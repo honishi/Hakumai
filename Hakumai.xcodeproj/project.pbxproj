@@ -1,0 +1,412 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		DB2AE0C41A0EE2FD00B1CE4D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0C31A0EE2FD00B1CE4D /* AppDelegate.swift */; };
+		DB2AE0C61A0EE2FD00B1CE4D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0C51A0EE2FD00B1CE4D /* ViewController.swift */; };
+		DB2AE0C81A0EE2FD00B1CE4D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB2AE0C71A0EE2FD00B1CE4D /* Images.xcassets */; };
+		DB2AE0CB1A0EE2FD00B1CE4D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DB2AE0C91A0EE2FD00B1CE4D /* Main.storyboard */; };
+		DB2AE0D71A0EE2FD00B1CE4D /* HakumaiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0D61A0EE2FD00B1CE4D /* HakumaiTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		DB2AE0D11A0EE2FD00B1CE4D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DB2AE0B61A0EE2FD00B1CE4D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DB2AE0BD1A0EE2FD00B1CE4D;
+			remoteInfo = Hakumai;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		DB2AE0BE1A0EE2FD00B1CE4D /* Hakumai.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hakumai.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB2AE0C21A0EE2FD00B1CE4D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DB2AE0C31A0EE2FD00B1CE4D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		DB2AE0C51A0EE2FD00B1CE4D /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		DB2AE0C71A0EE2FD00B1CE4D /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		DB2AE0CA1A0EE2FD00B1CE4D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		DB2AE0D01A0EE2FD00B1CE4D /* HakumaiTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HakumaiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB2AE0D51A0EE2FD00B1CE4D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DB2AE0D61A0EE2FD00B1CE4D /* HakumaiTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HakumaiTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		DB2AE0BB1A0EE2FD00B1CE4D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DB2AE0CD1A0EE2FD00B1CE4D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		DB2AE0B51A0EE2FD00B1CE4D = {
+			isa = PBXGroup;
+			children = (
+				DB2AE0C01A0EE2FD00B1CE4D /* Hakumai */,
+				DB2AE0D31A0EE2FD00B1CE4D /* HakumaiTests */,
+				DB2AE0BF1A0EE2FD00B1CE4D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		DB2AE0BF1A0EE2FD00B1CE4D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DB2AE0BE1A0EE2FD00B1CE4D /* Hakumai.app */,
+				DB2AE0D01A0EE2FD00B1CE4D /* HakumaiTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		DB2AE0C01A0EE2FD00B1CE4D /* Hakumai */ = {
+			isa = PBXGroup;
+			children = (
+				DB2AE0C31A0EE2FD00B1CE4D /* AppDelegate.swift */,
+				DB2AE0C51A0EE2FD00B1CE4D /* ViewController.swift */,
+				DB2AE0C71A0EE2FD00B1CE4D /* Images.xcassets */,
+				DB2AE0C91A0EE2FD00B1CE4D /* Main.storyboard */,
+				DB2AE0C11A0EE2FD00B1CE4D /* Supporting Files */,
+			);
+			path = Hakumai;
+			sourceTree = "<group>";
+		};
+		DB2AE0C11A0EE2FD00B1CE4D /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				DB2AE0C21A0EE2FD00B1CE4D /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		DB2AE0D31A0EE2FD00B1CE4D /* HakumaiTests */ = {
+			isa = PBXGroup;
+			children = (
+				DB2AE0D61A0EE2FD00B1CE4D /* HakumaiTests.swift */,
+				DB2AE0D41A0EE2FD00B1CE4D /* Supporting Files */,
+			);
+			path = HakumaiTests;
+			sourceTree = "<group>";
+		};
+		DB2AE0D41A0EE2FD00B1CE4D /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				DB2AE0D51A0EE2FD00B1CE4D /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		DB2AE0BD1A0EE2FD00B1CE4D /* Hakumai */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DB2AE0DA1A0EE2FD00B1CE4D /* Build configuration list for PBXNativeTarget "Hakumai" */;
+			buildPhases = (
+				DB2AE0BA1A0EE2FD00B1CE4D /* Sources */,
+				DB2AE0BB1A0EE2FD00B1CE4D /* Frameworks */,
+				DB2AE0BC1A0EE2FD00B1CE4D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Hakumai;
+			productName = Hakumai;
+			productReference = DB2AE0BE1A0EE2FD00B1CE4D /* Hakumai.app */;
+			productType = "com.apple.product-type.application";
+		};
+		DB2AE0CF1A0EE2FD00B1CE4D /* HakumaiTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DB2AE0DD1A0EE2FD00B1CE4D /* Build configuration list for PBXNativeTarget "HakumaiTests" */;
+			buildPhases = (
+				DB2AE0CC1A0EE2FD00B1CE4D /* Sources */,
+				DB2AE0CD1A0EE2FD00B1CE4D /* Frameworks */,
+				DB2AE0CE1A0EE2FD00B1CE4D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DB2AE0D21A0EE2FD00B1CE4D /* PBXTargetDependency */,
+			);
+			name = HakumaiTests;
+			productName = HakumaiTests;
+			productReference = DB2AE0D01A0EE2FD00B1CE4D /* HakumaiTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		DB2AE0B61A0EE2FD00B1CE4D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0610;
+				ORGANIZATIONNAME = "Hiroyuki Onishi";
+				TargetAttributes = {
+					DB2AE0BD1A0EE2FD00B1CE4D = {
+						CreatedOnToolsVersion = 6.1;
+					};
+					DB2AE0CF1A0EE2FD00B1CE4D = {
+						CreatedOnToolsVersion = 6.1;
+						TestTargetID = DB2AE0BD1A0EE2FD00B1CE4D;
+					};
+				};
+			};
+			buildConfigurationList = DB2AE0B91A0EE2FD00B1CE4D /* Build configuration list for PBXProject "Hakumai" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = DB2AE0B51A0EE2FD00B1CE4D;
+			productRefGroup = DB2AE0BF1A0EE2FD00B1CE4D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DB2AE0BD1A0EE2FD00B1CE4D /* Hakumai */,
+				DB2AE0CF1A0EE2FD00B1CE4D /* HakumaiTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		DB2AE0BC1A0EE2FD00B1CE4D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DB2AE0C81A0EE2FD00B1CE4D /* Images.xcassets in Resources */,
+				DB2AE0CB1A0EE2FD00B1CE4D /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DB2AE0CE1A0EE2FD00B1CE4D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		DB2AE0BA1A0EE2FD00B1CE4D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DB2AE0C61A0EE2FD00B1CE4D /* ViewController.swift in Sources */,
+				DB2AE0C41A0EE2FD00B1CE4D /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DB2AE0CC1A0EE2FD00B1CE4D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DB2AE0D71A0EE2FD00B1CE4D /* HakumaiTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DB2AE0D21A0EE2FD00B1CE4D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DB2AE0BD1A0EE2FD00B1CE4D /* Hakumai */;
+			targetProxy = DB2AE0D11A0EE2FD00B1CE4D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		DB2AE0C91A0EE2FD00B1CE4D /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DB2AE0CA1A0EE2FD00B1CE4D /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		DB2AE0D81A0EE2FD00B1CE4D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		DB2AE0D91A0EE2FD00B1CE4D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		DB2AE0DB1A0EE2FD00B1CE4D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Hakumai/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		DB2AE0DC1A0EE2FD00B1CE4D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Hakumai/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		DB2AE0DE1A0EE2FD00B1CE4D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = HakumaiTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hakumai.app/Contents/MacOS/Hakumai";
+			};
+			name = Debug;
+		};
+		DB2AE0DF1A0EE2FD00B1CE4D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = HakumaiTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hakumai.app/Contents/MacOS/Hakumai";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		DB2AE0B91A0EE2FD00B1CE4D /* Build configuration list for PBXProject "Hakumai" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DB2AE0D81A0EE2FD00B1CE4D /* Debug */,
+				DB2AE0D91A0EE2FD00B1CE4D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DB2AE0DA1A0EE2FD00B1CE4D /* Build configuration list for PBXNativeTarget "Hakumai" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DB2AE0DB1A0EE2FD00B1CE4D /* Debug */,
+				DB2AE0DC1A0EE2FD00B1CE4D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		DB2AE0DD1A0EE2FD00B1CE4D /* Build configuration list for PBXNativeTarget "HakumaiTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DB2AE0DE1A0EE2FD00B1CE4D /* Debug */,
+				DB2AE0DF1A0EE2FD00B1CE4D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = DB2AE0B61A0EE2FD00B1CE4D /* Project object */;
+}
