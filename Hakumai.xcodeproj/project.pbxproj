@@ -32,6 +32,8 @@
 		DBAAA73C1A0F592300981004 /* SSKeychainQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7381A0F592300981004 /* SSKeychainQuery.m */; };
 		DBAAA73E1A0F594700981004 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBAAA73D1A0F594700981004 /* Security.framework */; };
 		DBAAA7421A0F5FEF00981004 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBAAA7411A0F5FEF00981004 /* SystemConfiguration.framework */; };
+		DBAAA7511A0FDA4500981004 /* NicoUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7501A0FDA4500981004 /* NicoUtility.swift */; };
+		DBAAA7521A0FDA4500981004 /* NicoUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7501A0FDA4500981004 /* NicoUtility.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,6 +77,7 @@
 		DBAAA7381A0F592300981004 /* SSKeychainQuery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SSKeychainQuery.m; path = vendor/SSKeychain/SSKeychain/SSKeychainQuery.m; sourceTree = "<group>"; };
 		DBAAA73D1A0F594700981004 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		DBAAA7411A0F5FEF00981004 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		DBAAA7501A0FDA4500981004 /* NicoUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicoUtility.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,6 +129,7 @@
 				DB2AE0C31A0EE2FD00B1CE4D /* AppDelegate.swift */,
 				DB2AE0C51A0EE2FD00B1CE4D /* ViewController.swift */,
 				DBAAA7311A0F43BB00981004 /* CookieUtility.swift */,
+				DBAAA7501A0FDA4500981004 /* NicoUtility.swift */,
 				DB2AE0C71A0EE2FD00B1CE4D /* Images.xcassets */,
 				DB2AE0C91A0EE2FD00B1CE4D /* Main.storyboard */,
 				DB2AE0C11A0EE2FD00B1CE4D /* Supporting Files */,
@@ -316,6 +320,7 @@
 				DB2AE0C41A0EE2FD00B1CE4D /* AppDelegate.swift in Sources */,
 				DB2AE1121A0F2BAB00B1CE4D /* FMDatabaseAdditions.m in Sources */,
 				DB2AE1161A0F2BAB00B1CE4D /* FMDatabaseQueue.m in Sources */,
+				DBAAA7511A0FDA4500981004 /* NicoUtility.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -328,6 +333,7 @@
 				DBAAA73A1A0F592300981004 /* SSKeychain.m in Sources */,
 				DB2AE1171A0F2BAB00B1CE4D /* FMDatabaseQueue.m in Sources */,
 				DB2AE0D71A0EE2FD00B1CE4D /* HakumaiTests.swift in Sources */,
+				DBAAA7521A0FDA4500981004 /* NicoUtility.swift in Sources */,
 				DB2AE1151A0F2BAB00B1CE4D /* FMDatabasePool.m in Sources */,
 				DB2AE1111A0F2BAB00B1CE4D /* FMDatabase.m in Sources */,
 				DB2AE1131A0F2BAB00B1CE4D /* FMDatabaseAdditions.m in Sources */,

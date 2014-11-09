@@ -15,6 +15,8 @@ class ViewController: NSViewController {
 
         // Do any additional setup after loading the view.
         // CookieUtility.chromeCookie()
+        
+        NicoUtility.getInstance().getPlayerStatus()
     }
 
     override var representedObject: AnyObject? {
