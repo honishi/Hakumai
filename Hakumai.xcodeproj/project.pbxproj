@@ -12,6 +12,26 @@
 		DB2AE0C81A0EE2FD00B1CE4D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB2AE0C71A0EE2FD00B1CE4D /* Images.xcassets */; };
 		DB2AE0CB1A0EE2FD00B1CE4D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DB2AE0C91A0EE2FD00B1CE4D /* Main.storyboard */; };
 		DB2AE0D71A0EE2FD00B1CE4D /* HakumaiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0D61A0EE2FD00B1CE4D /* HakumaiTests.swift */; };
+		DB2AE1101A0F2BAB00B1CE4D /* FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE1061A0F2BAB00B1CE4D /* FMDatabase.m */; };
+		DB2AE1111A0F2BAB00B1CE4D /* FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE1061A0F2BAB00B1CE4D /* FMDatabase.m */; };
+		DB2AE1121A0F2BAB00B1CE4D /* FMDatabaseAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE1081A0F2BAB00B1CE4D /* FMDatabaseAdditions.m */; };
+		DB2AE1131A0F2BAB00B1CE4D /* FMDatabaseAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE1081A0F2BAB00B1CE4D /* FMDatabaseAdditions.m */; };
+		DB2AE1141A0F2BAB00B1CE4D /* FMDatabasePool.m in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE10A1A0F2BAB00B1CE4D /* FMDatabasePool.m */; };
+		DB2AE1151A0F2BAB00B1CE4D /* FMDatabasePool.m in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE10A1A0F2BAB00B1CE4D /* FMDatabasePool.m */; };
+		DB2AE1161A0F2BAB00B1CE4D /* FMDatabaseQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE10C1A0F2BAB00B1CE4D /* FMDatabaseQueue.m */; };
+		DB2AE1171A0F2BAB00B1CE4D /* FMDatabaseQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE10C1A0F2BAB00B1CE4D /* FMDatabaseQueue.m */; };
+		DB2AE1181A0F2BAB00B1CE4D /* FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE10F1A0F2BAB00B1CE4D /* FMResultSet.m */; };
+		DB2AE1191A0F2BAB00B1CE4D /* FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE10F1A0F2BAB00B1CE4D /* FMResultSet.m */; };
+		DB2AE11A1A0F2C8200B1CE4D /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DB2AE0F71A0EF18200B1CE4D /* libsqlite3.dylib */; };
+		DB2AE11B1A0F2D4C00B1CE4D /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DB2AE0F71A0EF18200B1CE4D /* libsqlite3.dylib */; };
+		DBAAA7321A0F43BB00981004 /* CookieUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7311A0F43BB00981004 /* CookieUtility.swift */; };
+		DBAAA7331A0F43BB00981004 /* CookieUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7311A0F43BB00981004 /* CookieUtility.swift */; };
+		DBAAA7391A0F592300981004 /* SSKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7361A0F592300981004 /* SSKeychain.m */; };
+		DBAAA73A1A0F592300981004 /* SSKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7361A0F592300981004 /* SSKeychain.m */; };
+		DBAAA73B1A0F592300981004 /* SSKeychainQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7381A0F592300981004 /* SSKeychainQuery.m */; };
+		DBAAA73C1A0F592300981004 /* SSKeychainQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7381A0F592300981004 /* SSKeychainQuery.m */; };
+		DBAAA73E1A0F594700981004 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBAAA73D1A0F594700981004 /* Security.framework */; };
+		DBAAA7421A0F5FEF00981004 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBAAA7411A0F5FEF00981004 /* SystemConfiguration.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,6 +54,27 @@
 		DB2AE0D01A0EE2FD00B1CE4D /* HakumaiTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HakumaiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB2AE0D51A0EE2FD00B1CE4D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DB2AE0D61A0EE2FD00B1CE4D /* HakumaiTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HakumaiTests.swift; sourceTree = "<group>"; };
+		DB2AE0F71A0EF18200B1CE4D /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		DB2AE1031A0F2BAA00B1CE4D /* Hakumai-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Hakumai-Bridging-Header.h"; sourceTree = "<group>"; };
+		DB2AE1041A0F2BAA00B1CE4D /* HakumaiTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HakumaiTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		DB2AE1051A0F2BAB00B1CE4D /* FMDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FMDatabase.h; path = vendor/fmdb/src/fmdb/FMDatabase.h; sourceTree = "<group>"; };
+		DB2AE1061A0F2BAB00B1CE4D /* FMDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FMDatabase.m; path = vendor/fmdb/src/fmdb/FMDatabase.m; sourceTree = "<group>"; };
+		DB2AE1071A0F2BAB00B1CE4D /* FMDatabaseAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FMDatabaseAdditions.h; path = vendor/fmdb/src/fmdb/FMDatabaseAdditions.h; sourceTree = "<group>"; };
+		DB2AE1081A0F2BAB00B1CE4D /* FMDatabaseAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FMDatabaseAdditions.m; path = vendor/fmdb/src/fmdb/FMDatabaseAdditions.m; sourceTree = "<group>"; };
+		DB2AE1091A0F2BAB00B1CE4D /* FMDatabasePool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FMDatabasePool.h; path = vendor/fmdb/src/fmdb/FMDatabasePool.h; sourceTree = "<group>"; };
+		DB2AE10A1A0F2BAB00B1CE4D /* FMDatabasePool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FMDatabasePool.m; path = vendor/fmdb/src/fmdb/FMDatabasePool.m; sourceTree = "<group>"; };
+		DB2AE10B1A0F2BAB00B1CE4D /* FMDatabaseQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FMDatabaseQueue.h; path = vendor/fmdb/src/fmdb/FMDatabaseQueue.h; sourceTree = "<group>"; };
+		DB2AE10C1A0F2BAB00B1CE4D /* FMDatabaseQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FMDatabaseQueue.m; path = vendor/fmdb/src/fmdb/FMDatabaseQueue.m; sourceTree = "<group>"; };
+		DB2AE10D1A0F2BAB00B1CE4D /* FMDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FMDB.h; path = vendor/fmdb/src/fmdb/FMDB.h; sourceTree = "<group>"; };
+		DB2AE10E1A0F2BAB00B1CE4D /* FMResultSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FMResultSet.h; path = vendor/fmdb/src/fmdb/FMResultSet.h; sourceTree = "<group>"; };
+		DB2AE10F1A0F2BAB00B1CE4D /* FMResultSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FMResultSet.m; path = vendor/fmdb/src/fmdb/FMResultSet.m; sourceTree = "<group>"; };
+		DBAAA7311A0F43BB00981004 /* CookieUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CookieUtility.swift; sourceTree = "<group>"; };
+		DBAAA7351A0F592300981004 /* SSKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SSKeychain.h; path = vendor/SSKeychain/SSKeychain/SSKeychain.h; sourceTree = "<group>"; };
+		DBAAA7361A0F592300981004 /* SSKeychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SSKeychain.m; path = vendor/SSKeychain/SSKeychain/SSKeychain.m; sourceTree = "<group>"; };
+		DBAAA7371A0F592300981004 /* SSKeychainQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SSKeychainQuery.h; path = vendor/SSKeychain/SSKeychain/SSKeychainQuery.h; sourceTree = "<group>"; };
+		DBAAA7381A0F592300981004 /* SSKeychainQuery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SSKeychainQuery.m; path = vendor/SSKeychain/SSKeychain/SSKeychainQuery.m; sourceTree = "<group>"; };
+		DBAAA73D1A0F594700981004 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		DBAAA7411A0F5FEF00981004 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,6 +82,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DBAAA7421A0F5FEF00981004 /* SystemConfiguration.framework in Frameworks */,
+				DBAAA73E1A0F594700981004 /* Security.framework in Frameworks */,
+				DB2AE11A1A0F2C8200B1CE4D /* libsqlite3.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -48,6 +92,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB2AE11B1A0F2D4C00B1CE4D /* libsqlite3.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -58,6 +103,8 @@
 			isa = PBXGroup;
 			children = (
 				DB2AE0C01A0EE2FD00B1CE4D /* Hakumai */,
+				DB2AE1011A0F29BA00B1CE4D /* frameworks */,
+				DB2AE0EF1A0EECD300B1CE4D /* vendor */,
 				DB2AE0D31A0EE2FD00B1CE4D /* HakumaiTests */,
 				DB2AE0BF1A0EE2FD00B1CE4D /* Products */,
 			);
@@ -75,8 +122,10 @@
 		DB2AE0C01A0EE2FD00B1CE4D /* Hakumai */ = {
 			isa = PBXGroup;
 			children = (
+				DB2AE1031A0F2BAA00B1CE4D /* Hakumai-Bridging-Header.h */,
 				DB2AE0C31A0EE2FD00B1CE4D /* AppDelegate.swift */,
 				DB2AE0C51A0EE2FD00B1CE4D /* ViewController.swift */,
+				DBAAA7311A0F43BB00981004 /* CookieUtility.swift */,
 				DB2AE0C71A0EE2FD00B1CE4D /* Images.xcassets */,
 				DB2AE0C91A0EE2FD00B1CE4D /* Main.storyboard */,
 				DB2AE0C11A0EE2FD00B1CE4D /* Supporting Files */,
@@ -95,6 +144,7 @@
 		DB2AE0D31A0EE2FD00B1CE4D /* HakumaiTests */ = {
 			isa = PBXGroup;
 			children = (
+				DB2AE1041A0F2BAA00B1CE4D /* HakumaiTests-Bridging-Header.h */,
 				DB2AE0D61A0EE2FD00B1CE4D /* HakumaiTests.swift */,
 				DB2AE0D41A0EE2FD00B1CE4D /* Supporting Files */,
 			);
@@ -107,6 +157,54 @@
 				DB2AE0D51A0EE2FD00B1CE4D /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		DB2AE0EF1A0EECD300B1CE4D /* vendor */ = {
+			isa = PBXGroup;
+			children = (
+				DBAAA7341A0F58E700981004 /* SSKeychain */,
+				DB2AE1021A0F2B7C00B1CE4D /* FMDB */,
+			);
+			name = vendor;
+			sourceTree = "<group>";
+		};
+		DB2AE1011A0F29BA00B1CE4D /* frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				DB2AE0F71A0EF18200B1CE4D /* libsqlite3.dylib */,
+				DBAAA7411A0F5FEF00981004 /* SystemConfiguration.framework */,
+				DBAAA73D1A0F594700981004 /* Security.framework */,
+			);
+			name = frameworks;
+			sourceTree = "<group>";
+		};
+		DB2AE1021A0F2B7C00B1CE4D /* FMDB */ = {
+			isa = PBXGroup;
+			children = (
+				DB2AE1051A0F2BAB00B1CE4D /* FMDatabase.h */,
+				DB2AE1061A0F2BAB00B1CE4D /* FMDatabase.m */,
+				DB2AE1071A0F2BAB00B1CE4D /* FMDatabaseAdditions.h */,
+				DB2AE1081A0F2BAB00B1CE4D /* FMDatabaseAdditions.m */,
+				DB2AE1091A0F2BAB00B1CE4D /* FMDatabasePool.h */,
+				DB2AE10A1A0F2BAB00B1CE4D /* FMDatabasePool.m */,
+				DB2AE10B1A0F2BAB00B1CE4D /* FMDatabaseQueue.h */,
+				DB2AE10C1A0F2BAB00B1CE4D /* FMDatabaseQueue.m */,
+				DB2AE10D1A0F2BAB00B1CE4D /* FMDB.h */,
+				DB2AE10E1A0F2BAB00B1CE4D /* FMResultSet.h */,
+				DB2AE10F1A0F2BAB00B1CE4D /* FMResultSet.m */,
+			);
+			name = FMDB;
+			sourceTree = "<group>";
+		};
+		DBAAA7341A0F58E700981004 /* SSKeychain */ = {
+			isa = PBXGroup;
+			children = (
+				DBAAA7351A0F592300981004 /* SSKeychain.h */,
+				DBAAA7361A0F592300981004 /* SSKeychain.m */,
+				DBAAA7371A0F592300981004 /* SSKeychainQuery.h */,
+				DBAAA7381A0F592300981004 /* SSKeychainQuery.m */,
+			);
+			name = SSKeychain;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -208,8 +306,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB2AE1101A0F2BAB00B1CE4D /* FMDatabase.m in Sources */,
 				DB2AE0C61A0EE2FD00B1CE4D /* ViewController.swift in Sources */,
+				DB2AE1181A0F2BAB00B1CE4D /* FMResultSet.m in Sources */,
+				DB2AE1141A0F2BAB00B1CE4D /* FMDatabasePool.m in Sources */,
+				DBAAA7321A0F43BB00981004 /* CookieUtility.swift in Sources */,
+				DBAAA7391A0F592300981004 /* SSKeychain.m in Sources */,
+				DBAAA73B1A0F592300981004 /* SSKeychainQuery.m in Sources */,
 				DB2AE0C41A0EE2FD00B1CE4D /* AppDelegate.swift in Sources */,
+				DB2AE1121A0F2BAB00B1CE4D /* FMDatabaseAdditions.m in Sources */,
+				DB2AE1161A0F2BAB00B1CE4D /* FMDatabaseQueue.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -217,7 +323,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB2AE1191A0F2BAB00B1CE4D /* FMResultSet.m in Sources */,
+				DBAAA73C1A0F592300981004 /* SSKeychainQuery.m in Sources */,
+				DBAAA73A1A0F592300981004 /* SSKeychain.m in Sources */,
+				DB2AE1171A0F2BAB00B1CE4D /* FMDatabaseQueue.m in Sources */,
 				DB2AE0D71A0EE2FD00B1CE4D /* HakumaiTests.swift in Sources */,
+				DB2AE1151A0F2BAB00B1CE4D /* FMDatabasePool.m in Sources */,
+				DB2AE1111A0F2BAB00B1CE4D /* FMDatabase.m in Sources */,
+				DB2AE1131A0F2BAB00B1CE4D /* FMDatabaseAdditions.m in Sources */,
+				DBAAA7331A0F43BB00981004 /* CookieUtility.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -324,10 +438,17 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = Hakumai/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)/usr/lib/system",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Hakumai-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
@@ -335,10 +456,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = Hakumai/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)/usr/lib/system",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Hakumai-Bridging-Header.h";
 			};
 			name = Release;
 		};
@@ -346,6 +473,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
@@ -358,6 +486,8 @@
 				INFOPLIST_FILE = HakumaiTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "HakumaiTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hakumai.app/Contents/MacOS/Hakumai";
 			};
 			name = Debug;
@@ -366,6 +496,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
@@ -374,6 +505,7 @@
 				INFOPLIST_FILE = HakumaiTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "HakumaiTests-Bridging-Header.h";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hakumai.app/Contents/MacOS/Hakumai";
 			};
 			name = Release;
@@ -397,6 +529,7 @@
 				DB2AE0DC1A0EE2FD00B1CE4D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		DB2AE0DD1A0EE2FD00B1CE4D /* Build configuration list for PBXNativeTarget "HakumaiTests" */ = {
 			isa = XCConfigurationList;
@@ -405,6 +538,7 @@
 				DB2AE0DF1A0EE2FD00B1CE4D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

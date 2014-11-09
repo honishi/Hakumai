@@ -14,6 +14,7 @@ class ViewController: NSViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        // CookieUtility.chromeCookie()
     }
 
     override var representedObject: AnyObject? {
@@ -21,7 +22,4 @@ class ViewController: NSViewController {
         // Update the view, if already loaded.
         }
     }
-
-
 }
-

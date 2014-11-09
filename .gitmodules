@@ -1,0 +1,6 @@
+[submodule "vendor/SSKeychain"]
+	path = vendor/SSKeychain
+	url = git@github.com:soffes/sskeychain.git
+[submodule "vendor/FMDB"]
+	path = vendor/FMDB
+	url = git@github.com:ccgus/fmdb.git

@@ -21,6 +21,7 @@ class HakumaiTests: XCTestCase {
         super.tearDown()
     }
     
+    // MARK: example
     func testExample() {
         // This is an example of a functional test case.
         XCTAssert(true, "Pass")
@@ -33,4 +34,9 @@ class HakumaiTests: XCTestCase {
         }
     }
     
+    // MARK: cookie utility
+    func testChromeCookie() {
+        let cookie = CookieUtility.chromeCookie()
+        XCTAssert(0 < cookie?.utf16Count, "")
+    }
 }
