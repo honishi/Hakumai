@@ -167,20 +167,22 @@ class CookieUtility : NSObject {
         if UInt32(cryptStatus) == UInt32(kCCSuccess) {
             decryptedData.length = Int(numBytesEncrypted)
             println("decryptedData = \(decryptedData), decryptedLength = \(numBytesEncrypted)")
-            
-            // Not all data is a UTF-8 string so Base64 is used
-            // let base64cryptString = decryptedData.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
-            // println("base64cryptString = \(base64cryptString)")
         }
         else {
             println("Error: \(cryptStatus)")
         }
 
         // trim padding
-        let decryptedString = NSString(data: decryptedData, encoding: NSUTF8StringEncoding)
-        let cleansedString = decryptedString?.stringByReplacingOccurrencesOfString("\n", withString: "")
+        if let decryptedString = NSString(data: decryptedData, encoding: NSUTF8StringEncoding) {
+            var error: NSError?
+            let cleanseRegexp = NSRegularExpression(pattern: "(\n|\r)", options: nil, error: &error)
+            let range = NSMakeRange(0, decryptedString.length)
+            let cleansedString = cleanseRegexp?.stringByReplacingMatchesInString(decryptedString, options: nil, range: range, withTemplate: "")
+            
+            return cleansedString
+        }
         
-        return cleansedString
+        return nil
     }
     
 // MARK: common utility

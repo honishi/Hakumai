@@ -8,15 +8,19 @@
 
 import Cocoa
 
-class ViewController: NSViewController {
-
+class ViewController: NSViewController, NicoUtilityProtocol, NSTableViewDataSource, NSTableViewDelegate {
+    @IBOutlet weak var tableView: NSTableView!
+    
+    var chats: [Chat] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
         // CookieUtility.chromeCookie()
         
-        NicoUtility.getInstance().getPlayerStatus()
+        NicoUtility.getInstance().delegate = self
+        NicoUtility.getInstance().connect()
     }
 
     override var representedObject: AnyObject? {
@@ -24,4 +28,43 @@ class ViewController: NSViewController {
         // Update the view, if already loaded.
         }
     }
+    
+    // MARK: NicoUtilityDelegate Functions
+    func receiveChat(nicoUtility: NicoUtility, chat: Chat) {
+        println("\(chat.mail),\(chat.comment)")
+        self.chats.append(chat)
+        
+        self.tableView.reloadData()
+        self.tableView.scrollRowToVisible(self.chats.count - 1)
+    }
+    
+    // MARK: NSTableViewDataSource Functions
+    func numberOfRowsInTableView(tableView: NSTableView) -> Int {
+        return self.chats.count
+    }
+    
+    func tableView(tableView: NSTableView, objectValueForTableColumn tableColumn: NSTableColumn?, row: Int) -> AnyObject? {
+        var content = ""
+        
+        if tableColumn?.identifier == "MailColumn" {
+            if let mail = self.chats[row].mail {
+                content = mail
+            }
+            else {
+                content = "n/a"
+            }
+        }
+        else if tableColumn?.identifier == "UserIdColumn" {
+            content = self.chats[row].userId
+        }
+        else if tableColumn?.identifier == "CommentColumn" {
+            content = self.chats[row].comment
+        }
+        
+        return content
+    }
+
+    // MARK: NSTableViewDelegate Functions
+    // func tableView(tableView: NSTableView, viewForTableColumn tableColumn: NSTableColumn?, row: Int) -> NSView? {
+    // }
 }
