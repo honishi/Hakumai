@@ -9,6 +9,7 @@
 import Cocoa
 
 class ViewController: NSViewController, NicoUtilityProtocol, NSTableViewDataSource, NSTableViewDelegate {
+    @IBOutlet weak var liveTextField: NSTextField!
     @IBOutlet weak var tableView: NSTableView!
     
     var chats: [Chat] = []
@@ -18,9 +19,6 @@ class ViewController: NSViewController, NicoUtilityProtocol, NSTableViewDataSour
 
         // Do any additional setup after loading the view.
         // CookieUtility.chromeCookie()
-        
-        NicoUtility.getInstance().delegate = self
-        NicoUtility.getInstance().connect()
     }
 
     override var representedObject: AnyObject? {
@@ -31,7 +29,12 @@ class ViewController: NSViewController, NicoUtilityProtocol, NSTableViewDataSour
     
     // MARK: NicoUtilityDelegate Functions
     func receiveChat(nicoUtility: NicoUtility, chat: Chat) {
-        println("\(chat.mail),\(chat.comment)")
+        // println("\(chat.mail),\(chat.comment)")
+        
+        if chat.comment.hasPrefix("/hb ifseetno ") {
+            return
+        }
+        
         self.chats.append(chat)
         
         self.tableView.reloadData()
@@ -46,7 +49,10 @@ class ViewController: NSViewController, NicoUtilityProtocol, NSTableViewDataSour
     func tableView(tableView: NSTableView, objectValueForTableColumn tableColumn: NSTableColumn?, row: Int) -> AnyObject? {
         var content = ""
         
-        if tableColumn?.identifier == "MailColumn" {
+        if tableColumn?.identifier == "RoomPositionColumn" {
+            content = String(self.chats[row].roomPosition)
+        }
+        else if tableColumn?.identifier == "MailColumn" {
             if let mail = self.chats[row].mail {
                 content = mail
             }
@@ -67,4 +73,10 @@ class ViewController: NSViewController, NicoUtilityProtocol, NSTableViewDataSour
     // MARK: NSTableViewDelegate Functions
     // func tableView(tableView: NSTableView, viewForTableColumn tableColumn: NSTableColumn?, row: Int) -> NSView? {
     // }
+    
+    @IBAction func connectLive(sender: AnyObject) {
+        NicoUtility.getInstance().delegate = self
+        NicoUtility.getInstance().connect(self.liveTextField.stringValue.toInt()!)
+    }
+    
 }
