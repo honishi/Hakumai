@@ -674,7 +674,7 @@
                         <subviews>
                             <textField verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gZN-es-bFO">
                                 <rect key="frame" x="10" y="241" width="194" height="22"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="200196490" drawsBackground="YES" id="iDS-0h-Uje">
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="200315978" drawsBackground="YES" id="iDS-0h-Uje">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -775,6 +775,16 @@
                                 </buttonCell>
                                 <connections>
                                     <action selector="connectLive:" target="XfG-lQ-9wD" id="FLc-vA-kGL"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FI2-RF-h0p">
+                                <rect key="frame" x="285" y="239" width="60" height="25"/>
+                                <buttonCell key="cell" type="roundTextured" title="+" bezelStyle="texturedRounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="tIv-fC-bzG">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="addRoom:" target="XfG-lQ-9wD" id="XP3-Nw-2ce"/>
                                 </connections>
                             </button>
                         </subviews>

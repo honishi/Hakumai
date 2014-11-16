@@ -28,7 +28,7 @@ class ViewController: NSViewController, NicoUtilityProtocol, NSTableViewDataSour
     }
     
     // MARK: NicoUtilityDelegate Functions
-    func receiveChat(nicoUtility: NicoUtility, chat: Chat) {
+    func nicoUtilityReceivedChat(nicoUtility: NicoUtility, chat: Chat) {
         // println("\(chat.mail),\(chat.comment)")
         
         if chat.comment.hasPrefix("/hb ifseetno ") {
@@ -50,7 +50,9 @@ class ViewController: NSViewController, NicoUtilityProtocol, NSTableViewDataSour
         var content = ""
         
         if tableColumn?.identifier == "RoomPositionColumn" {
-            content = String(self.chats[row].roomPosition)
+            if let roomPosition = self.chats[row].roomPosition {
+                content = String(roomPosition)
+            }
         }
         else if tableColumn?.identifier == "MailColumn" {
             if let mail = self.chats[row].mail {
@@ -79,4 +81,7 @@ class ViewController: NSViewController, NicoUtilityProtocol, NSTableViewDataSour
         NicoUtility.getInstance().connect(self.liveTextField.stringValue.toInt()!)
     }
     
+    @IBAction func addRoom(sender: AnyObject) {
+        NicoUtility.getInstance().addMessageServer()
+    }
 }

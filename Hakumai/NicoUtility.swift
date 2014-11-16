@@ -18,26 +18,6 @@ struct messageServer {
     let thread: Int
 }
 
-struct Chat {
-    let roomPosition: Int
-    let mail: String?
-    let userId: String
-    let comment: String
-    let score: Int
-}
-
-// MARK: class
-
-// simple wrapper class for messageServer struct.
-// this class is used to throw server info through NSThread(target:selector:object:).
-class MessageServerWrapper {
-    let server: messageServer
-    
-    private init(server: messageServer) {
-        self.server = server
-    }
-}
-
 // MARK: operator overload
 
 // this overload is used in test methods
@@ -74,7 +54,7 @@ typealias getPlayerStatusCompletion = (messageServer: messageServer?) -> (Void)
 // MARK: protocol
 
 protocol NicoUtilityProtocol {
-    func receiveChat(nicoUtility: NicoUtility, chat: Chat)
+    func nicoUtilityReceivedChat(nicoUtility: NicoUtility, chat: Chat)
 }
 
 // MARK: constant value
@@ -92,7 +72,7 @@ let kGetPlayerStatuUrl = "http://watch.live.nicovideo.jp/api/getplayerstatus?v=l
 
 // MARK: global value
 
-private let nicoutility = NicoUtility(roomPosition: nil)
+private let nicoutility = NicoUtility()
 
 // MARK: extension
 
@@ -142,18 +122,14 @@ func -(left: Character, right: Character) -> Int {
 
 // MARK: class
 
-class NicoUtility : NSObject, NSStreamDelegate {
-
+class NicoUtility : NSObject, RoomListenerDelegate {
     var delegate: NicoUtilityProtocol?
     
-    let roomPosition: Int!
-    var inputStream: NSInputStream!
-    var outputStream: NSOutputStream!
+    var messageServers: [messageServer] = []
+    var roomListeners: [RoomListener] = []
     
-    private init(roomPosition: Int!) {
+    private override init() {
         super.init()
-        
-        self.roomPosition = roomPosition
     }
     
     class func getInstance() -> NicoUtility {
@@ -162,6 +138,10 @@ class NicoUtility : NSObject, NSStreamDelegate {
 
     // MARK: public interface
     func connect(live: Int) {
+        if 0 < self.roomListeners.count {
+            self.disconnect()
+        }
+        
         self.getPlayerStatus (live, {(server: messageServer?) -> (Void) in
             println(server)
             
@@ -174,23 +154,42 @@ class NicoUtility : NSObject, NSStreamDelegate {
         })
     }
     
-    func openMessageServers(originServer: messageServer) {
-        let servers = self.deriveMessageServers(originServer)
-        
-        for server in servers {
-            let utility = NicoUtility(roomPosition: server.roomPosition)
-            utility.delegate = self.delegate
-            
-            let qualityOfServiceClass = Int(QOS_CLASS_BACKGROUND.value)
-            let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-            
-            dispatch_async(backgroundQueue, {
-                utility.openSocket(MessageServerWrapper(server: server))
-            })
+    func addMessageServer() {
+        if self.roomListeners.count == self.messageServers.count {
+            println("already opened max servers.")
+            return
         }
+        
+        let targetServerIndex = self.roomListeners.count
+        let targetServer = self.messageServers[targetServerIndex]
+        let listener = RoomListener(delegate: self, server: targetServer)
+        
+        let qualityOfServiceClass = Int(QOS_CLASS_BACKGROUND.value)
+        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+        dispatch_async(backgroundQueue, {
+            listener.openSocket()
+        })
+        
+        self.roomListeners.append(listener)
+    }
+    
+    func disconnect() {
+        for listener in self.roomListeners {
+            listener.closeSocket()
+        }
+        
+        self.roomListeners.removeAll(keepCapacity: false)
     }
     
     // MARK: -
+    func openMessageServers(originServer: messageServer) {
+        self.messageServers = self.deriveMessageServers(originServer)
+
+        for i in 1...2 {
+            self.addMessageServer()
+        }
+    }
+    
     func getPlayerStatus(live: Int, completion: getPlayerStatusCompletion) {
         let url = NSURL(string: kGetPlayerStatuUrl + String(live))!
         var request = NSMutableURLRequest(URL: url)
@@ -321,8 +320,8 @@ class NicoUtility : NSObject, NSStreamDelegate {
         
         var servers = [arenaServer]
         
-        // add stand a
-        for _ in 1...1 {
+        // add stand a, b, c, d, e, f
+        for _ in 1...6 {
             servers.append(self.nextMessageServer(servers.last!))
         }
         
@@ -416,121 +415,8 @@ class NicoUtility : NSObject, NSStreamDelegate {
         return kMessageServerAddressHostPrefix + String(serverNumber) + kMessageServerAddressDomain
     }
     
-    // MARK: - Socket Functions
-    func openSocket(serverObj: MessageServerWrapper) {
-        let server = serverObj.server
-        
-        println("opening socket:\(server.roomPosition),\(server.address),\(server.port),\(server.thread)")
-        
-        var input :NSInputStream?
-        var output :NSOutputStream?
-        
-        NSStream.getStreamsToHostWithName(server.address, port: server.port, inputStream: &input, outputStream: &output)
-
-        if input == nil || output == nil {
-            println("failed to open socket.")
-            return
-        }
-        
-        self.inputStream = input!
-        self.outputStream = output!
-        
-        self.inputStream?.delegate = self
-        self.outputStream?.delegate = self
-        
-        let loop = NSRunLoop.currentRunLoop()
-        
-        self.inputStream?.scheduleInRunLoop(loop, forMode: NSDefaultRunLoopMode)
-        self.outputStream?.scheduleInRunLoop(loop, forMode: NSDefaultRunLoopMode)
-        
-        self.inputStream?.open()
-        self.outputStream?.open()
-        
-        self.sendOpenThreadText(server.thread)
-        
-        loop.run()
-    }
-    
-    func sendOpenThreadText(thread: Int) {
-        let buffer = "<thread thread=\"\(thread)\" version=\"20061206\" res_form=\"-1\"/>\0"
-        let data: NSData = buffer.dataUsingEncoding(NSUTF8StringEncoding)!
-        self.outputStream?.write(UnsafePointer<UInt8>(data.bytes), maxLength: data.length)
-    }
-    
-    // MARK: NSStreamDelegate Functions
-    func stream(aStream: NSStream, handleEvent eventCode: NSStreamEvent) {
-        switch eventCode {
-        case NSStreamEvent.None:
-            println("*** stream event none")
-            
-        case NSStreamEvent.OpenCompleted:
-            println("*** stream event open completed");
-            
-        case NSStreamEvent.HasBytesAvailable:
-            // println("*** stream event has bytes available");
-            
-            // http://stackoverflow.com/q/26360962
-            var readByte = [UInt8](count: 500, repeatedValue: 0)
-            
-            while self.inputStream.hasBytesAvailable {
-                self.inputStream.read(&readByte, maxLength: 500)
-                //println(readByte)
-            }
-            
-            var output = NSString(bytes: &readByte, length: readByte.count, encoding: NSUTF8StringEncoding)
-            // println(output?)
-
-            if let chat = output {
-                if let s = self.parseChat(chat) {
-                    println("\(s.score),\(s.comment)")
-                    if let d = self.delegate {
-                        dispatch_async(dispatch_get_main_queue(), {
-                            d.receiveChat(self, chat: s)
-                        })
-                    }
-                }
-            }
-            
-        case NSStreamEvent.HasSpaceAvailable:
-            println("*** stream event has space available");
-            
-        case NSStreamEvent.ErrorOccurred:
-            println("*** stream event error occurred");
-            // [self closeSocket];
-            
-        case NSStreamEvent.EndEncountered:
-            println("*** stream event end encountered");
-            
-        default:
-            println("*** unexpected stream event...");
-        }
-    }
-    
-    func parseChat(chat: String) -> Chat? {
-        var err: NSError?
-        
-        let xmlDocument = NSXMLDocument(XMLString: chat, options: Int(NSXMLDocumentTidyXML), error: &err)
-        
-        if xmlDocument == nil {
-            println("could not parse chat:\(chat)")
-            return nil
-        }
-        
-        let chatElement = xmlDocument?.rootElement()
-        
-        if chatElement == nil || chatElement?.name != "chat" {
-            println("could not find chat:\(chat)")
-            return nil
-        }
-        
-        println(chat)
-        
-        let comment = chatElement?.stringValue
-        let mail = chatElement?.attributeForName("mail")?.stringValue
-        let userId = chatElement?.attributeForName("user_id")?.stringValue
-
-        let chatStruct = Chat(roomPosition: self.roomPosition, mail: mail, userId: userId!, comment: comment!, score: 123)
-        
-        return chatStruct
+    // MARK: RoomListenerDelegate Functions
+    func roomListenerReceivedChat(roomListener: RoomListener, chat: Chat) {
+        self.delegate?.nicoUtilityReceivedChat(self, chat: chat)
     }
 }

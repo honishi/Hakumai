@@ -8,7 +8,6 @@
 
 import Foundation
 import XCTest
-//import NicoUtility
 
 class NicoUtilityTests: XCTestCase {
     
@@ -115,21 +114,23 @@ class NicoUtilityTests: XCTestCase {
         let server1 = messageServer(official: false, roomPosition: 1, address: "msg102.live.nicovideo.jp", port: 2811, thread: 101)
         let server2 = messageServer(official: false, roomPosition: 2, address: "msg102.live.nicovideo.jp", port: 2812, thread: 102)
         let server3 = messageServer(official: false, roomPosition: 3, address: "msg102.live.nicovideo.jp", port: 2813, thread: 103)
+        let server4 = messageServer(official: false, roomPosition: 4, address: "msg102.live.nicovideo.jp", port: 2814, thread: 104)
+        let server5 = messageServer(official: false, roomPosition: 5, address: "msg103.live.nicovideo.jp", port: 2805, thread: 105)
+        let server6 = messageServer(official: false, roomPosition: 6, address: "msg103.live.nicovideo.jp", port: 2806, thread: 106)
+        
+        expected = [server0, server1, server2, server3, server4, server5, server6]
+        println("expected:\(expected)")
         
         server = server0
-        expected = [server0, server1]
-        // println("expected:\(expected)")
         derived = NicoUtility.getInstance().deriveMessageServers(server)
-        // println("derived:\(derived)")
+        println("derived:\(derived)")
         XCTAssert(derived == expected, "")
         
         server = server1
-        expected = [server0, server1]
         derived = NicoUtility.getInstance().deriveMessageServers(server)
         XCTAssert(derived == expected, "")
         
         server = server3
-        expected = [server0, server1]
         derived = NicoUtility.getInstance().deriveMessageServers(server)
         XCTAssert(derived == expected, "")
     }
