@@ -9,103 +9,9 @@
 import Foundation
 import XCGLogger
 
-// MARK: enum
-
-enum RoomPosition: Int {
-    case Arena = 0
-    case StandA
-    case StandB
-    case StandC
-    case StandD
-    case StandE
-    case StandF
-    case StandG
-    
-    func label() -> String {
-        switch self {
-        case .Arena:
-            return "アリーナ"
-        case .StandA:
-            return "立ち見A"
-        case .StandB:
-            return "立ち見B"
-        case .StandC:
-            return "立ち見C"
-        case .StandD:
-            return "立ち見D"
-        case .StandE:
-            return "立ち見E"
-        case .StandF:
-            return "立ち見F"
-        case .StandG:
-            return "立ち見G"
-        }
-    }
-    
-    func shortLabel() -> String {
-        switch self {
-        case .Arena:
-            return "ア"
-        case .StandA:
-            return "A"
-        case .StandB:
-            return "B"
-        case .StandC:
-            return "C"
-        case .StandD:
-            return "D"
-        case .StandE:
-            return "E"
-        case .StandF:
-            return "F"
-        case .StandG:
-            return "G"
-        }
-    }
-}
-
-// MARK: struct
-
-struct messageServer {
-    let official: Bool
-    let roomPosition: RoomPosition
-    let address: String
-    let port: Int
-    let thread: Int
-}
-
-// MARK: operator overload
-
-// this overload is used in test methods
-func == (left: messageServer, right: messageServer) -> Bool {
-    return (left.official == right.official &&
-            left.roomPosition == right.roomPosition &&
-            left.address == right.address &&
-            left.port == right.port &&
-            left.thread == right.thread)
-}
-
-func != (left: messageServer, right: messageServer) -> Bool {
-    return !(left == right)
-}
-
-func == (left: Array<messageServer>, right: Array<messageServer>) -> Bool {
-    if left.count != right.count {
-        return false
-    }
-    
-    for i in 0..<left.count {
-        if left[i] != right[i] {
-            return false
-        }
-    }
-    
-    return true
-}
-
 // MARK: type
 
-typealias getPlayerStatusCompletion = (messageServer: messageServer?) -> (Void)
+typealias getPlayerStatusCompletion = (messageServer: MessageServer?) -> (Void)
 
 // MARK: protocol
 
@@ -116,15 +22,6 @@ protocol NicoUtilityProtocol {
 
 // MARK: constant value
 
-let kMessageServerNumberFirst = 101
-let kMessageServerNumberLast = 104
-let kMessageServerPortOfficialFirst = 2815
-let kMessageServerPortOfficialLast = 2817
-let kMessageServerPortUserFirst = 2805
-let kMessageServerPortUserLast = 2814
-
-let kMessageServerAddressHostPrefix = "msg"
-let kMessageServerAddressDomain = ".live.nicovideo.jp"
 let kGetPlayerStatuUrl = "http://watch.live.nicovideo.jp/api/getplayerstatus?v=lv"
 
 // MARK: global value
@@ -156,7 +53,7 @@ func -(left: Character, right: Character) -> Int {
 class NicoUtility : NSObject, RoomListenerDelegate {
     var delegate: NicoUtilityProtocol?
     
-    var messageServers: [messageServer] = []
+    var messageServers: [MessageServer] = []
     var roomListeners: [RoomListener] = []
     
     let log = XCGLogger.defaultInstance()
@@ -175,7 +72,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             self.disconnect()
         }
         
-        self.getPlayerStatus (live, {(server: messageServer?) -> (Void) in
+        self.getPlayerStatus (live, {(server: MessageServer?) -> (Void) in
             self.log.debug("\(server)")
             
             if server == nil {
@@ -215,7 +112,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     // MARK: -
-    func openMessageServers(originServer: messageServer) {
+    func openMessageServers(originServer: MessageServer) {
         self.messageServers = self.deriveMessageServers(originServer)
 
         for i in 1...2 {
@@ -274,7 +171,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         return nil
     }
     
-    func extractMessageServer (xmlData: NSData) -> messageServer? {
+    func extractMessageServer (xmlData: NSData) -> MessageServer? {
         var err: NSError?
         
         // let xmlDocument = NSXMLDocument(data: xmlData, options: [NSXMLDocumentTidyXML], error: err!)
@@ -302,7 +199,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             return nil
         }
 
-        let server = messageServer(official: false, roomPosition: roomPosition!, address: address!, port: port!, thread: thread!)
+        let server = MessageServer(roomPosition: roomPosition!, address: address!, port: port!, thread: thread!)
         
         return server
     }
@@ -338,8 +235,8 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
 
     // MARK: Message Server Utility
-    func deriveMessageServers(originServer: messageServer) -> [messageServer] {
-        if originServer.official == true {
+    func deriveMessageServers(originServer: MessageServer) -> [MessageServer] {
+        if originServer.isOfficial() == true {
             // TODO: not yet supported
             return [originServer]
         }
@@ -348,7 +245,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         
         if 0 < originServer.roomPosition.rawValue {
             for _ in 1...(originServer.roomPosition.rawValue) {
-                arenaServer = self.previousMessageServer(arenaServer)
+                arenaServer = arenaServer.previous()
             }
         }
         
@@ -356,14 +253,14 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         
         // add stand a, b, c, d, e, f
         for _ in 1...6 {
-            servers.append(self.nextMessageServer(servers.last!))
+            servers.append(servers.last!.next())
         }
         
         return servers
     }
     
-    func deriveMessageServer(originServer: messageServer, distance: Int) -> messageServer? {
-        if originServer.official == true {
+    func deriveMessageServer(originServer: MessageServer, distance: Int) -> MessageServer? {
+        if originServer.isOfficial() == true {
             // TODO: not yet supported
             return nil
         }
@@ -376,77 +273,16 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         
         if 0 < distance {
             for _ in 1...distance {
-                server = self.nextMessageServer(server)
+                server = server.next()
             }
         }
         else {
             for _ in 1...abs(distance) {
-                server = self.previousMessageServer(server)
+                server = server.previous()
             }
         }
         
         return server
-    }
-    
-    func previousMessageServer(originMessageServer: messageServer) -> messageServer {
-        let roomPosition = RoomPosition(rawValue: originMessageServer.roomPosition.rawValue - 1)
-        var address = originMessageServer.address
-        var port = originMessageServer.port
-        let thread = originMessageServer.thread - 1
-        
-        if port == kMessageServerPortUserFirst {
-            port = kMessageServerPortUserLast
-            
-            if let serverNumber = self.extractServerNumber(address) {
-                if serverNumber == kMessageServerNumberFirst {
-                    address = self.serverAddressWithServerNumber(kMessageServerNumberLast)
-                }
-                else {
-                    address = self.serverAddressWithServerNumber(serverNumber - 1)
-                }
-            }
-        }
-        else {
-            port -= 1
-        }
-        
-        return messageServer(official: false, roomPosition: roomPosition!, address: address, port: port, thread: thread)
-    }
-
-    func nextMessageServer(originMessageServer: messageServer) -> messageServer {
-        let roomPosition = RoomPosition(rawValue: originMessageServer.roomPosition.rawValue + 1)
-        var address = originMessageServer.address
-        var port = originMessageServer.port
-        let thread = originMessageServer.thread + 1
-        
-        if port == kMessageServerPortUserLast {
-            port = kMessageServerPortUserFirst
-            
-            if let serverNumber = self.extractServerNumber(address) {
-                if serverNumber == kMessageServerNumberLast {
-                    address = self.serverAddressWithServerNumber(kMessageServerNumberFirst)
-                }
-                else {
-                    address = self.serverAddressWithServerNumber(serverNumber + 1)
-                }
-            }
-        }
-        else {
-            port += 1
-        }
-        
-        return messageServer(official: false, roomPosition: roomPosition!, address: address, port: port, thread: thread)
-    }
-
-    func extractServerNumber(address: String) -> Int? {
-        let regexp = kMessageServerAddressHostPrefix + "(\\d+)" + kMessageServerAddressDomain
-        let serverNumber = address.extractRegexpPattern(regexp)
-        
-        return serverNumber?.toInt()
-    }
-    
-    func serverAddressWithServerNumber(serverNumber: Int) -> String {
-        return kMessageServerAddressHostPrefix + String(serverNumber) + kMessageServerAddressDomain
     }
     
     // MARK: RoomListenerDelegate Functions

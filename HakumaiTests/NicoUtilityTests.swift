@@ -38,67 +38,13 @@ class NicoUtilityTests: XCTestCase {
         XCTAssert(roomPosition == .StandC, "")
     }
     
-    func testServerNumber() {
-        var serverNumber: Int!
-
-        serverNumber = NicoUtility.getInstance().extractServerNumber("x")
-        XCTAssert(serverNumber == nil, "")
-        
-        serverNumber = NicoUtility.getInstance().extractServerNumber("msg102.live.nicovideo.jp")
-        XCTAssert(serverNumber == 102, "")
-    }
-    
-    // message server specs:
-    // user: msg[101-104].live.nicovideo.jp:[2805-2814]
-    func testPreviousMessageServer() {
-        var server: messageServer!
-        var expected: messageServer!
-        var previous: messageServer!
-        
-        server = messageServer(official: false, roomPosition: .StandA, address: "msg102.live.nicovideo.jp", port: 2810, thread: 100)
-        expected = messageServer(official: false, roomPosition: .Arena, address: "msg102.live.nicovideo.jp", port: 2809, thread: 99)
-        previous = NicoUtility.getInstance().previousMessageServer(server)
-        XCTAssert(previous == expected, "")
-        
-        server = messageServer(official: false, roomPosition: .StandA, address: "msg102.live.nicovideo.jp", port: 2805, thread: 100)
-        expected = messageServer(official: false, roomPosition: .Arena, address: "msg101.live.nicovideo.jp", port: 2814, thread: 99)
-        previous = NicoUtility.getInstance().previousMessageServer(server)
-        XCTAssert(previous == expected, "")
-
-        server = messageServer(official: false, roomPosition: .StandA, address: "msg101.live.nicovideo.jp", port: 2805, thread: 100)
-        expected = messageServer(official: false, roomPosition: .Arena, address: "msg104.live.nicovideo.jp", port: 2814, thread: 99)
-        previous = NicoUtility.getInstance().previousMessageServer(server)
-        XCTAssert(previous == expected, "")
-    }
-    
-    func testNextMessageServer() {
-        var server: messageServer!
-        var expected: messageServer!
-        var next: messageServer!
-        
-        server = messageServer(official: false, roomPosition: .StandA, address: "msg102.live.nicovideo.jp", port: 2810, thread: 100)
-        expected = messageServer(official: false, roomPosition: .StandB, address: "msg102.live.nicovideo.jp", port: 2811, thread: 101)
-        next = NicoUtility.getInstance().nextMessageServer(server)
-        XCTAssert(next == expected, "")
-        
-        server = messageServer(official: false, roomPosition: .StandA, address: "msg102.live.nicovideo.jp", port: 2814, thread: 100)
-        expected = messageServer(official: false, roomPosition: .StandB, address: "msg103.live.nicovideo.jp", port: 2805, thread: 101)
-        next = NicoUtility.getInstance().nextMessageServer(server)
-        XCTAssert(next == expected, "")
-        
-        server = messageServer(official: false, roomPosition: .StandA, address: "msg104.live.nicovideo.jp", port: 2814, thread: 100)
-        expected = messageServer(official: false, roomPosition: .StandB, address: "msg101.live.nicovideo.jp", port: 2805, thread: 101)
-        next = NicoUtility.getInstance().nextMessageServer(server)
-        XCTAssert(next == expected, "")
-    }
-    
     func testDeriveMessageServer() {
-        var server: messageServer!
-        var expected: messageServer!
-        var derived: messageServer!
+        var server: MessageServer!
+        var expected: MessageServer!
+        var derived: MessageServer!
         
-        server = messageServer(official: false, roomPosition: .StandA, address: "msg102.live.nicovideo.jp", port: 2810, thread: 100)
-        expected = messageServer(official: false, roomPosition: .StandC, address: "msg102.live.nicovideo.jp", port: 2812, thread: 102)
+        server = MessageServer(roomPosition: .StandA, address: "msg102.live.nicovideo.jp", port: 2810, thread: 100)
+        expected = MessageServer(roomPosition: .StandC, address: "msg102.live.nicovideo.jp", port: 2812, thread: 102)
         derived = NicoUtility.getInstance().deriveMessageServer(server, distance: 2)
         XCTAssert(derived == expected, "")
         
@@ -106,17 +52,17 @@ class NicoUtilityTests: XCTestCase {
     }
     
     func testDeriveMessageServers() {
-        var server: messageServer!
-        var expected: Array<messageServer>
-        var derived: Array<messageServer>
+        var server: MessageServer!
+        var expected: Array<MessageServer>
+        var derived: Array<MessageServer>
         
-        let server0 = messageServer(official: false, roomPosition: .Arena, address: "msg102.live.nicovideo.jp", port: 2810, thread: 100)
-        let server1 = messageServer(official: false, roomPosition: .StandA, address: "msg102.live.nicovideo.jp", port: 2811, thread: 101)
-        let server2 = messageServer(official: false, roomPosition: .StandB, address: "msg102.live.nicovideo.jp", port: 2812, thread: 102)
-        let server3 = messageServer(official: false, roomPosition: .StandC, address: "msg102.live.nicovideo.jp", port: 2813, thread: 103)
-        let server4 = messageServer(official: false, roomPosition: .StandD, address: "msg102.live.nicovideo.jp", port: 2814, thread: 104)
-        let server5 = messageServer(official: false, roomPosition: .StandE, address: "msg103.live.nicovideo.jp", port: 2805, thread: 105)
-        let server6 = messageServer(official: false, roomPosition: .StandF, address: "msg103.live.nicovideo.jp", port: 2806, thread: 106)
+        let server0 = MessageServer(roomPosition: .Arena, address: "msg102.live.nicovideo.jp", port: 2810, thread: 100)
+        let server1 = MessageServer(roomPosition: .StandA, address: "msg102.live.nicovideo.jp", port: 2811, thread: 101)
+        let server2 = MessageServer(roomPosition: .StandB, address: "msg102.live.nicovideo.jp", port: 2812, thread: 102)
+        let server3 = MessageServer(roomPosition: .StandC, address: "msg102.live.nicovideo.jp", port: 2813, thread: 103)
+        let server4 = MessageServer(roomPosition: .StandD, address: "msg102.live.nicovideo.jp", port: 2814, thread: 104)
+        let server5 = MessageServer(roomPosition: .StandE, address: "msg103.live.nicovideo.jp", port: 2805, thread: 105)
+        let server6 = MessageServer(roomPosition: .StandF, address: "msg103.live.nicovideo.jp", port: 2806, thread: 106)
         
         expected = [server0, server1, server2, server3, server4, server5, server6]
         println("expected:\(expected)")

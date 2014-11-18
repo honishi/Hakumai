@@ -39,7 +39,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     func nicoUtilityDidReceiveChat(nicoUtility: NicoUtility, chat: Chat) {
         // log.debug("\(chat.mail),\(chat.comment)")
         
-        if chat.comment.hasPrefix("/hb ifseetno ") {
+        if chat.comment?.hasPrefix("/hb ifseetno ") == true {
             return
         }
         
@@ -55,26 +55,23 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     }
     
     func tableView(tableView: NSTableView, objectValueForTableColumn tableColumn: NSTableColumn?, row: Int) -> AnyObject? {
-        var content = ""
+        var content: String?
         
         if tableColumn?.identifier == "RoomPositionColumn" {
-            if let roomPosition = self.chats[row].roomPosition {
-                content = roomPosition.shortLabel()
-            }
+            content = self.chats[row].roomPosition?.shortLabel()
         }
         else if tableColumn?.identifier == "MailColumn" {
-            if let mail = self.chats[row].mail {
-                content = mail
-            }
-            else {
-                content = "n/a"
-            }
+            content = self.chats[row].mail
         }
         else if tableColumn?.identifier == "UserIdColumn" {
             content = self.chats[row].userId
         }
         else if tableColumn?.identifier == "CommentColumn" {
             content = self.chats[row].comment
+        }
+        
+        if content == nil {
+            content = ""
         }
         
         return content

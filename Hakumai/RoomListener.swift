@@ -9,20 +9,6 @@
 import Foundation
 import XCGLogger
 
-// MARK: struct
-
-struct Thread {
-    let resultCode: Int
-}
-
-struct Chat {
-    let roomPosition: RoomPosition?
-    let mail: String?
-    let userId: String
-    let comment: String
-    let score: Int
-}
-
 // MARK: protocol
 
 protocol RoomListenerDelegate {
@@ -34,7 +20,7 @@ protocol RoomListenerDelegate {
 
 class RoomListener : NSObject, NSStreamDelegate {
     let delegate: RoomListenerDelegate?
-    let server: messageServer?
+    let server: MessageServer?
     
     var inputStream: NSInputStream!
     var outputStream: NSOutputStream!
@@ -42,7 +28,7 @@ class RoomListener : NSObject, NSStreamDelegate {
     let log = XCGLogger.defaultInstance()
     let fileLog = XCGLogger()
     
-    init(delegate: RoomListenerDelegate?, server: messageServer?) {
+    init(delegate: RoomListenerDelegate?, server: MessageServer?) {
         super.init()
         
         self.delegate = delegate
@@ -162,7 +148,6 @@ class RoomListener : NSObject, NSStreamDelegate {
         
         let wrappedStream = "<items>" + stream + "</items>"
         fileLog.verbose("[ " + wrappedStream + " ]")
-        log.verbose("aaa")
         
         var err: NSError?
         let xmlDocument = NSXMLDocument(XMLString: wrappedStream, options: Int(NSXMLDocumentTidyXML), error: &err)
@@ -192,10 +177,9 @@ class RoomListener : NSObject, NSStreamDelegate {
         let threadElements = rootElement.elementsForName("thread")
         
         for threadElement in threadElements {
-            let resultCode = threadElement.attributeForName("resultcode")?.stringValue?.toInt()
-            // let userId = chatElement.attributeForName("user_id")?.stringValue
+            let thread = Thread()
             
-            let thread = Thread(resultCode: resultCode!)
+            thread.resultCode = threadElement.attributeForName("resultcode")?.stringValue?.toInt()
             
             threadArray.append(thread)
         }
@@ -208,11 +192,13 @@ class RoomListener : NSObject, NSStreamDelegate {
         let chatElements = rootElement.elementsForName("chat")
         
         for chatElement in chatElements {
-            let comment = chatElement.stringValue
-            let mail = chatElement.attributeForName("mail")?.stringValue
-            let userId = chatElement.attributeForName("user_id")?.stringValue
-            
-            let chat = Chat(roomPosition: self.server?.roomPosition, mail: mail, userId: userId!, comment: comment!, score: 123)
+            let chat = Chat()
+
+            chat.roomPosition = self.server?.roomPosition
+            chat.comment = chatElement.stringValue
+            chat.mail = chatElement.attributeForName("mail")?.stringValue
+            chat.userId = chatElement.attributeForName("user_id")?.stringValue
+            chat.score = 123
             
             chatArray.append(chat)
         }

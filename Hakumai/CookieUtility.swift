@@ -190,7 +190,4 @@ class CookieUtility : NSObject {
         
         return nil
     }
-    
-// MARK: common utility
-    
 }
