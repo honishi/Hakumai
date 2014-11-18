@@ -6,12 +6,15 @@
 //  Copyright (c) 2014 Hiroyuki Onishi. All rights reserved.
 //
 
-import Cocoa
+import Foundation
+import XCGLogger
 
 
 class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewDataSource, NSTableViewDelegate {
     @IBOutlet weak var liveTextField: NSTextField!
     @IBOutlet weak var tableView: NSTableView!
+    
+    let log = XCGLogger.defaultInstance()
     
     var chats: [Chat] = []
     
@@ -30,11 +33,11 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     
     // MARK: NicoUtilityDelegate Functions
     func nicoUtilityDidStartListening(nicoUtility: NicoUtility, roomPosition: RoomPosition) {
-        println("opened \(roomPosition.label()).")
+        log.info("opened \(roomPosition.label()).")
     }
 
     func nicoUtilityDidReceiveChat(nicoUtility: NicoUtility, chat: Chat) {
-        // println("\(chat.mail),\(chat.comment)")
+        // log.debug("\(chat.mail),\(chat.comment)")
         
         if chat.comment.hasPrefix("/hb ifseetno ") {
             return

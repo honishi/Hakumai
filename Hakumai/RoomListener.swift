@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import XCGLogger
 
 // MARK: struct
 
@@ -38,14 +39,35 @@ class RoomListener : NSObject, NSStreamDelegate {
     var inputStream: NSInputStream!
     var outputStream: NSOutputStream!
     
+    let log = XCGLogger.defaultInstance()
+    let fileLog = XCGLogger()
+    
     init(delegate: RoomListenerDelegate?, server: messageServer?) {
+        super.init()
+        
         self.delegate = delegate
         self.server = server
         
-        println("listener initialized w/ server:" +
+        log.info("listener initialized w/ server:" +
             "\(self.server?.roomPosition),\(self.server?.address),\(self.server?.port),\(self.server?.thread)")
         
-        super.init()
+        self.initializeFileLog()
+    }
+    
+    func initializeFileLog() {
+        var logNumber = 0
+        if let server = self.server {
+            logNumber = server.roomPosition.rawValue
+        }
+        
+        let fileLogPath = NSHomeDirectory() + "/Hakumai_\(logNumber).log"
+        fileLog.setup(logLevel: .Verbose, showLogLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: fileLogPath)
+        
+        if let console = fileLog.logDestination(XCGLogger.constants.baseConsoleLogDestinationIdentifier) {
+            fileLog.removeLogDestination(console)
+        }
+        
+        fileLog.debug("file log started.")
     }
     
     // MARK: - Socket Functions
@@ -58,7 +80,7 @@ class RoomListener : NSObject, NSStreamDelegate {
         NSStream.getStreamsToHostWithName(server.address, port: server.port, inputStream: &input, outputStream: &output)
         
         if input == nil || output == nil {
-            println("failed to open socket.")
+            fileLog.error("failed to open socket.")
             return
         }
         
@@ -82,7 +104,7 @@ class RoomListener : NSObject, NSStreamDelegate {
     }
     
     func closeSocket() {
-        println("closed streams.")
+        fileLog.debug("closed streams.")
         
         self.inputStream?.close()
         self.outputStream?.close()
@@ -99,39 +121,39 @@ class RoomListener : NSObject, NSStreamDelegate {
     func stream(aStream: NSStream, handleEvent eventCode: NSStreamEvent) {
         switch eventCode {
         case NSStreamEvent.None:
-            println("*** stream event none")
+            fileLog.debug("*** stream event none")
             
         case NSStreamEvent.OpenCompleted:
-            println("*** stream event open completed");
+            fileLog.debug("*** stream event open completed");
             
         case NSStreamEvent.HasBytesAvailable:
-            // println("*** stream event has bytes available");
+            // fileLog.debug("*** stream event has bytes available");
             
             // http://stackoverflow.com/q/26360962
             var readByte = [UInt8](count: 10240, repeatedValue: 0)
             
             while self.inputStream.hasBytesAvailable {
                 self.inputStream.read(&readByte, maxLength: 10240)
-                //println(readByte)
+                //fileLog.debug(readByte)
             }
             
             if let readString = NSString(bytes: &readByte, length: readByte.count, encoding: NSUTF8StringEncoding) {
-                // println(readString?)
+                // fileLog.debug(readString?)
                 self.parseInputStream(readString)
             }
             
         case NSStreamEvent.HasSpaceAvailable:
-            println("*** stream event has space available");
+            fileLog.debug("*** stream event has space available");
             
         case NSStreamEvent.ErrorOccurred:
-            println("*** stream event error occurred");
-            // [self closeSocket];
+            fileLog.error("*** stream event error occurred");
+            self.closeSocket();
             
         case NSStreamEvent.EndEncountered:
-            println("*** stream event end encountered");
+            fileLog.debug("*** stream event end encountered");
             
         default:
-            println("*** unexpected stream event...");
+            fileLog.warning("*** unexpected stream event...");
         }
     }
     
@@ -139,13 +161,14 @@ class RoomListener : NSObject, NSStreamDelegate {
         let delegate = self.delegate!
         
         let wrappedStream = "<items>" + stream + "</items>"
-        println("wrapped stream: >>> " + wrappedStream + " <<<")
+        fileLog.verbose("[ " + wrappedStream + " ]")
+        log.verbose("aaa")
         
         var err: NSError?
         let xmlDocument = NSXMLDocument(XMLString: wrappedStream, options: Int(NSXMLDocumentTidyXML), error: &err)
         
         if xmlDocument == nil {
-            println("could not parse input stream:\(stream)")
+            fileLog.error("could not parse input stream:\(stream)")
             return
         }
         

@@ -24,7 +24,7 @@ extension String {
     func extractRegexpPattern(pattern: String, index: Int = 0) -> String? {
         let regexp = NSRegularExpression(pattern: pattern, options: nil, error: nil)!
         let matched = regexp.matchesInString(self, options: nil, range: NSMakeRange(0, self.utf16Count))
-        // println(matched.count)
+        // log.debug(matched.count)
         
         if matched.count < index + 1 {
             return nil

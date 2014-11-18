@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import XCGLogger
 
 // sqlite
 let databasePath = NSHomeDirectory() + "/Library/Application Support/Google/Chrome/Default/Cookies"
@@ -18,9 +19,14 @@ let kRoundCount = 1003
 // decrypt
 let kInitializationVector = "                "
 
+let log = XCGLogger.defaultInstance()
+
 class CookieUtility : NSObject {
+    // Class variables not yet supported
+    // class let log = XCGLogger.defaultInstance()
     
-// MARK: chrome utility
+    // MARK: - chrome utility
+    
     // based on http://n8henrie.com/2014/05/decrypt-chrome-cookies-with-python/
     class func chromeCookie() -> String? {
         let encryptedValue: NSData? = CookieUtility.querySqlite()
@@ -39,10 +45,10 @@ class CookieUtility : NSObject {
         var error: NSError?
         
         let aesKeyData = CookieUtility.aesKeyForPassword(passwordString, saltString: kSalt, roundCount: kRoundCount, error: &error)!
-        println(aesKeyData)
+        // log.debug(aesKeyData)
         
         let decryptedCookieValue = CookieUtility.decryptCookieValue(encryptedValueByRemovingPrefix!, aesKeyData: aesKeyData)
-        println(decryptedCookieValue)
+        log.debug("\(decryptedCookieValue)")
         
         return decryptedCookieValue
     }
@@ -61,10 +67,10 @@ class CookieUtility : NSObject {
         
         while (rows != nil && rows.next()) {
             var name = rows.stringForColumn("name")
-            println(name)
+            // log.debug(name)
             
             var encryptedValue = rows.dataForColumn("encrypted_value")
-            println(encryptedValue)
+            // log.debug(encryptedValue)
             // we could not extract string from binary here
             
             if (0 < encryptedValue.length) {
@@ -81,14 +87,14 @@ class CookieUtility : NSObject {
         let prefixString : NSString = "v10"
         let prefixRange = NSMakeRange(prefixString.length, encryptedValue!.length - prefixString.length)
         let encryptedValueByRemovingPrefix = encryptedValue!.subdataWithRange(prefixRange)
-        println(encryptedValueByRemovingPrefix)
+        // log.debug(encryptedValueByRemovingPrefix)
         
         return encryptedValueByRemovingPrefix
     }
     
     class func chromePassword() -> String {
         let password = SSKeychain.passwordForService("Chrome Safe Storage", account: "Chrome")
-        println(password)
+        log.debug(password)
         
         return password
     }
@@ -135,11 +141,11 @@ class CookieUtility : NSObject {
     class func decryptCookieValue(encryptedData: NSData, aesKeyData: NSData) -> String? {
         let aesKeyBytes = UnsafePointer<UInt8>(aesKeyData.bytes)
         let aesKeyLength = size_t(kCCKeySizeAES128)
-        println("aesKeyData = \(aesKeyData), aesKeyLength = \(aesKeyData.length)")
+        // log.debug("aesKeyData = \(aesKeyData), aesKeyLength = \(aesKeyData.length)")
         
         let encryptedDataLength = UInt(encryptedData.length)
         let encryptedDataBytes = UnsafePointer<UInt8>(encryptedData.bytes)
-        println("encryptedData = \(encryptedData), encryptedDataLength = \(encryptedDataLength)")
+        // log.debug("encryptedData = \(encryptedData), encryptedDataLength = \(encryptedDataLength)")
         
         let decryptedData: NSMutableData! = NSMutableData(length: Int(encryptedDataLength) + kCCBlockSizeAES128)
         var decryptedPointer = UnsafeMutablePointer<UInt8>(decryptedData.mutableBytes)
@@ -166,10 +172,10 @@ class CookieUtility : NSObject {
         
         if UInt32(cryptStatus) == UInt32(kCCSuccess) {
             decryptedData.length = Int(numBytesEncrypted)
-            println("decryptedData = \(decryptedData), decryptedLength = \(numBytesEncrypted)")
+            // log.debug("decryptedData = \(decryptedData), decryptedLength = \(numBytesEncrypted)")
         }
         else {
-            println("Error: \(cryptStatus)")
+            log.error("Error: \(cryptStatus)")
         }
 
         // trim padding

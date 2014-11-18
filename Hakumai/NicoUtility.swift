@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import XCGLogger
 
 // MARK: enum
 
@@ -158,6 +159,8 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     var messageServers: [messageServer] = []
     var roomListeners: [RoomListener] = []
     
+    let log = XCGLogger.defaultInstance()
+    
     private override init() {
         super.init()
     }
@@ -173,10 +176,10 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         }
         
         self.getPlayerStatus (live, {(server: messageServer?) -> (Void) in
-            println(server)
+            self.log.debug("\(server)")
             
             if server == nil {
-                println("could not obtain message server.")
+                self.log.error("could not obtain message server.")
                 return
             }
             
@@ -186,7 +189,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     
     func addMessageServer() {
         if self.roomListeners.count == self.messageServers.count {
-            println("already opened max servers.")
+            log.info("already opened max servers.")
             return
         }
         
@@ -229,13 +232,13 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             request.allHTTPHeaderFields = requestHeader
         }
         else {
-            println("could not get cookie")
+            log.error("could not get cookie")
             completion(messageServer: nil)
         }
         
         func completionHandler (response: NSURLResponse?, data: NSData?, connectionError: NSError?) {
             let responseString = NSString(data: data!, encoding: NSUTF8StringEncoding)
-            println(responseString)
+            log.debug("\(responseString)")
             
             if data == nil {
                 return
@@ -256,7 +259,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     
     func sessionCookie() -> NSHTTPCookie? {
         if let cookie = CookieUtility.chromeCookie() {
-            println("cookie:[\(cookie)]")
+            log.debug("cookie:[\(cookie)]")
             
             let userSessionCookie = NSHTTPCookie(properties: [
                 NSHTTPCookieDomain: "nicovideo.jp",
@@ -293,7 +296,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         let address = (rootElement?.nodesForXPath("/getplayerstatus/ms/addr", error: &err)?[0] as NSXMLNode).stringValue
         let port = (rootElement?.nodesForXPath("/getplayerstatus/ms/port", error: &err)?[0] as NSXMLNode).stringValue?.toInt()
         let thread = (rootElement?.nodesForXPath("/getplayerstatus/ms/thread", error: &err)?[0] as NSXMLNode).stringValue?.toInt()
-        // println("\(address?),\(port),\(thread)")
+        // log.debug("\(address?),\(port),\(thread)")
  
         if address == nil || port == nil || thread == nil {
             return nil
@@ -305,14 +308,14 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     func roomPositionByRoomLabel(roomLabel: String) -> RoomPosition? {
-        // println("roomLabel:\(roomLabel)")
+        // log.debug("roomLabel:\(roomLabel)")
         
         if self.isArena(roomLabel) == true {
             return RoomPosition(rawValue: 0)
         }
         
         if let standCharacter = self.extractStandCharacter(roomLabel) {
-            println("extracted standCharacter:\(standCharacter)")
+            log.debug("extracted standCharacter:\(standCharacter)")
             let raw = (standCharacter - ("A" as Character)) + 1
             return RoomPosition(rawValue: raw)
         }

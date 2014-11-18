@@ -4,3 +4,6 @@
 [submodule "vendor/FMDB"]
 	path = vendor/FMDB
 	url = git@github.com:ccgus/fmdb.git
+[submodule "vendor/XCGLogger"]
+	path = vendor/XCGLogger
+	url = git@github.com:DaveWoodCom/XCGLogger.git

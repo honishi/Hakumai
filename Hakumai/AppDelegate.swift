@@ -6,21 +6,23 @@
 //  Copyright (c) 2014 Hiroyuki Onishi. All rights reserved.
 //
 
-import Cocoa
+import Foundation
+import XCGLogger
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
-
-
+    let log = XCGLogger.defaultInstance()
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
-        // Insert code here to initialize your application
+        self.initializeLog()
     }
 
     func applicationWillTerminate(aNotification: NSNotification) {
-        // Insert code here to tear down your application
     }
-
-
+    
+    // MARK: initializer
+    func initializeLog() {
+        log.setup(logLevel: .Debug, showLogLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: nil)
+    }
 }
 

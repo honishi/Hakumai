@@ -44,6 +44,8 @@
 		DBAAA7521A0FDA4500981004 /* NicoUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7501A0FDA4500981004 /* NicoUtility.swift */; };
 		DBE73ECA1A1A1B6A00A8BCA9 /* MainViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE73EC91A1A1B6A00A8BCA9 /* MainViewControllerTests.swift */; };
 		DBE73ECD1A1A1CE500A8BCA9 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0C51A0EE2FD00B1CE4D /* MainViewController.swift */; };
+		DBFA88781A1BA3AB005349AD /* XCGLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBFA88731A1BA353005349AD /* XCGLogger.framework */; };
+		DBFA88791A1BA3B5005349AD /* XCGLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBFA88731A1BA353005349AD /* XCGLogger.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +55,34 @@
 			proxyType = 1;
 			remoteGlobalIDString = DB2AE0BD1A0EE2FD00B1CE4D;
 			remoteInfo = Hakumai;
+		};
+		DBFA88701A1BA353005349AD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DBFA886A1A1BA353005349AD /* XCGLogger.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 55E3EE4519D76F280068C3A7;
+			remoteInfo = "XCGLogger (iOS)";
+		};
+		DBFA88721A1BA353005349AD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DBFA886A1A1BA353005349AD /* XCGLogger.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 554DF41719D76FE7005708BE;
+			remoteInfo = "XCGLogger (OS X)";
+		};
+		DBFA88741A1BA353005349AD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DBFA886A1A1BA353005349AD /* XCGLogger.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 55E3EE5019D76F280068C3A7;
+			remoteInfo = XCGLoggerTests;
+		};
+		DBFA88761A1BA385005349AD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DBFA886A1A1BA353005349AD /* XCGLogger.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 554DF41619D76FE7005708BE;
+			remoteInfo = "XCGLogger (OS X)";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -95,6 +125,7 @@
 		DBAAA7411A0F5FEF00981004 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		DBAAA7501A0FDA4500981004 /* NicoUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicoUtility.swift; sourceTree = "<group>"; };
 		DBE73EC91A1A1B6A00A8BCA9 /* MainViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewControllerTests.swift; sourceTree = "<group>"; };
+		DBFA886A1A1BA353005349AD /* XCGLogger.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = XCGLogger.xcodeproj; path = vendor/XCGLogger/XCGLogger/Library/XCGLogger.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +133,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DBFA88781A1BA3AB005349AD /* XCGLogger.framework in Frameworks */,
 				DBAAA7421A0F5FEF00981004 /* SystemConfiguration.framework in Frameworks */,
 				DBAAA73E1A0F594700981004 /* Security.framework in Frameworks */,
 				DB2AE11A1A0F2C8200B1CE4D /* libsqlite3.dylib in Frameworks */,
@@ -112,6 +144,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DBFA88791A1BA3B5005349AD /* XCGLogger.framework in Frameworks */,
 				DB2AE11B1A0F2D4C00B1CE4D /* libsqlite3.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -185,6 +218,7 @@
 		DB2AE0EF1A0EECD300B1CE4D /* vendor */ = {
 			isa = PBXGroup;
 			children = (
+				DBFA886A1A1BA353005349AD /* XCGLogger.xcodeproj */,
 				DBAAA7341A0F58E700981004 /* SSKeychain */,
 				DB2AE1021A0F2B7C00B1CE4D /* FMDB */,
 			);
@@ -283,6 +317,16 @@
 			name = ViewControllers;
 			sourceTree = "<group>";
 		};
+		DBFA886B1A1BA353005349AD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DBFA88711A1BA353005349AD /* XCGLogger.framework */,
+				DBFA88731A1BA353005349AD /* XCGLogger.framework */,
+				DBFA88751A1BA353005349AD /* XCGLoggerTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -297,6 +341,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				DBFA88771A1BA385005349AD /* PBXTargetDependency */,
 			);
 			name = Hakumai;
 			productName = Hakumai;
@@ -350,6 +395,12 @@
 			mainGroup = DB2AE0B51A0EE2FD00B1CE4D;
 			productRefGroup = DB2AE0BF1A0EE2FD00B1CE4D /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = DBFA886B1A1BA353005349AD /* Products */;
+					ProjectRef = DBFA886A1A1BA353005349AD /* XCGLogger.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				DB2AE0BD1A0EE2FD00B1CE4D /* Hakumai */,
@@ -357,6 +408,30 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		DBFA88711A1BA353005349AD /* XCGLogger.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = XCGLogger.framework;
+			remoteRef = DBFA88701A1BA353005349AD /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DBFA88731A1BA353005349AD /* XCGLogger.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = XCGLogger.framework;
+			remoteRef = DBFA88721A1BA353005349AD /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DBFA88751A1BA353005349AD /* XCGLoggerTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = XCGLoggerTests.xctest;
+			remoteRef = DBFA88741A1BA353005349AD /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		DB2AE0BC1A0EE2FD00B1CE4D /* Resources */ = {
@@ -430,6 +505,11 @@
 			isa = PBXTargetDependency;
 			target = DB2AE0BD1A0EE2FD00B1CE4D /* Hakumai */;
 			targetProxy = DB2AE0D11A0EE2FD00B1CE4D /* PBXContainerItemProxy */;
+		};
+		DBFA88771A1BA385005349AD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "XCGLogger (OS X)";
+			targetProxy = DBFA88761A1BA385005349AD /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
