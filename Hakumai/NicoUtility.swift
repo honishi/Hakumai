@@ -8,11 +8,66 @@
 
 import Foundation
 
+// MARK: enum
+
+enum RoomPosition: Int {
+    case Arena = 0
+    case StandA
+    case StandB
+    case StandC
+    case StandD
+    case StandE
+    case StandF
+    case StandG
+    
+    func label() -> String {
+        switch self {
+        case .Arena:
+            return "アリーナ"
+        case .StandA:
+            return "立ち見A"
+        case .StandB:
+            return "立ち見B"
+        case .StandC:
+            return "立ち見C"
+        case .StandD:
+            return "立ち見D"
+        case .StandE:
+            return "立ち見E"
+        case .StandF:
+            return "立ち見F"
+        case .StandG:
+            return "立ち見G"
+        }
+    }
+    
+    func shortLabel() -> String {
+        switch self {
+        case .Arena:
+            return "ア"
+        case .StandA:
+            return "A"
+        case .StandB:
+            return "B"
+        case .StandC:
+            return "C"
+        case .StandD:
+            return "D"
+        case .StandE:
+            return "E"
+        case .StandF:
+            return "F"
+        case .StandG:
+            return "G"
+        }
+    }
+}
+
 // MARK: struct
 
 struct messageServer {
     let official: Bool
-    let roomPosition: Int
+    let roomPosition: RoomPosition
     let address: String
     let port: Int
     let thread: Int
@@ -54,7 +109,8 @@ typealias getPlayerStatusCompletion = (messageServer: messageServer?) -> (Void)
 // MARK: protocol
 
 protocol NicoUtilityProtocol {
-    func nicoUtilityReceivedChat(nicoUtility: NicoUtility, chat: Chat)
+    func nicoUtilityDidStartListening(nicoUtility: NicoUtility, roomPosition: RoomPosition)
+    func nicoUtilityDidReceiveChat(nicoUtility: NicoUtility, chat: Chat)
 }
 
 // MARK: constant value
@@ -85,32 +141,6 @@ extension Character {
         let scalars = characterString.unicodeScalars
         
         return scalars[scalars.startIndex].value
-    }
-}
-
-// enabling intuitive operation to get nth Character from String
-// based on http://stackoverflow.com/a/24144365
-extension String {
-    subscript (i: Int) -> Character {
-        return Array(self)[i]
-    }
-    
-    func extractRegexpPattern(pattern: String) -> String? {
-        let regexp = NSRegularExpression(pattern: pattern, options: nil, error: nil)!
-        let matched = regexp.firstMatchInString(self, options: nil, range: NSMakeRange(0, self.utf16Count))
-        // println(matched)
-        
-        if matched == nil {
-            return nil
-        }
-        
-        let nsRange = matched?.rangeAtIndex(1)
-        let start = advance(self.startIndex, nsRange!.location)
-        let end = advance(self.startIndex, nsRange!.location + nsRange!.length)
-        let range = Range<String.Index>(start: start, end: end)
-        let substring = self.substringWithRange(range)
-        
-        return substring
     }
 }
 
@@ -274,16 +304,17 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         return server
     }
     
-    func roomPositionByRoomLabel(roomLabel: String) -> Int? {
+    func roomPositionByRoomLabel(roomLabel: String) -> RoomPosition? {
         // println("roomLabel:\(roomLabel)")
         
         if self.isArena(roomLabel) == true {
-            return 0
+            return RoomPosition(rawValue: 0)
         }
         
         if let standCharacter = self.extractStandCharacter(roomLabel) {
             println("extracted standCharacter:\(standCharacter)")
-            return (standCharacter - ("A" as Character)) + 1
+            let raw = (standCharacter - ("A" as Character)) + 1
+            return RoomPosition(rawValue: raw)
         }
         
         return nil
@@ -312,8 +343,8 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         
         var arenaServer = originServer
         
-        if 0 < originServer.roomPosition {
-            for _ in 1...(originServer.roomPosition) {
+        if 0 < originServer.roomPosition.rawValue {
+            for _ in 1...(originServer.roomPosition.rawValue) {
                 arenaServer = self.previousMessageServer(arenaServer)
             }
         }
@@ -355,7 +386,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     func previousMessageServer(originMessageServer: messageServer) -> messageServer {
-        let roomPosition = originMessageServer.roomPosition - 1
+        let roomPosition = RoomPosition(rawValue: originMessageServer.roomPosition.rawValue - 1)
         var address = originMessageServer.address
         var port = originMessageServer.port
         let thread = originMessageServer.thread - 1
@@ -376,11 +407,11 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             port -= 1
         }
         
-        return messageServer(official: false, roomPosition: roomPosition, address: address, port: port, thread: thread)
+        return messageServer(official: false, roomPosition: roomPosition!, address: address, port: port, thread: thread)
     }
 
     func nextMessageServer(originMessageServer: messageServer) -> messageServer {
-        let roomPosition = originMessageServer.roomPosition + 1
+        let roomPosition = RoomPosition(rawValue: originMessageServer.roomPosition.rawValue + 1)
         var address = originMessageServer.address
         var port = originMessageServer.port
         let thread = originMessageServer.thread + 1
@@ -401,7 +432,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             port += 1
         }
         
-        return messageServer(official: false, roomPosition: roomPosition, address: address, port: port, thread: thread)
+        return messageServer(official: false, roomPosition: roomPosition!, address: address, port: port, thread: thread)
     }
 
     func extractServerNumber(address: String) -> Int? {
@@ -416,7 +447,19 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     // MARK: RoomListenerDelegate Functions
-    func roomListenerReceivedChat(roomListener: RoomListener, chat: Chat) {
-        self.delegate?.nicoUtilityReceivedChat(self, chat: chat)
+    func roomListenerDidStartListening(roomListener: RoomListener) {
+        if let delegate = self.delegate {
+            dispatch_async(dispatch_get_main_queue(), {
+                delegate.nicoUtilityDidStartListening(self, roomPosition: roomListener.server!.roomPosition)
+            })
+        }
+    }
+    
+    func roomListenerDidReceiveChat(roomListener: RoomListener, chat: Chat) {
+        if let delegate = self.delegate {
+            dispatch_async(dispatch_get_main_queue(), {
+                delegate.nicoUtilityDidReceiveChat(self, chat: chat)
+            })
+        }
     }
 }

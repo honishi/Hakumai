@@ -10,7 +10,7 @@
 		DB080B851A17CA0100896228 /* CookieUtilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB080B841A17CA0100896228 /* CookieUtilityTests.swift */; };
 		DB0F0ECD1A16441D00F8BDC5 /* NicoUtilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0F0ECC1A16441D00F8BDC5 /* NicoUtilityTests.swift */; };
 		DB2AE0C41A0EE2FD00B1CE4D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0C31A0EE2FD00B1CE4D /* AppDelegate.swift */; };
-		DB2AE0C61A0EE2FD00B1CE4D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0C51A0EE2FD00B1CE4D /* ViewController.swift */; };
+		DB2AE0C61A0EE2FD00B1CE4D /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0C51A0EE2FD00B1CE4D /* MainViewController.swift */; };
 		DB2AE0C81A0EE2FD00B1CE4D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB2AE0C71A0EE2FD00B1CE4D /* Images.xcassets */; };
 		DB2AE0CB1A0EE2FD00B1CE4D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DB2AE0C91A0EE2FD00B1CE4D /* Main.storyboard */; };
 		DB2AE0D71A0EE2FD00B1CE4D /* HakumaiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0D61A0EE2FD00B1CE4D /* HakumaiTests.swift */; };
@@ -29,6 +29,9 @@
 		DBA414C61A188A7400E0CAD3 /* RoomListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA414C51A188A7400E0CAD3 /* RoomListener.swift */; };
 		DBA414C71A18915C00E0CAD3 /* RoomListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA414C51A188A7400E0CAD3 /* RoomListener.swift */; };
 		DBA414C91A189D7D00E0CAD3 /* RoomListenerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA414C81A189D7D00E0CAD3 /* RoomListenerTests.swift */; };
+		DBA414CC1A1A16F300E0CAD3 /* CommonExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA414CB1A1A16F300E0CAD3 /* CommonExtensions.swift */; };
+		DBA414CD1A1A16F300E0CAD3 /* CommonExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA414CB1A1A16F300E0CAD3 /* CommonExtensions.swift */; };
+		DBA414D21A1A176E00E0CAD3 /* CommonExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA414D11A1A176E00E0CAD3 /* CommonExtensionsTests.swift */; };
 		DBAAA7321A0F43BB00981004 /* CookieUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7311A0F43BB00981004 /* CookieUtility.swift */; };
 		DBAAA7331A0F43BB00981004 /* CookieUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7311A0F43BB00981004 /* CookieUtility.swift */; };
 		DBAAA7391A0F592300981004 /* SSKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7361A0F592300981004 /* SSKeychain.m */; };
@@ -39,6 +42,8 @@
 		DBAAA7421A0F5FEF00981004 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBAAA7411A0F5FEF00981004 /* SystemConfiguration.framework */; };
 		DBAAA7511A0FDA4500981004 /* NicoUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7501A0FDA4500981004 /* NicoUtility.swift */; };
 		DBAAA7521A0FDA4500981004 /* NicoUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7501A0FDA4500981004 /* NicoUtility.swift */; };
+		DBE73ECA1A1A1B6A00A8BCA9 /* MainViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE73EC91A1A1B6A00A8BCA9 /* MainViewControllerTests.swift */; };
+		DBE73ECD1A1A1CE500A8BCA9 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0C51A0EE2FD00B1CE4D /* MainViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,7 +62,7 @@
 		DB2AE0BE1A0EE2FD00B1CE4D /* Hakumai.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hakumai.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB2AE0C21A0EE2FD00B1CE4D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DB2AE0C31A0EE2FD00B1CE4D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		DB2AE0C51A0EE2FD00B1CE4D /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		DB2AE0C51A0EE2FD00B1CE4D /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		DB2AE0C71A0EE2FD00B1CE4D /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		DB2AE0CA1A0EE2FD00B1CE4D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		DB2AE0D01A0EE2FD00B1CE4D /* HakumaiTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HakumaiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -79,6 +84,8 @@
 		DB2AE10F1A0F2BAB00B1CE4D /* FMResultSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FMResultSet.m; path = vendor/fmdb/src/fmdb/FMResultSet.m; sourceTree = "<group>"; };
 		DBA414C51A188A7400E0CAD3 /* RoomListener.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomListener.swift; sourceTree = "<group>"; };
 		DBA414C81A189D7D00E0CAD3 /* RoomListenerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomListenerTests.swift; sourceTree = "<group>"; };
+		DBA414CB1A1A16F300E0CAD3 /* CommonExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommonExtensions.swift; sourceTree = "<group>"; };
+		DBA414D11A1A176E00E0CAD3 /* CommonExtensionsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommonExtensionsTests.swift; sourceTree = "<group>"; };
 		DBAAA7311A0F43BB00981004 /* CookieUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CookieUtility.swift; sourceTree = "<group>"; };
 		DBAAA7351A0F592300981004 /* SSKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SSKeychain.h; path = vendor/SSKeychain/SSKeychain/SSKeychain.h; sourceTree = "<group>"; };
 		DBAAA7361A0F592300981004 /* SSKeychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SSKeychain.m; path = vendor/SSKeychain/SSKeychain/SSKeychain.m; sourceTree = "<group>"; };
@@ -87,6 +94,7 @@
 		DBAAA73D1A0F594700981004 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		DBAAA7411A0F5FEF00981004 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		DBAAA7501A0FDA4500981004 /* NicoUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicoUtility.swift; sourceTree = "<group>"; };
+		DBE73EC91A1A1B6A00A8BCA9 /* MainViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewControllerTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,12 +144,10 @@
 			children = (
 				DB2AE1031A0F2BAA00B1CE4D /* Hakumai-Bridging-Header.h */,
 				DB2AE0C31A0EE2FD00B1CE4D /* AppDelegate.swift */,
-				DB2AE0C51A0EE2FD00B1CE4D /* ViewController.swift */,
-				DBAAA7311A0F43BB00981004 /* CookieUtility.swift */,
-				DBAAA7501A0FDA4500981004 /* NicoUtility.swift */,
-				DBA414C51A188A7400E0CAD3 /* RoomListener.swift */,
+				DBA414CE1A1A16FB00E0CAD3 /* Common */,
+				DBA414CA1A1A13FC00E0CAD3 /* NicoManager */,
+				DBE73ECC1A1A1B9600A8BCA9 /* ViewControllers */,
 				DB2AE0C71A0EE2FD00B1CE4D /* Images.xcassets */,
-				DB2AE0C91A0EE2FD00B1CE4D /* Main.storyboard */,
 				DB2AE0C11A0EE2FD00B1CE4D /* Supporting Files */,
 			);
 			path = Hakumai;
@@ -160,9 +166,9 @@
 			children = (
 				DB2AE1041A0F2BAA00B1CE4D /* HakumaiTests-Bridging-Header.h */,
 				DB2AE0D61A0EE2FD00B1CE4D /* HakumaiTests.swift */,
-				DB080B841A17CA0100896228 /* CookieUtilityTests.swift */,
-				DB0F0ECC1A16441D00F8BDC5 /* NicoUtilityTests.swift */,
-				DBA414C81A189D7D00E0CAD3 /* RoomListenerTests.swift */,
+				DBA414D01A1A175000E0CAD3 /* Common */,
+				DBA414CF1A1A174500E0CAD3 /* NicoManager */,
+				DBE73ECB1A1A1B7E00A8BCA9 /* ViewControllers */,
 				DB2AE0D41A0EE2FD00B1CE4D /* Supporting Files */,
 			);
 			path = HakumaiTests;
@@ -213,6 +219,42 @@
 			name = FMDB;
 			sourceTree = "<group>";
 		};
+		DBA414CA1A1A13FC00E0CAD3 /* NicoManager */ = {
+			isa = PBXGroup;
+			children = (
+				DBAAA7311A0F43BB00981004 /* CookieUtility.swift */,
+				DBAAA7501A0FDA4500981004 /* NicoUtility.swift */,
+				DBA414C51A188A7400E0CAD3 /* RoomListener.swift */,
+			);
+			name = NicoManager;
+			sourceTree = "<group>";
+		};
+		DBA414CE1A1A16FB00E0CAD3 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				DBA414CB1A1A16F300E0CAD3 /* CommonExtensions.swift */,
+			);
+			name = Common;
+			sourceTree = "<group>";
+		};
+		DBA414CF1A1A174500E0CAD3 /* NicoManager */ = {
+			isa = PBXGroup;
+			children = (
+				DB080B841A17CA0100896228 /* CookieUtilityTests.swift */,
+				DB0F0ECC1A16441D00F8BDC5 /* NicoUtilityTests.swift */,
+				DBA414C81A189D7D00E0CAD3 /* RoomListenerTests.swift */,
+			);
+			name = NicoManager;
+			sourceTree = "<group>";
+		};
+		DBA414D01A1A175000E0CAD3 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				DBA414D11A1A176E00E0CAD3 /* CommonExtensionsTests.swift */,
+			);
+			name = Common;
+			sourceTree = "<group>";
+		};
 		DBAAA7341A0F58E700981004 /* SSKeychain */ = {
 			isa = PBXGroup;
 			children = (
@@ -222,6 +264,23 @@
 				DBAAA7381A0F592300981004 /* SSKeychainQuery.m */,
 			);
 			name = SSKeychain;
+			sourceTree = "<group>";
+		};
+		DBE73ECB1A1A1B7E00A8BCA9 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				DBE73EC91A1A1B6A00A8BCA9 /* MainViewControllerTests.swift */,
+			);
+			name = ViewControllers;
+			sourceTree = "<group>";
+		};
+		DBE73ECC1A1A1B9600A8BCA9 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				DB2AE0C91A0EE2FD00B1CE4D /* Main.storyboard */,
+				DB2AE0C51A0EE2FD00B1CE4D /* MainViewController.swift */,
+			);
+			name = ViewControllers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -324,7 +383,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DB2AE1101A0F2BAB00B1CE4D /* FMDatabase.m in Sources */,
-				DB2AE0C61A0EE2FD00B1CE4D /* ViewController.swift in Sources */,
+				DB2AE0C61A0EE2FD00B1CE4D /* MainViewController.swift in Sources */,
 				DB2AE1181A0F2BAB00B1CE4D /* FMResultSet.m in Sources */,
 				DB2AE1141A0F2BAB00B1CE4D /* FMDatabasePool.m in Sources */,
 				DBA414C61A188A7400E0CAD3 /* RoomListener.swift in Sources */,
@@ -334,6 +393,7 @@
 				DB2AE0C41A0EE2FD00B1CE4D /* AppDelegate.swift in Sources */,
 				DB2AE1121A0F2BAB00B1CE4D /* FMDatabaseAdditions.m in Sources */,
 				DB2AE1161A0F2BAB00B1CE4D /* FMDatabaseQueue.m in Sources */,
+				DBA414CC1A1A16F300E0CAD3 /* CommonExtensions.swift in Sources */,
 				DBAAA7511A0FDA4500981004 /* NicoUtility.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -344,16 +404,20 @@
 			files = (
 				DB080B851A17CA0100896228 /* CookieUtilityTests.swift in Sources */,
 				DB2AE1191A0F2BAB00B1CE4D /* FMResultSet.m in Sources */,
+				DBA414D21A1A176E00E0CAD3 /* CommonExtensionsTests.swift in Sources */,
 				DBAAA73C1A0F592300981004 /* SSKeychainQuery.m in Sources */,
 				DBAAA73A1A0F592300981004 /* SSKeychain.m in Sources */,
 				DB2AE1171A0F2BAB00B1CE4D /* FMDatabaseQueue.m in Sources */,
 				DB2AE0D71A0EE2FD00B1CE4D /* HakumaiTests.swift in Sources */,
+				DBE73ECA1A1A1B6A00A8BCA9 /* MainViewControllerTests.swift in Sources */,
 				DB0F0ECD1A16441D00F8BDC5 /* NicoUtilityTests.swift in Sources */,
 				DBAAA7521A0FDA4500981004 /* NicoUtility.swift in Sources */,
 				DB2AE1151A0F2BAB00B1CE4D /* FMDatabasePool.m in Sources */,
 				DBA414C71A18915C00E0CAD3 /* RoomListener.swift in Sources */,
+				DBA414CD1A1A16F300E0CAD3 /* CommonExtensions.swift in Sources */,
 				DB2AE1111A0F2BAB00B1CE4D /* FMDatabase.m in Sources */,
 				DB2AE1131A0F2BAB00B1CE4D /* FMDatabaseAdditions.m in Sources */,
+				DBE73ECD1A1A1CE500A8BCA9 /* MainViewController.swift in Sources */,
 				DBA414C91A189D7D00E0CAD3 /* RoomListenerTests.swift in Sources */,
 				DBAAA7331A0F43BB00981004 /* CookieUtility.swift in Sources */,
 			);

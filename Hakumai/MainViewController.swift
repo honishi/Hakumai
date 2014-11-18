@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  MainViewController.swift
 //  Hakumai
 //
 //  Created by Hiroyuki Onishi on 11/9/14.
@@ -8,7 +8,8 @@
 
 import Cocoa
 
-class ViewController: NSViewController, NicoUtilityProtocol, NSTableViewDataSource, NSTableViewDelegate {
+
+class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewDataSource, NSTableViewDelegate {
     @IBOutlet weak var liveTextField: NSTextField!
     @IBOutlet weak var tableView: NSTableView!
     
@@ -28,7 +29,11 @@ class ViewController: NSViewController, NicoUtilityProtocol, NSTableViewDataSour
     }
     
     // MARK: NicoUtilityDelegate Functions
-    func nicoUtilityReceivedChat(nicoUtility: NicoUtility, chat: Chat) {
+    func nicoUtilityDidStartListening(nicoUtility: NicoUtility, roomPosition: RoomPosition) {
+        println("opened \(roomPosition.label()).")
+    }
+
+    func nicoUtilityDidReceiveChat(nicoUtility: NicoUtility, chat: Chat) {
         // println("\(chat.mail),\(chat.comment)")
         
         if chat.comment.hasPrefix("/hb ifseetno ") {
@@ -51,7 +56,7 @@ class ViewController: NSViewController, NicoUtilityProtocol, NSTableViewDataSour
         
         if tableColumn?.identifier == "RoomPositionColumn" {
             if let roomPosition = self.chats[row].roomPosition {
-                content = String(roomPosition)
+                content = roomPosition.shortLabel()
             }
         }
         else if tableColumn?.identifier == "MailColumn" {
@@ -76,12 +81,41 @@ class ViewController: NSViewController, NicoUtilityProtocol, NSTableViewDataSour
     // func tableView(tableView: NSTableView, viewForTableColumn tableColumn: NSTableColumn?, row: Int) -> NSView? {
     // }
     
+    // MARK: - Button Handlers
     @IBAction func connectLive(sender: AnyObject) {
-        NicoUtility.getInstance().delegate = self
-        NicoUtility.getInstance().connect(self.liveTextField.stringValue.toInt()!)
+        if let liveNumber = MainViewController.extractLiveNumber(self.liveTextField.stringValue) {
+            NicoUtility.getInstance().delegate = self
+            NicoUtility.getInstance().connect(liveNumber)
+        }
     }
     
     @IBAction func addRoom(sender: AnyObject) {
         NicoUtility.getInstance().addMessageServer()
+    }
+    
+    // MARK: - Misc Utility
+    class func extractLiveNumber(url: String) -> Int? {
+        let liveNumberPattern = "\\d{9,}"
+        var pattern: String
+        
+        pattern = "http:\\/\\/live\\.nicovideo\\.jp\\/watch\\/lv(" + liveNumberPattern + ").*"
+        
+        if let extracted = url.extractRegexpPattern(pattern) {
+            return extracted.toInt()
+        }
+        
+        pattern = "lv(" + liveNumberPattern + ")"
+        
+        if let extracted = url.extractRegexpPattern(pattern) {
+            return extracted.toInt()
+        }
+        
+        pattern = "(" + liveNumberPattern + ")"
+        
+        if let extracted = url.extractRegexpPattern(pattern) {
+            return extracted.toInt()
+        }
+        
+        return nil
     }
 }

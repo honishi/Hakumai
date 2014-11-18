@@ -10,8 +10,12 @@ import Foundation
 
 // MARK: struct
 
+struct Thread {
+    let resultCode: Int
+}
+
 struct Chat {
-    let roomPosition: Int?
+    let roomPosition: RoomPosition?
     let mail: String?
     let userId: String
     let comment: String
@@ -21,7 +25,8 @@ struct Chat {
 // MARK: protocol
 
 protocol RoomListenerDelegate {
-    func roomListenerReceivedChat(roomListener: RoomListener, chat: Chat)
+    func roomListenerDidStartListening(roomListener: RoomListener)
+    func roomListenerDidReceiveChat(roomListener: RoomListener, chat: Chat)
 }
 
 // MARK: main
@@ -112,17 +117,7 @@ class RoomListener : NSObject, NSStreamDelegate {
             
             if let readString = NSString(bytes: &readByte, length: readByte.count, encoding: NSUTF8StringEncoding) {
                 // println(readString?)
-                if let chats = self.parseChat(readString) {
-                    for chat in chats {
-                        // println("\(chat.score),\(chat.comment)")
-                        
-                        dispatch_async(dispatch_get_main_queue(), {
-                            if let delegate = self.delegate {
-                                delegate.roomListenerReceivedChat(self, chat: chat)
-                            }
-                        })
-                    }
-                }
+                self.parseInputStream(readString)
             }
             
         case NSStreamEvent.HasSpaceAvailable:
@@ -140,38 +135,65 @@ class RoomListener : NSObject, NSStreamDelegate {
         }
     }
     
-    func parseChat(chat: String) -> [Chat]? {
+    func parseInputStream(stream: String) {
+        let delegate = self.delegate!
+        
+        let wrappedStream = "<items>" + stream + "</items>"
+        println("wrapped stream: >>> " + wrappedStream + " <<<")
+        
         var err: NSError?
-        
-        let chats = "<chats>" + chat + "</chats>"
-        // println("wrapped chat: >>> " + chat + " <<<")
-        
-        let xmlDocument = NSXMLDocument(XMLString: chats, options: Int(NSXMLDocumentTidyXML), error: &err)
+        let xmlDocument = NSXMLDocument(XMLString: wrappedStream, options: Int(NSXMLDocumentTidyXML), error: &err)
         
         if xmlDocument == nil {
-            println("could not parse chat:\(chat)")
-            return nil
+            println("could not parse input stream:\(stream)")
+            return
         }
         
-        let chatsElement = xmlDocument?.rootElement()
+        if let rootElement = xmlDocument?.rootElement() {
+            // rootElement = '<items>...</item>'
+
+            let threads = self.parseThreadElement(rootElement)
+            for thread in threads {
+                delegate.roomListenerDidStartListening(self)
+            }
         
-        if chatsElement == nil || chatsElement?.name != "chats" {
-            println("could not find chat:\(chats)")
-            return nil
+            let chats = self.parseChatElement(rootElement)
+            for chat in chats {
+                delegate.roomListenerDidReceiveChat(self, chat: chat)
+            }
+        }
+    }
+    
+    func parseThreadElement(rootElement: NSXMLElement) -> [Thread] {
+        var threadArray: Array<Thread> = []
+        let threadElements = rootElement.elementsForName("thread")
+        
+        for threadElement in threadElements {
+            let resultCode = threadElement.attributeForName("resultcode")?.stringValue?.toInt()
+            // let userId = chatElement.attributeForName("user_id")?.stringValue
+            
+            let thread = Thread(resultCode: resultCode!)
+            
+            threadArray.append(thread)
         }
         
-        let chatElements = chatsElement!.elementsForName("chat")
-        var chatsArray: [Chat] = []
+        return threadArray
+    }
+    
+    func parseChatElement(rootElement: NSXMLElement) -> [Chat] {
+        var chatArray: Array<Chat> = []
+        let chatElements = rootElement.elementsForName("chat")
         
         for chatElement in chatElements {
             let comment = chatElement.stringValue
             let mail = chatElement.attributeForName("mail")?.stringValue
             let userId = chatElement.attributeForName("user_id")?.stringValue
             
-            let chatStruct = Chat(roomPosition: self.server?.roomPosition, mail: mail, userId: userId!, comment: comment!, score: 123)
-            chatsArray.append(chatStruct)
+            let chat = Chat(roomPosition: self.server?.roomPosition, mail: mail, userId: userId!, comment: comment!, score: 123)
+            
+            chatArray.append(chat)
         }
         
-        return chatsArray
+        return chatArray
     }
 }
