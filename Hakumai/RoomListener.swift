@@ -195,10 +195,14 @@ class RoomListener : NSObject, NSStreamDelegate {
             let chat = Chat()
 
             chat.roomPosition = self.server?.roomPosition
-            chat.comment = chatElement.stringValue
+            
+            if let date = chatElement.attributeForName("date")?.stringValue?.toInt() {
+                chat.date = NSDate(timeIntervalSince1970: Double(date))
+            }
             chat.mail = chatElement.attributeForName("mail")?.stringValue
             chat.userId = chatElement.attributeForName("user_id")?.stringValue
             chat.score = 123
+            chat.comment = chatElement.stringValue
             
             chatArray.append(chat)
         }

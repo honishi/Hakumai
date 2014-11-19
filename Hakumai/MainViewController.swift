@@ -9,20 +9,24 @@
 import Foundation
 import XCGLogger
 
+let kCalculateActiveInterval: NSTimeInterval = 3
 
 class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewDataSource, NSTableViewDelegate {
     @IBOutlet weak var liveTextField: NSTextField!
     @IBOutlet weak var tableView: NSTableView!
+    @IBOutlet weak var activeLabel: NSTextField!
     
     let log = XCGLogger.defaultInstance()
     
     var chats: [Chat] = []
     
+    var activeTimer: NSTimer?
+    var calculatingActive: Bool = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
-        // CookieUtility.chromeCookie()
+        
+        self.activeTimer = NSTimer.scheduledTimerWithTimeInterval(kCalculateActiveInterval, target: self, selector: "calculateActive:", userInfo: nil, repeats: true)
     }
 
     override var representedObject: AnyObject? {
@@ -88,9 +92,59 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
             NicoUtility.getInstance().connect(liveNumber)
         }
     }
-    
+
     @IBAction func addRoom(sender: AnyObject) {
         NicoUtility.getInstance().addMessageServer()
+    }
+
+    // MARK: - Timer Handlers
+    func calculateActive(timer: NSTimer) {
+        // TODO: should be atomic?
+        objc_sync_enter(self)
+        objc_sync_exit(self)
+        
+        if self.calculatingActive {
+            log.debug("skip calcurating active")
+            return
+        }
+        self.calculatingActive = true
+        
+        log.debug("calcurating active")
+        
+        // TODO: check duplicate executes
+        let qualityOfServiceClass = Int(QOS_CLASS_BACKGROUND.value)
+        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+        
+        dispatch_async(backgroundQueue, {
+            var active = 0
+            var userIds: Array<String> = []
+            let tenMinutesAgo = NSDate(timeIntervalSinceNow: (Double)(-10 * 60))
+            
+            for chat in self.chats.reverse() {
+                if chat.date == nil || chat.userId == nil {
+                    continue
+                }
+                
+                // is "chat.date < tenMinutesAgo" ?
+                if chat.date!.compare(tenMinutesAgo) == .OrderedAscending {
+                    break
+                }
+                
+                if 0 < userIds.filter({$0 == chat.userId!}).count {
+                    continue
+                }
+                userIds.append(chat.userId!)
+                
+                active++
+            }
+            
+            dispatch_async(dispatch_get_main_queue(), {
+                self.activeLabel.stringValue = "active: \(active)"
+                
+                self.calculatingActive = false
+                self.log.debug("finished to calcurate active")
+            })
+        })
     }
     
     // MARK: - Misc Utility
