@@ -9,12 +9,13 @@
 import Foundation
 import XCGLogger
 
-let kCalculateActiveInterval: NSTimeInterval = 3
+let kCalculateActiveInterval: NSTimeInterval = 5
 
 class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewDataSource, NSTableViewDelegate {
     @IBOutlet weak var liveTextField: NSTextField!
     @IBOutlet weak var tableView: NSTableView!
     @IBOutlet weak var activeLabel: NSTextField!
+    @IBOutlet weak var notificationLabel: NSTextField!
     
     let log = XCGLogger.defaultInstance()
     
@@ -23,6 +24,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     var activeTimer: NSTimer?
     var calculatingActive: Bool = false
     
+    // MARK: - UIViewController Functions
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -35,9 +37,15 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         }
     }
     
-    // MARK: NicoUtilityDelegate Functions
+    // MARK: - NicoUtilityDelegate Functions
     func nicoUtilityDidStartListening(nicoUtility: NicoUtility, roomPosition: RoomPosition) {
         log.info("opened \(roomPosition.label()).")
+    }
+
+    func nicoUtilityDidReceiveFirstChat(nicoUtility: NicoUtility, chat: Chat) {
+        if let roomPositionLabel = chat.roomPosition?.label() {
+            self.notificationLabel.stringValue = "\(roomPositionLabel) opened."
+        }
     }
 
     func nicoUtilityDidReceiveChat(nicoUtility: NicoUtility, chat: Chat) {
@@ -53,7 +61,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         self.tableView.scrollRowToVisible(self.chats.count - 1)
     }
     
-    // MARK: NSTableViewDataSource Functions
+    // MARK: - NSTableViewDataSource Functions
     func numberOfRowsInTableView(tableView: NSTableView) -> Int {
         return self.chats.count
     }
@@ -64,14 +72,17 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         if tableColumn?.identifier == "RoomPositionColumn" {
             content = self.chats[row].roomPosition?.shortLabel()
         }
-        else if tableColumn?.identifier == "MailColumn" {
-            content = self.chats[row].mail
+        else if tableColumn?.identifier == "CommentColumn" {
+            content = self.chats[row].comment
         }
         else if tableColumn?.identifier == "UserIdColumn" {
             content = self.chats[row].userId
         }
-        else if tableColumn?.identifier == "CommentColumn" {
-            content = self.chats[row].comment
+        else if tableColumn?.identifier == "PremiumColumn" {
+            content = self.chats[row].premium?.label()
+        }
+        else if tableColumn?.identifier == "MailColumn" {
+            content = self.chats[row].mail
         }
         
         if content == nil {
@@ -81,7 +92,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         return content
     }
 
-    // MARK: NSTableViewDelegate Functions
+    // MARK : - NSTableViewDelegate Functions
     // func tableView(tableView: NSTableView, viewForTableColumn tableColumn: NSTableColumn?, row: Int) -> NSView? {
     // }
     
@@ -100,8 +111,8 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     // MARK: - Timer Handlers
     func calculateActive(timer: NSTimer) {
         // TODO: should be atomic?
-        objc_sync_enter(self)
-        objc_sync_exit(self)
+        // objc_sync_enter(self)
+        // objc_sync_exit(self)
         
         if self.calculatingActive {
             log.debug("skip calcurating active")
@@ -109,7 +120,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         }
         self.calculatingActive = true
         
-        log.debug("calcurating active")
+        // log.debug("calcurating active")
         
         // TODO: check duplicate executes
         let qualityOfServiceClass = Int(QOS_CLASS_BACKGROUND.value)
@@ -142,7 +153,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
                 self.activeLabel.stringValue = "active: \(active)"
                 
                 self.calculatingActive = false
-                self.log.debug("finished to calcurate active")
+                // self.log.debug("finished to calcurate active")
             })
         })
     }

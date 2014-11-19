@@ -199,6 +199,15 @@ class RoomListener : NSObject, NSStreamDelegate {
             if let date = chatElement.attributeForName("date")?.stringValue?.toInt() {
                 chat.date = NSDate(timeIntervalSince1970: Double(date))
             }
+            
+            if let premium = chatElement.attributeForName("premium")?.stringValue?.toInt() {
+                chat.premium = Premium(rawValue: premium)
+            }
+            else {
+                // assume no attribute provided as Ippan(0)
+                chat.premium = Premium(rawValue: 0)
+            }
+            
             chat.mail = chatElement.attributeForName("mail")?.stringValue
             chat.userId = chatElement.attributeForName("user_id")?.stringValue
             chat.score = 123

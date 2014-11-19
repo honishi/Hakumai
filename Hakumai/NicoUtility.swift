@@ -9,20 +9,22 @@
 import Foundation
 import XCGLogger
 
-// MARK: type
-
-typealias getPlayerStatusCompletion = (messageServer: MessageServer?) -> (Void)
-
 // MARK: protocol
 
 protocol NicoUtilityProtocol {
     func nicoUtilityDidStartListening(nicoUtility: NicoUtility, roomPosition: RoomPosition)
+    func nicoUtilityDidReceiveFirstChat(nicoUtility: NicoUtility, chat: Chat)
     func nicoUtilityDidReceiveChat(nicoUtility: NicoUtility, chat: Chat)
 }
 
 // MARK: constant value
 
+// table about relation between community level and given stand room.
+// for example; if community level is 66 or upper, then we can open stand a.
+let kCommunityLevelStandTable = [0, 0, 66, 70, 105, 150, 190, 232]
+
 let kGetPlayerStatuUrl = "http://watch.live.nicovideo.jp/api/getplayerstatus?v=lv"
+let kCommunityUrl = "http://com.nicovideo.jp/community/"
 
 // MARK: global value
 
@@ -53,11 +55,16 @@ func -(left: Character, right: Character) -> Int {
 class NicoUtility : NSObject, RoomListenerDelegate {
     var delegate: NicoUtilityProtocol?
     
+    // TODO: not used yet
+    // var live: Live?
+    var community: Community?
     var messageServers: [MessageServer] = []
     var roomListeners: [RoomListener] = []
+    var receivedFirstChat = [RoomPosition: Bool]()
     
     let log = XCGLogger.defaultInstance()
     
+    // MARK: - Object Lifecycle
     private override init() {
         super.init()
     }
@@ -66,28 +73,67 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         return nicoutility
     }
 
-    // MARK: public interface
+    // MARK: - Public Interface
     func connect(live: Int) {
         if 0 < self.roomListeners.count {
             self.disconnect()
         }
         
-        self.getPlayerStatus (live, {(server: MessageServer?) -> (Void) in
-            self.log.debug("\(server)")
+        func completion(server: MessageServer?, community: Community?) {
+            self.log.debug("extracted server: \(server)")
+            self.log.debug("extracted community: \(community?.community)")
             
-            if server == nil {
-                self.log.error("could not obtain message server.")
+            if server == nil || community == nil {
+                self.log.error("could not extract live information.")
                 return
             }
             
-            self.openMessageServers(server!)
-        })
+            self.community = community
+            
+            self.checkCommunityLevel(self.community!, completion: { (communityLevel) -> Void in
+                self.log.debug("checked community level: \(communityLevel)")
+                self.community?.level = communityLevel
+                self.openMessageServers(server!)
+            })
+        }
+        
+        self.getPlayerStatus(live, completion: completion)
+    }
+    
+    func disconnect() {
+        for listener in self.roomListeners {
+            listener.closeSocket()
+        }
+        
+        self.roomListeners.removeAll(keepCapacity: false)
+        self.receivedFirstChat.removeAll(keepCapacity: false)
+    }
+    
+    // MARK: -
+    func openMessageServers(originServer: MessageServer) {
+        self.messageServers = self.deriveMessageServers(originServer)
+        
+        // opens arena only
+        self.addMessageServer()
     }
     
     func addMessageServer() {
         if self.roomListeners.count == self.messageServers.count {
             log.info("already opened max servers.")
             return
+        }
+        
+        if let lastRoomListener = self.roomListeners.last {
+            if let lastRoomPositionRawValue = lastRoomListener.server?.roomPosition.rawValue {
+                let nextRoomPosition = RoomPosition(rawValue:lastRoomPositionRawValue  + 1)
+                
+                if let level = self.community?.level {
+                    if !self.canOpenRoomPosition(nextRoomPosition!, communityLevel: level) {
+                        log.info("already opened max servers with this community level \(level)")
+                        return
+                    }
+                }
+            }
         }
         
         let targetServerIndex = self.roomListeners.count
@@ -103,25 +149,45 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         self.roomListeners.append(listener)
     }
     
-    func disconnect() {
-        for listener in self.roomListeners {
-            listener.closeSocket()
-        }
-        
-        self.roomListeners.removeAll(keepCapacity: false)
+    func canOpenRoomPosition(roomPosition: RoomPosition, communityLevel: Int) -> Bool {
+        let requiredCommunityLevel = kCommunityLevelStandTable[roomPosition.rawValue]
+        return (requiredCommunityLevel <= communityLevel)
     }
     
-    // MARK: -
-    func openMessageServers(originServer: MessageServer) {
-        self.messageServers = self.deriveMessageServers(originServer)
+    func getPlayerStatus(live: Int, completion: (messageServer: MessageServer?, community: Community?) -> (Void)) {
+        func httpCompletion (response: NSURLResponse!, data: NSData!, connectionError: NSError!) {
+            if connectionError != nil {
+                log.error("error in cookied async request")
+                completion(messageServer: nil, community: nil)
+                return
+            }
+            
+            let responseString = NSString(data: data, encoding: NSUTF8StringEncoding)
+            log.debug("\(responseString)")
+            
+            if data == nil {
+                log.error("error in unpacking response data")
+                completion(messageServer: nil, community: nil)
+                return
+            }
+            
+            let messageServer = self.extractMessageServer(data)
+            let community = self.extractCommunity(data)
+            
+            if messageServer == nil || community == nil {
+                log.error("error in extracting message server")
+                completion(messageServer: nil, community: nil)
+                return
+            }
 
-        for i in 1...2 {
-            self.addMessageServer()
+            completion(messageServer: messageServer, community: community)
         }
+
+        self.cookiedAsyncRequest(kGetPlayerStatuUrl + String(live), completion: httpCompletion)
     }
     
-    func getPlayerStatus(live: Int, completion: getPlayerStatusCompletion) {
-        let url = NSURL(string: kGetPlayerStatuUrl + String(live))!
+    func cookiedAsyncRequest(urlString: String, completion: (NSURLResponse!, NSData!, NSError!) -> Void) {
+        let url = NSURL(string: urlString)!
         var request = NSMutableURLRequest(URL: url)
         
         if let cookie = self.sessionCookie() {
@@ -130,28 +196,10 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         }
         else {
             log.error("could not get cookie")
-            completion(messageServer: nil)
+            completion(nil, nil, NSError(domain:"", code:0, userInfo: nil))
         }
         
-        func completionHandler (response: NSURLResponse?, data: NSData?, connectionError: NSError?) {
-            let responseString = NSString(data: data!, encoding: NSUTF8StringEncoding)
-            log.debug("\(responseString)")
-            
-            if data == nil {
-                return
-            }
-            
-            let messageServer = self.extractMessageServer(data!)
-            
-            if messageServer == nil {
-                completion(messageServer: nil)
-                return
-            }
-
-            completion(messageServer: messageServer)
-        }
-        
-        NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue.mainQueue(), completionHandler: completionHandler)
+        NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue.mainQueue(), completionHandler: completion)
     }
     
     func sessionCookie() -> NSHTTPCookie? {
@@ -171,6 +219,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         return nil
     }
     
+    // MARK: - Message Server Extractor
     func extractMessageServer (xmlData: NSData) -> MessageServer? {
         var err: NSError?
         
@@ -285,7 +334,77 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         return server
     }
     
-    // MARK: RoomListenerDelegate Functions
+    // MARK: - Community Extractor
+    func extractCommunity(xmlData: NSData) -> Community? {
+        var err: NSError?
+        
+        // let xmlDocument = NSXMLDocument(data: xmlData, options: [NSXMLDocumentTidyXML], error: err!)
+        let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &err)
+        let rootElement = xmlDocument?.rootElement()
+        
+        let community = Community()
+        
+        community.community = (rootElement?.nodesForXPath("/getplayerstatus/stream/default_community", error: &err)?[0] as NSXMLNode).stringValue
+        // let port = (rootElement?.nodesForXPath("/getplayerstatus/ms/port", error: &err)?[0] as NSXMLNode).stringValue?.toInt()
+        
+        return community
+    }
+    
+    func checkCommunityLevel(community: Community, completion: ((Int?) -> Void)) {
+        if community.community == nil {
+            log.error("invalid community number")
+            completion(nil)
+            return
+        }
+        
+        func httpCompletion (response: NSURLResponse!, data: NSData!, connectionError: NSError!) {
+            if connectionError != nil {
+                log.error("error in cookied async request")
+                completion(nil)
+                return
+            }
+            
+            let responseString = NSString(data: data, encoding: NSUTF8StringEncoding)
+            log.debug("\(responseString)")
+            
+            if data == nil {
+                log.error("error in unpacking response data")
+                completion(nil)
+                return
+            }
+
+            // extract community level here
+            let level = self.extractCommunityLevel(data)
+            
+            if level == nil {
+                log.error("error in extracting community level")
+                completion(nil)
+                return
+            }
+            
+            completion(level)
+        }
+        
+        self.cookiedAsyncRequest(kCommunityUrl + community.community!, completion: httpCompletion)
+    }
+    
+    func extractCommunityLevel(xmlData: NSData) -> Int? {
+        var err: NSError?
+        let xmlDocument = NSXMLDocument(data: xmlData, options: Int(NSXMLDocumentTidyXML), error: &err)
+        let rootElement = xmlDocument?.rootElement()
+        
+        let xpath = "//*[@id=\"cbox_profile\"]/table/tr/td[1]/table/tr[1]/td[2]/strong[1]"
+        
+        if let nodes = rootElement?.nodesForXPath(xpath, error: &err) {
+            if 0 < nodes.count {
+                return (nodes[0] as NSXMLNode).stringValue?.toInt()
+            }
+        }
+        
+        return nil
+    }
+    
+    // MARK: - RoomListenerDelegate Functions
     func roomListenerDidStartListening(roomListener: RoomListener) {
         if let delegate = self.delegate {
             dispatch_async(dispatch_get_main_queue(), {
@@ -299,6 +418,23 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             dispatch_async(dispatch_get_main_queue(), {
                 delegate.nicoUtilityDidReceiveChat(self, chat: chat)
             })
+        }
+
+        // open next room, if first comment in the room received
+        if chat.premium == .Ippan || chat.premium == .Premium {
+            if let room = roomListener.server?.roomPosition {
+                if self.receivedFirstChat[room] == nil || self.receivedFirstChat[room] == false {
+                    self.receivedFirstChat[room] = true
+                    
+                    if let delegate = self.delegate {
+                        dispatch_async(dispatch_get_main_queue(), {
+                            delegate.nicoUtilityDidReceiveFirstChat(self, chat: chat)
+                        })
+                    }
+
+                    self.addMessageServer()
+                }
+            }
         }
     }
 }

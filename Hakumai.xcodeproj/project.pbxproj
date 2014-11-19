@@ -55,6 +55,11 @@
 		DBFA88851A1BC925005349AD /* MessageServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA88841A1BC925005349AD /* MessageServer.swift */; };
 		DBFA88861A1BC925005349AD /* MessageServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA88841A1BC925005349AD /* MessageServer.swift */; };
 		DBFA88891A1BCF77005349AD /* MessageServerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA88871A1BCF77005349AD /* MessageServerTests.swift */; };
+		DBFA888B1A1C9A56005349AD /* Live.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA888A1A1C9A56005349AD /* Live.swift */; };
+		DBFA888C1A1C9A56005349AD /* Live.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA888A1A1C9A56005349AD /* Live.swift */; };
+		DBFA888E1A1C9B14005349AD /* Community.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA888D1A1C9B14005349AD /* Community.swift */; };
+		DBFA888F1A1C9B14005349AD /* Community.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA888D1A1C9B14005349AD /* Community.swift */; };
+		DBFA88911A1CAE85005349AD /* community.html in Resources */ = {isa = PBXBuildFile; fileRef = DBFA88901A1CAE85005349AD /* community.html */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -140,6 +145,9 @@
 		DBFA88811A1BC8C9005349AD /* Enum.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enum.swift; sourceTree = "<group>"; };
 		DBFA88841A1BC925005349AD /* MessageServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageServer.swift; sourceTree = "<group>"; };
 		DBFA88871A1BCF77005349AD /* MessageServerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageServerTests.swift; sourceTree = "<group>"; };
+		DBFA888A1A1C9A56005349AD /* Live.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Live.swift; sourceTree = "<group>"; };
+		DBFA888D1A1C9B14005349AD /* Community.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Community.swift; sourceTree = "<group>"; };
+		DBFA88901A1CAE85005349AD /* community.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = community.html; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -289,6 +297,7 @@
 		DBA414CF1A1A174500E0CAD3 /* NicoManager */ = {
 			isa = PBXGroup;
 			children = (
+				DBFA88921A1CAE8B005349AD /* sample */,
 				DBFA88871A1BCF77005349AD /* MessageServerTests.swift */,
 				DB080B841A17CA0100896228 /* CookieUtilityTests.swift */,
 				DB0F0ECC1A16441D00F8BDC5 /* NicoUtilityTests.swift */,
@@ -347,11 +356,21 @@
 			isa = PBXGroup;
 			children = (
 				DBFA88811A1BC8C9005349AD /* Enum.swift */,
+				DBFA888A1A1C9A56005349AD /* Live.swift */,
+				DBFA888D1A1C9B14005349AD /* Community.swift */,
 				DBFA88841A1BC925005349AD /* MessageServer.swift */,
 				DBFA887E1A1BC7FF005349AD /* Thread.swift */,
 				DBFA887A1A1BC25A005349AD /* Chat.swift */,
 			);
 			name = Model;
+			sourceTree = "<group>";
+		};
+		DBFA88921A1CAE8B005349AD /* sample */ = {
+			isa = PBXGroup;
+			children = (
+				DBFA88901A1CAE85005349AD /* community.html */,
+			);
+			name = sample;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -474,6 +493,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DBFA88911A1CAE85005349AD /* community.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -486,6 +506,7 @@
 			files = (
 				DB2AE1101A0F2BAB00B1CE4D /* FMDatabase.m in Sources */,
 				DBFA887F1A1BC7FF005349AD /* Thread.swift in Sources */,
+				DBFA888E1A1C9B14005349AD /* Community.swift in Sources */,
 				DB2AE0C61A0EE2FD00B1CE4D /* MainViewController.swift in Sources */,
 				DB2AE1181A0F2BAB00B1CE4D /* FMResultSet.m in Sources */,
 				DB2AE1141A0F2BAB00B1CE4D /* FMDatabasePool.m in Sources */,
@@ -501,6 +522,7 @@
 				DB2AE1161A0F2BAB00B1CE4D /* FMDatabaseQueue.m in Sources */,
 				DBA414CC1A1A16F300E0CAD3 /* CommonExtensions.swift in Sources */,
 				DBAAA7511A0FDA4500981004 /* NicoUtility.swift in Sources */,
+				DBFA888B1A1C9A56005349AD /* Live.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -513,6 +535,7 @@
 				DBFA88861A1BC925005349AD /* MessageServer.swift in Sources */,
 				DBFA887C1A1BC25A005349AD /* Chat.swift in Sources */,
 				DBA414D21A1A176E00E0CAD3 /* CommonExtensionsTests.swift in Sources */,
+				DBFA888C1A1C9A56005349AD /* Live.swift in Sources */,
 				DBAAA73C1A0F592300981004 /* SSKeychainQuery.m in Sources */,
 				DBAAA73A1A0F592300981004 /* SSKeychain.m in Sources */,
 				DB2AE1171A0F2BAB00B1CE4D /* FMDatabaseQueue.m in Sources */,
@@ -522,6 +545,7 @@
 				DBAAA7521A0FDA4500981004 /* NicoUtility.swift in Sources */,
 				DBFA88831A1BC8C9005349AD /* Enum.swift in Sources */,
 				DBFA88801A1BC7FF005349AD /* Thread.swift in Sources */,
+				DBFA888F1A1C9B14005349AD /* Community.swift in Sources */,
 				DB2AE1151A0F2BAB00B1CE4D /* FMDatabasePool.m in Sources */,
 				DBFA88891A1BCF77005349AD /* MessageServerTests.swift in Sources */,
 				DBA414C71A18915C00E0CAD3 /* RoomListener.swift in Sources */,

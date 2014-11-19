@@ -61,3 +61,25 @@ enum RoomPosition: Int {
     }
 }
 
+enum Premium: Int {
+    case Ippan = 0
+    case Premium = 1
+    case System = 2     // '/disconnect'
+    case Caster = 3
+    case BSP = 7
+    
+    func label() -> String {
+        switch self {
+        case .Ippan:
+            return "一般"
+        case .Premium:
+            return "プレミアム"
+        case .System:
+            return "システム"
+        case .Caster:
+            return "放送主"
+        case .BSP:
+            return "BSP"
+        }
+    }
+}

@@ -80,4 +80,40 @@ class NicoUtilityTests: XCTestCase {
         derived = NicoUtility.getInstance().deriveMessageServers(server)
         XCTAssert(derived == expected, "")
     }
+    
+    // MARK: - community
+    func testCheckCommunityLevel() {
+        let data = self.dataForResource("community.html")
+        
+        let level = NicoUtility.getInstance().extractCommunityLevel(data)
+        XCTAssert(level == 109, "")
+    }
+    
+    // let kCommunityLevelStandTable = [0, 0, 66, 70, 105, 150, 190, 232]
+    func testCanOpenRoomPosition() {
+        var roomPosition: RoomPosition = .Arena
+        var canOpen: Bool?
+        
+        roomPosition = RoomPosition.StandB
+        canOpen = NicoUtility.getInstance().canOpenRoomPosition(roomPosition, communityLevel: 65)
+        XCTAssert(canOpen == false, "")
+        canOpen = NicoUtility.getInstance().canOpenRoomPosition(roomPosition, communityLevel: 66)
+        XCTAssert(canOpen == true, "")
+        
+        roomPosition = RoomPosition.StandD
+        canOpen = NicoUtility.getInstance().canOpenRoomPosition(roomPosition, communityLevel: 104)
+        XCTAssert(canOpen == false, "")
+        canOpen = NicoUtility.getInstance().canOpenRoomPosition(roomPosition, communityLevel: 105)
+        XCTAssert(canOpen == true, "")
+    }
+    
+    // MARK: - test utility
+    func dataForResource(fileName: String) -> NSData {
+        let bundle = NSBundle(forClass: NicoUtilityTests.self)
+        let path = bundle.pathForResource(fileName, ofType: nil)
+        let fileHandle = NSFileHandle(forReadingAtPath: path!)
+        let data = fileHandle?.readDataToEndOfFile()
+        
+        return data!
+    }
 }

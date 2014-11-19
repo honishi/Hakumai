@@ -13,6 +13,7 @@ class Chat {
     var date: NSDate?
     var mail: String?
     var userId: String?
+    var premium: Premium?
     var comment: String?
     var score: Int?
     
