@@ -89,7 +89,6 @@ class NicoUtilityTests: XCTestCase {
         XCTAssert(level == 109, "")
     }
     
-    // let kCommunityLevelStandTable = [0, 0, 66, 70, 105, 150, 190, 232]
     func testCanOpenRoomPosition() {
         var roomPosition: RoomPosition = .Arena
         var canOpen: Bool?

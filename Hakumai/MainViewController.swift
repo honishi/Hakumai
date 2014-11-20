@@ -9,7 +9,7 @@
 import Foundation
 import XCGLogger
 
-let kCalculateActiveInterval: NSTimeInterval = 5
+let kCalculateActiveInterval: NSTimeInterval = 10
 
 class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewDataSource, NSTableViewDelegate {
     @IBOutlet weak var liveTextField: NSTextField!
@@ -59,6 +59,11 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         
         self.tableView.reloadData()
         self.tableView.scrollRowToVisible(self.chats.count - 1)
+    }
+    
+    func nicoUtilityDidFinishListening(nicoUtility: NicoUtility) {
+        self.chats.removeAll(keepCapacity: false)
+        self.tableView.reloadData()
     }
     
     // MARK: - NSTableViewDataSource Functions

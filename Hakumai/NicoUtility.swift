@@ -15,13 +15,20 @@ protocol NicoUtilityProtocol {
     func nicoUtilityDidStartListening(nicoUtility: NicoUtility, roomPosition: RoomPosition)
     func nicoUtilityDidReceiveFirstChat(nicoUtility: NicoUtility, chat: Chat)
     func nicoUtilityDidReceiveChat(nicoUtility: NicoUtility, chat: Chat)
+    func nicoUtilityDidFinishListening(nicoUtility: NicoUtility)
 }
 
 // MARK: constant value
 
-// table about relation between community level and given stand room.
-// for example; if community level is 66 or upper, then we can open stand a.
-let kCommunityLevelStandTable = [0, 0, 66, 70, 105, 150, 190, 232]
+let kRequiredCommunityLevelForStandRoom: [RoomPosition: Int] = [
+    .Arena: 0,
+    .StandA: 0,
+    .StandB: 66,
+    .StandC: 70,
+    .StandD: 105,
+    .StandE: 150,
+    .StandF: 190,
+    .StandG: 232]
 
 let kGetPlayerStatuUrl = "http://watch.live.nicovideo.jp/api/getplayerstatus?v=lv"
 let kCommunityUrl = "http://com.nicovideo.jp/community/"
@@ -107,6 +114,12 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         
         self.roomListeners.removeAll(keepCapacity: false)
         self.receivedFirstChat.removeAll(keepCapacity: false)
+        
+        if let delegate = self.delegate {
+            dispatch_async(dispatch_get_main_queue(), {
+                delegate.nicoUtilityDidFinishListening(self)
+            })
+        }
     }
     
     // MARK: -
@@ -124,11 +137,9 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         }
         
         if let lastRoomListener = self.roomListeners.last {
-            if let lastRoomPositionRawValue = lastRoomListener.server?.roomPosition.rawValue {
-                let nextRoomPosition = RoomPosition(rawValue:lastRoomPositionRawValue  + 1)
-                
+            if let lastRoomPosition = lastRoomListener.server?.roomPosition {
                 if let level = self.community?.level {
-                    if !self.canOpenRoomPosition(nextRoomPosition!, communityLevel: level) {
+                    if !self.canOpenRoomPosition(lastRoomPosition.next()!, communityLevel: level) {
                         log.info("already opened max servers with this community level \(level)")
                         return
                     }
@@ -150,7 +161,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     func canOpenRoomPosition(roomPosition: RoomPosition, communityLevel: Int) -> Bool {
-        let requiredCommunityLevel = kCommunityLevelStandTable[roomPosition.rawValue]
+        let requiredCommunityLevel = kRequiredCommunityLevelForStandRoom[roomPosition]
         return (requiredCommunityLevel <= communityLevel)
     }
     
@@ -167,6 +178,12 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             
             if data == nil {
                 log.error("error in unpacking response data")
+                completion(messageServer: nil, community: nil)
+                return
+            }
+            
+            if self.isErrorResponse(data) {
+                log.error("detected error")
                 completion(messageServer: nil, community: nil)
                 return
             }
@@ -219,6 +236,28 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         return nil
     }
     
+    // MARK: - General Extractor
+    func isErrorResponse(xmlData: NSData) -> Bool {
+        var err: NSError?
+        
+        let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &err)
+        let rootElement = xmlDocument?.rootElement()
+        
+        let status = rootElement?.attributeForName("status")?.stringValue
+        
+        if status == "fail" {
+            log.warning("failed to load message server")
+            
+            if let errorCode = (rootElement?.nodesForXPath("/getplayerstatus/error/code", error: &err)?[0] as NSXMLNode).stringValue {
+                log.warning("error code: \(errorCode)")
+            }
+            
+            return true
+        }
+        
+        return false
+    }
+    
     // MARK: - Message Server Extractor
     func extractMessageServer (xmlData: NSData) -> MessageServer? {
         var err: NSError?
@@ -227,6 +266,18 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &err)
         let rootElement = xmlDocument?.rootElement()
         
+        let status = rootElement?.attributeForName("status")?.stringValue
+        
+        if status == "fail" {
+            log.warning("failed to load message server")
+            
+            if let errorCode = (rootElement?.nodesForXPath("/getplayerstatus/error/code", error: &err)?[0] as NSXMLNode).stringValue {
+                log.warning("error code: \(errorCode)")
+            }
+            
+            return nil
+        }
+
         let roomLabel = (rootElement?.nodesForXPath("/getplayerstatus/user/room_label", error: &err)?[0] as NSXMLNode).stringValue
         
         if roomLabel == nil {

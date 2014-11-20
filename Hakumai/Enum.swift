@@ -17,6 +17,25 @@ enum RoomPosition: Int {
     case StandE
     case StandF
     case StandG
+    case StandH
+    case StandI
+    case StandJ
+    
+    func previous() -> RoomPosition? {
+        if self == .Arena {
+            return nil
+        }
+        
+        return RoomPosition(rawValue: self.rawValue - 1)
+    }
+    
+    func next() -> RoomPosition? {
+        if self == .StandJ {
+            return nil
+        }
+        
+        return RoomPosition(rawValue: self.rawValue + 1)
+    }
     
     func label() -> String {
         switch self {
@@ -36,6 +55,12 @@ enum RoomPosition: Int {
             return "立ち見F"
         case .StandG:
             return "立ち見G"
+        case .StandH:
+            return "立ち見H"
+        case .StandI:
+            return "立ち見I"
+        case .StandJ:
+            return "立ち見J"
         }
     }
     
@@ -57,6 +82,12 @@ enum RoomPosition: Int {
             return "F"
         case .StandG:
             return "G"
+        case .StandH:
+            return "H"
+        case .StandI:
+            return "I"
+        case .StandJ:
+            return "J"
         }
     }
 }
