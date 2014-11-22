@@ -1,5 +1,5 @@
 //
-//  Thread.swift
+//  Stream.swift
 //  Hakumai
 //
 //  Created by Hiroyuki Onishi on 11/19/14.
@@ -8,12 +8,9 @@
 
 import Foundation
 
-class Thread {
-    var resultCode: Int?
-    var thread: Int?
-    var lastRes: Int? = 0
-    var ticket: String?
-    var serverTime: Int?
+class Stream {
+    var community: Community = Community()
+    var baseTime: Int?
     
     init() {
         // nop

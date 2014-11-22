@@ -31,6 +31,7 @@ let kRequiredCommunityLevelForStandRoom: [RoomPosition: Int] = [
     .StandG: 232]
 
 let kGetPlayerStatuUrl = "http://watch.live.nicovideo.jp/api/getplayerstatus?v=lv"
+let kGetPostKeyUrl = "http://live.nicovideo.jp/api/getpostkey?thread=%d&block_no=%d"
 let kCommunityUrl = "http://com.nicovideo.jp/community/"
 
 // MARK: global value
@@ -62,9 +63,10 @@ func -(left: Character, right: Character) -> Int {
 class NicoUtility : NSObject, RoomListenerDelegate {
     var delegate: NicoUtilityProtocol?
     
-    // TODO: not used yet
-    // var live: Live?
-    var community: Community?
+    var stream: Stream?
+    var user: User?
+    var messageServer: MessageServer?
+    
     var messageServers: [MessageServer] = []
     var roomListeners: [RoomListener] = []
     var receivedFirstChat = [RoomPosition: Bool]()
@@ -86,20 +88,22 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             self.disconnect()
         }
         
-        func completion(server: MessageServer?, community: Community?) {
+        func completion(stream: Stream?, user: User?, server: MessageServer?) {
+            self.log.debug("extracted stream: \(stream)")
             self.log.debug("extracted server: \(server)")
-            self.log.debug("extracted community: \(community?.community)")
             
-            if server == nil || community == nil {
+            if stream == nil || server == nil {
                 self.log.error("could not extract live information.")
                 return
             }
             
-            self.community = community
+            self.stream = stream
+            self.user = user
+            self.messageServer = server
             
-            self.checkCommunityLevel(self.community!, completion: { (communityLevel) -> Void in
+            self.checkCommunityLevel(self.stream!.community.community!, completion: { (communityLevel) -> Void in
                 self.log.debug("checked community level: \(communityLevel)")
-                self.community?.level = communityLevel
+                self.stream?.community.level = communityLevel
                 self.openMessageServers(server!)
             })
         }
@@ -122,7 +126,19 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         }
     }
     
-    // MARK: -
+    func comment(comment: String) {
+        self.getPostKey { (postKey) -> (Void) in
+            if self.stream == nil || self.user == nil || postKey == nil {
+                self.log.debug("no available stream, user, or post key")
+                return
+            }
+            
+            let roomListener = self.roomListeners[self.messageServer!.roomPosition.rawValue]
+            roomListener.comment(self.stream!, user: self.user!, postKey: postKey!, comment: comment)
+        }
+    }
+    
+    // MARK: - Message Server Functions
     func openMessageServers(originServer: MessageServer) {
         self.messageServers = self.deriveMessageServers(originServer)
         
@@ -138,7 +154,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         
         if let lastRoomListener = self.roomListeners.last {
             if let lastRoomPosition = lastRoomListener.server?.roomPosition {
-                if let level = self.community?.level {
+                if let level = self.stream?.community.level {
                     if !self.canOpenRoomPosition(lastRoomPosition.next()!, communityLevel: level) {
                         log.info("already opened max servers with this community level \(level)")
                         return
@@ -165,11 +181,11 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         return (requiredCommunityLevel <= communityLevel)
     }
     
-    func getPlayerStatus(live: Int, completion: (messageServer: MessageServer?, community: Community?) -> (Void)) {
+    func getPlayerStatus(live: Int, completion: (stream: Stream?, user: User?, messageServer: MessageServer?) -> (Void)) {
         func httpCompletion (response: NSURLResponse!, data: NSData!, connectionError: NSError!) {
             if connectionError != nil {
                 log.error("error in cookied async request")
-                completion(messageServer: nil, community: nil)
+                completion(stream: nil, user: nil, messageServer: nil)
                 return
             }
             
@@ -178,62 +194,30 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             
             if data == nil {
                 log.error("error in unpacking response data")
-                completion(messageServer: nil, community: nil)
+                completion(stream: nil, user: nil, messageServer: nil)
                 return
             }
             
             if self.isErrorResponse(data) {
                 log.error("detected error")
-                completion(messageServer: nil, community: nil)
+                completion(stream: nil, user: nil, messageServer: nil)
                 return
             }
             
+            let stream = self.extractStream(data)
+            let user = self.extractUser(data)
             let messageServer = self.extractMessageServer(data)
-            let community = self.extractCommunity(data)
             
-            if messageServer == nil || community == nil {
-                log.error("error in extracting message server")
-                completion(messageServer: nil, community: nil)
+            if stream == nil || user == nil || messageServer == nil {
+                log.error("error in extracting getplayerstatus response")
+                completion(stream: nil, user: nil, messageServer: nil)
                 return
             }
 
-            completion(messageServer: messageServer, community: community)
+            completion(stream: stream, user: user, messageServer: messageServer)
         }
 
         self.cookiedAsyncRequest(kGetPlayerStatuUrl + String(live), completion: httpCompletion)
-    }
-    
-    func cookiedAsyncRequest(urlString: String, completion: (NSURLResponse!, NSData!, NSError!) -> Void) {
-        let url = NSURL(string: urlString)!
-        var request = NSMutableURLRequest(URL: url)
-        
-        if let cookie = self.sessionCookie() {
-            let requestHeader = NSHTTPCookie.requestHeaderFieldsWithCookies([cookie])
-            request.allHTTPHeaderFields = requestHeader
-        }
-        else {
-            log.error("could not get cookie")
-            completion(nil, nil, NSError(domain:"", code:0, userInfo: nil))
-        }
-        
-        NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue.mainQueue(), completionHandler: completion)
-    }
-    
-    func sessionCookie() -> NSHTTPCookie? {
-        if let cookie = CookieUtility.chromeCookie() {
-            log.debug("cookie:[\(cookie)]")
-            
-            let userSessionCookie = NSHTTPCookie(properties: [
-                NSHTTPCookieDomain: "nicovideo.jp",
-                NSHTTPCookieName: "user_session",
-                NSHTTPCookieValue: cookie,
-                NSHTTPCookieExpires: NSDate().dateByAddingTimeInterval(7200),
-                NSHTTPCookiePath: "/"])
-            
-            return userSessionCookie
-        }
-        
-        return nil
     }
     
     // MARK: - General Extractor
@@ -258,11 +242,73 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         return false
     }
     
+    // MARK: - Stream Extractor
+    func extractStream(xmlData: NSData) -> Stream? {
+        var err: NSError?
+        
+        let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &err)
+        let rootElement = xmlDocument?.rootElement()
+        
+        let stream = Stream()
+        
+        stream.baseTime = (rootElement?.nodesForXPath("/getplayerstatus/stream/base_time", error: &err)?[0] as NSXMLNode).stringValue?.toInt()
+        
+        stream.community.community = (rootElement?.nodesForXPath("/getplayerstatus/stream/default_community", error: &err)?[0] as NSXMLNode).stringValue
+        return stream
+    }
+    
+    func checkCommunityLevel(community: String, completion: ((Int?) -> Void)) {
+        func httpCompletion (response: NSURLResponse!, data: NSData!, connectionError: NSError!) {
+            if connectionError != nil {
+                log.error("error in cookied async request")
+                completion(nil)
+                return
+            }
+            
+            let responseString = NSString(data: data, encoding: NSUTF8StringEncoding)
+            // log.debug("\(responseString)")
+            
+            if data == nil {
+                log.error("error in unpacking response data")
+                completion(nil)
+                return
+            }
+            
+            // extract community level here
+            let level = self.extractCommunityLevel(data)
+            
+            if level == nil {
+                log.error("error in extracting community level")
+                completion(nil)
+                return
+            }
+            
+            completion(level)
+        }
+        
+        self.cookiedAsyncRequest(kCommunityUrl + community, completion: httpCompletion)
+    }
+    
+    func extractCommunityLevel(xmlData: NSData) -> Int? {
+        var err: NSError?
+        let xmlDocument = NSXMLDocument(data: xmlData, options: Int(NSXMLDocumentTidyXML), error: &err)
+        let rootElement = xmlDocument?.rootElement()
+        
+        let xpath = "//*[@id=\"cbox_profile\"]/table/tr/td[1]/table/tr[1]/td[2]/strong[1]"
+        
+        if let nodes = rootElement?.nodesForXPath(xpath, error: &err) {
+            if 0 < nodes.count {
+                return (nodes[0] as NSXMLNode).stringValue?.toInt()
+            }
+        }
+        
+        return nil
+    }
+    
     // MARK: - Message Server Extractor
     func extractMessageServer (xmlData: NSData) -> MessageServer? {
         var err: NSError?
         
-        // let xmlDocument = NSXMLDocument(data: xmlData, options: [NSXMLDocumentTidyXML], error: err!)
         let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &err)
         let rootElement = xmlDocument?.rootElement()
         
@@ -385,33 +431,33 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         return server
     }
     
-    // MARK: - Community Extractor
-    func extractCommunity(xmlData: NSData) -> Community? {
+    // MARK: - User Extractor
+    func extractUser(xmlData: NSData) -> User? {
         var err: NSError?
         
-        // let xmlDocument = NSXMLDocument(data: xmlData, options: [NSXMLDocumentTidyXML], error: err!)
         let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &err)
         let rootElement = xmlDocument?.rootElement()
         
-        let community = Community()
+        let user = User()
         
-        community.community = (rootElement?.nodesForXPath("/getplayerstatus/stream/default_community", error: &err)?[0] as NSXMLNode).stringValue
-        // let port = (rootElement?.nodesForXPath("/getplayerstatus/ms/port", error: &err)?[0] as NSXMLNode).stringValue?.toInt()
+        user.userId = (rootElement?.nodesForXPath("/getplayerstatus/user/user_id", error: &err)?[0] as NSXMLNode).stringValue?.toInt()
+        user.nickname = (rootElement?.nodesForXPath("/getplayerstatus/user/nickname", error: &err)?[0] as NSXMLNode).stringValue
         
-        return community
+        return user
     }
     
-    func checkCommunityLevel(community: Community, completion: ((Int?) -> Void)) {
-        if community.community == nil {
-            log.error("invalid community number")
-            completion(nil)
+    // MARK: - Comment
+    func getPostKey(completion: (postKey: String?) -> (Void)) {
+        if messageServer == nil {
+            log.error("cannot comment without messageServer")
+            completion(postKey: nil)
             return
         }
         
         func httpCompletion (response: NSURLResponse!, data: NSData!, connectionError: NSError!) {
             if connectionError != nil {
                 log.error("error in cookied async request")
-                completion(nil)
+                completion(postKey: nil)
                 return
             }
             
@@ -420,36 +466,57 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             
             if data == nil {
                 log.error("error in unpacking response data")
-                completion(nil)
-                return
-            }
-
-            // extract community level here
-            let level = self.extractCommunityLevel(data)
-            
-            if level == nil {
-                log.error("error in extracting community level")
-                completion(nil)
+                completion(postKey: nil)
                 return
             }
             
-            completion(level)
+            let postKey = (responseString as String).extractRegexpPattern("postkey=(.+)")
+            
+            if postKey == nil {
+                log.error("error in extracting postkey")
+                completion(postKey: nil)
+                return
+            }
+            
+            completion(postKey: postKey)
         }
         
-        self.cookiedAsyncRequest(kCommunityUrl + community.community!, completion: httpCompletion)
+        let thread = messageServer!.thread
+        let blockNo = (roomListeners[messageServer!.roomPosition.rawValue].lastRes + 1) / 100
+        
+        let getPostKeyUrl = String(format: kGetPostKeyUrl, thread, blockNo)
+        self.cookiedAsyncRequest(getPostKeyUrl, completion: httpCompletion)
     }
     
-    func extractCommunityLevel(xmlData: NSData) -> Int? {
-        var err: NSError?
-        let xmlDocument = NSXMLDocument(data: xmlData, options: Int(NSXMLDocumentTidyXML), error: &err)
-        let rootElement = xmlDocument?.rootElement()
+    // MARK: - General Utility
+    func cookiedAsyncRequest(urlString: String, completion: (NSURLResponse!, NSData!, NSError!) -> Void) {
+        let url = NSURL(string: urlString)!
+        var request = NSMutableURLRequest(URL: url)
         
-        let xpath = "//*[@id=\"cbox_profile\"]/table/tr/td[1]/table/tr[1]/td[2]/strong[1]"
+        if let cookie = self.sessionCookie() {
+            let requestHeader = NSHTTPCookie.requestHeaderFieldsWithCookies([cookie])
+            request.allHTTPHeaderFields = requestHeader
+        }
+        else {
+            log.error("could not get cookie")
+            completion(nil, nil, NSError(domain:"", code:0, userInfo: nil))
+        }
         
-        if let nodes = rootElement?.nodesForXPath(xpath, error: &err) {
-            if 0 < nodes.count {
-                return (nodes[0] as NSXMLNode).stringValue?.toInt()
-            }
+        NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue.mainQueue(), completionHandler: completion)
+    }
+    
+    func sessionCookie() -> NSHTTPCookie? {
+        if let cookie = CookieUtility.cookie(CookieUtility.BrowserType.Chrome) {
+            log.debug("cookie:[\(cookie)]")
+            
+            let userSessionCookie = NSHTTPCookie(properties: [
+                NSHTTPCookieDomain: "nicovideo.jp",
+                NSHTTPCookieName: "user_session",
+                NSHTTPCookieValue: cookie,
+                NSHTTPCookieExpires: NSDate().dateByAddingTimeInterval(7200),
+                NSHTTPCookiePath: "/"])
+            
+            return userSessionCookie
         }
         
         return nil

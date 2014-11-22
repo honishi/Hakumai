@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		DB080B851A17CA0100896228 /* CookieUtilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB080B841A17CA0100896228 /* CookieUtilityTests.swift */; };
+		DB0ED6521A20B0A7007E9318 /* ChromeCookie.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0ED6511A20B0A7007E9318 /* ChromeCookie.swift */; };
+		DB0ED6531A20B0A7007E9318 /* ChromeCookie.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0ED6511A20B0A7007E9318 /* ChromeCookie.swift */; };
 		DB0F0ECD1A16441D00F8BDC5 /* NicoUtilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0F0ECC1A16441D00F8BDC5 /* NicoUtilityTests.swift */; };
 		DB2AE0C41A0EE2FD00B1CE4D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0C31A0EE2FD00B1CE4D /* AppDelegate.swift */; };
 		DB2AE0C61A0EE2FD00B1CE4D /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0C51A0EE2FD00B1CE4D /* MainViewController.swift */; };
@@ -26,6 +28,12 @@
 		DB2AE1191A0F2BAB00B1CE4D /* FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE10F1A0F2BAB00B1CE4D /* FMResultSet.m */; };
 		DB2AE11A1A0F2C8200B1CE4D /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DB2AE0F71A0EF18200B1CE4D /* libsqlite3.dylib */; };
 		DB2AE11B1A0F2D4C00B1CE4D /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DB2AE0F71A0EF18200B1CE4D /* libsqlite3.dylib */; };
+		DB52B0AD1A2102C700E78C6A /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB52B0AC1A2102C700E78C6A /* User.swift */; };
+		DB52B0AE1A2102C700E78C6A /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB52B0AC1A2102C700E78C6A /* User.swift */; };
+		DB52B0B21A21226900E78C6A /* ChatResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB52B0B11A21226900E78C6A /* ChatResult.swift */; };
+		DB52B0B31A21226900E78C6A /* ChatResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB52B0B11A21226900E78C6A /* ChatResult.swift */; };
+		DB7F21B01A210017008D17E0 /* Community.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7F21AF1A210017008D17E0 /* Community.swift */; };
+		DB7F21B11A210017008D17E0 /* Community.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7F21AF1A210017008D17E0 /* Community.swift */; };
 		DBA414C61A188A7400E0CAD3 /* RoomListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA414C51A188A7400E0CAD3 /* RoomListener.swift */; };
 		DBA414C71A18915C00E0CAD3 /* RoomListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA414C51A188A7400E0CAD3 /* RoomListener.swift */; };
 		DBA414C91A189D7D00E0CAD3 /* RoomListenerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA414C81A189D7D00E0CAD3 /* RoomListenerTests.swift */; };
@@ -55,10 +63,8 @@
 		DBFA88851A1BC925005349AD /* MessageServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA88841A1BC925005349AD /* MessageServer.swift */; };
 		DBFA88861A1BC925005349AD /* MessageServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA88841A1BC925005349AD /* MessageServer.swift */; };
 		DBFA88891A1BCF77005349AD /* MessageServerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA88871A1BCF77005349AD /* MessageServerTests.swift */; };
-		DBFA888B1A1C9A56005349AD /* Live.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA888A1A1C9A56005349AD /* Live.swift */; };
-		DBFA888C1A1C9A56005349AD /* Live.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA888A1A1C9A56005349AD /* Live.swift */; };
-		DBFA888E1A1C9B14005349AD /* Community.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA888D1A1C9B14005349AD /* Community.swift */; };
-		DBFA888F1A1C9B14005349AD /* Community.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA888D1A1C9B14005349AD /* Community.swift */; };
+		DBFA888B1A1C9A56005349AD /* Stream.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA888A1A1C9A56005349AD /* Stream.swift */; };
+		DBFA888C1A1C9A56005349AD /* Stream.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA888A1A1C9A56005349AD /* Stream.swift */; };
 		DBFA88911A1CAE85005349AD /* community.html in Resources */ = {isa = PBXBuildFile; fileRef = DBFA88901A1CAE85005349AD /* community.html */; };
 /* End PBXBuildFile section */
 
@@ -102,6 +108,7 @@
 
 /* Begin PBXFileReference section */
 		DB080B841A17CA0100896228 /* CookieUtilityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CookieUtilityTests.swift; sourceTree = "<group>"; };
+		DB0ED6511A20B0A7007E9318 /* ChromeCookie.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChromeCookie.swift; sourceTree = "<group>"; };
 		DB0F0ECC1A16441D00F8BDC5 /* NicoUtilityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicoUtilityTests.swift; sourceTree = "<group>"; };
 		DB2AE0BE1A0EE2FD00B1CE4D /* Hakumai.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hakumai.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB2AE0C21A0EE2FD00B1CE4D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -126,6 +133,9 @@
 		DB2AE10D1A0F2BAB00B1CE4D /* FMDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FMDB.h; path = vendor/fmdb/src/fmdb/FMDB.h; sourceTree = "<group>"; };
 		DB2AE10E1A0F2BAB00B1CE4D /* FMResultSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FMResultSet.h; path = vendor/fmdb/src/fmdb/FMResultSet.h; sourceTree = "<group>"; };
 		DB2AE10F1A0F2BAB00B1CE4D /* FMResultSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FMResultSet.m; path = vendor/fmdb/src/fmdb/FMResultSet.m; sourceTree = "<group>"; };
+		DB52B0AC1A2102C700E78C6A /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		DB52B0B11A21226900E78C6A /* ChatResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatResult.swift; sourceTree = "<group>"; };
+		DB7F21AF1A210017008D17E0 /* Community.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Community.swift; sourceTree = "<group>"; };
 		DBA414C51A188A7400E0CAD3 /* RoomListener.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomListener.swift; sourceTree = "<group>"; };
 		DBA414C81A189D7D00E0CAD3 /* RoomListenerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomListenerTests.swift; sourceTree = "<group>"; };
 		DBA414CB1A1A16F300E0CAD3 /* CommonExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommonExtensions.swift; sourceTree = "<group>"; };
@@ -145,8 +155,7 @@
 		DBFA88811A1BC8C9005349AD /* Enum.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enum.swift; sourceTree = "<group>"; };
 		DBFA88841A1BC925005349AD /* MessageServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageServer.swift; sourceTree = "<group>"; };
 		DBFA88871A1BCF77005349AD /* MessageServerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageServerTests.swift; sourceTree = "<group>"; };
-		DBFA888A1A1C9A56005349AD /* Live.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Live.swift; sourceTree = "<group>"; };
-		DBFA888D1A1C9B14005349AD /* Community.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Community.swift; sourceTree = "<group>"; };
+		DBFA888A1A1C9A56005349AD /* Stream.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stream.swift; sourceTree = "<group>"; };
 		DBFA88901A1CAE85005349AD /* community.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = community.html; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -174,6 +183,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		DB0ED64E1A20B07E007E9318 /* Cookie */ = {
+			isa = PBXGroup;
+			children = (
+				DBAAA7311A0F43BB00981004 /* CookieUtility.swift */,
+				DB0ED6541A20B0AD007E9318 /* New Group */,
+			);
+			name = Cookie;
+			sourceTree = "<group>";
+		};
+		DB0ED6541A20B0AD007E9318 /* New Group */ = {
+			isa = PBXGroup;
+			children = (
+				DB0ED6511A20B0A7007E9318 /* ChromeCookie.swift */,
+			);
+			name = "New Group";
+			sourceTree = "<group>";
+		};
 		DB2AE0B51A0EE2FD00B1CE4D = {
 			isa = PBXGroup;
 			children = (
@@ -278,8 +304,8 @@
 		DBA414CA1A1A13FC00E0CAD3 /* NicoManager */ = {
 			isa = PBXGroup;
 			children = (
+				DB0ED64E1A20B07E007E9318 /* Cookie */,
 				DBFA887D1A1BC264005349AD /* Model */,
-				DBAAA7311A0F43BB00981004 /* CookieUtility.swift */,
 				DBAAA7501A0FDA4500981004 /* NicoUtility.swift */,
 				DBA414C51A188A7400E0CAD3 /* RoomListener.swift */,
 			);
@@ -356,11 +382,13 @@
 			isa = PBXGroup;
 			children = (
 				DBFA88811A1BC8C9005349AD /* Enum.swift */,
-				DBFA888A1A1C9A56005349AD /* Live.swift */,
-				DBFA888D1A1C9B14005349AD /* Community.swift */,
+				DBFA888A1A1C9A56005349AD /* Stream.swift */,
+				DB7F21AF1A210017008D17E0 /* Community.swift */,
 				DBFA88841A1BC925005349AD /* MessageServer.swift */,
+				DB52B0AC1A2102C700E78C6A /* User.swift */,
 				DBFA887E1A1BC7FF005349AD /* Thread.swift */,
 				DBFA887A1A1BC25A005349AD /* Chat.swift */,
+				DB52B0B11A21226900E78C6A /* ChatResult.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -506,23 +534,26 @@
 			files = (
 				DB2AE1101A0F2BAB00B1CE4D /* FMDatabase.m in Sources */,
 				DBFA887F1A1BC7FF005349AD /* Thread.swift in Sources */,
-				DBFA888E1A1C9B14005349AD /* Community.swift in Sources */,
+				DB52B0B21A21226900E78C6A /* ChatResult.swift in Sources */,
 				DB2AE0C61A0EE2FD00B1CE4D /* MainViewController.swift in Sources */,
 				DB2AE1181A0F2BAB00B1CE4D /* FMResultSet.m in Sources */,
 				DB2AE1141A0F2BAB00B1CE4D /* FMDatabasePool.m in Sources */,
 				DBA414C61A188A7400E0CAD3 /* RoomListener.swift in Sources */,
 				DBFA88851A1BC925005349AD /* MessageServer.swift in Sources */,
 				DBAAA7321A0F43BB00981004 /* CookieUtility.swift in Sources */,
+				DB0ED6521A20B0A7007E9318 /* ChromeCookie.swift in Sources */,
 				DBAAA7391A0F592300981004 /* SSKeychain.m in Sources */,
 				DBAAA73B1A0F592300981004 /* SSKeychainQuery.m in Sources */,
 				DB2AE0C41A0EE2FD00B1CE4D /* AppDelegate.swift in Sources */,
 				DBFA88821A1BC8C9005349AD /* Enum.swift in Sources */,
 				DBFA887B1A1BC25A005349AD /* Chat.swift in Sources */,
 				DB2AE1121A0F2BAB00B1CE4D /* FMDatabaseAdditions.m in Sources */,
+				DB7F21B01A210017008D17E0 /* Community.swift in Sources */,
 				DB2AE1161A0F2BAB00B1CE4D /* FMDatabaseQueue.m in Sources */,
 				DBA414CC1A1A16F300E0CAD3 /* CommonExtensions.swift in Sources */,
 				DBAAA7511A0FDA4500981004 /* NicoUtility.swift in Sources */,
-				DBFA888B1A1C9A56005349AD /* Live.swift in Sources */,
+				DBFA888B1A1C9A56005349AD /* Stream.swift in Sources */,
+				DB52B0AD1A2102C700E78C6A /* User.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -535,22 +566,25 @@
 				DBFA88861A1BC925005349AD /* MessageServer.swift in Sources */,
 				DBFA887C1A1BC25A005349AD /* Chat.swift in Sources */,
 				DBA414D21A1A176E00E0CAD3 /* CommonExtensionsTests.swift in Sources */,
-				DBFA888C1A1C9A56005349AD /* Live.swift in Sources */,
+				DB52B0AE1A2102C700E78C6A /* User.swift in Sources */,
+				DBFA888C1A1C9A56005349AD /* Stream.swift in Sources */,
 				DBAAA73C1A0F592300981004 /* SSKeychainQuery.m in Sources */,
 				DBAAA73A1A0F592300981004 /* SSKeychain.m in Sources */,
 				DB2AE1171A0F2BAB00B1CE4D /* FMDatabaseQueue.m in Sources */,
 				DB2AE0D71A0EE2FD00B1CE4D /* HakumaiTests.swift in Sources */,
 				DBE73ECA1A1A1B6A00A8BCA9 /* MainViewControllerTests.swift in Sources */,
+				DB7F21B11A210017008D17E0 /* Community.swift in Sources */,
 				DB0F0ECD1A16441D00F8BDC5 /* NicoUtilityTests.swift in Sources */,
+				DB52B0B31A21226900E78C6A /* ChatResult.swift in Sources */,
 				DBAAA7521A0FDA4500981004 /* NicoUtility.swift in Sources */,
 				DBFA88831A1BC8C9005349AD /* Enum.swift in Sources */,
 				DBFA88801A1BC7FF005349AD /* Thread.swift in Sources */,
-				DBFA888F1A1C9B14005349AD /* Community.swift in Sources */,
 				DB2AE1151A0F2BAB00B1CE4D /* FMDatabasePool.m in Sources */,
 				DBFA88891A1BCF77005349AD /* MessageServerTests.swift in Sources */,
 				DBA414C71A18915C00E0CAD3 /* RoomListener.swift in Sources */,
 				DBA414CD1A1A16F300E0CAD3 /* CommonExtensions.swift in Sources */,
 				DB2AE1111A0F2BAB00B1CE4D /* FMDatabase.m in Sources */,
+				DB0ED6531A20B0A7007E9318 /* ChromeCookie.swift in Sources */,
 				DB2AE1131A0F2BAB00B1CE4D /* FMDatabaseAdditions.m in Sources */,
 				DBE73ECD1A1A1CE500A8BCA9 /* MainViewController.swift in Sources */,
 				DBA414C91A189D7D00E0CAD3 /* RoomListenerTests.swift in Sources */,

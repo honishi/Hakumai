@@ -9,7 +9,7 @@
 import Foundation
 import XCGLogger
 
-let kCalculateActiveInterval: NSTimeInterval = 10
+let kCalculateActiveInterval: NSTimeInterval = 3
 
 var mainViewController: MainViewController?
 
@@ -18,7 +18,8 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     @IBOutlet weak var tableView: NSTableView!
     @IBOutlet weak var activeLabel: NSTextField!
     @IBOutlet weak var notificationLabel: NSTextField!
-
+    @IBOutlet weak var commentTextField: NSTextField!
+    
     let log = XCGLogger.defaultInstance()
 
     var chats: [Chat] = []
@@ -50,6 +51,37 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         }
     }
 
+    // MARK: - NSTableViewDataSource Functions
+    func numberOfRowsInTableView(tableView: NSTableView) -> Int {
+        return self.chats.count
+    }
+    
+    func tableView(tableView: NSTableView, objectValueForTableColumn tableColumn: NSTableColumn?, row: Int) -> AnyObject? {
+        var content: String?
+        
+        if tableColumn?.identifier == "RoomPositionColumn" {
+            content = self.chats[row].roomPosition?.shortLabel()
+        }
+        else if tableColumn?.identifier == "CommentColumn" {
+            content = self.chats[row].comment
+        }
+        else if tableColumn?.identifier == "UserIdColumn" {
+            content = self.chats[row].userId
+        }
+        else if tableColumn?.identifier == "PremiumColumn" {
+            content = self.chats[row].premium?.label()
+        }
+        else if tableColumn?.identifier == "MailColumn" {
+            content = self.chats[row].mail
+        }
+        
+        if content == nil {
+            content = ""
+        }
+        
+        return content
+    }
+    
     // MARK: - NicoUtilityDelegate Functions
     func nicoUtilityDidStartListening(nicoUtility: NicoUtility, roomPosition: RoomPosition) {
         log.info("opened \(roomPosition.label()).")
@@ -57,7 +89,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
 
     func nicoUtilityDidReceiveFirstChat(nicoUtility: NicoUtility, chat: Chat) {
         if let roomPositionLabel = chat.roomPosition?.label() {
-            self.notificationLabel.stringValue = "\(roomPositionLabel) opened."
+            self.notificationLabel.stringValue = "\(roomPositionLabel)"
         }
     }
 
@@ -79,37 +111,13 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         self.tableView.reloadData()
     }
 
-    // MARK: - NSTableViewDataSource Functions
-    func numberOfRowsInTableView(tableView: NSTableView) -> Int {
-        return self.chats.count
+    // MARK: - Comment TextField Action
+    @IBAction func comment(sender: AnyObject) {
+        NicoUtility.sharedInstance().comment(self.commentTextField.stringValue)
+        
+        self.commentTextField.stringValue = ""
     }
-
-    func tableView(tableView: NSTableView, objectValueForTableColumn tableColumn: NSTableColumn?, row: Int) -> AnyObject? {
-        var content: String?
-
-        if tableColumn?.identifier == "RoomPositionColumn" {
-            content = self.chats[row].roomPosition?.shortLabel()
-        }
-        else if tableColumn?.identifier == "CommentColumn" {
-            content = self.chats[row].comment
-        }
-        else if tableColumn?.identifier == "UserIdColumn" {
-            content = self.chats[row].userId
-        }
-        else if tableColumn?.identifier == "PremiumColumn" {
-            content = self.chats[row].premium?.label()
-        }
-        else if tableColumn?.identifier == "MailColumn" {
-            content = self.chats[row].mail
-        }
-
-        if content == nil {
-            content = ""
-        }
-
-        return content
-    }
-
+    
     // MARK: - Button Handlers
     @IBAction func connectLive(sender: AnyObject) {
         if let liveNumber = MainViewController.extractLiveNumber(self.liveTextField.stringValue) {
@@ -137,32 +145,26 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
 
         dispatch_async(backgroundQueue, {
-            var active = 0
-            // TODO: use dictionary instead of array
-            var userIds: Array<String> = []
+            var activeUsers = Dictionary<String, Bool>()
             let tenMinutesAgo = NSDate(timeIntervalSinceNow: (Double)(-10 * 60))
 
-            // TODO: not using reverse()
-            for chat in self.chats.reverse() {
+            for var i = self.chats.count; 0 < i ; i-- {
+                let chat = self.chats[i - 1]
+                
                 if chat.date == nil || chat.userId == nil {
                     continue
                 }
-
+                
                 // is "chat.date < tenMinutesAgo" ?
                 if chat.date!.compare(tenMinutesAgo) == .OrderedAscending {
                     break
                 }
-
-                if 0 < userIds.filter({$0 == chat.userId!}).count {
-                    continue
-                }
-                userIds.append(chat.userId!)
-
-                active++
+                
+                activeUsers[chat.userId!] = true
             }
 
             dispatch_async(dispatch_get_main_queue(), {
-                self.activeLabel.stringValue = "active: \(active)"
+                self.activeLabel.stringValue = "active: \(activeUsers.count)"
                 
                 self.calculatingActive = false
                 // self.log.debug("finished to calcurate active")
@@ -173,8 +175,6 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     // MARK: - Menu Handlers
     func focusLiveTextField() {
         self.liveTextField.becomeFirstResponder()
-        //self.liveTextField.resignFirstResponder()
-        //self.tableView.becomeFirstResponder()
     }
 
     // MARK: - Misc Utility

@@ -23,7 +23,7 @@ class CookieUtilityTests: XCTestCase {
     
     // MARK: cookie utility
     func testChromeCookie() {
-        let cookie = CookieUtility.chromeCookie()
+        let cookie = CookieUtility.cookie(CookieUtility.BrowserType.Chrome)
         XCTAssert(0 < cookie?.utf16Count, "")
     }
 }

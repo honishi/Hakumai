@@ -10,6 +10,7 @@ import Foundation
 
 class Chat {
     var roomPosition: RoomPosition?
+    var no: Int?
     var date: NSDate?
     var mail: String?
     var userId: String?

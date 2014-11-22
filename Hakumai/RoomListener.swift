@@ -25,6 +25,10 @@ class RoomListener : NSObject, NSStreamDelegate {
     var inputStream: NSInputStream!
     var outputStream: NSOutputStream!
     
+    var thread: Thread?
+    var startDate: NSDate?
+    var lastRes: Int = 0
+    
     let log = XCGLogger.defaultInstance()
     let fileLog = XCGLogger()
     
@@ -84,7 +88,8 @@ class RoomListener : NSObject, NSStreamDelegate {
         self.inputStream?.open()
         self.outputStream?.open()
         
-        self.sendOpenThreadText(server.thread)
+        let message = "<thread thread=\"\(server.thread)\" version=\"20061206\" res_form=\"-1\"/>"
+        self.sendMessage(message)
         
         loop.run()
     }
@@ -96,11 +101,29 @@ class RoomListener : NSObject, NSStreamDelegate {
         self.outputStream?.close()
     }
     
-    // MARK: -
-    func sendOpenThreadText(thread: Int) {
-        let buffer = "<thread thread=\"\(thread)\" version=\"20061206\" res_form=\"-1\"/>\0"
-        let data: NSData = buffer.dataUsingEncoding(NSUTF8StringEncoding)!
+    func comment(stream: Stream, user: User, postKey: String, comment: String) {
+        if self.thread == nil {
+            log.debug("could not get thread information")
+            return
+        }
+        
+        let thread = self.thread!.thread!
+        let ticket = self.thread!.ticket!
+        let originTime = self.thread!.serverTime! - stream.baseTime!
+        let elapsedTime = Int(NSDate().timeIntervalSince1970) - Int(self.startDate!.timeIntervalSince1970)
+        let vpos = (originTime + elapsedTime) * 100
+        let userId = user.userId!
+        
+        let message = "<chat thread=\"\(thread)\" ticket=\"\(ticket)\" vpos=\"\(vpos)\" postkey=\"\(postKey)\" mail=\"184\" user_id=\"\(userId)\" premium=\"1\">\(comment)</chat>"
+        
+        self.sendMessage(message)
+    }
+    
+    func sendMessage(message: String) {
+        let data: NSData = (message + "\0").dataUsingEncoding(NSUTF8StringEncoding)!
         self.outputStream?.write(UnsafePointer<UInt8>(data.bytes), maxLength: data.length)
+        
+        log.debug(message)
     }
     
     // MARK: NSStreamDelegate Functions
@@ -114,16 +137,17 @@ class RoomListener : NSObject, NSStreamDelegate {
             
         case NSStreamEvent.HasBytesAvailable:
             // fileLog.debug("*** stream event has bytes available");
-            
+
             // http://stackoverflow.com/q/26360962
             var readByte = [UInt8](count: 10240, repeatedValue: 0)
             
+            var actualRead = 0
             while self.inputStream.hasBytesAvailable {
-                self.inputStream.read(&readByte, maxLength: 10240)
+                actualRead = self.inputStream.read(&readByte, maxLength: 10240)
                 //fileLog.debug(readByte)
             }
             
-            if let readString = NSString(bytes: &readByte, length: readByte.count, encoding: NSUTF8StringEncoding) {
+            if let readString = NSString(bytes: &readByte, length: actualRead, encoding: NSUTF8StringEncoding) {
                 // fileLog.debug(readString?)
                 self.parseInputStream(readString)
             }
@@ -162,33 +186,56 @@ class RoomListener : NSObject, NSStreamDelegate {
 
             let threads = self.parseThreadElement(rootElement)
             for thread in threads {
+                self.thread = thread
+                self.lastRes = thread.lastRes!
+                self.startDate = NSDate()
                 delegate.roomListenerDidStartListening(self)
             }
         
             let chats = self.parseChatElement(rootElement)
             for chat in chats {
+                if let chatNo = chat.no {
+                    lastRes = chatNo
+                }
+                
                 delegate.roomListenerDidReceiveChat(self, chat: chat)
+            }
+            
+            let chatResults = self.parseChatResultElement(rootElement)
+            for chatResult in chatResults {
+                log.debug("\(chatResult.description)")
             }
         }
     }
     
     func parseThreadElement(rootElement: NSXMLElement) -> [Thread] {
-        var threadArray: Array<Thread> = []
+        var threads: Array<Thread> = []
         let threadElements = rootElement.elementsForName("thread")
         
         for threadElement in threadElements {
             let thread = Thread()
             
             thread.resultCode = threadElement.attributeForName("resultcode")?.stringValue?.toInt()
+            thread.thread = threadElement.attributeForName("thread")?.stringValue?.toInt()
             
-            threadArray.append(thread)
+            if let lastRes = threadElement.attributeForName("last_res")?.stringValue?.toInt() {
+                thread.lastRes = lastRes
+            }
+            else {
+                thread.lastRes = 0
+            }
+            
+            thread.ticket = threadElement.attributeForName("ticket")?.stringValue
+            thread.serverTime = threadElement.attributeForName("server_time")?.stringValue?.toInt()
+            
+            threads.append(thread)
         }
         
-        return threadArray
+        return threads
     }
     
     func parseChatElement(rootElement: NSXMLElement) -> [Chat] {
-        var chatArray: Array<Chat> = []
+        var chats: Array<Chat> = []
         let chatElements = rootElement.elementsForName("chat")
         
         for chatElement in chatElements {
@@ -208,14 +255,32 @@ class RoomListener : NSObject, NSStreamDelegate {
                 chat.premium = Premium(rawValue: 0)
             }
             
+            chat.no = chatElement.attributeForName("no")?.stringValue?.toInt()
             chat.mail = chatElement.attributeForName("mail")?.stringValue
             chat.userId = chatElement.attributeForName("user_id")?.stringValue
             chat.score = 123
             chat.comment = chatElement.stringValue
             
-            chatArray.append(chat)
+            chats.append(chat)
         }
         
-        return chatArray
+        return chats
+    }
+    
+    func parseChatResultElement(rootElement: NSXMLElement) -> [ChatResult] {
+        var chatResults: Array<ChatResult> = []
+        let chatResultElements = rootElement.elementsForName("chat_result")
+        
+        for chatResultElement in chatResultElements {
+            let chatResult = ChatResult()
+            
+            if let status = chatResultElement.attributeForName("status")?.stringValue?.toInt() {
+                chatResult.status = ChatResult.Status(rawValue: status)
+            }
+            
+            chatResults.append(chatResult)
+        }
+        
+        return chatResults
     }
 }
