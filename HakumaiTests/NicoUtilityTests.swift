@@ -25,16 +25,16 @@ class NicoUtilityTests: XCTestCase {
     func testRoomPosition() {
         var roomPosition: RoomPosition?
         
-        roomPosition = NicoUtility.getInstance().roomPositionByRoomLabel("x")
+        roomPosition = NicoUtility.sharedInstance().roomPositionByRoomLabel("x")
         XCTAssert(roomPosition == nil, "")
         
-        roomPosition = NicoUtility.getInstance().roomPositionByRoomLabel("co1")
+        roomPosition = NicoUtility.sharedInstance().roomPositionByRoomLabel("co1")
         XCTAssert(roomPosition == .Arena, "")
         
-        roomPosition = NicoUtility.getInstance().roomPositionByRoomLabel("立ち見A列")
+        roomPosition = NicoUtility.sharedInstance().roomPositionByRoomLabel("立ち見A列")
         XCTAssert(roomPosition == .StandA, "")
         
-        roomPosition = NicoUtility.getInstance().roomPositionByRoomLabel("立ち見C列")
+        roomPosition = NicoUtility.sharedInstance().roomPositionByRoomLabel("立ち見C列")
         XCTAssert(roomPosition == .StandC, "")
     }
     
@@ -45,7 +45,7 @@ class NicoUtilityTests: XCTestCase {
         
         server = MessageServer(roomPosition: .StandA, address: "msg102.live.nicovideo.jp", port: 2810, thread: 100)
         expected = MessageServer(roomPosition: .StandC, address: "msg102.live.nicovideo.jp", port: 2812, thread: 102)
-        derived = NicoUtility.getInstance().deriveMessageServer(server, distance: 2)
+        derived = NicoUtility.sharedInstance().deriveMessageServer(server, distance: 2)
         XCTAssert(derived == expected, "")
         
         // TODO: more test cases should be implemented here
@@ -68,16 +68,16 @@ class NicoUtilityTests: XCTestCase {
         println("expected:\(expected)")
         
         server = server0
-        derived = NicoUtility.getInstance().deriveMessageServers(server)
+        derived = NicoUtility.sharedInstance().deriveMessageServers(server)
         println("derived:\(derived)")
         XCTAssert(derived == expected, "")
         
         server = server1
-        derived = NicoUtility.getInstance().deriveMessageServers(server)
+        derived = NicoUtility.sharedInstance().deriveMessageServers(server)
         XCTAssert(derived == expected, "")
         
         server = server3
-        derived = NicoUtility.getInstance().deriveMessageServers(server)
+        derived = NicoUtility.sharedInstance().deriveMessageServers(server)
         XCTAssert(derived == expected, "")
     }
     
@@ -85,7 +85,7 @@ class NicoUtilityTests: XCTestCase {
     func testCheckCommunityLevel() {
         let data = self.dataForResource("community.html")
         
-        let level = NicoUtility.getInstance().extractCommunityLevel(data)
+        let level = NicoUtility.sharedInstance().extractCommunityLevel(data)
         XCTAssert(level == 109, "")
     }
     
@@ -94,15 +94,15 @@ class NicoUtilityTests: XCTestCase {
         var canOpen: Bool?
         
         roomPosition = RoomPosition.StandB
-        canOpen = NicoUtility.getInstance().canOpenRoomPosition(roomPosition, communityLevel: 65)
+        canOpen = NicoUtility.sharedInstance().canOpenRoomPosition(roomPosition, communityLevel: 65)
         XCTAssert(canOpen == false, "")
-        canOpen = NicoUtility.getInstance().canOpenRoomPosition(roomPosition, communityLevel: 66)
+        canOpen = NicoUtility.sharedInstance().canOpenRoomPosition(roomPosition, communityLevel: 66)
         XCTAssert(canOpen == true, "")
         
         roomPosition = RoomPosition.StandD
-        canOpen = NicoUtility.getInstance().canOpenRoomPosition(roomPosition, communityLevel: 104)
+        canOpen = NicoUtility.sharedInstance().canOpenRoomPosition(roomPosition, communityLevel: 104)
         XCTAssert(canOpen == false, "")
-        canOpen = NicoUtility.getInstance().canOpenRoomPosition(roomPosition, communityLevel: 105)
+        canOpen = NicoUtility.sharedInstance().canOpenRoomPosition(roomPosition, communityLevel: 105)
         XCTAssert(canOpen == true, "")
     }
     

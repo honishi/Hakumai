@@ -76,7 +76,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         super.init()
     }
     
-    class func getInstance() -> NicoUtility {
+    class func sharedInstance() -> NicoUtility {
         return nicoutility
     }
 

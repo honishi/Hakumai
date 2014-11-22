@@ -24,5 +24,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func initializeLog() {
         log.setup(logLevel: .Debug, showLogLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: nil)
     }
+    
+    // MARK: - Menu Handlers
+    @IBAction func openUrl(sender: AnyObject) {
+        MainViewController.instance()?.focusLiveTextField()
+    }
 }
 

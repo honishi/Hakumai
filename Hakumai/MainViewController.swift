@@ -11,19 +11,32 @@ import XCGLogger
 
 let kCalculateActiveInterval: NSTimeInterval = 10
 
+var mainViewController: MainViewController?
+
 class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewDataSource, NSTableViewDelegate {
     @IBOutlet weak var liveTextField: NSTextField!
     @IBOutlet weak var tableView: NSTableView!
     @IBOutlet weak var activeLabel: NSTextField!
     @IBOutlet weak var notificationLabel: NSTextField!
-    
+
     let log = XCGLogger.defaultInstance()
-    
+
     var chats: [Chat] = []
-    
+
     var activeTimer: NSTimer?
     var calculatingActive: Bool = false
-    
+
+    // MARK: - Object Lifecycle
+    override func awakeFromNib() {
+        super.awakeFromNib()
+
+        mainViewController = self
+    }
+
+    class func instance() -> MainViewController? {
+        return mainViewController
+    }
+
     // MARK: - UIViewController Functions
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,7 +49,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         // Update the view, if already loaded.
         }
     }
-    
+
     // MARK: - NicoUtilityDelegate Functions
     func nicoUtilityDidStartListening(nicoUtility: NicoUtility, roomPosition: RoomPosition) {
         log.info("opened \(roomPosition.label()).")
@@ -50,30 +63,30 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
 
     func nicoUtilityDidReceiveChat(nicoUtility: NicoUtility, chat: Chat) {
         // log.debug("\(chat.mail),\(chat.comment)")
-        
+
         if chat.comment?.hasPrefix("/hb ifseetno ") == true {
             return
         }
-        
+
         self.chats.append(chat)
-        
+
         self.tableView.reloadData()
         self.tableView.scrollRowToVisible(self.chats.count - 1)
     }
-    
+
     func nicoUtilityDidFinishListening(nicoUtility: NicoUtility) {
         self.chats.removeAll(keepCapacity: false)
         self.tableView.reloadData()
     }
-    
+
     // MARK: - NSTableViewDataSource Functions
     func numberOfRowsInTableView(tableView: NSTableView) -> Int {
         return self.chats.count
     }
-    
+
     func tableView(tableView: NSTableView, objectValueForTableColumn tableColumn: NSTableColumn?, row: Int) -> AnyObject? {
         var content: String?
-        
+
         if tableColumn?.identifier == "RoomPositionColumn" {
             content = self.chats[row].roomPosition?.shortLabel()
         }
@@ -89,28 +102,20 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         else if tableColumn?.identifier == "MailColumn" {
             content = self.chats[row].mail
         }
-        
+
         if content == nil {
             content = ""
         }
-        
+
         return content
     }
 
-    // MARK : - NSTableViewDelegate Functions
-    // func tableView(tableView: NSTableView, viewForTableColumn tableColumn: NSTableColumn?, row: Int) -> NSView? {
-    // }
-    
     // MARK: - Button Handlers
     @IBAction func connectLive(sender: AnyObject) {
         if let liveNumber = MainViewController.extractLiveNumber(self.liveTextField.stringValue) {
-            NicoUtility.getInstance().delegate = self
-            NicoUtility.getInstance().connect(liveNumber)
+            NicoUtility.sharedInstance().delegate = self
+            NicoUtility.sharedInstance().connect(liveNumber)
         }
-    }
-
-    @IBAction func addRoom(sender: AnyObject) {
-        NicoUtility.getInstance().addMessageServer()
     }
 
     // MARK: - Timer Handlers
@@ -118,42 +123,44 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         // TODO: should be atomic?
         // objc_sync_enter(self)
         // objc_sync_exit(self)
-        
+
         if self.calculatingActive {
             log.debug("skip calcurating active")
             return
         }
         self.calculatingActive = true
-        
+
         // log.debug("calcurating active")
         
         // TODO: check duplicate executes
         let qualityOfServiceClass = Int(QOS_CLASS_BACKGROUND.value)
         let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-        
+
         dispatch_async(backgroundQueue, {
             var active = 0
+            // TODO: use dictionary instead of array
             var userIds: Array<String> = []
             let tenMinutesAgo = NSDate(timeIntervalSinceNow: (Double)(-10 * 60))
-            
+
+            // TODO: not using reverse()
             for chat in self.chats.reverse() {
                 if chat.date == nil || chat.userId == nil {
                     continue
                 }
-                
+
                 // is "chat.date < tenMinutesAgo" ?
                 if chat.date!.compare(tenMinutesAgo) == .OrderedAscending {
                     break
                 }
-                
+
                 if 0 < userIds.filter({$0 == chat.userId!}).count {
                     continue
                 }
                 userIds.append(chat.userId!)
-                
+
                 active++
             }
-            
+
             dispatch_async(dispatch_get_main_queue(), {
                 self.activeLabel.stringValue = "active: \(active)"
                 
@@ -162,30 +169,37 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
             })
         })
     }
-    
+
+    // MARK: - Menu Handlers
+    func focusLiveTextField() {
+        self.liveTextField.becomeFirstResponder()
+        //self.liveTextField.resignFirstResponder()
+        //self.tableView.becomeFirstResponder()
+    }
+
     // MARK: - Misc Utility
     class func extractLiveNumber(url: String) -> Int? {
         let liveNumberPattern = "\\d{9,}"
         var pattern: String
-        
+
         pattern = "http:\\/\\/live\\.nicovideo\\.jp\\/watch\\/lv(" + liveNumberPattern + ").*"
-        
+
         if let extracted = url.extractRegexpPattern(pattern) {
             return extracted.toInt()
         }
-        
+
         pattern = "lv(" + liveNumberPattern + ")"
-        
+
         if let extracted = url.extractRegexpPattern(pattern) {
             return extracted.toInt()
         }
-        
+
         pattern = "(" + liveNumberPattern + ")"
-        
+
         if let extracted = url.extractRegexpPattern(pattern) {
             return extracted.toInt()
         }
-        
+
         return nil
     }
 }
