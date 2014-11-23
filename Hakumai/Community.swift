@@ -11,6 +11,7 @@ import Foundation
 class Community {
     var community: String?
     var level: Int?
+    var thumbnailUrl: NSURL?
 
     init() {
         // nop

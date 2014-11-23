@@ -63,8 +63,8 @@
 		DBFA88851A1BC925005349AD /* MessageServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA88841A1BC925005349AD /* MessageServer.swift */; };
 		DBFA88861A1BC925005349AD /* MessageServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA88841A1BC925005349AD /* MessageServer.swift */; };
 		DBFA88891A1BCF77005349AD /* MessageServerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA88871A1BCF77005349AD /* MessageServerTests.swift */; };
-		DBFA888B1A1C9A56005349AD /* Stream.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA888A1A1C9A56005349AD /* Stream.swift */; };
-		DBFA888C1A1C9A56005349AD /* Stream.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA888A1A1C9A56005349AD /* Stream.swift */; };
+		DBFA888B1A1C9A56005349AD /* Live.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA888A1A1C9A56005349AD /* Live.swift */; };
+		DBFA888C1A1C9A56005349AD /* Live.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA888A1A1C9A56005349AD /* Live.swift */; };
 		DBFA88911A1CAE85005349AD /* community.html in Resources */ = {isa = PBXBuildFile; fileRef = DBFA88901A1CAE85005349AD /* community.html */; };
 /* End PBXBuildFile section */
 
@@ -155,7 +155,7 @@
 		DBFA88811A1BC8C9005349AD /* Enum.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enum.swift; sourceTree = "<group>"; };
 		DBFA88841A1BC925005349AD /* MessageServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageServer.swift; sourceTree = "<group>"; };
 		DBFA88871A1BCF77005349AD /* MessageServerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageServerTests.swift; sourceTree = "<group>"; };
-		DBFA888A1A1C9A56005349AD /* Stream.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stream.swift; sourceTree = "<group>"; };
+		DBFA888A1A1C9A56005349AD /* Live.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Live.swift; sourceTree = "<group>"; };
 		DBFA88901A1CAE85005349AD /* community.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = community.html; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -382,7 +382,7 @@
 			isa = PBXGroup;
 			children = (
 				DBFA88811A1BC8C9005349AD /* Enum.swift */,
-				DBFA888A1A1C9A56005349AD /* Stream.swift */,
+				DBFA888A1A1C9A56005349AD /* Live.swift */,
 				DB7F21AF1A210017008D17E0 /* Community.swift */,
 				DBFA88841A1BC925005349AD /* MessageServer.swift */,
 				DB52B0AC1A2102C700E78C6A /* User.swift */,
@@ -552,7 +552,7 @@
 				DB2AE1161A0F2BAB00B1CE4D /* FMDatabaseQueue.m in Sources */,
 				DBA414CC1A1A16F300E0CAD3 /* CommonExtensions.swift in Sources */,
 				DBAAA7511A0FDA4500981004 /* NicoUtility.swift in Sources */,
-				DBFA888B1A1C9A56005349AD /* Stream.swift in Sources */,
+				DBFA888B1A1C9A56005349AD /* Live.swift in Sources */,
 				DB52B0AD1A2102C700E78C6A /* User.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -567,7 +567,7 @@
 				DBFA887C1A1BC25A005349AD /* Chat.swift in Sources */,
 				DBA414D21A1A176E00E0CAD3 /* CommonExtensionsTests.swift in Sources */,
 				DB52B0AE1A2102C700E78C6A /* User.swift in Sources */,
-				DBFA888C1A1C9A56005349AD /* Stream.swift in Sources */,
+				DBFA888C1A1C9A56005349AD /* Live.swift in Sources */,
 				DBAAA73C1A0F592300981004 /* SSKeychainQuery.m in Sources */,
 				DBAAA73A1A0F592300981004 /* SSKeychain.m in Sources */,
 				DB2AE1171A0F2BAB00B1CE4D /* FMDatabaseQueue.m in Sources */,

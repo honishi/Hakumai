@@ -15,7 +15,14 @@ var mainViewController: MainViewController?
 
 class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewDataSource, NSTableViewDelegate {
     @IBOutlet weak var liveTextField: NSTextField!
+    
+    @IBOutlet weak var communityImageView: NSImageView!
+    @IBOutlet weak var liveTitleLabel: NSTextField!
+    @IBOutlet weak var roomPositionLabel: NSTextField!
+    
+    @IBOutlet weak var scrollView: NSScrollView!
     @IBOutlet weak var tableView: NSTableView!
+    
     @IBOutlet weak var activeLabel: NSTextField!
     @IBOutlet weak var notificationLabel: NSTextField!
     @IBOutlet weak var commentTextField: NSTextField!
@@ -83,34 +90,84 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     }
     
     // MARK: - NicoUtilityDelegate Functions
+    func nicoUtilityDidExtractLive(nicoUtility: NicoUtility, live: Live) {
+        dispatch_async(dispatch_get_main_queue(), {
+            self.liveTitleLabel.stringValue = live.title!
+        })
+        
+        self.loadThumbnail()
+    }
+
     func nicoUtilityDidStartListening(nicoUtility: NicoUtility, roomPosition: RoomPosition) {
         log.info("opened \(roomPosition.label()).")
+        
+        dispatch_async(dispatch_get_main_queue(), {
+            // nop
+        })
     }
 
     func nicoUtilityDidReceiveFirstChat(nicoUtility: NicoUtility, chat: Chat) {
-        if let roomPositionLabel = chat.roomPosition?.label() {
-            self.notificationLabel.stringValue = "\(roomPositionLabel)"
-        }
+        dispatch_async(dispatch_get_main_queue(), {
+            if let roomPositionLabel = chat.roomPosition?.label() {
+                self.notificationLabel.stringValue = "\(roomPositionLabel)"
+            }
+        })
     }
 
     func nicoUtilityDidReceiveChat(nicoUtility: NicoUtility, chat: Chat) {
         // log.debug("\(chat.mail),\(chat.comment)")
 
-        if chat.comment?.hasPrefix("/hb ifseetno ") == true {
-            return
-        }
-
-        self.chats.append(chat)
-
-        self.tableView.reloadData()
-        self.tableView.scrollRowToVisible(self.chats.count - 1)
+        dispatch_async(dispatch_get_main_queue(), {
+            if chat.comment?.hasPrefix("/hb ifseetno ") == true {
+                return
+            }
+            
+            self.chats.append(chat)
+            
+            let shouldScroll = self.shouldTableViewScrollToBottom()
+            
+            self.tableView.reloadData()
+            
+            if shouldScroll {
+                self.tableView.scrollRowToVisible(self.chats.count - 1)
+            }
+            
+            self.scrollView.flashScrollers()
+        })
     }
 
+    func shouldTableViewScrollToBottom() -> Bool {
+        let viewRect = self.scrollView.contentView.documentRect
+        let visibleRect = self.scrollView.contentView.documentVisibleRect
+        // log.debug("\(viewRect)-\(visibleRect)")
+        
+        let bottomY = viewRect.size.height
+        let offsetBottomY = visibleRect.origin.y + visibleRect.size.height
+        let allowance: CGFloat = 10
+        
+        return (bottomY <= (offsetBottomY + allowance))
+    }
+    
     func nicoUtilityDidFinishListening(nicoUtility: NicoUtility) {
-        self.chats.removeAll(keepCapacity: false)
-        self.tableView.reloadData()
+        dispatch_async(dispatch_get_main_queue(), {
+            self.chats.removeAll(keepCapacity: false)
+            self.tableView.reloadData()
+        })
     }
 
+    // MARK: - Live Info Loader
+    func loadThumbnail() {
+        NicoUtility.sharedInstance().loadThumbnail { (imageData) -> (Void) in
+            dispatch_async(dispatch_get_main_queue(), {
+                if imageData == nil {
+                    return
+                }
+                
+                self.communityImageView.image = NSImage(data: imageData!)
+            })
+        }
+    }
+    
     // MARK: - Comment TextField Action
     @IBAction func comment(sender: AnyObject) {
         NicoUtility.sharedInstance().comment(self.commentTextField.stringValue)
@@ -148,8 +205,12 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
             var activeUsers = Dictionary<String, Bool>()
             let tenMinutesAgo = NSDate(timeIntervalSinceNow: (Double)(-10 * 60))
 
-            for var i = self.chats.count; 0 < i ; i-- {
-                let chat = self.chats[i - 1]
+            // to avoid weird exc_bad_instruction(fatal error: Array index out of range) when 
+            // accessing self.chats[i - 1] in for-loop, copy self.chats first
+            let copiedChats = self.chats
+            
+            for var i = copiedChats.count; 0 < i ; i-- {
+                let chat = copiedChats[i - 1]
                 
                 if chat.date == nil || chat.userId == nil {
                     continue
@@ -175,6 +236,10 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     // MARK: - Menu Handlers
     func focusLiveTextField() {
         self.liveTextField.becomeFirstResponder()
+    }
+    
+    func focusCommentTextField() {
+        self.commentTextField.becomeFirstResponder()
     }
 
     // MARK: - Misc Utility

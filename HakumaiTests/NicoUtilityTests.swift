@@ -82,11 +82,13 @@ class NicoUtilityTests: XCTestCase {
     }
     
     // MARK: - community
-    func testCheckCommunityLevel() {
+    func testLoadCommunity() {
         let data = self.dataForResource("community.html")
+        var community = Community()
         
-        let level = NicoUtility.sharedInstance().extractCommunityLevel(data)
-        XCTAssert(level == 109, "")
+        NicoUtility.sharedInstance().extractCommunity(data, community: community)
+        XCTAssert(community.level == 109, "")
+        XCTAssert(community.thumbnailUrl!.absoluteString == "http://icon.nimg.jp/community/135/co1354854.jpg?1412118337", "")
     }
     
     func testCanOpenRoomPosition() {

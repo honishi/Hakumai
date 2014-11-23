@@ -101,7 +101,7 @@ class RoomListener : NSObject, NSStreamDelegate {
         self.outputStream?.close()
     }
     
-    func comment(stream: Stream, user: User, postKey: String, comment: String) {
+    func comment(live: Live, user: User, postKey: String, comment: String) {
         if self.thread == nil {
             log.debug("could not get thread information")
             return
@@ -109,7 +109,7 @@ class RoomListener : NSObject, NSStreamDelegate {
         
         let thread = self.thread!.thread!
         let ticket = self.thread!.ticket!
-        let originTime = self.thread!.serverTime! - stream.baseTime!
+        let originTime = self.thread!.serverTime! - live.baseTime!
         let elapsedTime = Int(NSDate().timeIntervalSince1970) - Int(self.startDate!.timeIntervalSince1970)
         let vpos = (originTime + elapsedTime) * 100
         let userId = user.userId!

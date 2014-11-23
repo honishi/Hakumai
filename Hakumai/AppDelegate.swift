@@ -29,5 +29,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @IBAction func openUrl(sender: AnyObject) {
         MainViewController.instance()?.focusLiveTextField()
     }
+    
+    @IBAction func newComment(sender: AnyObject) {
+        MainViewController.instance()?.focusCommentTextField()
+    }
 }
 

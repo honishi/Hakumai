@@ -1,5 +1,5 @@
 //
-//  Stream.swift
+//  Live.swift
 //  Hakumai
 //
 //  Created by Hiroyuki Onishi on 11/19/14.
@@ -8,7 +8,8 @@
 
 import Foundation
 
-class Stream {
+class Live {
+    var title: String?
     var community: Community = Community()
     var baseTime: Int?
     
