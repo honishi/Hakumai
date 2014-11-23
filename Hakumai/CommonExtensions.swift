@@ -38,4 +38,12 @@ extension String {
         
         return substring
     }
+    
+    func stringByRemovingPattern(pattern: String) -> String {
+        let regexp = NSRegularExpression(pattern: pattern, options: nil, error: nil)!
+        //     func stringByReplacingMatchesInString(string: String, options: NSMatchingOptions, range: NSRange, withTemplate templ: String) -> String
+        let removed = regexp.stringByReplacingMatchesInString(self, options: nil, range: NSMakeRange(0, self.utf16Count), withTemplate: "")
+        
+        return removed
+    }
 }

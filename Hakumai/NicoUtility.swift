@@ -14,7 +14,7 @@ import XCGLogger
 // note these functions are called in background thread, not main thread.
 // so use explicit main thread for updating ui in these callbacks.
 protocol NicoUtilityProtocol {
-    func nicoUtilityDidExtractLive(nicoUtility: NicoUtility, live: Live)
+    func nicoUtilityDidPrepareLive(nicoUtility: NicoUtility, user: User, live: Live)
     func nicoUtilityDidStartListening(nicoUtility: NicoUtility, roomPosition: RoomPosition)
     func nicoUtilityDidReceiveFirstChat(nicoUtility: NicoUtility, chat: Chat)
     func nicoUtilityDidReceiveChat(nicoUtility: NicoUtility, chat: Chat)
@@ -112,8 +112,8 @@ class NicoUtility : NSObject, RoomListenerDelegate {
                     return
                 }
                 
-                if self.delegate != nil && self.live != nil {
-                    self.delegate!.nicoUtilityDidExtractLive(self, live: self.live!)
+                if self.delegate != nil && self.user != nil && self.live != nil {
+                    self.delegate!.nicoUtilityDidPrepareLive(self, user: self.user!, live: self.live!)
                 }
                 
                 self.openMessageServers(server!)
@@ -236,7 +236,11 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             
             let live = self.extractLive(data)
             let user = self.extractUser(data)
-            let messageServer = self.extractMessageServer(data)
+            
+            var messageServer: MessageServer?
+            if user != nil {
+                messageServer = self.extractMessageServer(data, user: user!)
+            }
             
             if live == nil || user == nil || messageServer == nil {
                 log.error("error in extracting getplayerstatus response")
@@ -324,9 +328,14 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             return
         }
         
-        let xpathCommunityLevel = "//*[@id=\"cbox_profile\"]/table/tr/td[1]/table/tr[1]/td[2]/strong[1]"
-        if let communityLevel = self.stringValueForXPathNode(rootElement!, xpath: xpathCommunityLevel) {
-            community.level = communityLevel.toInt()
+        let xpathTitle = "//*[@id=\"community_name\"]"
+        if let title = self.stringValueForXPathNode(rootElement!, xpath: xpathTitle) {
+            community.title = title.stringByRemovingPattern("\n")
+        }
+        
+        let xpathLevel = "//*[@id=\"cbox_profile\"]/table/tr/td[1]/table/tr[1]/td[2]/strong[1]"
+        if let level = self.stringValueForXPathNode(rootElement!, xpath: xpathLevel) {
+            community.level = level.toInt()
         }
         
          let xpathThumbnailUrl = "//*[@id=\"cbox_profile\"]/table/tr/td[2]/p/img/@src"
@@ -348,7 +357,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     // MARK: - Message Server Extractor
-    private func extractMessageServer (xmlData: NSData) -> MessageServer? {
+    private func extractMessageServer (xmlData: NSData, user: User) -> MessageServer? {
         var err: NSError?
         
         let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &err)
@@ -366,13 +375,11 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             return nil
         }
 
-        let roomLabel = (rootElement?.nodesForXPath("/getplayerstatus/user/room_label", error: &err)?[0] as NSXMLNode).stringValue
-        
-        if roomLabel == nil {
+        if user.roomLabel == nil {
             return nil
         }
         
-        let roomPosition = self.roomPositionByRoomLabel(roomLabel!)
+        let roomPosition = self.roomPositionByRoomLabel(user.roomLabel!)
         
         if roomPosition == nil {
             return nil
@@ -484,6 +491,8 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         
         user.userId = (rootElement?.nodesForXPath("/getplayerstatus/user/user_id", error: &err)?[0] as NSXMLNode).stringValue?.toInt()
         user.nickname = (rootElement?.nodesForXPath("/getplayerstatus/user/nickname", error: &err)?[0] as NSXMLNode).stringValue
+        user.roomLabel = (rootElement?.nodesForXPath("/getplayerstatus/user/room_label", error: &err)?[0] as NSXMLNode).stringValue
+        user.seatNo = (rootElement?.nodesForXPath("/getplayerstatus/user/room_seetno", error: &err)?[0] as NSXMLNode).stringValue?.toInt()
         
         return user
     }

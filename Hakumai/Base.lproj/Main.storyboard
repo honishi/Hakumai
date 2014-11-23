@@ -697,8 +697,8 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gZN-es-bFO">
-                                <rect key="frame" x="10" y="371" width="392" height="22"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" title="http://live.nicovideo.jp/watch/lv201137840" placeholderString="live url, live#" drawsBackground="YES" id="iDS-0h-Uje">
+                                <rect key="frame" x="10" y="371" width="460" height="22"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" placeholderString="⌘L (live url, live#)" drawsBackground="YES" usesSingleLineMode="YES" id="iDS-0h-Uje">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -707,19 +707,6 @@
                                     <action selector="connectLive:" target="XfG-lQ-9wD" id="wHs-05-aZb"/>
                                 </connections>
                             </textField>
-                            <button verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kGO-iP-d6j">
-                                <rect key="frame" x="410" y="369" width="60" height="25"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="60" id="Ky4-np-oXK"/>
-                                </constraints>
-                                <buttonCell key="cell" type="roundTextured" title="接続" bezelStyle="texturedRounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="hWg-Cx-jGX">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="connectLive:" target="XfG-lQ-9wD" id="FLc-vA-kGL"/>
-                                </connections>
-                            </button>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="09h-Eb-cuW">
                                 <rect key="frame" x="10" y="6" width="80" height="17"/>
                                 <constraints>
@@ -732,19 +719,19 @@
                                 </textFieldCell>
                             </textField>
                             <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3lG-BL-Thc">
-                                <rect key="frame" x="10" y="56" width="460" height="241"/>
+                                <rect key="frame" x="10" y="56" width="460" height="234"/>
                                 <clipView key="contentView" misplaced="YES" id="2u9-qQ-bep">
                                     <rect key="frame" x="1" y="0.0" width="238" height="134"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="cl3-1e-Mq0" id="21S-OF-mg3">
+                                        <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="none" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="cl3-1e-Mq0" id="21S-OF-mg3">
                                             <rect key="frame" x="0.0" y="0.0" width="635" height="19"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                             <tableColumns>
-                                                <tableColumn identifier="RoomPositionColumn" width="40" minWidth="10" maxWidth="3.4028234663852886e+38" id="PtZ-YS-lF5">
+                                                <tableColumn identifier="RoomPositionColumn" width="55" minWidth="55" maxWidth="3.4028234663852886e+38" id="PtZ-YS-lF5">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Room">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -831,9 +818,9 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableHeaderView>
                             </scrollView>
-                            <textField verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pml-Sh-s7e">
-                                <rect key="frame" x="82" y="26" width="320" height="22"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="39S-6e-1RP">
+                            <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="pml-Sh-s7e">
+                                <rect key="frame" x="82" y="26" width="388" height="22"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" placeholderString="⌘N (enter to comment)" drawsBackground="YES" id="39S-6e-1RP">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -854,24 +841,32 @@
                                 </textFieldCell>
                             </textField>
                             <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="NQm-lE-rVr">
-                                <rect key="frame" x="10" y="312" width="48" height="48"/>
+                                <rect key="frame" x="10" y="305" width="55" height="55"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="48" id="NLv-j6-Vde"/>
-                                    <constraint firstAttribute="width" constant="48" id="pr9-rr-7yq"/>
+                                    <constraint firstAttribute="height" constant="55" id="NLv-j6-Vde"/>
+                                    <constraint firstAttribute="width" constant="55" id="pr9-rr-7yq"/>
                                 </constraints>
-                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="Rj1-mk-21r"/>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NoImage" id="Rj1-mk-21r"/>
                             </imageView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gpJ-ll-AbX">
-                                <rect key="frame" x="70" y="312" width="38" height="17"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="yqU-Gi-9N3">
+                                <rect key="frame" x="71" y="305" width="100" height="17"/>
+                                <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Label" id="yqU-Gi-9N3">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="65a-aX-RIL">
-                                <rect key="frame" x="72" y="343" width="200" height="17"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="dok-kh-Amw">
+                                <rect key="frame" x="71" y="343" width="250" height="20"/>
+                                <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Label" id="dok-kh-Amw">
+                                    <font key="font" size="13" name="HelveticaNeue-Bold"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mqT-iT-cC6">
+                                <rect key="frame" x="71" y="324" width="250" height="17"/>
+                                <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Label" id="jGH-vk-fS8">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -886,21 +881,22 @@
                             <constraint firstItem="gZN-es-bFO" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="7" id="Ias-02-mgL"/>
                             <constraint firstItem="09h-Eb-cuW" firstAttribute="top" secondItem="pml-Sh-s7e" secondAttribute="bottom" constant="3" id="Ivg-Iy-ST6"/>
                             <constraint firstItem="NQm-lE-rVr" firstAttribute="top" secondItem="gZN-es-bFO" secondAttribute="bottom" constant="11" id="KgN-ci-c6C"/>
-                            <constraint firstAttribute="trailing" secondItem="kGO-iP-d6j" secondAttribute="trailing" constant="10" id="N1f-qt-Biv"/>
                             <constraint firstItem="0js-wz-rh5" firstAttribute="top" secondItem="3lG-BL-Thc" secondAttribute="bottom" constant="8" id="Qtt-1P-HRQ"/>
+                            <constraint firstAttribute="trailing" secondItem="gZN-es-bFO" secondAttribute="trailing" constant="10" id="X7M-qF-7Kx"/>
                             <constraint firstItem="09h-Eb-cuW" firstAttribute="top" secondItem="0js-wz-rh5" secondAttribute="bottom" constant="8" id="aF6-yr-iNE"/>
-                            <constraint firstItem="kGO-iP-d6j" firstAttribute="leading" secondItem="gZN-es-bFO" secondAttribute="trailing" constant="8" id="cgr-Oy-n2e"/>
                             <constraint firstItem="09h-Eb-cuW" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="12" id="fh6-jh-IzE"/>
                             <constraint firstAttribute="bottom" secondItem="09h-Eb-cuW" secondAttribute="bottom" constant="6" id="fxK-1G-hxJ"/>
                             <constraint firstItem="3lG-BL-Thc" firstAttribute="top" secondItem="NQm-lE-rVr" secondAttribute="bottom" constant="15" id="gmF-yV-so1"/>
                             <constraint firstItem="0js-wz-rh5" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="12" id="nFX-wf-mQV"/>
                             <constraint firstItem="gZN-es-bFO" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="10" id="sNm-LV-zdL"/>
+                            <constraint firstAttribute="trailing" secondItem="pml-Sh-s7e" secondAttribute="trailing" constant="10" id="wBu-8a-ozb"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="activeLabel" destination="09h-Eb-cuW" id="6Lr-4p-RbY"/>
                         <outlet property="commentTextField" destination="pml-Sh-s7e" id="JGp-sC-LAL"/>
                         <outlet property="communityImageView" destination="NQm-lE-rVr" id="Vlq-76-e8s"/>
+                        <outlet property="communityTitleLabel" destination="mqT-iT-cC6" id="JMh-Lc-OmS"/>
                         <outlet property="liveTextField" destination="gZN-es-bFO" id="vZe-3V-txV"/>
                         <outlet property="liveTitleLabel" destination="65a-aX-RIL" id="uvT-R4-GZO"/>
                         <outlet property="notificationLabel" destination="0js-wz-rh5" id="a5j-tx-qKV"/>
@@ -914,4 +910,7 @@
             <point key="canvasLocation" x="74" y="723"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="NoImage" width="128" height="128"/>
+    </resources>
 </document>

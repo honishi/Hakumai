@@ -10,7 +10,8 @@ import Foundation
 
 class Community {
     var community: String?
-    var level: Int?
+    var title: String? = ""
+    var level: Int? = 0
     var thumbnailUrl: NSURL?
 
     init() {

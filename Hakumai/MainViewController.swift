@@ -18,6 +18,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     
     @IBOutlet weak var communityImageView: NSImageView!
     @IBOutlet weak var liveTitleLabel: NSTextField!
+    @IBOutlet weak var communityTitleLabel: NSTextField!
     @IBOutlet weak var roomPositionLabel: NSTextField!
     
     @IBOutlet weak var scrollView: NSScrollView!
@@ -67,7 +68,11 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         var content: String?
         
         if tableColumn?.identifier == "RoomPositionColumn" {
-            content = self.chats[row].roomPosition?.shortLabel()
+            let chat = self.chats[row]
+            
+            if chat.roomPosition != nil && chat.no != nil {
+                content = chat.roomPosition!.shortLabel() + ":" + String(chat.no!)
+            }
         }
         else if tableColumn?.identifier == "CommentColumn" {
             content = self.chats[row].comment
@@ -90,9 +95,11 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     }
     
     // MARK: - NicoUtilityDelegate Functions
-    func nicoUtilityDidExtractLive(nicoUtility: NicoUtility, live: Live) {
+    func nicoUtilityDidPrepareLive(nicoUtility: NicoUtility, user: User, live: Live) {
         dispatch_async(dispatch_get_main_queue(), {
             self.liveTitleLabel.stringValue = live.title!
+            self.communityTitleLabel.stringValue = live.community.title! + " (Lv." + String(live.community.level!) + ")"
+            self.roomPositionLabel.stringValue = user.roomLabel!
         })
         
         self.loadThumbnail()
@@ -124,7 +131,19 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
             
             self.chats.append(chat)
             
-            let shouldScroll = self.shouldTableViewScrollToBottom()
+            func shouldTableViewScrollToBottom() -> Bool {
+                let viewRect = self.scrollView.contentView.documentRect
+                let visibleRect = self.scrollView.contentView.documentVisibleRect
+                // log.debug("\(viewRect)-\(visibleRect)")
+                
+                let bottomY = viewRect.size.height
+                let offsetBottomY = visibleRect.origin.y + visibleRect.size.height
+                let allowance: CGFloat = 10
+                
+                return (bottomY <= (offsetBottomY + allowance))
+            }
+            
+            let shouldScroll = shouldTableViewScrollToBottom()
             
             self.tableView.reloadData()
             
@@ -134,18 +153,6 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
             
             self.scrollView.flashScrollers()
         })
-    }
-
-    func shouldTableViewScrollToBottom() -> Bool {
-        let viewRect = self.scrollView.contentView.documentRect
-        let visibleRect = self.scrollView.contentView.documentVisibleRect
-        // log.debug("\(viewRect)-\(visibleRect)")
-        
-        let bottomY = viewRect.size.height
-        let offsetBottomY = visibleRect.origin.y + visibleRect.size.height
-        let allowance: CGFloat = 10
-        
-        return (bottomY <= (offsetBottomY + allowance))
     }
     
     func nicoUtilityDidFinishListening(nicoUtility: NicoUtility) {

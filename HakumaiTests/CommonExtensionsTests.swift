@@ -36,4 +36,17 @@ class CommonExtensionsTests: XCTestCase {
         XCTAssert(extracted == "200433812", "")
          */
     }
+    
+    func testStringByRemovingPattern() {
+        var removed: String
+        
+        removed = "abcd".stringByRemovingPattern("bc")
+        XCTAssert(removed == "ad", "")
+        
+        removed = "abcdabcd".stringByRemovingPattern("bc")
+        XCTAssert(removed == "adad", "")
+
+        removed = "abc\n".stringByRemovingPattern("\n")
+        XCTAssert(removed == "abc", "")
+    }
 }
