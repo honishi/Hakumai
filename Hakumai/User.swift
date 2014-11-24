@@ -11,6 +11,7 @@ import Foundation
 class User {
     var userId: Int?
     var nickname: String?
+    var isPremium: Int?
     var roomLabel: String?
     var seatNo: Int?
     

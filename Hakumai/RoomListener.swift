@@ -113,8 +113,9 @@ class RoomListener : NSObject, NSStreamDelegate {
         let elapsedTime = Int(NSDate().timeIntervalSince1970) - Int(self.startDate!.timeIntervalSince1970)
         let vpos = (originTime + elapsedTime) * 100
         let userId = user.userId!
+        let premium = user.isPremium!
         
-        let message = "<chat thread=\"\(thread)\" ticket=\"\(ticket)\" vpos=\"\(vpos)\" postkey=\"\(postKey)\" mail=\"184\" user_id=\"\(userId)\" premium=\"1\">\(comment)</chat>"
+        let message = "<chat thread=\"\(thread)\" ticket=\"\(ticket)\" vpos=\"\(vpos)\" postkey=\"\(postKey)\" mail=\"184\" user_id=\"\(userId)\" premium=\"\(premium)\">\(comment)</chat>"
         
         self.sendMessage(message)
     }

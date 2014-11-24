@@ -47,3 +47,25 @@ extension String {
         return removed
     }
 }
+
+// MARK: - NSXMLElement
+
+extension NSXMLElement {
+    func firstStringValueForXPathNode(xpath: String) -> String? {
+        var err: NSError?
+        
+        if let nodes = self.nodesForXPath(xpath, error: &err) {
+            if 0 < nodes.count {
+                return (nodes[0] as NSXMLNode).stringValue
+            }
+        }
+        
+        return nil
+    }
+    
+    func firstIntValueForXPathNode(xpath: String) -> Int? {
+        let stringValue = self.firstStringValueForXPathNode(xpath)
+        
+        return stringValue?.toInt()
+    }
+}

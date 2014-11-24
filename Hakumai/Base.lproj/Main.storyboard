@@ -693,11 +693,11 @@
             <objects>
                 <viewController id="XfG-lQ-9wD" customClass="MainViewController" customModule="Hakumai" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="m2S-Jp-Qdl">
-                        <rect key="frame" x="0.0" y="0.0" width="480" height="400"/>
+                        <rect key="frame" x="0.0" y="0.0" width="479" height="400"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gZN-es-bFO">
-                                <rect key="frame" x="10" y="371" width="460" height="22"/>
+                                <rect key="frame" x="10" y="371" width="459" height="22"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" placeholderString="⌘L (live url, live#)" drawsBackground="YES" usesSingleLineMode="YES" id="iDS-0h-Uje">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -707,7 +707,7 @@
                                     <action selector="connectLive:" target="XfG-lQ-9wD" id="wHs-05-aZb"/>
                                 </connections>
                             </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="09h-Eb-cuW">
+                            <textField toolTip="直近10分間に書き込みをしたアクティブユーザー数" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="09h-Eb-cuW">
                                 <rect key="frame" x="10" y="6" width="80" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="76" id="wxf-k4-uEw"/>
@@ -719,13 +719,13 @@
                                 </textFieldCell>
                             </textField>
                             <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3lG-BL-Thc">
-                                <rect key="frame" x="10" y="56" width="460" height="234"/>
+                                <rect key="frame" x="10" y="56" width="459" height="234"/>
                                 <clipView key="contentView" misplaced="YES" id="2u9-qQ-bep">
                                     <rect key="frame" x="1" y="0.0" width="238" height="134"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="none" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="cl3-1e-Mq0" id="21S-OF-mg3">
-                                            <rect key="frame" x="0.0" y="0.0" width="635" height="19"/>
+                                        <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="none" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="cl3-1e-Mq0" id="21S-OF-mg3">
+                                            <rect key="frame" x="0.0" y="0.0" width="650" height="19"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -819,7 +819,7 @@
                                 </tableHeaderView>
                             </scrollView>
                             <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="pml-Sh-s7e">
-                                <rect key="frame" x="82" y="26" width="388" height="22"/>
+                                <rect key="frame" x="10" y="26" width="459" height="22"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" placeholderString="⌘N (enter to comment)" drawsBackground="YES" id="39S-6e-1RP">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -828,17 +828,6 @@
                                 <connections>
                                     <action selector="comment:" target="XfG-lQ-9wD" id="PkR-2p-peK"/>
                                 </connections>
-                            </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0js-wz-rh5">
-                                <rect key="frame" x="10" y="31" width="80" height="17"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="76" id="Crb-XE-GjO"/>
-                                </constraints>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="Label" id="kqW-3l-FJT">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
                             </textField>
                             <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="NQm-lE-rVr">
                                 <rect key="frame" x="10" y="305" width="55" height="55"/>
@@ -849,7 +838,7 @@
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NoImage" id="Rj1-mk-21r"/>
                             </imageView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gpJ-ll-AbX">
-                                <rect key="frame" x="71" y="305" width="100" height="17"/>
+                                <rect key="frame" x="70" y="305" width="120" height="17"/>
                                 <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Label" id="yqU-Gi-9N3">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -857,7 +846,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="65a-aX-RIL">
-                                <rect key="frame" x="71" y="343" width="250" height="20"/>
+                                <rect key="frame" x="70" y="343" width="250" height="20"/>
                                 <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Label" id="dok-kh-Amw">
                                     <font key="font" size="13" name="HelveticaNeue-Bold"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -865,8 +854,19 @@
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mqT-iT-cC6">
-                                <rect key="frame" x="71" y="324" width="250" height="17"/>
+                                <rect key="frame" x="70" y="324" width="250" height="17"/>
                                 <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Label" id="jGH-vk-fS8">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0js-wz-rh5">
+                                <rect key="frame" x="95" y="6" width="120" height="17"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="116" id="Crb-XE-GjO"/>
+                                </constraints>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="Label" id="kqW-3l-FJT">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -875,19 +875,20 @@
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="3lG-BL-Thc" secondAttribute="trailing" constant="10" id="6z6-Uh-LJe"/>
-                            <constraint firstItem="pml-Sh-s7e" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="82" id="74G-Kx-2b1"/>
+                            <constraint firstItem="pml-Sh-s7e" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="10" id="74G-Kx-2b1"/>
                             <constraint firstItem="3lG-BL-Thc" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="10" id="8ng-pl-uE0"/>
                             <constraint firstItem="NQm-lE-rVr" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="10" id="AOg-FI-Vpr"/>
+                            <constraint firstItem="pml-Sh-s7e" firstAttribute="top" secondItem="3lG-BL-Thc" secondAttribute="bottom" constant="8" id="BNn-eE-KLl"/>
+                            <constraint firstAttribute="bottom" secondItem="0js-wz-rh5" secondAttribute="bottom" constant="6" id="Dfv-oB-BcA"/>
                             <constraint firstItem="gZN-es-bFO" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="7" id="Ias-02-mgL"/>
                             <constraint firstItem="09h-Eb-cuW" firstAttribute="top" secondItem="pml-Sh-s7e" secondAttribute="bottom" constant="3" id="Ivg-Iy-ST6"/>
                             <constraint firstItem="NQm-lE-rVr" firstAttribute="top" secondItem="gZN-es-bFO" secondAttribute="bottom" constant="11" id="KgN-ci-c6C"/>
-                            <constraint firstItem="0js-wz-rh5" firstAttribute="top" secondItem="3lG-BL-Thc" secondAttribute="bottom" constant="8" id="Qtt-1P-HRQ"/>
+                            <constraint firstItem="pml-Sh-s7e" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="10" id="QPY-ri-0Ko"/>
+                            <constraint firstItem="0js-wz-rh5" firstAttribute="leading" secondItem="09h-Eb-cuW" secondAttribute="trailing" constant="9" id="WeX-oW-MNj"/>
                             <constraint firstAttribute="trailing" secondItem="gZN-es-bFO" secondAttribute="trailing" constant="10" id="X7M-qF-7Kx"/>
-                            <constraint firstItem="09h-Eb-cuW" firstAttribute="top" secondItem="0js-wz-rh5" secondAttribute="bottom" constant="8" id="aF6-yr-iNE"/>
                             <constraint firstItem="09h-Eb-cuW" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="12" id="fh6-jh-IzE"/>
                             <constraint firstAttribute="bottom" secondItem="09h-Eb-cuW" secondAttribute="bottom" constant="6" id="fxK-1G-hxJ"/>
                             <constraint firstItem="3lG-BL-Thc" firstAttribute="top" secondItem="NQm-lE-rVr" secondAttribute="bottom" constant="15" id="gmF-yV-so1"/>
-                            <constraint firstItem="0js-wz-rh5" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="12" id="nFX-wf-mQV"/>
                             <constraint firstItem="gZN-es-bFO" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="10" id="sNm-LV-zdL"/>
                             <constraint firstAttribute="trailing" secondItem="pml-Sh-s7e" secondAttribute="trailing" constant="10" id="wBu-8a-ozb"/>
                         </constraints>
@@ -907,7 +908,7 @@
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="74" y="723"/>
+            <point key="canvasLocation" x="74.5" y="723"/>
         </scene>
     </scenes>
     <resources>

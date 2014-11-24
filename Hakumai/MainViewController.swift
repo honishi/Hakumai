@@ -99,10 +99,12 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         dispatch_async(dispatch_get_main_queue(), {
             self.liveTitleLabel.stringValue = live.title!
             self.communityTitleLabel.stringValue = live.community.title! + " (Lv." + String(live.community.level!) + ")"
-            self.roomPositionLabel.stringValue = user.roomLabel!
+            self.roomPositionLabel.stringValue = user.roomLabel! + " - " + String(user.seatNo!)
         })
         
         self.loadThumbnail()
+        
+        self.focusCommentTextField()
     }
 
     func nicoUtilityDidStartListening(nicoUtility: NicoUtility, roomPosition: RoomPosition) {
@@ -116,7 +118,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     func nicoUtilityDidReceiveFirstChat(nicoUtility: NicoUtility, chat: Chat) {
         dispatch_async(dispatch_get_main_queue(), {
             if let roomPositionLabel = chat.roomPosition?.label() {
-                self.notificationLabel.stringValue = "\(roomPositionLabel)"
+                self.notificationLabel.stringValue = "opened:\(roomPositionLabel)"
             }
         })
     }
@@ -232,7 +234,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
             }
 
             dispatch_async(dispatch_get_main_queue(), {
-                self.activeLabel.stringValue = "active: \(activeUsers.count)"
+                self.activeLabel.stringValue = "active:\(activeUsers.count)"
                 
                 self.calculatingActive = false
                 // self.log.debug("finished to calcurate active")

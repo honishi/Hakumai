@@ -266,7 +266,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         if status == "fail" {
             log.warning("failed to load message server")
             
-            if let errorCode = (rootElement?.nodesForXPath("/getplayerstatus/error/code", error: &err)?[0] as NSXMLNode).stringValue {
+            if let errorCode = rootElement?.firstStringValueForXPathNode("/getplayerstatus/error/code") {
                 log.warning("error code: \(errorCode)")
             }
             
@@ -284,11 +284,11 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         let rootElement = xmlDocument?.rootElement()
         
         let live = Live()
+        let baseXPath = "/getplayerstatus/stream/"
         
-        live.title = (rootElement?.nodesForXPath("/getplayerstatus/stream/title", error: &err)?[0] as NSXMLNode).stringValue
-        live.baseTime = (rootElement?.nodesForXPath("/getplayerstatus/stream/base_time", error: &err)?[0] as NSXMLNode).stringValue?.toInt()
-        
-        live.community.community = (rootElement?.nodesForXPath("/getplayerstatus/stream/default_community", error: &err)?[0] as NSXMLNode).stringValue
+        live.title = rootElement?.firstStringValueForXPathNode(baseXPath + "title")
+        live.baseTime = rootElement?.firstIntValueForXPathNode(baseXPath + "base_time")
+        live.community.community = rootElement?.firstStringValueForXPathNode(baseXPath + "default_community")
         
         return live
     }
@@ -327,33 +327,17 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             log.error("rootElement is nil")
             return
         }
-        
+
         let xpathTitle = "//*[@id=\"community_name\"]"
-        if let title = self.stringValueForXPathNode(rootElement!, xpath: xpathTitle) {
-            community.title = title.stringByRemovingPattern("\n")
-        }
+        community.title = rootElement?.firstStringValueForXPathNode(xpathTitle)?.stringByRemovingPattern("\n")
         
         let xpathLevel = "//*[@id=\"cbox_profile\"]/table/tr/td[1]/table/tr[1]/td[2]/strong[1]"
-        if let level = self.stringValueForXPathNode(rootElement!, xpath: xpathLevel) {
-            community.level = level.toInt()
-        }
+        community.level = rootElement?.firstIntValueForXPathNode(xpathLevel)
         
-         let xpathThumbnailUrl = "//*[@id=\"cbox_profile\"]/table/tr/td[2]/p/img/@src"
-        if let thumbnailUrl = self.stringValueForXPathNode(rootElement!, xpath: xpathThumbnailUrl) {
+        let xpathThumbnailUrl = "//*[@id=\"cbox_profile\"]/table/tr/td[2]/p/img/@src"
+        if let thumbnailUrl = rootElement?.firstStringValueForXPathNode(xpathThumbnailUrl) {
             community.thumbnailUrl = NSURL(string: thumbnailUrl)
         }
-    }
-    
-    private func stringValueForXPathNode(rootElement: NSXMLElement, xpath: String) -> String? {
-        var err: NSError?
-        
-        if let nodes = rootElement.nodesForXPath(xpath, error: &err) {
-            if 0 < nodes.count {
-                return (nodes[0] as NSXMLNode).stringValue
-            }
-        }
-        
-        return nil
     }
     
     // MARK: - Message Server Extractor
@@ -368,7 +352,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         if status == "fail" {
             log.warning("failed to load message server")
             
-            if let errorCode = (rootElement?.nodesForXPath("/getplayerstatus/error/code", error: &err)?[0] as NSXMLNode).stringValue {
+            if let errorCode = rootElement?.firstStringValueForXPathNode("/getplayerstatus/error/code") {
                 log.warning("error code: \(errorCode)")
             }
             
@@ -385,9 +369,11 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             return nil
         }
         
-        let address = (rootElement?.nodesForXPath("/getplayerstatus/ms/addr", error: &err)?[0] as NSXMLNode).stringValue
-        let port = (rootElement?.nodesForXPath("/getplayerstatus/ms/port", error: &err)?[0] as NSXMLNode).stringValue?.toInt()
-        let thread = (rootElement?.nodesForXPath("/getplayerstatus/ms/thread", error: &err)?[0] as NSXMLNode).stringValue?.toInt()
+        let baseXPath = "/getplayerstatus/ms/"
+
+        let address = rootElement?.firstStringValueForXPathNode(baseXPath + "addr")
+        let port = rootElement?.firstIntValueForXPathNode(baseXPath + "port")
+        let thread = rootElement?.firstIntValueForXPathNode(baseXPath + "thread")
         // log.debug("\(address?),\(port),\(thread)")
  
         if address == nil || port == nil || thread == nil {
@@ -488,11 +474,13 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         let rootElement = xmlDocument?.rootElement()
         
         let user = User()
+        let baseXPath = "/getplayerstatus/user/"
         
-        user.userId = (rootElement?.nodesForXPath("/getplayerstatus/user/user_id", error: &err)?[0] as NSXMLNode).stringValue?.toInt()
-        user.nickname = (rootElement?.nodesForXPath("/getplayerstatus/user/nickname", error: &err)?[0] as NSXMLNode).stringValue
-        user.roomLabel = (rootElement?.nodesForXPath("/getplayerstatus/user/room_label", error: &err)?[0] as NSXMLNode).stringValue
-        user.seatNo = (rootElement?.nodesForXPath("/getplayerstatus/user/room_seetno", error: &err)?[0] as NSXMLNode).stringValue?.toInt()
+        user.userId = rootElement?.firstIntValueForXPathNode(baseXPath + "user_id")
+        user.nickname = rootElement?.firstStringValueForXPathNode(baseXPath + "nickname")
+        user.isPremium = rootElement?.firstIntValueForXPathNode(baseXPath + "is_premium")
+        user.roomLabel = rootElement?.firstStringValueForXPathNode(baseXPath + "room_label")
+        user.seatNo = rootElement?.firstIntValueForXPathNode(baseXPath + "room_seetno")
         
         return user
     }
