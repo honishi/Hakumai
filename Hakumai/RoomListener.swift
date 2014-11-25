@@ -256,10 +256,16 @@ class RoomListener : NSObject, NSStreamDelegate {
                 chat.premium = Premium(rawValue: 0)
             }
             
+            if let score = chatElement.attributeForName("score")?.stringValue?.toInt() {
+                chat.score = score
+            }
+            else {
+                chat.score = 0
+            }
+            
             chat.no = chatElement.attributeForName("no")?.stringValue?.toInt()
             chat.mail = chatElement.attributeForName("mail")?.stringValue
             chat.userId = chatElement.attributeForName("user_id")?.stringValue
-            chat.score = 123
             chat.comment = chatElement.stringValue
             
             chats.append(chat)

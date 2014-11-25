@@ -46,6 +46,23 @@ extension String {
         
         return removed
     }
+    
+    func numberStringWithSeparatorComma() -> String? {
+        let intValue: Int! = self.toInt()
+        
+        if intValue == nil {
+            return nil
+        }
+        
+        var number = NSNumber(integer: intValue)
+        
+        var formatter = NSNumberFormatter()
+        formatter.numberStyle = .DecimalStyle
+        formatter.groupingSeparator = ","
+        formatter.groupingSize = 3
+        
+        return formatter.stringFromNumber(number)
+    }
 }
 
 // MARK: - NSXMLElement

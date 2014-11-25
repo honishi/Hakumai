@@ -9,6 +9,15 @@
 import Foundation
 import XCGLogger
 
+let kNibNameScoreTableCellView = "ScoreTableCellView"
+
+let kRoomPositionColumnIdentifier = "RoomPositionColumn"
+let kScoreColumnIdentifier = "ScoreColumn"
+let kCommentColumnIdentifier = "CommentColumn"
+let kUserIdColumnIdentifier = "UserIdColumn"
+let kPremiumColumnIdentifier = "PremiumColumn"
+let kMailColumnIdentifier = "MailColumn"
+
 let kCalculateActiveInterval: NSTimeInterval = 3
 
 var mainViewController: MainViewController?
@@ -50,6 +59,9 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let scoreTableCellViewNib = NSNib(nibNamed: kNibNameScoreTableCellView, bundle: NSBundle.mainBundle())
+        self.tableView.registerNib(scoreTableCellViewNib!, forIdentifier: kScoreColumnIdentifier)
+        
         self.activeTimer = NSTimer.scheduledTimerWithTimeInterval(kCalculateActiveInterval, target: self, selector: "calculateActive:", userInfo: nil, repeats: true)
     }
 
@@ -64,34 +76,65 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         return self.chats.count
     }
     
-    func tableView(tableView: NSTableView, objectValueForTableColumn tableColumn: NSTableColumn?, row: Int) -> AnyObject? {
-        var content: String?
+    func tableView(tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
+        let systemFontSize: CGFloat = 13.0
+        let cellSpacingHeight: CGFloat = 2.0
         
-        if tableColumn?.identifier == "RoomPositionColumn" {
-            let chat = self.chats[row]
-            
+        let comment = self.chats[row].comment
+        
+        let commentTableColumn = self.tableView.tableColumnWithIdentifier(kCommentColumnIdentifier)
+        let commentColumnWidth = commentTableColumn?.width
+        
+        let attributes = [NSFontAttributeName: NSFont.systemFontOfSize(systemFontSize)]
+        let commentRect = (comment! as NSString).boundingRectWithSize(CGSizeMake(commentColumnWidth!, 0),
+            options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: nil)
+        // log.debug("\(commentRect.size.width),\(commentRect.size.height)")
+        
+        return commentRect.size.height + cellSpacingHeight
+    }
+    
+    func tableViewColumnDidResize(aNotification: NSNotification) {
+        self.tableView.reloadData()
+    }
+
+    func tableView(tableView: NSTableView, viewForTableColumn tableColumn: NSTableColumn?, row: Int) -> NSView? {
+        var content: String?
+        var view: NSTableCellView?
+        
+        if let identifier = tableColumn?.identifier {
+            view = tableView.makeViewWithIdentifier(identifier, owner: self) as? NSTableCellView
+        }
+
+        let chat = self.chats[row]
+
+        if tableColumn?.identifier == kRoomPositionColumnIdentifier {
             if chat.roomPosition != nil && chat.no != nil {
                 content = chat.roomPosition!.shortLabel() + ":" + String(chat.no!)
             }
         }
-        else if tableColumn?.identifier == "CommentColumn" {
-            content = self.chats[row].comment
+        else if tableColumn?.identifier == kScoreColumnIdentifier {
+            (view as ScoreTableCellView).score = chat.score!
         }
-        else if tableColumn?.identifier == "UserIdColumn" {
-            content = self.chats[row].userId
+        else if tableColumn?.identifier == kCommentColumnIdentifier {
+            content = chat.comment
         }
-        else if tableColumn?.identifier == "PremiumColumn" {
-            content = self.chats[row].premium?.label()
+        else if tableColumn?.identifier == kUserIdColumnIdentifier {
+            content = chat.userId
         }
-        else if tableColumn?.identifier == "MailColumn" {
-            content = self.chats[row].mail
+        else if tableColumn?.identifier == kPremiumColumnIdentifier {
+            content = chat.premium?.label()
+        }
+        else if tableColumn?.identifier == kMailColumnIdentifier {
+            content = chat.mail
         }
         
         if content == nil {
             content = ""
         }
         
-        return content
+        view?.textField?.stringValue = content!
+        
+        return view
     }
     
     // MARK: - NicoUtilityDelegate Functions
@@ -108,7 +151,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     }
 
     func nicoUtilityDidStartListening(nicoUtility: NicoUtility, roomPosition: RoomPosition) {
-        log.info("opened \(roomPosition.label()).")
+        log.info("started listening \(roomPosition.label()).")
         
         dispatch_async(dispatch_get_main_queue(), {
             // nop
@@ -216,10 +259,16 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
 
             // to avoid weird exc_bad_instruction(fatal error: Array index out of range) when 
             // accessing self.chats[i - 1] in for-loop, copy self.chats first
+            self.log.debug("start copy chats")
             let copiedChats = self.chats
+            self.log.debug("end copy chats")
+            
+            self.log.debug("start counting active")
             
             for var i = copiedChats.count; 0 < i ; i-- {
+            // for var i = self.chats.count; 0 < i ; i-- {
                 let chat = copiedChats[i - 1]
+                // let chat = self.chats[i - 1]
                 
                 if chat.date == nil || chat.userId == nil {
                     continue
@@ -233,6 +282,8 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
                 activeUsers[chat.userId!] = true
             }
 
+            self.log.debug("end counting active")
+            
             dispatch_async(dispatch_get_main_queue(), {
                 self.activeLabel.stringValue = "active:\(activeUsers.count)"
                 
