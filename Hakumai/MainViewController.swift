@@ -9,6 +9,7 @@
 import Foundation
 import XCGLogger
 
+let kNibNameRoomPositionTableCellView = "RoomPositionTableCellView"
 let kNibNameScoreTableCellView = "ScoreTableCellView"
 
 let kRoomPositionColumnIdentifier = "RoomPositionColumn"
@@ -58,11 +59,19 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     // MARK: - UIViewController Functions
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        self.registerNibs()
+        
+        // TODO: disabled for test
+        // self.activeTimer = NSTimer.scheduledTimerWithTimeInterval(kCalculateActiveInterval, target: self, selector: "calculateActive:", userInfo: nil, repeats: true)
+    }
+    
+    func registerNibs() {
+        let roomPositionTableCellViewNib = NSNib(nibNamed: kNibNameRoomPositionTableCellView, bundle: NSBundle.mainBundle())
+        self.tableView.registerNib(roomPositionTableCellViewNib!, forIdentifier: kRoomPositionColumnIdentifier)
         
         let scoreTableCellViewNib = NSNib(nibNamed: kNibNameScoreTableCellView, bundle: NSBundle.mainBundle())
         self.tableView.registerNib(scoreTableCellViewNib!, forIdentifier: kScoreColumnIdentifier)
-        
-        self.activeTimer = NSTimer.scheduledTimerWithTimeInterval(kCalculateActiveInterval, target: self, selector: "calculateActive:", userInfo: nil, repeats: true)
     }
 
     override var representedObject: AnyObject? {
@@ -108,9 +117,9 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         let chat = self.chats[row]
 
         if tableColumn?.identifier == kRoomPositionColumnIdentifier {
-            if chat.roomPosition != nil && chat.no != nil {
-                content = chat.roomPosition!.shortLabel() + ":" + String(chat.no!)
-            }
+            let roomPositionView = (view as RoomPositionTableCellView)
+            roomPositionView.roomPosition = chat.roomPosition!
+            roomPositionView.commentNo = chat.no!
         }
         else if tableColumn?.identifier == kScoreColumnIdentifier {
             (view as ScoreTableCellView).score = chat.score!
@@ -168,28 +177,28 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
 
     func nicoUtilityDidReceiveChat(nicoUtility: NicoUtility, chat: Chat) {
         // log.debug("\(chat.mail),\(chat.comment)")
-
+        
+        if chat.comment?.hasPrefix("/hb ifseetno ") == true {
+            return
+        }
+        
+        self.chats.append(chat)
+        
+        func shouldTableViewScrollToBottom() -> Bool {
+            let viewRect = self.scrollView.contentView.documentRect
+            let visibleRect = self.scrollView.contentView.documentVisibleRect
+            // log.debug("\(viewRect)-\(visibleRect)")
+            
+            let bottomY = viewRect.size.height
+            let offsetBottomY = visibleRect.origin.y + visibleRect.size.height
+            let allowance: CGFloat = 10
+            
+            return (bottomY <= (offsetBottomY + allowance))
+        }
+        
+        let shouldScroll = shouldTableViewScrollToBottom()
+        
         dispatch_async(dispatch_get_main_queue(), {
-            if chat.comment?.hasPrefix("/hb ifseetno ") == true {
-                return
-            }
-            
-            self.chats.append(chat)
-            
-            func shouldTableViewScrollToBottom() -> Bool {
-                let viewRect = self.scrollView.contentView.documentRect
-                let visibleRect = self.scrollView.contentView.documentVisibleRect
-                // log.debug("\(viewRect)-\(visibleRect)")
-                
-                let bottomY = viewRect.size.height
-                let offsetBottomY = visibleRect.origin.y + visibleRect.size.height
-                let allowance: CGFloat = 10
-                
-                return (bottomY <= (offsetBottomY + allowance))
-            }
-            
-            let shouldScroll = shouldTableViewScrollToBottom()
-            
             self.tableView.reloadData()
             
             if shouldScroll {

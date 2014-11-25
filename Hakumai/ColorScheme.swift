@@ -47,23 +47,68 @@ extension NSColor {
 
 class ColorScheme {
     // MARK: - Score Colors
-    class func greenScoreColor() -> NSColor {
+    class func scoreColorGreen() -> NSColor {
         return NSColor(rgba: "#24cf20")
     }
     
-    class func lightGreenScoreColor() -> NSColor {
+    class func scoreColorLightGreen() -> NSColor {
         return NSColor(rgba: "#abff00")
     }
 
-    class func yellowScoreColor() -> NSColor {
+    class func scoreColorYellow() -> NSColor {
         return NSColor(rgba: "#ffd900")
     }
 
-    class func orangeScoreColor() -> NSColor {
+    class func scoreColorOrange() -> NSColor {
         return NSColor(rgba: "#ff8c00")
     }
 
-    class func redScoreColor() -> NSColor {
+    class func scoreColorRed() -> NSColor {
         return NSColor(rgba: "#ff0000")
+    }
+    
+    // MARK: - Room Colors
+    class func roomColorArena() -> NSColor {
+        return NSColor(rgba: "#3c49ff")
+    }
+    
+    class func roomColorStandA() -> NSColor {
+        return NSColor(rgba: "#ff3c37")
+    }
+    
+    class func roomColorStandB() -> NSColor {
+        return NSColor(rgba: "#b2ae00")
+    }
+    
+    class func roomColorStandC() -> NSColor {
+        return NSColor(rgba: "#24c10e")
+    }
+    
+    class func roomColorStandD() -> NSColor {
+        return NSColor(rgba: "#f577cd")
+    }
+    
+    class func roomColorStandE() -> NSColor {
+        return NSColor(rgba: "#2eb9c8")
+    }
+
+    class func roomColorStandF() -> NSColor {
+        return NSColor(rgba: "#f97900")
+    }
+    
+    class func roomColorStandG() -> NSColor {
+        return NSColor(rgba: "#8600d8")
+    }
+    
+    class func roomColorStandH() -> NSColor {
+        return NSColor(rgba: "#006b42")
+    }
+    
+    class func roomColorStandI() -> NSColor {
+        return NSColor(rgba: "#ac1200")
+    }
+    
+    class func roomColorStandJ() -> NSColor {
+        return NSColor(rgba: "#ababab")
     }
 }

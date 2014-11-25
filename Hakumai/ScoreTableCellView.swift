@@ -14,7 +14,7 @@ let kScoreThresholdLightGreen = -1000
 let kScoreThresholdYellow = -4800
 let kScoreThresholdOrange = -10000
 
-class ScoreTableCellView : NSTableCellView {
+class ScoreTableCellView: NSTableCellView {
     @IBOutlet weak var coloredView: ColoredView!
     @IBOutlet weak var scoreLabel: NSTextField!
     
@@ -41,18 +41,18 @@ class ScoreTableCellView : NSTableCellView {
         // println("\(self.score)")
         
         if score == kScoreThresholdGreen {
-            return ColorScheme.greenScoreColor()
+            return ColorScheme.scoreColorGreen()
         }
         else if kScoreThresholdLightGreen < score && score < kScoreThresholdGreen {
-            return ColorScheme.lightGreenScoreColor()
+            return ColorScheme.scoreColorLightGreen()
         }
         else if kScoreThresholdYellow < score && score <= kScoreThresholdLightGreen {
-            return ColorScheme.yellowScoreColor()
+            return ColorScheme.scoreColorYellow()
         }
         else if kScoreThresholdOrange < score && score <= kScoreThresholdYellow {
-            return ColorScheme.orangeScoreColor()
+            return ColorScheme.scoreColorOrange()
         }
         
-        return ColorScheme.redScoreColor()
+        return ColorScheme.scoreColorRed()
     }
 }
