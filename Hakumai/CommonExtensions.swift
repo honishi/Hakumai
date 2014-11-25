@@ -65,6 +65,20 @@ extension String {
     }
 }
 
+func * (left: String, right: Int) -> String {
+    if right == 0 {
+        return ""
+    }
+    
+    var multiplied = ""
+    
+    for _ in 1...right {
+        multiplied += left
+    }
+    
+    return multiplied
+}
+
 // MARK: - NSXMLElement
 
 extension NSXMLElement {

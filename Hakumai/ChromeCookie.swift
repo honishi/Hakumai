@@ -18,7 +18,7 @@ let kSalt = "saltysalt"
 let kRoundCount = 1003
 
 // decrypt
-let kInitializationVector = "                "
+let kInitializationVector = " " * 16
 
 let log = XCGLogger.defaultInstance()
 

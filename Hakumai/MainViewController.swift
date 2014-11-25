@@ -63,7 +63,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         self.registerNibs()
         
         // TODO: disabled for test
-        // self.activeTimer = NSTimer.scheduledTimerWithTimeInterval(kCalculateActiveInterval, target: self, selector: "calculateActive:", userInfo: nil, repeats: true)
+        self.activeTimer = NSTimer.scheduledTimerWithTimeInterval(kCalculateActiveInterval, target: self, selector: "calculateActive:", userInfo: nil, repeats: true)
     }
     
     func registerNibs() {
@@ -72,6 +72,10 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         
         let scoreTableCellViewNib = NSNib(nibNamed: kNibNameScoreTableCellView, bundle: NSBundle.mainBundle())
         self.tableView.registerNib(scoreTableCellViewNib!, forIdentifier: kScoreColumnIdentifier)
+    }
+    
+    override func viewDidAppear() {
+        self.kickTableViewPerformanceTest()
     }
 
     override var representedObject: AnyObject? {
@@ -335,5 +339,43 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         }
 
         return nil
+    }
+}
+
+extension MainViewController {
+    // MARK: - NSTableView Performance
+    func kickTableViewPerformanceTest() {
+        let qualityOfServiceClass = Int(QOS_CLASS_BACKGROUND.value)
+        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+        
+        dispatch_async(backgroundQueue, {
+            for _ in 1...100000 {
+                let chat = self.randomChat()
+                
+                if let mainvc = MainViewController.instance() {
+                    mainvc.nicoUtilityDidReceiveChat(NicoUtility.sharedInstance(), chat: chat)
+                }
+                
+                NSThread.sleepForTimeInterval(0.05)
+            }
+            
+        })
+        
+        // NSRunLoop.currentRunLoop().run()
+    }
+    
+    func randomChat() -> Chat {
+        let chat = Chat()
+        
+        chat.roomPosition = RoomPosition.Arena
+        chat.userId = String(arc4random() % 1000)
+        chat.no = (Int(arc4random()) % 1000)
+        chat.score = -(Int(arc4random()) % 30000)
+        chat.comment = "hello " * (Int(arc4random()) % 100)
+        chat.date = NSDate()
+        chat.mail = "184"
+        chat.premium = Premium.Premium
+        
+        return chat
     }
 }
