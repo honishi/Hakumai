@@ -102,24 +102,31 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
             return cached
         }
         
-        let systemFontSize: CGFloat = 13.0
-        let cellSpacingWidth: CGFloat = 6.0 + 2 * 2
-        let cellSpacingHeight: CGFloat = 2.0
+        let comment = ChatContainer.sharedContainer[row].comment!
         
-        let comment = ChatContainer.sharedContainer[row].comment
+        let commentTableColumn = self.tableView.tableColumnWithIdentifier(kCommentColumnIdentifier)!
+        let commentColumnWidth = commentTableColumn.width
         
-        let commentTableColumn = self.tableView.tableColumnWithIdentifier(kCommentColumnIdentifier)
-        let commentColumnWidth = commentTableColumn?.width
-        
-        let attributes = [NSFontAttributeName: NSFont.systemFontOfSize(systemFontSize)]
-        let commentRect = (comment! as NSString).boundingRectWithSize(CGSizeMake(commentColumnWidth! - cellSpacingWidth, 0),
-            options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: nil)
-        // log.debug("\(commentRect.size.width),\(commentRect.size.height)")
-        
-        let rowHeight = commentRect.size.height + cellSpacingHeight
+        let rowHeight = self.commentColumnHeight(comment, width: commentColumnWidth)
         self.RowHeightCacher[row] = rowHeight
         
         return rowHeight
+    }
+    
+    func commentColumnHeight(comment: String, width: CGFloat) -> CGFloat {
+        let systemFontSize: CGFloat = 13.0
+        
+        let leadingSpace: CGFloat = 2
+        let trailingSpace: CGFloat = 2
+        let widthPadding = leadingSpace + trailingSpace
+        
+        let attributes = [NSFontAttributeName: NSFont.systemFontOfSize(systemFontSize),
+            NSParagraphStyleAttributeName: NSParagraphStyle.defaultParagraphStyle()]
+        let commentRect = (comment as NSString).boundingRectWithSize(CGSizeMake(width - widthPadding, 0),
+            options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: attributes)
+        // log.debug("\(commentRect.size.width),\(commentRect.size.height)")
+        
+        return commentRect.size.height
     }
     
     func tableViewColumnDidResize(aNotification: NSNotification) {
