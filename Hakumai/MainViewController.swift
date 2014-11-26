@@ -103,7 +103,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         }
         
         let systemFontSize: CGFloat = 13.0
-        let cellSpacingWidth: CGFloat = 6.0
+        let cellSpacingWidth: CGFloat = 6.0 + 2 * 2
         let cellSpacingHeight: CGFloat = 2.0
         
         let comment = ChatContainer.sharedContainer[row].comment

@@ -11,6 +11,8 @@
 		DB0ED6521A20B0A7007E9318 /* ChromeCookie.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0ED6511A20B0A7007E9318 /* ChromeCookie.swift */; };
 		DB0ED6531A20B0A7007E9318 /* ChromeCookie.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0ED6511A20B0A7007E9318 /* ChromeCookie.swift */; };
 		DB0F0ECD1A16441D00F8BDC5 /* NicoUtilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0F0ECC1A16441D00F8BDC5 /* NicoUtilityTests.swift */; };
+		DB0FC12B1A262CF0000FADDD /* XCGLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBFA88731A1BA353005349AD /* XCGLogger.framework */; };
+		DB0FC12C1A262CF0000FADDD /* XCGLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DBFA88731A1BA353005349AD /* XCGLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		DB2AE0C41A0EE2FD00B1CE4D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0C31A0EE2FD00B1CE4D /* AppDelegate.swift */; };
 		DB2AE0C61A0EE2FD00B1CE4D /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0C51A0EE2FD00B1CE4D /* MainViewController.swift */; };
 		DB2AE0C81A0EE2FD00B1CE4D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB2AE0C71A0EE2FD00B1CE4D /* Images.xcassets */; };
@@ -68,7 +70,6 @@
 		DBAAA7521A0FDA4500981004 /* NicoUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7501A0FDA4500981004 /* NicoUtility.swift */; };
 		DBE73ECA1A1A1B6A00A8BCA9 /* MainViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE73EC91A1A1B6A00A8BCA9 /* MainViewControllerTests.swift */; };
 		DBE73ECD1A1A1CE500A8BCA9 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0C51A0EE2FD00B1CE4D /* MainViewController.swift */; };
-		DBFA88781A1BA3AB005349AD /* XCGLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBFA88731A1BA353005349AD /* XCGLogger.framework */; };
 		DBFA88791A1BA3B5005349AD /* XCGLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBFA88731A1BA353005349AD /* XCGLogger.framework */; };
 		DBFA887B1A1BC25A005349AD /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA887A1A1BC25A005349AD /* Chat.swift */; };
 		DBFA887C1A1BC25A005349AD /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA887A1A1BC25A005349AD /* Chat.swift */; };
@@ -85,6 +86,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		DB0FC12D1A262CF0000FADDD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DBFA886A1A1BA353005349AD /* XCGLogger.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 554DF41619D76FE7005708BE;
+			remoteInfo = "XCGLogger (OS X)";
+		};
 		DB2AE0D11A0EE2FD00B1CE4D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = DB2AE0B61A0EE2FD00B1CE4D /* Project object */;
@@ -121,6 +129,20 @@
 			remoteInfo = "XCGLogger (OS X)";
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		DB0FC12F1A262CF0000FADDD /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				DB0FC12C1A262CF0000FADDD /* XCGLogger.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		DB080B841A17CA0100896228 /* CookieUtilityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CookieUtilityTests.swift; sourceTree = "<group>"; };
@@ -188,7 +210,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DBFA88781A1BA3AB005349AD /* XCGLogger.framework in Frameworks */,
+				DB0FC12B1A262CF0000FADDD /* XCGLogger.framework in Frameworks */,
 				DBAAA7421A0F5FEF00981004 /* SystemConfiguration.framework in Frameworks */,
 				DBAAA73E1A0F594700981004 /* Security.framework in Frameworks */,
 				DB2AE11A1A0F2C8200B1CE4D /* libsqlite3.dylib in Frameworks */,
@@ -451,11 +473,13 @@
 				DB2AE0BA1A0EE2FD00B1CE4D /* Sources */,
 				DB2AE0BB1A0EE2FD00B1CE4D /* Frameworks */,
 				DB2AE0BC1A0EE2FD00B1CE4D /* Resources */,
+				DB0FC12F1A262CF0000FADDD /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				DBFA88771A1BA385005349AD /* PBXTargetDependency */,
+				DB0FC12E1A262CF0000FADDD /* PBXTargetDependency */,
 			);
 			name = Hakumai;
 			productName = Hakumai;
@@ -651,6 +675,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		DB0FC12E1A262CF0000FADDD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "XCGLogger (OS X)";
+			targetProxy = DB0FC12D1A262CF0000FADDD /* PBXContainerItemProxy */;
+		};
 		DB2AE0D21A0EE2FD00B1CE4D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = DB2AE0BD1A0EE2FD00B1CE4D /* Hakumai */;
@@ -758,6 +787,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				INFOPLIST_FILE = Hakumai/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -776,6 +806,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				INFOPLIST_FILE = Hakumai/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
