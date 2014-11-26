@@ -46,6 +46,10 @@
 		DB7EB8A31A24AA5100C3BFB5 /* RoomPositionTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7EB8A11A24AA5100C3BFB5 /* RoomPositionTableCellView.swift */; };
 		DB7F21B01A210017008D17E0 /* Community.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7F21AF1A210017008D17E0 /* Community.swift */; };
 		DB7F21B11A210017008D17E0 /* Community.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7F21AF1A210017008D17E0 /* Community.swift */; };
+		DB80CA821A256F9A002636E0 /* ChatContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB80CA811A256F9A002636E0 /* ChatContainer.swift */; };
+		DB80CA831A256F9A002636E0 /* ChatContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB80CA811A256F9A002636E0 /* ChatContainer.swift */; };
+		DB80CA871A2575A0002636E0 /* MainViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB80CA861A2575A0002636E0 /* MainViewControllerExtensions.swift */; };
+		DB80CA881A2575A0002636E0 /* MainViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB80CA861A2575A0002636E0 /* MainViewControllerExtensions.swift */; };
 		DBA414C61A188A7400E0CAD3 /* RoomListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA414C51A188A7400E0CAD3 /* RoomListener.swift */; };
 		DBA414C71A18915C00E0CAD3 /* RoomListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA414C51A188A7400E0CAD3 /* RoomListener.swift */; };
 		DBA414C91A189D7D00E0CAD3 /* RoomListenerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA414C81A189D7D00E0CAD3 /* RoomListenerTests.swift */; };
@@ -154,6 +158,8 @@
 		DB7EB89B1A24AA3700C3BFB5 /* RoomPositionTableCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RoomPositionTableCellView.xib; sourceTree = "<group>"; };
 		DB7EB8A11A24AA5100C3BFB5 /* RoomPositionTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomPositionTableCellView.swift; sourceTree = "<group>"; };
 		DB7F21AF1A210017008D17E0 /* Community.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Community.swift; sourceTree = "<group>"; };
+		DB80CA811A256F9A002636E0 /* ChatContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatContainer.swift; sourceTree = "<group>"; };
+		DB80CA861A2575A0002636E0 /* MainViewControllerExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewControllerExtensions.swift; sourceTree = "<group>"; };
 		DBA414C51A188A7400E0CAD3 /* RoomListener.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomListener.swift; sourceTree = "<group>"; };
 		DBA414C81A189D7D00E0CAD3 /* RoomListenerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomListenerTests.swift; sourceTree = "<group>"; };
 		DBA414CB1A1A16F300E0CAD3 /* CommonExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommonExtensions.swift; sourceTree = "<group>"; };
@@ -393,9 +399,11 @@
 			isa = PBXGroup;
 			children = (
 				DB7B3DE71A246EE200205470 /* ColorScheme.swift */,
+				DB80CA811A256F9A002636E0 /* ChatContainer.swift */,
 				DB7B3DE01A242D4100205470 /* TableViewColumns */,
 				DB2AE0C91A0EE2FD00B1CE4D /* Main.storyboard */,
 				DB2AE0C51A0EE2FD00B1CE4D /* MainViewController.swift */,
+				DB80CA861A2575A0002636E0 /* MainViewControllerExtensions.swift */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -573,6 +581,7 @@
 				DBFA887F1A1BC7FF005349AD /* Thread.swift in Sources */,
 				DB52B0B21A21226900E78C6A /* ChatResult.swift in Sources */,
 				DB2AE0C61A0EE2FD00B1CE4D /* MainViewController.swift in Sources */,
+				DB80CA871A2575A0002636E0 /* MainViewControllerExtensions.swift in Sources */,
 				DB2AE1181A0F2BAB00B1CE4D /* FMResultSet.m in Sources */,
 				DB7B3DE81A246EE200205470 /* ColorScheme.swift in Sources */,
 				DB2AE1141A0F2BAB00B1CE4D /* FMDatabasePool.m in Sources */,
@@ -593,6 +602,7 @@
 				DBA414CC1A1A16F300E0CAD3 /* CommonExtensions.swift in Sources */,
 				DBAAA7511A0FDA4500981004 /* NicoUtility.swift in Sources */,
 				DBFA888B1A1C9A56005349AD /* Live.swift in Sources */,
+				DB80CA821A256F9A002636E0 /* ChatContainer.swift in Sources */,
 				DB52B0AD1A2102C700E78C6A /* User.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -618,8 +628,10 @@
 				DBE73ECA1A1A1B6A00A8BCA9 /* MainViewControllerTests.swift in Sources */,
 				DB7EB8A31A24AA5100C3BFB5 /* RoomPositionTableCellView.swift in Sources */,
 				DB7F21B11A210017008D17E0 /* Community.swift in Sources */,
+				DB80CA881A2575A0002636E0 /* MainViewControllerExtensions.swift in Sources */,
 				DB0F0ECD1A16441D00F8BDC5 /* NicoUtilityTests.swift in Sources */,
 				DB52B0B31A21226900E78C6A /* ChatResult.swift in Sources */,
+				DB80CA831A256F9A002636E0 /* ChatContainer.swift in Sources */,
 				DBAAA7521A0FDA4500981004 /* NicoUtility.swift in Sources */,
 				DBFA88831A1BC8C9005349AD /* Enum.swift in Sources */,
 				DBFA88801A1BC7FF005349AD /* Thread.swift in Sources */,

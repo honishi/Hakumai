@@ -75,7 +75,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     }
     
     override func viewDidAppear() {
-        self.kickTableViewPerformanceTest()
+        self.kickParallelTableViewStressTest(5, interval: 0.5, count: 100000)
     }
 
     override var representedObject: AnyObject? {
@@ -86,14 +86,14 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
 
     // MARK: - NSTableViewDataSource Functions
     func numberOfRowsInTableView(tableView: NSTableView) -> Int {
-        return self.chats.count
+        return ChatContainer.sharedContainer.count()
     }
     
     func tableView(tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
         let systemFontSize: CGFloat = 13.0
         let cellSpacingHeight: CGFloat = 2.0
         
-        let comment = self.chats[row].comment
+        let comment = ChatContainer.sharedContainer[row].comment
         
         let commentTableColumn = self.tableView.tableColumnWithIdentifier(kCommentColumnIdentifier)
         let commentColumnWidth = commentTableColumn?.width
@@ -118,7 +118,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
             view = tableView.makeViewWithIdentifier(identifier, owner: self) as? NSTableCellView
         }
 
-        let chat = self.chats[row]
+        let chat = ChatContainer.sharedContainer[row]
 
         if tableColumn?.identifier == kRoomPositionColumnIdentifier {
             let roomPositionView = (view as RoomPositionTableCellView)
@@ -186,7 +186,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
             return
         }
         
-        self.chats.append(chat)
+        ChatContainer.sharedContainer.append(chat)
         
         func shouldTableViewScrollToBottom() -> Bool {
             let viewRect = self.scrollView.contentView.documentRect
@@ -206,7 +206,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
             self.tableView.reloadData()
             
             if shouldScroll {
-                self.tableView.scrollRowToVisible(self.chats.count - 1)
+                self.tableView.scrollRowToVisible(ChatContainer.sharedContainer.count() - 1)
             }
             
             self.scrollView.flashScrollers()
@@ -215,7 +215,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     
     func nicoUtilityDidFinishListening(nicoUtility: NicoUtility) {
         dispatch_async(dispatch_get_main_queue(), {
-            self.chats.removeAll(keepCapacity: false)
+            ChatContainer.sharedContainer.removeAll()
             self.tableView.reloadData()
         })
     }
@@ -250,10 +250,6 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
 
     // MARK: - Timer Handlers
     func calculateActive(timer: NSTimer) {
-        // TODO: should be atomic?
-        // objc_sync_enter(self)
-        // objc_sync_exit(self)
-
         if self.calculatingActive {
             log.debug("skip calcurating active")
             return
@@ -262,7 +258,6 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
 
         // log.debug("calcurating active")
         
-        // TODO: check duplicate executes
         let qualityOfServiceClass = Int(QOS_CLASS_BACKGROUND.value)
         let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
 
@@ -270,18 +265,10 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
             var activeUsers = Dictionary<String, Bool>()
             let tenMinutesAgo = NSDate(timeIntervalSinceNow: (Double)(-10 * 60))
 
-            // to avoid weird exc_bad_instruction(fatal error: Array index out of range) when 
-            // accessing self.chats[i - 1] in for-loop, copy self.chats first
-            self.log.debug("start copy chats")
-            let copiedChats = self.chats
-            self.log.debug("end copy chats")
-            
             self.log.debug("start counting active")
             
-            for var i = copiedChats.count; 0 < i ; i-- {
-            // for var i = self.chats.count; 0 < i ; i-- {
-                let chat = copiedChats[i - 1]
-                // let chat = self.chats[i - 1]
+            for var i = ChatContainer.sharedContainer.count(); 0 < i ; i-- {
+                let chat = ChatContainer.sharedContainer[i - 1]
                 
                 if chat.date == nil || chat.userId == nil {
                     continue
@@ -339,43 +326,5 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         }
 
         return nil
-    }
-}
-
-extension MainViewController {
-    // MARK: - NSTableView Performance
-    func kickTableViewPerformanceTest() {
-        let qualityOfServiceClass = Int(QOS_CLASS_BACKGROUND.value)
-        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-        
-        dispatch_async(backgroundQueue, {
-            for _ in 1...100000 {
-                let chat = self.randomChat()
-                
-                if let mainvc = MainViewController.instance() {
-                    mainvc.nicoUtilityDidReceiveChat(NicoUtility.sharedInstance(), chat: chat)
-                }
-                
-                NSThread.sleepForTimeInterval(0.05)
-            }
-            
-        })
-        
-        // NSRunLoop.currentRunLoop().run()
-    }
-    
-    func randomChat() -> Chat {
-        let chat = Chat()
-        
-        chat.roomPosition = RoomPosition.Arena
-        chat.userId = String(arc4random() % 1000)
-        chat.no = (Int(arc4random()) % 1000)
-        chat.score = -(Int(arc4random()) % 30000)
-        chat.comment = "hello " * (Int(arc4random()) % 100)
-        chat.date = NSDate()
-        chat.mail = "184"
-        chat.premium = Premium.Premium
-        
-        return chat
     }
 }
