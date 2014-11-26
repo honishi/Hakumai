@@ -19,10 +19,13 @@ class ChatContainer {
         return Static.instance
     }
     
-    func append(chat: Chat) {
+    func append(chat: Chat) -> Int {
         objc_sync_enter(self)
         self.chats.append(chat)
+        let count = self.chats.count
         objc_sync_exit(self)
+        
+        return count
     }
     
     func count() -> Int {

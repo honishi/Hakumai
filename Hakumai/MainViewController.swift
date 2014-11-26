@@ -46,6 +46,8 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
 
     // row-height cache
     var RowHeightCacher = Dictionary<Int, CGFloat>()
+    var lastShouldScrollToBottom = true
+    var currentScrollAnimationCount = 0
     
     var activeTimer: NSTimer?
     var calculatingActive: Bool = false
@@ -81,7 +83,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     
     override func viewDidAppear() {
         // self.kickParallelTableViewStressTest(5, interval: 0.5, count: 100000)
-        self.kickParallelTableViewStressTest(4, interval: 2, count: 100000)
+        // self.kickParallelTableViewStressTest(4, interval: 2, count: 100000)
     }
 
     override var representedObject: AnyObject? {
@@ -201,31 +203,61 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
             return
         }
         
-        ChatContainer.sharedContainer.append(chat)
-        
-        func shouldTableViewScrollToBottom() -> Bool {
-            let viewRect = self.scrollView.contentView.documentRect
-            let visibleRect = self.scrollView.contentView.documentVisibleRect
-            // log.debug("\(viewRect)-\(visibleRect)")
-            
-            let bottomY = viewRect.size.height
-            let offsetBottomY = visibleRect.origin.y + visibleRect.size.height
-            let allowance: CGFloat = 10
-            
-            return (bottomY <= (offsetBottomY + allowance))
-        }
-        
-        let shouldScroll = shouldTableViewScrollToBottom()
-        
         dispatch_async(dispatch_get_main_queue(), {
-            self.tableView.reloadData()
+            let shouldScroll = self.shouldTableViewScrollToBottom()
+            
+            let rowIndex = ChatContainer.sharedContainer.append(chat) - 1
+            self.tableView.insertRowsAtIndexes(NSIndexSet(index: rowIndex), withAnimation: .EffectNone)
             
             if shouldScroll {
-                self.tableView.scrollRowToVisible(ChatContainer.sharedContainer.count() - 1)
+                // self.tableView.scrollRowToVisible(rowIndex)
+                self.scrollMoveToBottom()
             }
             
             self.scrollView.flashScrollers()
         })
+    }
+    
+    func shouldTableViewScrollToBottom() -> Bool {
+        if 0 < self.currentScrollAnimationCount {
+            return self.lastShouldScrollToBottom
+        }
+        
+        let viewRect = self.scrollView.contentView.documentRect
+        let visibleRect = self.scrollView.contentView.documentVisibleRect
+        // log.debug("\(viewRect)-\(visibleRect)")
+        
+        let bottomY = viewRect.size.height
+        let offsetBottomY = visibleRect.origin.y + visibleRect.size.height
+        let allowance: CGFloat = 10
+
+        let shouldScroll = (bottomY <= (offsetBottomY + allowance))
+        self.lastShouldScrollToBottom = shouldScroll
+        
+        return shouldScroll
+    }
+    
+    // http://stackoverflow.com/questions/19399242/soft-scroll-animation-nsscrollview-scrolltopoint
+    func scrollMoveToBottom() {
+        self.currentScrollAnimationCount += 1
+        // log.debug("start scroll animation:\(self.currentScrollAnimationCount)")
+        
+        NSAnimationContext.beginGrouping()
+        NSAnimationContext.currentContext().duration = 0.3
+        
+        NSAnimationContext.currentContext().completionHandler = {() -> Void in
+            self.currentScrollAnimationCount -= 1
+            // self.log.debug("  end scroll animation:\(self.currentScrollAnimationCount)")
+        }
+        
+        let clipView = self.scrollView.contentView
+        let x = clipView.documentVisibleRect.origin.x
+        let y = clipView.documentRect.size.height - clipView.documentVisibleRect.size.height
+        
+        clipView.animator().setBoundsOrigin(NSMakePoint(x, y))
+        // self.scrollView.reflectScrolledClipView(clipView)
+        
+        NSAnimationContext.endGrouping()
     }
     
     func nicoUtilityDidFinishListening(nicoUtility: NicoUtility) {
@@ -280,7 +312,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
             var activeUsers = Dictionary<String, Bool>()
             let tenMinutesAgo = NSDate(timeIntervalSinceNow: (Double)(-10 * 60))
 
-            self.log.debug("start counting active")
+            // self.log.debug("start counting active")
             
             for var i = ChatContainer.sharedContainer.count(); 0 < i ; i-- {
                 let chat = ChatContainer.sharedContainer[i - 1]
@@ -297,7 +329,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
                 activeUsers[chat.userId!] = true
             }
 
-            self.log.debug("end counting active")
+            // self.log.debug("end counting active")
             
             dispatch_async(dispatch_get_main_queue(), {
                 self.activeLabel.stringValue = "active:\(activeUsers.count)"
