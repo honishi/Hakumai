@@ -37,6 +37,10 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     @IBOutlet weak var activeLabel: NSTextField!
     @IBOutlet weak var notificationLabel: NSTextField!
     @IBOutlet weak var commentTextField: NSTextField!
+
+    struct Static {
+        static var instance: MainViewController!
+    }
     
     let log = XCGLogger.defaultInstance()
 
@@ -49,11 +53,11 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     override func awakeFromNib() {
         super.awakeFromNib()
 
-        mainViewController = self
+        Static.instance = self
     }
 
     class func instance() -> MainViewController? {
-        return mainViewController
+        return Static.instance
     }
 
     // MARK: - UIViewController Functions
@@ -75,7 +79,8 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     }
     
     override func viewDidAppear() {
-        self.kickParallelTableViewStressTest(5, interval: 0.5, count: 100000)
+        // self.kickParallelTableViewStressTest(5, interval: 0.5, count: 100000)
+        self.kickParallelTableViewStressTest(4, interval: 2, count: 100000)
     }
 
     override var representedObject: AnyObject? {
