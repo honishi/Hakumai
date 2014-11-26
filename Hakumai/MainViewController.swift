@@ -21,8 +21,6 @@ let kMailColumnIdentifier = "MailColumn"
 
 let kCalculateActiveInterval: NSTimeInterval = 3
 
-var mainViewController: MainViewController?
-
 class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewDataSource, NSTableViewDelegate {
     @IBOutlet weak var liveTextField: NSTextField!
     
@@ -46,6 +44,9 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
 
     var chats: [Chat] = []
 
+    // row-height cache
+    var RowHeightCacher = Dictionary<Int, CGFloat>()
+    
     var activeTimer: NSTimer?
     var calculatingActive: Bool = false
 
@@ -95,7 +96,12 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     }
     
     func tableView(tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
+        if let cached = self.RowHeightCacher[row] {
+            return cached
+        }
+        
         let systemFontSize: CGFloat = 13.0
+        let cellSpacingWidth: CGFloat = 6.0
         let cellSpacingHeight: CGFloat = 2.0
         
         let comment = ChatContainer.sharedContainer[row].comment
@@ -104,14 +110,18 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         let commentColumnWidth = commentTableColumn?.width
         
         let attributes = [NSFontAttributeName: NSFont.systemFontOfSize(systemFontSize)]
-        let commentRect = (comment! as NSString).boundingRectWithSize(CGSizeMake(commentColumnWidth!, 0),
+        let commentRect = (comment! as NSString).boundingRectWithSize(CGSizeMake(commentColumnWidth! - cellSpacingWidth, 0),
             options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: nil)
         // log.debug("\(commentRect.size.width),\(commentRect.size.height)")
         
-        return commentRect.size.height + cellSpacingHeight
+        let rowHeight = commentRect.size.height + cellSpacingHeight
+        self.RowHeightCacher[row] = rowHeight
+        
+        return rowHeight
     }
     
     func tableViewColumnDidResize(aNotification: NSNotification) {
+        self.RowHeightCacher.removeAll(keepCapacity: false)
         self.tableView.reloadData()
     }
 
