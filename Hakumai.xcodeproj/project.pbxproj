@@ -13,6 +13,8 @@
 		DB0F0ECD1A16441D00F8BDC5 /* NicoUtilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0F0ECC1A16441D00F8BDC5 /* NicoUtilityTests.swift */; };
 		DB0FC12B1A262CF0000FADDD /* XCGLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBFA88731A1BA353005349AD /* XCGLogger.framework */; };
 		DB0FC12C1A262CF0000FADDD /* XCGLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DBFA88731A1BA353005349AD /* XCGLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		DB1E32BF1A2B95C600CD874A /* user.html in Resources */ = {isa = PBXBuildFile; fileRef = DB1E32BE1A2B95C600CD874A /* user.html */; };
+		DB1E32C31A2BA53700CD874A /* user_me.html in Resources */ = {isa = PBXBuildFile; fileRef = DB1E32C21A2BA53700CD874A /* user_me.html */; };
 		DB2AE0C41A0EE2FD00B1CE4D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0C31A0EE2FD00B1CE4D /* AppDelegate.swift */; };
 		DB2AE0C61A0EE2FD00B1CE4D /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0C51A0EE2FD00B1CE4D /* MainViewController.swift */; };
 		DB2AE0C81A0EE2FD00B1CE4D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB2AE0C71A0EE2FD00B1CE4D /* Images.xcassets */; };
@@ -141,6 +143,8 @@
 		DB080B841A17CA0100896228 /* CookieUtilityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CookieUtilityTests.swift; sourceTree = "<group>"; };
 		DB0ED6511A20B0A7007E9318 /* ChromeCookie.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChromeCookie.swift; sourceTree = "<group>"; };
 		DB0F0ECC1A16441D00F8BDC5 /* NicoUtilityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicoUtilityTests.swift; sourceTree = "<group>"; };
+		DB1E32BE1A2B95C600CD874A /* user.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = user.html; sourceTree = "<group>"; };
+		DB1E32C21A2BA53700CD874A /* user_me.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = user_me.html; sourceTree = "<group>"; };
 		DB2AE0BE1A0EE2FD00B1CE4D /* Hakumai.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hakumai.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB2AE0C21A0EE2FD00B1CE4D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DB2AE0C31A0EE2FD00B1CE4D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -452,6 +456,8 @@
 			isa = PBXGroup;
 			children = (
 				DBFA88901A1CAE85005349AD /* community.html */,
+				DB1E32BE1A2B95C600CD874A /* user.html */,
+				DB1E32C21A2BA53700CD874A /* user_me.html */,
 			);
 			name = sample;
 			sourceTree = "<group>";
@@ -583,6 +589,8 @@
 				DB7B3DE31A242D7B00205470 /* ScoreTableCellView.xib in Resources */,
 				DB7EB89D1A24AA3700C3BFB5 /* RoomPositionTableCellView.xib in Resources */,
 				DBFA88911A1CAE85005349AD /* community.html in Resources */,
+				DB1E32BF1A2B95C600CD874A /* user.html in Resources */,
+				DB1E32C31A2BA53700CD874A /* user_me.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

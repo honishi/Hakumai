@@ -1,0 +1,1906 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="ja-jp">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta name="copyright" content="&copy; niwango, inc.">
+<meta name="msapplication-task" content="name=ニコニコ動画 ; action-uri=http://www.nicovideo.jp/; icon-uri=http://uni.res.nimg.jp/img/favicon.ico">
+<meta property="fb:app_id" content="378853695459932">
+<title>honishiさんのユーザーページ - niconico</title><base href="http://www.nicovideo.jp/">
+<link rel="alternate" media="handheld" href="http://nicomoba.jp/user/79595" />
+<link rel="alternate" media="only screen and (max-width: 640px)" href="http://sp.nicovideo.jp/" />
+<link rel="shortcut icon" href="http://uni.res.nimg.jp/img/favicon.ico">
+
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="http://uni.res.nimg.jp/css/ini.css?121017">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="http://uni.res.nimg.jp/css/zero_common.css?1407152">
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="http://uni.res.nimg.jp/css/zero_my/my.css?140908">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="http://uni.res.nimg.jp/css/zero_my/search.css?120509">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="http://uni.res.nimg.jp/css/multilanguage.css?121017">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="http://uni.res.nimg.jp/js/nicolib/SuggestSearch/nicolib-SuggestSearch.css?131204">
+<!--[if lte IE 7]>
+<link rel="stylesheet" type="text/css" media="all" href="http://uni.res.nimg.jp/css/zero_my/my_ie.css?120530">
+<![endif]-->
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="http://uni.res.nimg.jp/js/lib/introjs/introjs.css">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="http://uni.res.nimg.jp/css/zero_my/introjs_mypage.css">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="http://uni.res.nimg.jp/css/zero_my/user.css?140114">
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="http://uni.res.nimg.jp/css/multilanguage.css?121017">
+
+<link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="http://uni.res.nimg.jp/css/zero_nicorepo.css?131003">
+
+
+
+
+
+<link rel="stylesheet" type="text/css" href="http://uni.res.nimg.jp/css/setcountry.css?121017" media="all">
+<script type="text/javascript">
+
+if (typeof Nico === 'undefined') Nico = {};
+if (typeof Nico.messages === 'undefined') Nico.messages = {};
+
+</script><script type="text/javascript" charset="utf-8" src="http://uni.res.nimg.jp/js/lib/prototype.js?1.5.1.1_2"></script>
+<script type="text/javascript" charset="utf-8" src="http://uni.res.nimg.jp/js/common.js?110215"></script>
+<script type="text/javascript" charset="utf-8" src="http://uni.res.nimg.jp/js/swfobject.js?5"></script>
+<script type="text/javascript" charset="utf-8" src="http://uni.res.nimg.jp/js/nicolib.js?110215"></script>
+<script type="text/javascript" charset="utf-8" src="http://uni.res.nimg.jp/js/ads.js?110531"></script>
+<script type="text/javascript" charset="utf-8" src="http://ads.nicovideo.jp/assets/js/ads-2.5.1.min.js?140213"></script>
+
+
+<script type="text/javascript" src="http://uni.res.nimg.jp/js/__utm.js?110928"></script><script type="text/javascript" charset="utf-8" src="http://uni.res.nimg.jp/js/base.js?120501"></script>
+
+
+<script type="text/javascript" charset="utf-8" src="http://uni.res.nimg.jp/js/nicolib/SuggestSearch/nicolib-SuggestSearch.js?140916"></script>
+
+<script type="text/javascript"><!--
+
+var User = { id: 79595, age: 38, isPremium: true, isOver18: true, isMan: true };
+var q = "";
+var country = "";
+
+
+Nico.SuggestSearch.IS_ENABLED = true;
+
+--></script>
+
+<script type="text/javascript">
+(function(we, ico) {
+	try {
+		we.msSiteModeCreateJumplist('niconico(Q)');
+		we.msSiteModeAddJumpListItem('ヘルプ',         'http://faq.nicovideo.jp/',           ico);
+		we.msSiteModeAddJumpListItem('アカウント設定', 'https://secure.nicovideo.jp/secure/',           ico);
+		we.msSiteModeAddJumpListItem('視聴履歴',       'http://www.nicovideo.jp/my/history',               ico);
+		we.msSiteModeAddJumpListItem('投稿動画',       'http://www.nicovideo.jp/my/video',                 ico);
+		we.msSiteModeAddJumpListItem('お気に入り',     'http://www.nicovideo.jp/my/watchlist',             ico);
+		we.msSiteModeAddJumpListItem('マイリスト',     'http://www.nicovideo.jp/my/mylist',                ico);
+		we.msSiteModeAddJumpListItem('総合ランキング', 'http://www.nicovideo.jp/uni_ranking',              ico);
+		we.msSiteModeAddJumpListItem('動画を投稿',     'http://www.upload.nicovideo.jp/upload',      ico);
+		we.msSiteModeAddJumpListItem('マイページ',     'http://www.nicovideo.jp/my/top',                   ico);
+		we.msSiteModeAddJumpListItem('ログイン',       'https://account.nicovideo.jp/login', ico);
+	} catch(e) {}
+})(window.external, 'http://uni.res.nimg.jp/img/favicon.ico');
+</script>
+<script type="text/javascript" src="http://uni.res.nimg.jp/js/setcountry.js?121121"></script>
+
+<script type="text/javascript" charset="utf-8"><!--
+
+Ads.get_segment_object = function(){
+	var segment = {};
+
+	segment.age = '38';
+	segment.gender = '0';
+	return segment;
+
+};
+
+// -->
+</script>
+</head>
+
+<body class="ja-jp">
+
+
+<link rel="stylesheet" type="text/css" charset="utf-8" href="http://uni.res.nimg.jp/js/nicoheader/resources/siteHeader.css?131031">
+<link rel="stylesheet" type="text/css" charset="utf-8" href="http://uni.res.nimg.jp/js/nicoheader/resources/nicolib-CommonNotificationHeader.css?141023">
+<script type="text/javascript" charset="utf-8" src="http://uni.res.nimg.jp/js/nicoheader/siteHeader.js?131031"></script>
+<script type="text/javascript" charset="utf-8" src="http://uni.res.nimg.jp/js/nicoheader/nicolib-CommonNotificationHeader.js?131031"></script>
+<div id="siteHeader">
+	<div id="siteHeaderInner">
+		<ul class="siteHeaderGlovalNavigation">
+			<li><a href="http://www.nicovideo.jp/?header"><span>niconico</span></a></li>
+			<li><a href="http://www.nicovideo.jp/video_top?header"><span>動画</span></a></li>
+			<li><a href="http://seiga.nicovideo.jp/?header"><span>静画</span></a></li>
+			<li><a href="http://live.nicovideo.jp/?header"><span>生放送</span></a></li>
+			<li><a href="http://ch.nicovideo.jp/?header"><span>チャンネル</span></a></li>
+			<li><a href="http://ch.nicovideo.jp/portal/blomaga?header"><span>ブロマガ</span></a></li>
+			<li class="siteHeaderOther" id="siteHeaderLeftMenu">
+				<a href="javascript:void(0);"><span>その他▼</span></a>
+				<ul id="siteHeaderLeftMenuContainer" style="display: none;">
+					<li><a href="http://app.nicovideo.jp/?header">アプリ</a></li>
+					<li><a href="http://dic.nicovideo.jp/?header">大百科</a></li>
+					<li><a href="http://ichiba.nicovideo.jp/?header">市場</a></li>
+					<li><a href="http://uad.nicovideo.jp/?header">ニコニ広告</a></li>
+					<li><a href="http://3d.nicovideo.jp/?header">ニコニ立体</a></li>
+					<li><a href="http://commons.nicovideo.jp/?header">コモンズ</a></li>
+					<li><a href="http://jk.nicovideo.jp/?header">実況</a></li>
+					<li><a href="http://com.nicovideo.jp/?header">コミュニティ</a></li>
+					<li><a href="http://nicoseiga.charagoods.jp/?header">静画の印刷工房</a></li>
+					<li><a href="http://info.nicovideo.jp/pr_nicom/iphone.html?header">スマートフォン</a></li>
+					<li><a href="http://news.nicovideo.jp/?header">ニュース</a></li>
+					<li class="menuServiceList"><a href="http://www.nicovideo.jp/top_service?header">サービス一覧</a></li>
+				</ul>
+			</li>
+		</ul>
+
+		<ul class="siteHeaderMenuList">
+<!-- start notification header -->
+			<li id="siteHeaderNotification" data-nico-userId="79595" data-nico-siteId="nicovideo"
+			  data-nico-API-Date="1417375030" data-nico-API-Version="2" data-nico-locale="ja_JP"
+			  data-nico-API-Key="a7c18118314a8d738fb8ba0b96b5b01194240678"
+			  data-nico-JSONP-URL="http://notify.nicovideo.jp/api/notify"
+			  data-nico-count="0" data-nico-userIconUrl="http://res.nimg.jp/img/user/thumb/blank_s.jpg"
+			  data-nico-config-nicorepores="1" data-nico-config-nicoru="1"
+			  data-nico-config-stampget="1" data-nico-config-blomagacomment="1"
+			  data-nico-isError="false" data-nico-isMaintenance="false"
+			  class="siteHeaderPremium"			>
+
+																																									<a href="/my/top" id="siteHeaderUserContainer">
+					<span class="siteHeaderAva" id="siteHeaderUserIconContainer"></span>
+										<span id="siteHeaderUserNickNameContainer">honishi さん</span>
+				</a>
+				<div class="siteHeaderNotificationContainer" id="siteHeaderNotificationContainer">
+					<dl id="siteHeaderNotificationWithNotification" style="display: none;">
+					</dl>
+					<div id="siteHeaderNotificationWithoutNotification" style="display: none;">
+						<span></span>
+						<p>あなた宛のお知らせが届くとここに表示されます。</p>
+						<p id="siteHeaderShowConfigButton" class="siteHeaderInformationOption">設定変更</p>
+					</div>
+					<dl id="siteHeaderNotificationLoading" style="display: none;">
+						<dt>お知らせ<span></span></dt>
+						<dd><span><img src="http://res.nimg.jp/img/loading.gif" /></span>お知らせを読み込んでいます…</dd>
+					</dl>
+					<dl id="siteHeaderNotificationError" style="display: none;">
+						<dt>お知らせ<span></span></dt>
+						<dd id="siteHeaderNotificationError503Detail">お知らせが取得できませんでした。しばらく待って再度お試しください。</dd>
+						<dd id="siteHeaderNotificationError503Config" style="display: none;">設定が反映できませんでした。しばらく待って再度お試しください。</dd>
+						<dd id="siteHeaderNotificationError401" style="display: none;">ログインされておりません。再度ログインしなおしてください。</dd>
+					</dl>
+					<dl id="siteHeaderNotificationMaintenance" style="display: none;">
+						<dt>お知らせ<span></span></dt>
+						<dd>只今メンテナンス中です。</dd>
+					</dl>
+					<dl id="siteHeaderNotificationOption" style="display: none;">
+						<dt>設定<span></span></dt>
+						<dd>
+							<p class="siteHeaderSwitch siteHeaderFirstChild">ニコレポコメントのお知らせ
+								<span id="siteHeaderConfigNicoreporesButton" class="siteHeaderEnable"></span>
+							</p>
+
+							<p class="siteHeaderSwitch">スタンプ取得のお知らせ
+								<span id="siteHeaderConfigStampgetButton" class="siteHeaderEnable"></span>
+							</p>
+
+							<p class="siteHeaderSwitch">ニコられた数の通知
+								<span id="siteHeaderConfigNicoruButton" class="siteHeaderEnable"></span>
+							</p>
+
+							<p class="siteHeaderSwitch lastChild">ブロマガコメントのお知らせ
+								<span id="siteHeaderConfigBlomagacommentButton" class="siteHeaderEnable"></span>
+							</p>
+							<a href="javascript:void(0);" id="siteHeaderApplyConfigButton" class="siteHeaderSubmitButtonDisable">変更を適用する</a>
+						</dd>
+						<dd class="siteHeaderInformationOption">
+							<a href="javascript:void(0);" id="siteHeaderBackDetail">一覧に戻る</a>
+							<a href="javascript:void(0);" id="siteHeaderBackDetailChanged" style="display: none;">閉じる</a>
+						</dd>
+					</dl>
+				</div>
+				<a href="https://account.nicovideo.jp/premium/register?sec=bar" class="siteHeaderUpgrade" id="siteHeaderNotificationPremium">
+					<small>－</small>
+					<span>プレミアム登録</span>
+				</a>
+								<span class="siteHeaderNicopo">
+					<a href="http://point.nicovideo.jp/index/bank/?from_notification=1" class="siteHeaderNicopoBalance"><span>0</span><span class="unit">pt</span></a>
+					<a href="http://point.nicovideo.jp/index/asp/purchase_point?from_notification=1" class="siteHeaderNicopoPurchase" id="siteHeaderNicopoPurchase"
+					   data-F_site_cd="S0011"><span class="tooltip">ニコニコポイントを購入</span>
+					</a>
+				</span>
+							</li>
+<!-- end notification header -->
+			<li class="siteHeaderHorizon"><a href="http://www.upload.nicovideo.jp/upload"><span>動画を投稿</span></a></li>
+			<li><a href="uni_ranking"><span>総合ランキング</span></a></li>
+			<li class="siteHeaderOther" id="siteHeaderRightMenu">
+				<a href="javascript:void(0);"><span>メニュー▼</span></a>
+				<ul style="display: none;" id="siteHeaderRightMenuContainer">
+					<li><a href="/my/mylist">マイリスト</a></li>
+					<li><a href="/my/watchlist">お気に入り</a></li>
+					<li><a href="/my/video">投稿動画</a></li>
+					<li><a href="/my/history">視聴履歴</a></li>
+					<li><a href="https://secure.nicovideo.jp/secure/">アカウント設定</a></li>
+					<li><a href="http://point.nicovideo.jp/index/bank/?from_notification=2">ポイント購入</a></li>					<li id="siteHeaderRightMenuUnfix"><a href="javascript:void(0);">ヘッダー:<span class="siteHeaderScroll">追従</span></a></li>
+					<li id="siteHeaderRightMenuFix"><a href="javascript:void(0);">ヘッダー:<span class="siteHeaderFix">固定</span></a></li>
+					<li><a href="http://faq.nicovideo.jp/">ヘルプ</a></li>
+					<li><a href="https://secure.nicovideo.jp/secure/logout">ログアウト</a></li>
+				</ul>
+			</li>
+		</ul>
+	</div>
+</div>
+
+
+
+
+
+<div id="header" class="clearfix">
+
+  <h1 id="logo_zero"><a href="http://www.nicovideo.jp/">niconico</a></h1> 
+
+  
+            <div id="pc_uni_top_468x60_north" class="headerBanner"></div>
+          <script type="text/javascript">
+      
+      (function () {
+        var segment = Ads.get_segment_object();
+        new Ads.Advertisement({zone: 680, segments: segment, impression: 2}).set('pc_uni_top_468x60_north');
+      })();
+      
+    </script>
+    </div>
+<!-- /#header --><script type="text/javascript" src="http://uni.res.nimg.jp/js/lib/jquery/jquery-1.7.min.js"></script>
+<script type="text/javascript"><!--
+jQuery.noConflict();
+var nickname = "honishi";
+--></script>
+<script type="text/javascript" src="http://uni.res.nimg.jp/js/my4.js?140903"></script>
+<script type="text/javascript"><!--
+
+User_profile_description.cover_up = '▲隠す';
+User_profile_description.cover_down = '▼もっと見る';
+
+Mypage_globals.error_message = {
+'hash error' : '操作を受け付けるのは前回アクセスから30分以内までです。\n恐れ入りますが、画面をリロードしてから再度操作をして下さるようお願いいたします。',
+'busy' : '短時間での連続アクセスはご遠慮ください。\n混雑緩和のため、ご協力をお願いいたしします。\n外部ツールなどをお使いの場合、意図しない過剰アクセスが発生し、このメッセージが表示されやすくなることがあります。',
+'param error' : 'パラメータが不正です。',
+'comment error' : 'コメントの投稿に失敗しました。\nコメント文字数は140文字まで投稿できます。',
+'reslimit error' : 'このニコレポへコメントできる上限数を超えました。',
+'user error' : 'アクセス権限がありません。',
+'many res' : 'コメントの投稿には制限を設けております。しばらく時間を置いてもう一度お試しください',
+'ng word' : '利用できない単語が含まれております。\nこのニコレポコメントは投稿できません。',
+'maintenance' : '現在メンテナンス中のため、ニコレポコメントの投稿削除ができません。\nメンテナンス終了までお待ちください。',
+'default_message' : '通信に失敗しました。\nしばらく時間を置いてもう一度お試しください。'
+};
+
+Favuser_confirm_message.register = 'このユーザーをお気に入りに登録してよろしいですか？';
+Favuser_confirm_message.unregister = 'このユーザーをお気に入りからはずしてよろしいですか？';
+
+WatchBtn_status.watchLoadingMsg = '読み込み中です...';
+WatchBtn_status.watchRegisteredMsg = 'お気に入りに登録しました';
+WatchBtn_status.watchUnregisteredMsg = 'お気に入りからはずしました';
+WatchBtn_status.watchBlockingMsg = 'ブロックしているため、登録できませんでした';
+WatchBtn_status.watchBlockedMsg = 'ブロックされているため、登録できませんでした';
+WatchBtn_status.watchFailedMsg = '登録に失敗しました';
+
+--></script>
+
+
+<div class="ownerMsg">
+	<p>他のユーザーから見たあなたのプロフィールです。</p>
+	<ul>
+		<li><a href="https://secure.nicovideo.jp/secure/user_publish">公開・非公開設定</a></li>
+		<li><a href="https://secure.nicovideo.jp/secure/profile_edit">プロフィールの変更</a></li>
+	</ul>
+</div><!-- /.ownerMsg -->
+
+<!--↓コンテンツ↓-->
+<script type="text/javascript" src="http://res.nimg.jp/js/my3.js"></script>
+<script type="text/javascript" src="http://res.nimg.jp/js/nicoru.js?4" id="nicoru-token" data-nicoru-token="1:79595:niconico:1417375030:0bd4934bc24b71755267933697921739f11629c0" data-nicoru-language="ja-jp"></script>
+<script type="text/javascript" src="http://res.nimg.jp/js/lib/jquery/jquery.prettydate.js?121024"></script>
+<script type="text/javascript" src="http://res.nimg.jp/js/zero_nicorepo.js?121024"></script>
+<script type="text/javascript"><!--
+Globals.hash = '79595-1417378630-dd27bdfc91722919c44ef4573b4596659d417b7e';
+
+--></script>
+
+<div class="userDetail">
+	<div class="avatar">
+		<img src="http://uni.res.nimg.jp/img/user/thumb/blank.jpg" alt="honishi" />
+	</div>
+
+	<div class="profile">
+		<h2>honishi<small>さん</small></h2>
+
+		<div id="watchBtns" class="noWatching">
+				</div><!-- /#watchBtns -->
+
+		<div class="account">
+			<p class="accountNumber">ID:<span>79595(β) プレミアム会員</span></p>
+			<p>性別:<span>非公開</span></p>
+			<p>生年月日:<span>非公開</span></p>
+			<p>お住まいの地域:<span>非公開</span></p>
+		</div>
+		<ul class="stats channel_open_mb8">
+			<li class="fav" title="お気に入り登録された数"><span></span>13</li>
+			<li class="exp" title="スタンプ経験値"><a href="user/79595/stamp"><span></span>79EXP</li>
+			<li class="nicoru" title="ニコられた数"><a href="user/79595/nicoru/passive"><span></span>1</a></li>
+		</ul>
+													<ul class="userDetailComment channel_open_mt0">
+			
+						<li class="mutualFriends">
+				<hr />
+				<p class="notice">※この場所には共通のフレンドが表示されます</p>
+					</ul>
+		
+		<script type="text/javascript">
+		(function($) {
+			$('ul.userDetailComment li p').find('font[size]').each(function() {
+				var el  = $(this),
+					tmp = el.attr('size').split(''),
+					op  = tmp.length > 1 ? tmp[0] : '',
+					n   = (tmp.length > 1 ? tmp[1] : tmp[0]) - 0,
+					def = 3,
+					f   = op != '' && $.inArray(op, '+-'.split('')) < 0;
+
+				if (isNaN(n) || f) return;
+
+				var size =
+					op == '+' ? def + (n < 1 ? 1 : n > 4 ? 4 : n) :
+					op == '-' ? def - (n < 1 ? 1 : n > 2 ? 2 : n) :
+					n < 1     ? 1 :
+					n > 7     ? 7 :
+					n;
+
+				// size:px -> 1:8, 2:10, 3:12, 4:14, 5:16, 6:18, 7:20
+				el.css('font-size', size * 2 + 6);
+			});
+		})(jQuery)
+		</script>
+		
+
+	</div>
+
+		</div>
+<!-- wrapper -->
+<div class="wrapper">
+
+	<!-- content -->
+	<div class="content" id="nicorepo">
+		<h3>最新ニコレポ</h3>
+		<div class="articleBody">
+			<div class="nicorepo">
+
+	<div class="nicorepo-page">
+
+	
+		<div class="timeline">
+							
+<div class="log first log-user-video-upload">
+
+							
+					<div class="log-author ">
+							<a href="http://www.nicovideo.jp/user/79595"><img src="http://uni.res.nimg.jp/img/x.gif" alt="" class="nicorepo-lazyimage" data-src="http://uni.res.nimg.jp/img/user/thumb/blank_s.jpg"></a>
+						</div>
+		
+					<!--  -->
+			<form class="log-deleteform" action="/api/nicorepo/delete_log" method="POST"
+					data-confirm="このニコレポを削除してもよろしいですか？&#10;（一度消すと元に戻せません）">
+				<input type="hidden" name="log_id" value="79595">
+				<input type="hidden" name="type" value="1">
+				<input type="hidden" name="time" value="14153683942811">
+				<input type="hidden" name="token" value="79595-1417378630-dd27bdfc91722919c44ef4573b4596659d417b7e">
+
+				<div class="log-deleteform-button">
+					<input type="submit" value="削除">
+				</div>
+				<div class="ajax-loading">削除しています…</div>
+				<div class="ajax-completed">削除されました</div>
+			</form>
+		
+		<div class="log-content">
+
+			<div class="log-body">
+				<a href="http://www.nicovideo.jp/user/79595" class="author-user">honishi</a> さんが <strong>動画を投稿しました。</strong>
+			</div>
+
+			
+
+			<div class="log-details log-target log-target-video">
+									<!--  -->
+											<div class="log-target-thumbnail">
+							<a href="http://www.nicovideo.jp/watch/sm24863987">
+								<img src="http://uni.res.nimg.jp/img/x.gif" alt="" class="nicorepo-lazyimage video" data-src="http://tn-skr4.smilevideo.jp/smile?i=24863987">
+							</a>
+						</div>
+										<div class="log-target-info">
+													<span class="log-target-type-video">動画</span>
+												<a href="http://www.nicovideo.jp/watch/sm24863987">らみあからよっさんへ 激励 2014/11/7</a>
+					</div>
+				
+
+				
+									<div class="log-footer">
+						<div class="log-footer-inner">
+
+						
+													<a href="#" class="log-res-open-link">コメントする</a>
+						
+												<div class="nicoru-positioned">
+							<span class="nicoru-button" data-type="nicorepo"
+								data-nicorepo="1:79595:14153683942811"></span>
+						</div>
+						
+						<a href="http://www.nicovideo.jp/nicorepo/1/79595/14153683942811" class="log-footer-date ">
+							<time class="relative" datetime="2014-11-07T13:53:14Z">
+								14年11月07日 22:53
+							</time>
+						</a>
+
+						</div>
+
+
+					</div><!-- .log-footer -->
+				
+
+			</div><!-- .log-details -->
+
+
+
+							<!--  -->
+				
+<div class="log-reslist log-reslist-empty">
+
+	
+	
+			<div class="log-res">
+			<form class="log-res-writeform" action="/api/nicorepo/post_res" method="POST"
+					>
+				<input type="hidden" name="log_id" value="79595">
+				<input type="hidden" name="type" value="1">
+				<input type="hidden" name="time" value="14153683942811">
+				<input type="hidden" name="token" value="79595-1417378630-dd27bdfc91722919c44ef4573b4596659d417b7e">
+
+				<div class="log-res-thumbnail">
+					<img src="http://uni.res.nimg.jp/img/x.gif" alt="" class="nicorepo-lazyimage" data-src="http://uni.res.nimg.jp/img/user/thumb/blank.jpg">
+				</div>
+				<div class="log-res-submit">
+					<input class="log-res-submit-button" type="submit" value="投稿">
+				</div>
+				<div class="log-res-inner">
+					<input class="log-res-input" type="text" name="message" value="" placeholder="コメントする">
+					<div class="log-res-counter"></div>
+				</div>
+
+				<div class="ajax-loading"><span>投稿しています…</span></div>
+				<div class="ajax-completed">投稿しました</div>
+			</form>
+		</div>
+	
+</div><!-- .log-reslist -->			
+		</div><!-- .log-content -->
+
+	
+</div>							
+<div class="log log-user-mylist-add-blomaga">
+
+							
+					<div class="log-author ">
+							<a href="http://www.nicovideo.jp/user/79595"><img src="http://uni.res.nimg.jp/img/x.gif" alt="" class="nicorepo-lazyimage" data-src="http://uni.res.nimg.jp/img/user/thumb/blank_s.jpg"></a>
+						</div>
+		
+					<!--  -->
+			<form class="log-deleteform" action="/api/nicorepo/delete_log" method="POST"
+					data-confirm="このニコレポを削除してもよろしいですか？&#10;（一度消すと元に戻せません）">
+				<input type="hidden" name="log_id" value="79595">
+				<input type="hidden" name="type" value="1">
+				<input type="hidden" name="time" value="14131100951248">
+				<input type="hidden" name="token" value="79595-1417378630-dd27bdfc91722919c44ef4573b4596659d417b7e">
+
+				<div class="log-deleteform-button">
+					<input type="submit" value="削除">
+				</div>
+				<div class="ajax-loading">削除しています…</div>
+				<div class="ajax-completed">削除されました</div>
+			</form>
+		
+		<div class="log-content">
+
+			<div class="log-body">
+				<a href="http://www.nicovideo.jp/user/79595" class="author-user">honishi</a> さんがブロマガをマイリスト登録しました。
+			</div>
+
+			
+
+			<div class="log-details log-target log-target-chblog">
+									<!--  -->
+											<div class="log-target-thumbnail">
+							<a href="http://ch.nicovideo.jp/article/ar642619">
+								<img src="http://uni.res.nimg.jp/img/x.gif" alt="" class="nicorepo-lazyimage chblog" data-src="http://abch.nimg.jp/img/article_thumbnail/ae/hanakusobito_642619.jpg">
+							</a>
+						</div>
+										<div class="log-target-info">
+													<span class="log-target-type-book">ブロマガ</span>
+												<a href="http://ch.nicovideo.jp/article/ar642619">リスナーのみなさんへ</a>
+					</div>
+				
+
+				
+									<div class="log-footer">
+						<div class="log-footer-inner">
+
+						
+													<a href="#" class="log-res-open-link">コメントする</a>
+						
+												<div class="nicoru-positioned">
+							<span class="nicoru-button" data-type="nicorepo"
+								data-nicorepo="1:79595:14131100951248"></span>
+						</div>
+						
+						<a href="http://www.nicovideo.jp/nicorepo/1/79595/14131100951248" class="log-footer-date ">
+							<time class="relative" datetime="2014-10-12T10:34:55Z">
+								14年10月12日 19:34
+							</time>
+						</a>
+
+						</div>
+
+
+					</div><!-- .log-footer -->
+				
+
+			</div><!-- .log-details -->
+
+
+
+							<!--  -->
+				
+<div class="log-reslist log-reslist-empty">
+
+	
+	
+			<div class="log-res">
+			<form class="log-res-writeform" action="/api/nicorepo/post_res" method="POST"
+					>
+				<input type="hidden" name="log_id" value="79595">
+				<input type="hidden" name="type" value="1">
+				<input type="hidden" name="time" value="14131100951248">
+				<input type="hidden" name="token" value="79595-1417378630-dd27bdfc91722919c44ef4573b4596659d417b7e">
+
+				<div class="log-res-thumbnail">
+					<img src="http://uni.res.nimg.jp/img/x.gif" alt="" class="nicorepo-lazyimage" data-src="http://uni.res.nimg.jp/img/user/thumb/blank.jpg">
+				</div>
+				<div class="log-res-submit">
+					<input class="log-res-submit-button" type="submit" value="投稿">
+				</div>
+				<div class="log-res-inner">
+					<input class="log-res-input" type="text" name="message" value="" placeholder="コメントする">
+					<div class="log-res-counter"></div>
+				</div>
+
+				<div class="ajax-loading"><span>投稿しています…</span></div>
+				<div class="ajax-completed">投稿しました</div>
+			</form>
+		</div>
+	
+</div><!-- .log-reslist -->			
+		</div><!-- .log-content -->
+
+	
+</div>							
+<div class="log log-user-mylist-add">
+
+							
+					<div class="log-author ">
+							<a href="http://www.nicovideo.jp/user/79595"><img src="http://uni.res.nimg.jp/img/x.gif" alt="" class="nicorepo-lazyimage" data-src="http://uni.res.nimg.jp/img/user/thumb/blank_s.jpg"></a>
+						</div>
+		
+					<!--  -->
+			<form class="log-deleteform" action="/api/nicorepo/delete_log" method="POST"
+					data-confirm="このニコレポを削除してもよろしいですか？&#10;（一度消すと元に戻せません）">
+				<input type="hidden" name="log_id" value="79595">
+				<input type="hidden" name="type" value="1">
+				<input type="hidden" name="time" value="14130359128121">
+				<input type="hidden" name="token" value="79595-1417378630-dd27bdfc91722919c44ef4573b4596659d417b7e">
+
+				<div class="log-deleteform-button">
+					<input type="submit" value="削除">
+				</div>
+				<div class="ajax-loading">削除しています…</div>
+				<div class="ajax-completed">削除されました</div>
+			</form>
+		
+		<div class="log-content">
+
+			<div class="log-body">
+				<a href="http://www.nicovideo.jp/user/79595" class="author-user">honishi</a> さんが動画をマイリスト登録しました。
+			</div>
+
+			
+
+			<div class="log-details log-target log-target-video">
+									<!--  -->
+											<div class="log-target-thumbnail">
+							<a href="http://www.nicovideo.jp/watch/sm23325827">
+								<img src="http://uni.res.nimg.jp/img/x.gif" alt="" class="nicorepo-lazyimage video" data-src="http://tn-skr4.smilevideo.jp/smile?i=23325827">
+							</a>
+						</div>
+										<div class="log-target-info">
+													<span class="log-target-type-video">動画</span>
+												<a href="http://www.nicovideo.jp/watch/sm23325827">【リア充斉藤】　インターネット　【渋谷のキング】</a>
+					</div>
+				
+
+				
+									<div class="log-footer">
+						<div class="log-footer-inner">
+
+						
+													<a href="#" class="log-res-open-link">コメントする</a>
+						
+												<div class="nicoru-positioned">
+							<span class="nicoru-button" data-type="nicorepo"
+								data-nicorepo="1:79595:14130359128121"></span>
+						</div>
+						
+						<a href="http://www.nicovideo.jp/nicorepo/1/79595/14130359128121" class="log-footer-date ">
+							<time class="relative" datetime="2014-10-11T13:58:32Z">
+								14年10月11日 22:58
+							</time>
+						</a>
+
+						</div>
+
+
+					</div><!-- .log-footer -->
+				
+
+			</div><!-- .log-details -->
+
+
+
+							<!--  -->
+				
+<div class="log-reslist log-reslist-empty">
+
+	
+	
+			<div class="log-res">
+			<form class="log-res-writeform" action="/api/nicorepo/post_res" method="POST"
+					>
+				<input type="hidden" name="log_id" value="79595">
+				<input type="hidden" name="type" value="1">
+				<input type="hidden" name="time" value="14130359128121">
+				<input type="hidden" name="token" value="79595-1417378630-dd27bdfc91722919c44ef4573b4596659d417b7e">
+
+				<div class="log-res-thumbnail">
+					<img src="http://uni.res.nimg.jp/img/x.gif" alt="" class="nicorepo-lazyimage" data-src="http://uni.res.nimg.jp/img/user/thumb/blank.jpg">
+				</div>
+				<div class="log-res-submit">
+					<input class="log-res-submit-button" type="submit" value="投稿">
+				</div>
+				<div class="log-res-inner">
+					<input class="log-res-input" type="text" name="message" value="" placeholder="コメントする">
+					<div class="log-res-counter"></div>
+				</div>
+
+				<div class="ajax-loading"><span>投稿しています…</span></div>
+				<div class="ajax-completed">投稿しました</div>
+			</form>
+		</div>
+	
+</div><!-- .log-reslist -->			
+		</div><!-- .log-content -->
+
+	
+</div>							
+<div class="log log-user-mylist-add-blomaga">
+
+							
+					<div class="log-author ">
+							<a href="http://www.nicovideo.jp/user/79595"><img src="http://uni.res.nimg.jp/img/x.gif" alt="" class="nicorepo-lazyimage" data-src="http://uni.res.nimg.jp/img/user/thumb/blank_s.jpg"></a>
+						</div>
+		
+					<!--  -->
+			<form class="log-deleteform" action="/api/nicorepo/delete_log" method="POST"
+					data-confirm="このニコレポを削除してもよろしいですか？&#10;（一度消すと元に戻せません）">
+				<input type="hidden" name="log_id" value="79595">
+				<input type="hidden" name="type" value="1">
+				<input type="hidden" name="time" value="14128595339349">
+				<input type="hidden" name="token" value="79595-1417378630-dd27bdfc91722919c44ef4573b4596659d417b7e">
+
+				<div class="log-deleteform-button">
+					<input type="submit" value="削除">
+				</div>
+				<div class="ajax-loading">削除しています…</div>
+				<div class="ajax-completed">削除されました</div>
+			</form>
+		
+		<div class="log-content">
+
+			<div class="log-body">
+				<a href="http://www.nicovideo.jp/user/79595" class="author-user">honishi</a> さんがブロマガをマイリスト登録しました。
+			</div>
+
+			
+
+			<div class="log-details log-target log-target-chblog">
+									<!--  -->
+											<div class="log-target-thumbnail">
+							<a href="http://ch.nicovideo.jp/article/ar640892">
+								<img src="http://uni.res.nimg.jp/img/x.gif" alt="" class="nicorepo-lazyimage chblog" data-src="http://abch.nimg.jp/img/article_thumbnail/3e/50yen_640892.png">
+							</a>
+						</div>
+										<div class="log-target-info">
+													<span class="log-target-type-book">ブロマガ</span>
+												<a href="http://ch.nicovideo.jp/article/ar640892">これも削除！？暗黒掲示板の削除された書き込みレビュー！！</a>
+					</div>
+				
+
+				
+									<div class="log-footer">
+						<div class="log-footer-inner">
+
+						
+													<a href="#" class="log-res-open-link">コメントする</a>
+						
+												<div class="nicoru-positioned">
+							<span class="nicoru-button" data-type="nicorepo"
+								data-nicorepo="1:79595:14128595339349"></span>
+						</div>
+						
+						<a href="http://www.nicovideo.jp/nicorepo/1/79595/14128595339349" class="log-footer-date ">
+							<time class="relative" datetime="2014-10-09T12:58:53Z">
+								14年10月09日 21:58
+							</time>
+						</a>
+
+						</div>
+
+
+					</div><!-- .log-footer -->
+				
+
+			</div><!-- .log-details -->
+
+
+
+							<!--  -->
+				
+<div class="log-reslist log-reslist-empty">
+
+	
+	
+			<div class="log-res">
+			<form class="log-res-writeform" action="/api/nicorepo/post_res" method="POST"
+					>
+				<input type="hidden" name="log_id" value="79595">
+				<input type="hidden" name="type" value="1">
+				<input type="hidden" name="time" value="14128595339349">
+				<input type="hidden" name="token" value="79595-1417378630-dd27bdfc91722919c44ef4573b4596659d417b7e">
+
+				<div class="log-res-thumbnail">
+					<img src="http://uni.res.nimg.jp/img/x.gif" alt="" class="nicorepo-lazyimage" data-src="http://uni.res.nimg.jp/img/user/thumb/blank.jpg">
+				</div>
+				<div class="log-res-submit">
+					<input class="log-res-submit-button" type="submit" value="投稿">
+				</div>
+				<div class="log-res-inner">
+					<input class="log-res-input" type="text" name="message" value="" placeholder="コメントする">
+					<div class="log-res-counter"></div>
+				</div>
+
+				<div class="ajax-loading"><span>投稿しています…</span></div>
+				<div class="ajax-completed">投稿しました</div>
+			</form>
+		</div>
+	
+</div><!-- .log-reslist -->			
+		</div><!-- .log-content -->
+
+	
+</div>							
+<div class="log log-user-mylist-add">
+
+							
+					<div class="log-author ">
+							<a href="http://www.nicovideo.jp/user/79595"><img src="http://uni.res.nimg.jp/img/x.gif" alt="" class="nicorepo-lazyimage" data-src="http://uni.res.nimg.jp/img/user/thumb/blank_s.jpg"></a>
+						</div>
+		
+					<!--  -->
+			<form class="log-deleteform" action="/api/nicorepo/delete_log" method="POST"
+					data-confirm="このニコレポを削除してもよろしいですか？&#10;（一度消すと元に戻せません）">
+				<input type="hidden" name="log_id" value="79595">
+				<input type="hidden" name="type" value="1">
+				<input type="hidden" name="time" value="14100296624532">
+				<input type="hidden" name="token" value="79595-1417378630-dd27bdfc91722919c44ef4573b4596659d417b7e">
+
+				<div class="log-deleteform-button">
+					<input type="submit" value="削除">
+				</div>
+				<div class="ajax-loading">削除しています…</div>
+				<div class="ajax-completed">削除されました</div>
+			</form>
+		
+		<div class="log-content">
+
+			<div class="log-body">
+				<a href="http://www.nicovideo.jp/user/79595" class="author-user">honishi</a> さんが動画をマイリスト登録しました。
+			</div>
+
+			
+
+			<div class="log-details log-target log-target-video">
+									<!--  -->
+											<div class="log-target-thumbnail">
+							<a href="http://www.nicovideo.jp/watch/sm6164405">
+								<img src="http://uni.res.nimg.jp/img/x.gif" alt="" class="nicorepo-lazyimage video" data-src="http://tn-skr2.smilevideo.jp/smile?i=6164405">
+							</a>
+						</div>
+										<div class="log-target-info">
+													<span class="log-target-type-video">動画</span>
+												<a href="http://www.nicovideo.jp/watch/sm6164405">田村ゆかり「Cherry Kiss」を立って弾いてみた。</a>
+					</div>
+				
+
+				
+									<div class="log-footer">
+						<div class="log-footer-inner">
+
+						
+													<a href="#" class="log-res-open-link">コメントする</a>
+						
+												<div class="nicoru-positioned">
+							<span class="nicoru-button" data-type="nicorepo"
+								data-nicorepo="1:79595:14100296624532"></span>
+						</div>
+						
+						<a href="http://www.nicovideo.jp/nicorepo/1/79595/14100296624532" class="log-footer-date ">
+							<time class="relative" datetime="2014-09-06T18:54:22Z">
+								14年09月07日 03:54
+							</time>
+						</a>
+
+						</div>
+
+
+					</div><!-- .log-footer -->
+				
+
+			</div><!-- .log-details -->
+
+
+
+							<!--  -->
+				
+<div class="log-reslist log-reslist-empty">
+
+	
+	
+			<div class="log-res">
+			<form class="log-res-writeform" action="/api/nicorepo/post_res" method="POST"
+					>
+				<input type="hidden" name="log_id" value="79595">
+				<input type="hidden" name="type" value="1">
+				<input type="hidden" name="time" value="14100296624532">
+				<input type="hidden" name="token" value="79595-1417378630-dd27bdfc91722919c44ef4573b4596659d417b7e">
+
+				<div class="log-res-thumbnail">
+					<img src="http://uni.res.nimg.jp/img/x.gif" alt="" class="nicorepo-lazyimage" data-src="http://uni.res.nimg.jp/img/user/thumb/blank.jpg">
+				</div>
+				<div class="log-res-submit">
+					<input class="log-res-submit-button" type="submit" value="投稿">
+				</div>
+				<div class="log-res-inner">
+					<input class="log-res-input" type="text" name="message" value="" placeholder="コメントする">
+					<div class="log-res-counter"></div>
+				</div>
+
+				<div class="ajax-loading"><span>投稿しています…</span></div>
+				<div class="ajax-completed">投稿しました</div>
+			</form>
+		</div>
+	
+</div><!-- .log-reslist -->			
+		</div><!-- .log-content -->
+
+	
+</div>							
+<div class="log log-user-mylist-add">
+
+							
+					<div class="log-author ">
+							<a href="http://www.nicovideo.jp/user/79595"><img src="http://uni.res.nimg.jp/img/x.gif" alt="" class="nicorepo-lazyimage" data-src="http://uni.res.nimg.jp/img/user/thumb/blank_s.jpg"></a>
+						</div>
+		
+					<!--  -->
+			<form class="log-deleteform" action="/api/nicorepo/delete_log" method="POST"
+					data-confirm="このニコレポを削除してもよろしいですか？&#10;（一度消すと元に戻せません）">
+				<input type="hidden" name="log_id" value="79595">
+				<input type="hidden" name="type" value="1">
+				<input type="hidden" name="time" value="14100294246494">
+				<input type="hidden" name="token" value="79595-1417378630-dd27bdfc91722919c44ef4573b4596659d417b7e">
+
+				<div class="log-deleteform-button">
+					<input type="submit" value="削除">
+				</div>
+				<div class="ajax-loading">削除しています…</div>
+				<div class="ajax-completed">削除されました</div>
+			</form>
+		
+		<div class="log-content">
+
+			<div class="log-body">
+				<a href="http://www.nicovideo.jp/user/79595" class="author-user">honishi</a> さんが動画をマイリスト登録しました。
+			</div>
+
+			
+
+			<div class="log-details log-target log-target-video">
+									<!--  -->
+											<div class="log-target-thumbnail">
+							<a href="http://www.nicovideo.jp/watch/sm8831940">
+								<img src="http://uni.res.nimg.jp/img/x.gif" alt="" class="nicorepo-lazyimage video" data-src="http://tn-skr1.smilevideo.jp/smile?i=8831940">
+							</a>
+						</div>
+										<div class="log-target-info">
+													<span class="log-target-type-video">動画</span>
+												<a href="http://www.nicovideo.jp/watch/sm8831940">田村ゆかり「チェルシーガール」を立って弾いてみた。</a>
+					</div>
+				
+
+				
+									<div class="log-footer">
+						<div class="log-footer-inner">
+
+						
+													<a href="#" class="log-res-open-link">コメントする</a>
+						
+												<div class="nicoru-positioned">
+							<span class="nicoru-button" data-type="nicorepo"
+								data-nicorepo="1:79595:14100294246494"></span>
+						</div>
+						
+						<a href="http://www.nicovideo.jp/nicorepo/1/79595/14100294246494" class="log-footer-date ">
+							<time class="relative" datetime="2014-09-06T18:50:24Z">
+								14年09月07日 03:50
+							</time>
+						</a>
+
+						</div>
+
+
+					</div><!-- .log-footer -->
+				
+
+			</div><!-- .log-details -->
+
+
+
+							<!--  -->
+				
+<div class="log-reslist log-reslist-empty">
+
+	
+	
+			<div class="log-res">
+			<form class="log-res-writeform" action="/api/nicorepo/post_res" method="POST"
+					>
+				<input type="hidden" name="log_id" value="79595">
+				<input type="hidden" name="type" value="1">
+				<input type="hidden" name="time" value="14100294246494">
+				<input type="hidden" name="token" value="79595-1417378630-dd27bdfc91722919c44ef4573b4596659d417b7e">
+
+				<div class="log-res-thumbnail">
+					<img src="http://uni.res.nimg.jp/img/x.gif" alt="" class="nicorepo-lazyimage" data-src="http://uni.res.nimg.jp/img/user/thumb/blank.jpg">
+				</div>
+				<div class="log-res-submit">
+					<input class="log-res-submit-button" type="submit" value="投稿">
+				</div>
+				<div class="log-res-inner">
+					<input class="log-res-input" type="text" name="message" value="" placeholder="コメントする">
+					<div class="log-res-counter"></div>
+				</div>
+
+				<div class="ajax-loading"><span>投稿しています…</span></div>
+				<div class="ajax-completed">投稿しました</div>
+			</form>
+		</div>
+	
+</div><!-- .log-reslist -->			
+		</div><!-- .log-content -->
+
+	
+</div>							
+<div class="log log-user-video-upload">
+
+							
+					<div class="log-author ">
+							<a href="http://www.nicovideo.jp/user/79595"><img src="http://uni.res.nimg.jp/img/x.gif" alt="" class="nicorepo-lazyimage" data-src="http://uni.res.nimg.jp/img/user/thumb/blank_s.jpg"></a>
+						</div>
+		
+					<!--  -->
+			<form class="log-deleteform" action="/api/nicorepo/delete_log" method="POST"
+					data-confirm="このニコレポを削除してもよろしいですか？&#10;（一度消すと元に戻せません）">
+				<input type="hidden" name="log_id" value="79595">
+				<input type="hidden" name="type" value="1">
+				<input type="hidden" name="time" value="14090719378090">
+				<input type="hidden" name="token" value="79595-1417378630-dd27bdfc91722919c44ef4573b4596659d417b7e">
+
+				<div class="log-deleteform-button">
+					<input type="submit" value="削除">
+				</div>
+				<div class="ajax-loading">削除しています…</div>
+				<div class="ajax-completed">削除されました</div>
+			</form>
+		
+		<div class="log-content">
+
+			<div class="log-body">
+				<a href="http://www.nicovideo.jp/user/79595" class="author-user">honishi</a> さんが <strong>動画を投稿しました。</strong>
+			</div>
+
+			
+
+			<div class="log-details log-target log-target-video">
+									<!--  -->
+											<div class="log-target-thumbnail">
+							<a href="http://www.nicovideo.jp/watch/sm24330609">
+								<img src="http://uni.res.nimg.jp/img/x.gif" alt="" class="nicorepo-lazyimage video" data-src="http://tn-skr2.smilevideo.jp/smile?i=24330609">
+							</a>
+						</div>
+										<div class="log-target-info">
+													<span class="log-target-type-video">動画</span>
+												<a href="http://www.nicovideo.jp/watch/sm24330609">小岩井キング &quot;サライ&quot;</a>
+					</div>
+				
+
+				
+									<div class="log-footer">
+						<div class="log-footer-inner">
+
+						
+													<a href="#" class="log-res-open-link">コメントする</a>
+						
+												<div class="nicoru-positioned">
+							<span class="nicoru-button" data-type="nicorepo"
+								data-nicorepo="1:79595:14090719378090"></span>
+						</div>
+						
+						<a href="http://www.nicovideo.jp/nicorepo/1/79595/14090719378090" class="log-footer-date ">
+							<time class="relative" datetime="2014-08-26T16:52:17Z">
+								14年08月27日 01:52
+							</time>
+						</a>
+
+						</div>
+
+
+					</div><!-- .log-footer -->
+				
+
+			</div><!-- .log-details -->
+
+
+
+							<!--  -->
+				
+<div class="log-reslist log-reslist-empty">
+
+	
+	
+			<div class="log-res">
+			<form class="log-res-writeform" action="/api/nicorepo/post_res" method="POST"
+					>
+				<input type="hidden" name="log_id" value="79595">
+				<input type="hidden" name="type" value="1">
+				<input type="hidden" name="time" value="14090719378090">
+				<input type="hidden" name="token" value="79595-1417378630-dd27bdfc91722919c44ef4573b4596659d417b7e">
+
+				<div class="log-res-thumbnail">
+					<img src="http://uni.res.nimg.jp/img/x.gif" alt="" class="nicorepo-lazyimage" data-src="http://uni.res.nimg.jp/img/user/thumb/blank.jpg">
+				</div>
+				<div class="log-res-submit">
+					<input class="log-res-submit-button" type="submit" value="投稿">
+				</div>
+				<div class="log-res-inner">
+					<input class="log-res-input" type="text" name="message" value="" placeholder="コメントする">
+					<div class="log-res-counter"></div>
+				</div>
+
+				<div class="ajax-loading"><span>投稿しています…</span></div>
+				<div class="ajax-completed">投稿しました</div>
+			</form>
+		</div>
+	
+</div><!-- .log-reslist -->			
+		</div><!-- .log-content -->
+
+	
+</div>							
+<div class="log log-user-mylist-add">
+
+							
+					<div class="log-author ">
+							<a href="http://www.nicovideo.jp/user/79595"><img src="http://uni.res.nimg.jp/img/x.gif" alt="" class="nicorepo-lazyimage" data-src="http://uni.res.nimg.jp/img/user/thumb/blank_s.jpg"></a>
+						</div>
+		
+					<!--  -->
+			<form class="log-deleteform" action="/api/nicorepo/delete_log" method="POST"
+					data-confirm="このニコレポを削除してもよろしいですか？&#10;（一度消すと元に戻せません）">
+				<input type="hidden" name="log_id" value="79595">
+				<input type="hidden" name="type" value="1">
+				<input type="hidden" name="time" value="14065667933950">
+				<input type="hidden" name="token" value="79595-1417378630-dd27bdfc91722919c44ef4573b4596659d417b7e">
+
+				<div class="log-deleteform-button">
+					<input type="submit" value="削除">
+				</div>
+				<div class="ajax-loading">削除しています…</div>
+				<div class="ajax-completed">削除されました</div>
+			</form>
+		
+		<div class="log-content">
+
+			<div class="log-body">
+				<a href="http://www.nicovideo.jp/user/79595" class="author-user">honishi</a> さんが動画をマイリスト登録しました。
+			</div>
+
+			
+
+			<div class="log-details log-target log-target-video">
+									<!--  -->
+											<div class="log-target-thumbnail">
+							<a href="http://www.nicovideo.jp/watch/sm12388095">
+								<img src="http://uni.res.nimg.jp/img/x.gif" alt="" class="nicorepo-lazyimage video" data-src="http://tn-skr4.smilevideo.jp/smile?i=12388095">
+							</a>
+						</div>
+										<div class="log-target-info">
+													<span class="log-target-type-video">動画</span>
+												<a href="http://www.nicovideo.jp/watch/sm12388095">【渋谷のキング】インターネット【10月10日】</a>
+					</div>
+				
+
+				
+									<div class="log-footer">
+						<div class="log-footer-inner">
+
+						
+													<a href="#" class="log-res-open-link">コメントする</a>
+						
+												<div class="nicoru-positioned">
+							<span class="nicoru-button" data-type="nicorepo"
+								data-nicorepo="1:79595:14065667933950"></span>
+						</div>
+						
+						<a href="http://www.nicovideo.jp/nicorepo/1/79595/14065667933950" class="log-footer-date ">
+							<time class="relative" datetime="2014-07-28T16:59:53Z">
+								14年07月29日 01:59
+							</time>
+						</a>
+
+						</div>
+
+
+					</div><!-- .log-footer -->
+				
+
+			</div><!-- .log-details -->
+
+
+
+							<!--  -->
+				
+<div class="log-reslist log-reslist-empty">
+
+	
+	
+			<div class="log-res">
+			<form class="log-res-writeform" action="/api/nicorepo/post_res" method="POST"
+					>
+				<input type="hidden" name="log_id" value="79595">
+				<input type="hidden" name="type" value="1">
+				<input type="hidden" name="time" value="14065667933950">
+				<input type="hidden" name="token" value="79595-1417378630-dd27bdfc91722919c44ef4573b4596659d417b7e">
+
+				<div class="log-res-thumbnail">
+					<img src="http://uni.res.nimg.jp/img/x.gif" alt="" class="nicorepo-lazyimage" data-src="http://uni.res.nimg.jp/img/user/thumb/blank.jpg">
+				</div>
+				<div class="log-res-submit">
+					<input class="log-res-submit-button" type="submit" value="投稿">
+				</div>
+				<div class="log-res-inner">
+					<input class="log-res-input" type="text" name="message" value="" placeholder="コメントする">
+					<div class="log-res-counter"></div>
+				</div>
+
+				<div class="ajax-loading"><span>投稿しています…</span></div>
+				<div class="ajax-completed">投稿しました</div>
+			</form>
+		</div>
+	
+</div><!-- .log-reslist -->			
+		</div><!-- .log-content -->
+
+	
+</div>							
+<div class="log log-user-video-upload">
+
+							
+					<div class="log-author ">
+							<a href="http://www.nicovideo.jp/user/79595"><img src="http://uni.res.nimg.jp/img/x.gif" alt="" class="nicorepo-lazyimage" data-src="http://uni.res.nimg.jp/img/user/thumb/blank_s.jpg"></a>
+						</div>
+		
+					<!--  -->
+			<form class="log-deleteform" action="/api/nicorepo/delete_log" method="POST"
+					data-confirm="このニコレポを削除してもよろしいですか？&#10;（一度消すと元に戻せません）">
+				<input type="hidden" name="log_id" value="79595">
+				<input type="hidden" name="type" value="1">
+				<input type="hidden" name="time" value="14048263946917">
+				<input type="hidden" name="token" value="79595-1417378630-dd27bdfc91722919c44ef4573b4596659d417b7e">
+
+				<div class="log-deleteform-button">
+					<input type="submit" value="削除">
+				</div>
+				<div class="ajax-loading">削除しています…</div>
+				<div class="ajax-completed">削除されました</div>
+			</form>
+		
+		<div class="log-content">
+
+			<div class="log-body">
+				<a href="http://www.nicovideo.jp/user/79595" class="author-user">honishi</a> さんが <strong>動画を投稿しました。</strong>
+			</div>
+
+			
+
+			<div class="log-details log-target log-target-video">
+									<!--  -->
+											<div class="log-target-thumbnail">
+							<a href="http://www.nicovideo.jp/watch/sm23958556">
+								<img src="http://uni.res.nimg.jp/img/x.gif" alt="" class="nicorepo-lazyimage video" data-src="http://tn-skr1.smilevideo.jp/smile?i=23958556">
+							</a>
+						</div>
+										<div class="log-target-info">
+													<span class="log-target-type-video">動画</span>
+												<a href="http://www.nicovideo.jp/watch/sm23958556">タイガー倉内 &quot;I LOVE YOU&quot;</a>
+					</div>
+				
+
+				
+									<div class="log-footer">
+						<div class="log-footer-inner">
+
+						
+													<a href="#" class="log-res-open-link">コメントする</a>
+						
+												<div class="nicoru-positioned">
+							<span class="nicoru-button" data-type="nicorepo"
+								data-nicorepo="1:79595:14048263946917"></span>
+						</div>
+						
+						<a href="http://www.nicovideo.jp/nicorepo/1/79595/14048263946917" class="log-footer-date ">
+							<time class="relative" datetime="2014-07-08T13:33:14Z">
+								14年07月08日 22:33
+							</time>
+						</a>
+
+						</div>
+
+
+					</div><!-- .log-footer -->
+				
+
+			</div><!-- .log-details -->
+
+
+
+							<!--  -->
+				
+<div class="log-reslist log-reslist-empty">
+
+	
+	
+			<div class="log-res">
+			<form class="log-res-writeform" action="/api/nicorepo/post_res" method="POST"
+					>
+				<input type="hidden" name="log_id" value="79595">
+				<input type="hidden" name="type" value="1">
+				<input type="hidden" name="time" value="14048263946917">
+				<input type="hidden" name="token" value="79595-1417378630-dd27bdfc91722919c44ef4573b4596659d417b7e">
+
+				<div class="log-res-thumbnail">
+					<img src="http://uni.res.nimg.jp/img/x.gif" alt="" class="nicorepo-lazyimage" data-src="http://uni.res.nimg.jp/img/user/thumb/blank.jpg">
+				</div>
+				<div class="log-res-submit">
+					<input class="log-res-submit-button" type="submit" value="投稿">
+				</div>
+				<div class="log-res-inner">
+					<input class="log-res-input" type="text" name="message" value="" placeholder="コメントする">
+					<div class="log-res-counter"></div>
+				</div>
+
+				<div class="ajax-loading"><span>投稿しています…</span></div>
+				<div class="ajax-completed">投稿しました</div>
+			</form>
+		</div>
+	
+</div><!-- .log-reslist -->			
+		</div><!-- .log-content -->
+
+	
+</div>					</div>
+
+					<div class="no-next-page">
+									これより過去のニコレポは存在しないか、表示期限を過ぎています。
+							</div>
+		
+	
+	</div><!-- .nicorepo-page -->
+
+	<div class="nicorepo_error_messages"
+	data-too-long-res="コメントの内容が長すぎます。"
+	data-ajax-failed="通信に失敗しました。お手数ですが、画面を再読み込みしてもう一度お試しください。"
+	data-bad-parameter="パラメータが不正です。お手数ですが、画面を再読み込みしてもう一度お試しください。"
+	data-no-login="ログインしていません。お手数ですが、画面を再読み込みしてログインし直してください。"
+	data-maintenance="現在、ニコレポ機能はメンテナンス中です。ご迷惑をおかけしております。"
+	data-token-expires="画面の有効期間（30分間）が過ぎました。お手数ですが、画面を再読み込みしてもう一度お試しください。"
+	data-token-invalid="トークンが無効です。お手数ですが、画面を再読み込みしてもう一度お試しください。"
+	data-not-allowed="この動作は許可されていない可能性があります。"
+	data-not-allowed-post-res="コメントが許可されていません。"
+	data-internal="システムに問題が発生しました。お手数ですが、画面を再読み込みしてもう一度お試しください。"
+	data-throttled="短時間での連続アクセスはご遠慮ください。お手数ですが、しばらく経ってからもう一度お試し下さい。"
+	data-unknown="システムに問題が発生しました。お手数ですが、画面を再読み込みしてもう一度お試しください。"
+></div>
+</div><!-- .nicorepo -->		</div>
+	</div>
+	<!-- //content -->
+
+	<!-- sidebar -->
+	<script type="text/javascript"><!--
+Side_bar_message.tab_cover_up = '隠す';
+Side_bar_message.tab_cover_down = '表示';
+--></script>
+
+<div class="sidebar">
+	<ul>
+
+		<li class="favTab">
+			<a href="user/79595/fav/user"><span></span>お気に入り</a>
+					</li>
+		
+		<li class="nicorepoTab active">
+						<a href="user/79595/top"><span></span>ニコレポ</a>
+					</li>
+		<li class="mylistTab ">
+						<a href="user/79595/mylist"><span></span>マイリスト</a>
+					</li>
+		<li class="videoTab ">
+						<a href="user/79595/video"><span></span>投稿</a>
+					</li>
+		<li class="stampTab ">
+			<a href="user/79595/stamp"><span></span>スタンプ帳</a>
+		</li>
+		<li class="nicoruTab">
+			<a href="user/79595/nicoru"><span></span>ニコる</a>
+					</li>
+		
+	</ul>
+	
+		<div class="userCalendar">
+						<div id="m1417359600">
+			<div class="calendarNav">
+				<p>ニコレポカレンダー</p>
+
+									<a href="javascript:onclick=showOBJ('m1414767600');hideOBJ('m1417359600');" class="prev">&laquo;前月</a>
+											</div><!-- /.userCalendar -->
+
+			<p class="currentMonth">2014年12月</p>
+
+			<div class="calendarInner">
+				<table summary="ニコレポカレンダー">
+					<thead>
+						<tr>
+							<th>日</th>
+							<th>月</th>
+							<th>火</th>
+							<th>水</th>
+							<th>木</th>
+							<th>金</th>
+							<th>土</th>
+						</tr>
+					</thead>
+					<tbody>
+												<tr>																						<td></td>
+																																															<td class="today"><a href="user/79595">1</a></td>
+																																															<td>2</td>
+																																																							<td>3</td>
+																																																							<td>4</td>
+																																																							<td>5</td>
+																																																							<td>6</td>
+																					</tr>												<tr>																						<td>7</td>
+																																																							<td>8</td>
+																																																							<td>9</td>
+																																																							<td>10</td>
+																																																							<td>11</td>
+																																																							<td>12</td>
+																																																							<td>13</td>
+																					</tr>												<tr>																						<td>14</td>
+																																																							<td>15</td>
+																																																							<td>16</td>
+																																																							<td>17</td>
+																																																							<td>18</td>
+																																																							<td>19</td>
+																																																							<td>20</td>
+																					</tr>												<tr>																						<td>21</td>
+																																																							<td>22</td>
+																																																							<td>23</td>
+																																																							<td>24</td>
+																																																							<td>25</td>
+																																																							<td>26</td>
+																																																							<td>27</td>
+																					</tr>												<tr>																						<td>28</td>
+																																																							<td>29</td>
+																																																							<td>30</td>
+																																																							<td>31</td>
+																																																							<td></td>
+																																																							<td></td>
+																																																							<td></td>
+																					</tr>											</tbody>
+				</table>
+			</div><!-- /.calendarInner -->
+			<script type="text/javascript">hideOBJ('m1417359600');</script>
+		</div>
+								<div id="m1414767600">
+			<div class="calendarNav">
+				<p>ニコレポカレンダー</p>
+
+									<a href="javascript:onclick=showOBJ('m1412089200');hideOBJ('m1414767600');" class="prev">&laquo;前月</a>
+													<a href="javascript:onclick=showOBJ('m1417359600');hideOBJ('m1414767600');" class="next">&raquo;次月</a>
+							</div><!-- /.userCalendar -->
+
+			<p class="currentMonth">2014年11月</p>
+
+			<div class="calendarInner">
+				<table summary="ニコレポカレンダー">
+					<thead>
+						<tr>
+							<th>日</th>
+							<th>月</th>
+							<th>火</th>
+							<th>水</th>
+							<th>木</th>
+							<th>金</th>
+							<th>土</th>
+						</tr>
+					</thead>
+					<tbody>
+												<tr>																						<td></td>
+																																																							<td></td>
+																																																							<td></td>
+																																																							<td></td>
+																																																							<td></td>
+																																																							<td></td>
+																																																							<td>1</td>
+																					</tr>												<tr>																						<td>2</td>
+																																																							<td>3</td>
+																																																							<td>4</td>
+																																																							<td>5</td>
+																																																							<td>6</td>
+																																															<td class="hasData"><a href="user/79595/top/20141107">7</a></td>
+																																							<td class="hasData"><a href="user/79595/top/20141108">8</a></td>
+													</tr>												<tr>																						<td>9</td>
+																																																							<td>10</td>
+																																																							<td>11</td>
+																																																							<td>12</td>
+																																																							<td>13</td>
+																																																							<td>14</td>
+																																																							<td>15</td>
+																					</tr>												<tr>																						<td>16</td>
+																																																							<td>17</td>
+																																																							<td>18</td>
+																																																							<td>19</td>
+																																																							<td>20</td>
+																																																							<td>21</td>
+																																																							<td>22</td>
+																					</tr>												<tr>																						<td>23</td>
+																																																							<td>24</td>
+																																																							<td>25</td>
+																																																							<td>26</td>
+																																																							<td>27</td>
+																																																							<td>28</td>
+																																																							<td>29</td>
+																					</tr>												<tr>																						<td>30</td>
+																																																							<td></td>
+																																																							<td></td>
+																																																							<td></td>
+																																																							<td></td>
+																																																							<td></td>
+																																																							<td></td>
+																					</tr>											</tbody>
+				</table>
+			</div><!-- /.calendarInner -->
+			<script type="text/javascript">hideOBJ('m1414767600');</script>
+		</div>
+								<div id="m1412089200">
+			<div class="calendarNav">
+				<p>ニコレポカレンダー</p>
+
+									<a href="javascript:onclick=showOBJ('m1409497200');hideOBJ('m1412089200');" class="prev">&laquo;前月</a>
+													<a href="javascript:onclick=showOBJ('m1414767600');hideOBJ('m1412089200');" class="next">&raquo;次月</a>
+							</div><!-- /.userCalendar -->
+
+			<p class="currentMonth">2014年10月</p>
+
+			<div class="calendarInner">
+				<table summary="ニコレポカレンダー">
+					<thead>
+						<tr>
+							<th>日</th>
+							<th>月</th>
+							<th>火</th>
+							<th>水</th>
+							<th>木</th>
+							<th>金</th>
+							<th>土</th>
+						</tr>
+					</thead>
+					<tbody>
+												<tr>																						<td></td>
+																																																							<td></td>
+																																																							<td></td>
+																																																							<td>1</td>
+																																																							<td>2</td>
+																																																							<td>3</td>
+																																																							<td>4</td>
+																					</tr>												<tr>																						<td>5</td>
+																																																							<td>6</td>
+																																																							<td>7</td>
+																																																							<td>8</td>
+																																															<td class="hasData"><a href="user/79595/top/20141009">9</a></td>
+																																															<td>10</td>
+																																															<td class="hasData"><a href="user/79595/top/20141011">11</a></td>
+													</tr>												<tr>														<td class="hasData"><a href="user/79595/top/20141012">12</a></td>
+																																															<td>13</td>
+																																																							<td>14</td>
+																																															<td class="hasData"><a href="user/79595/top/20141015">15</a></td>
+																																							<td class="hasData"><a href="user/79595/top/20141016">16</a></td>
+																																															<td>17</td>
+																																																							<td>18</td>
+																					</tr>												<tr>																						<td>19</td>
+																																																							<td>20</td>
+																																																							<td>21</td>
+																																																							<td>22</td>
+																																																							<td>23</td>
+																																																							<td>24</td>
+																																																							<td>25</td>
+																					</tr>												<tr>																						<td>26</td>
+																																																							<td>27</td>
+																																																							<td>28</td>
+																																																							<td>29</td>
+																																																							<td>30</td>
+																																																							<td>31</td>
+																																																							<td></td>
+																					</tr>											</tbody>
+				</table>
+			</div><!-- /.calendarInner -->
+			<script type="text/javascript">hideOBJ('m1412089200');</script>
+		</div>
+								<div id="m1409497200">
+			<div class="calendarNav">
+				<p>ニコレポカレンダー</p>
+
+									<a href="javascript:onclick=showOBJ('m1406818800');hideOBJ('m1409497200');" class="prev">&laquo;前月</a>
+													<a href="javascript:onclick=showOBJ('m1412089200');hideOBJ('m1409497200');" class="next">&raquo;次月</a>
+							</div><!-- /.userCalendar -->
+
+			<p class="currentMonth">2014年09月</p>
+
+			<div class="calendarInner">
+				<table summary="ニコレポカレンダー">
+					<thead>
+						<tr>
+							<th>日</th>
+							<th>月</th>
+							<th>火</th>
+							<th>水</th>
+							<th>木</th>
+							<th>金</th>
+							<th>土</th>
+						</tr>
+					</thead>
+					<tbody>
+												<tr>																						<td></td>
+																																																							<td>1</td>
+																																																							<td>2</td>
+																																																							<td>3</td>
+																																																							<td>4</td>
+																																																							<td>5</td>
+																																																							<td>6</td>
+																					</tr>												<tr>														<td class="hasData"><a href="user/79595/top/20140907">7</a></td>
+																																															<td>8</td>
+																																																							<td>9</td>
+																																																							<td>10</td>
+																																																							<td>11</td>
+																																																							<td>12</td>
+																																																							<td>13</td>
+																					</tr>												<tr>																						<td>14</td>
+																																																							<td>15</td>
+																																																							<td>16</td>
+																																																							<td>17</td>
+																																																							<td>18</td>
+																																																							<td>19</td>
+																																																							<td>20</td>
+																					</tr>												<tr>																						<td>21</td>
+																																																							<td>22</td>
+																																																							<td>23</td>
+																																																							<td>24</td>
+																																																							<td>25</td>
+																																																							<td>26</td>
+																																																							<td>27</td>
+																					</tr>												<tr>																						<td>28</td>
+																																																							<td>29</td>
+																																																							<td>30</td>
+																																																							<td></td>
+																																																							<td></td>
+																																																							<td></td>
+																																																							<td></td>
+																					</tr>											</tbody>
+				</table>
+			</div><!-- /.calendarInner -->
+			<script type="text/javascript">hideOBJ('m1409497200');</script>
+		</div>
+								<div id="m1406818800">
+			<div class="calendarNav">
+				<p>ニコレポカレンダー</p>
+
+									<a href="javascript:onclick=showOBJ('m1404140400');hideOBJ('m1406818800');" class="prev">&laquo;前月</a>
+													<a href="javascript:onclick=showOBJ('m1409497200');hideOBJ('m1406818800');" class="next">&raquo;次月</a>
+							</div><!-- /.userCalendar -->
+
+			<p class="currentMonth">2014年08月</p>
+
+			<div class="calendarInner">
+				<table summary="ニコレポカレンダー">
+					<thead>
+						<tr>
+							<th>日</th>
+							<th>月</th>
+							<th>火</th>
+							<th>水</th>
+							<th>木</th>
+							<th>金</th>
+							<th>土</th>
+						</tr>
+					</thead>
+					<tbody>
+												<tr>																						<td></td>
+																																																							<td></td>
+																																																							<td></td>
+																																																							<td></td>
+																																																							<td></td>
+																																																							<td>1</td>
+																																																							<td>2</td>
+																					</tr>												<tr>																						<td>3</td>
+																																																							<td>4</td>
+																																																							<td>5</td>
+																																																							<td>6</td>
+																																																							<td>7</td>
+																																																							<td>8</td>
+																																																							<td>9</td>
+																					</tr>												<tr>																						<td>10</td>
+																																																							<td>11</td>
+																																																							<td>12</td>
+																																																							<td>13</td>
+																																																							<td>14</td>
+																																																							<td>15</td>
+																																																							<td>16</td>
+																					</tr>												<tr>																						<td>17</td>
+																																																							<td>18</td>
+																																																							<td>19</td>
+																																																							<td>20</td>
+																																																							<td>21</td>
+																																																							<td>22</td>
+																																																							<td>23</td>
+																					</tr>												<tr>																						<td>24</td>
+																																																							<td>25</td>
+																																																							<td>26</td>
+																																															<td class="hasData"><a href="user/79595/top/20140827">27</a></td>
+																																															<td>28</td>
+																																																							<td>29</td>
+																																																							<td>30</td>
+																					</tr>												<tr>																						<td>31</td>
+																																																							<td></td>
+																																																							<td></td>
+																																																							<td></td>
+																																																							<td></td>
+																																																							<td></td>
+																																																							<td></td>
+																					</tr>											</tbody>
+				</table>
+			</div><!-- /.calendarInner -->
+			<script type="text/javascript">hideOBJ('m1406818800');</script>
+		</div>
+								<div id="m1404140400">
+			<div class="calendarNav">
+				<p>ニコレポカレンダー</p>
+
+													<a href="javascript:onclick=showOBJ('m1406818800');hideOBJ('m1404140400');" class="next">&raquo;次月</a>
+							</div><!-- /.userCalendar -->
+
+			<p class="currentMonth">2014年07月</p>
+
+			<div class="calendarInner">
+				<table summary="ニコレポカレンダー">
+					<thead>
+						<tr>
+							<th>日</th>
+							<th>月</th>
+							<th>火</th>
+							<th>水</th>
+							<th>木</th>
+							<th>金</th>
+							<th>土</th>
+						</tr>
+					</thead>
+					<tbody>
+												<tr>																						<td></td>
+																																																							<td></td>
+																																																							<td>1</td>
+																																																							<td>2</td>
+																																																							<td>3</td>
+																																																							<td>4</td>
+																																																							<td>5</td>
+																					</tr>												<tr>																						<td>6</td>
+																																																							<td>7</td>
+																																															<td class="hasData"><a href="user/79595/top/20140708">8</a></td>
+																																							<td class="hasData"><a href="user/79595/top/20140709">9</a></td>
+																																															<td>10</td>
+																																																							<td>11</td>
+																																																							<td>12</td>
+																					</tr>												<tr>																						<td>13</td>
+																																																							<td>14</td>
+																																																							<td>15</td>
+																																																							<td>16</td>
+																																																							<td>17</td>
+																																																							<td>18</td>
+																																																							<td>19</td>
+																					</tr>												<tr>																						<td>20</td>
+																																																							<td>21</td>
+																																																							<td>22</td>
+																																																							<td>23</td>
+																																																							<td>24</td>
+																																																							<td>25</td>
+																																																							<td>26</td>
+																					</tr>												<tr>																						<td>27</td>
+																																																							<td>28</td>
+																																															<td class="hasData"><a href="user/79595/top/20140729">29</a></td>
+																																															<td>30</td>
+																																																							<td>31</td>
+																																																							<td></td>
+																																																							<td></td>
+																					</tr>											</tbody>
+				</table>
+			</div><!-- /.calendarInner -->
+			<script type="text/javascript">hideOBJ('m1404140400');</script>
+		</div>
+					</div><!-- /.userCalendar -->
+	<script type="text/javascript">showOBJ('m1417359600');</script>
+
+	<div class="exTag">
+		<p>ブログ貼付</p>
+		<dl>
+			<dt>&lt;iframe&gt;タグ</dt>
+			<dd><input type="text" value="&lt;iframe width=&quot;320&quot; height=&quot;160&quot; src=&quot;http://ext.nicovideo.jp/thumb_user/79595&quot; scrolling=&quot;no&quot; style=&quot;border:solid 1px #CCC;&quot; frameborder=&quot;0&quot;&gt;&lt;/iframe&gt;" onclick="this.focus();this.select();" readOnly></dd>
+			<dt>&lt;a&gt;タグ</dt>
+			<dd><input type="text" value="&lt;a target=&quot;_blank&quot; href=&quot;http://www.nicovideo.jp/user/79595&quot;&gt;honishiさんのプロフィール&lt;/a&gt;" onclick="this.focus();this.select();" readOnly></dd>
+
+		</dl>
+	</div>
+		
+</div>
+	<!-- //sidebar -->
+
+</div>
+<!--↑コンテンツ↑-->
+
+
+
+
+
+</div>
+
+<div class="toPageTopWrap">
+	<div class="inner">
+		<a href="#" class="toPageTopBtn"><span></span>ページトップ</a>
+			</div>
+</div><!-- /.toPageTop -->
+
+<div id="footerWrap">
+
+	<div id="footerNav">
+		<div class="outer">
+
+			<h3>niconicoについて</h3>
+			<ul class="footerNavList">
+				<li><a href="http://www.nicovideo.jp/top_service/">サービス一覧</a></li>
+				<li><a href="http://www.nicovideo.jp/rss">RSS（更新情報）一覧</a></li>
+				<li><a href="http://license-search.nicovideo.jp/">動画・生放送に使用できる音源の検索</a></li>
+				<li><a href="http://ex.nicovideo.jp/base/declaration">宣言</a></li>
+				<li><a href="http://info.nicovideo.jp/base/term.html">サイトご利用にあたって</a></li>							</ul>
+		</div>
+
+		<div class="outer">
+			<h3>お知らせ</h3>
+			<ul class="footerNavList">
+				<li><a href="http://blog.nicovideo.jp/niconews/">インフォメーション</a></li>
+				<li><a href="http://blog.nicovideo.jp/niconews/ge_function/">機能・お知らせ</a></li>								<li><a href="http://blog.nicovideo.jp/niconews/ge_maintenance/">メンテナンス・障害・復旧</a></li>				<li><a href="http://info.nicovideo.jp/base/phishing.html">フィッシング詐欺にご注意</a></li>			</ul>
+		</div>
+		<div class="outer">
+			<h3>お問い合わせ</h3>
+			<ul class="footerNavList">
+				<li><a href="http://faq.nicovideo.jp/">総合ヘルプ</a></li>
+				<li><a href="http://bbs.nicovideo.jp/request/">要望掲示板</a></li>
+				<li><a href="http://rcp-smile.nicovideo.jp/static/rule/">権利者法人の皆様へ</a></li>
+				<li><a href="https://secure.ch.nicovideo.jp/application/info/top">団体・企業ページ開設</a></li>
+				<li><a href="https://secure.nicovideo.jp/form/ads">広告出稿</a></li>
+				<li><a href="https://secure.nicovideo.jp/form/press">取材・プレス</a></li>
+				<li><a href="http://info.dwango.co.jp/recruit/">採用情報</a></li>
+			</ul>
+		</div>
+	</div>
+
+	<div id="copyright">
+					<div class="setCountryOuter">
+    <ul class="setCountry">
+        <li class="selector" id="area">
+            <p>地域</p>
+            <div class="outer">
+                <p class="trigger" id="areaTrigger">
+                    <span class="currentType JP">日本</span>
+                    <span class="arrow"></span>
+                </p>
+                <div class="expandContainer" id="areaExpandContainer">
+                                                                                            <a href="#" class="selectType US" onclick="document.site_footer_setcountry.area.value='US';return Nico.CommonFooter.setCountry();">アメリカ合衆国</a>
+                                                                            <a href="#" class="selectType TW" onclick="document.site_footer_setcountry.area.value='TW';return Nico.CommonFooter.setCountry();">台湾</a>
+                                                    </div>
+            </div>
+        </li>
+        <li class="selector" id="lang">
+            <p>言語</p>
+            <div class="outer">
+                <p class="trigger" id="langTrigger">
+                    <span class="currentType">日本語</span>
+                    <span class="arrow"></span>
+                </p>
+                <div class="expandContainer" id="langExpandContainer">
+                                                                                            <a href="#" class="selectType en-us" onclick="document.site_footer_setcountry.language.value='en-us';return Nico.CommonFooter.setCountry();">English (US)</a>
+                                                                            <a href="#" class="selectType zh-tw" onclick="document.site_footer_setcountry.language.value='zh-tw';return Nico.CommonFooter.setCountry();">中文 (繁體)</a>
+                                                    </div>
+            </div>
+        </li>
+    </ul>
+    <form method="post" action="http://www.nicovideo.jp/api/setcountry" id="site_footer_setcountry" name="site_footer_setcountry">
+            <input type="hidden" name="user_id" value="79595" id="site_footer_setcountry_userid">
+        <input type="hidden" name="token" value="79595-1417375030-bfa2ca1fab2d2df5aca2eed97b385e2a5d7a62ac">
+            <input type="hidden" name="area" value="">
+        <input type="hidden" name="language" value="">
+    </form>
+</div>				<p class="figureWrap">
+			<img src="http://uni.res.nimg.jp/img/base/foot/logo_jasrac.png" alt="Licensed by JASRAC" /><span>JASRAC許諾番号：9013388001Y45123<br>9013388004Y30005</span>
+						<small>&copy;niwango,inc. All rights reserved.</small>
+		</p>
+	</div>
+</div><!-- /#footerWrap -->
+<script type="text/javascript" charset="utf-8" src="http://notification.nicovideo.jp/res/notify.js?140901" async defer></script>
+<script type="text/javascript" charset="utf-8" src="http://enquete.nicovideo.jp/static/js/enquete.js?141028" async defer></script></body>
+</html>

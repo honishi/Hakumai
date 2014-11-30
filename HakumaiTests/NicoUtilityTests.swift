@@ -9,6 +9,8 @@
 import Foundation
 import XCTest
 
+let kAsyncTimeout: NSTimeInterval = 3
+
 class NicoUtilityTests: XCTestCase {
     
     override func setUp() {
@@ -21,7 +23,7 @@ class NicoUtilityTests: XCTestCase {
         super.tearDown()
     }
     
-    // MARK: room position
+    // MARK: - Room Position
     func testRoomPosition() {
         var roomPosition: RoomPosition?
         
@@ -81,7 +83,7 @@ class NicoUtilityTests: XCTestCase {
         XCTAssert(derived == expected, "")
     }
     
-    // MARK: - community
+    // MARK: - Community
     func testLoadCommunity() {
         let data = self.dataForResource("community.html")
         var community = Community()
@@ -108,7 +110,34 @@ class NicoUtilityTests: XCTestCase {
         XCTAssert(canOpen == true, "")
     }
     
-    // MARK: - test utility
+    // MARK: - Username Resolver
+    func testExtractUsername() {
+        var data: NSData!
+        var resolved: String?
+        
+        data = self.dataForResource("user.html")
+        resolved = NicoUtility.sharedInstance().extractUsername(data)
+        XCTAssert(resolved == "野田草履", "")
+        
+        data = self.dataForResource("user_me.html")
+        resolved = NicoUtility.sharedInstance().extractUsername(data)
+        XCTAssert(resolved == "honishi", "")
+    }
+    
+    func testResolveUsername() {
+        let asyncExpectation = self.expectationWithDescription("asyncEcpectation")
+        
+        NicoUtility.sharedInstance().resolveUsername(79595, completion: { (userName) -> (Void) in
+            // test: NSRunLoop.currentRunLoop().runUntilDate(NSDate(timeIntervalSinceNow: NSTimeInterval(5)))
+            
+            XCTAssert(userName == "honishi", "")
+            asyncExpectation.fulfill()
+        })
+
+        self.waitForExpectationsWithTimeout(kAsyncTimeout, handler: nil)
+    }
+
+    // MARK: - Test Utility
     func dataForResource(fileName: String) -> NSData {
         let bundle = NSBundle(forClass: NicoUtilityTests.self)
         let path = bundle.pathForResource(fileName, ofType: nil)

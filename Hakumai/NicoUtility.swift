@@ -36,6 +36,7 @@ let kRequiredCommunityLevelForStandRoom: [RoomPosition: Int] = [
 let kGetPlayerStatuUrl = "http://watch.live.nicovideo.jp/api/getplayerstatus?v=lv"
 let kGetPostKeyUrl = "http://live.nicovideo.jp/api/getpostkey?thread=%d&block_no=%d"
 let kCommunityUrl = "http://com.nicovideo.jp/community/"
+let kUserUrl = "http://www.nicovideo.jp/user/"
 
 // MARK: global value
 
@@ -168,6 +169,22 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         self.cookiedAsyncRequest(self.live!.community.thumbnailUrl!, completion: httpCompletion)
     }
     
+    func resolveUsername(userId: Int, completion: (userName: String?) -> (Void)) {
+        func httpCompletion (response: NSURLResponse!, data: NSData!, connectionError: NSError!) {
+            if connectionError != nil {
+                log.error("error in resolving username")
+                completion(userName: nil)
+                return
+            }
+            
+            let username = self.extractUsername(data)
+            
+            completion(userName: username)
+        }
+        
+        self.cookiedAsyncRequest(kUserUrl + String(userId), completion: httpCompletion)
+    }
+    
     // MARK: - Message Server Functions
     private func openMessageServers(originServer: MessageServer) {
         self.messageServers = self.deriveMessageServers(originServer)
@@ -257,7 +274,6 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     // MARK: - General Extractor
     private func isErrorResponse(xmlData: NSData) -> Bool {
         var err: NSError?
-        
         let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &err)
         let rootElement = xmlDocument?.rootElement()
         
@@ -279,7 +295,6 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     // MARK: - Stream Extractor
     func extractLive(xmlData: NSData) -> Live? {
         var err: NSError?
-        
         let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &err)
         let rootElement = xmlDocument?.rootElement()
         
@@ -343,7 +358,6 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     // MARK: - Message Server Extractor
     private func extractMessageServer (xmlData: NSData, user: User) -> MessageServer? {
         var err: NSError?
-        
         let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &err)
         let rootElement = xmlDocument?.rootElement()
         
@@ -469,7 +483,6 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     // MARK: - User Extractor
     private func extractUser(xmlData: NSData) -> User? {
         var err: NSError?
-        
         let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &err)
         let rootElement = xmlDocument?.rootElement()
         
@@ -525,6 +538,20 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         
         let getPostKeyUrl = String(format: kGetPostKeyUrl, thread, blockNo)
         self.cookiedAsyncRequest(getPostKeyUrl, completion: httpCompletion)
+    }
+    
+    // MARK: - Username
+    func extractUsername(xmlData: NSData) -> String? {
+        var err: NSError?
+        let xmlDocument = NSXMLDocument(data: xmlData, options: Int(NSXMLDocumentTidyHTML), error: &err)
+        let rootElement = xmlDocument?.rootElement()
+        
+        // /html/body/div[3]/div[2]/h2/text() -> other's userpage
+        // /html/body/div[4]/div[2]/h2/text() -> my userpage, contains '他のユーザーから見たあなたのプロフィールです。' box
+        let username = rootElement?.firstStringValueForXPathNode("/html/body/*/div[2]/h2")
+        let cleansed = username?.stringByRemovingPattern("(?:さん|)\n$")
+        
+        return cleansed
     }
     
     // MARK: - Internal Utility
