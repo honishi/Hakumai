@@ -19,15 +19,10 @@
 		DB2AE0CB1A0EE2FD00B1CE4D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DB2AE0C91A0EE2FD00B1CE4D /* Main.storyboard */; };
 		DB2AE0D71A0EE2FD00B1CE4D /* HakumaiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0D61A0EE2FD00B1CE4D /* HakumaiTests.swift */; };
 		DB2AE1101A0F2BAB00B1CE4D /* FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE1061A0F2BAB00B1CE4D /* FMDatabase.m */; };
-		DB2AE1111A0F2BAB00B1CE4D /* FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE1061A0F2BAB00B1CE4D /* FMDatabase.m */; };
 		DB2AE1121A0F2BAB00B1CE4D /* FMDatabaseAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE1081A0F2BAB00B1CE4D /* FMDatabaseAdditions.m */; };
-		DB2AE1131A0F2BAB00B1CE4D /* FMDatabaseAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE1081A0F2BAB00B1CE4D /* FMDatabaseAdditions.m */; };
 		DB2AE1141A0F2BAB00B1CE4D /* FMDatabasePool.m in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE10A1A0F2BAB00B1CE4D /* FMDatabasePool.m */; };
-		DB2AE1151A0F2BAB00B1CE4D /* FMDatabasePool.m in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE10A1A0F2BAB00B1CE4D /* FMDatabasePool.m */; };
 		DB2AE1161A0F2BAB00B1CE4D /* FMDatabaseQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE10C1A0F2BAB00B1CE4D /* FMDatabaseQueue.m */; };
-		DB2AE1171A0F2BAB00B1CE4D /* FMDatabaseQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE10C1A0F2BAB00B1CE4D /* FMDatabaseQueue.m */; };
 		DB2AE1181A0F2BAB00B1CE4D /* FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE10F1A0F2BAB00B1CE4D /* FMResultSet.m */; };
-		DB2AE1191A0F2BAB00B1CE4D /* FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE10F1A0F2BAB00B1CE4D /* FMResultSet.m */; };
 		DB2AE11A1A0F2C8200B1CE4D /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DB2AE0F71A0EF18200B1CE4D /* libsqlite3.dylib */; };
 		DB2AE11B1A0F2D4C00B1CE4D /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DB2AE0F71A0EF18200B1CE4D /* libsqlite3.dylib */; };
 		DB52B0AD1A2102C700E78C6A /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB52B0AC1A2102C700E78C6A /* User.swift */; };
@@ -61,9 +56,7 @@
 		DBAAA7321A0F43BB00981004 /* CookieUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7311A0F43BB00981004 /* CookieUtility.swift */; };
 		DBAAA7331A0F43BB00981004 /* CookieUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7311A0F43BB00981004 /* CookieUtility.swift */; };
 		DBAAA7391A0F592300981004 /* SSKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7361A0F592300981004 /* SSKeychain.m */; };
-		DBAAA73A1A0F592300981004 /* SSKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7361A0F592300981004 /* SSKeychain.m */; };
 		DBAAA73B1A0F592300981004 /* SSKeychainQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7381A0F592300981004 /* SSKeychainQuery.m */; };
-		DBAAA73C1A0F592300981004 /* SSKeychainQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7381A0F592300981004 /* SSKeychainQuery.m */; };
 		DBAAA73E1A0F594700981004 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBAAA73D1A0F594700981004 /* Security.framework */; };
 		DBAAA7421A0F5FEF00981004 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBAAA7411A0F5FEF00981004 /* SystemConfiguration.framework */; };
 		DBAAA7511A0FDA4500981004 /* NicoUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7501A0FDA4500981004 /* NicoUtility.swift */; };
@@ -636,7 +629,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				DB080B851A17CA0100896228 /* CookieUtilityTests.swift in Sources */,
-				DB2AE1191A0F2BAB00B1CE4D /* FMResultSet.m in Sources */,
 				DBFA88861A1BC925005349AD /* MessageServer.swift in Sources */,
 				DBFA887C1A1BC25A005349AD /* Chat.swift in Sources */,
 				DB7B3DE61A2434FB00205470 /* ScoreTableCellView.swift in Sources */,
@@ -644,9 +636,6 @@
 				DB7B3DE91A246EE200205470 /* ColorScheme.swift in Sources */,
 				DB52B0AE1A2102C700E78C6A /* User.swift in Sources */,
 				DBFA888C1A1C9A56005349AD /* Live.swift in Sources */,
-				DBAAA73C1A0F592300981004 /* SSKeychainQuery.m in Sources */,
-				DBAAA73A1A0F592300981004 /* SSKeychain.m in Sources */,
-				DB2AE1171A0F2BAB00B1CE4D /* FMDatabaseQueue.m in Sources */,
 				DB2AE0D71A0EE2FD00B1CE4D /* HakumaiTests.swift in Sources */,
 				DB7B3DDF1A23B4D700205470 /* ColoredView.swift in Sources */,
 				DBE73ECA1A1A1B6A00A8BCA9 /* MainViewControllerTests.swift in Sources */,
@@ -659,13 +648,10 @@
 				DBAAA7521A0FDA4500981004 /* NicoUtility.swift in Sources */,
 				DBFA88831A1BC8C9005349AD /* Enum.swift in Sources */,
 				DBFA88801A1BC7FF005349AD /* Thread.swift in Sources */,
-				DB2AE1151A0F2BAB00B1CE4D /* FMDatabasePool.m in Sources */,
 				DBFA88891A1BCF77005349AD /* MessageServerTests.swift in Sources */,
 				DBA414C71A18915C00E0CAD3 /* RoomListener.swift in Sources */,
 				DBA414CD1A1A16F300E0CAD3 /* CommonExtensions.swift in Sources */,
-				DB2AE1111A0F2BAB00B1CE4D /* FMDatabase.m in Sources */,
 				DB0ED6531A20B0A7007E9318 /* ChromeCookie.swift in Sources */,
-				DB2AE1131A0F2BAB00B1CE4D /* FMDatabaseAdditions.m in Sources */,
 				DBE73ECD1A1A1CE500A8BCA9 /* MainViewController.swift in Sources */,
 				DBA414C91A189D7D00E0CAD3 /* RoomListenerTests.swift in Sources */,
 				DBAAA7331A0F43BB00981004 /* CookieUtility.swift in Sources */,

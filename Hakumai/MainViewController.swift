@@ -66,6 +66,9 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     // MARK: - UIViewController Functions
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.communityImageView.layer?.borderWidth = 1.0
+        self.communityImageView.layer?.borderColor = NSColor.blackColor().CGColor
 
         self.registerNibs()
         
@@ -268,10 +271,6 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     }
     
     func nicoUtilityDidFinishListening(nicoUtility: NicoUtility) {
-        dispatch_async(dispatch_get_main_queue(), {
-            ChatContainer.sharedContainer.removeAll()
-            self.tableView.reloadData()
-        })
     }
 
     // MARK: - Live Info Loader
@@ -297,6 +296,8 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     // MARK: - Button Handlers
     @IBAction func connectLive(sender: AnyObject) {
         if let liveNumber = MainViewController.extractLiveNumber(self.liveTextField.stringValue) {
+            self.clearAllChats()
+
             NicoUtility.sharedInstance().delegate = self
             NicoUtility.sharedInstance().connect(liveNumber)
         }
@@ -356,6 +357,13 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         self.commentTextField.becomeFirstResponder()
     }
 
+    // MARK: - Internal Functions
+    func clearAllChats() {
+        self.RowHeightCacher.removeAll(keepCapacity: false)
+        ChatContainer.sharedContainer.removeAll()
+        self.tableView.reloadData()
+    }
+    
     // MARK: - Misc Utility
     class func extractLiveNumber(url: String) -> Int? {
         let liveNumberPattern = "\\d{9,}"
