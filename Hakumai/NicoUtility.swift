@@ -600,23 +600,27 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     func roomListenerDidReceiveChat(roomListener: RoomListener, chat: Chat) {
-        if let delegate = self.delegate {
-            delegate.nicoUtilityDidReceiveChat(self, chat: chat)
-        }
-
         // open next room, if first comment in the room received
         if chat.premium == .Ippan || chat.premium == .Premium {
             if let room = roomListener.server?.roomPosition {
                 if self.receivedFirstChat[room] == nil || self.receivedFirstChat[room] == false {
                     self.receivedFirstChat[room] = true
+                    self.addMessageServer()
                     
                     if let delegate = self.delegate {
                         delegate.nicoUtilityDidReceiveFirstChat(self, chat: chat)
                     }
-
-                    self.addMessageServer()
                 }
             }
+        }
+        
+        if let delegate = self.delegate {
+            delegate.nicoUtilityDidReceiveChat(self, chat: chat)
+        }
+        
+        if (chat.comment == "/disconnect" && (chat.premium == .Caster || chat.premium == .System) &&
+            chat.roomPosition == .Arena) {
+            self.disconnect()
         }
     }
 }

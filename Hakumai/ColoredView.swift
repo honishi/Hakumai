@@ -24,6 +24,7 @@ class ColoredView: NSView {
         super.init(coder: coder)
     }
     
+    // TODO: should implement wantslayer, see http://rway.tumblr.com/post/4525503228
     override func drawRect(dirtyRect: NSRect) {
         // http://stackoverflow.com/a/2962882
         self.fillColor.setFill()

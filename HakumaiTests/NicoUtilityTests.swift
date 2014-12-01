@@ -125,7 +125,7 @@ class NicoUtilityTests: XCTestCase {
     }
     
     func testResolveUsername() {
-        let asyncExpectation = self.expectationWithDescription("asyncEcpectation")
+        let asyncExpectation = self.expectationWithDescription("asyncExpectation")
         
         NicoUtility.sharedInstance().resolveUsername(79595, completion: { (userName) -> (Void) in
             // test: NSRunLoop.currentRunLoop().runUntilDate(NSDate(timeIntervalSinceNow: NSTimeInterval(5)))

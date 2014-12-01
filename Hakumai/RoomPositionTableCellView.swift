@@ -14,16 +14,16 @@ class RoomPositionTableCellView: NSTableCellView {
     @IBOutlet weak var roomPositionLabel: NSTextField!
     @IBOutlet weak var commentNoLabel: NSTextField!
     
-    var roomPosition: RoomPosition = .Arena {
+    var roomPosition: RoomPosition? = nil {
         didSet {
-            self.roomPositionLabel.stringValue = self.roomPosition.shortLabel() + ":"
+            self.roomPositionLabel.stringValue = self.stringForRoomPosition(self.roomPosition)
             self.coloredView.fillColor = self.colorForRoomPosition(self.roomPosition)
         }
     }
     
-    var commentNo: Int = 0 {
+    var commentNo: Int? = nil {
         didSet {
-            self.commentNoLabel.stringValue = String(self.commentNo).numberStringWithSeparatorComma()!
+            self.commentNoLabel.stringValue = self.commentNoString(self.commentNo)
         }
     }
     
@@ -32,8 +32,12 @@ class RoomPositionTableCellView: NSTableCellView {
     }
     
     // MARK: - Internal Functions
-    func colorForRoomPosition(roomPosition: RoomPosition) -> NSColor {
-        switch (roomPosition) {
+    func colorForRoomPosition(roomPosition: RoomPosition?) -> NSColor {
+        if roomPosition == nil {
+            return ColorScheme.systemMessageColorBackground()
+        }
+        
+        switch (roomPosition!) {
         case .Arena:
             return ColorScheme.roomColorArena()
         case .StandA:
@@ -61,5 +65,25 @@ class RoomPositionTableCellView: NSTableCellView {
         }
         
         return NSColor.grayColor()
+    }
+    
+    func stringForRoomPosition(roomPosition: RoomPosition?) -> String {
+        var string = ""
+
+        if let unwrapped = roomPosition {
+            string = unwrapped.shortLabel() + ":"
+        }
+        
+        return string
+    }
+    
+    func commentNoString(commentNo: Int?) -> String {
+        var string = ""
+        
+        if let unwrapped = commentNo {
+            string = String(unwrapped).numberStringWithSeparatorComma()!
+        }
+        
+        return string
     }
 }

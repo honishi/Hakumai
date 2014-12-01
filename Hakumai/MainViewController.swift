@@ -50,7 +50,6 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     var currentScrollAnimationCount = 0
     
     var activeTimer: NSTimer?
-    var calculatingActive: Bool = false
 
     // MARK: - Object Lifecycle
     override func awakeFromNib() {
@@ -105,12 +104,22 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
             return cached
         }
         
-        let comment = ChatContainer.sharedContainer[row].comment!
+        var rowHeight: CGFloat = 0
+        var content: String? = ""
+        
+        let chatOrSystemMessage: AnyObject = ChatContainer.sharedContainer[row]
+        
+        if let message = chatOrSystemMessage as? SystemMessage {
+            content = message.message
+        }
+        else if let chat = chatOrSystemMessage as? Chat {
+            content = chat.comment
+        }
         
         let commentTableColumn = self.tableView.tableColumnWithIdentifier(kCommentColumnIdentifier)!
         let commentColumnWidth = commentTableColumn.width
+        rowHeight = self.commentColumnHeight(content!, width: commentColumnWidth)
         
-        let rowHeight = self.commentColumnHeight(comment, width: commentColumnWidth)
         self.RowHeightCacher[row] = rowHeight
         
         return rowHeight
@@ -138,43 +147,65 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     }
 
     func tableView(tableView: NSTableView, viewForTableColumn tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        var content: String?
         var view: NSTableCellView?
         
         if let identifier = tableColumn?.identifier {
             view = tableView.makeViewWithIdentifier(identifier, owner: self) as? NSTableCellView
+            view?.textField?.stringValue = ""
         }
 
-        let chat = ChatContainer.sharedContainer[row]
-
-        if tableColumn?.identifier == kRoomPositionColumnIdentifier {
+        let chatOrSystemMessage: AnyObject = ChatContainer.sharedContainer[row]
+        
+        if let message = chatOrSystemMessage as? SystemMessage {
+            self.configureSystemMessageView(message, tableColumn: tableColumn!, view: view!)
+        }
+        else if let chat = chatOrSystemMessage as? Chat {
+            self.configureChatView(chat, tableColumn: tableColumn!, view: view!)
+        }
+        
+        return view
+    }
+    
+    func configureSystemMessageView(message: SystemMessage, tableColumn: NSTableColumn, view: NSTableCellView) {
+        switch tableColumn.identifier {
+        case kRoomPositionColumnIdentifier:
+            let roomPositionView = (view as RoomPositionTableCellView)
+            roomPositionView.roomPosition = nil
+            roomPositionView.commentNo = nil
+        case kScoreColumnIdentifier:
+            (view as ScoreTableCellView).score = nil
+        case kCommentColumnIdentifier:
+            view.textField?.stringValue = message.message
+        default:
+            break
+        }
+    }
+    
+    func configureChatView(chat: Chat, tableColumn: NSTableColumn, view: NSTableCellView) {
+        var content: String? = nil
+        
+        switch tableColumn.identifier {
+        case kRoomPositionColumnIdentifier:
             let roomPositionView = (view as RoomPositionTableCellView)
             roomPositionView.roomPosition = chat.roomPosition!
             roomPositionView.commentNo = chat.no!
-        }
-        else if tableColumn?.identifier == kScoreColumnIdentifier {
+        case kScoreColumnIdentifier:
             (view as ScoreTableCellView).score = chat.score!
-        }
-        else if tableColumn?.identifier == kCommentColumnIdentifier {
+        case kCommentColumnIdentifier:
             content = chat.comment
-        }
-        else if tableColumn?.identifier == kUserIdColumnIdentifier {
+        case kUserIdColumnIdentifier:
             content = chat.userId
-        }
-        else if tableColumn?.identifier == kPremiumColumnIdentifier {
+        case kPremiumColumnIdentifier:
             content = chat.premium?.label()
-        }
-        else if tableColumn?.identifier == kMailColumnIdentifier {
+        case kMailColumnIdentifier:
             content = chat.mail
+        default:
+            break
         }
-        
-        if content == nil {
-            content = ""
+
+        if content != nil {
+            view.textField?.stringValue = content!
         }
-        
-        view?.textField?.stringValue = content!
-        
-        return view
     }
     
     // MARK: - NicoUtilityDelegate Functions
@@ -186,8 +217,9 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         })
         
         self.loadThumbnail()
-        
         self.focusCommentTextField()
+        
+        self.logSystemMessageToTableView("放送情報を取得しました.")
     }
 
     func nicoUtilityDidStartListening(nicoUtility: NicoUtility, roomPosition: RoomPosition) {
@@ -199,24 +231,54 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     }
 
     func nicoUtilityDidReceiveFirstChat(nicoUtility: NicoUtility, chat: Chat) {
-        dispatch_async(dispatch_get_main_queue(), {
-            if let roomPositionLabel = chat.roomPosition?.label() {
+        if let roomPositionLabel = chat.roomPosition?.label() {
+            dispatch_async(dispatch_get_main_queue(), {
                 self.notificationLabel.stringValue = "opened:\(roomPositionLabel)"
-            }
-        })
+            })
+            
+            self.logSystemMessageToTableView("\(roomPositionLabel)がオープンしました.")
+        }
     }
 
     func nicoUtilityDidReceiveChat(nicoUtility: NicoUtility, chat: Chat) {
         // log.debug("\(chat.mail),\(chat.comment)")
-        
-        if chat.comment?.hasPrefix("/hb ifseetno ") == true {
+
+        if self.shouldIgnoreChat(chat) {
             return
         }
         
+        self.appendTableView(chat)
+    }
+    
+    func nicoUtilityDidFinishListening(nicoUtility: NicoUtility) {
+        self.logSystemMessageToTableView("放送が終了しました.")
+    }
+    
+    // MARK: System Message Utility
+    func logSystemMessageToTableView(message: String) {
+        let systemMessage = SystemMessage(message: "[ " + message + " ]")
+        self.appendTableView(systemMessage)
+    }
+    
+    // MARK: Chat Append Utility
+    func shouldIgnoreChat(chat: Chat) -> Bool {
+        if chat.comment?.hasPrefix("/hb ifseetno ") == true {
+            return true
+        }
+        
+        if (chat.premium == .System || chat.premium == .Caster || chat.premium == .BSP) &&
+            chat.roomPosition != .Arena {
+            return true
+        }
+        
+        return false
+    }
+    
+    func appendTableView(chatOrSystemMessage: AnyObject) {
         dispatch_async(dispatch_get_main_queue(), {
             let shouldScroll = self.shouldTableViewScrollToBottom()
             
-            let rowIndex = ChatContainer.sharedContainer.append(chat) - 1
+            let rowIndex = ChatContainer.sharedContainer.append(chatOrSystemMessage: chatOrSystemMessage) - 1
             self.tableView.insertRowsAtIndexes(NSIndexSet(index: rowIndex), withAnimation: .EffectNone)
             
             if shouldScroll {
@@ -270,9 +332,6 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         NSAnimationContext.endGrouping()
     }
     
-    func nicoUtilityDidFinishListening(nicoUtility: NicoUtility) {
-    }
-
     // MARK: - Live Info Loader
     func loadThumbnail() {
         NicoUtility.sharedInstance().loadThumbnail { (imageData) -> (Void) in
@@ -305,47 +364,15 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
 
     // MARK: - Timer Handlers
     func calculateActive(timer: NSTimer) {
-        if self.calculatingActive {
-            log.debug("skip calcurating active")
-            return
-        }
-        self.calculatingActive = true
-
-        // log.debug("calcurating active")
-        
-        let qualityOfServiceClass = Int(QOS_CLASS_BACKGROUND.value)
-        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-
-        dispatch_async(backgroundQueue, {
-            var activeUsers = Dictionary<String, Bool>()
-            let tenMinutesAgo = NSDate(timeIntervalSinceNow: (Double)(-10 * 60))
-
-            // self.log.debug("start counting active")
-            
-            for var i = ChatContainer.sharedContainer.count(); 0 < i ; i-- {
-                let chat = ChatContainer.sharedContainer[i - 1]
-                
-                if chat.date == nil || chat.userId == nil {
-                    continue
-                }
-                
-                // is "chat.date < tenMinutesAgo" ?
-                if chat.date!.compare(tenMinutesAgo) == .OrderedAscending {
-                    break
-                }
-                
-                activeUsers[chat.userId!] = true
+        ChatContainer.sharedContainer.calculateActive { (active: Int?) -> (Void) in
+            if active == nil {
+                return
             }
-
-            // self.log.debug("end counting active")
             
             dispatch_async(dispatch_get_main_queue(), {
-                self.activeLabel.stringValue = "active:\(activeUsers.count)"
-                
-                self.calculatingActive = false
-                // self.log.debug("finished to calcurate active")
+                self.activeLabel.stringValue = "active:\(active!)"
             })
-        })
+        }
     }
 
     // MARK: - Menu Handlers

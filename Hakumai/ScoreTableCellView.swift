@@ -18,13 +18,10 @@ class ScoreTableCellView: NSTableCellView {
     @IBOutlet weak var coloredView: ColoredView!
     @IBOutlet weak var scoreLabel: NSTextField!
     
-    var score: Int = 0 {
+    var score: Int? = nil {
         didSet {
-            let color = self.colorForScore(self.score)
-            self.coloredView.fillColor = color
-            
-            let scoreString = String(self.score).numberStringWithSeparatorComma()!
-            self.scoreLabel.stringValue = scoreString
+            self.coloredView.fillColor = self.colorForScore(self.score)
+            self.scoreLabel.stringValue = self.stringForScore(self.score)
         }
     }
 
@@ -37,8 +34,12 @@ class ScoreTableCellView: NSTableCellView {
     }
 
     // MARK: - Internal Functions
-    func colorForScore(score: Int) -> NSColor {
+    func colorForScore(score: Int?) -> NSColor {
         // println("\(self.score)")
+        
+        if score == nil {
+            return ColorScheme.systemMessageColorBackground()
+        }
         
         if score == kScoreThresholdGreen {
             return ColorScheme.scoreColorGreen()
@@ -54,5 +55,15 @@ class ScoreTableCellView: NSTableCellView {
         }
         
         return ColorScheme.scoreColorRed()
+    }
+    
+    func stringForScore(score: Int?) -> String {
+        var string = ""
+        
+        if let unwrapped = score {
+            string = String(unwrapped).numberStringWithSeparatorComma()!
+        }
+        
+        return string
     }
 }

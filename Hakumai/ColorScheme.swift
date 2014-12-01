@@ -46,6 +46,11 @@ extension NSColor {
 }
 
 class ColorScheme {
+    // MARK: - System Message Colors
+    class func systemMessageColorBackground() -> NSColor {
+        return NSColor.lightGrayColor()
+    }
+    
     // MARK: - Score Colors
     class func scoreColorGreen() -> NSColor {
         return NSColor(rgba: "#24cf20")
