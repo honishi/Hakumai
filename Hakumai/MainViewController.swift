@@ -11,6 +11,7 @@ import XCGLogger
 
 let kNibNameRoomPositionTableCellView = "RoomPositionTableCellView"
 let kNibNameScoreTableCellView = "ScoreTableCellView"
+let kNibNameUserIdTableCellView = "UserIdTableCellView"
 
 let kRoomPositionColumnIdentifier = "RoomPositionColumn"
 let kScoreColumnIdentifier = "ScoreColumn"
@@ -81,6 +82,9 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         
         let scoreTableCellViewNib = NSNib(nibNamed: kNibNameScoreTableCellView, bundle: NSBundle.mainBundle())
         self.tableView.registerNib(scoreTableCellViewNib!, forIdentifier: kScoreColumnIdentifier)
+        
+        let userIdTableCellViewNib = NSNib(nibNamed: kNibNameUserIdTableCellView, bundle: NSBundle.mainBundle())
+        self.tableView.registerNib(userIdTableCellViewNib!, forIdentifier: kUserIdColumnIdentifier)
     }
     
     override func viewDidAppear() {
@@ -194,7 +198,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         case kCommentColumnIdentifier:
             content = chat.comment
         case kUserIdColumnIdentifier:
-            content = chat.userId
+            (view as UserIdTableCellView).userId = chat.userId
         case kPremiumColumnIdentifier:
             content = chat.premium?.label()
         case kMailColumnIdentifier:

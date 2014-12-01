@@ -124,16 +124,34 @@ class NicoUtilityTests: XCTestCase {
         XCTAssert(resolved == "honishi", "")
     }
     
+    func testIsRawUserId() {
+        XCTAssert(NicoUtility.sharedInstance().isRawUserId("123") == true, "")
+        XCTAssert(NicoUtility.sharedInstance().isRawUserId("123a") == false, "")
+    }
+    
     func testResolveUsername() {
-        let asyncExpectation = self.expectationWithDescription("asyncExpectation")
+        var asyncExpectation: XCTestExpectation
         
-        NicoUtility.sharedInstance().resolveUsername(79595, completion: { (userName) -> (Void) in
+        // raw id case
+        asyncExpectation = self.expectationWithDescription("asyncExpectation")
+        
+        NicoUtility.sharedInstance().resolveUsername("79595", completion: { (userName) -> (Void) in
             // test: NSRunLoop.currentRunLoop().runUntilDate(NSDate(timeIntervalSinceNow: NSTimeInterval(5)))
             
             XCTAssert(userName == "honishi", "")
             asyncExpectation.fulfill()
         })
 
+        self.waitForExpectationsWithTimeout(kAsyncTimeout, handler: nil)
+        
+        // 184 id case
+        asyncExpectation = self.expectationWithDescription("asyncExpectation")
+        
+        NicoUtility.sharedInstance().resolveUsername("abc", completion: { (userName) -> (Void) in
+            XCTAssert(userName == nil, "")
+            asyncExpectation.fulfill()
+        })
+        
         self.waitForExpectationsWithTimeout(kAsyncTimeout, handler: nil)
     }
 

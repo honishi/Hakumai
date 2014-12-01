@@ -75,6 +75,8 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     var roomListeners: [RoomListener] = []
     var receivedFirstChat = [RoomPosition: Bool]()
     
+    var cachedUsernames = [String: String]()
+    
     let log = XCGLogger.defaultInstance()
     
     // MARK: - Object Lifecycle
@@ -169,7 +171,17 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         self.cookiedAsyncRequest(self.live!.community.thumbnailUrl!, completion: httpCompletion)
     }
     
-    func resolveUsername(userId: Int, completion: (userName: String?) -> (Void)) {
+    func resolveUsername(userId: String, completion: (userName: String?) -> (Void)) {
+        if !self.isRawUserId(userId) {
+            completion(userName: nil)
+            return
+        }
+        
+        if let cachedUsername = self.cachedUsernames[userId] {
+            completion(userName: cachedUsername)
+            return
+        }
+        
         func httpCompletion (response: NSURLResponse!, data: NSData!, connectionError: NSError!) {
             if connectionError != nil {
                 log.error("error in resolving username")
@@ -178,6 +190,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             }
             
             let username = self.extractUsername(data)
+            self.cachedUsernames[userId] = username
             
             completion(userName: username)
         }
@@ -552,6 +565,13 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         let cleansed = username?.stringByRemovingPattern("(?:さん|)\n$")
         
         return cleansed
+    }
+    
+    func isRawUserId(userId: String) -> Bool {
+        let regexp = NSRegularExpression(pattern: "^\\d+$", options: nil, error: nil)!
+        let matched = regexp.firstMatchInString(userId, options: nil, range: NSMakeRange(0, userId.utf16Count))
+        
+        return matched != nil ? true : false
     }
     
     // MARK: - Internal Utility
