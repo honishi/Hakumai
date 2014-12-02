@@ -30,7 +30,7 @@ class UserIdTableCellView: NSTableCellView {
     // MARK: - Internal Functions
     func imageForUserId(userId: String) -> NSImage {
         var image: NSImage
-        let isRawUserId = NicoUtility.sharedInstance().isRawUserId(userId)
+        let isRawUserId = NicoUtility.sharedInstance.isRawUserId(userId)
         
         if isRawUserId {
             image = NSImage(named: "UserIdRaw")!
@@ -51,6 +51,6 @@ class UserIdTableCellView: NSTableCellView {
             self.userIdTextField.stringValue = userName!
         }
         
-        NicoUtility.sharedInstance().resolveUsername(userId, completion: completion)
+        NicoUtility.sharedInstance.resolveUsername(userId, completion: completion)
     }
 }

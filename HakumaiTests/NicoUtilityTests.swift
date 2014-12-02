@@ -27,16 +27,16 @@ class NicoUtilityTests: XCTestCase {
     func testRoomPosition() {
         var roomPosition: RoomPosition?
         
-        roomPosition = NicoUtility.sharedInstance().roomPositionByRoomLabel("x")
+        roomPosition = NicoUtility.sharedInstance.roomPositionByRoomLabel("x")
         XCTAssert(roomPosition == nil, "")
         
-        roomPosition = NicoUtility.sharedInstance().roomPositionByRoomLabel("co1")
+        roomPosition = NicoUtility.sharedInstance.roomPositionByRoomLabel("co1")
         XCTAssert(roomPosition == .Arena, "")
         
-        roomPosition = NicoUtility.sharedInstance().roomPositionByRoomLabel("立ち見A列")
+        roomPosition = NicoUtility.sharedInstance.roomPositionByRoomLabel("立ち見A列")
         XCTAssert(roomPosition == .StandA, "")
         
-        roomPosition = NicoUtility.sharedInstance().roomPositionByRoomLabel("立ち見C列")
+        roomPosition = NicoUtility.sharedInstance.roomPositionByRoomLabel("立ち見C列")
         XCTAssert(roomPosition == .StandC, "")
     }
     
@@ -47,7 +47,7 @@ class NicoUtilityTests: XCTestCase {
         
         server = MessageServer(roomPosition: .StandA, address: "msg102.live.nicovideo.jp", port: 2810, thread: 100)
         expected = MessageServer(roomPosition: .StandC, address: "msg102.live.nicovideo.jp", port: 2812, thread: 102)
-        derived = NicoUtility.sharedInstance().deriveMessageServer(server, distance: 2)
+        derived = NicoUtility.sharedInstance.deriveMessageServer(server, distance: 2)
         XCTAssert(derived == expected, "")
         
         // TODO: more test cases should be implemented here
@@ -70,16 +70,16 @@ class NicoUtilityTests: XCTestCase {
         println("expected:\(expected)")
         
         server = server0
-        derived = NicoUtility.sharedInstance().deriveMessageServers(server)
+        derived = NicoUtility.sharedInstance.deriveMessageServers(server)
         println("derived:\(derived)")
         XCTAssert(derived == expected, "")
         
         server = server1
-        derived = NicoUtility.sharedInstance().deriveMessageServers(server)
+        derived = NicoUtility.sharedInstance.deriveMessageServers(server)
         XCTAssert(derived == expected, "")
         
         server = server3
-        derived = NicoUtility.sharedInstance().deriveMessageServers(server)
+        derived = NicoUtility.sharedInstance.deriveMessageServers(server)
         XCTAssert(derived == expected, "")
     }
     
@@ -88,7 +88,7 @@ class NicoUtilityTests: XCTestCase {
         let data = self.dataForResource("community.html")
         var community = Community()
         
-        NicoUtility.sharedInstance().extractCommunity(data, community: community)
+        NicoUtility.sharedInstance.extractCommunity(data, community: community)
         XCTAssert(community.level == 109, "")
         XCTAssert(community.thumbnailUrl!.absoluteString == "http://icon.nimg.jp/community/135/co1354854.jpg?1412118337", "")
     }
@@ -98,15 +98,15 @@ class NicoUtilityTests: XCTestCase {
         var canOpen: Bool?
         
         roomPosition = RoomPosition.StandB
-        canOpen = NicoUtility.sharedInstance().canOpenRoomPosition(roomPosition, communityLevel: 65)
+        canOpen = NicoUtility.sharedInstance.canOpenRoomPosition(roomPosition, communityLevel: 65)
         XCTAssert(canOpen == false, "")
-        canOpen = NicoUtility.sharedInstance().canOpenRoomPosition(roomPosition, communityLevel: 66)
+        canOpen = NicoUtility.sharedInstance.canOpenRoomPosition(roomPosition, communityLevel: 66)
         XCTAssert(canOpen == true, "")
         
         roomPosition = RoomPosition.StandD
-        canOpen = NicoUtility.sharedInstance().canOpenRoomPosition(roomPosition, communityLevel: 104)
+        canOpen = NicoUtility.sharedInstance.canOpenRoomPosition(roomPosition, communityLevel: 104)
         XCTAssert(canOpen == false, "")
-        canOpen = NicoUtility.sharedInstance().canOpenRoomPosition(roomPosition, communityLevel: 105)
+        canOpen = NicoUtility.sharedInstance.canOpenRoomPosition(roomPosition, communityLevel: 105)
         XCTAssert(canOpen == true, "")
     }
     
@@ -116,17 +116,17 @@ class NicoUtilityTests: XCTestCase {
         var resolved: String?
         
         data = self.dataForResource("user.html")
-        resolved = NicoUtility.sharedInstance().extractUsername(data)
+        resolved = NicoUtility.sharedInstance.extractUsername(data)
         XCTAssert(resolved == "野田草履", "")
         
         data = self.dataForResource("user_me.html")
-        resolved = NicoUtility.sharedInstance().extractUsername(data)
+        resolved = NicoUtility.sharedInstance.extractUsername(data)
         XCTAssert(resolved == "honishi", "")
     }
     
     func testIsRawUserId() {
-        XCTAssert(NicoUtility.sharedInstance().isRawUserId("123") == true, "")
-        XCTAssert(NicoUtility.sharedInstance().isRawUserId("123a") == false, "")
+        XCTAssert(NicoUtility.sharedInstance.isRawUserId("123") == true, "")
+        XCTAssert(NicoUtility.sharedInstance.isRawUserId("123a") == false, "")
     }
     
     func testResolveUsername() {
@@ -135,7 +135,7 @@ class NicoUtilityTests: XCTestCase {
         // raw id case
         asyncExpectation = self.expectationWithDescription("asyncExpectation")
         
-        NicoUtility.sharedInstance().resolveUsername("79595", completion: { (userName) -> (Void) in
+        NicoUtility.sharedInstance.resolveUsername("79595", completion: { (userName) -> (Void) in
             // test: NSRunLoop.currentRunLoop().runUntilDate(NSDate(timeIntervalSinceNow: NSTimeInterval(5)))
             
             XCTAssert(userName == "honishi", "")
@@ -147,7 +147,7 @@ class NicoUtilityTests: XCTestCase {
         // 184 id case
         asyncExpectation = self.expectationWithDescription("asyncExpectation")
         
-        NicoUtility.sharedInstance().resolveUsername("abc", completion: { (userName) -> (Void) in
+        NicoUtility.sharedInstance.resolveUsername("abc", completion: { (userName) -> (Void) in
             XCTAssert(userName == nil, "")
             asyncExpectation.fulfill()
         })

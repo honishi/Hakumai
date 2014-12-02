@@ -340,7 +340,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     
     // MARK: - Live Info Loader
     func loadThumbnail() {
-        NicoUtility.sharedInstance().loadThumbnail { (imageData) -> (Void) in
+        NicoUtility.sharedInstance.loadThumbnail { (imageData) -> (Void) in
             dispatch_async(dispatch_get_main_queue(), {
                 if imageData == nil {
                     return
@@ -353,7 +353,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     
     // MARK: - Comment TextField Action
     @IBAction func comment(sender: AnyObject) {
-        NicoUtility.sharedInstance().comment(self.commentTextField.stringValue)
+        NicoUtility.sharedInstance.comment(self.commentTextField.stringValue)
         
         self.commentTextField.stringValue = ""
     }
@@ -363,8 +363,8 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         if let liveNumber = MainViewController.extractLiveNumber(self.liveTextField.stringValue) {
             self.clearAllChats()
 
-            NicoUtility.sharedInstance().delegate = self
-            NicoUtility.sharedInstance().connect(liveNumber)
+            NicoUtility.sharedInstance.delegate = self
+            NicoUtility.sharedInstance.connect(liveNumber)
         }
     }
 

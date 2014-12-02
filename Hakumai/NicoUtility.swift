@@ -38,10 +38,6 @@ let kGetPostKeyUrl = "http://live.nicovideo.jp/api/getpostkey?thread=%d&block_no
 let kCommunityUrl = "http://com.nicovideo.jp/community/"
 let kUserUrl = "http://www.nicovideo.jp/user/"
 
-// MARK: global value
-
-private let nicoutility = NicoUtility()
-
 // MARK: extension
 
 // enabling operation like followings;
@@ -84,10 +80,13 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         super.init()
     }
     
-    class func sharedInstance() -> NicoUtility {
-        return nicoutility
+    class var sharedInstance : NicoUtility {
+        struct Static {
+            static let instance : NicoUtility = NicoUtility()
+        }
+        return Static.instance
     }
-
+    
     // MARK: - Public Interface
     func connect(live: Int) {
         if 0 < self.roomListeners.count {

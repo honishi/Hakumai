@@ -28,7 +28,7 @@ extension MainViewController {
                 let chat = self.randomChat()
                 
                 if let mainvc = MainViewController.instance() {
-                    mainvc.nicoUtilityDidReceiveChat(NicoUtility.sharedInstance(), chat: chat)
+                    mainvc.nicoUtilityDidReceiveChat(NicoUtility.sharedInstance, chat: chat)
                 }
                 
                 NSThread.sleepForTimeInterval(interval)

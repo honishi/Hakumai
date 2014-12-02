@@ -238,17 +238,17 @@
 			isa = PBXGroup;
 			children = (
 				DBAAA7311A0F43BB00981004 /* CookieUtility.swift */,
-				DB0ED6541A20B0AD007E9318 /* New Group */,
+				DB0ED6541A20B0AD007E9318 /* Browsers */,
 			);
 			name = Cookie;
 			sourceTree = "<group>";
 		};
-		DB0ED6541A20B0AD007E9318 /* New Group */ = {
+		DB0ED6541A20B0AD007E9318 /* Browsers */ = {
 			isa = PBXGroup;
 			children = (
 				DB0ED6511A20B0A7007E9318 /* ChromeCookie.swift */,
 			);
-			name = "New Group";
+			name = Browsers;
 			sourceTree = "<group>";
 		};
 		DB1E32C41A2C0CCE00CD874A /* Model */ = {
