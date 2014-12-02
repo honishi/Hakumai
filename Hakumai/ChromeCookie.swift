@@ -47,7 +47,7 @@ class ChromeCookie {
         // log.debug(aesKeyData)
         
         let decryptedCookieValue = ChromeCookie.decryptCookieValue(encryptedValueByRemovingPrefix!, aesKeyData: aesKeyData)
-        log.debug("\(decryptedCookieValue)")
+        // log.debug("\(decryptedCookieValue)")
         
         return decryptedCookieValue
     }
@@ -93,7 +93,7 @@ class ChromeCookie {
     
     private class func chromePassword() -> String {
         let password = SSKeychain.passwordForService("Chrome Safe Storage", account: "Chrome")
-        log.debug(password)
+        // log.debug(password)
         
         return password
     }

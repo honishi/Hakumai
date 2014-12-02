@@ -286,6 +286,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
             
             let rowIndex = ChatContainer.sharedContainer.append(chatOrSystemMessage: chatOrSystemMessage) - 1
             self.tableView.insertRowsAtIndexes(NSIndexSet(index: rowIndex), withAnimation: .EffectNone)
+            self.logChatOrSystemMessage(chatOrSystemMessage)
             
             if shouldScroll {
                 // self.tableView.scrollRowToVisible(rowIndex)
@@ -294,6 +295,19 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
             
             self.scrollView.flashScrollers()
         })
+    }
+    
+    func logChatOrSystemMessage(chatOrSystemMessage: AnyObject) {
+        var content = ""
+        
+        if let chat = chatOrSystemMessage as? Chat {
+            content = chat.comment!
+        }
+        else if let systemMessage = chatOrSystemMessage as? SystemMessage {
+            content = systemMessage.message
+        }
+        
+        log.debug("[ " + content + " ]")
     }
     
     func shouldTableViewScrollToBottom() -> Bool {
