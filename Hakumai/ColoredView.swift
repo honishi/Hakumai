@@ -8,6 +8,7 @@
 
 import Foundation
 import AppKit
+import QuartzCore
 
 class ColoredView: NSView {
     var fillColor: NSColor = NSColor.grayColor()
@@ -24,7 +25,24 @@ class ColoredView: NSView {
         super.init(coder: coder)
     }
     
-    // TODO: should implement wantslayer, see http://rway.tumblr.com/post/4525503228
+    override func awakeFromNib() {
+        // calyer implementation based on http://rway.tumblr.com/post/4525503228
+        let layer = CALayer()
+        layer.delegate = self
+        layer.bounds = self.bounds
+        layer.needsDisplayOnBoundsChange = true
+        layer.setNeedsDisplay()
+        
+        self.layer = layer
+        self.wantsLayer = true
+    }
+
+    override func drawLayer(layer: CALayer!, inContext ctx: CGContext!) {
+        CGContextSetFillColorWithColor(ctx, self.fillColor.CGColor)
+        CGContextFillRect(ctx, self.bounds)
+    }
+    
+    /*
     override func drawRect(dirtyRect: NSRect) {
         // http://stackoverflow.com/a/2962882
         self.fillColor.setFill()
@@ -32,4 +50,5 @@ class ColoredView: NSView {
         
         super.drawRect(dirtyRect)
     }
+    */
 }
