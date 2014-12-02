@@ -43,7 +43,7 @@ extension MainViewController {
         let chat = Chat()
         
         chat.roomPosition = RoomPosition.Arena
-        chat.userId = String(arc4random() % 1000)
+        chat.userId = "xxx" + String(arc4random() % 1000)
         chat.no = (Int(arc4random()) % 1000)
         chat.score = -(Int(arc4random()) % 30000)
         chat.comment = "hello " * (Int(arc4random()) % 100)

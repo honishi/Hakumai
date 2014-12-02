@@ -90,6 +90,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     override func viewDidAppear() {
         // self.kickParallelTableViewStressTest(5, interval: 0.5, count: 100000)
         // self.kickParallelTableViewStressTest(4, interval: 2, count: 100000)
+        // self.kickParallelTableViewStressTest(1, interval: 0.01, count: 100)
     }
 
     override var representedObject: AnyObject? {

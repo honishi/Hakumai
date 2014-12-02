@@ -68,6 +68,8 @@
 		DBAAA7511A0FDA4500981004 /* NicoUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7501A0FDA4500981004 /* NicoUtility.swift */; };
 		DBAAA7521A0FDA4500981004 /* NicoUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7501A0FDA4500981004 /* NicoUtility.swift */; };
 		DBD65C121A2CD1AD00B84C97 /* UserIdTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1E32C81A2CC85C00CD874A /* UserIdTableCellView.swift */; };
+		DBD65C1B1A2E0C6600B84C97 /* LayeredClipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD65C1A1A2E0C6600B84C97 /* LayeredClipView.swift */; };
+		DBD65C1D1A2E0FB900B84C97 /* LayeredScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD65C1C1A2E0FB900B84C97 /* LayeredScrollView.swift */; };
 		DBE73ECA1A1A1B6A00A8BCA9 /* MainViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE73EC91A1A1B6A00A8BCA9 /* MainViewControllerTests.swift */; };
 		DBE73ECD1A1A1CE500A8BCA9 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0C51A0EE2FD00B1CE4D /* MainViewController.swift */; };
 		DBFA88791A1BA3B5005349AD /* XCGLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBFA88731A1BA353005349AD /* XCGLogger.framework */; };
@@ -199,6 +201,8 @@
 		DBAAA73D1A0F594700981004 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		DBAAA7411A0F5FEF00981004 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		DBAAA7501A0FDA4500981004 /* NicoUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicoUtility.swift; sourceTree = "<group>"; };
+		DBD65C1A1A2E0C6600B84C97 /* LayeredClipView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LayeredClipView.swift; sourceTree = "<group>"; };
+		DBD65C1C1A2E0FB900B84C97 /* LayeredScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LayeredScrollView.swift; sourceTree = "<group>"; };
 		DBE73EC91A1A1B6A00A8BCA9 /* MainViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewControllerTests.swift; sourceTree = "<group>"; };
 		DBFA886A1A1BA353005349AD /* XCGLogger.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = XCGLogger.xcodeproj; path = vendor/XCGLogger/XCGLogger/Library/XCGLogger.xcodeproj; sourceTree = "<group>"; };
 		DBFA887A1A1BC25A005349AD /* Chat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
@@ -425,6 +429,26 @@
 			name = SSKeychain;
 			sourceTree = "<group>";
 		};
+		DBD65C191A2E0C3200B84C97 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				DB7B3DE01A242D4100205470 /* TableViewColumns */,
+				DBD65C1E1A2E2EA600B84C97 /* Unused Layered Views */,
+				DB2AE0C51A0EE2FD00B1CE4D /* MainViewController.swift */,
+				DB80CA861A2575A0002636E0 /* MainViewControllerExtensions.swift */,
+			);
+			name = Main;
+			sourceTree = "<group>";
+		};
+		DBD65C1E1A2E2EA600B84C97 /* Unused Layered Views */ = {
+			isa = PBXGroup;
+			children = (
+				DBD65C1C1A2E0FB900B84C97 /* LayeredScrollView.swift */,
+				DBD65C1A1A2E0C6600B84C97 /* LayeredClipView.swift */,
+			);
+			name = "Unused Layered Views";
+			sourceTree = "<group>";
+		};
 		DBE73ECB1A1A1B7E00A8BCA9 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -436,12 +460,10 @@
 		DBE73ECC1A1A1B9600A8BCA9 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				DB2AE0C91A0EE2FD00B1CE4D /* Main.storyboard */,
 				DB7B3DE71A246EE200205470 /* ColorScheme.swift */,
 				DB1E32C41A2C0CCE00CD874A /* Model */,
-				DB7B3DE01A242D4100205470 /* TableViewColumns */,
-				DB2AE0C91A0EE2FD00B1CE4D /* Main.storyboard */,
-				DB2AE0C51A0EE2FD00B1CE4D /* MainViewController.swift */,
-				DB80CA861A2575A0002636E0 /* MainViewControllerExtensions.swift */,
+				DBD65C191A2E0C3200B84C97 /* Main */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -623,6 +645,7 @@
 			files = (
 				DB1E32C61A2C0CFB00CD874A /* SystemMessage.swift in Sources */,
 				DB7B3DDC1A23B35300205470 /* ColoredView.swift in Sources */,
+				DBD65C1D1A2E0FB900B84C97 /* LayeredScrollView.swift in Sources */,
 				DB2AE1101A0F2BAB00B1CE4D /* FMDatabase.m in Sources */,
 				DBFA887F1A1BC7FF005349AD /* Thread.swift in Sources */,
 				DB52B0B21A21226900E78C6A /* ChatResult.swift in Sources */,
@@ -633,6 +656,7 @@
 				DB7B3DE81A246EE200205470 /* ColorScheme.swift in Sources */,
 				DB2AE1141A0F2BAB00B1CE4D /* FMDatabasePool.m in Sources */,
 				DBA414C61A188A7400E0CAD3 /* RoomListener.swift in Sources */,
+				DBD65C1B1A2E0C6600B84C97 /* LayeredClipView.swift in Sources */,
 				DBFA88851A1BC925005349AD /* MessageServer.swift in Sources */,
 				DBAAA7321A0F43BB00981004 /* CookieUtility.swift in Sources */,
 				DB7B3DE51A2434FB00205470 /* ScoreTableCellView.swift in Sources */,

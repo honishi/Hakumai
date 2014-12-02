@@ -11,7 +11,11 @@ import AppKit
 import QuartzCore
 
 class ColoredView: NSView {
-    var fillColor: NSColor = NSColor.grayColor()
+    var fillColor: NSColor = NSColor.grayColor() {
+        didSet {
+            self.layer?.setNeedsDisplay()
+        }
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
