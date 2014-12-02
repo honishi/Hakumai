@@ -180,6 +180,8 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
             (view as ScoreTableCellView).score = nil
         case kCommentColumnIdentifier:
             view.textField?.stringValue = message.message
+        case kUserIdColumnIdentifier:
+            (view as UserIdTableCellView).userId = nil
         default:
             break
         }
