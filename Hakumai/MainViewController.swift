@@ -287,7 +287,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
             
             let rowIndex = ChatContainer.sharedContainer.append(chatOrSystemMessage: chatOrSystemMessage) - 1
             self.tableView.insertRowsAtIndexes(NSIndexSet(index: rowIndex), withAnimation: .EffectNone)
-            self.logChatOrSystemMessage(chatOrSystemMessage)
+            // self.logChat(chatOrSystemMessage)
             
             if shouldScroll {
                 // self.tableView.scrollRowToVisible(rowIndex)
@@ -298,7 +298,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         })
     }
     
-    func logChatOrSystemMessage(chatOrSystemMessage: AnyObject) {
+    func logChat(chatOrSystemMessage: AnyObject) {
         var content = ""
         
         if let chat = chatOrSystemMessage as? Chat {

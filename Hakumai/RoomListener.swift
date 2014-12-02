@@ -9,6 +9,8 @@
 import Foundation
 import XCGLogger
 
+let kReadBufferSize = 102400
+
 // MARK: protocol
 
 protocol RoomListenerDelegate {
@@ -140,11 +142,11 @@ class RoomListener : NSObject, NSStreamDelegate {
             // fileLog.debug("*** stream event has bytes available");
 
             // http://stackoverflow.com/q/26360962
-            var readByte = [UInt8](count: 10240, repeatedValue: 0)
+            var readByte = [UInt8](count: kReadBufferSize, repeatedValue: 0)
             
             var actualRead = 0
             while self.inputStream.hasBytesAvailable {
-                actualRead = self.inputStream.read(&readByte, maxLength: 10240)
+                actualRead = self.inputStream.read(&readByte, maxLength: kReadBufferSize)
                 //fileLog.debug(readByte)
             }
             
