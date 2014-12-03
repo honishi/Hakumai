@@ -10,27 +10,49 @@ import Foundation
 import XCGLogger
 
 // thread safe chat container
-class ChatContainer {
-    var contents: [AnyObject] = []
+class MessageContainer {
+    var messages = [Message]()
+    var firstChat = [String: Bool]()
     var calculatingActive: Bool = false
     
     let log = XCGLogger.defaultInstance()
     
     // MARK: - Object Lifecycle
-    class var sharedContainer : ChatContainer {
+    class var sharedContainer : MessageContainer {
         struct Static {
-            static let instance = ChatContainer()
+            static let instance = MessageContainer()
         }
         return Static.instance
     }
     
     // MARK: - Basic Operation to Content Array
-    func append(chatOrSystemMessage chat: AnyObject) -> Int {
-        assert((chat is Chat) || (chat is SystemMessage), "")
-        
+    func append(chatOrSystemMessage object: AnyObject) -> Int {
         objc_sync_enter(self)
-        self.contents.append(chat)
-        let count = self.contents.count
+ 
+        var message: Message!
+        
+        if let systemMessage = object as? String {
+            message = Message(message: systemMessage)
+        }
+        else if let chat = object as? Chat {
+            var isFirstChat = false
+            
+            if chat.premium == .Ippan || chat.premium == .Premium {
+                isFirstChat = (self.firstChat[chat.userId!] == nil ? true : false)
+                if isFirstChat {
+                    self.firstChat[chat.userId!] = true
+                }
+            }
+            
+            message = Message(chat: chat, firstChat: isFirstChat)
+        }
+        else {
+            assert(false, "appending unexpected object")
+        }
+        
+        self.messages.append(message)
+        let count = self.messages.count
+        
         objc_sync_exit(self)
         
         return count
@@ -38,15 +60,15 @@ class ChatContainer {
     
     func count() -> Int {
         objc_sync_enter(self)
-        let count = self.contents.count
+        let count = self.messages.count
         objc_sync_exit(self)
         
         return count
     }
     
-    subscript (index: Int) -> AnyObject {
+    subscript (index: Int) -> Message {
         objc_sync_enter(self)
-        let content: AnyObject = self.contents[index]
+        let content = self.messages[index]
         objc_sync_exit(self)
         
         return content
@@ -54,7 +76,8 @@ class ChatContainer {
     
     func removeAll() {
         objc_sync_enter(self)
-        self.contents.removeAll(keepCapacity: false)
+        self.messages.removeAll(keepCapacity: false)
+        self.firstChat.removeAll(keepCapacity: false)
         objc_sync_exit(self)
     }
     
@@ -83,13 +106,13 @@ class ChatContainer {
             // self.log.debug("start counting active")
             
             for var i = self.count(); 0 < i ; i-- {
-                let content: AnyObject = self[i - 1]
+                let message = self[i - 1]
                 
-                if content is SystemMessage {
+                if message.messageType == .System {
                     continue
                 }
                 
-                let chat = content as Chat
+                let chat = message.chat!
                 
                 if chat.date == nil || chat.userId == nil {
                     continue

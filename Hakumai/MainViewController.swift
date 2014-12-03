@@ -101,7 +101,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
 
     // MARK: - NSTableViewDataSource Functions
     func numberOfRowsInTableView(tableView: NSTableView) -> Int {
-        return ChatContainer.sharedContainer.count()
+        return MessageContainer.sharedContainer.count()
     }
     
     func tableView(tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
@@ -112,34 +112,25 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         var rowHeight: CGFloat = 0
         var content: String? = ""
         
-        let chatOrSystemMessage: AnyObject = ChatContainer.sharedContainer[row]
-        
-        if let message = chatOrSystemMessage as? SystemMessage {
-            content = message.message
-        }
-        else if let chat = chatOrSystemMessage as? Chat {
-            content = chat.comment
-        }
+        let message = MessageContainer.sharedContainer[row]
         
         let commentTableColumn = self.tableView.tableColumnWithIdentifier(kCommentColumnIdentifier)!
         let commentColumnWidth = commentTableColumn.width
-        rowHeight = self.commentColumnHeight(content!, width: commentColumnWidth)
+        rowHeight = self.commentColumnHeight(message, width: commentColumnWidth)
         
         self.RowHeightCacher[row] = rowHeight
         
         return rowHeight
     }
     
-    func commentColumnHeight(comment: String, width: CGFloat) -> CGFloat {
-        let systemFontSize: CGFloat = 13.0
-        
+    func commentColumnHeight(message: Message, width: CGFloat) -> CGFloat {
         let leadingSpace: CGFloat = 2
         let trailingSpace: CGFloat = 2
         let widthPadding = leadingSpace + trailingSpace
+
+        let (content, attributes) = self.contentAndAttributesForMessage(message)
         
-        let attributes = [NSFontAttributeName: NSFont.systemFontOfSize(systemFontSize),
-            NSParagraphStyleAttributeName: NSParagraphStyle.defaultParagraphStyle()]
-        let commentRect = (comment as NSString).boundingRectWithSize(CGSizeMake(width - widthPadding, 0),
+        let commentRect = content.boundingRectWithSize(CGSizeMake(width - widthPadding, 0),
             options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: attributes)
         // log.debug("\(commentRect.size.width),\(commentRect.size.height)")
         
@@ -159,19 +150,19 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
             view?.textField?.stringValue = ""
         }
 
-        let chatOrSystemMessage: AnyObject = ChatContainer.sharedContainer[row]
+        let message = MessageContainer.sharedContainer[row]
         
-        if let message = chatOrSystemMessage as? SystemMessage {
-            self.configureSystemMessageView(message, tableColumn: tableColumn!, view: view!)
+        if message.messageType == .System {
+            self.configureViewForSystemMessage(message, tableColumn: tableColumn!, view: view!)
         }
-        else if let chat = chatOrSystemMessage as? Chat {
-            self.configureChatView(chat, tableColumn: tableColumn!, view: view!)
+        else if message.messageType == .Chat {
+            self.configureViewForChat(message, tableColumn: tableColumn!, view: view!)
         }
         
         return view
     }
     
-    func configureSystemMessageView(message: SystemMessage, tableColumn: NSTableColumn, view: NSTableCellView) {
+    func configureViewForSystemMessage(message: Message, tableColumn: NSTableColumn, view: NSTableCellView) {
         switch tableColumn.identifier {
         case kRoomPositionColumnIdentifier:
             let roomPositionView = (view as RoomPositionTableCellView)
@@ -180,16 +171,20 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         case kScoreColumnIdentifier:
             (view as ScoreTableCellView).score = nil
         case kCommentColumnIdentifier:
-            view.textField?.stringValue = message.message
+            let (content, attributes) = self.contentAndAttributesForMessage(message)
+            let attributed = NSAttributedString(string: content, attributes: attributes)
+            view.textField?.attributedStringValue = attributed
         case kUserIdColumnIdentifier:
             (view as UserIdTableCellView).userId = nil
         default:
             break
         }
     }
-    
-    func configureChatView(chat: Chat, tableColumn: NSTableColumn, view: NSTableCellView) {
-        var content: String? = nil
+
+    func configureViewForChat(message: Message, tableColumn: NSTableColumn, view: NSTableCellView) {
+        let chat = message.chat!
+        
+        var attributed: NSAttributedString?
         
         switch tableColumn.identifier {
         case kRoomPositionColumnIdentifier:
@@ -199,20 +194,52 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         case kScoreColumnIdentifier:
             (view as ScoreTableCellView).score = chat.score!
         case kCommentColumnIdentifier:
-            content = chat.comment
+            let (content, attributes) = self.contentAndAttributesForMessage(message)
+            attributed = NSAttributedString(string: content, attributes: attributes)
         case kUserIdColumnIdentifier:
             (view as UserIdTableCellView).userId = chat.userId
         case kPremiumColumnIdentifier:
-            content = chat.premium?.label()
+            if let premium = chat.premium {
+                attributed = NSAttributedString(string: premium.label(), attributes: self.normalCommentAttributes())
+            }
         case kMailColumnIdentifier:
-            content = chat.mail
+            if let mail = chat.mail {
+                attributed = NSAttributedString(string: chat.mail!, attributes: self.normalCommentAttributes())
+            }
         default:
             break
         }
 
-        if content != nil {
-            view.textField?.stringValue = content!
+        if attributed != nil {
+            view.textField?.attributedStringValue = attributed!
         }
+    }
+    
+    // MARK: - Utility
+    func contentAndAttributesForMessage(message: Message) -> (NSString, [NSString: AnyObject]) {
+        var content: NSString!
+        var attributes: [NSString: AnyObject]!
+        
+        if message.messageType == .System {
+            content = message.message!
+            attributes = self.normalCommentAttributes()
+        }
+        else if message.messageType == .Chat {
+            content = message.chat!.comment!
+            attributes = (message.firstChat == true ? self.boldCommentAttributes() : self.normalCommentAttributes())
+        }
+        
+        return (content, attributes)
+    }
+    
+    func normalCommentAttributes() -> [NSString: AnyObject] {
+        return [NSFontAttributeName: NSFont.systemFontOfSize(13),
+            NSParagraphStyleAttributeName: NSParagraphStyle.defaultParagraphStyle()]
+    }
+    
+    func boldCommentAttributes() -> [NSString: AnyObject] {
+        return [NSFontAttributeName: NSFont.boldSystemFontOfSize(13),
+            NSParagraphStyleAttributeName: NSParagraphStyle.defaultParagraphStyle()]
     }
     
     // MARK: - NicoUtilityDelegate Functions
@@ -263,8 +290,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     
     // MARK: System Message Utility
     func logSystemMessageToTableView(message: String) {
-        let systemMessage = SystemMessage(message: "[ " + message + " ]")
-        self.appendTableView(systemMessage)
+        self.appendTableView(message)
     }
     
     // MARK: Chat Append Utility
@@ -285,7 +311,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         dispatch_async(dispatch_get_main_queue(), {
             let shouldScroll = self.shouldTableViewScrollToBottom()
             
-            let rowIndex = ChatContainer.sharedContainer.append(chatOrSystemMessage: chatOrSystemMessage) - 1
+            let rowIndex = MessageContainer.sharedContainer.append(chatOrSystemMessage: chatOrSystemMessage) - 1
             self.tableView.insertRowsAtIndexes(NSIndexSet(index: rowIndex), withAnimation: .EffectNone)
             // self.logChat(chatOrSystemMessage)
             
@@ -298,17 +324,17 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         })
     }
     
-    func logChat(chatOrSystemMessage: AnyObject) {
-        var content = ""
+    func logMessage(message: Message) {
+        var content: String?
         
-        if let chat = chatOrSystemMessage as? Chat {
-            content = chat.comment!
+        if message.messageType == .System {
+            content = message.message
         }
-        else if let systemMessage = chatOrSystemMessage as? SystemMessage {
-            content = systemMessage.message
+        else if message.messageType == .Chat {
+            content = message.chat!.comment
         }
         
-        log.debug("[ " + content + " ]")
+        log.debug("[ " + content! + " ]")
     }
     
     func shouldTableViewScrollToBottom() -> Bool {
@@ -385,7 +411,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
 
     // MARK: - Timer Handlers
     func calculateActive(timer: NSTimer) {
-        ChatContainer.sharedContainer.calculateActive { (active: Int?) -> (Void) in
+        MessageContainer.sharedContainer.calculateActive { (active: Int?) -> (Void) in
             if active == nil {
                 return
             }
@@ -408,7 +434,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     // MARK: - Internal Functions
     func clearAllChats() {
         self.RowHeightCacher.removeAll(keepCapacity: false)
-        ChatContainer.sharedContainer.removeAll()
+        MessageContainer.sharedContainer.removeAll()
         self.tableView.reloadData()
     }
     

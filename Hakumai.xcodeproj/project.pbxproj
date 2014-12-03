@@ -13,10 +13,9 @@
 		DB0F0ECD1A16441D00F8BDC5 /* NicoUtilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0F0ECC1A16441D00F8BDC5 /* NicoUtilityTests.swift */; };
 		DB0FC12B1A262CF0000FADDD /* XCGLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBFA88731A1BA353005349AD /* XCGLogger.framework */; };
 		DB0FC12C1A262CF0000FADDD /* XCGLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DBFA88731A1BA353005349AD /* XCGLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		DB1CD2D01A2EE5BB00D3108A /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD65C1F1A2EB08D00B84C97 /* Message.swift */; };
 		DB1E32BF1A2B95C600CD874A /* user.html in Resources */ = {isa = PBXBuildFile; fileRef = DB1E32BE1A2B95C600CD874A /* user.html */; };
 		DB1E32C31A2BA53700CD874A /* user_me.html in Resources */ = {isa = PBXBuildFile; fileRef = DB1E32C21A2BA53700CD874A /* user_me.html */; };
-		DB1E32C61A2C0CFB00CD874A /* SystemMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1E32C51A2C0CFB00CD874A /* SystemMessage.swift */; };
-		DB1E32C71A2C176D00CD874A /* SystemMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1E32C51A2C0CFB00CD874A /* SystemMessage.swift */; };
 		DB1E32C91A2CC85C00CD874A /* UserIdTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1E32C81A2CC85C00CD874A /* UserIdTableCellView.swift */; };
 		DB1E32CB1A2CC87200CD874A /* UserIdTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB1E32CA1A2CC87200CD874A /* UserIdTableCellView.xib */; };
 		DB2AE0C41A0EE2FD00B1CE4D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0C31A0EE2FD00B1CE4D /* AppDelegate.swift */; };
@@ -49,8 +48,8 @@
 		DB7EB8A31A24AA5100C3BFB5 /* RoomPositionTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7EB8A11A24AA5100C3BFB5 /* RoomPositionTableCellView.swift */; };
 		DB7F21B01A210017008D17E0 /* Community.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7F21AF1A210017008D17E0 /* Community.swift */; };
 		DB7F21B11A210017008D17E0 /* Community.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7F21AF1A210017008D17E0 /* Community.swift */; };
-		DB80CA821A256F9A002636E0 /* ChatContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB80CA811A256F9A002636E0 /* ChatContainer.swift */; };
-		DB80CA831A256F9A002636E0 /* ChatContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB80CA811A256F9A002636E0 /* ChatContainer.swift */; };
+		DB80CA821A256F9A002636E0 /* MessageContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB80CA811A256F9A002636E0 /* MessageContainer.swift */; };
+		DB80CA831A256F9A002636E0 /* MessageContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB80CA811A256F9A002636E0 /* MessageContainer.swift */; };
 		DB80CA871A2575A0002636E0 /* MainViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB80CA861A2575A0002636E0 /* MainViewControllerExtensions.swift */; };
 		DB80CA881A2575A0002636E0 /* MainViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB80CA861A2575A0002636E0 /* MainViewControllerExtensions.swift */; };
 		DBA414C61A188A7400E0CAD3 /* RoomListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA414C51A188A7400E0CAD3 /* RoomListener.swift */; };
@@ -70,6 +69,7 @@
 		DBD65C121A2CD1AD00B84C97 /* UserIdTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1E32C81A2CC85C00CD874A /* UserIdTableCellView.swift */; };
 		DBD65C1B1A2E0C6600B84C97 /* LayeredClipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD65C1A1A2E0C6600B84C97 /* LayeredClipView.swift */; };
 		DBD65C1D1A2E0FB900B84C97 /* LayeredScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD65C1C1A2E0FB900B84C97 /* LayeredScrollView.swift */; };
+		DBD65C201A2EB08D00B84C97 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD65C1F1A2EB08D00B84C97 /* Message.swift */; };
 		DBE73ECA1A1A1B6A00A8BCA9 /* MainViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE73EC91A1A1B6A00A8BCA9 /* MainViewControllerTests.swift */; };
 		DBE73ECD1A1A1CE500A8BCA9 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0C51A0EE2FD00B1CE4D /* MainViewController.swift */; };
 		DBFA88791A1BA3B5005349AD /* XCGLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBFA88731A1BA353005349AD /* XCGLogger.framework */; };
@@ -152,7 +152,6 @@
 		DB0F0ECC1A16441D00F8BDC5 /* NicoUtilityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicoUtilityTests.swift; sourceTree = "<group>"; };
 		DB1E32BE1A2B95C600CD874A /* user.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = user.html; sourceTree = "<group>"; };
 		DB1E32C21A2BA53700CD874A /* user_me.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = user_me.html; sourceTree = "<group>"; };
-		DB1E32C51A2C0CFB00CD874A /* SystemMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SystemMessage.swift; sourceTree = "<group>"; };
 		DB1E32C81A2CC85C00CD874A /* UserIdTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserIdTableCellView.swift; sourceTree = "<group>"; };
 		DB1E32CA1A2CC87200CD874A /* UserIdTableCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UserIdTableCellView.xib; sourceTree = "<group>"; };
 		DB2AE0BE1A0EE2FD00B1CE4D /* Hakumai.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hakumai.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -187,7 +186,7 @@
 		DB7EB89B1A24AA3700C3BFB5 /* RoomPositionTableCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RoomPositionTableCellView.xib; sourceTree = "<group>"; };
 		DB7EB8A11A24AA5100C3BFB5 /* RoomPositionTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomPositionTableCellView.swift; sourceTree = "<group>"; };
 		DB7F21AF1A210017008D17E0 /* Community.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Community.swift; sourceTree = "<group>"; };
-		DB80CA811A256F9A002636E0 /* ChatContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatContainer.swift; sourceTree = "<group>"; };
+		DB80CA811A256F9A002636E0 /* MessageContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageContainer.swift; sourceTree = "<group>"; };
 		DB80CA861A2575A0002636E0 /* MainViewControllerExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewControllerExtensions.swift; sourceTree = "<group>"; };
 		DBA414C51A188A7400E0CAD3 /* RoomListener.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomListener.swift; sourceTree = "<group>"; };
 		DBA414C81A189D7D00E0CAD3 /* RoomListenerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomListenerTests.swift; sourceTree = "<group>"; };
@@ -203,6 +202,7 @@
 		DBAAA7501A0FDA4500981004 /* NicoUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicoUtility.swift; sourceTree = "<group>"; };
 		DBD65C1A1A2E0C6600B84C97 /* LayeredClipView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LayeredClipView.swift; sourceTree = "<group>"; };
 		DBD65C1C1A2E0FB900B84C97 /* LayeredScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LayeredScrollView.swift; sourceTree = "<group>"; };
+		DBD65C1F1A2EB08D00B84C97 /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		DBE73EC91A1A1B6A00A8BCA9 /* MainViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewControllerTests.swift; sourceTree = "<group>"; };
 		DBFA886A1A1BA353005349AD /* XCGLogger.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = XCGLogger.xcodeproj; path = vendor/XCGLogger/XCGLogger/Library/XCGLogger.xcodeproj; sourceTree = "<group>"; };
 		DBFA887A1A1BC25A005349AD /* Chat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
@@ -255,13 +255,13 @@
 			name = Browsers;
 			sourceTree = "<group>";
 		};
-		DB1E32C41A2C0CCE00CD874A /* Model */ = {
+		DB1E32C41A2C0CCE00CD874A /* Message Container */ = {
 			isa = PBXGroup;
 			children = (
-				DB80CA811A256F9A002636E0 /* ChatContainer.swift */,
-				DB1E32C51A2C0CFB00CD874A /* SystemMessage.swift */,
+				DB80CA811A256F9A002636E0 /* MessageContainer.swift */,
+				DBD65C1F1A2EB08D00B84C97 /* Message.swift */,
 			);
-			name = Model;
+			name = "Message Container";
 			sourceTree = "<group>";
 		};
 		DB2AE0B51A0EE2FD00B1CE4D = {
@@ -432,6 +432,7 @@
 		DBD65C191A2E0C3200B84C97 /* Main */ = {
 			isa = PBXGroup;
 			children = (
+				DB1E32C41A2C0CCE00CD874A /* Message Container */,
 				DB7B3DE01A242D4100205470 /* TableViewColumns */,
 				DBD65C1E1A2E2EA600B84C97 /* Unused Layered Views */,
 				DB2AE0C51A0EE2FD00B1CE4D /* MainViewController.swift */,
@@ -462,7 +463,6 @@
 			children = (
 				DB2AE0C91A0EE2FD00B1CE4D /* Main.storyboard */,
 				DB7B3DE71A246EE200205470 /* ColorScheme.swift */,
-				DB1E32C41A2C0CCE00CD874A /* Model */,
 				DBD65C191A2E0C3200B84C97 /* Main */,
 			);
 			name = ViewControllers;
@@ -643,12 +643,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DB1E32C61A2C0CFB00CD874A /* SystemMessage.swift in Sources */,
 				DB7B3DDC1A23B35300205470 /* ColoredView.swift in Sources */,
 				DBD65C1D1A2E0FB900B84C97 /* LayeredScrollView.swift in Sources */,
 				DB2AE1101A0F2BAB00B1CE4D /* FMDatabase.m in Sources */,
 				DBFA887F1A1BC7FF005349AD /* Thread.swift in Sources */,
 				DB52B0B21A21226900E78C6A /* ChatResult.swift in Sources */,
+				DBD65C201A2EB08D00B84C97 /* Message.swift in Sources */,
 				DB2AE0C61A0EE2FD00B1CE4D /* MainViewController.swift in Sources */,
 				DB80CA871A2575A0002636E0 /* MainViewControllerExtensions.swift in Sources */,
 				DB1E32C91A2CC85C00CD874A /* UserIdTableCellView.swift in Sources */,
@@ -673,7 +673,7 @@
 				DBA414CC1A1A16F300E0CAD3 /* CommonExtensions.swift in Sources */,
 				DBAAA7511A0FDA4500981004 /* NicoUtility.swift in Sources */,
 				DBFA888B1A1C9A56005349AD /* Live.swift in Sources */,
-				DB80CA821A256F9A002636E0 /* ChatContainer.swift in Sources */,
+				DB80CA821A256F9A002636E0 /* MessageContainer.swift in Sources */,
 				DB52B0AD1A2102C700E78C6A /* User.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -686,6 +686,7 @@
 				DBFA88861A1BC925005349AD /* MessageServer.swift in Sources */,
 				DBFA887C1A1BC25A005349AD /* Chat.swift in Sources */,
 				DB7B3DE61A2434FB00205470 /* ScoreTableCellView.swift in Sources */,
+				DB1CD2D01A2EE5BB00D3108A /* Message.swift in Sources */,
 				DBA414D21A1A176E00E0CAD3 /* CommonExtensionsTests.swift in Sources */,
 				DB7B3DE91A246EE200205470 /* ColorScheme.swift in Sources */,
 				DB52B0AE1A2102C700E78C6A /* User.swift in Sources */,
@@ -694,12 +695,11 @@
 				DB7B3DDF1A23B4D700205470 /* ColoredView.swift in Sources */,
 				DBE73ECA1A1A1B6A00A8BCA9 /* MainViewControllerTests.swift in Sources */,
 				DB7EB8A31A24AA5100C3BFB5 /* RoomPositionTableCellView.swift in Sources */,
-				DB1E32C71A2C176D00CD874A /* SystemMessage.swift in Sources */,
 				DB7F21B11A210017008D17E0 /* Community.swift in Sources */,
 				DB80CA881A2575A0002636E0 /* MainViewControllerExtensions.swift in Sources */,
 				DB0F0ECD1A16441D00F8BDC5 /* NicoUtilityTests.swift in Sources */,
 				DB52B0B31A21226900E78C6A /* ChatResult.swift in Sources */,
-				DB80CA831A256F9A002636E0 /* ChatContainer.swift in Sources */,
+				DB80CA831A256F9A002636E0 /* MessageContainer.swift in Sources */,
 				DBAAA7521A0FDA4500981004 /* NicoUtility.swift in Sources */,
 				DBFA88831A1BC8C9005349AD /* Enum.swift in Sources */,
 				DBFA88801A1BC7FF005349AD /* Thread.swift in Sources */,
