@@ -336,7 +336,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         // log.debug("start scroll animation:\(self.currentScrollAnimationCount)")
         
         NSAnimationContext.beginGrouping()
-        NSAnimationContext.currentContext().duration = 0.3
+        NSAnimationContext.currentContext().duration = 0.5
         
         NSAnimationContext.currentContext().completionHandler = {() -> Void in
             self.currentScrollAnimationCount -= 1
