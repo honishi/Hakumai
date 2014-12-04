@@ -316,8 +316,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
             // self.logChat(chatOrSystemMessage)
             
             if shouldScroll {
-                // self.tableView.scrollRowToVisible(rowIndex)
-                self.scrollMoveToBottom()
+                self.scrollMoveToBottom(animated: false)
             }
             
             self.scrollView.flashScrollers()
@@ -356,8 +355,13 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         return shouldScroll
     }
     
-    // http://stackoverflow.com/questions/19399242/soft-scroll-animation-nsscrollview-scrolltopoint
-    func scrollMoveToBottom() {
+    func scrollMoveToBottom(animated: Bool = true) {
+        if !animated {
+            self.tableView.scrollRowToVisible(self.tableView.numberOfRows - 1)
+            return
+        }
+        
+        // http://stackoverflow.com/questions/19399242/soft-scroll-animation-nsscrollview-scrolltopoint
         self.currentScrollAnimationCount += 1
         // log.debug("start scroll animation:\(self.currentScrollAnimationCount)")
         

@@ -27,6 +27,8 @@ class RoomListener : NSObject, NSStreamDelegate {
     var inputStream: NSInputStream!
     var outputStream: NSOutputStream!
     
+    var parsingString: NSString = ""
+    
     var thread: Thread?
     var startDate: NSDate?
     var lastRes: Int = 0
@@ -62,7 +64,7 @@ class RoomListener : NSObject, NSStreamDelegate {
         fileLog.debug("file log started.")
     }
     
-    // MARK: - Socket Functions
+    // MARK: - Public Functions
     func openSocket() {
         let server = self.server!
         
@@ -90,7 +92,7 @@ class RoomListener : NSObject, NSStreamDelegate {
         self.inputStream?.open()
         self.outputStream?.open()
         
-        let message = "<thread thread=\"\(server.thread)\" version=\"20061206\" res_form=\"-1\"/>"
+        let message = "<thread thread=\"\(server.thread)\" res_from=\"-10\" version=\"20061206\"/>"
         self.sendMessage(message)
         
         loop.run()
@@ -129,17 +131,17 @@ class RoomListener : NSObject, NSStreamDelegate {
         log.debug(message)
     }
     
-    // MARK: NSStreamDelegate Functions
+    // MARK: - NSStreamDelegate Functions
     func stream(aStream: NSStream, handleEvent eventCode: NSStreamEvent) {
         switch eventCode {
         case NSStreamEvent.None:
-            fileLog.debug("*** stream event none")
+            fileLog.debug("stream event none")
             
         case NSStreamEvent.OpenCompleted:
-            fileLog.debug("*** stream event open completed");
+            fileLog.debug("stream event open completed");
             
         case NSStreamEvent.HasBytesAvailable:
-            // fileLog.debug("*** stream event has bytes available");
+            // fileLog.debug("stream event has bytes available");
 
             // http://stackoverflow.com/q/26360962
             var readByte = [UInt8](count: kReadBufferSize, repeatedValue: 0)
@@ -148,33 +150,73 @@ class RoomListener : NSObject, NSStreamDelegate {
             while self.inputStream.hasBytesAvailable {
                 actualRead = self.inputStream.read(&readByte, maxLength: kReadBufferSize)
                 //fileLog.debug(readByte)
+                
+                if let readString = NSString(bytes: &readByte, length: actualRead, encoding: NSUTF8StringEncoding) {
+                    fileLog.debug("read: [ " + readString + " ]")
+                    
+                    self.parsingString = self.parsingString + self.streamByRemovingNull(readString)
+                    
+                    if !self.hasValidCloseBracket(self.parsingString) {
+                        fileLog.warning("detected no-close-bracket stream, continue reading...")
+                        continue
+                    }
+                    
+                    if !self.hasValidOpenBracket(self.parsingString) {
+                        fileLog.warning("detected no-open-bracket stream, clearing buffer and continue reading...")
+                        self.parsingString = ""
+                        continue
+                    }
+                    
+                    self.parseInputStream(self.parsingString)
+                    self.parsingString = ""
+                }
             }
             
-            if let readString = NSString(bytes: &readByte, length: actualRead, encoding: NSUTF8StringEncoding) {
-                // fileLog.debug(readString?)
-                self.parseInputStream(readString)
-            }
             
         case NSStreamEvent.HasSpaceAvailable:
-            fileLog.debug("*** stream event has space available");
+            fileLog.debug("stream event has space available");
             
         case NSStreamEvent.ErrorOccurred:
-            fileLog.error("*** stream event error occurred");
+            fileLog.error("stream event error occurred");
             self.closeSocket();
             
         case NSStreamEvent.EndEncountered:
-            fileLog.debug("*** stream event end encountered");
+            fileLog.debug("stream event end encountered");
             
         default:
-            fileLog.warning("*** unexpected stream event...");
+            fileLog.warning("unexpected stream event");
         }
     }
+
+    // MARK: Read Utility
+    func streamByRemovingNull(stream: String) -> String {
+        let regexp = NSRegularExpression(pattern: "\0", options: nil, error: nil)!
+        let removed = regexp.stringByReplacingMatchesInString(stream, options: nil, range: NSMakeRange(0, stream.utf16Count), withTemplate: "")
+        
+        return removed
+    }
     
+    func hasValidOpenBracket(stream: String) -> Bool {
+        return self.hasValidPatternInStream("^<", stream: stream)
+    }
+    
+    func hasValidCloseBracket(stream: String) -> Bool {
+        return self.hasValidPatternInStream(">$", stream: stream)
+    }
+    
+    func hasValidPatternInStream(pattern: String, stream: String) -> Bool {
+        let regexp = NSRegularExpression(pattern: pattern, options: nil, error: nil)!
+        let matched = regexp.firstMatchInString(stream, options: nil, range: NSMakeRange(0, stream.utf16Count))
+        
+        return matched != nil ? true : false
+    }
+    
+    // MARK: Parse Utility
     func parseInputStream(stream: String) {
         let delegate = self.delegate!
         
         let wrappedStream = "<items>" + stream + "</items>"
-        fileLog.verbose("[ " + wrappedStream + " ]")
+        fileLog.verbose("parsing: [ " + wrappedStream + " ]")
         
         var err: NSError?
         let xmlDocument = NSXMLDocument(XMLString: wrappedStream, options: Int(NSXMLDocumentTidyXML), error: &err)

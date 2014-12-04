@@ -21,6 +21,25 @@ class RoomListenerTests: XCTestCase {
         super.tearDown()
     }
 
+    func testStreamByRemovingNull() {
+        let listener = RoomListener(delegate: nil, server: nil)
+        
+        XCTAssert(listener.streamByRemovingNull("aaa\0") == "aaa", "")
+        XCTAssert(listener.streamByRemovingNull("aaa\nbbb\0") == "aaa\nbbb", "")
+        XCTAssert(listener.streamByRemovingNull("aaa\0bbb\0") == "aaabbb", "")
+        XCTAssert(listener.streamByRemovingNull("aaa") == "aaa", "")
+    }
+    
+    func testHasValidBracket() {
+        let listener = RoomListener(delegate: nil, server: nil)
+        
+        XCTAssert(listener.hasValidOpenBracket("<aaa") == true, "")
+        XCTAssert(listener.hasValidOpenBracket("aaa") == false, "")
+        
+        XCTAssert(listener.hasValidCloseBracket("aaa>") == true, "")
+        XCTAssert(listener.hasValidCloseBracket("aaa") == false, "")
+    }
+    
     // 1. <thread resultcode="0" thread="1394699813" ticket="0x2e8e4000" revision="1" server_time="1416296072"/>
     func testParseThreadElement() {
         let listener = RoomListener(delegate: nil, server: nil)
