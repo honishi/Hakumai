@@ -932,6 +932,7 @@
                                             <connections>
                                                 <outlet property="dataSource" destination="XfG-lQ-9wD" id="4Q0-Ot-acu"/>
                                                 <outlet property="delegate" destination="XfG-lQ-9wD" id="TML-43-bbi"/>
+                                                <outlet property="menu" destination="gGN-GZ-TZX" id="cvZ-lt-Zwp"/>
                                             </connections>
                                         </tableView>
                                     </subviews>
@@ -1032,6 +1033,7 @@
                         <outlet property="communityTitleLabel" destination="mqT-iT-cC6" id="JMh-Lc-OmS"/>
                         <outlet property="liveTextField" destination="gZN-es-bFO" id="vZe-3V-txV"/>
                         <outlet property="liveTitleLabel" destination="65a-aX-RIL" id="uvT-R4-GZO"/>
+                        <outlet property="menuDelegate" destination="Riw-FG-ugq" id="l3S-iG-Ve5"/>
                         <outlet property="notificationLabel" destination="0js-wz-rh5" id="a5j-tx-qKV"/>
                         <outlet property="roomPositionLabel" destination="gpJ-ll-AbX" id="SSs-eW-LLR"/>
                         <outlet property="scrollView" destination="3lG-BL-Thc" id="fKo-Wb-zpM"/>
@@ -1039,6 +1041,38 @@
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <menu id="gGN-GZ-TZX">
+                    <items>
+                        <menuItem title="Copy Commnet" id="CZ2-j4-uTm">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="copyComment:" target="Riw-FG-ugq" id="eGt-6q-XnR"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="Copy URL in comment" id="rwi-Ju-wYL">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="copyUrl:" target="Riw-FG-ugq" id="3qv-Pf-isq"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem isSeparatorItem="YES" id="uwl-U0-wdQ"/>
+                        <menuItem title="Item 2" id="L1C-9u-5sm">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                        </menuItem>
+                        <menuItem title="Item 3" id="9gC-Dv-kyp">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                        </menuItem>
+                    </items>
+                    <connections>
+                        <outlet property="delegate" destination="Riw-FG-ugq" id="TCY-H8-8Zf"/>
+                    </connections>
+                </menu>
+                <customObject id="Riw-FG-ugq" customClass="MenuDelegate" customModule="Hakumai" customModuleProvider="target">
+                    <connections>
+                        <outlet property="copyCommentMenuItem" destination="CZ2-j4-uTm" id="FO6-qx-8DC"/>
+                        <outlet property="copyUrlMenuItem" destination="rwi-Ju-wYL" id="wjg-UJ-KQa"/>
+                    </connections>
+                </customObject>
             </objects>
             <point key="canvasLocation" x="74.5" y="723"/>
         </scene>

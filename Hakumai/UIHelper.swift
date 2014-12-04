@@ -1,5 +1,5 @@
 //
-//  ColorScheme.swift
+//  UIHelper.swift
 //  Hakumai
 //
 //  Created by Hiroyuki Onishi on 11/25/14.
@@ -45,7 +45,7 @@ extension NSColor {
     }
 }
 
-class ColorScheme {
+class UIHelper {
     // MARK: - System Message Colors
     class func systemMessageColorBackground() -> NSColor {
         return NSColor.lightGrayColor()
@@ -115,5 +115,18 @@ class ColorScheme {
     
     class func roomColorStandJ() -> NSColor {
         return NSColor(rgba: "#ababab")
+    }
+    
+    // MARK: - Font Attributes
+    class func normalCommentAttributes() -> [NSString: AnyObject] {
+        let attributes = [NSFontAttributeName: NSFont.systemFontOfSize(13),
+            NSParagraphStyleAttributeName: NSParagraphStyle.defaultParagraphStyle()]
+        return attributes
+    }
+    
+    class func boldCommentAttributes() -> [NSString: AnyObject] {
+        let attributes = [NSFontAttributeName: NSFont.boldSystemFontOfSize(13),
+            NSParagraphStyleAttributeName: NSParagraphStyle.defaultParagraphStyle()]
+        return attributes
     }
 }

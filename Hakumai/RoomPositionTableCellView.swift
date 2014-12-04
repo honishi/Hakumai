@@ -34,32 +34,32 @@ class RoomPositionTableCellView: NSTableCellView {
     // MARK: - Internal Functions
     func colorForRoomPosition(roomPosition: RoomPosition?) -> NSColor {
         if roomPosition == nil {
-            return ColorScheme.systemMessageColorBackground()
+            return UIHelper.systemMessageColorBackground()
         }
         
         switch (roomPosition!) {
         case .Arena:
-            return ColorScheme.roomColorArena()
+            return UIHelper.roomColorArena()
         case .StandA:
-            return ColorScheme.roomColorStandA()
+            return UIHelper.roomColorStandA()
         case .StandB:
-            return ColorScheme.roomColorStandB()
+            return UIHelper.roomColorStandB()
         case .StandC:
-            return ColorScheme.roomColorStandC()
+            return UIHelper.roomColorStandC()
         case .StandD:
-            return ColorScheme.roomColorStandD()
+            return UIHelper.roomColorStandD()
         case .StandE:
-            return ColorScheme.roomColorStandE()
+            return UIHelper.roomColorStandE()
         case .StandF:
-            return ColorScheme.roomColorStandF()
+            return UIHelper.roomColorStandF()
         case .StandG:
-            return ColorScheme.roomColorStandG()
+            return UIHelper.roomColorStandG()
         case .StandH:
-            return ColorScheme.roomColorStandH()
+            return UIHelper.roomColorStandH()
         case .StandI:
-            return ColorScheme.roomColorStandI()
+            return UIHelper.roomColorStandI()
         case .StandJ:
-            return ColorScheme.roomColorStandJ()
+            return UIHelper.roomColorStandJ()
         default:
             break
         }

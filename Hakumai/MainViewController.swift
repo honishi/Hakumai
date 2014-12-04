@@ -22,7 +22,8 @@ let kMailColumnIdentifier = "MailColumn"
 
 let kCalculateActiveInterval: NSTimeInterval = 3
 
-class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewDataSource, NSTableViewDelegate {
+class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate, NicoUtilityProtocol {
+    // MARK: Main Outlets
     @IBOutlet weak var liveTextField: NSTextField!
     
     @IBOutlet weak var communityImageView: NSImageView!
@@ -37,6 +38,10 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
     @IBOutlet weak var notificationLabel: NSTextField!
     @IBOutlet weak var commentTextField: NSTextField!
 
+    // MARK: Menu Delegate
+    @IBOutlet var menuDelegate: MenuDelegate!
+    
+    // MARK: General Properties
     struct Static {
         static var instance: MainViewController!
     }
@@ -200,11 +205,11 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
             (view as UserIdTableCellView).userId = chat.userId
         case kPremiumColumnIdentifier:
             if let premium = chat.premium {
-                attributed = NSAttributedString(string: premium.label(), attributes: self.normalCommentAttributes())
+                attributed = NSAttributedString(string: premium.label(), attributes: UIHelper.normalCommentAttributes())
             }
         case kMailColumnIdentifier:
             if let mail = chat.mail {
-                attributed = NSAttributedString(string: chat.mail!, attributes: self.normalCommentAttributes())
+                attributed = NSAttributedString(string: chat.mail!, attributes: UIHelper.normalCommentAttributes())
             }
         default:
             break
@@ -215,31 +220,21 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         }
     }
     
-    // MARK: - Utility
+    // MARK: Utility
     func contentAndAttributesForMessage(message: Message) -> (NSString, [NSString: AnyObject]) {
         var content: NSString!
         var attributes: [NSString: AnyObject]!
         
         if message.messageType == .System {
             content = message.message!
-            attributes = self.normalCommentAttributes()
+            attributes = UIHelper.normalCommentAttributes()
         }
         else if message.messageType == .Chat {
             content = message.chat!.comment!
-            attributes = (message.firstChat == true ? self.boldCommentAttributes() : self.normalCommentAttributes())
+            attributes = (message.firstChat == true ? UIHelper.boldCommentAttributes() : UIHelper.normalCommentAttributes())
         }
         
         return (content, attributes)
-    }
-    
-    func normalCommentAttributes() -> [NSString: AnyObject] {
-        return [NSFontAttributeName: NSFont.systemFontOfSize(13),
-            NSParagraphStyleAttributeName: NSParagraphStyle.defaultParagraphStyle()]
-    }
-    
-    func boldCommentAttributes() -> [NSString: AnyObject] {
-        return [NSFontAttributeName: NSFont.boldSystemFontOfSize(13),
-            NSParagraphStyleAttributeName: NSParagraphStyle.defaultParagraphStyle()]
     }
     
     // MARK: - NicoUtilityDelegate Functions
@@ -403,7 +398,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         self.commentTextField.stringValue = ""
     }
     
-    // MARK: - Button Handlers
+    // MARK: - Control Handlers
     @IBAction func connectLive(sender: AnyObject) {
         if let liveNumber = MainViewController.extractLiveNumber(self.liveTextField.stringValue) {
             self.clearAllChats()
@@ -411,6 +406,14 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
             NicoUtility.sharedInstance.delegate = self
             NicoUtility.sharedInstance.connect(liveNumber)
         }
+    }
+    
+    func focusLiveTextField() {
+        self.liveTextField.becomeFirstResponder()
+    }
+    
+    func focusCommentTextField() {
+        self.commentTextField.becomeFirstResponder()
     }
 
     // MARK: - Timer Handlers
@@ -425,16 +428,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
             })
         }
     }
-
-    // MARK: - Menu Handlers
-    func focusLiveTextField() {
-        self.liveTextField.becomeFirstResponder()
-    }
     
-    func focusCommentTextField() {
-        self.commentTextField.becomeFirstResponder()
-    }
-
     // MARK: - Internal Functions
     func clearAllChats() {
         self.RowHeightCacher.removeAll(keepCapacity: false)
@@ -442,7 +436,7 @@ class MainViewController: NSViewController, NicoUtilityProtocol, NSTableViewData
         self.tableView.reloadData()
     }
     
-    // MARK: - Misc Utility
+    // MARK: Misc Utility
     class func extractLiveNumber(url: String) -> Int? {
         let liveNumberPattern = "\\d{9,}"
         var pattern: String

@@ -38,23 +38,23 @@ class ScoreTableCellView: NSTableCellView {
         // println("\(self.score)")
         
         if score == nil {
-            return ColorScheme.systemMessageColorBackground()
+            return UIHelper.systemMessageColorBackground()
         }
         
         if score == kScoreThresholdGreen {
-            return ColorScheme.scoreColorGreen()
+            return UIHelper.scoreColorGreen()
         }
         else if kScoreThresholdLightGreen < score && score < kScoreThresholdGreen {
-            return ColorScheme.scoreColorLightGreen()
+            return UIHelper.scoreColorLightGreen()
         }
         else if kScoreThresholdYellow < score && score <= kScoreThresholdLightGreen {
-            return ColorScheme.scoreColorYellow()
+            return UIHelper.scoreColorYellow()
         }
         else if kScoreThresholdOrange < score && score <= kScoreThresholdYellow {
-            return ColorScheme.scoreColorOrange()
+            return UIHelper.scoreColorOrange()
         }
         
-        return ColorScheme.scoreColorRed()
+        return UIHelper.scoreColorRed()
     }
     
     func stringForScore(score: Int?) -> String {
