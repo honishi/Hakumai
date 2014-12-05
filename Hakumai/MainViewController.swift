@@ -294,7 +294,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             return true
         }
         
-        if (chat.premium == .System || chat.premium == .Caster || chat.premium == .BSP) &&
+        if (chat.premium == .System || chat.premium == .Caster || chat.premium == .Operator || chat.premium == .BSP) &&
             chat.roomPosition != .Arena {
             return true
         }

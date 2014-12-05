@@ -97,6 +97,7 @@ enum Premium: Int {
     case Premium = 1
     case System = 2     // '/disconnect'
     case Caster = 3
+    case Operator = 6
     case BSP = 7
     
     func label() -> String {
@@ -109,6 +110,8 @@ enum Premium: Int {
             return "システム"
         case .Caster:
             return "放送主"
+        case .Operator:
+            return "運営"
         case .BSP:
             return "BSP"
         }
