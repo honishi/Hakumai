@@ -12,6 +12,7 @@ class Chat {
     var roomPosition: RoomPosition?
     var no: Int?
     var date: NSDate?
+    var dateUsec: Int?
     var mail: String?
     var userId: String?
     var premium: Premium?

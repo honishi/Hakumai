@@ -14,7 +14,8 @@ class MenuDelegate: NSObject, NSMenuDelegate {
     // MARK: Menu Outlets
     @IBOutlet weak var copyCommentMenuItem: NSMenuItem!
     @IBOutlet weak var copyUrlMenuItem: NSMenuItem!
-
+    @IBOutlet weak var requestNgUserMenuItem: NSMenuItem!
+    
     // MARK: General Properties
     let log = XCGLogger.defaultInstance()
 
@@ -43,7 +44,7 @@ class MenuDelegate: NSObject, NSMenuDelegate {
         let chat = message.chat!
         
         switch menuItem {
-        case self.copyCommentMenuItem:
+        case self.copyCommentMenuItem, self.requestNgUserMenuItem:
             return true
         case self.copyUrlMenuItem:
             return self.urlStringInComment(chat) != nil ? true : false
@@ -91,6 +92,12 @@ class MenuDelegate: NSObject, NSMenuDelegate {
         let toBeCopied = self.urlStringInComment(chat)!
         self.copyStringToPasteBoard(toBeCopied)
     }
+    
+    @IBAction func requestNgUser(sender: AnyObject) {
+        let chat = MessageContainer.sharedContainer[self.tableView.clickedRow].chat!
+        NicoUtility.sharedInstance.requestNgUser(chat)
+    }
+    
     
     // MARK: - Internal Functions
     func urlStringInComment(chat: Chat) -> String? {

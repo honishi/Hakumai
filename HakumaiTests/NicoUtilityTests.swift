@@ -23,6 +23,31 @@ class NicoUtilityTests: XCTestCase {
         super.tearDown()
     }
     
+    // MARK: - Internal Utility
+    func testConstructParameters() {
+        var parameters: String?
+        
+        parameters = NicoUtility.sharedInstance.constructParameters(nil)
+        XCTAssert(parameters == nil, "")
+        
+        parameters = NicoUtility.sharedInstance.constructParameters(["a": "b"])
+        XCTAssert(parameters == "a=b", "")
+        
+        parameters = NicoUtility.sharedInstance.constructParameters(["a": 123])
+        XCTAssert(parameters == "a=123", "")
+        
+        parameters = NicoUtility.sharedInstance.constructParameters(["a": "b", "c": "d"])
+        XCTAssert(parameters == "a=b&c=d", "")
+        
+        // space
+        parameters = NicoUtility.sharedInstance.constructParameters(["a": "b c"])
+        XCTAssert(parameters == "a=b%20c", "")
+        
+        // symbol in ngscoring
+        parameters = NicoUtility.sharedInstance.constructParameters(["tpos": "1416842780.802121", "comment_locale": "ja-jp"])
+        XCTAssert(parameters == "tpos=1416842780%2E802121&comment%5Flocale=ja%2Djp", "")
+    }
+    
     // MARK: - Room Position
     func testRoomPosition() {
         var roomPosition: RoomPosition?

@@ -308,6 +308,7 @@ class RoomListener : NSObject, NSStreamDelegate {
             }
             
             chat.no = chatElement.attributeForName("no")?.stringValue?.toInt()
+            chat.dateUsec = chatElement.attributeForName("date_usec")?.stringValue?.toInt()
             chat.mail = chatElement.attributeForName("mail")?.stringValue
             chat.userId = chatElement.attributeForName("user_id")?.stringValue
             chat.comment = chatElement.stringValue

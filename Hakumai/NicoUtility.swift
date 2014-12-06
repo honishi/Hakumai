@@ -33,10 +33,15 @@ let kRequiredCommunityLevelForStandRoom: [RoomPosition: Int] = [
     .StandF: 190,
     .StandG: 232]
 
-let kGetPlayerStatuUrl = "http://watch.live.nicovideo.jp/api/getplayerstatus?v=lv"
-let kGetPostKeyUrl = "http://live.nicovideo.jp/api/getpostkey?thread=%d&block_no=%d"
+// urls
+let kGetPlayerStatuUrl = "http://watch.live.nicovideo.jp/api/getplayerstatus"
+let kGetPostKeyUrl = "http://live.nicovideo.jp/api/getpostkey"
 let kCommunityUrl = "http://com.nicovideo.jp/community/"
 let kUserUrl = "http://www.nicovideo.jp/user/"
+let kNgScoringUrl:String = "http://watch.live.nicovideo.jp/api/ngscoring"
+
+// request header
+let kUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"
 
 // MARK: extension
 
@@ -167,7 +172,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             completion(imageData: data)
         }
         
-        self.cookiedAsyncRequest(self.live!.community.thumbnailUrl!, completion: httpCompletion)
+        self.cookiedAsyncRequest("GET", url: self.live!.community.thumbnailUrl!, parameters: nil, completion: httpCompletion)
     }
     
     func resolveUsername(userId: String, completion: (userName: String?) -> (Void)) {
@@ -194,7 +199,37 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             completion(userName: username)
         }
         
-        self.cookiedAsyncRequest(kUserUrl + String(userId), completion: httpCompletion)
+        self.cookiedAsyncRequest("GET", url: kUserUrl + String(userId), parameters: nil, completion: httpCompletion)
+    }
+    
+    func requestNgUser(chat: Chat) {
+        func httpCompletion (response: NSURLResponse!, data: NSData!, connectionError: NSError!) {
+            if connectionError != nil {
+                log.error("error in requesting ng user")
+                // TODO: error completion?
+                return
+            }
+            
+            log.debug("completed to request ng user")
+            
+            // TODO: success completion?
+        }
+        
+        let parameters: [String: Any] = [
+            "vid": self.live!.liveId!,
+            "lang": "ja-jp",
+            "type": "ID",
+            "locale": "GLOBAL",
+            "value": chat.userId!,
+            "player": "v4",
+            "uid": chat.userId!,
+            "tpos": String(Int(chat.date!.timeIntervalSince1970)) + "." + String(chat.dateUsec!),
+            "comment": String(chat.no!),
+            "thread": String(self.messageServers[chat.roomPosition!.rawValue].thread),
+            "comment_locale": "ja-jp"
+        ]
+        
+        self.cookiedAsyncRequest("POST", url: kNgScoringUrl, parameters: parameters, completion: httpCompletion)
     }
     
     // MARK: - Message Server Functions
@@ -280,7 +315,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             completion(live: live, user: user, messageServer: messageServer)
         }
 
-        self.cookiedAsyncRequest(kGetPlayerStatuUrl + String(live), completion: httpCompletion)
+        self.cookiedAsyncRequest("GET", url: kGetPlayerStatuUrl, parameters: ["v": "lv" + String(live)], completion: httpCompletion)
     }
     
     // MARK: - General Extractor
@@ -313,6 +348,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         let live = Live()
         let baseXPath = "/getplayerstatus/stream/"
         
+        live.liveId = rootElement?.firstStringValueForXPathNode(baseXPath + "id")
         live.title = rootElement?.firstStringValueForXPathNode(baseXPath + "title")
         live.baseTime = rootElement?.firstIntValueForXPathNode(baseXPath + "base_time")
         live.community.community = rootElement?.firstStringValueForXPathNode(baseXPath + "default_community")
@@ -342,7 +378,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             completion(true)
         }
         
-        self.cookiedAsyncRequest(kCommunityUrl + community.community!, completion: httpCompletion)
+        self.cookiedAsyncRequest("GET", url: kCommunityUrl + community.community!, parameters: nil, completion: httpCompletion)
     }
     
     func extractCommunity(xmlData: NSData, community: Community) {
@@ -548,8 +584,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         let thread = messageServer!.thread
         let blockNo = (roomListeners[messageServer!.roomPosition.rawValue].lastRes + 1) / 100
         
-        let getPostKeyUrl = String(format: kGetPostKeyUrl, thread, blockNo)
-        self.cookiedAsyncRequest(getPostKeyUrl, completion: httpCompletion)
+        self.cookiedAsyncRequest("GET", url: kGetPostKeyUrl, parameters: ["thread": thread, "block_no": blockNo], completion: httpCompletion)
     }
     
     // MARK: - Username
@@ -573,14 +608,25 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         return matched != nil ? true : false
     }
     
-    // MARK: - Internal Utility
-    private func cookiedAsyncRequest(url: String, completion: (NSURLResponse!, NSData!, NSError!) -> Void) {
-        let url = NSURL(string: url)!
-        self.cookiedAsyncRequest(url, completion: completion)
+    // MARK: - Internal Http Utility
+    private func cookiedAsyncRequest(httpMethod: String, url: NSURL, parameters: [String: Any]?, completion: (NSURLResponse!, NSData!, NSError!) -> Void) {
+        self.cookiedAsyncRequest(httpMethod, url: url.absoluteString!, parameters: parameters, completion: completion)
     }
     
-    private func cookiedAsyncRequest(url: NSURL, completion: (NSURLResponse!, NSData!, NSError!) -> Void) {
-        var request = NSMutableURLRequest(URL: url)
+    private func cookiedAsyncRequest(httpMethod: String, url: String, parameters: [String: Any]?, completion: (NSURLResponse!, NSData!, NSError!) -> Void) {
+        var parameteredUrl: String = url
+        let constructedParameters = self.constructParameters(parameters)
+        
+        if httpMethod == "GET" && constructedParameters != nil {
+            parameteredUrl += "?" + constructedParameters!
+        }
+        
+        var request = self.mutableRequestWithCustomHeaders(parameteredUrl)
+        request.HTTPMethod = httpMethod
+        
+        if httpMethod == "POST" && constructedParameters != nil {
+            request.HTTPBody = constructedParameters!.dataUsingEncoding(NSUTF8StringEncoding)
+        }
         
         if let cookie = self.sessionCookie() {
             let requestHeader = NSHTTPCookie.requestHeaderFieldsWithCookies([cookie])
@@ -592,6 +638,38 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         }
         
         NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue.mainQueue(), completionHandler: completion)
+    }
+    
+    func constructParameters(parameters: [String: Any]?) -> String? {
+        if parameters == nil {
+            return nil
+        }
+        
+        var constructed: NSString = ""
+        
+        for (key, value) in parameters! {
+            if 0 < constructed.length {
+                constructed = constructed + "&"
+            }
+            
+            constructed = constructed + "\(key)=\(value)"
+        }
+        
+        // use custom escape character sets instead of NSCharacterSet.URLQueryAllowedCharacterSet()
+        // cause we need to escape strings like this: tpos=1416842780%2E802121&comment%5Flocale=ja%2Djp
+        var allowed = NSMutableCharacterSet.alphanumericCharacterSet()
+        allowed.addCharactersInString("?=&")
+        
+        return constructed.stringByAddingPercentEncodingWithAllowedCharacters(allowed)
+    }
+    
+    private func mutableRequestWithCustomHeaders(url: String) -> NSMutableURLRequest {
+        let urlObject = NSURL(string: url)!
+        var mutableRequest = NSMutableURLRequest(URL: urlObject)
+
+        mutableRequest.setValue(kUserAgent, forHTTPHeaderField: "User-Agent")
+        
+        return mutableRequest
     }
     
     private func sessionCookie() -> NSHTTPCookie? {

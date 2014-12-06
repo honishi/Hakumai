@@ -698,7 +698,7 @@
                         <subviews>
                             <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gZN-es-bFO">
                                 <rect key="frame" x="10" y="371" width="459" height="22"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" title="http://live.nicovideo.jp/watch/lv202291914" placeholderString="⌘L (live url, live#)" drawsBackground="YES" usesSingleLineMode="YES" id="iDS-0h-Uje">
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" title="http://live.nicovideo.jp/watch/lv202507220" placeholderString="⌘L (live url, live#)" drawsBackground="YES" usesSingleLineMode="YES" id="iDS-0h-Uje">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -1056,8 +1056,11 @@
                             </connections>
                         </menuItem>
                         <menuItem isSeparatorItem="YES" id="uwl-U0-wdQ"/>
-                        <menuItem title="Item 2" id="L1C-9u-5sm">
+                        <menuItem title="NG This User" id="L1C-9u-5sm">
                             <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="requestNgUser:" target="Riw-FG-ugq" id="QmK-GH-Ebr"/>
+                            </connections>
                         </menuItem>
                         <menuItem title="Item 3" id="9gC-Dv-kyp">
                             <modifierMask key="keyEquivalentModifierMask"/>
@@ -1070,7 +1073,8 @@
                 <customObject id="Riw-FG-ugq" customClass="MenuDelegate" customModule="Hakumai" customModuleProvider="target">
                     <connections>
                         <outlet property="copyCommentMenuItem" destination="CZ2-j4-uTm" id="FO6-qx-8DC"/>
-                        <outlet property="copyUrlMenuItem" destination="rwi-Ju-wYL" id="wjg-UJ-KQa"/>
+                        <outlet property="copyUrlMenuItem" destination="rwi-Ju-wYL" id="ng5-yT-BNE"/>
+                        <outlet property="requestNgUserMenuItem" destination="L1C-9u-5sm" id="6SQ-pT-Bs0"/>
                     </connections>
                 </customObject>
             </objects>
