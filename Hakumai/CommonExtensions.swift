@@ -79,6 +79,14 @@ func * (left: String, right: Int) -> String {
     return multiplied
 }
 
+// MARK: - Int
+
+extension Int {
+    func toDateAsTimeIntervalSince1970() -> NSDate {
+        return NSDate(timeIntervalSince1970: Double(self))
+    }
+}
+
 // MARK: - NSXMLElement
 
 extension NSXMLElement {

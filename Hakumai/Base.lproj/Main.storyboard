@@ -698,7 +698,7 @@
                         <subviews>
                             <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gZN-es-bFO">
                                 <rect key="frame" x="10" y="371" width="459" height="22"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" title="http://live.nicovideo.jp/watch/lv202507220" placeholderString="⌘L (live url, live#)" drawsBackground="YES" usesSingleLineMode="YES" id="iDS-0h-Uje">
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" title="http://live.nicovideo.jp/watch/lv202553349" placeholderString="⌘L (live url, live#)" drawsBackground="YES" usesSingleLineMode="YES" id="iDS-0h-Uje">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -708,11 +708,11 @@
                                 </connections>
                             </textField>
                             <textField toolTip="直近10分間に書き込みをしたアクティブユーザー数" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="09h-Eb-cuW">
-                                <rect key="frame" x="10" y="6" width="80" height="17"/>
+                                <rect key="frame" x="151" y="6" width="80" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="76" id="wxf-k4-uEw"/>
                                 </constraints>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="Gc8-kb-8sm">
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Active: XXX" id="Gc8-kb-8sm">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -995,11 +995,23 @@
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0js-wz-rh5">
-                                <rect key="frame" x="95" y="6" width="120" height="17"/>
+                                <rect key="frame" x="242" y="6" width="120" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="116" id="Crb-XE-GjO"/>
                                 </constraints>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="Label" id="kqW-3l-FJT">
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="Opened: XXX" id="kqW-3l-FJT">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="p3A-6s-IKD">
+                                <rect key="frame" x="10" y="6" width="130" height="17"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="17" id="Z9u-tH-tXQ"/>
+                                    <constraint firstAttribute="width" constant="126" id="jRn-6P-vSi"/>
+                                </constraints>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Elapsed: XX:XX:XX" id="Gf3-nI-of1">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -1017,12 +1029,14 @@
                             <constraint firstItem="09h-Eb-cuW" firstAttribute="top" secondItem="pml-Sh-s7e" secondAttribute="bottom" constant="3" id="Ivg-Iy-ST6"/>
                             <constraint firstItem="NQm-lE-rVr" firstAttribute="top" secondItem="gZN-es-bFO" secondAttribute="bottom" constant="11" id="KgN-ci-c6C"/>
                             <constraint firstItem="pml-Sh-s7e" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="10" id="QPY-ri-0Ko"/>
-                            <constraint firstItem="0js-wz-rh5" firstAttribute="leading" secondItem="09h-Eb-cuW" secondAttribute="trailing" constant="9" id="WeX-oW-MNj"/>
+                            <constraint firstAttribute="bottom" secondItem="p3A-6s-IKD" secondAttribute="bottom" constant="6" id="W4n-H7-zbU"/>
                             <constraint firstAttribute="trailing" secondItem="gZN-es-bFO" secondAttribute="trailing" constant="10" id="X7M-qF-7Kx"/>
-                            <constraint firstItem="09h-Eb-cuW" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="12" id="fh6-jh-IzE"/>
+                            <constraint firstItem="0js-wz-rh5" firstAttribute="leading" secondItem="09h-Eb-cuW" secondAttribute="trailing" constant="15" id="cKm-sj-IvV"/>
                             <constraint firstAttribute="bottom" secondItem="09h-Eb-cuW" secondAttribute="bottom" constant="6" id="fxK-1G-hxJ"/>
                             <constraint firstItem="3lG-BL-Thc" firstAttribute="top" secondItem="NQm-lE-rVr" secondAttribute="bottom" constant="15" id="gmF-yV-so1"/>
+                            <constraint firstItem="p3A-6s-IKD" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="12" id="s9Q-J0-Swd"/>
                             <constraint firstItem="gZN-es-bFO" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="10" id="sNm-LV-zdL"/>
+                            <constraint firstItem="09h-Eb-cuW" firstAttribute="leading" secondItem="p3A-6s-IKD" secondAttribute="trailing" constant="15" id="vG4-4x-VnS"/>
                             <constraint firstAttribute="trailing" secondItem="pml-Sh-s7e" secondAttribute="trailing" constant="10" id="wBu-8a-ozb"/>
                         </constraints>
                     </view>
@@ -1031,6 +1045,7 @@
                         <outlet property="commentTextField" destination="pml-Sh-s7e" id="JGp-sC-LAL"/>
                         <outlet property="communityImageView" destination="NQm-lE-rVr" id="Vlq-76-e8s"/>
                         <outlet property="communityTitleLabel" destination="mqT-iT-cC6" id="JMh-Lc-OmS"/>
+                        <outlet property="elapsedLabel" destination="p3A-6s-IKD" id="6T8-le-0s2"/>
                         <outlet property="liveTextField" destination="gZN-es-bFO" id="vZe-3V-txV"/>
                         <outlet property="liveTitleLabel" destination="65a-aX-RIL" id="uvT-R4-GZO"/>
                         <outlet property="menuDelegate" destination="Riw-FG-ugq" id="l3S-iG-Ve5"/>

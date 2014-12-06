@@ -35,6 +35,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     @IBOutlet weak var scrollView: NSScrollView!
     @IBOutlet weak var tableView: NSTableView!
     
+    @IBOutlet weak var elapsedLabel: NSTextField!
     @IBOutlet weak var activeLabel: NSTextField!
     @IBOutlet weak var notificationLabel: NSTextField!
     @IBOutlet weak var commentTextField: NSTextField!
@@ -56,6 +57,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     var lastShouldScrollToBottom = true
     var currentScrollAnimationCount = 0
     
+    var elapsedTimer: NSTimer?
     var activeTimer: NSTimer?
 
     // MARK: - Object Lifecycle
@@ -77,9 +79,6 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         self.communityImageView.layer?.borderColor = NSColor.blackColor().CGColor
 
         self.registerNibs()
-        
-        // TODO: disabled for test
-        self.activeTimer = NSTimer.scheduledTimerWithTimeInterval(kCalculateActiveInterval, target: self, selector: "calculateActive:", userInfo: nil, repeats: true)
     }
     
     func registerNibs() {
@@ -255,9 +254,9 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     func nicoUtilityDidStartListening(nicoUtility: NicoUtility, roomPosition: RoomPosition) {
         log.info("started listening \(roomPosition.label()).")
         
-        dispatch_async(dispatch_get_main_queue(), {
-            // nop
-        })
+        if roomPosition == .Arena {
+            self.startTimers()
+        }
     }
 
     func nicoUtilityDidReceiveFirstChat(nicoUtility: NicoUtility, chat: Chat) {
@@ -282,6 +281,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     
     func nicoUtilityDidFinishListening(nicoUtility: NicoUtility) {
         self.logSystemMessageToTableView("放送が終了しました.")
+        self.stopTimers()
     }
     
     // MARK: System Message Utility
@@ -417,7 +417,47 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         self.commentTextField.becomeFirstResponder()
     }
 
-    // MARK: - Timer Handlers
+    // MARK: - Timer Functions
+    func startTimers() {
+        self.elapsedTimer = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "displayElapsed:", userInfo: nil, repeats: true)
+        self.activeTimer = NSTimer.scheduledTimerWithTimeInterval(kCalculateActiveInterval, target: self, selector: "calculateActive:", userInfo: nil, repeats: true)
+    }
+    
+    func stopTimers() {
+        if self.elapsedTimer != nil {
+            self.elapsedTimer!.invalidate()
+            self.elapsedTimer = nil
+        }
+        
+        if self.activeTimer != nil {
+            self.activeTimer!.invalidate()
+            self.activeTimer = nil
+        }
+    }
+    
+    // MARK: Handlers
+    func displayElapsed(timer: NSTimer) {
+        var display = "--:--:--"
+        
+        if let startTime = NicoUtility.sharedInstance.live?.startTime {
+            var prefix = ""
+            var elapsed = NSDate().timeIntervalSinceDate(startTime)
+            
+            if elapsed < 0 {
+                prefix = "-"
+                elapsed = abs(elapsed)
+            }
+            
+            let hour = String(format:"%02d", Int(elapsed / 3600))
+            let minute = String(format:"%02d", Int((elapsed / 60) % 60))
+            let second = String(format:"%02d", Int(elapsed % 60))
+            
+            display = "\(prefix)\(hour):\(minute):\(second)"
+        }
+        
+        self.elapsedLabel.stringValue = "Elapsed: " + display
+    }
+    
     func calculateActive(timer: NSTimer) {
         MessageContainer.sharedContainer.calculateActive { (active: Int?) -> (Void) in
             if active == nil {

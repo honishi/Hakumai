@@ -113,7 +113,7 @@ class RoomListener : NSObject, NSStreamDelegate {
         
         let thread = self.thread!.thread!
         let ticket = self.thread!.ticket!
-        let originTime = self.thread!.serverTime! - live.baseTime!
+        let originTime = Int(self.thread!.serverTime!.timeIntervalSince1970) - Int(live.baseTime!.timeIntervalSince1970)
         let elapsedTime = Int(NSDate().timeIntervalSince1970) - Int(self.startDate!.timeIntervalSince1970)
         let vpos = (originTime + elapsedTime) * 100
         let userId = user.userId!
@@ -271,7 +271,7 @@ class RoomListener : NSObject, NSStreamDelegate {
             }
             
             thread.ticket = threadElement.attributeForName("ticket")?.stringValue
-            thread.serverTime = threadElement.attributeForName("server_time")?.stringValue?.toInt()
+            thread.serverTime = threadElement.attributeForName("server_time")?.stringValue?.toInt()?.toDateAsTimeIntervalSince1970()
             
             threads.append(thread)
         }
@@ -287,10 +287,6 @@ class RoomListener : NSObject, NSStreamDelegate {
             let chat = Chat()
 
             chat.roomPosition = self.server?.roomPosition
-            
-            if let date = chatElement.attributeForName("date")?.stringValue?.toInt() {
-                chat.date = NSDate(timeIntervalSince1970: Double(date))
-            }
             
             if let premium = chatElement.attributeForName("premium")?.stringValue?.toInt() {
                 chat.premium = Premium(rawValue: premium)
@@ -308,6 +304,7 @@ class RoomListener : NSObject, NSStreamDelegate {
             }
             
             chat.no = chatElement.attributeForName("no")?.stringValue?.toInt()
+            chat.date = chatElement.attributeForName("date")?.stringValue?.toInt()?.toDateAsTimeIntervalSince1970()
             chat.dateUsec = chatElement.attributeForName("date_usec")?.stringValue?.toInt()
             chat.mail = chatElement.attributeForName("mail")?.stringValue
             chat.userId = chatElement.attributeForName("user_id")?.stringValue

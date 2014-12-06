@@ -12,7 +12,9 @@ class Live {
     var liveId: String?
     var title: String?
     var community: Community = Community()
-    var baseTime: Int?
+    var baseTime: NSDate?
+    var openTime: NSDate?
+    var startTime: NSDate?
     
     init() {
         // nop

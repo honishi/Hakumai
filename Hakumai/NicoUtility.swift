@@ -135,12 +135,11 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             listener.closeSocket()
         }
         
-        self.roomListeners.removeAll(keepCapacity: false)
-        self.receivedFirstChat.removeAll(keepCapacity: false)
-        
         if let delegate = self.delegate {
             delegate.nicoUtilityDidFinishListening(self)
         }
+        
+        self.reset()
     }
     
     func comment(comment: String) {
@@ -350,8 +349,10 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         
         live.liveId = rootElement?.firstStringValueForXPathNode(baseXPath + "id")
         live.title = rootElement?.firstStringValueForXPathNode(baseXPath + "title")
-        live.baseTime = rootElement?.firstIntValueForXPathNode(baseXPath + "base_time")
         live.community.community = rootElement?.firstStringValueForXPathNode(baseXPath + "default_community")
+        live.baseTime = rootElement?.firstIntValueForXPathNode(baseXPath + "base_time")?.toDateAsTimeIntervalSince1970()
+        live.openTime = rootElement?.firstIntValueForXPathNode(baseXPath + "open_time")?.toDateAsTimeIntervalSince1970()
+        live.startTime = rootElement?.firstIntValueForXPathNode(baseXPath + "start_time")?.toDateAsTimeIntervalSince1970()
         
         return live
     }
@@ -689,6 +690,17 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         return nil
     }
     
+    // MARK: - Misc Utility
+    func reset() {
+        self.live = nil
+        self.user = nil
+        self.messageServer = nil
+        
+        self.messageServers.removeAll(keepCapacity: false)
+        self.roomListeners.removeAll(keepCapacity: false)
+        self.receivedFirstChat.removeAll(keepCapacity: false)
+    }
+
     // MARK: - RoomListenerDelegate Functions
     func roomListenerDidStartListening(roomListener: RoomListener) {
         if let delegate = self.delegate {

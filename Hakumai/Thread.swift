@@ -13,7 +13,7 @@ class Thread {
     var thread: Int?
     var lastRes: Int? = 0
     var ticket: String?
-    var serverTime: Int?
+    var serverTime: NSDate?
     
     init() {
         // nop
