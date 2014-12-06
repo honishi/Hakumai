@@ -23,7 +23,7 @@ let kMailColumnIdentifier = "MailColumn"
 
 let kCalculateActiveInterval: NSTimeInterval = 3
 
-class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate, NicoUtilityProtocol {
+class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate, NSControlTextEditingDelegate, NicoUtilityProtocol {
     // MARK: Main Outlets
     @IBOutlet weak var liveTextField: NSTextField!
     
@@ -50,12 +50,15 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     
     let log = XCGLogger.defaultInstance()
 
-    var chats: [Chat] = []
+    var chats = [Chat]()
 
     // row-height cache
-    var RowHeightCacher = Dictionary<Int, CGFloat>()
+    var RowHeightCacher = [Int: CGFloat]()
     var lastShouldScrollToBottom = true
     var currentScrollAnimationCount = 0
+    
+    var commentHistory = [String]()
+    var commentHistoryIndex: Int?
     
     var elapsedTimer: NSTimer?
     var activeTimer: NSTimer?
@@ -237,6 +240,43 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         return (content, attributes)
     }
     
+    // MARK: - NSControlTextEditingDelegate Functions
+    func control(control: NSControl, textView: NSTextView, doCommandBySelector commandSelector: Selector) -> Bool {
+        let isMovedUp = commandSelector == "moveUp:"
+        let isMovedDown = commandSelector == "moveDown:"
+        
+        if isMovedUp || isMovedDown {
+            if self.commentHistory.count == 0 {
+                // nop
+            }
+            else {
+                self.handleCommentTextFieldKeyUpDown(isMovedUp: isMovedUp, isMovedDown: isMovedDown)
+            }
+            
+            return true
+        }
+        
+        return false
+    }
+    
+    func handleCommentTextFieldKeyUpDown(#isMovedUp: Bool, isMovedDown: Bool) {
+        if isMovedUp && 0 <= self.commentHistoryIndex {
+            self.commentHistoryIndex! -= 1
+        }
+        else if isMovedDown && self.commentHistoryIndex <= (self.commentHistory.count - 1) {
+            self.commentHistoryIndex! += 1
+        }
+        
+        let inValidHistoryRange = (0 <= self.commentHistoryIndex && self.commentHistoryIndex <= (self.commentHistory.count - 1))
+        
+        self.commentTextField.stringValue = (inValidHistoryRange ? self.commentHistory[self.commentHistoryIndex!] : "")
+        
+        // selectText() should be called in next run loop, http://stackoverflow.com/a/2196751
+        dispatch_after(0, dispatch_get_main_queue()) { () -> Void in
+            self.commentTextField.selectText(self)
+        }
+    }
+    
     // MARK: - NicoUtilityDelegate Functions
     func nicoUtilityDidPrepareLive(nicoUtility: NicoUtility, user: User, live: Live) {
         dispatch_async(dispatch_get_main_queue(), {
@@ -394,9 +434,16 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     
     // MARK: - Comment TextField Action
     @IBAction func comment(sender: AnyObject) {
-        NicoUtility.sharedInstance.comment(self.commentTextField.stringValue)
-        
+        let comment = self.commentTextField.stringValue
+        if countElements(comment) == 0 {
+            return
+        }
+
+        NicoUtility.sharedInstance.comment(comment)
         self.commentTextField.stringValue = ""
+        
+        self.commentHistory.append(comment)
+        self.commentHistoryIndex = self.commentHistory.count
     }
     
     // MARK: - Control Handlers

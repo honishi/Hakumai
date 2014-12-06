@@ -960,6 +960,7 @@
                                 </textFieldCell>
                                 <connections>
                                     <action selector="comment:" target="XfG-lQ-9wD" id="PkR-2p-peK"/>
+                                    <outlet property="delegate" destination="XfG-lQ-9wD" id="2ks-6u-ft9"/>
                                 </connections>
                             </textField>
                             <imageView wantsLayer="YES" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="NQm-lE-rVr">
