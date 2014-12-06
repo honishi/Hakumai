@@ -832,7 +832,7 @@
                                                         </tableCellView>
                                                     </prototypeCellViews>
                                                 </tableColumn>
-                                                <tableColumn identifier="UserIdColumn" width="100" minWidth="10" maxWidth="3.4028234663852886e+38" id="Gql-QY-Agq">
+                                                <tableColumn identifier="UserIdColumn" width="100" minWidth="10" maxWidth="200" id="Gql-QY-Agq">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="UserId">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -864,7 +864,7 @@
                                                         </tableCellView>
                                                     </prototypeCellViews>
                                                 </tableColumn>
-                                                <tableColumn identifier="PremiumColumn" width="64" minWidth="10" maxWidth="3.4028234663852886e+38" id="4XI-Je-gX7">
+                                                <tableColumn identifier="PremiumColumn" width="100" minWidth="10" maxWidth="100" id="4XI-Je-gX7">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Premium">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -878,7 +878,7 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="CR1-pr-bYn">
-                                                            <rect key="frame" x="465" y="1" width="64" height="17"/>
+                                                            <rect key="frame" x="467" y="1" width="100" height="17"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aCk-i1-enL">

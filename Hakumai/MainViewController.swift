@@ -12,6 +12,7 @@ import XCGLogger
 let kNibNameRoomPositionTableCellView = "RoomPositionTableCellView"
 let kNibNameScoreTableCellView = "ScoreTableCellView"
 let kNibNameUserIdTableCellView = "UserIdTableCellView"
+let kNibNamePremiumTableCellView = "PremiumTableCellView"
 
 let kRoomPositionColumnIdentifier = "RoomPositionColumn"
 let kScoreColumnIdentifier = "ScoreColumn"
@@ -82,14 +83,16 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
     
     func registerNibs() {
-        let roomPositionTableCellViewNib = NSNib(nibNamed: kNibNameRoomPositionTableCellView, bundle: NSBundle.mainBundle())
-        self.tableView.registerNib(roomPositionTableCellViewNib!, forIdentifier: kRoomPositionColumnIdentifier)
+        let nibs = [
+            (kNibNameRoomPositionTableCellView, kRoomPositionColumnIdentifier),
+            (kNibNameScoreTableCellView, kScoreColumnIdentifier),
+            (kNibNameUserIdTableCellView, kUserIdColumnIdentifier),
+            (kNibNamePremiumTableCellView, kPremiumColumnIdentifier)]
         
-        let scoreTableCellViewNib = NSNib(nibNamed: kNibNameScoreTableCellView, bundle: NSBundle.mainBundle())
-        self.tableView.registerNib(scoreTableCellViewNib!, forIdentifier: kScoreColumnIdentifier)
-        
-        let userIdTableCellViewNib = NSNib(nibNamed: kNibNameUserIdTableCellView, bundle: NSBundle.mainBundle())
-        self.tableView.registerNib(userIdTableCellViewNib!, forIdentifier: kUserIdColumnIdentifier)
+        for (nibName, identifier) in nibs {
+            let nib = NSNib(nibNamed: nibName, bundle: NSBundle.mainBundle())
+            self.tableView.registerNib(nib!, forIdentifier: identifier)
+        }
     }
     
     override func viewDidAppear() {
@@ -204,9 +207,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         case kUserIdColumnIdentifier:
             (view as UserIdTableCellView).userId = chat.userId
         case kPremiumColumnIdentifier:
-            if let premium = chat.premium {
-                attributed = NSAttributedString(string: premium.label(), attributes: UIHelper.normalCommentAttributes())
-            }
+            (view as PremiumTableCellView).premium = chat.premium!
         case kMailColumnIdentifier:
             if let mail = chat.mail {
                 attributed = NSAttributedString(string: chat.mail!, attributes: UIHelper.normalCommentAttributes())

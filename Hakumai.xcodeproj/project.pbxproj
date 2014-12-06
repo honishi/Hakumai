@@ -34,6 +34,9 @@
 		DB52B0AE1A2102C700E78C6A /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB52B0AC1A2102C700E78C6A /* User.swift */; };
 		DB52B0B21A21226900E78C6A /* ChatResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB52B0B11A21226900E78C6A /* ChatResult.swift */; };
 		DB52B0B31A21226900E78C6A /* ChatResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB52B0B11A21226900E78C6A /* ChatResult.swift */; };
+		DB55AC641A33905200CFAD99 /* PremiumTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB55AC631A33905200CFAD99 /* PremiumTableCellView.xib */; };
+		DB55AC681A33908300CFAD99 /* PremiumTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB55AC671A33908300CFAD99 /* PremiumTableCellView.swift */; };
+		DB55AC691A3394EE00CFAD99 /* PremiumTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB55AC671A33908300CFAD99 /* PremiumTableCellView.swift */; };
 		DB7B3DDC1A23B35300205470 /* ColoredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B3DDB1A23B35300205470 /* ColoredView.swift */; };
 		DB7B3DDF1A23B4D700205470 /* ColoredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B3DDB1A23B35300205470 /* ColoredView.swift */; };
 		DB7B3DE21A242D7B00205470 /* ScoreTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB7B3DE11A242D7B00205470 /* ScoreTableCellView.xib */; };
@@ -182,6 +185,8 @@
 		DB2AE10F1A0F2BAB00B1CE4D /* FMResultSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FMResultSet.m; path = vendor/fmdb/src/fmdb/FMResultSet.m; sourceTree = "<group>"; };
 		DB52B0AC1A2102C700E78C6A /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		DB52B0B11A21226900E78C6A /* ChatResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatResult.swift; sourceTree = "<group>"; };
+		DB55AC631A33905200CFAD99 /* PremiumTableCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PremiumTableCellView.xib; sourceTree = "<group>"; };
+		DB55AC671A33908300CFAD99 /* PremiumTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PremiumTableCellView.swift; sourceTree = "<group>"; };
 		DB7B3DDB1A23B35300205470 /* ColoredView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColoredView.swift; sourceTree = "<group>"; };
 		DB7B3DE11A242D7B00205470 /* ScoreTableCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ScoreTableCellView.xib; sourceTree = "<group>"; };
 		DB7B3DE41A2434FB00205470 /* ScoreTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScoreTableCellView.swift; sourceTree = "<group>"; };
@@ -380,6 +385,8 @@
 				DB7EB89B1A24AA3700C3BFB5 /* RoomPositionTableCellView.xib */,
 				DB1E32C81A2CC85C00CD874A /* UserIdTableCellView.swift */,
 				DB1E32CA1A2CC87200CD874A /* UserIdTableCellView.xib */,
+				DB55AC671A33908300CFAD99 /* PremiumTableCellView.swift */,
+				DB55AC631A33905200CFAD99 /* PremiumTableCellView.xib */,
 			);
 			name = TableViewColumns;
 			sourceTree = "<group>";
@@ -624,6 +631,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DB2AE0C81A0EE2FD00B1CE4D /* Images.xcassets in Resources */,
+				DB55AC641A33905200CFAD99 /* PremiumTableCellView.xib in Resources */,
 				DB2AE0CB1A0EE2FD00B1CE4D /* Main.storyboard in Resources */,
 				DB1E32CB1A2CC87200CD874A /* UserIdTableCellView.xib in Resources */,
 				DB7B3DE21A242D7B00205470 /* ScoreTableCellView.xib in Resources */,
@@ -667,6 +675,7 @@
 				DBFA88851A1BC925005349AD /* MessageServer.swift in Sources */,
 				DBAAA7321A0F43BB00981004 /* CookieUtility.swift in Sources */,
 				DB7B3DE51A2434FB00205470 /* ScoreTableCellView.swift in Sources */,
+				DB55AC681A33908300CFAD99 /* PremiumTableCellView.swift in Sources */,
 				DBCA40D41A30AD48006299A9 /* MenuDelegate.swift in Sources */,
 				DB0ED6521A20B0A7007E9318 /* ChromeCookie.swift in Sources */,
 				DBAAA7391A0F592300981004 /* SSKeychain.m in Sources */,
@@ -713,6 +722,7 @@
 				DBFA88831A1BC8C9005349AD /* Enum.swift in Sources */,
 				DBFA88801A1BC7FF005349AD /* Thread.swift in Sources */,
 				DBFA88891A1BCF77005349AD /* MessageServerTests.swift in Sources */,
+				DB55AC691A3394EE00CFAD99 /* PremiumTableCellView.swift in Sources */,
 				DBD65C121A2CD1AD00B84C97 /* UserIdTableCellView.swift in Sources */,
 				DBA414C71A18915C00E0CAD3 /* RoomListener.swift in Sources */,
 				DBA414CD1A1A16F300E0CAD3 /* CommonExtensions.swift in Sources */,
