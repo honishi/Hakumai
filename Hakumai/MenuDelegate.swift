@@ -15,6 +15,7 @@ class MenuDelegate: NSObject, NSMenuDelegate {
     @IBOutlet weak var copyCommentMenuItem: NSMenuItem!
     @IBOutlet weak var copyUrlMenuItem: NSMenuItem!
     @IBOutlet weak var requestNgUserMenuItem: NSMenuItem!
+    @IBOutlet weak var openUserPageMenuItem: NSMenuItem!
     
     // MARK: General Properties
     let log = XCGLogger.defaultInstance()
@@ -48,6 +49,8 @@ class MenuDelegate: NSObject, NSMenuDelegate {
             return true
         case self.copyUrlMenuItem:
             return self.urlStringInComment(chat) != nil ? true : false
+        case self.openUserPageMenuItem:
+            return NicoUtility.sharedInstance.isRawUserId(chat.userId!) ? true : false
         default:
             break
         }
@@ -98,6 +101,12 @@ class MenuDelegate: NSObject, NSMenuDelegate {
         NicoUtility.sharedInstance.requestNgUser(chat)
     }
     
+    @IBAction func openUserPage(sender: AnyObject) {
+        let chat = MessageContainer.sharedContainer[self.tableView.clickedRow].chat!
+        let userPageUrlString = NicoUtility.sharedInstance.urlStringForUserId(chat.userId!)
+        
+        NSWorkspace.sharedWorkspace().openURL(NSURL(string: userPageUrlString)!)
+    }
     
     // MARK: - Internal Functions
     func urlStringInComment(chat: Chat) -> String? {

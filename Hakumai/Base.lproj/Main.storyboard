@@ -1078,8 +1078,12 @@
                                 <action selector="requestNgUser:" target="Riw-FG-ugq" id="QmK-GH-Ebr"/>
                             </connections>
                         </menuItem>
-                        <menuItem title="Item 3" id="9gC-Dv-kyp">
+                        <menuItem isSeparatorItem="YES" id="FL0-Y6-hxv"/>
+                        <menuItem title="Open User Page" id="9gC-Dv-kyp">
                             <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="openUserPage:" target="Riw-FG-ugq" id="CV4-aK-NfG"/>
+                            </connections>
                         </menuItem>
                     </items>
                     <connections>
@@ -1090,6 +1094,7 @@
                     <connections>
                         <outlet property="copyCommentMenuItem" destination="CZ2-j4-uTm" id="FO6-qx-8DC"/>
                         <outlet property="copyUrlMenuItem" destination="rwi-Ju-wYL" id="ng5-yT-BNE"/>
+                        <outlet property="openUserPageMenuItem" destination="9gC-Dv-kyp" id="Yqk-Mt-JHF"/>
                         <outlet property="requestNgUserMenuItem" destination="L1C-9u-5sm" id="6SQ-pT-Bs0"/>
                     </connections>
                 </customObject>

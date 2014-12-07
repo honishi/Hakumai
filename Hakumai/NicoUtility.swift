@@ -231,6 +231,10 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         self.cookiedAsyncRequest("POST", url: kNgScoringUrl, parameters: parameters, completion: httpCompletion)
     }
     
+    func urlStringForUserId(userId: String) -> String {
+        return kUserUrl + userId
+    }
+    
     // MARK: - Message Server Functions
     private func openMessageServers(originServer: MessageServer) {
         self.messageServers = self.deriveMessageServers(originServer)
