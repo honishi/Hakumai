@@ -679,7 +679,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     
     private func sessionCookie() -> NSHTTPCookie? {
         if let cookie = CookieUtility.cookie(CookieUtility.BrowserType.Chrome) {
-            log.debug("cookie:[\(cookie)]")
+            // log.debug("cookie:[\(cookie)]")
             
             let userSessionCookie = NSHTTPCookie(properties: [
                 NSHTTPCookieDomain: "nicovideo.jp",

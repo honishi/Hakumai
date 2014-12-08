@@ -502,7 +502,9 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             display = "\(prefix)\(hour):\(minute):\(second)"
         }
         
-        self.elapsedLabel.stringValue = "Elapsed: " + display
+        dispatch_async(dispatch_get_main_queue(), {
+            self.elapsedLabel.stringValue = "Elapsed: " + display
+        })
     }
     
     func calculateActive(timer: NSTimer) {
