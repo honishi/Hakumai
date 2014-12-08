@@ -19,6 +19,7 @@ protocol NicoUtilityProtocol {
     func nicoUtilityDidReceiveFirstChat(nicoUtility: NicoUtility, chat: Chat)
     func nicoUtilityDidReceiveChat(nicoUtility: NicoUtility, chat: Chat)
     func nicoUtilityDidFinishListening(nicoUtility: NicoUtility)
+    func nicoUtilityDidReceiveHeartbeat(nicoUtility: NicoUtility, heartbeat: Heartbeat)
 }
 
 // MARK: constant value
@@ -33,35 +34,21 @@ let kRequiredCommunityLevelForStandRoom: [RoomPosition: Int] = [
     .StandF: 190,
     .StandG: 232]
 
-// urls
-let kGetPlayerStatuUrl = "http://watch.live.nicovideo.jp/api/getplayerstatus"
+// urls for api
+let kGetPlayerStatusUrl = "http://watch.live.nicovideo.jp/api/getplayerstatus"
 let kGetPostKeyUrl = "http://live.nicovideo.jp/api/getpostkey"
+let kHeartbeatUrl = "http://live.nicovideo.jp/api/heartbeat"
+let kNgScoringUrl:String = "http://watch.live.nicovideo.jp/api/ngscoring"
+
+// urls for scraping
 let kCommunityUrl = "http://com.nicovideo.jp/community/"
 let kUserUrl = "http://www.nicovideo.jp/user/"
-let kNgScoringUrl:String = "http://watch.live.nicovideo.jp/api/ngscoring"
 
 // request header
 let kUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"
 
-// MARK: extension
-
-// enabling operation like followings;
-// (("C" as Character) - ("A" as Character)) + 1 -> 3 (means "Stand-C")
-// based on http://stackoverflow.com/a/24102584
-extension Character {
-    func unicodeScalarCodePoint() -> UInt32 {
-        let characterString = String(self)
-        let scalars = characterString.unicodeScalars
-        
-        return scalars[scalars.startIndex].value
-    }
-}
-
-// MARK: operator overload
-
-func -(left: Character, right: Character) -> Int {
-    return left.unicodeScalarCodePoint() - right.unicodeScalarCodePoint()
-}
+// intervals
+let kHeartbeatDefaultInterval: NSTimeInterval = 30
 
 // MARK: class
 
@@ -78,11 +65,16 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     
     var cachedUsernames = [String: String]()
     
-    let log = XCGLogger.defaultInstance()
+    var heartbeatTimer: NSTimer?
     
+    let log = XCGLogger.defaultInstance()
+    let fileLog = XCGLogger()
+
     // MARK: - Object Lifecycle
     private override init() {
         super.init()
+        
+        self.initializeFileLog()
     }
     
     class var sharedInstance : NicoUtility {
@@ -92,6 +84,15 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         return Static.instance
     }
     
+    func initializeFileLog() {
+        let fileLogPath = NSHomeDirectory() + "/Hakumai.log"
+        fileLog.setup(logLevel: .Verbose, showLogLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: fileLogPath)
+        
+        if let console = fileLog.logDestination(XCGLogger.constants.baseConsoleLogDestinationIdentifier) {
+            fileLog.removeLogDestination(console)
+        }
+    }
+
     // MARK: - Public Interface
     func connect(live: Int) {
         if 0 < self.roomListeners.count {
@@ -124,6 +125,9 @@ class NicoUtility : NSObject, RoomListenerDelegate {
                 }
                 
                 self.openMessageServers(server!)
+                
+                self.startHeartbeatTimer()
+                self.heartbeatTimer?.fire()
             })
         }
         
@@ -134,6 +138,8 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         for listener in self.roomListeners {
             listener.closeSocket()
         }
+        
+        self.stopHeartbeatTimer()
         
         if let delegate = self.delegate {
             delegate.nicoUtilityDidFinishListening(self)
@@ -318,7 +324,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             completion(live: live, user: user, messageServer: messageServer)
         }
 
-        self.cookiedAsyncRequest("GET", url: kGetPlayerStatuUrl, parameters: ["v": "lv" + String(live)], completion: httpCompletion)
+        self.cookiedAsyncRequest("GET", url: kGetPlayerStatusUrl, parameters: ["v": "lv" + String(live)], completion: httpCompletion)
     }
     
     // MARK: - General Extractor
@@ -613,6 +619,83 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         return matched != nil ? true : false
     }
     
+    // MARK: - Heartbeat
+    func checkHeartbeat(timer: NSTimer) {
+        func httpCompletion (response: NSURLResponse!, data: NSData!, connectionError: NSError!) {
+            if connectionError != nil {
+                log.error("error in checking heartbeat")
+                return
+            }
+            
+            let responseString = NSString(data: data, encoding: NSUTF8StringEncoding)
+            fileLog.debug("\(responseString)")
+            
+            let heartbeat = self.extractHeartbeat(data)
+            fileLog.debug("\(heartbeat)")
+            
+            if heartbeat == nil {
+                log.error("error in extracting heatbeat")
+                return
+            }
+            
+            if let delegate = self.delegate {
+                delegate.nicoUtilityDidReceiveHeartbeat(self, heartbeat: heartbeat!)
+            }
+            
+            if let interval = heartbeat?.waitTime {
+                self.stopHeartbeatTimer()
+                self.startHeartbeatTimer(interval: NSTimeInterval(interval))
+            }
+        }
+        
+        let liveId = self.live!.liveId!
+        self.cookiedAsyncRequest("GET", url: kHeartbeatUrl, parameters: ["v": liveId], completion: httpCompletion)
+    }
+    
+    func extractHeartbeat(xmlData: NSData) -> Heartbeat? {
+        var err: NSError?
+        let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &err)
+        let rootElement = xmlDocument?.rootElement()
+        
+        let heartbeat = Heartbeat()
+        let baseXPath = "/heartbeat/"
+        
+        if let status = rootElement?.firstStringValueForXPathNode(baseXPath + "@status") {
+            heartbeat.status = Heartbeat.statusFromString(status: status)
+        }
+        
+        if heartbeat.status == Heartbeat.Status.Ok {
+            heartbeat.watchCount = rootElement?.firstIntValueForXPathNode(baseXPath + "watchCount")
+            heartbeat.commentCount = rootElement?.firstIntValueForXPathNode(baseXPath + "commentCount")
+            heartbeat.freeSlotNum = rootElement?.firstIntValueForXPathNode(baseXPath + "freeSlotNum")
+            heartbeat.isRestrict = rootElement?.firstIntValueForXPathNode(baseXPath + "is_restrict")
+            heartbeat.ticket = rootElement?.firstStringValueForXPathNode(baseXPath + "ticket")
+            heartbeat.waitTime = rootElement?.firstIntValueForXPathNode(baseXPath + "waitTime")
+        }
+        else if heartbeat.status == Heartbeat.Status.Fail {
+            if let errorCode = rootElement?.firstStringValueForXPathNode(baseXPath + "error/code") {
+                heartbeat.errorCode = Heartbeat.errorCodeFromString(errorCode: errorCode)
+            }
+        }
+        
+        return heartbeat
+    }
+    
+    private func startHeartbeatTimer(interval: NSTimeInterval = kHeartbeatDefaultInterval) {
+        self.stopHeartbeatTimer()
+        
+        self.heartbeatTimer = NSTimer.scheduledTimerWithTimeInterval(interval, target: self, selector: "checkHeartbeat:", userInfo: nil, repeats: true)
+    }
+    
+    private func stopHeartbeatTimer() {
+        if self.heartbeatTimer == nil {
+            return
+        }
+        
+        self.heartbeatTimer?.invalidate()
+        self.heartbeatTimer = nil
+    }
+    
     // MARK: - Internal Http Utility
     private func cookiedAsyncRequest(httpMethod: String, url: NSURL, parameters: [String: Any]?, completion: (NSURLResponse!, NSData!, NSError!) -> Void) {
         self.cookiedAsyncRequest(httpMethod, url: url.absoluteString!, parameters: parameters, completion: completion)
@@ -706,7 +789,9 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
 
     // MARK: - RoomListenerDelegate Functions
-    func roomListenerDidStartListening(roomListener: RoomListener) {
+    func roomListenerDidReceiveThread(roomListener: RoomListener, thread: Thread) {
+        log.debug("\(thread)")
+        
         if let delegate = self.delegate {
             delegate.nicoUtilityDidStartListening(self, roomPosition: roomListener.server!.roomPosition)
         }

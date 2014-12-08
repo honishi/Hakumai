@@ -180,6 +180,21 @@ class NicoUtilityTests: XCTestCase {
         self.waitForExpectationsWithTimeout(kAsyncTimeout, handler: nil)
     }
 
+    // MARK: - Heartbeat
+    func testExtractHeartbeat() {
+        var data: NSData!
+        var hb: Heartbeat?
+        
+        data = self.dataForResource("heartbeat_ok.xml")
+        hb = NicoUtility.sharedInstance.extractHeartbeat(data)
+        XCTAssert(hb?.status == Heartbeat.Status.Ok, "")
+        
+        data = self.dataForResource("heartbeat_fail.xml")
+        hb = NicoUtility.sharedInstance.extractHeartbeat(data)
+        XCTAssert(hb?.status == Heartbeat.Status.Fail, "")
+        XCTAssert(hb?.errorCode == Heartbeat.ErrorCode.NotFoundSlot, "")
+    }
+    
     // MARK: - Test Utility
     func dataForResource(fileName: String) -> NSData {
         let bundle = NSBundle(forClass: NicoUtilityTests.self)

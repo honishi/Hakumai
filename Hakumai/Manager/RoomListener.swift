@@ -14,7 +14,7 @@ let kReadBufferSize = 102400
 // MARK: protocol
 
 protocol RoomListenerDelegate {
-    func roomListenerDidStartListening(roomListener: RoomListener)
+    func roomListenerDidReceiveThread(roomListener: RoomListener, thread: Thread)
     func roomListenerDidReceiveChat(roomListener: RoomListener, chat: Chat)
 }
 
@@ -231,7 +231,7 @@ class RoomListener : NSObject, NSStreamDelegate {
                 self.thread = thread
                 self.lastRes = thread.lastRes!
                 self.startDate = NSDate()
-                delegate.roomListenerDidStartListening(self)
+                delegate.roomListenerDidReceiveThread(self, thread: thread)
             }
         
             let chats = self.parseChatElement(rootElement)

@@ -41,7 +41,6 @@ extension String {
     
     func stringByRemovingPattern(pattern: String) -> String {
         let regexp = NSRegularExpression(pattern: pattern, options: nil, error: nil)!
-        //     func stringByReplacingMatchesInString(string: String, options: NSMatchingOptions, range: NSRange, withTemplate templ: String) -> String
         let removed = regexp.stringByReplacingMatchesInString(self, options: nil, range: NSMakeRange(0, self.utf16Count), withTemplate: "")
         
         return removed
@@ -77,34 +76,4 @@ func * (left: String, right: Int) -> String {
     }
     
     return multiplied
-}
-
-// MARK: - Int
-
-extension Int {
-    func toDateAsTimeIntervalSince1970() -> NSDate {
-        return NSDate(timeIntervalSince1970: Double(self))
-    }
-}
-
-// MARK: - NSXMLElement
-
-extension NSXMLElement {
-    func firstStringValueForXPathNode(xpath: String) -> String? {
-        var err: NSError?
-        
-        if let nodes = self.nodesForXPath(xpath, error: &err) {
-            if 0 < nodes.count {
-                return (nodes[0] as NSXMLNode).stringValue
-            }
-        }
-        
-        return nil
-    }
-    
-    func firstIntValueForXPathNode(xpath: String) -> Int? {
-        let stringValue = self.firstStringValueForXPathNode(xpath)
-        
-        return stringValue?.toInt()
-    }
 }

@@ -32,6 +32,10 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     @IBOutlet weak var communityTitleLabel: NSTextField!
     @IBOutlet weak var roomPositionLabel: NSTextField!
     
+    @IBOutlet weak var visitorsLabel: NSTextField!
+    @IBOutlet weak var commentsLabel: NSTextField!
+    @IBOutlet weak var remainingSeatsLabel: NSTextField!
+    
     @IBOutlet weak var scrollView: NSScrollView!
     @IBOutlet weak var tableView: NSTableView!
     
@@ -79,6 +83,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         super.viewDidLoad()
         
         self.communityImageView.layer?.borderWidth = 1.0
+        self.communityImageView.layer?.masksToBounds = true
         self.communityImageView.layer?.borderColor = NSColor.blackColor().CGColor
 
         self.registerNibs()
@@ -324,6 +329,10 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         self.stopTimers()
     }
     
+    func nicoUtilityDidReceiveHeartbeat(nicoUtility: NicoUtility, heartbeat: Heartbeat) {
+        self.updateHeartbeatInformation(heartbeat)
+    }
+    
     // MARK: System Message Utility
     func logSystemMessageToTableView(message: String) {
         self.appendTableView(message)
@@ -419,7 +428,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         NSAnimationContext.endGrouping()
     }
     
-    // MARK: - Live Info Loader
+    // MARK: - Live Info Updater
     func loadThumbnail() {
         NicoUtility.sharedInstance.loadThumbnail { (imageData) -> (Void) in
             dispatch_async(dispatch_get_main_queue(), {
@@ -432,6 +441,26 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         }
     }
     
+    func updateHeartbeatInformation(heartbeat: Heartbeat) {
+        if heartbeat.status != .Ok {
+            return
+        }
+        
+        let visitors = String(heartbeat.watchCount!).numberStringWithSeparatorComma()!
+        let comments = String(heartbeat.commentCount!).numberStringWithSeparatorComma()!
+        
+        var remaining = "-"
+        if let free = heartbeat.freeSlotNum {
+            remaining = free == 0 ? "満員" : String(free).numberStringWithSeparatorComma()!
+        }
+        
+        dispatch_async(dispatch_get_main_queue(), {
+            self.visitorsLabel.stringValue = "Visitors: " + visitors
+            self.commentsLabel.stringValue = "Comments: " + comments
+            self.remainingSeatsLabel.stringValue = "Remaining Seats: " + remaining
+        })
+    }
+    
     // MARK: - Comment TextField Action
     @IBAction func comment(sender: AnyObject) {
         let comment = self.commentTextField.stringValue
@@ -442,8 +471,10 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         NicoUtility.sharedInstance.comment(comment)
         self.commentTextField.stringValue = ""
         
-        self.commentHistory.append(comment)
-        self.commentHistoryIndex = self.commentHistory.count
+        if self.commentHistory.count == 0 || self.commentHistory.last != comment {
+            self.commentHistory.append(comment)
+            self.commentHistoryIndex = self.commentHistory.count
+        }
     }
     
     // MARK: - Control Handlers
