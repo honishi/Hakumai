@@ -8,13 +8,21 @@
 
 import Foundation
 
-class User {
+class User: Printable {
     var userId: Int?
     var nickname: String?
     var isPremium: Int?
     var roomLabel: String?
     var seatNo: Int?
     
+    var description: String {
+        return (
+            "User: userId[\(self.userId)] nickname[\(self.nickname)] isPremium[\(self.isPremium)] " +
+            "roomLabel[\(self.roomLabel)] seatNo[\(self.seatNo)]"
+        )
+    }
+    
+    // MARK: - Object Lifecycle
     init() {
         // nop
     }

@@ -42,10 +42,9 @@ class RoomListener : NSObject, NSStreamDelegate {
         self.delegate = delegate
         self.server = server
         
-        log.info("listener initialized w/ server:" +
-            "\(self.server?.roomPosition),\(self.server?.address),\(self.server?.port),\(self.server?.thread)")
-        
         self.initializeFileLog()
+        
+        log.info("listener initialized for message server:\(self.server)")
     }
     
     func initializeFileLog() {
@@ -60,8 +59,6 @@ class RoomListener : NSObject, NSStreamDelegate {
         if let console = fileLog.logDestination(XCGLogger.constants.baseConsoleLogDestinationIdentifier) {
             fileLog.removeLogDestination(console)
         }
-        
-        fileLog.debug("file log started.")
     }
     
     // MARK: - Public Functions
@@ -211,7 +208,7 @@ class RoomListener : NSObject, NSStreamDelegate {
         return matched != nil ? true : false
     }
     
-    // MARK: Parse Utility
+    // MARK: - Parse Utility
     func parseInputStream(stream: String) {
         let delegate = self.delegate!
         

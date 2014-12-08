@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Live {
+class Live: Printable {
     var liveId: String?
     var title: String?
     var community: Community = Community()
@@ -16,6 +16,14 @@ class Live {
     var openTime: NSDate?
     var startTime: NSDate?
     
+    var description: String {
+        return (
+            "Live: liveId[\(self.liveId)] title[\(self.title)] community[\(self.community)] " +
+            "baseTime[\(self.baseTime)] openTime[\(self.openTime)] startTime[\(self.startTime)]"
+        )
+    }
+    
+    // MARK: - Object Lifecycle
     init() {
         // nop
     }

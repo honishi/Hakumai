@@ -112,7 +112,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             self.messageServer = server
             
             self.loadCommunity(self.live!.community, completion: { (isSuccess) -> Void in
-                self.log.debug("loaded community info: \(isSuccess)")
+                self.log.debug("loaded community info: success?:\(isSuccess) community:\(self.live!.community)")
                 
                 if !isSuccess {
                     self.log.error("error in loading community info")
@@ -287,7 +287,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             }
             
             let responseString = NSString(data: data, encoding: NSUTF8StringEncoding)
-            log.debug("\(responseString)")
+            // log.debug("\(responseString)")
             
             if data == nil {
                 log.error("error in unpacking response data")

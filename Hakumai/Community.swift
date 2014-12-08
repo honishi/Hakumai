@@ -8,12 +8,20 @@
 
 import Foundation
 
-class Community {
+class Community: Printable {
     var community: String?
     var title: String? = ""
     var level: Int? = 0
     var thumbnailUrl: NSURL?
 
+    var description: String {
+        return (
+            "Community: community[\(self.community)] title[\(self.title)] level[\(self.level)] " +
+            "thumbnailUrl[\(self.thumbnailUrl)]"
+        )
+    }
+
+    // MARK: Object Lifecycle
     init() {
         // nop
     }

@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum RoomPosition: Int {
+enum RoomPosition: Int, Printable {
     case Arena = 0
     case StandA
     case StandB
@@ -21,6 +21,11 @@ enum RoomPosition: Int {
     case StandI
     case StandJ
     
+    var description: String {
+        return "\(self.rawValue)(\(self.label()))"
+    }
+
+    // MARK: - Functions
     func previous() -> RoomPosition? {
         if self == .Arena {
             return nil
@@ -92,13 +97,17 @@ enum RoomPosition: Int {
     }
 }
 
-enum Premium: Int {
+enum Premium: Int, Printable {
     case Ippan = 0
     case Premium = 1
     case System = 2     // '/disconnect'
     case Caster = 3
     case Operator = 6
     case BSP = 7
+    
+    var description: String {
+        return "\(self.rawValue)(\(self.label()))"
+    }
     
     func label() -> String {
         switch self {

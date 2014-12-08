@@ -18,19 +18,28 @@ let kMessageServerPortUserLast = 2814
 let kMessageServerAddressHostPrefix = "msg"
 let kMessageServerAddressDomain = ".live.nicovideo.jp"
 
-class MessageServer {
+class MessageServer: Printable {
     let roomPosition: RoomPosition
     let address: String
     let port: Int
     let thread: Int
     
+    var description: String {
+        return (
+            "MessageServer: roomPosition[\(self.roomPosition)] " +
+            "address[\(self.address)] port[\(self.port)] thread[\(self.thread)]"
+        )
+    }
+    
+    // MARK: - Object Lifecycle
     init(roomPosition: RoomPosition, address: String, port: Int, thread: Int) {
         self.roomPosition = roomPosition
         self.address = address
         self.port = port
         self.thread = thread
     }
-    
+
+    // MARK: - Public Functions
     func isOfficial() -> Bool {
         // TODO:
         return false

@@ -9,7 +9,7 @@
 import Foundation
 
 class ChatResult {
-    enum Status: Int {
+    enum Status: Int, Printable {
         case Success = 0
         case Failure
         case InvalidThread
@@ -18,6 +18,10 @@ class ChatResult {
         case Locked
         case ReadOnly
         case TooLong
+        
+        var description: String {
+            return "ChatResult.Status: \(self.rawValue)(\(self.label()))"
+        }
         
         func label() -> String {
             switch (self) {
@@ -44,9 +48,12 @@ class ChatResult {
     var status: Status?
     
     var description: String {
-        return "ChatResult(\(self.status?.label()))"
+        return (
+            "ChatResult: status[\(self.status)]"
+        )
     }
-    
+
+    // MARK: - Object Lifecycle
     init() {
         // nop
     }

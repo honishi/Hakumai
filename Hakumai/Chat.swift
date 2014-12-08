@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Chat {
+class Chat: Printable {
     var roomPosition: RoomPosition?
     var no: Int?
     var date: NSDate?
@@ -19,6 +19,15 @@ class Chat {
     var comment: String?
     var score: Int?
     
+    var description: String {
+        return (
+            "Chat: roomPosition[\(self.roomPosition)] no[\(self.no)] date[\(self.date)] " +
+            "dateUsec[\(self.dateUsec)] mail[\(self.mail)] userId[\(self.userId)]" +
+            "premium[\(self.premium)] comment[\(self.comment)] score[\(self.score)]"
+        )
+    }
+    
+    // MARK: - Object Lifecycle
     init() {
         // nop
     }
