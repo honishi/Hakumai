@@ -120,8 +120,8 @@ class NicoUtility : NSObject, RoomListenerDelegate {
                     return
                 }
                 
-                if self.delegate != nil && self.user != nil && self.live != nil {
-                    self.delegate!.nicoUtilityDidPrepareLive(self, user: self.user!, live: self.live!)
+                if self.user != nil && self.live != nil {
+                    self.delegate?.nicoUtilityDidPrepareLive(self, user: self.user!, live: self.live!)
                 }
                 
                 self.openMessageServers(server!)
@@ -141,9 +141,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         
         self.stopHeartbeatTimer()
         
-        if let delegate = self.delegate {
-            delegate.nicoUtilityDidFinishListening(self)
-        }
+        self.delegate?.nicoUtilityDidFinishListening(self)
         
         self.reset()
     }
@@ -638,9 +636,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
                 return
             }
             
-            if let delegate = self.delegate {
-                delegate.nicoUtilityDidReceiveHeartbeat(self, heartbeat: heartbeat!)
-            }
+            self.delegate?.nicoUtilityDidReceiveHeartbeat(self, heartbeat: heartbeat!)
             
             if let interval = heartbeat?.waitTime {
                 self.stopHeartbeatTimer()
@@ -791,10 +787,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     // MARK: - RoomListenerDelegate Functions
     func roomListenerDidReceiveThread(roomListener: RoomListener, thread: Thread) {
         log.debug("\(thread)")
-        
-        if let delegate = self.delegate {
-            delegate.nicoUtilityDidStartListening(self, roomPosition: roomListener.server!.roomPosition)
-        }
+        self.delegate?.nicoUtilityDidStartListening(self, roomPosition: roomListener.server!.roomPosition)
     }
     
     func roomListenerDidReceiveChat(roomListener: RoomListener, chat: Chat) {
@@ -805,16 +798,12 @@ class NicoUtility : NSObject, RoomListenerDelegate {
                     self.receivedFirstChat[room] = true
                     self.addMessageServer()
                     
-                    if let delegate = self.delegate {
-                        delegate.nicoUtilityDidReceiveFirstChat(self, chat: chat)
-                    }
+                    self.delegate?.nicoUtilityDidReceiveFirstChat(self, chat: chat)
                 }
             }
         }
         
-        if let delegate = self.delegate {
-            delegate.nicoUtilityDidReceiveChat(self, chat: chat)
-        }
+        self.delegate?.nicoUtilityDidReceiveChat(self, chat: chat)
         
         if (chat.comment == "/disconnect" && (chat.premium == .Caster || chat.premium == .System) &&
             chat.roomPosition == .Arena) {

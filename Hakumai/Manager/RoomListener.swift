@@ -210,8 +210,6 @@ class RoomListener : NSObject, NSStreamDelegate {
     
     // MARK: - Parse Utility
     func parseInputStream(stream: String) {
-        let delegate = self.delegate!
-        
         let wrappedStream = "<items>" + stream + "</items>"
         fileLog.verbose("parsing: [ " + wrappedStream + " ]")
         
@@ -231,16 +229,16 @@ class RoomListener : NSObject, NSStreamDelegate {
                 self.thread = thread
                 self.lastRes = thread.lastRes!
                 self.startDate = NSDate()
-                delegate.roomListenerDidReceiveThread(self, thread: thread)
+                self.delegate?.roomListenerDidReceiveThread(self, thread: thread)
             }
         
             let chats = self.parseChatElement(rootElement)
             for chat in chats {
                 if let chatNo = chat.no {
-                    lastRes = chatNo
+                    self.lastRes = chatNo
                 }
                 
-                delegate.roomListenerDidReceiveChat(self, chat: chat)
+                self.delegate?.roomListenerDidReceiveChat(self, chat: chat)
             }
             
             let chatResults = self.parseChatResultElement(rootElement)
