@@ -8,8 +8,15 @@
 
 import Foundation
 
+// MainViewController test utility collection
 extension MainViewController {
     // MARK: - NSTableView Performance
+    func kickTableViewStressTest() {
+        // self.kickParallelTableViewStressTest(5, interval: 0.5, count: 100000)
+        self.kickParallelTableViewStressTest(4, interval: 2, count: 100000)
+        // self.kickParallelTableViewStressTest(1, interval: 0.01, count: 100)
+    }
+
     func kickParallelTableViewStressTest(parallelism: Int, interval: NSTimeInterval, count: Int) {
         for _ in 1...parallelism {
             self.kickTableViewStressTest(interval, count: count)
@@ -26,11 +33,7 @@ extension MainViewController {
         dispatch_async(backgroundQueue, {
             for _ in 1...count {
                 let chat = self.randomChat()
-                
-                if let mainvc = MainViewController.instance() {
-                    mainvc.nicoUtilityDidReceiveChat(NicoUtility.sharedInstance, chat: chat)
-                }
-                
+                MainViewController.sharedInstance.nicoUtilityDidReceiveChat(NicoUtility.sharedInstance, chat: chat)
                 NSThread.sleepForTimeInterval(interval)
             }
             
@@ -52,5 +55,18 @@ extension MainViewController {
         chat.premium = Premium.Premium
         
         return chat
+    }
+    
+    // MARK: - Standard User Defaults
+    func updateStandardUserDefaults() {
+        let delay = 2.0 * Double(NSEC_PER_SEC)
+        let time  = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
+        dispatch_after(time, dispatch_get_main_queue()) { () -> Void in
+            let d = NSUserDefaults.standardUserDefaults()
+            let v = d.boolForKey(Parameters.ShowIfseetnoCommands)
+            d.setBool(!v, forKey: Parameters.ShowIfseetnoCommands)
+            d.synchronize()
+            self.log.debug("")
+        }
     }
 }

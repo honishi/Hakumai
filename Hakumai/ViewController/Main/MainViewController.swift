@@ -52,6 +52,10 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         static var instance: MainViewController!
     }
     
+    class var sharedInstance : MainViewController {
+        return Static.instance
+    }
+
     let log = XCGLogger.defaultInstance()
 
     var chats = [Chat]()
@@ -74,19 +78,32 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         Static.instance = self
     }
 
-    class func instance() -> MainViewController? {
-        return Static.instance
-    }
-
     // MARK: - UIViewController Functions
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.buildViews()
+        self.registerNibs()
+        self.configureMessageContainer()
+        self.addObserverForUserDefaults()
+    }
+    
+    override func viewDidAppear() {
+        // self.kickTableViewStressTest()
+        // self.updateStandardUserDefaults()
+    }
+    
+    override var representedObject: AnyObject? {
+        didSet {
+            // Update the view, if already loaded.
+        }
+    }
+    
+    // MARK: Configure Views
+    func buildViews() {
         self.communityImageView.layer?.borderWidth = 1.0
         self.communityImageView.layer?.masksToBounds = true
         self.communityImageView.layer?.borderColor = NSColor.blackColor().CGColor
-
-        self.registerNibs()
     }
     
     func registerNibs() {
@@ -102,18 +119,21 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         }
     }
     
-    override func viewDidAppear() {
-        // self.kickParallelTableViewStressTest(5, interval: 0.5, count: 100000)
-        // self.kickParallelTableViewStressTest(4, interval: 2, count: 100000)
-        // self.kickParallelTableViewStressTest(1, interval: 0.01, count: 100)
+    func addObserverForUserDefaults() {
+        let defaults = NSUserDefaults.standardUserDefaults()
+        
+        defaults.addObserver(self, forKeyPath: Parameters.ShowIfseetnoCommands, options: .New, context: nil)
     }
-
-    override var representedObject: AnyObject? {
-        didSet {
-        // Update the view, if already loaded.
-        }
+    
+    func configureMessageContainer() {
+        // NSUserDefaults.standardUserDefaults().boolForKey(kParameterShowIfseetnoCommands)
     }
-
+    
+    // MARK: - KVO Functions
+    override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
+        log.debug("detected observing value changed: key[\(keyPath)]")
+    }
+    
     // MARK: - NSTableViewDataSource Functions
     func numberOfRowsInTableView(tableView: NSTableView) -> Int {
         return MessageContainer.sharedContainer.count()

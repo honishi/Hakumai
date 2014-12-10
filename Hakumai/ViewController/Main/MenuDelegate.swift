@@ -22,7 +22,7 @@ class MenuDelegate: NSObject, NSMenuDelegate {
 
     // MARK: Computed Properties
     var tableView: NSTableView {
-        return MainViewController.instance()!.tableView
+        return MainViewController.sharedInstance.tableView
     }
     
     // MARK: - Object Lifecycle

@@ -37,6 +37,8 @@
 		DB55AC641A33905200CFAD99 /* PremiumTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB55AC631A33905200CFAD99 /* PremiumTableCellView.xib */; };
 		DB55AC681A33908300CFAD99 /* PremiumTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB55AC671A33908300CFAD99 /* PremiumTableCellView.swift */; };
 		DB55AC691A3394EE00CFAD99 /* PremiumTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB55AC671A33908300CFAD99 /* PremiumTableCellView.swift */; };
+		DB682D421A36E6AE00499C72 /* Parameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB682D411A36E6AE00499C72 /* Parameter.swift */; };
+		DB682D451A36E73D00499C72 /* Parameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB682D411A36E6AE00499C72 /* Parameter.swift */; };
 		DB7B3DDC1A23B35300205470 /* ColoredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B3DDB1A23B35300205470 /* ColoredView.swift */; };
 		DB7B3DDF1A23B4D700205470 /* ColoredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B3DDB1A23B35300205470 /* ColoredView.swift */; };
 		DB7B3DE21A242D7B00205470 /* ScoreTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB7B3DE11A242D7B00205470 /* ScoreTableCellView.xib */; };
@@ -101,6 +103,7 @@
 		DBFA888B1A1C9A56005349AD /* Live.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA888A1A1C9A56005349AD /* Live.swift */; };
 		DBFA888C1A1C9A56005349AD /* Live.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA888A1A1C9A56005349AD /* Live.swift */; };
 		DBFA88911A1CAE85005349AD /* community.html in Resources */ = {isa = PBXBuildFile; fileRef = DBFA88901A1CAE85005349AD /* community.html */; };
+		DBFB81511A36B52E00294934 /* PreferenceWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB81501A36B52E00294934 /* PreferenceWindowController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -197,6 +200,7 @@
 		DB52B0B11A21226900E78C6A /* ChatResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatResult.swift; sourceTree = "<group>"; };
 		DB55AC631A33905200CFAD99 /* PremiumTableCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PremiumTableCellView.xib; sourceTree = "<group>"; };
 		DB55AC671A33908300CFAD99 /* PremiumTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PremiumTableCellView.swift; sourceTree = "<group>"; };
+		DB682D411A36E6AE00499C72 /* Parameter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Parameter.swift; sourceTree = "<group>"; };
 		DB7B3DDB1A23B35300205470 /* ColoredView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColoredView.swift; sourceTree = "<group>"; };
 		DB7B3DE11A242D7B00205470 /* ScoreTableCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ScoreTableCellView.xib; sourceTree = "<group>"; };
 		DB7B3DE41A2434FB00205470 /* ScoreTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScoreTableCellView.swift; sourceTree = "<group>"; };
@@ -238,6 +242,7 @@
 		DBFA88871A1BCF77005349AD /* MessageServerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageServerTests.swift; sourceTree = "<group>"; };
 		DBFA888A1A1C9A56005349AD /* Live.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Live.swift; sourceTree = "<group>"; };
 		DBFA88901A1CAE85005349AD /* community.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = community.html; sourceTree = "<group>"; };
+		DBFB81501A36B52E00294934 /* PreferenceWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PreferenceWindowController.swift; path = Hakumai/ViewController/Preference/PreferenceWindowController.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -315,6 +320,7 @@
 			isa = PBXGroup;
 			children = (
 				DB2AE1031A0F2BAA00B1CE4D /* Hakumai-Bridging-Header.h */,
+				DB682D411A36E6AE00499C72 /* Parameter.swift */,
 				DB2AE0C31A0EE2FD00B1CE4D /* AppDelegate.swift */,
 				DBA414CE1A1A16FB00E0CAD3 /* Extension */,
 				DBA414CA1A1A13FC00E0CAD3 /* Manager */,
@@ -498,6 +504,7 @@
 				DB7B3DE71A246EE200205470 /* UIHelper.swift */,
 				DB1E32C41A2C0CCE00CD874A /* MessageContainer */,
 				DBD65C191A2E0C3200B84C97 /* Main */,
+				DBFB814D1A36B4F300294934 /* Preference */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -538,6 +545,15 @@
 				DBB473111A35CE86002C797E /* heartbeat_fail.xml */,
 			);
 			path = sample;
+			sourceTree = "<group>";
+		};
+		DBFB814D1A36B4F300294934 /* Preference */ = {
+			isa = PBXGroup;
+			children = (
+				DBFB81501A36B52E00294934 /* PreferenceWindowController.swift */,
+			);
+			name = Preference;
+			path = Main;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -694,6 +710,7 @@
 				DB80CA871A2575A0002636E0 /* MainViewControllerExtensions.swift in Sources */,
 				DB1E32C91A2CC85C00CD874A /* UserIdTableCellView.swift in Sources */,
 				DB2AE1181A0F2BAB00B1CE4D /* FMResultSet.m in Sources */,
+				DB682D421A36E6AE00499C72 /* Parameter.swift in Sources */,
 				DBB473001A358FFC002C797E /* CharacterExtension.swift in Sources */,
 				DB7B3DE81A246EE200205470 /* UIHelper.swift in Sources */,
 				DB2AE1141A0F2BAB00B1CE4D /* FMDatabasePool.m in Sources */,
@@ -707,6 +724,7 @@
 				DB0ED6521A20B0A7007E9318 /* ChromeCookie.swift in Sources */,
 				DBAAA7391A0F592300981004 /* SSKeychain.m in Sources */,
 				DBB4730B1A35951C002C797E /* Heartbeat.swift in Sources */,
+				DBFB81511A36B52E00294934 /* PreferenceWindowController.swift in Sources */,
 				DBAAA73B1A0F592300981004 /* SSKeychainQuery.m in Sources */,
 				DB2AE0C41A0EE2FD00B1CE4D /* AppDelegate.swift in Sources */,
 				DBFA88821A1BC8C9005349AD /* Enum.swift in Sources */,
@@ -746,6 +764,7 @@
 				DB7F21B11A210017008D17E0 /* Community.swift in Sources */,
 				DB80CA881A2575A0002636E0 /* MainViewControllerExtensions.swift in Sources */,
 				DB0F0ECD1A16441D00F8BDC5 /* NicoUtilityTests.swift in Sources */,
+				DB682D451A36E73D00499C72 /* Parameter.swift in Sources */,
 				DBCA40D71A30BC38006299A9 /* MenuDelegateTests.swift in Sources */,
 				DBB4730C1A359685002C797E /* Heartbeat.swift in Sources */,
 				DB52B0B31A21226900E78C6A /* ChatResult.swift in Sources */,

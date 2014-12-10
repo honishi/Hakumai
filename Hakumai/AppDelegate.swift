@@ -7,14 +7,18 @@
 //
 
 import Foundation
+import AppKit
 import XCGLogger
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
+    // MARK: - Properties
     let log = XCGLogger.defaultInstance()
-
+    
+    // MARK: - NSApplicationDelegate Functions
     func applicationDidFinishLaunching(aNotification: NSNotification) {
         self.initializeLog()
+        self.initializeUserDefaults()
     }
 
     func applicationWillTerminate(aNotification: NSNotification) {
@@ -25,13 +29,25 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         log.setup(logLevel: .Debug, showLogLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: nil)
     }
     
+    func initializeUserDefaults() {
+        let defaults: [String: AnyObject] = [
+            Parameters.ShowIfseetnoCommands: false]
+
+        NSUserDefaults.standardUserDefaults().registerDefaults(defaults)
+    }
+    
     // MARK: - Menu Handlers
+    
+    @IBAction func openPreferences(sender: AnyObject) {
+        PreferenceWindowController.sharedInstance.showWindow(self)
+    }
+    
     @IBAction func openUrl(sender: AnyObject) {
-        MainViewController.instance()?.focusLiveTextField()
+        MainViewController.sharedInstance.focusLiveTextField()
     }
     
     @IBAction func newComment(sender: AnyObject) {
-        MainViewController.instance()?.focusCommentTextField()
+        MainViewController.sharedInstance.focusCommentTextField()
     }
 }
 
