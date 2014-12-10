@@ -11,11 +11,24 @@ import XCGLogger
 
 // thread safe chat container
 class MessageContainer {
-    var messages = [Message]()
-    var firstChat = [String: Bool]()
-    var calculatingActive: Bool = false
+    // MARK: - Properties
+    // MARK: Public
+    var showHbIfseetnoCommands: Bool = false {
+        didSet {
+            self.rebuildFilteredMessages()
+        }
+    }
     
-    let log = XCGLogger.defaultInstance()
+    // MARK: Private
+    private var sourceMessages = [Message]()
+    private var filteredMessages = [Message]()
+
+    private var firstChat = [String: Bool]()
+    
+    private var rebuildingFilteredMessages: Bool = false
+    private var calculatingActive: Bool = false
+    
+    private let log = XCGLogger.defaultInstance()
     
     // MARK: - Object Lifecycle
     class var sharedContainer : MessageContainer {
@@ -26,7 +39,7 @@ class MessageContainer {
     }
     
     // MARK: - Basic Operation to Content Array
-    func append(chatOrSystemMessage object: AnyObject) -> Int {
+    func append(chatOrSystemMessage object: AnyObject) -> (appended: Bool, count: Int) {
         objc_sync_enter(self)
  
         var message: Message!
@@ -50,17 +63,19 @@ class MessageContainer {
             assert(false, "appending unexpected object")
         }
         
-        self.messages.append(message)
-        let count = self.messages.count
+        self.sourceMessages.append(message)
+
+        let appended = self.appendToFilteredMessages(message)
+        let count = self.filteredMessages.count
         
         objc_sync_exit(self)
         
-        return count
+        return (appended, count)
     }
     
     func count() -> Int {
         objc_sync_enter(self)
-        let count = self.messages.count
+        let count = self.filteredMessages.count
         objc_sync_exit(self)
         
         return count
@@ -68,7 +83,7 @@ class MessageContainer {
     
     subscript (index: Int) -> Message {
         objc_sync_enter(self)
-        let content = self.messages[index]
+        let content = self.filteredMessages[index]
         objc_sync_exit(self)
         
         return content
@@ -76,15 +91,22 @@ class MessageContainer {
     
     func removeAll() {
         objc_sync_enter(self)
-        self.messages.removeAll(keepCapacity: false)
+        self.sourceMessages.removeAll(keepCapacity: false)
+        self.filteredMessages.removeAll(keepCapacity: false)
         self.firstChat.removeAll(keepCapacity: false)
         objc_sync_exit(self)
     }
     
     // MARK: - Utility
     func calculateActive(completion: (active: Int?) -> (Void)) {
+        if self.rebuildingFilteredMessages {
+            log.debug("detected rebuilding filtered messages, so skip calculating active.")
+            completion(active: nil)
+            return
+        }
+        
         if self.calculatingActive {
-            log.debug("detected duplicate calculating active, so skip.")
+            log.debug("detected duplicate calculating, so skip calculating active.")
             completion(active: nil)
             return
         }
@@ -105,8 +127,14 @@ class MessageContainer {
             
             // self.log.debug("start counting active")
             
-            for var i = self.count(); 0 < i ; i-- {
-                let message = self[i - 1]
+            objc_sync_enter(self)
+            let count = self.sourceMessages.count
+            objc_sync_exit(self)
+
+            for var i = count; 0 < i ; i-- {
+                objc_sync_enter(self)
+                let message = self.sourceMessages[i - 1]
+                objc_sync_exit(self)
                 
                 if message.messageType == .System {
                     continue
@@ -115,6 +143,10 @@ class MessageContainer {
                 let chat = message.chat!
                 
                 if chat.date == nil || chat.userId == nil {
+                    continue
+                }
+                
+                if !(chat.premium == .Ippan || chat.premium == .Premium) {
                     continue
                 }
                 
@@ -134,5 +166,48 @@ class MessageContainer {
             self.calculatingActive = false
             objc_sync_exit(self)
         })
+    }
+    
+    // MARK: - Internal Functions
+    func rebuildFilteredMessages() {
+        objc_sync_enter(self)
+        self.rebuildingFilteredMessages = true
+        
+        self.filteredMessages.removeAll(keepCapacity: false)
+        
+        for message in self.sourceMessages {
+            self.appendToFilteredMessages(message)
+        }
+        
+        self.rebuildingFilteredMessages = false
+        objc_sync_exit(self)
+    }
+    
+    // MARK: Filtered Message Append Utility
+    func appendToFilteredMessages(message: Message) -> Bool {
+        var appended = false
+        
+        if self.shouldAppendToFilteredMessages(message) {
+            self.filteredMessages.append(message)
+            appended = true
+        }
+        
+        return appended
+    }
+
+    func shouldAppendToFilteredMessages(message: Message) -> Bool {
+        if message.messageType == .System {
+            return true
+        }
+        
+        let chat = message.chat!
+        
+        if self.showHbIfseetnoCommands == false {
+            if chat.comment?.hasPrefix("/hb ifseetno ") == true {
+                return false
+            }
+        }
+        
+        return true
     }
 }

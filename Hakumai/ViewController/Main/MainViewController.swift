@@ -131,7 +131,33 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     
     // MARK: - KVO Functions
     override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
-        log.debug("detected observing value changed: key[\(keyPath)]")
+        // log.debug("detected observing value changed: key[\(keyPath)]")
+        
+        if keyPath == Parameters.ShowIfseetnoCommands {
+            if let newValue = change["new"] as? Bool {
+                // log.debug("\(newValue)")
+                
+                // use explicit next runloop to complete animating checkbox
+                dispatch_after(0, dispatch_get_main_queue()) { () -> Void in
+                    self.changeShowHbIfseetnoCommands(newValue)
+                }
+            }
+        }
+    }
+    
+    func changeShowHbIfseetnoCommands(show: Bool) {
+        let shouldScroll = self.shouldTableViewScrollToBottom()
+        
+        MessageContainer.sharedContainer.showHbIfseetnoCommands = show
+        
+        self.RowHeightCacher.removeAll(keepCapacity: false)
+        self.tableView.reloadData()
+        
+        if shouldScroll {
+            self.scrollMoveToBottom()
+        }
+        
+        self.scrollView.flashScrollers()
     }
     
     // MARK: - NSTableViewDataSource Functions
@@ -159,13 +185,9 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
     
     func commentColumnHeight(message: Message, width: CGFloat) -> CGFloat {
-        let leadingSpace: CGFloat = 2
-        let trailingSpace: CGFloat = 2
-        let widthPadding = leadingSpace + trailingSpace
-
         let (content, attributes) = self.contentAndAttributesForMessage(message)
         
-        let commentRect = content.boundingRectWithSize(CGSizeMake(width - widthPadding, 0),
+        let commentRect = content.boundingRectWithSize(CGSizeMake(width, 0),
             options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: attributes)
         // log.debug("\(commentRect.size.width),\(commentRect.size.height)")
         
@@ -360,10 +382,6 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     
     // MARK: Chat Append Utility
     func shouldIgnoreChat(chat: Chat) -> Bool {
-        if chat.comment?.hasPrefix("/hb ifseetno ") == true {
-            return true
-        }
-        
         if (chat.premium == .System || chat.premium == .Caster || chat.premium == .Operator || chat.premium == .BSP) &&
             chat.roomPosition != .Arena {
             return true
@@ -376,15 +394,20 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         dispatch_async(dispatch_get_main_queue(), {
             let shouldScroll = self.shouldTableViewScrollToBottom()
             
-            let rowIndex = MessageContainer.sharedContainer.append(chatOrSystemMessage: chatOrSystemMessage) - 1
-            self.tableView.insertRowsAtIndexes(NSIndexSet(index: rowIndex), withAnimation: .EffectNone)
-            // self.logChat(chatOrSystemMessage)
+            let (appended, count) = MessageContainer.sharedContainer.append(chatOrSystemMessage: chatOrSystemMessage)
             
-            if shouldScroll {
-                self.scrollMoveToBottom(animated: false)
+            if appended {
+                let rowIndex = count - 1
+                
+                self.tableView.insertRowsAtIndexes(NSIndexSet(index: rowIndex), withAnimation: .EffectNone)
+                // self.logChat(chatOrSystemMessage)
+                
+                if shouldScroll {
+                    self.scrollMoveToBottom()
+                }
+                
+                self.scrollView.flashScrollers()
             }
-            
-            self.scrollView.flashScrollers()
         })
     }
     
@@ -420,32 +443,36 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         return shouldScroll
     }
     
-    func scrollMoveToBottom(animated: Bool = true) {
-        if !animated {
-            self.tableView.scrollRowToVisible(self.tableView.numberOfRows - 1)
-            return
-        }
-        
-        // http://stackoverflow.com/questions/19399242/soft-scroll-animation-nsscrollview-scrolltopoint
-        self.currentScrollAnimationCount += 1
-        // log.debug("start scroll animation:\(self.currentScrollAnimationCount)")
-        
-        NSAnimationContext.beginGrouping()
-        NSAnimationContext.currentContext().duration = 0.5
-        
-        NSAnimationContext.currentContext().completionHandler = {() -> Void in
-            self.currentScrollAnimationCount -= 1
-            // self.log.debug("  end scroll animation:\(self.currentScrollAnimationCount)")
-        }
-        
+    func scrollMoveToBottom(animated: Bool = false) {
         let clipView = self.scrollView.contentView
         let x = clipView.documentVisibleRect.origin.x
         let y = clipView.documentRect.size.height - clipView.documentVisibleRect.size.height
+        let origin = NSMakePoint(x, y)
         
-        clipView.animator().setBoundsOrigin(NSMakePoint(x, y))
-        // self.scrollView.reflectScrolledClipView(clipView)
-        
-        NSAnimationContext.endGrouping()
+        if !animated {
+            // note: do not use scrollRowToVisible here.
+            // scroll will be sometimes stopped when very long comment arrives.
+            // self.tableView.scrollRowToVisible(self.tableView.numberOfRows - 1)
+            clipView.setBoundsOrigin(origin)
+        }
+        else {
+            // http://stackoverflow.com/questions/19399242/soft-scroll-animation-nsscrollview-scrolltopoint
+            self.currentScrollAnimationCount += 1
+            // log.debug("start scroll animation:\(self.currentScrollAnimationCount)")
+            
+            NSAnimationContext.beginGrouping()
+            NSAnimationContext.currentContext().duration = 0.5
+            
+            NSAnimationContext.currentContext().completionHandler = {() -> Void in
+                self.currentScrollAnimationCount -= 1
+                // self.log.debug("  end scroll animation:\(self.currentScrollAnimationCount)")
+            }
+            
+            clipView.animator().setBoundsOrigin(origin)
+            // self.scrollView.reflectScrolledClipView(clipView)
+            
+            NSAnimationContext.endGrouping()
+        }
     }
     
     // MARK: - Live Info Updater
@@ -572,8 +599,8 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     
     // MARK: - Internal Functions
     func clearAllChats() {
-        self.RowHeightCacher.removeAll(keepCapacity: false)
         MessageContainer.sharedContainer.removeAll()
+        self.RowHeightCacher.removeAll(keepCapacity: false)
         self.tableView.reloadData()
     }
     
