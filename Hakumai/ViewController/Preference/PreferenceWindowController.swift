@@ -11,11 +11,16 @@ import AppKit
 import XCGLogger
 
 // constant value for storyboard
-let kStoryboardNameMain = "Main"
-let kPreferenceWindowControllerStoryboardId = "PreferenceWindowController"
+private let kStoryboardNameMain = "Main"
+private let kStoryboardIdPreferenceWindowController = "PreferenceWindowController"
+
+private let kToolbarItemIdentifierGeneral = "GeneralToolbarItem"
+private let kToolbarItemIdentifierMute = "MuteToolbarItem"
 
 class PreferenceWindowController: NSWindowController {
     // MARK: - Properties
+    @IBOutlet weak var toolbar: NSToolbar!
+
     let log = XCGLogger.defaultInstance()
     
     // MARK: Properties for Singleton
@@ -28,7 +33,7 @@ class PreferenceWindowController: NSWindowController {
     
     class func generateInstance() -> PreferenceWindowController? {
         let storyboard = NSStoryboard(name: kStoryboardNameMain, bundle: nil)
-        return storyboard?.instantiateControllerWithIdentifier(kPreferenceWindowControllerStoryboardId) as? PreferenceWindowController
+        return storyboard?.instantiateControllerWithIdentifier(kStoryboardIdPreferenceWindowController) as? PreferenceWindowController
     }
 
     // MARK: - Object Lifecycle
@@ -47,5 +52,28 @@ class PreferenceWindowController: NSWindowController {
     // MARK: - NSObject Overrides
     override func awakeFromNib() {
         super.awakeFromNib()
+    }
+    
+    // MARK: - NSWindowController Overrides
+    override func windowDidLoad() {
+        self.contentViewController = GeneralViewController.generateInstance()
+    }
+    
+    // MARK: - NSToolbar Handlers
+    @IBAction func changeViewController(sender: AnyObject) {
+        let toolbarItem = (sender as NSToolbarItem)
+        
+        switch toolbarItem.itemIdentifier {
+        case kToolbarItemIdentifierGeneral:
+            self.contentViewController = GeneralViewController.generateInstance()
+            
+        case kToolbarItemIdentifierMute:
+            self.contentViewController = MuteViewController.generateInstance()
+            
+        default:
+            break
+        }
+        
+        self.toolbar.selectedItemIdentifier = toolbarItem.itemIdentifier
     }
 }

@@ -62,7 +62,7 @@ class ChromeCookie {
         }
         
         let decryptedString = ChromeCookie.decryptedStringByRemovingPadding(decrypted!)
-        log.debug("decrypted cookie: [\(decryptedString)]")
+        // log.debug("decrypted cookie: [\(decryptedString)]")
         
         return decryptedString
     }

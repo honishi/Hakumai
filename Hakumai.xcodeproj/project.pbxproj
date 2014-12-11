@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		DB080B851A17CA0100896228 /* CookieUtilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB080B841A17CA0100896228 /* CookieUtilityTests.swift */; };
+		DB0E10641A39B6C200A10E00 /* GeneralViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0E10631A39B6C200A10E00 /* GeneralViewController.swift */; };
+		DB0E10681A39B6DD00A10E00 /* MuteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0E10671A39B6DD00A10E00 /* MuteViewController.swift */; };
 		DB0ED6521A20B0A7007E9318 /* ChromeCookie.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0ED6511A20B0A7007E9318 /* ChromeCookie.swift */; };
 		DB0ED6531A20B0A7007E9318 /* ChromeCookie.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0ED6511A20B0A7007E9318 /* ChromeCookie.swift */; };
 		DB0F0ECD1A16441D00F8BDC5 /* NicoUtilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0F0ECC1A16441D00F8BDC5 /* NicoUtilityTests.swift */; };
@@ -167,6 +169,8 @@
 
 /* Begin PBXFileReference section */
 		DB080B841A17CA0100896228 /* CookieUtilityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CookieUtilityTests.swift; sourceTree = "<group>"; };
+		DB0E10631A39B6C200A10E00 /* GeneralViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GeneralViewController.swift; path = Hakumai/ViewController/Preference/GeneralViewController.swift; sourceTree = SOURCE_ROOT; };
+		DB0E10671A39B6DD00A10E00 /* MuteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MuteViewController.swift; path = Hakumai/ViewController/Preference/MuteViewController.swift; sourceTree = SOURCE_ROOT; };
 		DB0ED6511A20B0A7007E9318 /* ChromeCookie.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChromeCookie.swift; sourceTree = "<group>"; };
 		DB0F0ECC1A16441D00F8BDC5 /* NicoUtilityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicoUtilityTests.swift; sourceTree = "<group>"; };
 		DB1E32BE1A2B95C600CD874A /* user.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = user.html; sourceTree = "<group>"; };
@@ -551,6 +555,8 @@
 			isa = PBXGroup;
 			children = (
 				DBFB81501A36B52E00294934 /* PreferenceWindowController.swift */,
+				DB0E10631A39B6C200A10E00 /* GeneralViewController.swift */,
+				DB0E10671A39B6DD00A10E00 /* MuteViewController.swift */,
 			);
 			name = Preference;
 			path = Main;
@@ -706,6 +712,7 @@
 				DB52B0B21A21226900E78C6A /* ChatResult.swift in Sources */,
 				DBB473041A359082002C797E /* IntExtension.swift in Sources */,
 				DBD65C201A2EB08D00B84C97 /* Message.swift in Sources */,
+				DB0E10641A39B6C200A10E00 /* GeneralViewController.swift in Sources */,
 				DB2AE0C61A0EE2FD00B1CE4D /* MainViewController.swift in Sources */,
 				DB80CA871A2575A0002636E0 /* MainViewControllerExtensions.swift in Sources */,
 				DB1E32C91A2CC85C00CD874A /* UserIdTableCellView.swift in Sources */,
@@ -723,6 +730,7 @@
 				DBCA40D41A30AD48006299A9 /* MenuDelegate.swift in Sources */,
 				DB0ED6521A20B0A7007E9318 /* ChromeCookie.swift in Sources */,
 				DBAAA7391A0F592300981004 /* SSKeychain.m in Sources */,
+				DB0E10681A39B6DD00A10E00 /* MuteViewController.swift in Sources */,
 				DBB4730B1A35951C002C797E /* Heartbeat.swift in Sources */,
 				DBFB81511A36B52E00294934 /* PreferenceWindowController.swift in Sources */,
 				DBAAA73B1A0F592300981004 /* SSKeychainQuery.m in Sources */,
