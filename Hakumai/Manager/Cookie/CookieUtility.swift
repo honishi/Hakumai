@@ -8,7 +8,7 @@
 
 import Foundation
 
-class CookieUtility : NSObject {
+class CookieUtility {
     enum BrowserType {
         case Chrome
         case Safari

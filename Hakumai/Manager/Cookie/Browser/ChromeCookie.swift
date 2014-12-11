@@ -7,62 +7,78 @@
 //
 
 import Foundation
-
 import XCGLogger
 
 // sqlite
-let databasePath = NSHomeDirectory() + "/Library/Application Support/Google/Chrome/Default/Cookies"
+private let kDatabasePath = NSHomeDirectory() + "/Library/Application Support/Google/Chrome/Default/Cookies"
 
 // aes key
-let kSalt = "saltysalt"
-let kRoundCount = 1003
+private let kSalt = "saltysalt"
+private let kRoundCount = 1003
 
 // decrypt
-let kInitializationVector = " " * 16
+private let kInitializationVector = " " * 16
 
-let log = XCGLogger.defaultInstance()
+// keychain
+private let kChromeServiceName = "Chrome Safe Storage"
+private let kChromeAccount = "Chrome"
+
+// logger for class methods
+private let log = XCGLogger.defaultInstance()
 
 class ChromeCookie {
-    // Class variables not yet supported
-    // class let log = XCGLogger.defaultInstance()
-    
+    // MARK: - Properties
+    // nop
+
+    // MARK: - Public Functions
     // based on http://n8henrie.com/2014/05/decrypt-chrome-cookies-with-python/
-    internal class func cookie() -> String? {
-        let encryptedValue: NSData? = ChromeCookie.querySqlite()
+    class func cookie() -> String? {
+        let encryptedCookie = ChromeCookie.queryEncryptedCookie()
         
-        if encryptedValue == nil {
+        if encryptedCookie == nil {
             return nil
         }
         
-        let encryptedValueByRemovingPrefix = ChromeCookie.encryptedValueByRemovingPrefix(encryptedValue)
+        let encryptedCookieByRemovingPrefix = ChromeCookie.encryptedCookieByRemovingPrefix(encryptedCookie!)
         
-        if encryptedValueByRemovingPrefix == nil {
+        if encryptedCookieByRemovingPrefix == nil {
             return nil
         }
         
-        let passwordString: String! = ChromeCookie.chromePassword()
-        var error: NSError?
-        
-        let aesKeyData = ChromeCookie.aesKeyForPassword(passwordString, saltString: kSalt, roundCount: kRoundCount, error: &error)!
+        let password = ChromeCookie.chromePassword().dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+        let salt = kSalt.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+
+        let aesKey = ChromeCookie.aesKeyForPassword(password, salt: salt, roundCount: kRoundCount)
         // log.debug(aesKeyData)
         
-        let decryptedCookieValue = ChromeCookie.decryptCookieValue(encryptedValueByRemovingPrefix!, aesKeyData: aesKeyData)
-        // log.debug("\(decryptedCookieValue)")
+        if aesKey == nil {
+            return nil
+        }
         
-        return decryptedCookieValue
+        let decrypted = ChromeCookie.decryptCookie(encryptedCookieByRemovingPrefix!, aesKey: aesKey!)
+        
+        if decrypted == nil {
+            return nil
+        }
+        
+        let decryptedString = ChromeCookie.decryptedStringByRemovingPadding(decrypted!)
+        log.debug("decrypted cookie: [\(decryptedString)]")
+        
+        return decryptedString
     }
     
-    private class func querySqlite() -> NSData? {
-        var cookieValue: NSData?
+    // MARK: - Internal Functions
+    private class func queryEncryptedCookie() -> NSData? {
+        var encryptedCookie: NSData?
         
-        let database = FMDatabase(path: databasePath)
+        let database = FMDatabase(path: kDatabasePath)
         
-        let query_cookie = NSString(format: "SELECT host_key, name, encrypted_value FROM cookies " +
+        let query = NSString(format: "SELECT host_key, name, encrypted_value FROM cookies " +
             "WHERE host_key = '%@' and name = 'user_session'", ".nicovideo.jp")
         
         database.open()
         
-        var rows = database.executeQuery(query_cookie, withArgumentsInArray: [""])
+        var rows = database.executeQuery(query, withArgumentsInArray: [""])
         
         while (rows != nil && rows.next()) {
             var name = rows.stringForColumn("name")
@@ -73,98 +89,87 @@ class ChromeCookie {
             // we could not extract string from binary here
             
             if (0 < encryptedValue.length) {
-                cookieValue = encryptedValue
+                encryptedCookie = encryptedValue
             }
         }
         
         database.close()
         
-        return cookieValue
+        return encryptedCookie
     }
     
-    private class func encryptedValueByRemovingPrefix(encryptedValue: NSData!) -> NSData? {
+    private class func encryptedCookieByRemovingPrefix(encrypted: NSData) -> NSData? {
         let prefixString : NSString = "v10"
-        let prefixRange = NSMakeRange(prefixString.length, encryptedValue!.length - prefixString.length)
-        let encryptedValueByRemovingPrefix = encryptedValue!.subdataWithRange(prefixRange)
-        // log.debug(encryptedValueByRemovingPrefix)
+        let rangeForDataWithoutPrefix = NSMakeRange(prefixString.length, encrypted.length - prefixString.length)
+        let encryptedByRemovingPrefix = encrypted.subdataWithRange(rangeForDataWithoutPrefix)
+        // log.debug(encryptedByRemovingPrefix)
         
-        return encryptedValueByRemovingPrefix
+        return encryptedByRemovingPrefix
     }
     
     private class func chromePassword() -> String {
-        let password = SSKeychain.passwordForService("Chrome Safe Storage", account: "Chrome")
+        let password = SSKeychain.passwordForService(kChromeServiceName, account: kChromeAccount)
         // log.debug(password)
         
         return password
     }
     
     // based on http://stackoverflow.com/a/25702855
-    private class func aesKeyForPassword(passwordString: String, saltString: String, roundCount: Int, error: NSErrorPointer) -> NSData? {
-        let nsDerivedKey: NSMutableData! = NSMutableData(length: kCCKeySizeAES128)
-        var nsDerivedKeyPointer = UnsafeMutablePointer<UInt8>(nsDerivedKey.mutableBytes)
-        let nsDerivedKeyLength = size_t(nsDerivedKey.length)
+    private class func aesKeyForPassword(password: NSData, salt: NSData, roundCount: Int) -> NSData? {
+        let passwordPointer = UnsafePointer<Int8>(password.bytes)
+        let passwordLength = size_t(password.length)
         
-        let algorithm: CCPBKDFAlgorithm = CCPBKDFAlgorithm(kCCPBKDF2)
-        let prf: CCPseudoRandomAlgorithm = CCPseudoRandomAlgorithm(kCCPRFHmacAlgSHA1)
+        let saltPointer = UnsafePointer<UInt8>(salt.bytes)
+        let saltLength = size_t(salt.length)
         
-        let saltData: NSData! = saltString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
-        let saltBytes = UnsafePointer<UInt8>(saltData.bytes)
-        let saltLength = size_t(saltData.length)
-        
-        let passwordData = passwordString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
-        let nsPassword = passwordString as NSString
-        let nsPasswordPointer = UnsafePointer<Int8>(nsPassword.cStringUsingEncoding(NSUTF8StringEncoding))
-        let nsPasswordLength = size_t(nsPassword.lengthOfBytesUsingEncoding(NSUTF8StringEncoding))
+        let derivedKey = NSMutableData(length: kCCKeySizeAES128)!
+        var derivedKeyPointer = UnsafeMutablePointer<UInt8>(derivedKey.mutableBytes)
+        let derivedKeyLength = size_t(derivedKey.length)
         
         let result = CCKeyDerivationPBKDF(
-            algorithm,
-            nsPasswordPointer,
-            nsPasswordLength,
-            saltBytes,
+            CCPBKDFAlgorithm(kCCPBKDF2),
+            passwordPointer,
+            passwordLength,
+            saltPointer,
             saltLength,
-            prf,
+            CCPseudoRandomAlgorithm(kCCPRFHmacAlgSHA1),
             UInt32(roundCount),
-            nsDerivedKeyPointer,
-            nsDerivedKeyLength)
+            derivedKeyPointer,
+            derivedKeyLength)
         
         if result != 0 {
-            let errorDescription = "CCKeyDerivationPBKDF failed with error: '\(result)'"
-            // error.memory = MyError(domain: ClientErrorType.errorDomain, code: Int(result), descriptionText: errorDescription)
+            log.error("CCKeyDerivationPBKDF failed with error: '\(result)'")
             return nil
         }
         
-        return nsDerivedKey
+        return derivedKey
     }
     
     // based on http://stackoverflow.com/a/25755864
-    private class func decryptCookieValue(encryptedData: NSData, aesKeyData: NSData) -> String? {
-        let aesKeyBytes = UnsafePointer<UInt8>(aesKeyData.bytes)
+    private class func decryptCookie(encrypted: NSData, aesKey: NSData) -> NSData? {
+        let aesKeyPointer = UnsafePointer<UInt8>(aesKey.bytes)
         let aesKeyLength = size_t(kCCKeySizeAES128)
-        // log.debug("aesKeyData = \(aesKeyData), aesKeyLength = \(aesKeyData.length)")
+        // log.debug("aesKeyPointer = \(aesKeyPointer), aesKeyLength = \(aesKeyData.length)")
         
-        let encryptedDataLength = UInt(encryptedData.length)
-        let encryptedDataBytes = UnsafePointer<UInt8>(encryptedData.bytes)
-        // log.debug("encryptedData = \(encryptedData), encryptedDataLength = \(encryptedDataLength)")
+        let encryptedPointer = UnsafePointer<UInt8>(encrypted.bytes)
+        let encryptedLength = UInt(encrypted.length)
+        // log.debug("encryptedPointer = \(encryptedPointer), encryptedDataLength = \(encryptedLength)")
         
-        let decryptedData: NSMutableData! = NSMutableData(length: Int(encryptedDataLength) + kCCBlockSizeAES128)
+        let decryptedData: NSMutableData! = NSMutableData(length: Int(encryptedLength) + kCCBlockSizeAES128)
         var decryptedPointer = UnsafeMutablePointer<UInt8>(decryptedData.mutableBytes)
         let decryptedLength = size_t(decryptedData.length)
-        
-        let operation: CCOperation = UInt32(kCCDecrypt)
-        let algoritm: CCAlgorithm = UInt32(kCCAlgorithmAES128)
-        let options: CCOptions = UInt32(0)
         
         var numBytesEncrypted :UInt = 0
         
         var cryptStatus = CCCrypt(
-            operation,
-            algoritm,
-            options,
-            aesKeyBytes,
+            CCOperation(kCCDecrypt),
+            CCAlgorithm(kCCAlgorithmAES128),
+            CCOptions(),
+            aesKeyPointer,
             aesKeyLength,
             kInitializationVector,
-            encryptedDataBytes,
-            encryptedDataLength,
+            encryptedPointer,
+            encryptedLength,
             decryptedPointer,
             decryptedLength,
             &numBytesEncrypted)
@@ -177,14 +182,17 @@ class ChromeCookie {
             log.error("Error: \(cryptStatus)")
         }
         
-        // trim padding
-        if let decryptedString = NSString(data: decryptedData, encoding: NSUTF8StringEncoding) {
+        return decryptedData
+    }
+    
+    private class func decryptedStringByRemovingPadding(data: NSData) -> String? {
+        if let decryptedString = NSString(data: data, encoding: NSUTF8StringEncoding) {
             var error: NSError?
             let cleanseRegexp = NSRegularExpression(pattern: "(\n|\r)", options: nil, error: &error)
             let range = NSMakeRange(0, decryptedString.length)
-            let cleansedString = cleanseRegexp?.stringByReplacingMatchesInString(decryptedString, options: nil, range: range, withTemplate: "")
+            let cleansed = cleanseRegexp?.stringByReplacingMatchesInString(decryptedString, options: nil, range: range, withTemplate: "")
             
-            return cleansedString
+            return cleansed
         }
         
         return nil
