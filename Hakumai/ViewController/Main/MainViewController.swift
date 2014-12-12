@@ -39,10 +39,11 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     @IBOutlet weak var scrollView: NSScrollView!
     @IBOutlet weak var tableView: NSTableView!
     
+    @IBOutlet weak var commentTextField: NSTextField!
     @IBOutlet weak var elapsedLabel: NSTextField!
     @IBOutlet weak var activeLabel: NSTextField!
     @IBOutlet weak var notificationLabel: NSTextField!
-    @IBOutlet weak var commentTextField: NSTextField!
+    @IBOutlet weak var progressIndicator: NSProgressIndicator!
 
     // MARK: Menu Delegate
     @IBOutlet var menuDelegate: MenuDelegate!
@@ -146,6 +147,8 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
     
     func changeShowHbIfseetnoCommands(show: Bool) {
+        self.progressIndicator.startAnimation(self)
+        
         let shouldScroll = self.shouldTableViewScrollToBottom()
         
         MessageContainer.sharedContainer.showHbIfseetnoCommands = show
@@ -158,6 +161,8 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         }
         
         self.scrollView.flashScrollers()
+        
+        self.progressIndicator.stopAnimation(self)
     }
     
     // MARK: - NSTableViewDataSource Functions

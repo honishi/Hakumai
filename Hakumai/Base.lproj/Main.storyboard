@@ -1070,6 +1070,9 @@
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <progressIndicator horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="A3m-ux-Ivm">
+                                <rect key="frame" x="453" y="6" width="16" height="16"/>
+                            </progressIndicator>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="x2d-KV-3zy" secondAttribute="trailing" constant="10" id="06t-Fh-ICK"/>
@@ -1087,6 +1090,7 @@
                             <constraint firstItem="NQm-lE-rVr" firstAttribute="top" secondItem="gZN-es-bFO" secondAttribute="bottom" constant="11" id="KgN-ci-c6C"/>
                             <constraint firstItem="65a-aX-RIL" firstAttribute="top" secondItem="gZN-es-bFO" secondAttribute="bottom" constant="11" id="KnC-9C-IjS"/>
                             <constraint firstItem="pml-Sh-s7e" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="10" id="QPY-ri-0Ko"/>
+                            <constraint firstAttribute="trailing" secondItem="A3m-ux-Ivm" secondAttribute="trailing" constant="10" id="U6e-qq-p1R"/>
                             <constraint firstAttribute="bottom" secondItem="p3A-6s-IKD" secondAttribute="bottom" constant="6" id="W4n-H7-zbU"/>
                             <constraint firstAttribute="trailing" secondItem="vmz-z1-HHp" secondAttribute="trailing" constant="10" id="W9o-q0-DKK"/>
                             <constraint firstAttribute="trailing" secondItem="gZN-es-bFO" secondAttribute="trailing" constant="10" id="X7M-qF-7Kx"/>
@@ -1098,6 +1102,7 @@
                             <constraint firstAttribute="bottom" secondItem="09h-Eb-cuW" secondAttribute="bottom" constant="6" id="fxK-1G-hxJ"/>
                             <constraint firstItem="3lG-BL-Thc" firstAttribute="top" secondItem="NQm-lE-rVr" secondAttribute="bottom" constant="15" id="gmF-yV-so1"/>
                             <constraint firstItem="gpJ-ll-AbX" firstAttribute="leading" secondItem="NQm-lE-rVr" secondAttribute="trailing" constant="7" id="hOl-O8-4Lf"/>
+                            <constraint firstAttribute="bottom" secondItem="A3m-ux-Ivm" secondAttribute="bottom" constant="6" id="hSM-78-CVv"/>
                             <constraint firstItem="mqT-iT-cC6" firstAttribute="top" secondItem="gpJ-ll-AbX" secondAttribute="bottom" constant="2" id="kMh-RI-gdD"/>
                             <constraint firstAttribute="trailing" secondItem="8WA-yo-AuZ" secondAttribute="trailing" constant="10" id="n7U-xg-Exv"/>
                             <constraint firstItem="mqT-iT-cC6" firstAttribute="leading" secondItem="NQm-lE-rVr" secondAttribute="trailing" constant="7" id="nOx-yt-U1s"/>
@@ -1120,6 +1125,7 @@
                         <outlet property="liveTitleLabel" destination="65a-aX-RIL" id="uvT-R4-GZO"/>
                         <outlet property="menuDelegate" destination="Riw-FG-ugq" id="l3S-iG-Ve5"/>
                         <outlet property="notificationLabel" destination="0js-wz-rh5" id="a5j-tx-qKV"/>
+                        <outlet property="progressIndicator" destination="A3m-ux-Ivm" id="bCp-rD-QNX"/>
                         <outlet property="remainingSeatsLabel" destination="x2d-KV-3zy" id="opF-Ed-MaD"/>
                         <outlet property="roomPositionLabel" destination="gpJ-ll-AbX" id="SSs-eW-LLR"/>
                         <outlet property="scrollView" destination="3lG-BL-Thc" id="fKo-Wb-zpM"/>
