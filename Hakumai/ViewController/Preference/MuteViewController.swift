@@ -18,6 +18,13 @@ class MuteViewController: NSViewController {
     @IBOutlet var muteUserIdsArrayController: NSArrayController!
     
     // MARK: - Object Lifecycle
+    class var sharedInstance : MuteViewController {
+        struct Static {
+            static let instance : MuteViewController = MuteViewController.generateInstance()!
+        }
+        return Static.instance
+    }
+    
     class func generateInstance() -> MuteViewController? {
         let storyboard = NSStoryboard(name: kStoryboardNameMain, bundle: nil)
         return storyboard?.instantiateControllerWithIdentifier(kStoryboardIdMuteViewController) as? MuteViewController

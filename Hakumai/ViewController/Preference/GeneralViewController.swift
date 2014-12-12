@@ -15,6 +15,13 @@ private let kStoryboardIdGeneralViewController = "GeneralViewController"
 
 class GeneralViewController: NSViewController {
     // MARK: - Object Lifecycle
+    class var sharedInstance : GeneralViewController {
+        struct Static {
+            static let instance : GeneralViewController = GeneralViewController.generateInstance()!
+        }
+        return Static.instance
+    }
+
     class func generateInstance() -> GeneralViewController? {
         let storyboard = NSStoryboard(name: kStoryboardNameMain, bundle: nil)
         return storyboard?.instantiateControllerWithIdentifier(kStoryboardIdGeneralViewController) as? GeneralViewController

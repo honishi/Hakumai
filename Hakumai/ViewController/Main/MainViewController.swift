@@ -185,9 +185,13 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
     
     func commentColumnHeight(message: Message, width: CGFloat) -> CGFloat {
+        let leadingSpace: CGFloat = 2
+        let trailingSpace: CGFloat = 2
+        let widthPadding = leadingSpace + trailingSpace
+
         let (content, attributes) = self.contentAndAttributesForMessage(message)
         
-        let commentRect = content.boundingRectWithSize(CGSizeMake(width, 0),
+        let commentRect = content.boundingRectWithSize(CGSizeMake(width - widthPadding, 0),
             options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: attributes)
         // log.debug("\(commentRect.size.width),\(commentRect.size.height)")
         
