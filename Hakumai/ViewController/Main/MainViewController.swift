@@ -9,19 +9,19 @@
 import Foundation
 import XCGLogger
 
-let kNibNameRoomPositionTableCellView = "RoomPositionTableCellView"
-let kNibNameScoreTableCellView = "ScoreTableCellView"
-let kNibNameUserIdTableCellView = "UserIdTableCellView"
-let kNibNamePremiumTableCellView = "PremiumTableCellView"
+private let kNibNameRoomPositionTableCellView = "RoomPositionTableCellView"
+private let kNibNameScoreTableCellView = "ScoreTableCellView"
+private let kNibNameUserIdTableCellView = "UserIdTableCellView"
+private let kNibNamePremiumTableCellView = "PremiumTableCellView"
 
-let kRoomPositionColumnIdentifier = "RoomPositionColumn"
-let kScoreColumnIdentifier = "ScoreColumn"
-let kCommentColumnIdentifier = "CommentColumn"
-let kUserIdColumnIdentifier = "UserIdColumn"
-let kPremiumColumnIdentifier = "PremiumColumn"
-let kMailColumnIdentifier = "MailColumn"
+private let kRoomPositionColumnIdentifier = "RoomPositionColumn"
+private let kScoreColumnIdentifier = "ScoreColumn"
+private let kCommentColumnIdentifier = "CommentColumn"
+private let kUserIdColumnIdentifier = "UserIdColumn"
+private let kPremiumColumnIdentifier = "PremiumColumn"
+private let kMailColumnIdentifier = "MailColumn"
 
-let kCalculateActiveInterval: NSTimeInterval = 3
+private let kCalculateActiveInterval: NSTimeInterval = 3
 
 class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate, NSControlTextEditingDelegate, NicoUtilityProtocol {
     // MARK: Main Outlets

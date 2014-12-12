@@ -8,11 +8,11 @@
 
 import Foundation
 
-let kHeartbeatStatuses = [
+private let kHeartbeatStatuses = [
     "ok",
     "fail"]
 
-let kHeartbeatErrorCodes = [
+private let kHeartbeatErrorCodes = [
     "NOTFOUND_SLOT",
     "NOTFOUND_USERLIVESLOT"]
 

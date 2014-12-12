@@ -9,7 +9,7 @@
 import Foundation
 import XCTest
 
-let kAsyncTimeout: NSTimeInterval = 3
+private let kAsyncTimeout: NSTimeInterval = 3
 
 class NicoUtilityTests: XCTestCase {
     

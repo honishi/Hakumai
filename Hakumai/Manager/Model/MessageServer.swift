@@ -8,15 +8,15 @@
 
 import Foundation
 
-let kMessageServerNumberFirst = 101
-let kMessageServerNumberLast = 104
-let kMessageServerPortOfficialFirst = 2815
-let kMessageServerPortOfficialLast = 2817
-let kMessageServerPortUserFirst = 2805
-let kMessageServerPortUserLast = 2814
+private let kMessageServerNumberFirst = 101
+private let kMessageServerNumberLast = 104
+private let kMessageServerPortOfficialFirst = 2815
+private let kMessageServerPortOfficialLast = 2817
+private let kMessageServerPortUserFirst = 2805
+private let kMessageServerPortUserLast = 2814
 
-let kMessageServerAddressHostPrefix = "msg"
-let kMessageServerAddressDomain = ".live.nicovideo.jp"
+private let kMessageServerAddressHostPrefix = "msg"
+private let kMessageServerAddressDomain = ".live.nicovideo.jp"
 
 class MessageServer: Printable {
     let roomPosition: RoomPosition

@@ -24,7 +24,7 @@ protocol NicoUtilityProtocol {
 
 // MARK: constant value
 
-let kRequiredCommunityLevelForStandRoom: [RoomPosition: Int] = [
+private let kRequiredCommunityLevelForStandRoom: [RoomPosition: Int] = [
     .Arena: 0,
     .StandA: 0,
     .StandB: 66,
@@ -35,20 +35,20 @@ let kRequiredCommunityLevelForStandRoom: [RoomPosition: Int] = [
     .StandG: 232]
 
 // urls for api
-let kGetPlayerStatusUrl = "http://watch.live.nicovideo.jp/api/getplayerstatus"
-let kGetPostKeyUrl = "http://live.nicovideo.jp/api/getpostkey"
-let kHeartbeatUrl = "http://live.nicovideo.jp/api/heartbeat"
-let kNgScoringUrl:String = "http://watch.live.nicovideo.jp/api/ngscoring"
+private let kGetPlayerStatusUrl = "http://watch.live.nicovideo.jp/api/getplayerstatus"
+private let kGetPostKeyUrl = "http://live.nicovideo.jp/api/getpostkey"
+private let kHeartbeatUrl = "http://live.nicovideo.jp/api/heartbeat"
+private let kNgScoringUrl:String = "http://watch.live.nicovideo.jp/api/ngscoring"
 
 // urls for scraping
-let kCommunityUrl = "http://com.nicovideo.jp/community/"
-let kUserUrl = "http://www.nicovideo.jp/user/"
+private let kCommunityUrl = "http://com.nicovideo.jp/community/"
+private let kUserUrl = "http://www.nicovideo.jp/user/"
 
 // request header
-let kUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"
+private let kUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"
 
 // intervals
-let kHeartbeatDefaultInterval: NSTimeInterval = 30
+private let kHeartbeatDefaultInterval: NSTimeInterval = 30
 
 // MARK: class
 

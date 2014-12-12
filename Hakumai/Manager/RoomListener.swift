@@ -9,7 +9,7 @@
 import Foundation
 import XCGLogger
 
-let kReadBufferSize = 102400
+private let kReadBufferSize = 102400
 
 // MARK: protocol
 

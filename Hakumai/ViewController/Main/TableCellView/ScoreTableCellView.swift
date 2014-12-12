@@ -9,10 +9,10 @@
 import Foundation
 import AppKit
 
-let kScoreThresholdGreen = 0
-let kScoreThresholdLightGreen = -1000
-let kScoreThresholdYellow = -4800
-let kScoreThresholdOrange = -10000
+private let kScoreThresholdGreen = 0
+private let kScoreThresholdLightGreen = -1000
+private let kScoreThresholdYellow = -4800
+private let kScoreThresholdOrange = -10000
 
 class ScoreTableCellView: NSTableCellView {
     @IBOutlet weak var coloredView: ColoredView!
