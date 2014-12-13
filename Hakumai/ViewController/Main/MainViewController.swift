@@ -137,32 +137,30 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         if keyPath == Parameters.ShowIfseetnoCommands {
             if let newValue = change["new"] as? Bool {
                 // log.debug("\(newValue)")
-                
-                // use explicit next runloop to complete animating checkbox
-                dispatch_after(0, dispatch_get_main_queue()) { () -> Void in
-                    self.changeShowHbIfseetnoCommands(newValue)
-                }
+                self.changeShowHbIfseetnoCommands(newValue)
             }
         }
     }
     
     func changeShowHbIfseetnoCommands(show: Bool) {
-        self.progressIndicator.startAnimation(self)
-        
-        let shouldScroll = self.shouldTableViewScrollToBottom()
-        
-        MessageContainer.sharedContainer.showHbIfseetnoCommands = show
-        
-        self.RowHeightCacher.removeAll(keepCapacity: false)
-        self.tableView.reloadData()
-        
-        if shouldScroll {
-            self.scrollMoveToBottom()
-        }
-        
-        self.scrollView.flashScrollers()
-        
-        self.progressIndicator.stopAnimation(self)
+        dispatch_async(dispatch_get_main_queue(), {
+            MessageContainer.sharedContainer.showHbIfseetnoCommands = show
+            
+            self.progressIndicator.startAnimation(self)
+            let shouldScroll = self.shouldTableViewScrollToBottom()
+            
+            MessageContainer.sharedContainer.rebuildFilteredMessages({ () -> Void in
+                self.RowHeightCacher.removeAll(keepCapacity: false)
+                self.tableView.reloadData()
+                
+                if shouldScroll {
+                    self.scrollMoveToBottom()
+                }
+                self.scrollView.flashScrollers()
+                
+                self.progressIndicator.stopAnimation(self)
+            })
+        })
     }
     
     // MARK: - NSTableViewDataSource Functions
@@ -367,11 +365,6 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
 
     func nicoUtilityDidReceiveChat(nicoUtility: NicoUtility, chat: Chat) {
         // log.debug("\(chat.mail),\(chat.comment)")
-
-        if self.shouldIgnoreChat(chat) {
-            return
-        }
-        
         self.appendTableView(chat)
     }
     
@@ -390,15 +383,6 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
     
     // MARK: Chat Append Utility
-    func shouldIgnoreChat(chat: Chat) -> Bool {
-        if (chat.premium == .System || chat.premium == .Caster || chat.premium == .Operator || chat.premium == .BSP) &&
-            chat.roomPosition != .Arena {
-            return true
-        }
-        
-        return false
-    }
-    
     func appendTableView(chatOrSystemMessage: AnyObject) {
         dispatch_async(dispatch_get_main_queue(), {
             let shouldScroll = self.shouldTableViewScrollToBottom()
