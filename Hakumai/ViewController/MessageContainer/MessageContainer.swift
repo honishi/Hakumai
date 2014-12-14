@@ -114,10 +114,7 @@ class MessageContainer {
         // log.debug("calcurating active")
         
         // swift way to use background gcd, http://stackoverflow.com/a/25070476
-        let qualityOfServiceClass = Int(QOS_CLASS_BACKGROUND.value)
-        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-        
-        dispatch_async(backgroundQueue, {
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
             var activeUsers = Dictionary<String, Bool>()
             let tenMinutesAgo = NSDate(timeIntervalSinceNow: (Double)(-10 * 60))
             
@@ -126,7 +123,7 @@ class MessageContainer {
             objc_sync_enter(self)
             let count = self.sourceMessages.count
             objc_sync_exit(self)
-
+            
             for var i = count; 0 < i ; i-- {
                 objc_sync_enter(self)
                 let message = self.sourceMessages[i - 1]
@@ -155,7 +152,7 @@ class MessageContainer {
             }
             
             // self.log.debug("end counting active")
-
+            
             completion(active: activeUsers.count)
             
             objc_sync_enter(self)
@@ -168,10 +165,7 @@ class MessageContainer {
     func rebuildFilteredMessages(completion: () -> Void) {
         // 1st pass:
         // copy and filter source messages. this could be long operation so use background thread
-        let qualityOfServiceClass = Int(QOS_CLASS_BACKGROUND.value)
-        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-        
-        dispatch_async(backgroundQueue, {
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
             self.log.debug("started 1st pass rebuilding filtered messages (bg section)")
             
             var workingMessages = [Message]()

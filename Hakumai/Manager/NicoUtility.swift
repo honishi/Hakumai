@@ -268,9 +268,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         let targetServer = self.messageServers[targetServerIndex]
         let listener = RoomListener(delegate: self, server: targetServer)
         
-        let qualityOfServiceClass = Int(QOS_CLASS_BACKGROUND.value)
-        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-        dispatch_async(backgroundQueue, {
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
             listener.openSocket()
         })
         
@@ -721,7 +719,8 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             completion(nil, nil, NSError(domain:"", code:0, userInfo: nil))
         }
         
-        NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue.mainQueue(), completionHandler: completion)
+        let queue = NSOperationQueue()
+        NSURLConnection.sendAsynchronousRequest(request, queue: queue, completionHandler: completion)
     }
     
     func constructParameters(parameters: [String: Any]?) -> String? {

@@ -337,10 +337,10 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             self.liveTitleLabel.stringValue = live.title!
             self.communityTitleLabel.stringValue = live.community.title! + " (Lv." + String(live.community.level!) + ")"
             self.roomPositionLabel.stringValue = user.roomLabel! + " - " + String(user.seatNo!)
+            
+            self.loadThumbnail()
+            self.focusCommentTextField()
         })
-        
-        self.loadThumbnail()
-        self.focusCommentTextField()
         
         self.logSystemMessageToTableView("放送情報を取得しました.")
     }

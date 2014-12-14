@@ -48,7 +48,9 @@ class UserIdTableCellView: NSTableCellView {
                 return
             }
             
-            self.userIdTextField.stringValue = userName!
+            dispatch_async(dispatch_get_main_queue(), {
+                self.userIdTextField.stringValue = userName!
+            })
         }
         
         NicoUtility.sharedInstance.resolveUsername(userId, completion: completion)

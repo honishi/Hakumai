@@ -27,16 +27,12 @@ extension MainViewController {
     }
     
     func kickTableViewStressTest(interval: NSTimeInterval, count: Int) {
-        let qualityOfServiceClass = Int(QOS_CLASS_BACKGROUND.value)
-        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-        
-        dispatch_async(backgroundQueue, {
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
             for _ in 1...count {
                 let chat = self.randomChat()
                 MainViewController.sharedInstance.nicoUtilityDidReceiveChat(NicoUtility.sharedInstance, chat: chat)
                 NSThread.sleepForTimeInterval(interval)
             }
-            
         })
         
         // NSRunLoop.currentRunLoop().run()

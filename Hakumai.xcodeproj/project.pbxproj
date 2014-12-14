@@ -326,6 +326,7 @@
 				DB2AE1031A0F2BAA00B1CE4D /* Hakumai-Bridging-Header.h */,
 				DB682D411A36E6AE00499C72 /* Parameter.swift */,
 				DB2AE0C31A0EE2FD00B1CE4D /* AppDelegate.swift */,
+				DB3426751A3D86C6001494A6 /* Common */,
 				DBA414CE1A1A16FB00E0CAD3 /* Extension */,
 				DBA414CA1A1A13FC00E0CAD3 /* Manager */,
 				DBE73ECC1A1A1B9600A8BCA9 /* ViewController */,
@@ -401,6 +402,13 @@
 				DB2AE10F1A0F2BAB00B1CE4D /* FMResultSet.m */,
 			);
 			name = FMDB;
+			sourceTree = "<group>";
+		};
+		DB3426751A3D86C6001494A6 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Common;
 			sourceTree = "<group>";
 		};
 		DB7B3DE01A242D4100205470 /* TableCellView */ = {
