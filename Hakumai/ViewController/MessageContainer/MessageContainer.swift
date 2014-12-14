@@ -90,6 +90,7 @@ class MessageContainer {
         self.sourceMessages.removeAll(keepCapacity: false)
         self.filteredMessages.removeAll(keepCapacity: false)
         self.firstChat.removeAll(keepCapacity: false)
+        Message.resetMessageNo()
         objc_sync_exit(self)
     }
     

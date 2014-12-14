@@ -9,12 +9,18 @@
 import Foundation
 
 class Message {
+    // workaround for non-supported class variable
+    struct Static {
+        static var messageNo: Int = 0
+    }
+    
     enum MessageType: Int {
         case System = 0
         case Chat
     }
 
     // MARK: - Properties
+    let messageNo: Int
     let messageType: MessageType
     let date: NSDate
 
@@ -28,6 +34,7 @@ class Message {
     // MARK: - Object Lifecycle
     init(messageType: MessageType, message: String?, chat: Chat?, firstChat: Bool?) {
         self.messageType = messageType
+        self.messageNo = Static.messageNo++
         self.message = message
         self.chat = chat
         self.firstChat = firstChat
@@ -40,5 +47,10 @@ class Message {
     
     convenience init(chat: Chat, firstChat: Bool = false) {
         self.init(messageType: .Chat, message: nil, chat: chat, firstChat: firstChat)
+    }
+    
+    // MARK: - Public Functions
+    class func resetMessageNo() {
+        Static.messageNo = 0
     }
 }

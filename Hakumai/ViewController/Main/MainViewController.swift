@@ -150,7 +150,6 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             let shouldScroll = self.shouldTableViewScrollToBottom()
             
             MessageContainer.sharedContainer.rebuildFilteredMessages({ () -> Void in
-                self.RowHeightCacher.removeAll(keepCapacity: false)
                 self.tableView.reloadData()
                 
                 if shouldScroll {
@@ -169,20 +168,20 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
     
     func tableView(tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
-        if let cached = self.RowHeightCacher[row] {
+        let message = MessageContainer.sharedContainer[row]
+        
+        if let cached = self.RowHeightCacher[message.messageNo] {
             return cached
         }
         
         var rowHeight: CGFloat = 0
         var content: String? = ""
         
-        let message = MessageContainer.sharedContainer[row]
-        
         let commentTableColumn = self.tableView.tableColumnWithIdentifier(kCommentColumnIdentifier)!
         let commentColumnWidth = commentTableColumn.width
         rowHeight = self.commentColumnHeight(message, width: commentColumnWidth)
         
-        self.RowHeightCacher[row] = rowHeight
+        self.RowHeightCacher[message.messageNo] = rowHeight
         
         return rowHeight
     }
