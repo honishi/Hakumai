@@ -204,7 +204,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         self.cookiedAsyncRequest("GET", url: kUserUrl + String(userId), parameters: nil, completion: httpCompletion)
     }
     
-    func requestNgUser(chat: Chat) {
+    func reportAsNgUser(chat: Chat) {
         func httpCompletion (response: NSURLResponse!, data: NSData!, connectionError: NSError!) {
             if connectionError != nil {
                 log.error("error in requesting ng user")

@@ -1170,10 +1170,10 @@
                             </connections>
                         </menuItem>
                         <menuItem isSeparatorItem="YES" id="uwl-U0-wdQ"/>
-                        <menuItem title="NG This User" id="L1C-9u-5sm">
+                        <menuItem title="Report as NG User" id="L1C-9u-5sm">
                             <modifierMask key="keyEquivalentModifierMask"/>
                             <connections>
-                                <action selector="requestNgUser:" target="Riw-FG-ugq" id="QmK-GH-Ebr"/>
+                                <action selector="reportAsNgUser:" target="Riw-FG-ugq" id="Yt8-JR-cEe"/>
                             </connections>
                         </menuItem>
                         <menuItem isSeparatorItem="YES" id="FL0-Y6-hxv"/>
@@ -1193,7 +1193,7 @@
                         <outlet property="copyCommentMenuItem" destination="CZ2-j4-uTm" id="FO6-qx-8DC"/>
                         <outlet property="copyUrlMenuItem" destination="rwi-Ju-wYL" id="ng5-yT-BNE"/>
                         <outlet property="openUserPageMenuItem" destination="9gC-Dv-kyp" id="Yqk-Mt-JHF"/>
-                        <outlet property="requestNgUserMenuItem" destination="L1C-9u-5sm" id="6SQ-pT-Bs0"/>
+                        <outlet property="reportAsNgUserMenuItem" destination="L1C-9u-5sm" id="Edy-Ao-CgH"/>
                     </connections>
                 </customObject>
             </objects>

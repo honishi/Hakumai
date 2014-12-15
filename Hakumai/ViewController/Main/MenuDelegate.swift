@@ -14,7 +14,7 @@ class MenuDelegate: NSObject, NSMenuDelegate {
     // MARK: Menu Outlets
     @IBOutlet weak var copyCommentMenuItem: NSMenuItem!
     @IBOutlet weak var copyUrlMenuItem: NSMenuItem!
-    @IBOutlet weak var requestNgUserMenuItem: NSMenuItem!
+    @IBOutlet weak var reportAsNgUserMenuItem: NSMenuItem!
     @IBOutlet weak var openUserPageMenuItem: NSMenuItem!
     
     // MARK: General Properties
@@ -45,7 +45,7 @@ class MenuDelegate: NSObject, NSMenuDelegate {
         let chat = message.chat!
         
         switch menuItem {
-        case self.copyCommentMenuItem, self.requestNgUserMenuItem:
+        case self.copyCommentMenuItem, self.reportAsNgUserMenuItem:
             return true
         case self.copyUrlMenuItem:
             return self.urlStringInComment(chat) != nil ? true : false
@@ -96,9 +96,9 @@ class MenuDelegate: NSObject, NSMenuDelegate {
         self.copyStringToPasteBoard(toBeCopied)
     }
     
-    @IBAction func requestNgUser(sender: AnyObject) {
+    @IBAction func reportAsNgUser(sender: AnyObject) {
         let chat = MessageContainer.sharedContainer[self.tableView.clickedRow].chat!
-        NicoUtility.sharedInstance.requestNgUser(chat)
+        NicoUtility.sharedInstance.reportAsNgUser(chat)
     }
     
     @IBAction func openUserPage(sender: AnyObject) {

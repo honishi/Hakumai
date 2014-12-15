@@ -208,8 +208,12 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
     
     func tableViewColumnDidResize(aNotification: NSNotification) {
-        self.RowHeightCacher.removeAll(keepCapacity: false)
-        self.tableView.reloadData()
+        let column = aNotification.userInfo?["NSTableColumn"] as NSTableColumn
+        
+        if column.identifier == kCommentColumnIdentifier {
+            self.RowHeightCacher.removeAll(keepCapacity: false)
+            self.tableView.reloadData()
+        }
     }
 
     func tableView(tableView: NSTableView, viewForTableColumn tableColumn: NSTableColumn?, row: Int) -> NSView? {
