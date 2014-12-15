@@ -72,6 +72,9 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     var elapsedTimer: NSTimer?
     var activeTimer: NSTimer?
 
+    // options
+    var commentAnonymously: Bool = true
+    
     // MARK: - Object Lifecycle
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -123,17 +126,24 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         let defaults = NSUserDefaults.standardUserDefaults()
         
         defaults.addObserver(self, forKeyPath: Parameters.ShowIfseetnoCommands, options: .New, context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.CommentAnonymously, options: .New, context: nil)
     }
     
     // MARK: - KVO Functions
     override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
         // log.debug("detected observing value changed: key[\(keyPath)]")
         
-        if keyPath == Parameters.ShowIfseetnoCommands {
-            if let newValue = change["new"] as? Bool {
-                // log.debug("\(newValue)")
-                self.changeShowHbIfseetnoCommands(newValue)
-            }
+        switch keyPath {
+        case Parameters.ShowIfseetnoCommands:
+            let changed = change["new"] as Bool
+            self.changeShowHbIfseetnoCommands(changed)
+            
+        case Parameters.CommentAnonymously:
+            let changed = change["new"] as Bool
+            self.commentAnonymously = changed
+            
+        default:
+            break
         }
     }
     
@@ -504,7 +514,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             return
         }
 
-        NicoUtility.sharedInstance.comment(comment)
+        NicoUtility.sharedInstance.comment(comment, anonymously: self.commentAnonymously)
         self.commentTextField.stringValue = ""
         
         if self.commentHistory.count == 0 || self.commentHistory.last != comment {

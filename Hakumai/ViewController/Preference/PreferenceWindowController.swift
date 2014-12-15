@@ -57,6 +57,9 @@ class PreferenceWindowController: NSWindowController {
     // MARK: - NSWindowController Overrides
     override func windowDidLoad() {
         self.changeContent(GeneralViewController.sharedInstance, itemIdentifier: kToolbarItemIdentifierGeneral)
+        
+        self.window?.center()
+        self.window?.makeKeyWindow()
     }
     
     // MARK: - NSToolbar Handlers

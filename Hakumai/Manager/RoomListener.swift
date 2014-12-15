@@ -102,7 +102,7 @@ class RoomListener : NSObject, NSStreamDelegate {
         self.outputStream?.close()
     }
     
-    func comment(live: Live, user: User, postKey: String, comment: String) {
+    func comment(live: Live, user: User, postKey: String, comment: String, anonymously: Bool) {
         if self.thread == nil {
             log.debug("could not get thread information")
             return
@@ -113,10 +113,11 @@ class RoomListener : NSObject, NSStreamDelegate {
         let originTime = Int(self.thread!.serverTime!.timeIntervalSince1970) - Int(live.baseTime!.timeIntervalSince1970)
         let elapsedTime = Int(NSDate().timeIntervalSince1970) - Int(self.startDate!.timeIntervalSince1970)
         let vpos = (originTime + elapsedTime) * 100
+        let mail = anonymously ? "184" : ""
         let userId = user.userId!
         let premium = user.isPremium!
         
-        let message = "<chat thread=\"\(thread)\" ticket=\"\(ticket)\" vpos=\"\(vpos)\" postkey=\"\(postKey)\" mail=\"184\" user_id=\"\(userId)\" premium=\"\(premium)\">\(comment)</chat>"
+        let message = "<chat thread=\"\(thread)\" ticket=\"\(ticket)\" vpos=\"\(vpos)\" postkey=\"\(postKey)\" mail=\"\(mail)\" user_id=\"\(userId)\" premium=\"\(premium)\">\(comment)</chat>"
         
         self.sendMessage(message)
     }

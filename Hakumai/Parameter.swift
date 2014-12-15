@@ -13,4 +13,5 @@ import Foundation
 struct Parameters {
     static let AlwaysOnTop = "AlwaysOnTop"
     static let ShowIfseetnoCommands = "ShowHbIfseetnoCommands"
+    static let CommentAnonymously = "CommentAnonymously"
 }

@@ -33,7 +33,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func initializeUserDefaults() {
         let defaults: [String: AnyObject] = [
             Parameters.AlwaysOnTop: false,
-            Parameters.ShowIfseetnoCommands: false]
+            Parameters.ShowIfseetnoCommands: false,
+            Parameters.CommentAnonymously: true]
 
         NSUserDefaults.standardUserDefaults().registerDefaults(defaults)
     }

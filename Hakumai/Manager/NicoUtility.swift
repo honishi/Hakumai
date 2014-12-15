@@ -145,7 +145,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         self.reset()
     }
     
-    func comment(comment: String) {
+    func comment(comment: String, anonymously: Bool = true) {
         self.getPostKey { (postKey) -> (Void) in
             if self.live == nil || self.user == nil || postKey == nil {
                 self.log.debug("no available stream, user, or post key")
@@ -153,7 +153,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             }
             
             let roomListener = self.roomListeners[self.messageServer!.roomPosition.rawValue]
-            roomListener.comment(self.live!, user: self.user!, postKey: postKey!, comment: comment)
+            roomListener.comment(self.live!, user: self.user!, postKey: postKey!, comment: comment, anonymously: anonymously)
         }
     }
     

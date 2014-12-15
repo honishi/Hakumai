@@ -10,6 +10,7 @@ import Foundation
 import AppKit
 
 extension NSWindow {
+    // http://qiita.com/rryu/items/04af65d772e81d2beb7a
     var alwaysOnTop: Bool {
         get {
             let windowLevelKey = Int32(kCGStatusWindowLevelKey)
