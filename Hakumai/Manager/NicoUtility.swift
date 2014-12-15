@@ -126,8 +126,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
                 
                 self.openMessageServers(server!)
                 
-                self.startHeartbeatTimer()
-                self.heartbeatTimer?.fire()
+                self.scheduleHeartbeatTimer(immediateFire: true)
             })
         }
         
@@ -638,7 +637,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             
             if let interval = heartbeat?.waitTime {
                 self.stopHeartbeatTimer()
-                self.startHeartbeatTimer(interval: NSTimeInterval(interval))
+                self.scheduleHeartbeatTimer(immediateFire: false, interval: NSTimeInterval(interval))
             }
         }
         
@@ -675,10 +674,15 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         return heartbeat
     }
     
-    private func startHeartbeatTimer(interval: NSTimeInterval = kHeartbeatDefaultInterval) {
+    private func scheduleHeartbeatTimer(immediateFire: Bool = false, interval: NSTimeInterval = kHeartbeatDefaultInterval) {
         self.stopHeartbeatTimer()
         
-        self.heartbeatTimer = NSTimer.scheduledTimerWithTimeInterval(interval, target: self, selector: "checkHeartbeat:", userInfo: nil, repeats: true)
+        dispatch_async(dispatch_get_main_queue(), {
+            self.heartbeatTimer = NSTimer.scheduledTimerWithTimeInterval(interval, target: self, selector: "checkHeartbeat:", userInfo: nil, repeats: true)
+            if immediateFire {
+                self.heartbeatTimer?.fire()
+            }
+        })
     }
     
     private func stopHeartbeatTimer() {
