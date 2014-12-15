@@ -85,7 +85,6 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         
         self.buildViews()
         self.registerNibs()
-        self.configureMessageContainer()
         self.addObserverForUserDefaults()
     }
     
@@ -126,10 +125,6 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         defaults.addObserver(self, forKeyPath: Parameters.ShowIfseetnoCommands, options: .New, context: nil)
     }
     
-    func configureMessageContainer() {
-        // NSUserDefaults.standardUserDefaults().boolForKey(kParameterShowIfseetnoCommands)
-    }
-    
     // MARK: - KVO Functions
     override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
         // log.debug("detected observing value changed: key[\(keyPath)]")
@@ -160,6 +155,8 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
                 self.progressIndicator.stopAnimation(self)
             })
         })
+        
+        log.debug("changed show 'hbifseetno' commands: \(show)")
     }
     
     // MARK: - NSTableViewDataSource Functions

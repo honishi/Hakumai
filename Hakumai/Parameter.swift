@@ -11,5 +11,6 @@ import Foundation
 // parameters
 // http://stackoverflow.com/a/26252377
 struct Parameters {
+    static let AlwaysOnTop = "AlwaysOnTop"
     static let ShowIfseetnoCommands = "ShowHbIfseetnoCommands"
 }

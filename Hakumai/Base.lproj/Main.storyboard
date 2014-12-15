@@ -648,6 +648,12 @@
                                                 <action selector="arrangeInFront:" target="Ady-hI-5gd" id="DRN-fu-gQh"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="fSq-dG-fr2"/>
+                                        <menuItem title="Always On Top" keyEquivalent="t" id="Imh-AC-vGA">
+                                            <connections>
+                                                <binding destination="Qbm-2t-1Py" name="value" keyPath="values.AlwaysOnTop" id="Bnm-T5-SYV"/>
+                                            </connections>
+                                        </menuItem>
                                     </items>
                                 </menu>
                             </menuItem>
@@ -671,6 +677,7 @@
                 </application>
                 <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="Hakumai" customModuleProvider="target"/>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <userDefaultsController id="Qbm-2t-1Py"/>
             </objects>
             <point key="canvasLocation" x="75" y="0.0"/>
         </scene>

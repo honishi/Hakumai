@@ -59,6 +59,7 @@
 		DB80CA831A256F9A002636E0 /* MessageContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB80CA811A256F9A002636E0 /* MessageContainer.swift */; };
 		DB80CA871A2575A0002636E0 /* MainViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB80CA861A2575A0002636E0 /* MainViewControllerExtensions.swift */; };
 		DB80CA881A2575A0002636E0 /* MainViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB80CA861A2575A0002636E0 /* MainViewControllerExtensions.swift */; };
+		DB9EFC741A3E974A0087D302 /* NSWindowExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9EFC731A3E974A0087D302 /* NSWindowExtension.swift */; };
 		DBA414C61A188A7400E0CAD3 /* RoomListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA414C51A188A7400E0CAD3 /* RoomListener.swift */; };
 		DBA414C71A18915C00E0CAD3 /* RoomListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA414C51A188A7400E0CAD3 /* RoomListener.swift */; };
 		DBA414C91A189D7D00E0CAD3 /* RoomListenerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA414C81A189D7D00E0CAD3 /* RoomListenerTests.swift */; };
@@ -214,6 +215,7 @@
 		DB7F21AF1A210017008D17E0 /* Community.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Community.swift; sourceTree = "<group>"; };
 		DB80CA811A256F9A002636E0 /* MessageContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageContainer.swift; sourceTree = "<group>"; };
 		DB80CA861A2575A0002636E0 /* MainViewControllerExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewControllerExtensions.swift; sourceTree = "<group>"; };
+		DB9EFC731A3E974A0087D302 /* NSWindowExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSWindowExtension.swift; sourceTree = "<group>"; };
 		DBA414C51A188A7400E0CAD3 /* RoomListener.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomListener.swift; sourceTree = "<group>"; };
 		DBA414C81A189D7D00E0CAD3 /* RoomListenerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomListenerTests.swift; sourceTree = "<group>"; };
 		DBA414CB1A1A16F300E0CAD3 /* StringExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
@@ -444,6 +446,7 @@
 				DBA414CB1A1A16F300E0CAD3 /* StringExtension.swift */,
 				DBB472FF1A358FFC002C797E /* CharacterExtension.swift */,
 				DBB473031A359082002C797E /* IntExtension.swift */,
+				DB9EFC731A3E974A0087D302 /* NSWindowExtension.swift */,
 				DBB473051A35909F002C797E /* NSXMLElementExtension.swift */,
 			);
 			path = Extension;
@@ -746,6 +749,7 @@
 				DBFA88821A1BC8C9005349AD /* Enum.swift in Sources */,
 				DBFA887B1A1BC25A005349AD /* Chat.swift in Sources */,
 				DB2AE1121A0F2BAB00B1CE4D /* FMDatabaseAdditions.m in Sources */,
+				DB9EFC741A3E974A0087D302 /* NSWindowExtension.swift in Sources */,
 				DB7F21B01A210017008D17E0 /* Community.swift in Sources */,
 				DB2AE1161A0F2BAB00B1CE4D /* FMDatabaseQueue.m in Sources */,
 				DB7EB8A21A24AA5100C3BFB5 /* RoomPositionTableCellView.swift in Sources */,

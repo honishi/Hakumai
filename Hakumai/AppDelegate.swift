@@ -19,6 +19,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(aNotification: NSNotification) {
         self.initializeLog()
         self.initializeUserDefaults()
+        self.addObserverForUserDefaults()
     }
 
     func applicationWillTerminate(aNotification: NSNotification) {
@@ -31,13 +32,32 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func initializeUserDefaults() {
         let defaults: [String: AnyObject] = [
+            Parameters.AlwaysOnTop: false,
             Parameters.ShowIfseetnoCommands: false]
 
         NSUserDefaults.standardUserDefaults().registerDefaults(defaults)
     }
     
-    // MARK: - Menu Handlers
-    
+    func addObserverForUserDefaults() {
+        let defaults = NSUserDefaults.standardUserDefaults()
+        
+        defaults.addObserver(self, forKeyPath: Parameters.AlwaysOnTop, options: (.Initial | .New), context: nil)
+    }
+
+    // MARK: - KVO Functions
+    override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
+        // log.debug("detected observing value changed: key[\(keyPath)]")
+        
+        if keyPath == Parameters.AlwaysOnTop {
+            if let newValue = change["new"] as? Bool {
+                // log.debug("\(newValue)")
+                self.makeWindowAlwaysOnTop(newValue)
+            }
+        }
+    }
+
+    // MARK: - Internal Functions
+    // MARK: Menu Handlers
     @IBAction func openPreferences(sender: AnyObject) {
         PreferenceWindowController.sharedInstance.showWindow(self)
     }
@@ -48,6 +68,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     @IBAction func newComment(sender: AnyObject) {
         MainViewController.sharedInstance.focusCommentTextField()
+    }
+    
+    // here no handlers for 'Always On Top' menu item. it should be implemented using KVO.
+    // see detail at http://stackoverflow.com/a/13613507
+    
+    // MARK: Misc
+    func makeWindowAlwaysOnTop(alwaysOnTop: Bool) {
+        let window = NSApplication.sharedApplication().windows[0] as NSWindow
+        window.alwaysOnTop = alwaysOnTop
+        
+        log.debug("changed always on top: \(alwaysOnTop)")
     }
 }
 
