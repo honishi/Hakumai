@@ -13,7 +13,7 @@ class PreferenceWindow: NSWindow {
     // MARK: - NSObject Overrides
     override func awakeFromNib() {
         super.awakeFromNib()
-        // self.alwaysOnTop = true
+        self.alwaysOnTop = true
     }
 
     // MARK: - NSResponder Overrides
