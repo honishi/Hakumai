@@ -43,6 +43,11 @@ class UserIdTableCellView: NSTableCellView {
     }
     
     func resolveAndSetLabel(userId: String) {
+        if let userName = NicoUtility.sharedInstance.cachedUsernames[userId] {
+            self.userIdTextField.stringValue = userName
+            return
+        }
+        
         func completion(userName: String?) {
             if userName == nil {
                 return

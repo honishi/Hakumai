@@ -9,7 +9,7 @@
 import Foundation
 import XCGLogger
 
-// MARK: protocol
+// MARK: - protocol
 
 // note these functions are called in background thread, not main thread.
 // so use explicit main thread for updating ui in these callbacks.
@@ -50,25 +50,26 @@ private let kUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleW
 // intervals
 private let kHeartbeatDefaultInterval: NSTimeInterval = 30
 
-// MARK: class
+// MARK: - class
 
 class NicoUtility : NSObject, RoomListenerDelegate {
     var delegate: NicoUtilityProtocol?
     
     var live: Live?
-    var user: User?
-    var messageServer: MessageServer?
+    private var user: User?
+    private var messageServer: MessageServer?
     
-    var messageServers: [MessageServer] = []
-    var roomListeners: [RoomListener] = []
-    var receivedFirstChat = [RoomPosition: Bool]()
+    private var messageServers: [MessageServer] = []
+    private var roomListeners: [RoomListener] = []
+    private var receivedFirstChat = [RoomPosition: Bool]()
     
     var cachedUsernames = [String: String]()
     
-    var heartbeatTimer: NSTimer?
+    private var heartbeatTimer: NSTimer?
     
-    let log = XCGLogger.defaultInstance()
-    let fileLog = XCGLogger()
+    // logger
+    private let log = XCGLogger.defaultInstance()
+    private let fileLog = XCGLogger()
 
     // MARK: - Object Lifecycle
     private override init() {
