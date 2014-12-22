@@ -11,7 +11,7 @@ import AppKit
 import XCGLogger
 
 // constant value for storyboard
-private let kStoryboardNameMain = "Main"
+private let kStoryboardNamePreferenceWindowController = "PreferenceWindowController"
 private let kStoryboardIdPreferenceWindowController = "PreferenceWindowController"
 
 private let kToolbarItemIdentifierGeneral = "GeneralToolbarItem"
@@ -32,7 +32,7 @@ class PreferenceWindowController: NSWindowController {
     }
     
     class func generateInstance() -> PreferenceWindowController? {
-        let storyboard = NSStoryboard(name: kStoryboardNameMain, bundle: nil)
+        let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
         return storyboard?.instantiateControllerWithIdentifier(kStoryboardIdPreferenceWindowController) as? PreferenceWindowController
     }
 

@@ -10,7 +10,7 @@ import Foundation
 import AppKit
 
 // constant value for storyboard
-private let kStoryboardNameMain = "Main"
+private let kStoryboardNamePreferenceWindowController = "PreferenceWindowController"
 private let kStoryboardIdGeneralViewController = "GeneralViewController"
 
 class GeneralViewController: NSViewController {
@@ -23,7 +23,7 @@ class GeneralViewController: NSViewController {
     }
 
     class func generateInstance() -> GeneralViewController? {
-        let storyboard = NSStoryboard(name: kStoryboardNameMain, bundle: nil)
+        let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
         return storyboard?.instantiateControllerWithIdentifier(kStoryboardIdGeneralViewController) as? GeneralViewController
     }
 }

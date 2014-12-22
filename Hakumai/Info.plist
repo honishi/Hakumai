@@ -27,7 +27,7 @@
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2014 Hiroyuki Onishi. All rights reserved.</string>
 	<key>NSMainStoryboardFile</key>
-	<string>Main</string>
+	<string>MainWindowController</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 </dict>

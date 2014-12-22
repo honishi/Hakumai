@@ -10,7 +10,7 @@ import Foundation
 import AppKit
 
 // constant value for storyboard
-private let kStoryboardNameMain = "Main"
+private let kStoryboardNamePreferenceWindowController = "PreferenceWindowController"
 private let kStoryboardIdMuteViewController = "MuteViewController"
 
 class MuteViewController: NSViewController {
@@ -26,7 +26,7 @@ class MuteViewController: NSViewController {
     }
     
     class func generateInstance() -> MuteViewController? {
-        let storyboard = NSStoryboard(name: kStoryboardNameMain, bundle: nil)
+        let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
         return storyboard?.instantiateControllerWithIdentifier(kStoryboardIdMuteViewController) as? MuteViewController
     }
     

@@ -13,7 +13,7 @@ import XCGLogger
 
 // note these functions are called in background thread, not main thread.
 // so use explicit main thread for updating ui in these callbacks.
-protocol NicoUtilityProtocol {
+protocol NicoUtilityDelegate {
     func nicoUtilityDidPrepareLive(nicoUtility: NicoUtility, user: User, live: Live)
     func nicoUtilityDidStartListening(nicoUtility: NicoUtility, roomPosition: RoomPosition)
     func nicoUtilityDidReceiveFirstChat(nicoUtility: NicoUtility, chat: Chat)
@@ -53,7 +53,7 @@ private let kHeartbeatDefaultInterval: NSTimeInterval = 30
 // MARK: - class
 
 class NicoUtility : NSObject, RoomListenerDelegate {
-    var delegate: NicoUtilityProtocol?
+    var delegate: NicoUtilityDelegate?
     
     var live: Live?
     private var user: User?

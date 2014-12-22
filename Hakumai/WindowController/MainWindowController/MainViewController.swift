@@ -23,7 +23,7 @@ private let kMailColumnIdentifier = "MailColumn"
 
 private let kCalculateActiveInterval: NSTimeInterval = 3
 
-class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate, NSControlTextEditingDelegate, NicoUtilityProtocol {
+class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate, NSControlTextEditingDelegate, NicoUtilityDelegate, UserWindowControllerDelegate {
     // MARK: Main Outlets
     @IBOutlet weak var liveTextField: NSTextField!
     
@@ -75,6 +75,8 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     // options
     var commentAnonymously: Bool = true
     
+    var userWindowControllers = [UserWindowController]()
+    
     // MARK: - Object Lifecycle
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -87,6 +89,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         super.viewDidLoad()
         
         self.buildViews()
+        self.setupTableView()
         self.registerNibs()
         self.addObserverForUserDefaults()
     }
@@ -107,6 +110,10 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         self.communityImageView.layer?.borderWidth = 1.0
         self.communityImageView.layer?.masksToBounds = true
         self.communityImageView.layer?.borderColor = NSColor.blackColor().CGColor
+    }
+    
+    func setupTableView() {
+        self.tableView.doubleAction = "openUserWindow:"
     }
     
     func registerNibs() {
@@ -478,6 +485,15 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         }
     }
     
+    // MARK: - UserWindowControllerDelegate Functions
+    func userWindowControllerDidClose(userWindowController: UserWindowController) {
+        log.debug("")
+        
+        if let index = find(self.userWindowControllers, userWindowController) {
+            self.userWindowControllers.removeAtIndex(index)
+        }
+    }
+    
     // MARK: - Live Info Updater
     func loadThumbnail() {
         NicoUtility.sharedInstance.loadThumbnail { (imageData) -> (Void) in
@@ -539,6 +555,42 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     
     func focusLiveTextField() {
         self.liveTextField.becomeFirstResponder()
+    }
+    
+    func openUserWindow(sender: AnyObject?) {
+        let clickedRow = self.tableView.clickedRow
+        
+        if clickedRow == -1 {
+            return
+        }
+        
+        let message = MessageContainer.sharedContainer[clickedRow]
+        
+        if message.messageType != .Chat || message.chat?.userId == nil {
+            return
+        }
+        
+        let chat = message.chat!
+
+        // existing?
+        var userWindowController: UserWindowController?
+        
+        for existing in self.userWindowControllers {
+            if chat.userId == existing.userId {
+                userWindowController = existing
+                log.debug("existing userwc found, use it:\(userWindowController)")
+                break
+            }
+        }
+        
+        if userWindowController == nil {
+            // not existing. create and chache it
+            userWindowController = UserWindowController.generateInstanceWithDelegate(self, userId: chat.userId!)
+            log.debug("no existing userwc found, create it:\(userWindowController)")
+            self.userWindowControllers.append(userWindowController!)
+        }
+        
+        userWindowController!.showWindow(self)
     }
     
     func focusCommentTextField() {
