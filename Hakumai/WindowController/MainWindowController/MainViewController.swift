@@ -9,18 +9,6 @@
 import Foundation
 import XCGLogger
 
-private let kNibNameRoomPositionTableCellView = "RoomPositionTableCellView"
-private let kNibNameScoreTableCellView = "ScoreTableCellView"
-private let kNibNameUserIdTableCellView = "UserIdTableCellView"
-private let kNibNamePremiumTableCellView = "PremiumTableCellView"
-
-private let kRoomPositionColumnIdentifier = "RoomPositionColumn"
-private let kScoreColumnIdentifier = "ScoreColumn"
-private let kCommentColumnIdentifier = "CommentColumn"
-private let kUserIdColumnIdentifier = "UserIdColumn"
-private let kPremiumColumnIdentifier = "PremiumColumn"
-private let kMailColumnIdentifier = "MailColumn"
-
 private let kCalculateActiveInterval: NSTimeInterval = 3
 
 class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate, NSControlTextEditingDelegate, NicoUtilityDelegate, UserWindowControllerDelegate {
@@ -62,7 +50,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     var chats = [Chat]()
 
     // row-height cache
-    var RowHeightCacher = [Int: CGFloat]()
+    var rowHeightCacher = [Int: CGFloat]()
     var lastShouldScrollToBottom = true
     var currentScrollAnimationCount = 0
     
@@ -84,7 +72,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         Static.instance = self
     }
 
-    // MARK: - UIViewController Functions
+    // MARK: - NSViewController Functions
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -165,7 +153,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
                 self.tableView.reloadData()
                 
                 if shouldScroll {
-                    self.scrollMoveToBottom()
+                    self.scrollTableViewToBottom()
                 }
                 self.scrollView.flashScrollers()
                 
@@ -184,7 +172,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     func tableView(tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
         let message = MessageContainer.sharedContainer[row]
         
-        if let cached = self.RowHeightCacher[message.messageNo] {
+        if let cached = self.rowHeightCacher[message.messageNo] {
             return cached
         }
         
@@ -195,7 +183,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         let commentColumnWidth = commentTableColumn.width
         rowHeight = self.commentColumnHeight(message, width: commentColumnWidth)
         
-        self.RowHeightCacher[message.messageNo] = rowHeight
+        self.rowHeightCacher[message.messageNo] = rowHeight
         
         return rowHeight
     }
@@ -218,7 +206,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         let column = aNotification.userInfo?["NSTableColumn"] as NSTableColumn
         
         if column.identifier == kCommentColumnIdentifier {
-            self.RowHeightCacher.removeAll(keepCapacity: false)
+            self.rowHeightCacher.removeAll(keepCapacity: false)
             self.tableView.reloadData()
         }
     }
@@ -383,6 +371,14 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     func nicoUtilityDidReceiveChat(nicoUtility: NicoUtility, chat: Chat) {
         // log.debug("\(chat.mail),\(chat.comment)")
         self.appendTableView(chat)
+        
+        for userWindowController in self.userWindowControllers {
+            if chat.userId == userWindowController.userId {
+                dispatch_async(dispatch_get_main_queue(), {
+                    userWindowController.reloadMessages()
+                })
+            }
+        }
     }
     
     func nicoUtilityDidFinishListening(nicoUtility: NicoUtility) {
@@ -413,7 +409,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
                 // self.logChat(chatOrSystemMessage)
                 
                 if shouldScroll {
-                    self.scrollMoveToBottom()
+                    self.scrollTableViewToBottom()
                 }
                 
                 self.scrollView.flashScrollers()
@@ -453,7 +449,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         return shouldScroll
     }
     
-    func scrollMoveToBottom(animated: Bool = false) {
+    func scrollTableViewToBottom(animated: Bool = false) {
         let clipView = self.scrollView.contentView
         let x = clipView.documentVisibleRect.origin.x
         let y = clipView.documentRect.size.height - clipView.documentVisibleRect.size.height
@@ -655,7 +651,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     // MARK: - Internal Functions
     func clearAllChats() {
         MessageContainer.sharedContainer.removeAll()
-        self.RowHeightCacher.removeAll(keepCapacity: false)
+        self.rowHeightCacher.removeAll(keepCapacity: false)
         self.tableView.reloadData()
     }
     

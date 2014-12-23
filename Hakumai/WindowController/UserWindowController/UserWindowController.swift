@@ -23,8 +23,7 @@ class UserWindowController: NSWindowController, NSWindowDelegate {
     var delegate: UserWindowControllerDelegate?
     var userId: String? {
         didSet {
-            let userViewController = self.contentViewController as UserViewController
-            userViewController.userId = userId
+            self.reloadMessages()
         }
     }
     
@@ -66,5 +65,10 @@ class UserWindowController: NSWindowController, NSWindowDelegate {
     }
     
     // MARK: - Public Functions
+    func reloadMessages() {
+        let userViewController = self.contentViewController as UserViewController
+        userViewController.userId = userId
+    }
+    
     // MARK: - Internal Functions
 }

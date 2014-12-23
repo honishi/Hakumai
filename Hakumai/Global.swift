@@ -8,4 +8,15 @@
 
 import Foundation
 
-// nop
+// MARK: constant value for storyboard contents
+let kNibNameRoomPositionTableCellView = "RoomPositionTableCellView"
+let kNibNameScoreTableCellView = "ScoreTableCellView"
+let kNibNameUserIdTableCellView = "UserIdTableCellView"
+let kNibNamePremiumTableCellView = "PremiumTableCellView"
+
+let kRoomPositionColumnIdentifier = "RoomPositionColumn"
+let kScoreColumnIdentifier = "ScoreColumn"
+let kCommentColumnIdentifier = "CommentColumn"
+let kUserIdColumnIdentifier = "UserIdColumn"
+let kPremiumColumnIdentifier = "PremiumColumn"
+let kMailColumnIdentifier = "MailColumn"

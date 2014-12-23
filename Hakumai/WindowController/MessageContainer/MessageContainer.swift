@@ -85,6 +85,24 @@ class MessageContainer {
         return content
     }
     
+    func messagesWithUserId(userId: String) -> [Message] {
+        var userMessages = [Message]()
+        
+        objc_sync_enter(self)
+        for message in sourceMessages {
+            if message.messageType != .Chat {
+                continue
+            }
+            
+            if message.chat?.userId == userId {
+                userMessages.append(message)
+            }
+        }
+        objc_sync_exit(self)
+        
+        return userMessages
+    }
+    
     func removeAll() {
         objc_sync_enter(self)
         self.sourceMessages.removeAll(keepCapacity: false)

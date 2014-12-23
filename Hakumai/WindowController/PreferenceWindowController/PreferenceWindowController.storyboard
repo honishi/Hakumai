@@ -163,7 +163,7 @@
                 <customObject id="iZj-NB-vz6" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <userDefaultsController representsSharedInstance="YES" id="Ex8-3g-KNv"/>
             </objects>
-            <point key="canvasLocation" x="615" y="835"/>
+            <point key="canvasLocation" x="615" y="735"/>
         </scene>
         <!--Mute View Controller-->
         <scene sceneID="NGa-AP-Lnp">
@@ -336,7 +336,7 @@
                 </arrayController>
                 <userDefaultsController id="uvJ-SI-XeK"/>
             </objects>
-            <point key="canvasLocation" x="1131" y="827"/>
+            <point key="canvasLocation" x="1120" y="710"/>
         </scene>
     </scenes>
     <resources>
