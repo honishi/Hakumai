@@ -95,9 +95,12 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     
     // MARK: Configure Views
     func buildViews() {
-        self.communityImageView.layer?.borderWidth = 1.0
-        self.communityImageView.layer?.masksToBounds = true
-        self.communityImageView.layer?.borderColor = NSColor.blackColor().CGColor
+        // use async to properly render border line. if not async, the line sometimes disappears
+        dispatch_async(dispatch_get_main_queue(), {
+            self.communityImageView.layer?.borderWidth = 0.5
+            self.communityImageView.layer?.masksToBounds = true
+            self.communityImageView.layer?.borderColor = NSColor.blackColor().CGColor
+        })
     }
     
     func setupTableView() {
