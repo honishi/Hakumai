@@ -8,30 +8,59 @@
 
 import Foundation
 import AppKit
+import XCGLogger
 
 // constant value for storyboard
 private let kStoryboardNamePreferenceWindowController = "PreferenceWindowController"
 private let kStoryboardIdMuteViewController = "MuteViewController"
+private let kStoryboardIdMuteAddViewController = "MuteAddViewController"
 
 class MuteViewController: NSViewController {
     // MARK: - Properties
     @IBOutlet var muteUserIdsArrayController: NSArrayController!
+    @IBOutlet var muteWordsArrayController: NSArrayController!
+    
+    private let log = XCGLogger.defaultInstance()
     
     // MARK: - Object Lifecycle
     class var sharedInstance : MuteViewController {
         struct Static {
-            static let instance : MuteViewController = MuteViewController.generateInstance()!
+            static let instance : MuteViewController = MuteViewController.generateInstance()
         }
         return Static.instance
     }
     
-    class func generateInstance() -> MuteViewController? {
-        let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
-        return storyboard?.instantiateControllerWithIdentifier(kStoryboardIdMuteViewController) as? MuteViewController
+    class func generateInstance() -> MuteViewController {
+        let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)!
+        return storyboard.instantiateControllerWithIdentifier(kStoryboardIdMuteViewController) as MuteViewController
     }
     
-    // MARK: - dummy
-    @IBAction func addDummyMuteUserId(sender: AnyObject) {
-        self.muteUserIdsArrayController.addObject("123")
+    // MARK: - Button Handlers
+    @IBAction func addMuteUserId(sender: AnyObject) {
+        self.addMute({ (muteStringValue: String) -> Void in
+            self.muteUserIdsArrayController.addObject(["UserId": muteStringValue])
+        })
+    }
+    
+    @IBAction func addMuteWord(sender: AnyObject) {
+        self.addMute({ (muteStringValue: String) -> Void in
+            self.muteWordsArrayController.addObject(["Word": muteStringValue])
+        })
+    }
+    
+    func addMute(completion: String -> Void) {
+        let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)!
+        let muteAddViewController = storyboard.instantiateControllerWithIdentifier(kStoryboardIdMuteAddViewController) as MuteAddViewController
+        
+        muteAddViewController.completion = { (cancelled: Bool, muteStringValue: String?) -> Void in
+            if !cancelled {
+                completion(muteStringValue!)
+            }
+            
+            self.dismissViewController(muteAddViewController)
+            // TODO: deinit in muteAddViewController is not called after this completion
+        }
+        
+        self.presentViewControllerAsSheet(muteAddViewController)
     }
 }

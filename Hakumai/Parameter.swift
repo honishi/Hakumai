@@ -14,4 +14,6 @@ struct Parameters {
     static let AlwaysOnTop = "AlwaysOnTop"
     static let ShowIfseetnoCommands = "ShowHbIfseetnoCommands"
     static let CommentAnonymously = "CommentAnonymously"
+    static let EnableMuteUserIds = "EnableMuteUserIds"
+    static let EnableMuteWords = "EnableMuteWords"
 }

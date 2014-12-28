@@ -23,7 +23,7 @@ class GeneralViewController: NSViewController {
     }
 
     class func generateInstance() -> GeneralViewController? {
-        let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
-        return storyboard?.instantiateControllerWithIdentifier(kStoryboardIdGeneralViewController) as? GeneralViewController
+        let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)!
+        return storyboard.instantiateControllerWithIdentifier(kStoryboardIdGeneralViewController) as GeneralViewController
     }
 }

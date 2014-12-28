@@ -47,6 +47,8 @@
 		DB55AC691A3394EE00CFAD99 /* PremiumTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB55AC671A33908300CFAD99 /* PremiumTableCellView.swift */; };
 		DB682D421A36E6AE00499C72 /* Parameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB682D411A36E6AE00499C72 /* Parameter.swift */; };
 		DB682D451A36E73D00499C72 /* Parameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB682D411A36E6AE00499C72 /* Parameter.swift */; };
+		DB73A38C1A4F43F6008423D0 /* MuteAddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB73A38B1A4F43F6008423D0 /* MuteAddViewController.swift */; };
+		DB73A38D1A4F43F6008423D0 /* MuteAddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB73A38B1A4F43F6008423D0 /* MuteAddViewController.swift */; };
 		DB7B3DDC1A23B35300205470 /* ColoredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B3DDB1A23B35300205470 /* ColoredView.swift */; };
 		DB7B3DDF1A23B4D700205470 /* ColoredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B3DDB1A23B35300205470 /* ColoredView.swift */; };
 		DB7B3DE21A242D7B00205470 /* ScoreTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB7B3DE11A242D7B00205470 /* ScoreTableCellView.xib */; };
@@ -220,6 +222,7 @@
 		DB55AC631A33905200CFAD99 /* PremiumTableCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PremiumTableCellView.xib; sourceTree = "<group>"; };
 		DB55AC671A33908300CFAD99 /* PremiumTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PremiumTableCellView.swift; sourceTree = "<group>"; };
 		DB682D411A36E6AE00499C72 /* Parameter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Parameter.swift; sourceTree = "<group>"; };
+		DB73A38B1A4F43F6008423D0 /* MuteAddViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MuteAddViewController.swift; sourceTree = "<group>"; };
 		DB7B3DDB1A23B35300205470 /* ColoredView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColoredView.swift; sourceTree = "<group>"; };
 		DB7B3DE11A242D7B00205470 /* ScoreTableCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ScoreTableCellView.xib; sourceTree = "<group>"; };
 		DB7B3DE41A2434FB00205470 /* ScoreTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScoreTableCellView.swift; sourceTree = "<group>"; };
@@ -601,6 +604,7 @@
 				DB9EFC771A3E9EB10087D302 /* PreferenceWindow.swift */,
 				DB0E10631A39B6C200A10E00 /* GeneralViewController.swift */,
 				DB0E10671A39B6DD00A10E00 /* MuteViewController.swift */,
+				DB73A38B1A4F43F6008423D0 /* MuteAddViewController.swift */,
 			);
 			path = PreferenceWindowController;
 			sourceTree = "<group>";
@@ -786,6 +790,7 @@
 				DBAAA73B1A0F592300981004 /* SSKeychainQuery.m in Sources */,
 				DB2AE0C41A0EE2FD00B1CE4D /* AppDelegate.swift in Sources */,
 				DBFA88821A1BC8C9005349AD /* Enum.swift in Sources */,
+				DB73A38C1A4F43F6008423D0 /* MuteAddViewController.swift in Sources */,
 				DBFA887B1A1BC25A005349AD /* Chat.swift in Sources */,
 				DB2AE1121A0F2BAB00B1CE4D /* FMDatabaseAdditions.m in Sources */,
 				DB9EFC741A3E974A0087D302 /* NSWindowExtension.swift in Sources */,
@@ -806,6 +811,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DB080B851A17CA0100896228 /* CookieUtilityTests.swift in Sources */,
+				DB73A38D1A4F43F6008423D0 /* MuteAddViewController.swift in Sources */,
 				DBFA88861A1BC925005349AD /* MessageServer.swift in Sources */,
 				DBFA887C1A1BC25A005349AD /* Chat.swift in Sources */,
 				DBB473071A3590BE002C797E /* CharacterExtension.swift in Sources */,

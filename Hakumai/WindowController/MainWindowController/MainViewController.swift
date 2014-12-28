@@ -334,7 +334,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         self.commentTextField.stringValue = (inValidHistoryRange ? self.commentHistory[self.commentHistoryIndex!] : "")
         
         // selectText() should be called in next run loop, http://stackoverflow.com/a/2196751
-        dispatch_after(0, dispatch_get_main_queue()) { () -> Void in
+        dispatch_after(0, dispatch_get_main_queue()) {
             self.commentTextField.selectText(self)
         }
     }

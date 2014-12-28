@@ -26,14 +26,14 @@ class PreferenceWindowController: NSWindowController {
     // MARK: Properties for Singleton
     class var sharedInstance : PreferenceWindowController {
         struct Static {
-            static let instance : PreferenceWindowController = PreferenceWindowController.generateInstance()!
+            static let instance : PreferenceWindowController = PreferenceWindowController.generateInstance()
         }
         return Static.instance
     }
     
-    class func generateInstance() -> PreferenceWindowController? {
-        let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
-        return storyboard?.instantiateControllerWithIdentifier(kStoryboardIdPreferenceWindowController) as? PreferenceWindowController
+    class func generateInstance() -> PreferenceWindowController {
+        let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)!
+        return storyboard.instantiateControllerWithIdentifier(kStoryboardIdPreferenceWindowController) as PreferenceWindowController
     }
 
     // MARK: - Object Lifecycle

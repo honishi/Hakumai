@@ -38,7 +38,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let defaults: [String: AnyObject] = [
             Parameters.AlwaysOnTop: false,
             Parameters.ShowIfseetnoCommands: false,
-            Parameters.CommentAnonymously: true]
+            Parameters.CommentAnonymously: true,
+            Parameters.EnableMuteUserIds: false,
+            Parameters.EnableMuteWords: false]
 
         NSUserDefaults.standardUserDefaults().registerDefaults(defaults)
     }

@@ -174,7 +174,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xym-eD-8PD">
-                                <rect key="frame" x="20" y="49" width="190" height="231"/>
+                                <rect key="frame" x="20" y="49" width="190" height="208"/>
                                 <clipView key="contentView" misplaced="YES" id="pg2-CQ-gXZ">
                                     <rect key="frame" x="1" y="0.0" width="238" height="134"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -199,10 +199,13 @@
                                                     </textFieldCell>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <connections>
-                                                        <binding destination="vdg-tQ-sRo" name="value" keyPath="arrangedObjects.UserId" id="kfZ-Qe-ih3"/>
+                                                        <binding destination="vdg-tQ-sRo" name="value" keyPath="arrangedObjects.UserId" id="PsH-60-qMO"/>
                                                     </connections>
                                                 </tableColumn>
                                             </tableColumns>
+                                            <connections>
+                                                <binding destination="uvJ-SI-XeK" name="enabled" keyPath="values.EnableMuteUserIds" id="Cyg-dL-gSd"/>
+                                            </connections>
                                         </tableView>
                                     </subviews>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -227,7 +230,8 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="add:" target="vdg-tQ-sRo" id="qGH-7e-Osy"/>
+                                    <action selector="addMuteUserId:" target="C7H-PX-KIj" id="GR4-Xg-ZIE"/>
+                                    <binding destination="uvJ-SI-XeK" name="enabled" keyPath="values.EnableMuteUserIds" id="PVS-sb-ehi"/>
                                 </connections>
                             </button>
                             <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uVC-jM-fSS">
@@ -238,11 +242,19 @@
                                 </buttonCell>
                                 <connections>
                                     <action selector="remove:" target="vdg-tQ-sRo" id="XXJ-vj-yxU"/>
-                                    <binding destination="vdg-tQ-sRo" name="enabled" keyPath="canRemove" id="1WO-jw-vTu"/>
+                                    <binding destination="vdg-tQ-sRo" name="enabled2" keyPath="canRemove" previousBinding="DdY-ns-2Xf" id="EsI-67-gza">
+                                        <dictionary key="options">
+                                            <integer key="NSMultipleValuesPlaceholder" value="-1"/>
+                                            <integer key="NSNoSelectionPlaceholder" value="-1"/>
+                                            <integer key="NSNotApplicablePlaceholder" value="-1"/>
+                                            <integer key="NSNullPlaceholder" value="-1"/>
+                                        </dictionary>
+                                    </binding>
+                                    <binding destination="uvJ-SI-XeK" name="enabled" keyPath="values.EnableMuteUserIds" id="DdY-ns-2Xf"/>
                                 </connections>
                             </button>
                             <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NrJ-uc-Arl">
-                                <rect key="frame" x="240" y="49" width="190" height="231"/>
+                                <rect key="frame" x="240" y="49" width="190" height="208"/>
                                 <clipView key="contentView" misplaced="YES" id="eF0-GR-RiB">
                                     <rect key="frame" x="1" y="0.0" width="238" height="134"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -271,6 +283,9 @@
                                                     </connections>
                                                 </tableColumn>
                                             </tableColumns>
+                                            <connections>
+                                                <binding destination="uvJ-SI-XeK" name="enabled" keyPath="values.EnableMuteWords" id="GTr-oe-QQd"/>
+                                            </connections>
                                         </tableView>
                                     </subviews>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -295,7 +310,8 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="add:" target="wEP-6P-JL7" id="G1w-2V-Yqb"/>
+                                    <action selector="addMuteWord:" target="C7H-PX-KIj" id="fFH-C8-rB8"/>
+                                    <binding destination="uvJ-SI-XeK" name="enabled" keyPath="values.EnableMuteWords" id="cL7-dW-5uU"/>
                                 </connections>
                             </button>
                             <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AnK-fP-Qbc">
@@ -306,13 +322,42 @@
                                 </buttonCell>
                                 <connections>
                                     <action selector="remove:" target="wEP-6P-JL7" id="gJf-og-LSr"/>
-                                    <binding destination="wEP-6P-JL7" name="enabled" keyPath="canRemove" id="ypk-Dw-X79"/>
+                                    <binding destination="wEP-6P-JL7" name="enabled2" keyPath="canRemove" previousBinding="zN1-5b-K77" id="VUm-By-i6M">
+                                        <dictionary key="options">
+                                            <integer key="NSMultipleValuesPlaceholder" value="-1"/>
+                                            <integer key="NSNoSelectionPlaceholder" value="-1"/>
+                                            <integer key="NSNotApplicablePlaceholder" value="-1"/>
+                                            <integer key="NSNullPlaceholder" value="-1"/>
+                                        </dictionary>
+                                    </binding>
+                                    <binding destination="uvJ-SI-XeK" name="enabled" keyPath="values.EnableMuteWords" id="zN1-5b-K77"/>
+                                </connections>
+                            </button>
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wjy-pZ-e10">
+                                <rect key="frame" x="18" y="264" width="180" height="18"/>
+                                <buttonCell key="cell" type="check" title="Enable Mute User Ids" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="2LF-VE-RQ9">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="uvJ-SI-XeK" name="value" keyPath="values.EnableMuteUserIds" id="iUC-65-Pln"/>
+                                </connections>
+                            </button>
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6fH-gd-O2m">
+                                <rect key="frame" x="238" y="264" width="180" height="18"/>
+                                <buttonCell key="cell" type="check" title="Enable Mute Words" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="t5h-zb-XRl">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="uvJ-SI-XeK" name="value" keyPath="values.EnableMuteWords" id="GJH-if-QqG"/>
                                 </connections>
                             </button>
                         </subviews>
                     </view>
                     <connections>
                         <outlet property="muteUserIdsArrayController" destination="vdg-tQ-sRo" id="pIZ-lW-liG"/>
+                        <outlet property="muteWordsArrayController" destination="wEP-6P-JL7" id="ilV-vn-RJh"/>
                     </connections>
                 </viewController>
                 <customObject id="pnd-jq-xlF" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -336,7 +381,67 @@
                 </arrayController>
                 <userDefaultsController id="uvJ-SI-XeK"/>
             </objects>
-            <point key="canvasLocation" x="1120" y="710"/>
+            <point key="canvasLocation" x="1182" y="710"/>
+        </scene>
+        <!--Mute Add View Controller-->
+        <scene sceneID="lX6-YY-HsO">
+            <objects>
+                <viewController storyboardIdentifier="MuteAddViewController" id="9lI-n8-548" customClass="MuteAddViewController" customModule="Hakumai" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="Z0I-2M-U0S">
+                        <rect key="frame" x="0.0" y="0.0" width="300" height="113"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6VM-az-ow4">
+                                <rect key="frame" x="18" y="76" width="200" height="17"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Enter Mute User Id / Word:" id="FlA-m3-CVz">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ldH-s4-3VX">
+                                <rect key="frame" x="20" y="46" width="260" height="22"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="68l-xU-phD">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                                <connections>
+                                    <action selector="detectedEnterInTextField:" target="9lI-n8-548" id="LhW-NP-lAf"/>
+                                    <binding destination="9lI-n8-548" name="value" keyPath="self.muteStringValue" id="0Zg-ra-aqa">
+                                        <dictionary key="options">
+                                            <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </textField>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Sgw-tq-0w5">
+                                <rect key="frame" x="200" y="19" width="80" height="19"/>
+                                <buttonCell key="cell" type="roundRect" title="Add" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="wrR-VC-jlF">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="cellTitle"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="addMute:" target="9lI-n8-548" id="hGr-Lv-coW"/>
+                                    <binding destination="9lI-n8-548" name="enabled" keyPath="self.muteStringValue.length" id="fwP-sR-fZJ"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2I5-fW-V6c">
+                                <rect key="frame" x="112" y="19" width="80" height="19"/>
+                                <buttonCell key="cell" type="roundRect" title="Cancel" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ZJi-lX-Khz">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="cellTitle"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="cancelAddMute:" target="9lI-n8-548" id="0lP-N7-1ru"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                    </view>
+                </viewController>
+                <customObject id="fvF-6F-IGF" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1182" y="987.5"/>
         </scene>
     </scenes>
     <resources>

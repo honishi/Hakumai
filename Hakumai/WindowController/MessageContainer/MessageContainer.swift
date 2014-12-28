@@ -201,7 +201,7 @@ class MessageContainer {
             // - exclusive to ui updates, so use main thread
             // - atomic to any other operation like append, count, calcurate and so on, so use objc_sync_enter/exit
             dispatch_async(dispatch_get_main_queue(), {
-                self.log.debug("started 2nd pass rebuilding filtered messages (crytical section)")
+                self.log.debug("started 2nd pass rebuilding filtered messages (critical section)")
                 
                 objc_sync_enter(self)
                 self.rebuildingFilteredMessages = true

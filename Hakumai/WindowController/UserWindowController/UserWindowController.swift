@@ -43,12 +43,12 @@ class UserWindowController: NSWindowController, NSWindowDelegate {
         log.debug("")
     }
     
-    class func generateInstanceWithDelegate(delegate: UserWindowControllerDelegate?, userId: String) -> UserWindowController? {
-        let storyboard = NSStoryboard(name: kStoryboardNameUserWindowController, bundle: nil)
-        let userWindowController = storyboard?.instantiateControllerWithIdentifier(kStoryboardIdUserWindowController) as? UserWindowController
+    class func generateInstanceWithDelegate(delegate: UserWindowControllerDelegate?, userId: String) -> UserWindowController {
+        let storyboard = NSStoryboard(name: kStoryboardNameUserWindowController, bundle: nil)!
+        let userWindowController = storyboard.instantiateControllerWithIdentifier(kStoryboardIdUserWindowController) as UserWindowController
         
-        userWindowController?.delegate = delegate
-        userWindowController?.userId = userId
+        userWindowController.delegate = delegate
+        userWindowController.userId = userId
         
         return userWindowController
     }

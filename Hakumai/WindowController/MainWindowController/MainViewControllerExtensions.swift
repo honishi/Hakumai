@@ -57,7 +57,7 @@ extension MainViewController {
     func updateStandardUserDefaults() {
         let delay = 2.0 * Double(NSEC_PER_SEC)
         let time  = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
-        dispatch_after(time, dispatch_get_main_queue()) { () -> Void in
+        dispatch_after(time, dispatch_get_main_queue()) {
             let d = NSUserDefaults.standardUserDefaults()
             let v = d.boolForKey(Parameters.ShowIfseetnoCommands)
             d.setBool(!v, forKey: Parameters.ShowIfseetnoCommands)
