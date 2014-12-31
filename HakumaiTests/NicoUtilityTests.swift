@@ -113,20 +113,20 @@ class NicoUtilityTests: XCTestCase {
         let data = self.dataForResource("community_user.html")
         var community = Community()
         
-//        NicoUtility.sharedInstance.extractUserCommunity(data, community: community)
-//        XCTAssert(community.title == "野田草履のからし高菜炎上", "")
-//        XCTAssert(community.level == 109, "")
-//        XCTAssert(community.thumbnailUrl!.absoluteString == "http://icon.nimg.jp/community/135/co1354854.jpg?1412118337", "")
+        NicoUtility.sharedInstance.extractUserCommunity(data, community: community)
+        XCTAssert(community.title == "野田草履のからし高菜炎上", "")
+        XCTAssert(community.level == 109, "")
+        XCTAssert(community.thumbnailUrl!.absoluteString == "http://icon.nimg.jp/community/135/co1354854.jpg?1412118337", "")
     }
     
     func testLoadCommunityChannel() {
         let data = self.dataForResource("community_channel.html")
         var community = Community()
         
-//        NicoUtility.sharedInstance.extractChannelCommunity(data, community: community)
-//        XCTAssert(community.title == "暗黒黙示録", "")
-//        XCTAssert(community.level == nil, "")
-//        XCTAssert(community.thumbnailUrl!.absoluteString == "http://icon.nimg.jp/channel/ch2590739.jpg?1411539979", "")
+        NicoUtility.sharedInstance.extractChannelCommunity(data, community: community)
+        XCTAssert(community.title == "暗黒黙示録", "")
+        XCTAssert(community.level == nil, "")
+        XCTAssert(community.thumbnailUrl!.absoluteString == "http://icon.nimg.jp/channel/ch2590739.jpg?1411539979", "")
     }
     
     func testCanOpenRoomPosition() {
@@ -171,7 +171,7 @@ class NicoUtilityTests: XCTestCase {
         // raw id case
         asyncExpectation = self.expectationWithDescription("asyncExpectation")
         
-        NicoUtility.sharedInstance.resolveUsername("79595", completion: { (userName) -> (Void) in
+        NicoUtility.sharedInstance.resolveUsername("79595", completion: { (userName) -> Void in
             // test: NSRunLoop.currentRunLoop().runUntilDate(NSDate(timeIntervalSinceNow: NSTimeInterval(5)))
             
             XCTAssert(userName == "honishi", "")

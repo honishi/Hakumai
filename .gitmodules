@@ -7,3 +7,6 @@
 [submodule "vendor/XCGLogger"]
 	path = vendor/XCGLogger
 	url = git@github.com:DaveWoodCom/XCGLogger.git
+[submodule "vendor/Ono"]
+	path = vendor/Ono
+	url = git@github.com:mattt/Ono.git

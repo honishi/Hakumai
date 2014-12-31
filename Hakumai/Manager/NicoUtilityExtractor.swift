@@ -14,8 +14,8 @@ import XCGLogger
 extension NicoUtility {
     // MARK: - General
     func isErrorResponse(xmlData: NSData) -> Bool {
-        var err: NSError?
-        let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &err)
+        var error: NSError?
+        let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &error)
         let rootElement = xmlDocument?.rootElement()
         
         let status = rootElement?.attributeForName("status")?.stringValue
@@ -35,8 +35,8 @@ extension NicoUtility {
     
     // MARK: - GetPlayerStatus
     func extractLive(xmlData: NSData) -> Live? {
-        var err: NSError?
-        let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &err)
+        var error: NSError?
+        let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &error)
         let rootElement = xmlDocument?.rootElement()
         
         let live = Live()
@@ -53,8 +53,8 @@ extension NicoUtility {
     }
     
     func extractUser(xmlData: NSData) -> User? {
-        var err: NSError?
-        let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &err)
+        var error: NSError?
+        let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &error)
         let rootElement = xmlDocument?.rootElement()
         
         let user = User()
@@ -70,8 +70,8 @@ extension NicoUtility {
     }
     
     func extractMessageServer(xmlData: NSData, user: User) -> MessageServer? {
-        var err: NSError?
-        let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &err)
+        var error: NSError?
+        let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &error)
         let rootElement = xmlDocument?.rootElement()
         
         let status = rootElement?.attributeForName("status")?.stringValue
@@ -143,10 +143,10 @@ extension NicoUtility {
     }
     
     // MARK: - Community
-    func extractUserCommunity(xmlData: NSData, community: Community) {
-        var err: NSError?
-        let xmlDocument = NSXMLDocument(data: xmlData, options: Int(NSXMLDocumentTidyXML), error: &err)
-        let rootElement = xmlDocument?.rootElement()
+    func extractUserCommunity(htmlData: NSData, community: Community) {
+        var error: NSError?
+        let htmlDocument = ONOXMLDocument.HTMLDocumentWithData(htmlData, error: &error)
+        let rootElement = htmlDocument?.rootElement
         
         if rootElement == nil {
             log.error("rootElement is nil")
@@ -154,57 +154,46 @@ extension NicoUtility {
         }
         
         let xpathTitle = "//*[@id=\"community_name\"]"
-        community.title = rootElement?.firstStringValueForXPathNode(xpathTitle)?.stringByRemovingPattern("\n")
+        community.title = rootElement?.firstChildWithXPath(xpathTitle)?.stringValue().stringByRemovingPattern("\n")
         
         let xpathLevel = "//*[@id=\"cbox_profile\"]/table/tr/td[1]/table/tr[1]/td[2]/strong[1]"
-        community.level = rootElement?.firstIntValueForXPathNode(xpathLevel)
+        community.level = rootElement?.firstChildWithXPath(xpathLevel)?.stringValue().toInt()
         
         let xpathThumbnailUrl = "//*[@id=\"cbox_profile\"]/table/tr/td[2]/p/img/@src"
-        if let thumbnailUrl = rootElement?.firstStringValueForXPathNode(xpathThumbnailUrl) {
+        if let thumbnailUrl = rootElement?.firstChildWithXPath(xpathThumbnailUrl)?.stringValue() {
             community.thumbnailUrl = NSURL(string: thumbnailUrl)
         }
-        
-        // test code
-        let node1 = rootElement?.firstStringValueForXPathNode("//*[@id=\"cbox_profile\"]/table/tr/td[2]/p/img/@src")
-        let node2 = rootElement?.firstStringValueForXPathNode("//*[@id=\"cbox_profile\"]/table/tr/td[2]/p/img")
-        let node3 = rootElement?.firstStringValueForXPathNode("//*[@id=\"cbox_profile\"]/table/tr/td[2]/p")
-        let node4 = rootElement?.firstStringValueForXPathNode("//*[@id=\"cbox_profile\"]/table/tr/td[2]")
-        let node5 = rootElement?.firstStringValueForXPathNode("//*[@id=\"cbox_profile\"]/table/tr/td[1]")
-        let node6 = rootElement?.firstStringValueForXPathNode("//*[@id=\"cbox_profile\"]/table/tr/td[2]")
-        let node7 = rootElement?.firstStringValueForXPathNode("//*[@id=\"cbox_profile\"]/table/tr")
     }
     
-    func extractChannelCommunity(xmlData: NSData, community: Community) {
-        var err: NSError?
-        let xmlDocument = NSXMLDocument(data: xmlData, options: Int(NSXMLDocumentTidyXML), error: &err)
-        let rootElement = xmlDocument?.rootElement()
+    func extractChannelCommunity(htmlData: NSData, community: Community) {
+        var error: NSError?
+        let htmlDocument = ONOXMLDocument.HTMLDocumentWithData(htmlData, error: &error)
+        let rootElement = htmlDocument?.rootElement
         
         if rootElement == nil {
             log.error("rootElement is nil")
             return
         }
         
-        // let xpathTitle = "//*[@id=\"head_cp_breadcrumb\"]/h1/a"
-        let xpathTitle = "//*/h1/a"
-        community.title = rootElement?.firstStringValueForXPathNode(xpathTitle)?.stringByRemovingPattern("\n")
+        let xpathTitle = "//*[@id=\"head_cp_breadcrumb\"]/h1/a"
+        community.title = rootElement?.firstChildWithXPath(xpathTitle)?.stringValue().stringByRemovingPattern("\n")
         
-        // //*[@id="cp_symbol"]/span/a/img
         let xpathThumbnailUrl = "//*[@id=\"cp_symbol\"]/span/a/img/@data-original"
-        if let thumbnailUrl = rootElement?.firstStringValueForXPathNode(xpathThumbnailUrl) {
+        if let thumbnailUrl = rootElement?.firstChildWithXPath(xpathThumbnailUrl)?.stringValue() {
             community.thumbnailUrl = NSURL(string: thumbnailUrl)
         }
     }
     
     // MARK: - Username
-    func extractUsername(xmlData: NSData) -> String? {
-        var err: NSError?
-        let xmlDocument = NSXMLDocument(data: xmlData, options: Int(NSXMLDocumentTidyXML|NSXMLDocumentTidyHTML), error: &err)
-        let rootElement = xmlDocument?.rootElement()
+    func extractUsername(htmlData: NSData) -> String? {
+        var error: NSError?
+        let htmlDocument = ONOXMLDocument.HTMLDocumentWithData(htmlData, error: &error)
+        let rootElement = htmlDocument?.rootElement
         
         // /html/body/div[3]/div[2]/h2/text() -> other's userpage
         // /html/body/div[4]/div[2]/h2/text() -> my userpage, contains '他のユーザーから見たあなたのプロフィールです。' box
-        let username = rootElement?.firstStringValueForXPathNode("/html/body/*/div[2]/h2")
-        let cleansed = username?.stringByRemovingPattern("(?:さん|)\n$")
+        let username = rootElement?.firstChildWithXPath("/html/body/*/div[2]/h2").stringValue()
+        let cleansed = username?.stringByRemovingPattern("(?:さん|)\\s*$")
         
         return cleansed
     }
@@ -218,8 +207,8 @@ extension NicoUtility {
     
     // MARK: - Heartbeat
     func extractHeartbeat(xmlData: NSData) -> Heartbeat? {
-        var err: NSError?
-        let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &err)
+        var error: NSError?
+        let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &error)
         let rootElement = xmlDocument?.rootElement()
         
         let heartbeat = Heartbeat()

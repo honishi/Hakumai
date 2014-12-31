@@ -34,6 +34,10 @@
 		DB2AE11B1A0F2D4C00B1CE4D /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DB2AE0F71A0EF18200B1CE4D /* libsqlite3.dylib */; };
 		DB346B9A1A54648100137639 /* community_channel.html in Resources */ = {isa = PBXBuildFile; fileRef = DB346B991A54648100137639 /* community_channel.html */; };
 		DB346B9C1A548C3B00137639 /* CommunityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB346B9B1A548C3B00137639 /* CommunityTests.swift */; };
+		DB346BA11A548FC600137639 /* ONOXMLDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = DB346BA01A548FC600137639 /* ONOXMLDocument.m */; };
+		DB346BA21A548FC600137639 /* ONOXMLDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = DB346BA01A548FC600137639 /* ONOXMLDocument.m */; };
+		DB346BA41A5491B400137639 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DB346BA31A5491B400137639 /* libxml2.dylib */; };
+		DB346BA51A54928A00137639 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DB346BA31A5491B400137639 /* libxml2.dylib */; };
 		DB414C071A4810A5008D2F40 /* UserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB414C061A4810A5008D2F40 /* UserViewController.swift */; };
 		DB414C091A481138008D2F40 /* UserWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB414C081A481138008D2F40 /* UserWindowController.swift */; };
 		DB414C0B1A4811C4008D2F40 /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB414C0A1A4811C4008D2F40 /* Global.swift */; };
@@ -222,6 +226,10 @@
 		DB2AE10F1A0F2BAB00B1CE4D /* FMResultSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FMResultSet.m; path = vendor/fmdb/src/fmdb/FMResultSet.m; sourceTree = "<group>"; };
 		DB346B991A54648100137639 /* community_channel.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = community_channel.html; sourceTree = "<group>"; };
 		DB346B9B1A548C3B00137639 /* CommunityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommunityTests.swift; sourceTree = "<group>"; };
+		DB346B9E1A548FC600137639 /* Ono.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Ono.h; path = vendor/Ono/Ono/Ono.h; sourceTree = "<group>"; };
+		DB346B9F1A548FC600137639 /* ONOXMLDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ONOXMLDocument.h; path = vendor/Ono/Ono/ONOXMLDocument.h; sourceTree = "<group>"; };
+		DB346BA01A548FC600137639 /* ONOXMLDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ONOXMLDocument.m; path = vendor/Ono/Ono/ONOXMLDocument.m; sourceTree = "<group>"; };
+		DB346BA31A5491B400137639 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
 		DB414C061A4810A5008D2F40 /* UserViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserViewController.swift; sourceTree = "<group>"; };
 		DB414C081A481138008D2F40 /* UserWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserWindowController.swift; sourceTree = "<group>"; };
 		DB414C0A1A4811C4008D2F40 /* Global.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
@@ -287,6 +295,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB346BA41A5491B400137639 /* libxml2.dylib in Frameworks */,
 				DB0FC12B1A262CF0000FADDD /* XCGLogger.framework in Frameworks */,
 				DBAAA7421A0F5FEF00981004 /* SystemConfiguration.framework in Frameworks */,
 				DBAAA73E1A0F594700981004 /* Security.framework in Frameworks */,
@@ -298,6 +307,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB346BA51A54928A00137639 /* libxml2.dylib in Frameworks */,
 				DBFA88791A1BA3B5005349AD /* XCGLogger.framework in Frameworks */,
 				DB2AE11B1A0F2D4C00B1CE4D /* libsqlite3.dylib in Frameworks */,
 			);
@@ -336,6 +346,7 @@
 		DB2AE0B51A0EE2FD00B1CE4D = {
 			isa = PBXGroup;
 			children = (
+				DB346BA31A5491B400137639 /* libxml2.dylib */,
 				DB2AE0C01A0EE2FD00B1CE4D /* Hakumai */,
 				DB2AE1011A0F29BA00B1CE4D /* frameworks */,
 				DB2AE0EF1A0EECD300B1CE4D /* vendor */,
@@ -406,6 +417,7 @@
 				DBFA886A1A1BA353005349AD /* XCGLogger.xcodeproj */,
 				DBAAA7341A0F58E700981004 /* SSKeychain */,
 				DB2AE1021A0F2B7C00B1CE4D /* FMDB */,
+				DB346B9D1A548F8400137639 /* Ono */,
 			);
 			name = vendor;
 			sourceTree = "<group>";
@@ -443,6 +455,16 @@
 			children = (
 			);
 			path = Common;
+			sourceTree = "<group>";
+		};
+		DB346B9D1A548F8400137639 /* Ono */ = {
+			isa = PBXGroup;
+			children = (
+				DB346B9E1A548FC600137639 /* Ono.h */,
+				DB346B9F1A548FC600137639 /* ONOXMLDocument.h */,
+				DB346BA01A548FC600137639 /* ONOXMLDocument.m */,
+			);
+			name = Ono;
 			sourceTree = "<group>";
 		};
 		DB414C031A48106B008D2F40 /* UserWindowController */ = {
@@ -784,6 +806,7 @@
 				DB80CA871A2575A0002636E0 /* MainViewControllerExtensions.swift in Sources */,
 				DB1E32C91A2CC85C00CD874A /* UserIdTableCellView.swift in Sources */,
 				DB2AE1181A0F2BAB00B1CE4D /* FMResultSet.m in Sources */,
+				DB346BA11A548FC600137639 /* ONOXMLDocument.m in Sources */,
 				DB682D421A36E6AE00499C72 /* Parameter.swift in Sources */,
 				DBB473001A358FFC002C797E /* CharacterExtension.swift in Sources */,
 				DB414C091A481138008D2F40 /* UserWindowController.swift in Sources */,
@@ -842,6 +865,7 @@
 				DB52B0AE1A2102C700E78C6A /* User.swift in Sources */,
 				DBFA888C1A1C9A56005349AD /* Live.swift in Sources */,
 				DB2AE0D71A0EE2FD00B1CE4D /* HakumaiTests.swift in Sources */,
+				DB346BA21A548FC600137639 /* ONOXMLDocument.m in Sources */,
 				DB7B3DDF1A23B4D700205470 /* ColoredView.swift in Sources */,
 				DBE73ECA1A1A1B6A00A8BCA9 /* MainViewControllerTests.swift in Sources */,
 				DB414C0C1A4814EF008D2F40 /* UserWindowController.swift in Sources */,
@@ -942,6 +966,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SDKROOT)/usr/include/libxml2\"",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -979,6 +1008,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SDKROOT)/usr/include/libxml2\"",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
