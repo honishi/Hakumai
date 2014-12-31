@@ -143,9 +143,9 @@ extension NicoUtility {
     }
     
     // MARK: - Community
-    func extractCommunity(xmlData: NSData, community: Community) {
+    func extractUserCommunity(xmlData: NSData, community: Community) {
         var err: NSError?
-        let xmlDocument = NSXMLDocument(data: xmlData, options: Int(NSXMLDocumentTidyHTML), error: &err)
+        let xmlDocument = NSXMLDocument(data: xmlData, options: Int(NSXMLDocumentTidyXML), error: &err)
         let rootElement = xmlDocument?.rootElement()
         
         if rootElement == nil {
@@ -163,12 +163,42 @@ extension NicoUtility {
         if let thumbnailUrl = rootElement?.firstStringValueForXPathNode(xpathThumbnailUrl) {
             community.thumbnailUrl = NSURL(string: thumbnailUrl)
         }
+        
+        // test code
+        let node1 = rootElement?.firstStringValueForXPathNode("//*[@id=\"cbox_profile\"]/table/tr/td[2]/p/img/@src")
+        let node2 = rootElement?.firstStringValueForXPathNode("//*[@id=\"cbox_profile\"]/table/tr/td[2]/p/img")
+        let node3 = rootElement?.firstStringValueForXPathNode("//*[@id=\"cbox_profile\"]/table/tr/td[2]/p")
+        let node4 = rootElement?.firstStringValueForXPathNode("//*[@id=\"cbox_profile\"]/table/tr/td[2]")
+        let node5 = rootElement?.firstStringValueForXPathNode("//*[@id=\"cbox_profile\"]/table/tr/td[1]")
+        let node6 = rootElement?.firstStringValueForXPathNode("//*[@id=\"cbox_profile\"]/table/tr/td[2]")
+        let node7 = rootElement?.firstStringValueForXPathNode("//*[@id=\"cbox_profile\"]/table/tr")
+    }
+    
+    func extractChannelCommunity(xmlData: NSData, community: Community) {
+        var err: NSError?
+        let xmlDocument = NSXMLDocument(data: xmlData, options: Int(NSXMLDocumentTidyXML), error: &err)
+        let rootElement = xmlDocument?.rootElement()
+        
+        if rootElement == nil {
+            log.error("rootElement is nil")
+            return
+        }
+        
+        // let xpathTitle = "//*[@id=\"head_cp_breadcrumb\"]/h1/a"
+        let xpathTitle = "//*/h1/a"
+        community.title = rootElement?.firstStringValueForXPathNode(xpathTitle)?.stringByRemovingPattern("\n")
+        
+        // //*[@id="cp_symbol"]/span/a/img
+        let xpathThumbnailUrl = "//*[@id=\"cp_symbol\"]/span/a/img/@data-original"
+        if let thumbnailUrl = rootElement?.firstStringValueForXPathNode(xpathThumbnailUrl) {
+            community.thumbnailUrl = NSURL(string: thumbnailUrl)
+        }
     }
     
     // MARK: - Username
     func extractUsername(xmlData: NSData) -> String? {
         var err: NSError?
-        let xmlDocument = NSXMLDocument(data: xmlData, options: Int(NSXMLDocumentTidyHTML), error: &err)
+        let xmlDocument = NSXMLDocument(data: xmlData, options: Int(NSXMLDocumentTidyXML|NSXMLDocumentTidyHTML), error: &err)
         let rootElement = xmlDocument?.rootElement()
         
         // /html/body/div[3]/div[2]/h2/text() -> other's userpage

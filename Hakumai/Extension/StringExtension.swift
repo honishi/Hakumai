@@ -39,6 +39,10 @@ extension String {
         return substring
     }
     
+    func hasRegexpPattern(pattern: String) -> Bool {
+        return (self.extractRegexpPattern("(" + pattern + ")") != nil)
+    }
+    
     func stringByRemovingPattern(pattern: String) -> String {
         let regexp = NSRegularExpression(pattern: pattern, options: nil, error: nil)!
         let removed = regexp.stringByReplacingMatchesInString(self, options: nil, range: NSMakeRange(0, self.utf16Count), withTemplate: "")

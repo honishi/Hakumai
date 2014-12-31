@@ -41,7 +41,8 @@ private let kHeartbeatUrl = "http://live.nicovideo.jp/api/heartbeat"
 private let kNgScoringUrl:String = "http://watch.live.nicovideo.jp/api/ngscoring"
 
 // urls for scraping
-private let kCommunityUrl = "http://com.nicovideo.jp/community/"
+private let kCommunityUrlUser = "http://com.nicovideo.jp/community/"
+private let kCommunityUrlChannel = "http://ch.nicovideo.jp/"
 private let kUserUrl = "http://www.nicovideo.jp/user/"
 
 // intervals
@@ -307,7 +308,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     
     // MARK: Community
     private func loadCommunity(community: Community, completion: ((Bool) -> Void)) {
-        func httpCompletion (response: NSURLResponse!, data: NSData!, connectionError: NSError!) {
+        func httpCompletion(response: NSURLResponse!, data: NSData!, connectionError: NSError!) {
             if connectionError != nil {
                 log.error("error in cookied async request")
                 completion(false)
@@ -323,12 +324,18 @@ class NicoUtility : NSObject, RoomListenerDelegate {
                 return
             }
             
-            self.extractCommunity(data, community: community)
+            if community.isChannel() == true {
+                self.extractChannelCommunity(data, community: community)
+            }
+            else {
+                self.extractUserCommunity(data, community: community)
+            }
             
             completion(true)
         }
         
-        self.cookiedAsyncRequest("GET", url: kCommunityUrl + community.community!, parameters: nil, completion: httpCompletion)
+        let url = (community.isChannel() == true ? kCommunityUrlChannel : kCommunityUrlUser) + community.community!
+        self.cookiedAsyncRequest("GET", url: url, parameters: nil, completion: httpCompletion)
     }
     
     // MARK: Message Server Functions
@@ -374,7 +381,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
 
     // MARK: (Message Server Utility)
     func deriveMessageServers(originServer: MessageServer) -> [MessageServer] {
-        if originServer.isOfficial() == true {
+        if originServer.isChannel() == true {
             // TODO: not yet supported
             return [originServer]
         }
@@ -398,7 +405,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     func deriveMessageServer(originServer: MessageServer, distance: Int) -> MessageServer? {
-        if originServer.isOfficial() == true {
+        if originServer.isChannel() == true {
             // TODO: not yet supported
             return nil
         }

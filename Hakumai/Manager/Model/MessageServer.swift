@@ -8,6 +8,9 @@
 
 import Foundation
 
+private let kRegExpPatternHostUser = "msg\\d+.live.nicovideo.jp"
+private let kRegExpPatternHostChannel = "omsg\\d+.live.nicovideo.jp"
+
 private let kMessageServerNumberFirst = 101
 private let kMessageServerNumberLast = 104
 private let kMessageServerPortOfficialFirst = 2815
@@ -40,8 +43,12 @@ class MessageServer: Printable {
     }
 
     // MARK: - Public Functions
-    func isOfficial() -> Bool {
-        // TODO:
+    func isChannel() -> Bool {
+        if self.address.hasRegexpPattern(kRegExpPatternHostChannel) {
+            return true
+        }
+        
+        // skip to examine kRegExpPatternHostUser, default live type is 'user'
         return false
     }
     

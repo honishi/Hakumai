@@ -37,6 +37,11 @@ class StringExtensionTests: XCTestCase {
          */
     }
     
+    func testHasRegexpPattern() {
+        XCTAssert("abc".hasRegexpPattern("b") == true, "")
+        XCTAssert("abc".hasRegexpPattern("1") == false, "")
+    }
+    
     func testStringByRemovingPattern() {
         var removed: String
         

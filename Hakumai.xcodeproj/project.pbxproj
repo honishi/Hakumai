@@ -32,6 +32,8 @@
 		DB2AE1181A0F2BAB00B1CE4D /* FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE10F1A0F2BAB00B1CE4D /* FMResultSet.m */; };
 		DB2AE11A1A0F2C8200B1CE4D /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DB2AE0F71A0EF18200B1CE4D /* libsqlite3.dylib */; };
 		DB2AE11B1A0F2D4C00B1CE4D /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DB2AE0F71A0EF18200B1CE4D /* libsqlite3.dylib */; };
+		DB346B9A1A54648100137639 /* community_channel.html in Resources */ = {isa = PBXBuildFile; fileRef = DB346B991A54648100137639 /* community_channel.html */; };
+		DB346B9C1A548C3B00137639 /* CommunityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB346B9B1A548C3B00137639 /* CommunityTests.swift */; };
 		DB414C071A4810A5008D2F40 /* UserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB414C061A4810A5008D2F40 /* UserViewController.swift */; };
 		DB414C091A481138008D2F40 /* UserWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB414C081A481138008D2F40 /* UserWindowController.swift */; };
 		DB414C0B1A4811C4008D2F40 /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB414C0A1A4811C4008D2F40 /* Global.swift */; };
@@ -122,7 +124,7 @@
 		DBFA88891A1BCF77005349AD /* MessageServerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA88871A1BCF77005349AD /* MessageServerTests.swift */; };
 		DBFA888B1A1C9A56005349AD /* Live.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA888A1A1C9A56005349AD /* Live.swift */; };
 		DBFA888C1A1C9A56005349AD /* Live.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA888A1A1C9A56005349AD /* Live.swift */; };
-		DBFA88911A1CAE85005349AD /* community.html in Resources */ = {isa = PBXBuildFile; fileRef = DBFA88901A1CAE85005349AD /* community.html */; };
+		DBFA88911A1CAE85005349AD /* community_user.html in Resources */ = {isa = PBXBuildFile; fileRef = DBFA88901A1CAE85005349AD /* community_user.html */; };
 		DBFB81511A36B52E00294934 /* PreferenceWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB81501A36B52E00294934 /* PreferenceWindowController.swift */; };
 /* End PBXBuildFile section */
 
@@ -218,6 +220,8 @@
 		DB2AE10D1A0F2BAB00B1CE4D /* FMDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FMDB.h; path = vendor/fmdb/src/fmdb/FMDB.h; sourceTree = "<group>"; };
 		DB2AE10E1A0F2BAB00B1CE4D /* FMResultSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FMResultSet.h; path = vendor/fmdb/src/fmdb/FMResultSet.h; sourceTree = "<group>"; };
 		DB2AE10F1A0F2BAB00B1CE4D /* FMResultSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FMResultSet.m; path = vendor/fmdb/src/fmdb/FMResultSet.m; sourceTree = "<group>"; };
+		DB346B991A54648100137639 /* community_channel.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = community_channel.html; sourceTree = "<group>"; };
+		DB346B9B1A548C3B00137639 /* CommunityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommunityTests.swift; sourceTree = "<group>"; };
 		DB414C061A4810A5008D2F40 /* UserViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserViewController.swift; sourceTree = "<group>"; };
 		DB414C081A481138008D2F40 /* UserWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserWindowController.swift; sourceTree = "<group>"; };
 		DB414C0A1A4811C4008D2F40 /* Global.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
@@ -274,7 +278,7 @@
 		DBFA88841A1BC925005349AD /* MessageServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageServer.swift; sourceTree = "<group>"; };
 		DBFA88871A1BCF77005349AD /* MessageServerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageServerTests.swift; sourceTree = "<group>"; };
 		DBFA888A1A1C9A56005349AD /* Live.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Live.swift; sourceTree = "<group>"; };
-		DBFA88901A1CAE85005349AD /* community.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = community.html; sourceTree = "<group>"; };
+		DBFA88901A1CAE85005349AD /* community_user.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = community_user.html; sourceTree = "<group>"; };
 		DBFB81501A36B52E00294934 /* PreferenceWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferenceWindowController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -496,6 +500,7 @@
 		DBA414CF1A1A174500E0CAD3 /* NicoManager */ = {
 			isa = PBXGroup;
 			children = (
+				DB346B9B1A548C3B00137639 /* CommunityTests.swift */,
 				DBFA88871A1BCF77005349AD /* MessageServerTests.swift */,
 				DB080B841A17CA0100896228 /* CookieUtilityTests.swift */,
 				DB0F0ECC1A16441D00F8BDC5 /* NicoUtilityTests.swift */,
@@ -595,7 +600,8 @@
 		DBFA88921A1CAE8B005349AD /* sample */ = {
 			isa = PBXGroup;
 			children = (
-				DBFA88901A1CAE85005349AD /* community.html */,
+				DBFA88901A1CAE85005349AD /* community_user.html */,
+				DB346B991A54648100137639 /* community_channel.html */,
 				DB1E32BE1A2B95C600CD874A /* user.html */,
 				DB1E32C21A2BA53700CD874A /* user_me.html */,
 				DBB4730F1A35CE72002C797E /* heartbeat_ok.xml */,
@@ -749,8 +755,9 @@
 				DB7B3DE31A242D7B00205470 /* ScoreTableCellView.xib in Resources */,
 				DBB473121A35CE86002C797E /* heartbeat_fail.xml in Resources */,
 				DB7EB89D1A24AA3700C3BFB5 /* RoomPositionTableCellView.xib in Resources */,
-				DBFA88911A1CAE85005349AD /* community.html in Resources */,
+				DBFA88911A1CAE85005349AD /* community_user.html in Resources */,
 				DB1E32BF1A2B95C600CD874A /* user.html in Resources */,
+				DB346B9A1A54648100137639 /* community_channel.html in Resources */,
 				DB1E32C31A2BA53700CD874A /* user_me.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -825,6 +832,7 @@
 				DBFA88861A1BC925005349AD /* MessageServer.swift in Sources */,
 				DBFA887C1A1BC25A005349AD /* Chat.swift in Sources */,
 				DBB473071A3590BE002C797E /* CharacterExtension.swift in Sources */,
+				DB346B9C1A548C3B00137639 /* CommunityTests.swift in Sources */,
 				DBB473091A3590C5002C797E /* NSXMLElementExtension.swift in Sources */,
 				DB7B3DE61A2434FB00205470 /* ScoreTableCellView.swift in Sources */,
 				DB1CD2D01A2EE5BB00D3108A /* Message.swift in Sources */,
