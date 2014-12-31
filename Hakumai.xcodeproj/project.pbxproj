@@ -67,6 +67,10 @@
 		DB80CA831A256F9A002636E0 /* MessageContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB80CA811A256F9A002636E0 /* MessageContainer.swift */; };
 		DB80CA871A2575A0002636E0 /* MainViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB80CA861A2575A0002636E0 /* MainViewControllerExtensions.swift */; };
 		DB80CA881A2575A0002636E0 /* MainViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB80CA861A2575A0002636E0 /* MainViewControllerExtensions.swift */; };
+		DB8E71B51A544A5E00C6E696 /* NicoUtilityExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8E71B41A544A5E00C6E696 /* NicoUtilityExtractor.swift */; };
+		DB8E71B61A544A5E00C6E696 /* NicoUtilityExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8E71B41A544A5E00C6E696 /* NicoUtilityExtractor.swift */; };
+		DB8E71BA1A544D7B00C6E696 /* NicoUtilityHttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8E71B91A544D7B00C6E696 /* NicoUtilityHttpClient.swift */; };
+		DB8E71BB1A544D7B00C6E696 /* NicoUtilityHttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8E71B91A544D7B00C6E696 /* NicoUtilityHttpClient.swift */; };
 		DB9EFC741A3E974A0087D302 /* NSWindowExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9EFC731A3E974A0087D302 /* NSWindowExtension.swift */; };
 		DB9EFC781A3E9EB10087D302 /* PreferenceWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9EFC771A3E9EB10087D302 /* PreferenceWindow.swift */; };
 		DBA414C61A188A7400E0CAD3 /* RoomListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA414C51A188A7400E0CAD3 /* RoomListener.swift */; };
@@ -232,6 +236,8 @@
 		DB7F21AF1A210017008D17E0 /* Community.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Community.swift; sourceTree = "<group>"; };
 		DB80CA811A256F9A002636E0 /* MessageContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageContainer.swift; sourceTree = "<group>"; };
 		DB80CA861A2575A0002636E0 /* MainViewControllerExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewControllerExtensions.swift; sourceTree = "<group>"; };
+		DB8E71B41A544A5E00C6E696 /* NicoUtilityExtractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicoUtilityExtractor.swift; sourceTree = "<group>"; };
+		DB8E71B91A544D7B00C6E696 /* NicoUtilityHttpClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicoUtilityHttpClient.swift; sourceTree = "<group>"; };
 		DB9EFC731A3E974A0087D302 /* NSWindowExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSWindowExtension.swift; sourceTree = "<group>"; };
 		DB9EFC771A3E9EB10087D302 /* PreferenceWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferenceWindow.swift; sourceTree = "<group>"; };
 		DBA414C51A188A7400E0CAD3 /* RoomListener.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomListener.swift; sourceTree = "<group>"; };
@@ -468,6 +474,8 @@
 				DB0ED64E1A20B07E007E9318 /* Cookie */,
 				DBFA887D1A1BC264005349AD /* Model */,
 				DBAAA7501A0FDA4500981004 /* NicoUtility.swift */,
+				DB8E71B41A544A5E00C6E696 /* NicoUtilityExtractor.swift */,
+				DB8E71B91A544D7B00C6E696 /* NicoUtilityHttpClient.swift */,
 				DBA414C51A188A7400E0CAD3 /* RoomListener.swift */,
 			);
 			path = Manager;
@@ -776,6 +784,7 @@
 				DB7B3DE81A246EE200205470 /* UIHelper.swift in Sources */,
 				DB2AE1141A0F2BAB00B1CE4D /* FMDatabasePool.m in Sources */,
 				DBA414C61A188A7400E0CAD3 /* RoomListener.swift in Sources */,
+				DB8E71B51A544A5E00C6E696 /* NicoUtilityExtractor.swift in Sources */,
 				DBD65C1B1A2E0C6600B84C97 /* LayeredClipView.swift in Sources */,
 				DBFA88851A1BC925005349AD /* MessageServer.swift in Sources */,
 				DBAAA7321A0F43BB00981004 /* CookieUtility.swift in Sources */,
@@ -788,6 +797,7 @@
 				DBB4730B1A35951C002C797E /* Heartbeat.swift in Sources */,
 				DBFB81511A36B52E00294934 /* PreferenceWindowController.swift in Sources */,
 				DBAAA73B1A0F592300981004 /* SSKeychainQuery.m in Sources */,
+				DB8E71BA1A544D7B00C6E696 /* NicoUtilityHttpClient.swift in Sources */,
 				DB2AE0C41A0EE2FD00B1CE4D /* AppDelegate.swift in Sources */,
 				DBFA88821A1BC8C9005349AD /* Enum.swift in Sources */,
 				DB73A38C1A4F43F6008423D0 /* MuteAddViewController.swift in Sources */,
@@ -832,10 +842,12 @@
 				DB80CA881A2575A0002636E0 /* MainViewControllerExtensions.swift in Sources */,
 				DB0F0ECD1A16441D00F8BDC5 /* NicoUtilityTests.swift in Sources */,
 				DB682D451A36E73D00499C72 /* Parameter.swift in Sources */,
+				DB8E71BB1A544D7B00C6E696 /* NicoUtilityHttpClient.swift in Sources */,
 				DBCA40D71A30BC38006299A9 /* MenuDelegateTests.swift in Sources */,
 				DBB4730C1A359685002C797E /* Heartbeat.swift in Sources */,
 				DB52B0B31A21226900E78C6A /* ChatResult.swift in Sources */,
 				DB80CA831A256F9A002636E0 /* MessageContainer.swift in Sources */,
+				DB8E71B61A544A5E00C6E696 /* NicoUtilityExtractor.swift in Sources */,
 				DBAAA7521A0FDA4500981004 /* NicoUtility.swift in Sources */,
 				DBFA88831A1BC8C9005349AD /* Enum.swift in Sources */,
 				DBFA88801A1BC7FF005349AD /* Thread.swift in Sources */,

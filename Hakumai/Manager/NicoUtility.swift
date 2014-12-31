@@ -44,9 +44,6 @@ private let kNgScoringUrl:String = "http://watch.live.nicovideo.jp/api/ngscoring
 private let kCommunityUrl = "http://com.nicovideo.jp/community/"
 private let kUserUrl = "http://www.nicovideo.jp/user/"
 
-// request header
-private let kUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"
-
 // intervals
 private let kHeartbeatDefaultInterval: NSTimeInterval = 30
 
@@ -68,8 +65,8 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     private var heartbeatTimer: NSTimer?
     
     // logger
-    private let log = XCGLogger.defaultInstance()
-    private let fileLog = XCGLogger()
+    let log = XCGLogger.defaultInstance()
+    let fileLog = XCGLogger()
 
     // MARK: - Object Lifecycle
     private override init() {
@@ -95,7 +92,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
 
     // MARK: - Public Interface
-    func connect(live: Int) {
+    func connect(liveNumber: Int) {
         if 0 < self.roomListeners.count {
             self.disconnect()
         }
@@ -113,7 +110,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             self.user = user
             self.messageServer = server
             
-            self.loadCommunity(self.live!.community, completion: { (isSuccess) -> Void in
+            self.loadCommunity(self.live!.community, completion: {(isSuccess) -> Void in
                 self.log.debug("loaded community info: success?:\(isSuccess) community:\(self.live!.community)")
                 
                 if !isSuccess {
@@ -126,12 +123,11 @@ class NicoUtility : NSObject, RoomListenerDelegate {
                 }
                 
                 self.openMessageServers(server!)
-                
                 self.scheduleHeartbeatTimer(immediateFire: true)
             })
         }
         
-        self.getPlayerStatus(live, completion: completion)
+        self.requestGetPlayerStatus(liveNumber, completion: completion)
     }
     
     func disconnect() {
@@ -140,14 +136,12 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         }
         
         self.stopHeartbeatTimer()
-        
         self.delegate?.nicoUtilityDidFinishListening(self)
-        
         self.reset()
     }
     
     func comment(comment: String, anonymously: Bool = true) {
-        self.getPostKey { (postKey) -> (Void) in
+        self.requestGetPostKey {(postKey) -> Void in
             if self.live == nil || self.user == nil || postKey == nil {
                 self.log.debug("no available stream, user, or post key")
                 return
@@ -158,7 +152,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         }
     }
     
-    func loadThumbnail(completion: (imageData: NSData?) -> (Void)) {
+    func loadThumbnail(completion: (imageData: NSData?) -> Void) {
         if self.live?.community.thumbnailUrl == nil {
             log.debug("no thumbnail url")
             completion(imageData: nil)
@@ -178,7 +172,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         self.cookiedAsyncRequest("GET", url: self.live!.community.thumbnailUrl!, parameters: nil, completion: httpCompletion)
     }
     
-    func resolveUsername(userId: String, completion: (userName: String?) -> (Void)) {
+    func resolveUsername(userId: String, completion: (userName: String?) -> Void) {
         if !self.isRawUserId(userId) {
             completion(userName: nil)
             return
@@ -239,7 +233,105 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         return kUserUrl + userId
     }
     
-    // MARK: - Message Server Functions
+    // MARK: - RoomListenerDelegate Functions
+    func roomListenerDidReceiveThread(roomListener: RoomListener, thread: Thread) {
+        log.debug("\(thread)")
+        self.delegate?.nicoUtilityDidStartListening(self, roomPosition: roomListener.server!.roomPosition)
+    }
+    
+    func roomListenerDidReceiveChat(roomListener: RoomListener, chat: Chat) {
+        // open next room, if first comment in the room received
+        if chat.premium == .Ippan || chat.premium == .Premium {
+            if let room = roomListener.server?.roomPosition {
+                if self.receivedFirstChat[room] == nil || self.receivedFirstChat[room] == false {
+                    self.receivedFirstChat[room] = true
+                    self.addMessageServer()
+                    
+                    self.delegate?.nicoUtilityDidReceiveFirstChat(self, chat: chat)
+                }
+            }
+        }
+        
+        self.delegate?.nicoUtilityDidReceiveChat(self, chat: chat)
+        
+        if (chat.comment == "/disconnect" && (chat.premium == .Caster || chat.premium == .System) &&
+            chat.roomPosition == .Arena) {
+                self.disconnect()
+        }
+    }
+    
+    // MARK: - Internal Functions
+    // MARK: Get Player Status
+    private func requestGetPlayerStatus(liveNumber: Int, completion: (live: Live?, user: User?, messageServer: MessageServer?) -> Void) {
+        func httpCompletion (response: NSURLResponse!, data: NSData!, connectionError: NSError!) {
+            if connectionError != nil {
+                log.error("error in cookied async request")
+                completion(live: nil, user: nil, messageServer: nil)
+                return
+            }
+            
+            let responseString = NSString(data: data, encoding: NSUTF8StringEncoding)
+            // log.debug("\(responseString)")
+            
+            if data == nil {
+                log.error("error in unpacking response data")
+                completion(live: nil, user: nil, messageServer: nil)
+                return
+            }
+            
+            if self.isErrorResponse(data) {
+                log.error("detected error")
+                completion(live: nil, user: nil, messageServer: nil)
+                return
+            }
+            
+            let live = self.extractLive(data)
+            let user = self.extractUser(data)
+            
+            var messageServer: MessageServer?
+            if user != nil {
+                messageServer = self.extractMessageServer(data, user: user!)
+            }
+            
+            if live == nil || user == nil || messageServer == nil {
+                log.error("error in extracting getplayerstatus response")
+                completion(live: nil, user: nil, messageServer: nil)
+                return
+            }
+            
+            completion(live: live, user: user, messageServer: messageServer)
+        }
+        
+        self.cookiedAsyncRequest("GET", url: kGetPlayerStatusUrl, parameters: ["v": "lv" + String(liveNumber)], completion: httpCompletion)
+    }
+    
+    // MARK: Community
+    private func loadCommunity(community: Community, completion: ((Bool) -> Void)) {
+        func httpCompletion (response: NSURLResponse!, data: NSData!, connectionError: NSError!) {
+            if connectionError != nil {
+                log.error("error in cookied async request")
+                completion(false)
+                return
+            }
+            
+            let responseString = NSString(data: data, encoding: NSUTF8StringEncoding)
+            // log.debug("\(responseString)")
+            
+            if data == nil {
+                log.error("error in unpacking response data")
+                completion(false)
+                return
+            }
+            
+            self.extractCommunity(data, community: community)
+            
+            completion(true)
+        }
+        
+        self.cookiedAsyncRequest("GET", url: kCommunityUrl + community.community!, parameters: nil, completion: httpCompletion)
+    }
+    
+    // MARK: Message Server Functions
     private func openMessageServers(originServer: MessageServer) {
         self.messageServers = self.deriveMessageServers(originServer)
         
@@ -279,212 +371,8 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         let requiredCommunityLevel = kRequiredCommunityLevelForStandRoom[roomPosition]
         return (requiredCommunityLevel <= communityLevel)
     }
-    
-    private func getPlayerStatus(live: Int, completion: (live: Live?, user: User?, messageServer: MessageServer?) -> (Void)) {
-        func httpCompletion (response: NSURLResponse!, data: NSData!, connectionError: NSError!) {
-            if connectionError != nil {
-                log.error("error in cookied async request")
-                completion(live: nil, user: nil, messageServer: nil)
-                return
-            }
-            
-            let responseString = NSString(data: data, encoding: NSUTF8StringEncoding)
-            // log.debug("\(responseString)")
-            
-            if data == nil {
-                log.error("error in unpacking response data")
-                completion(live: nil, user: nil, messageServer: nil)
-                return
-            }
-            
-            if self.isErrorResponse(data) {
-                log.error("detected error")
-                completion(live: nil, user: nil, messageServer: nil)
-                return
-            }
-            
-            let live = self.extractLive(data)
-            let user = self.extractUser(data)
-            
-            var messageServer: MessageServer?
-            if user != nil {
-                messageServer = self.extractMessageServer(data, user: user!)
-            }
-            
-            if live == nil || user == nil || messageServer == nil {
-                log.error("error in extracting getplayerstatus response")
-                completion(live: nil, user: nil, messageServer: nil)
-                return
-            }
 
-            completion(live: live, user: user, messageServer: messageServer)
-        }
-
-        self.cookiedAsyncRequest("GET", url: kGetPlayerStatusUrl, parameters: ["v": "lv" + String(live)], completion: httpCompletion)
-    }
-    
-    // MARK: - General Extractor
-    private func isErrorResponse(xmlData: NSData) -> Bool {
-        var err: NSError?
-        let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &err)
-        let rootElement = xmlDocument?.rootElement()
-        
-        let status = rootElement?.attributeForName("status")?.stringValue
-        
-        if status == "fail" {
-            log.warning("failed to load message server")
-            
-            if let errorCode = rootElement?.firstStringValueForXPathNode("/getplayerstatus/error/code") {
-                log.warning("error code: \(errorCode)")
-            }
-            
-            return true
-        }
-        
-        return false
-    }
-    
-    // MARK: - Stream Extractor
-    func extractLive(xmlData: NSData) -> Live? {
-        var err: NSError?
-        let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &err)
-        let rootElement = xmlDocument?.rootElement()
-        
-        let live = Live()
-        let baseXPath = "/getplayerstatus/stream/"
-        
-        live.liveId = rootElement?.firstStringValueForXPathNode(baseXPath + "id")
-        live.title = rootElement?.firstStringValueForXPathNode(baseXPath + "title")
-        live.community.community = rootElement?.firstStringValueForXPathNode(baseXPath + "default_community")
-        live.baseTime = rootElement?.firstIntValueForXPathNode(baseXPath + "base_time")?.toDateAsTimeIntervalSince1970()
-        live.openTime = rootElement?.firstIntValueForXPathNode(baseXPath + "open_time")?.toDateAsTimeIntervalSince1970()
-        live.startTime = rootElement?.firstIntValueForXPathNode(baseXPath + "start_time")?.toDateAsTimeIntervalSince1970()
-        
-        return live
-    }
-    
-    private func loadCommunity(community: Community, completion: ((Bool) -> Void)) {
-        func httpCompletion (response: NSURLResponse!, data: NSData!, connectionError: NSError!) {
-            if connectionError != nil {
-                log.error("error in cookied async request")
-                completion(false)
-                return
-            }
-            
-            let responseString = NSString(data: data, encoding: NSUTF8StringEncoding)
-            // log.debug("\(responseString)")
-            
-            if data == nil {
-                log.error("error in unpacking response data")
-                completion(false)
-                return
-            }
-            
-            self.extractCommunity(data, community: community)
-            
-            completion(true)
-        }
-        
-        self.cookiedAsyncRequest("GET", url: kCommunityUrl + community.community!, parameters: nil, completion: httpCompletion)
-    }
-    
-    func extractCommunity(xmlData: NSData, community: Community) {
-        var err: NSError?
-        let xmlDocument = NSXMLDocument(data: xmlData, options: Int(NSXMLDocumentTidyHTML), error: &err)
-        let rootElement = xmlDocument?.rootElement()
-        
-        if rootElement == nil {
-            log.error("rootElement is nil")
-            return
-        }
-
-        let xpathTitle = "//*[@id=\"community_name\"]"
-        community.title = rootElement?.firstStringValueForXPathNode(xpathTitle)?.stringByRemovingPattern("\n")
-        
-        let xpathLevel = "//*[@id=\"cbox_profile\"]/table/tr/td[1]/table/tr[1]/td[2]/strong[1]"
-        community.level = rootElement?.firstIntValueForXPathNode(xpathLevel)
-        
-        let xpathThumbnailUrl = "//*[@id=\"cbox_profile\"]/table/tr/td[2]/p/img/@src"
-        if let thumbnailUrl = rootElement?.firstStringValueForXPathNode(xpathThumbnailUrl) {
-            community.thumbnailUrl = NSURL(string: thumbnailUrl)
-        }
-    }
-    
-    // MARK: - Message Server Extractor
-    private func extractMessageServer (xmlData: NSData, user: User) -> MessageServer? {
-        var err: NSError?
-        let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &err)
-        let rootElement = xmlDocument?.rootElement()
-        
-        let status = rootElement?.attributeForName("status")?.stringValue
-        
-        if status == "fail" {
-            log.warning("failed to load message server")
-            
-            if let errorCode = rootElement?.firstStringValueForXPathNode("/getplayerstatus/error/code") {
-                log.warning("error code: \(errorCode)")
-            }
-            
-            return nil
-        }
-
-        if user.roomLabel == nil {
-            return nil
-        }
-        
-        let roomPosition = self.roomPositionByRoomLabel(user.roomLabel!)
-        
-        if roomPosition == nil {
-            return nil
-        }
-        
-        let baseXPath = "/getplayerstatus/ms/"
-
-        let address = rootElement?.firstStringValueForXPathNode(baseXPath + "addr")
-        let port = rootElement?.firstIntValueForXPathNode(baseXPath + "port")
-        let thread = rootElement?.firstIntValueForXPathNode(baseXPath + "thread")
-        // log.debug("\(address?),\(port),\(thread)")
- 
-        if address == nil || port == nil || thread == nil {
-            return nil
-        }
-
-        let server = MessageServer(roomPosition: roomPosition!, address: address!, port: port!, thread: thread!)
-        
-        return server
-    }
-    
-    func roomPositionByRoomLabel(roomLabel: String) -> RoomPosition? {
-        // log.debug("roomLabel:\(roomLabel)")
-        
-        if self.isArena(roomLabel) == true {
-            return RoomPosition(rawValue: 0)
-        }
-        
-        if let standCharacter = self.extractStandCharacter(roomLabel) {
-            log.debug("extracted standCharacter:\(standCharacter)")
-            let raw = (standCharacter - ("A" as Character)) + 1
-            return RoomPosition(rawValue: raw)
-        }
-        
-        return nil
-    }
-    
-    private func isArena(roomLabel: String) -> Bool {
-        let regexp = NSRegularExpression(pattern: "co\\d+", options: nil, error: nil)!
-        let matched = regexp.firstMatchInString(roomLabel, options: nil, range: NSMakeRange(0, roomLabel.utf16Count))
-        
-        return matched != nil ? true : false
-    }
-    
-    private func extractStandCharacter(roomLabel: String) -> Character? {
-        let matched = roomLabel.extractRegexpPattern("立ち見(\\w)列")
-        
-        // using subscript String extension defined above
-        return matched?[0]
-    }
-
-    // MARK: Message Server Utility
+    // MARK: (Message Server Utility)
     func deriveMessageServers(originServer: MessageServer) -> [MessageServer] {
         if originServer.isOfficial() == true {
             // TODO: not yet supported
@@ -535,26 +423,8 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         return server
     }
     
-    // MARK: - User Extractor
-    private func extractUser(xmlData: NSData) -> User? {
-        var err: NSError?
-        let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &err)
-        let rootElement = xmlDocument?.rootElement()
-        
-        let user = User()
-        let baseXPath = "/getplayerstatus/user/"
-        
-        user.userId = rootElement?.firstIntValueForXPathNode(baseXPath + "user_id")
-        user.nickname = rootElement?.firstStringValueForXPathNode(baseXPath + "nickname")
-        user.isPremium = rootElement?.firstIntValueForXPathNode(baseXPath + "is_premium")
-        user.roomLabel = rootElement?.firstStringValueForXPathNode(baseXPath + "room_label")
-        user.seatNo = rootElement?.firstIntValueForXPathNode(baseXPath + "room_seetno")
-        
-        return user
-    }
-    
-    // MARK: - Comment
-    private func getPostKey(completion: (postKey: String?) -> (Void)) {
+    // MARK: Comment
+    private func requestGetPostKey(completion: (postKey: String?) -> Void) {
         if messageServer == nil {
             log.error("cannot comment without messageServer")
             completion(postKey: nil)
@@ -594,30 +464,29 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         self.cookiedAsyncRequest("GET", url: kGetPostKeyUrl, parameters: ["thread": thread, "block_no": blockNo], completion: httpCompletion)
     }
     
-    // MARK: - Username
-    func extractUsername(xmlData: NSData) -> String? {
-        var err: NSError?
-        let xmlDocument = NSXMLDocument(data: xmlData, options: Int(NSXMLDocumentTidyHTML), error: &err)
-        let rootElement = xmlDocument?.rootElement()
+    // MARK: Heartbeat
+    private func scheduleHeartbeatTimer(immediateFire: Bool = false, interval: NSTimeInterval = kHeartbeatDefaultInterval) {
+        self.stopHeartbeatTimer()
         
-        // /html/body/div[3]/div[2]/h2/text() -> other's userpage
-        // /html/body/div[4]/div[2]/h2/text() -> my userpage, contains '他のユーザーから見たあなたのプロフィールです。' box
-        let username = rootElement?.firstStringValueForXPathNode("/html/body/*/div[2]/h2")
-        let cleansed = username?.stringByRemovingPattern("(?:さん|)\n$")
-        
-        return cleansed
+        dispatch_async(dispatch_get_main_queue(), {
+            self.heartbeatTimer = NSTimer.scheduledTimerWithTimeInterval(interval, target: self, selector: "checkHeartbeat:", userInfo: nil, repeats: true)
+            if immediateFire {
+                self.heartbeatTimer?.fire()
+            }
+        })
     }
     
-    func isRawUserId(userId: String) -> Bool {
-        let regexp = NSRegularExpression(pattern: "^\\d+$", options: nil, error: nil)!
-        let matched = regexp.firstMatchInString(userId, options: nil, range: NSMakeRange(0, userId.utf16Count))
+    private func stopHeartbeatTimer() {
+        if self.heartbeatTimer == nil {
+            return
+        }
         
-        return matched != nil ? true : false
+        self.heartbeatTimer?.invalidate()
+        self.heartbeatTimer = nil
     }
     
-    // MARK: - Heartbeat
     func checkHeartbeat(timer: NSTimer) {
-        func httpCompletion (response: NSURLResponse!, data: NSData!, connectionError: NSError!) {
+        func httpCompletion(response: NSURLResponse!, data: NSData!, connectionError: NSError!) {
             if connectionError != nil {
                 log.error("error in checking heartbeat")
                 return
@@ -646,138 +515,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         self.cookiedAsyncRequest("GET", url: kHeartbeatUrl, parameters: ["v": liveId], completion: httpCompletion)
     }
     
-    func extractHeartbeat(xmlData: NSData) -> Heartbeat? {
-        var err: NSError?
-        let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &err)
-        let rootElement = xmlDocument?.rootElement()
-        
-        let heartbeat = Heartbeat()
-        let baseXPath = "/heartbeat/"
-        
-        if let status = rootElement?.firstStringValueForXPathNode(baseXPath + "@status") {
-            heartbeat.status = Heartbeat.statusFromString(status: status)
-        }
-        
-        if heartbeat.status == Heartbeat.Status.Ok {
-            heartbeat.watchCount = rootElement?.firstIntValueForXPathNode(baseXPath + "watchCount")
-            heartbeat.commentCount = rootElement?.firstIntValueForXPathNode(baseXPath + "commentCount")
-            heartbeat.freeSlotNum = rootElement?.firstIntValueForXPathNode(baseXPath + "freeSlotNum")
-            heartbeat.isRestrict = rootElement?.firstIntValueForXPathNode(baseXPath + "is_restrict")
-            heartbeat.ticket = rootElement?.firstStringValueForXPathNode(baseXPath + "ticket")
-            heartbeat.waitTime = rootElement?.firstIntValueForXPathNode(baseXPath + "waitTime")
-        }
-        else if heartbeat.status == Heartbeat.Status.Fail {
-            if let errorCode = rootElement?.firstStringValueForXPathNode(baseXPath + "error/code") {
-                heartbeat.errorCode = Heartbeat.errorCodeFromString(errorCode: errorCode)
-            }
-        }
-        
-        return heartbeat
-    }
-    
-    private func scheduleHeartbeatTimer(immediateFire: Bool = false, interval: NSTimeInterval = kHeartbeatDefaultInterval) {
-        self.stopHeartbeatTimer()
-        
-        dispatch_async(dispatch_get_main_queue(), {
-            self.heartbeatTimer = NSTimer.scheduledTimerWithTimeInterval(interval, target: self, selector: "checkHeartbeat:", userInfo: nil, repeats: true)
-            if immediateFire {
-                self.heartbeatTimer?.fire()
-            }
-        })
-    }
-    
-    private func stopHeartbeatTimer() {
-        if self.heartbeatTimer == nil {
-            return
-        }
-        
-        self.heartbeatTimer?.invalidate()
-        self.heartbeatTimer = nil
-    }
-    
-    // MARK: - Internal Http Utility
-    private func cookiedAsyncRequest(httpMethod: String, url: NSURL, parameters: [String: Any]?, completion: (NSURLResponse!, NSData!, NSError!) -> Void) {
-        self.cookiedAsyncRequest(httpMethod, url: url.absoluteString!, parameters: parameters, completion: completion)
-    }
-    
-    private func cookiedAsyncRequest(httpMethod: String, url: String, parameters: [String: Any]?, completion: (NSURLResponse!, NSData!, NSError!) -> Void) {
-        var parameteredUrl: String = url
-        let constructedParameters = self.constructParameters(parameters)
-        
-        if httpMethod == "GET" && constructedParameters != nil {
-            parameteredUrl += "?" + constructedParameters!
-        }
-        
-        var request = self.mutableRequestWithCustomHeaders(parameteredUrl)
-        request.HTTPMethod = httpMethod
-        
-        if httpMethod == "POST" && constructedParameters != nil {
-            request.HTTPBody = constructedParameters!.dataUsingEncoding(NSUTF8StringEncoding)
-        }
-        
-        if let cookie = self.sessionCookie() {
-            let requestHeader = NSHTTPCookie.requestHeaderFieldsWithCookies([cookie])
-            request.allHTTPHeaderFields = requestHeader
-        }
-        else {
-            log.error("could not get cookie")
-            completion(nil, nil, NSError(domain:"", code:0, userInfo: nil))
-        }
-        
-        let queue = NSOperationQueue()
-        NSURLConnection.sendAsynchronousRequest(request, queue: queue, completionHandler: completion)
-    }
-    
-    func constructParameters(parameters: [String: Any]?) -> String? {
-        if parameters == nil {
-            return nil
-        }
-        
-        var constructed: NSString = ""
-        
-        for (key, value) in parameters! {
-            if 0 < constructed.length {
-                constructed = constructed + "&"
-            }
-            
-            constructed = constructed + "\(key)=\(value)"
-        }
-        
-        // use custom escape character sets instead of NSCharacterSet.URLQueryAllowedCharacterSet()
-        // cause we need to escape strings like this: tpos=1416842780%2E802121&comment%5Flocale=ja%2Djp
-        var allowed = NSMutableCharacterSet.alphanumericCharacterSet()
-        allowed.addCharactersInString("?=&")
-        
-        return constructed.stringByAddingPercentEncodingWithAllowedCharacters(allowed)
-    }
-    
-    private func mutableRequestWithCustomHeaders(url: String) -> NSMutableURLRequest {
-        let urlObject = NSURL(string: url)!
-        var mutableRequest = NSMutableURLRequest(URL: urlObject)
-
-        mutableRequest.setValue(kUserAgent, forHTTPHeaderField: "User-Agent")
-        
-        return mutableRequest
-    }
-    
-    private func sessionCookie() -> NSHTTPCookie? {
-        if let cookie = CookieUtility.cookie(CookieUtility.BrowserType.Chrome) {
-            // log.debug("cookie:[\(cookie)]")
-            
-            let userSessionCookie = NSHTTPCookie(properties: [
-                NSHTTPCookieDomain: "nicovideo.jp",
-                NSHTTPCookieName: "user_session",
-                NSHTTPCookieValue: cookie,
-                NSHTTPCookieExpires: NSDate().dateByAddingTimeInterval(7200),
-                NSHTTPCookiePath: "/"])
-            
-            return userSessionCookie
-        }
-        
-        return nil
-    }
-    
-    // MARK: - Misc Utility
+    // MARK: Misc Utility
     func reset() {
         self.live = nil
         self.user = nil
@@ -786,32 +524,5 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         self.messageServers.removeAll(keepCapacity: false)
         self.roomListeners.removeAll(keepCapacity: false)
         self.receivedFirstChat.removeAll(keepCapacity: false)
-    }
-
-    // MARK: - RoomListenerDelegate Functions
-    func roomListenerDidReceiveThread(roomListener: RoomListener, thread: Thread) {
-        log.debug("\(thread)")
-        self.delegate?.nicoUtilityDidStartListening(self, roomPosition: roomListener.server!.roomPosition)
-    }
-    
-    func roomListenerDidReceiveChat(roomListener: RoomListener, chat: Chat) {
-        // open next room, if first comment in the room received
-        if chat.premium == .Ippan || chat.premium == .Premium {
-            if let room = roomListener.server?.roomPosition {
-                if self.receivedFirstChat[room] == nil || self.receivedFirstChat[room] == false {
-                    self.receivedFirstChat[room] = true
-                    self.addMessageServer()
-                    
-                    self.delegate?.nicoUtilityDidReceiveFirstChat(self, chat: chat)
-                }
-            }
-        }
-        
-        self.delegate?.nicoUtilityDidReceiveChat(self, chat: chat)
-        
-        if (chat.comment == "/disconnect" && (chat.premium == .Caster || chat.premium == .System) &&
-            chat.roomPosition == .Arena) {
-            self.disconnect()
-        }
     }
 }
