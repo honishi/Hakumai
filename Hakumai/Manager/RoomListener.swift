@@ -306,6 +306,11 @@ class RoomListener : NSObject, NSStreamDelegate {
             chat.userId = chatElement.attributeForName("user_id")?.stringValue
             chat.comment = chatElement.stringValue
             
+            if chat.no == nil || chat.userId == nil || chat.comment == nil {
+                log.warning("skipped invalid chat:[\(chat)]")
+                continue
+            }
+            
             chats.append(chat)
         }
         
