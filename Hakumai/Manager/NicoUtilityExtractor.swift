@@ -129,7 +129,7 @@ extension NicoUtility {
     }
     
     private func isArena(roomLabel: String) -> Bool {
-        let regexp = NSRegularExpression(pattern: "co\\d+", options: nil, error: nil)!
+        let regexp = NSRegularExpression(pattern: "c(?:o|h)\\d+", options: nil, error: nil)!
         let matched = regexp.firstMatchInString(roomLabel, options: nil, range: NSMakeRange(0, roomLabel.utf16Count))
         
         return matched != nil ? true : false
@@ -192,7 +192,7 @@ extension NicoUtility {
         
         // /html/body/div[3]/div[2]/h2/text() -> other's userpage
         // /html/body/div[4]/div[2]/h2/text() -> my userpage, contains '他のユーザーから見たあなたのプロフィールです。' box
-        let username = rootElement?.firstChildWithXPath("/html/body/*/div[2]/h2").stringValue()
+        let username = rootElement?.firstChildWithXPath("/html/body/*/div[2]/h2")?.stringValue()
         let cleansed = username?.stringByRemovingPattern("(?:さん|)\\s*$")
         
         return cleansed

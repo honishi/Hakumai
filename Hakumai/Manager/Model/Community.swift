@@ -9,12 +9,13 @@
 import Foundation
 
 // community pattern
-private let kCommunityPrefixOfficial = "^ch\\d+"
+private let kCommunityPrefixUser = "^co\\d+"
+private let kCommunityPrefixChannel = "^ch\\d+"
 
 class Community: Printable {
     var community: String?
     var title: String? = ""
-    var level: Int? //= 0
+    var level: Int?
     var thumbnailUrl: NSURL?
 
     var description: String {
@@ -30,7 +31,11 @@ class Community: Printable {
     }
     
     // MARK: - Public Functions
+    func isUser() -> Bool? {
+        return self.community?.hasRegexpPattern(kCommunityPrefixUser)
+    }
+    
     func isChannel() -> Bool? {
-        return self.community?.hasRegexpPattern(kCommunityPrefixOfficial)
+        return self.community?.hasRegexpPattern(kCommunityPrefixChannel)
     }
 }

@@ -343,7 +343,8 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     func nicoUtilityDidPrepareLive(nicoUtility: NicoUtility, user: User, live: Live) {
         dispatch_async(dispatch_get_main_queue(), {
             self.liveTitleLabel.stringValue = live.title!
-            self.communityTitleLabel.stringValue = live.community.title! + " (Lv." + String(live.community.level!) + ")"
+            let level = live.community.level != nil ? String(live.community.level!) : "-"
+            self.communityTitleLabel.stringValue = live.community.title! + " (Lv." + level + ")"
             self.roomPositionLabel.stringValue = user.roomLabel! + " - " + String(user.seatNo!)
             
             self.loadThumbnail()

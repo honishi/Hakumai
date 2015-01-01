@@ -8,18 +8,17 @@
 
 import Foundation
 
-private let kRegExpPatternHostUser = "msg\\d+.live.nicovideo.jp"
-private let kRegExpPatternHostChannel = "omsg\\d+.live.nicovideo.jp"
+private let kRegExpPatternHostUser = "msg\\d+\\..+"
+private let kRegExpPatternHostChannel = "omsg\\d+\\..+"
 
 private let kMessageServerNumberFirst = 101
 private let kMessageServerNumberLast = 104
-private let kMessageServerPortOfficialFirst = 2815
-private let kMessageServerPortOfficialLast = 2817
-private let kMessageServerPortUserFirst = 2805
-private let kMessageServerPortUserLast = 2814
 
-private let kMessageServerAddressHostPrefix = "msg"
-private let kMessageServerAddressDomain = ".live.nicovideo.jp"
+private let kMessageServerPortFirstUser = 2805
+private let kMessageServerPortLastUser = 2814
+
+private let kMessageServerPortFirstChannel = 2815
+private let kMessageServerPortLastChannel = 2817
 
 class MessageServer: Printable {
     let roomPosition: RoomPosition
@@ -57,21 +56,39 @@ class MessageServer: Printable {
         var address = self.address
         var port = self.port
         let thread = self.thread - 1
-        
-        if port == kMessageServerPortUserFirst {
-            port = kMessageServerPortUserLast
-            
+
+        if self.isChannel() {
             if let serverNumber = MessageServer.extractServerNumber(address) {
                 if serverNumber == kMessageServerNumberFirst {
-                    address = MessageServer.serverAddressWithServerNumber(kMessageServerNumberLast)
+                    address = MessageServer.reconstructServerAddressWithBaseAddress(address, serverNumber: kMessageServerNumberLast)
+                    if port == kMessageServerPortFirstChannel {
+                        port = kMessageServerPortLastChannel
+                    }
+                    else {
+                        port -= 1
+                    }
                 }
                 else {
-                    address = MessageServer.serverAddressWithServerNumber(serverNumber - 1)
+                    address = MessageServer.reconstructServerAddressWithBaseAddress(address, serverNumber: serverNumber - 1)
                 }
             }
         }
         else {
-            port -= 1
+            if port == kMessageServerPortFirstUser {
+                port = kMessageServerPortLastUser
+                
+                if let serverNumber = MessageServer.extractServerNumber(address) {
+                    if serverNumber == kMessageServerNumberFirst {
+                        address = MessageServer.reconstructServerAddressWithBaseAddress(address, serverNumber: kMessageServerNumberLast)
+                    }
+                    else {
+                        address = MessageServer.reconstructServerAddressWithBaseAddress(address, serverNumber: serverNumber - 1)
+                    }
+                }
+            }
+            else {
+                port -= 1
+            }
         }
         
         return MessageServer(roomPosition: roomPosition!, address: address, port: port, thread: thread)
@@ -83,34 +100,70 @@ class MessageServer: Printable {
         var port = self.port
         let thread = self.thread + 1
         
-        if port == kMessageServerPortUserLast {
-            port = kMessageServerPortUserFirst
-            
+        if self.isChannel() {
             if let serverNumber = MessageServer.extractServerNumber(address) {
                 if serverNumber == kMessageServerNumberLast {
-                    address = MessageServer.serverAddressWithServerNumber(kMessageServerNumberFirst)
+                    address = MessageServer.reconstructServerAddressWithBaseAddress(address, serverNumber: kMessageServerNumberFirst)
+                    if port == kMessageServerPortLastChannel {
+                        port = kMessageServerPortFirstChannel
+                    }
+                    else {
+                        port += 1
+                    }
                 }
                 else {
-                    address = MessageServer.serverAddressWithServerNumber(serverNumber + 1)
+                    address = MessageServer.reconstructServerAddressWithBaseAddress(address, serverNumber: serverNumber + 1)
                 }
             }
         }
         else {
-            port += 1
+            if port == kMessageServerPortLastUser {
+                port = kMessageServerPortFirstUser
+                
+                if let serverNumber = MessageServer.extractServerNumber(address) {
+                    if serverNumber == kMessageServerNumberLast {
+                        address = MessageServer.reconstructServerAddressWithBaseAddress(address, serverNumber: kMessageServerNumberFirst)
+                    }
+                    else {
+                        address = MessageServer.reconstructServerAddressWithBaseAddress(address, serverNumber: serverNumber + 1)
+                    }
+                }
+            }
+            else {
+                port += 1
+            }
         }
         
         return MessageServer(roomPosition: roomPosition!, address: address, port: port, thread: thread)
     }
     
     class func extractServerNumber(address: String) -> Int? {
-        let regexp = kMessageServerAddressHostPrefix + "(\\d+)" + kMessageServerAddressDomain
+        let regexp = "\\D+(\\d+).+"
         let serverNumber = address.extractRegexpPattern(regexp)
         
         return serverNumber?.toInt()
     }
     
-    class func serverAddressWithServerNumber(serverNumber: Int) -> String {
-        return kMessageServerAddressHostPrefix + String(serverNumber) + kMessageServerAddressDomain
+    class func reconstructServerAddressWithBaseAddress(baseAddress: String, serverNumber: Int) -> String {
+        // split server address like followings, and reconstruct using given server number
+        // - msg102.live.nicovideo.jp (user)
+        // - omsg103.live.nicovideo.jp (channel)
+        let regexp = NSRegularExpression(pattern: "(\\D+)\\d+(.+)", options: nil, error: nil)!
+        let matched = regexp.matchesInString(baseAddress, options: nil, range: NSMakeRange(0, baseAddress.utf16Count))
+        
+        let hostPrefix = MessageServer.substringFromBaseString(baseAddress, nsRange: matched[0].rangeAtIndex(1))
+        let domain = MessageServer.substringFromBaseString(baseAddress, nsRange: matched[0].rangeAtIndex(2))
+
+        return hostPrefix + String(serverNumber) + domain
+    }
+    
+    class func substringFromBaseString(base: String, nsRange: NSRange) -> String {
+        let start = advance(base.startIndex, nsRange.location)
+        let end = advance(base.startIndex, nsRange.location + nsRange.length)
+        let range = Range<String.Index>(start: start, end: end)
+        let substring = base.substringWithRange(range)
+        
+        return substring
     }
 }
 
@@ -126,7 +179,7 @@ func != (left: MessageServer, right: MessageServer) -> Bool {
     return !(left == right)
 }
 
-func == (left: Array<MessageServer>, right: Array<MessageServer>) -> Bool {
+func == (left: [MessageServer], right: [MessageServer]) -> Bool {
     if left.count != right.count {
         return false
     }

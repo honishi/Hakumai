@@ -23,16 +23,15 @@ protocol NicoUtilityDelegate {
 }
 
 // MARK: constant value
-
-private let kRequiredCommunityLevelForStandRoom: [RoomPosition: Int] = [
-    .Arena: 0,
-    .StandA: 0,
-    .StandB: 66,
-    .StandC: 70,
-    .StandD: 105,
-    .StandE: 150,
-    .StandF: 190,
-    .StandG: 232]
+private let kCommunityLevelStandRoomTable: [(minLevel: Int, maxLevel: Int, standCount: Int)] = [
+    (1, 65, 1),     // a
+    (66, 69, 2),    // a, b
+    (70, 104, 3),   // a, b, c
+    (105, 149, 4),  // a, b, c, d
+    (150, 189, 5),  // a, b, c, d, e
+    (190, 231, 6),  // a, b, c, d, e, f
+    (232, 999, 7)   // a, b, c, d, e, f, g
+]
 
 // urls for api
 private let kGetPlayerStatusUrl = "http://watch.live.nicovideo.jp/api/getplayerstatus"
@@ -123,7 +122,13 @@ class NicoUtility : NSObject, RoomListenerDelegate {
                     self.delegate?.nicoUtilityDidPrepareLive(self, user: self.user!, live: self.live!)
                 }
                 
-                self.openMessageServers(server!)
+                self.messageServers = self.deriveMessageServersWithOriginServer(server!, community: self.live!.community)
+                self.log.debug("derived message servers:")
+                for server in self.messageServers {
+                    self.log.debug("\(server)")
+                }
+                
+                self.openNewMessageServer()
                 self.scheduleHeartbeatTimer(immediateFire: true)
             })
         }
@@ -246,7 +251,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             if let room = roomListener.server?.roomPosition {
                 if self.receivedFirstChat[room] == nil || self.receivedFirstChat[room] == false {
                     self.receivedFirstChat[room] = true
-                    self.addMessageServer()
+                    self.openNewMessageServer()
                     
                     self.delegate?.nicoUtilityDidReceiveFirstChat(self, chat: chat)
                 }
@@ -339,50 +344,9 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     // MARK: Message Server Functions
-    private func openMessageServers(originServer: MessageServer) {
-        self.messageServers = self.deriveMessageServers(originServer)
-        
-        // opens arena only
-        self.addMessageServer()
-    }
-    
-    private func addMessageServer() {
-        if self.roomListeners.count == self.messageServers.count {
-            log.info("already opened max servers.")
-            return
-        }
-        
-        if let lastRoomListener = self.roomListeners.last {
-            if let lastRoomPosition = lastRoomListener.server?.roomPosition {
-                if let level = self.live?.community.level {
-                    if !self.canOpenRoomPosition(lastRoomPosition.next()!, communityLevel: level) {
-                        log.info("already opened max servers with this community level \(level)")
-                        return
-                    }
-                }
-            }
-        }
-        
-        let targetServerIndex = self.roomListeners.count
-        let targetServer = self.messageServers[targetServerIndex]
-        let listener = RoomListener(delegate: self, server: targetServer)
-        
-        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
-            listener.openSocket()
-        })
-        
-        self.roomListeners.append(listener)
-    }
-    
-    func canOpenRoomPosition(roomPosition: RoomPosition, communityLevel: Int) -> Bool {
-        let requiredCommunityLevel = kRequiredCommunityLevelForStandRoom[roomPosition]
-        return (requiredCommunityLevel <= communityLevel)
-    }
-
-    // MARK: (Message Server Utility)
-    func deriveMessageServers(originServer: MessageServer) -> [MessageServer] {
-        if originServer.isChannel() == true {
-            // TODO: not yet supported
+    func deriveMessageServersWithOriginServer(originServer: MessageServer, community: Community) -> [MessageServer] {
+        if community.isUser() == true && community.level == nil {
+            // could not read community level (possible ban case)
             return [originServer]
         }
         
@@ -395,39 +359,53 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         }
         
         var servers = [arenaServer]
+        var standRoomCount = 0
         
-        // add stand a, b, c, d, e, f
-        for _ in 1...6 {
+        if community.isUser() == true {
+            if let level = community.level {
+                standRoomCount = self.standRoomCountForCommunityLevel(level)
+            }
+        }
+        else {
+            // stand a, b, c, d, e
+            standRoomCount = 5
+        }
+        
+        for _ in 1...standRoomCount {
             servers.append(servers.last!.next())
         }
         
         return servers
     }
     
-    func deriveMessageServer(originServer: MessageServer, distance: Int) -> MessageServer? {
-        if originServer.isChannel() == true {
-            // TODO: not yet supported
-            return nil
-        }
+    func standRoomCountForCommunityLevel(level: Int) -> Int {
+        var standRoomCount = 0
         
-        if distance == 0 {
-            return originServer
-        }
-        
-        var server = originServer
-        
-        if 0 < distance {
-            for _ in 1...distance {
-                server = server.next()
-            }
-        }
-        else {
-            for _ in 1...abs(distance) {
-                server = server.previous()
+        for (minLevel, maxLevel, standCount) in kCommunityLevelStandRoomTable {
+            if minLevel <= level && level <= maxLevel {
+                standRoomCount = standCount
+                break
             }
         }
         
-        return server
+        return standRoomCount
+    }
+    
+    private func openNewMessageServer() {
+        if self.roomListeners.count == self.messageServers.count {
+            log.info("already opened max servers.")
+            return
+        }
+        
+        let targetServerIndex = self.roomListeners.count
+        let targetServer = self.messageServers[targetServerIndex]
+        let listener = RoomListener(delegate: self, server: targetServer)
+        
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
+            listener.openSocket()
+        })
+        
+        self.roomListeners.append(listener)
     }
     
     // MARK: Comment
