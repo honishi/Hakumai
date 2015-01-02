@@ -18,6 +18,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: - NSApplicationDelegate Functions
     func applicationDidFinishLaunching(aNotification: NSNotification) {
         self.initializeLog()
+        self.migrateApplicationVersion()
         self.initializeUserDefaults()
         self.addObserverForUserDefaults()
     }
@@ -32,6 +33,36 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: initializer
     func initializeLog() {
         log.setup(logLevel: .Debug, showLogLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: nil)
+    }
+    
+    func migrateApplicationVersion() {
+        let defaults = NSUserDefaults.standardUserDefaults()
+        
+        let lastVersion = (defaults.objectForKey(Parameters.LastLaunchedApplicationVersion) as? String)
+        let currentVersion = (NSBundle.mainBundle().infoDictionary!["CFBundleVersion"] as? String)
+        log.info("last launched app version:[\(lastVersion)] current app version:[\(currentVersion)]")
+
+        if lastVersion != nil {
+            let lastVersionNumber = lastVersion!.toInt()!
+            let currentVersionNumber = currentVersion!.toInt()!
+            
+            if lastVersionNumber < currentVersionNumber {
+                // do some app version migration here
+                log.info("detected app version up from:[\(lastVersionNumber)] to:[\(currentVersionNumber)]")
+                
+                // version migration sample
+                /*
+                if lastVersionNumber < 3 {
+                    defaults.removeObjectForKey(Parameters.MuteUserIds)
+                    defaults.removeObjectForKey(Parameters.MuteWords)
+                    defaults.synchronize()
+                }
+                 */
+            }
+        }
+        
+        defaults.setObject(currentVersion!, forKey: Parameters.LastLaunchedApplicationVersion)
+        defaults.synchronize()
     }
     
     func initializeUserDefaults() {

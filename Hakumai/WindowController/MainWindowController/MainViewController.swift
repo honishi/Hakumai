@@ -79,7 +79,11 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         self.buildViews()
         self.setupTableView()
         self.registerNibs()
-        self.addObserverForUserDefaults()
+
+        // making some explicit delay here, to wait completion of AppDelegate.migrateApplicationVersion()
+        dispatch_async(dispatch_get_main_queue(), {
+            self.addObserverForUserDefaults()
+        })
     }
     
     override func viewDidAppear() {

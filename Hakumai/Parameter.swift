@@ -18,6 +18,9 @@ struct Parameters {
     static let EnableMuteUserIds = "EnableMuteUserIds"
     static let EnableMuteWords = "EnableMuteWords"
     
+    // management
+    static let LastLaunchedApplicationVersion = "LastLaunchedApplicationVersion"
+    
     // mute userids
     static let MuteUserIds = "MuteUserIds"
     static let MuteUserIdKeyUserId = "UserId"
