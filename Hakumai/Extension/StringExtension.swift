@@ -22,7 +22,16 @@ extension String {
     // "ab1 cd2 ef3 ab4".extractRegexpPattern("(ab\\d)", index: 0) -> Optional("ab1")
     // "ab1 cd2 ef3 ab4".extractRegexpPattern("(ab\\d)", index: 1) -> Optional("ab4")
     func extractRegexpPattern(pattern: String, index: Int = 0) -> String? {
-        let regexp = NSRegularExpression(pattern: pattern, options: nil, error: nil)!
+        let hasOpenBracket = (pattern.rangeOfString("(") != nil)
+        let hasCloseBracket = (pattern.rangeOfString(")") != nil)
+        assert(hasOpenBracket && hasCloseBracket, "pattern should have a pair of open and close bracket")
+        
+        let regexp: NSRegularExpression! = NSRegularExpression(pattern: pattern, options: nil, error: nil)
+        
+        if regexp == nil {
+            return nil
+        }
+        
         let matched = regexp.matchesInString(self, options: nil, range: NSMakeRange(0, self.utf16Count))
         // log.debug(matched.count)
         

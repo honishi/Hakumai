@@ -56,13 +56,16 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     private var user: User?
     private var messageServer: MessageServer?
     
-    private var messageServers: [MessageServer] = []
-    private var roomListeners: [RoomListener] = []
+    private var messageServers = [MessageServer]()
+    private var roomListeners = [RoomListener]()
     private var receivedFirstChat = [RoomPosition: Bool]()
     
     var cachedUsernames = [String: String]()
     
     private var heartbeatTimer: NSTimer?
+    
+    // cookie
+    var cookie: String?
     
     // logger
     let log = XCGLogger.defaultInstance()
@@ -95,6 +98,14 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     func connect(liveNumber: Int) {
         if 0 < self.roomListeners.count {
             self.disconnect()
+        }
+        
+        if let cookie = CookieUtility.cookie(CookieUtility.BrowserType.Chrome) {
+            self.cookie = cookie
+        }
+        else {
+            log.error("could not get cookie, canceled to connect")
+            return
         }
         
         func completion(live: Live?, user: User?, server: MessageServer?) {

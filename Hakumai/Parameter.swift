@@ -16,4 +16,9 @@ struct Parameters {
     static let CommentAnonymously = "CommentAnonymously"
     static let EnableMuteUserIds = "EnableMuteUserIds"
     static let EnableMuteWords = "EnableMuteWords"
+    
+    // mute words
+    static let MuteWords = "MuteWords"
+    static let MuteWordKeyWord = "Word"
+    // static let MuteWordKeyEnableRegexp = "EnableRegexp"
 }

@@ -40,6 +40,9 @@ class StringExtensionTests: XCTestCase {
     func testHasRegexpPattern() {
         XCTAssert("abc".hasRegexpPattern("b") == true, "")
         XCTAssert("abc".hasRegexpPattern("1") == false, "")
+        
+        // not resolved bug case. http://stackoverflow.com/a/27192734
+        // XCTAssert("すげーﾊﾃﾞだなｗ".hasRegexpPattern("ｗ") == true, "")
     }
     
     func testStringByRemovingPattern() {

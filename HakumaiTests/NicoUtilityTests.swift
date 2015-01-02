@@ -201,6 +201,7 @@ class NicoUtilityTests: XCTestCase {
         XCTAssert(NicoUtility.sharedInstance.isRawUserId("123a") == false, "")
     }
     
+    /*
     func testResolveUsername() {
         var asyncExpectation: XCTestExpectation
         
@@ -226,6 +227,7 @@ class NicoUtilityTests: XCTestCase {
         
         self.waitForExpectationsWithTimeout(kAsyncTimeout, handler: nil)
     }
+     */
 
     // MARK: - Heartbeat
     func testExtractHeartbeat() {

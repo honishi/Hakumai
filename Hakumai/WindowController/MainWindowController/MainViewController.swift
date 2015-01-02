@@ -123,8 +123,11 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     func addObserverForUserDefaults() {
         let defaults = NSUserDefaults.standardUserDefaults()
         
-        defaults.addObserver(self, forKeyPath: Parameters.ShowIfseetnoCommands, options: .New, context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.CommentAnonymously, options: .New, context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.ShowIfseetnoCommands, options: (.Initial | .New), context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.CommentAnonymously, options: (.Initial | .New), context: nil)
+        
+        defaults.addObserver(self, forKeyPath: Parameters.EnableMuteWords, options: (.Initial | .New), context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.MuteWords, options: (.Initial | .New), context: nil)
     }
     
     // MARK: - KVO Functions
@@ -133,26 +136,58 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         
         switch keyPath {
         case Parameters.ShowIfseetnoCommands:
-            let changed = change["new"] as Bool
-            self.changeShowHbIfseetnoCommands(changed)
+            if let changed = change["new"] as? Bool {
+                self.changeShowHbIfseetnoCommands(changed)
+            }
             
         case Parameters.CommentAnonymously:
-            let changed = change["new"] as Bool
-            self.commentAnonymously = changed
+            if let changed = change["new"] as? Bool {
+                self.commentAnonymously = changed
+            }
+            
+        case Parameters.EnableMuteWords:
+            if let changed = change["new"] as? Bool {
+                self.changeEnableMuteWords(changed)
+            }
+            
+        case Parameters.MuteWords:
+            if let changed = change["new"] as? [[String: String]] {
+                self.changeMuteWords(changed)
+            }
             
         default:
             break
         }
     }
     
+    // MARK: Utility
     func changeShowHbIfseetnoCommands(show: Bool) {
+        MessageContainer.sharedContainer.showHbIfseetnoCommands = show
+        log.debug("changed show 'hbifseetno' commands: \(show)")
+        
+        self.rebuildFilteredMessages()
+    }
+    
+    func changeEnableMuteWords(enabled: Bool) {
+        MessageContainer.sharedContainer.enableMuteWords = enabled
+        log.debug("changed enable mute words: \(enabled)")
+        
+        self.rebuildFilteredMessages()
+    }
+    
+    func changeMuteWords(muteWords: [[String: String]]) {
+        MessageContainer.sharedContainer.muteWords = muteWords
+        log.debug("changed mute words: \(muteWords)")
+        
+        self.rebuildFilteredMessages()
+    }
+    
+    func rebuildFilteredMessages() {
         dispatch_async(dispatch_get_main_queue(), {
-            MessageContainer.sharedContainer.showHbIfseetnoCommands = show
-            
             self.progressIndicator.startAnimation(self)
             let shouldScroll = self.shouldTableViewScrollToBottom()
             
-            MessageContainer.sharedContainer.rebuildFilteredMessages({ () -> Void in
+            MessageContainer.sharedContainer.rebuildFilteredMessages({() -> Void in
                 self.tableView.reloadData()
                 
                 if shouldScroll {
@@ -163,8 +198,6 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
                 self.progressIndicator.stopAnimation(self)
             })
         })
-        
-        log.debug("changed show 'hbifseetno' commands: \(show)")
     }
     
     // MARK: - NSTableViewDataSource Functions

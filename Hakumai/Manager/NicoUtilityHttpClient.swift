@@ -78,7 +78,7 @@ extension NicoUtility {
     }
     
     private func sessionCookie() -> NSHTTPCookie? {
-        if let cookie = CookieUtility.cookie(CookieUtility.BrowserType.Chrome) {
+        if let cookie = self.cookie {
             // log.debug("cookie:[\(cookie)]")
             
             let userSessionCookie = NSHTTPCookie(properties: [
