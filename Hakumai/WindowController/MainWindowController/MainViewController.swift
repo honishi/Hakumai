@@ -122,10 +122,14 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     
     func addObserverForUserDefaults() {
         let defaults = NSUserDefaults.standardUserDefaults()
-        
+
+        // general
         defaults.addObserver(self, forKeyPath: Parameters.ShowIfseetnoCommands, options: (.Initial | .New), context: nil)
         defaults.addObserver(self, forKeyPath: Parameters.CommentAnonymously, options: (.Initial | .New), context: nil)
         
+        // mute
+        defaults.addObserver(self, forKeyPath: Parameters.EnableMuteUserIds, options: (.Initial | .New), context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.MuteUserIds, options: (.Initial | .New), context: nil)
         defaults.addObserver(self, forKeyPath: Parameters.EnableMuteWords, options: (.Initial | .New), context: nil)
         defaults.addObserver(self, forKeyPath: Parameters.MuteWords, options: (.Initial | .New), context: nil)
     }
@@ -143,6 +147,16 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         case Parameters.CommentAnonymously:
             if let changed = change["new"] as? Bool {
                 self.commentAnonymously = changed
+            }
+            
+        case Parameters.EnableMuteUserIds:
+            if let changed = change["new"] as? Bool {
+                self.changeEnableMuteUserIds(changed)
+            }
+            
+        case Parameters.MuteUserIds:
+            if let changed = change["new"] as? [[String: String]] {
+                self.changeMuteUserIds(changed)
             }
             
         case Parameters.EnableMuteWords:
@@ -164,6 +178,20 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     func changeShowHbIfseetnoCommands(show: Bool) {
         MessageContainer.sharedContainer.showHbIfseetnoCommands = show
         log.debug("changed show 'hbifseetno' commands: \(show)")
+        
+        self.rebuildFilteredMessages()
+    }
+    
+    func changeEnableMuteUserIds(enabled: Bool) {
+        MessageContainer.sharedContainer.enableMuteUserIds = enabled
+        log.debug("changed enable mute userids: \(enabled)")
+        
+        self.rebuildFilteredMessages()
+    }
+    
+    func changeMuteUserIds(muteUserIds: [[String: String]]) {
+        MessageContainer.sharedContainer.muteUserIds = muteUserIds
+        log.debug("changed mute userids: \(muteUserIds)")
         
         self.rebuildFilteredMessages()
     }

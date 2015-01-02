@@ -224,7 +224,7 @@
                                 </tableHeaderView>
                             </scrollView>
                             <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UmD-x3-4nJ">
-                                <rect key="frame" x="118" y="17" width="40" height="26"/>
+                                <rect key="frame" x="128" y="17" width="40" height="26"/>
                                 <buttonCell key="cell" type="bevel" title="+" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="jgg-jG-PQ1">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -235,7 +235,7 @@
                                 </connections>
                             </button>
                             <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uVC-jM-fSS">
-                                <rect key="frame" x="162" y="17" width="40" height="26"/>
+                                <rect key="frame" x="172" y="17" width="40" height="26"/>
                                 <buttonCell key="cell" type="bevel" title="-" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="J8D-5y-BAe">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>

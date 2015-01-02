@@ -14,6 +14,7 @@ class MenuDelegate: NSObject, NSMenuDelegate {
     // MARK: Menu Outlets
     @IBOutlet weak var copyCommentMenuItem: NSMenuItem!
     @IBOutlet weak var copyUrlMenuItem: NSMenuItem!
+    @IBOutlet weak var addToMuteUserMenuItem: NSMenuItem!
     @IBOutlet weak var reportAsNgUserMenuItem: NSMenuItem!
     @IBOutlet weak var openUserPageMenuItem: NSMenuItem!
     
@@ -45,7 +46,7 @@ class MenuDelegate: NSObject, NSMenuDelegate {
         let chat = message.chat!
         
         switch menuItem {
-        case self.copyCommentMenuItem, self.reportAsNgUserMenuItem:
+        case self.copyCommentMenuItem, self.addToMuteUserMenuItem, self.reportAsNgUserMenuItem:
             return true
         case self.copyUrlMenuItem:
             return self.urlStringInComment(chat) != nil ? true : false
@@ -94,6 +95,24 @@ class MenuDelegate: NSObject, NSMenuDelegate {
         let chat = MessageContainer.sharedContainer[self.tableView.clickedRow].chat!
         let toBeCopied = self.urlStringInComment(chat)!
         self.copyStringToPasteBoard(toBeCopied)
+    }
+    
+    @IBAction func addToMuteUser(sender: AnyObject) {
+        let chat = MessageContainer.sharedContainer[self.tableView.clickedRow].chat!
+        
+        let defaults = NSUserDefaults.standardUserDefaults()
+        var muteUserIds = defaults.objectForKey(Parameters.MuteUserIds) as [[String: String]]
+        
+        for muteUserId in muteUserIds {
+            if chat.userId == muteUserId[Parameters.MuteUserIdKeyUserId] {
+                log.debug("mute userid [\(chat.userId)] already registered, so skip")
+                return
+            }
+        }
+        
+        muteUserIds.append([Parameters.MuteUserIdKeyUserId: chat.userId!])
+        defaults.setObject(muteUserIds, forKey: Parameters.MuteUserIds)
+        defaults.synchronize()
     }
     
     @IBAction func reportAsNgUser(sender: AnyObject) {

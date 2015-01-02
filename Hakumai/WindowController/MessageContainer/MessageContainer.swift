@@ -14,6 +14,8 @@ class MessageContainer {
     // MARK: - Properties
     // MARK: Public
     var showHbIfseetnoCommands = false
+    var enableMuteUserIds = false
+    var muteUserIds = [[String: String]]()
     var enableMuteWords = false
     var muteWords = [[String: String]]()
     
@@ -275,7 +277,15 @@ class MessageContainer {
         }
         
         // filter by userid
-        // TODO:
+        if let userId = chat.userId {
+            if self.enableMuteUserIds {
+                for muteUserId in self.muteUserIds {
+                    if muteUserId[Parameters.MuteUserIdKeyUserId] == userId {
+                        return false
+                    }
+                }
+            }
+        }
         
         return true
     }

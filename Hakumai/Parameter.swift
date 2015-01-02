@@ -11,11 +11,16 @@ import Foundation
 // parameters
 // http://stackoverflow.com/a/26252377
 struct Parameters {
+    // top level parameters
     static let AlwaysOnTop = "AlwaysOnTop"
     static let ShowIfseetnoCommands = "ShowHbIfseetnoCommands"
     static let CommentAnonymously = "CommentAnonymously"
     static let EnableMuteUserIds = "EnableMuteUserIds"
     static let EnableMuteWords = "EnableMuteWords"
+    
+    // mute userids
+    static let MuteUserIds = "MuteUserIds"
+    static let MuteUserIdKeyUserId = "UserId"
     
     // mute words
     static let MuteWords = "MuteWords"
