@@ -30,7 +30,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return true
     }
     
-    // MARK: initializer
+    // MARK: Application Initialize Utility
     func initializeLog() {
         log.setup(logLevel: .Debug, showLogLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: nil)
     }
@@ -38,11 +38,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func migrateApplicationVersion() {
         let defaults = NSUserDefaults.standardUserDefaults()
         
-        let lastVersion = (defaults.objectForKey(Parameters.LastLaunchedApplicationVersion) as? String)
+        let lastVersion = defaults.stringForKey(Parameters.LastLaunchedApplicationVersion)
         let currentVersion = (NSBundle.mainBundle().infoDictionary!["CFBundleVersion"] as? String)
         log.info("last launched app version:[\(lastVersion)] current app version:[\(currentVersion)]")
 
-        if lastVersion != nil {
+        if lastVersion == nil {
+            log.info("detected app first launch, no need to migrate application version")
+        }
+        else {
             let lastVersionNumber = lastVersion!.toInt()!
             let currentVersionNumber = currentVersion!.toInt()!
             
@@ -79,22 +82,59 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func addObserverForUserDefaults() {
         let defaults = NSUserDefaults.standardUserDefaults()
         
+        // general
         defaults.addObserver(self, forKeyPath: Parameters.AlwaysOnTop, options: (.Initial | .New), context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.ShowIfseetnoCommands, options: (.Initial | .New), context: nil)
+        
+        // mute
+        defaults.addObserver(self, forKeyPath: Parameters.EnableMuteUserIds, options: (.Initial | .New), context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.MuteUserIds, options: (.Initial | .New), context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.EnableMuteWords, options: (.Initial | .New), context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.MuteWords, options: (.Initial | .New), context: nil)
     }
 
-    // MARK: - KVO Functions
+    // MARK: - Internal Functions
+    // MARK: KVO Functions
     override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
         // log.debug("detected observing value changed: key[\(keyPath)]")
         
-        if keyPath == Parameters.AlwaysOnTop {
+        switch keyPath {
+        case Parameters.AlwaysOnTop:
             if let newValue = change["new"] as? Bool {
                 // log.debug("\(newValue)")
                 self.makeWindowAlwaysOnTop(newValue)
             }
+            
+        case Parameters.ShowIfseetnoCommands:
+            if let changed = change["new"] as? Bool {
+                MainViewController.sharedInstance.changeShowHbIfseetnoCommands(changed)
+            }
+            
+        case Parameters.EnableMuteUserIds:
+            if let changed = change["new"] as? Bool {
+                MainViewController.sharedInstance.changeEnableMuteUserIds(changed)
+            }
+            
+        case Parameters.MuteUserIds:
+            if let changed = change["new"] as? [[String: String]] {
+                MainViewController.sharedInstance.changeMuteUserIds(changed)
+            }
+            
+        case Parameters.EnableMuteWords:
+            if let changed = change["new"] as? Bool {
+                MainViewController.sharedInstance.changeEnableMuteWords(changed)
+            }
+            
+        case Parameters.MuteWords:
+            if let changed = change["new"] as? [[String: String]] {
+                MainViewController.sharedInstance.changeMuteWords(changed)
+            }
+            
+        default:
+            break
         }
     }
 
-    // MARK: - Internal Functions
     // MARK: Menu Handlers
     @IBAction func openPreferences(sender: AnyObject) {
         PreferenceWindowController.sharedInstance.showWindow(self)

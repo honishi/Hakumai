@@ -60,9 +60,6 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     var elapsedTimer: NSTimer?
     var activeTimer: NSTimer?
 
-    // options
-    var commentAnonymously: Bool = true
-    
     var userWindowControllers = [UserWindowController]()
     
     // MARK: - Object Lifecycle
@@ -79,11 +76,6 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         self.buildViews()
         self.setupTableView()
         self.registerNibs()
-
-        // making some explicit delay here, to wait completion of AppDelegate.migrateApplicationVersion()
-        dispatch_async(dispatch_get_main_queue(), {
-            self.addObserverForUserDefaults()
-        })
     }
     
     override func viewDidAppear() {
@@ -121,60 +113,6 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         for (nibName, identifier) in nibs {
             let nib = NSNib(nibNamed: nibName, bundle: NSBundle.mainBundle())
             self.tableView.registerNib(nib!, forIdentifier: identifier)
-        }
-    }
-    
-    func addObserverForUserDefaults() {
-        let defaults = NSUserDefaults.standardUserDefaults()
-
-        // general
-        defaults.addObserver(self, forKeyPath: Parameters.ShowIfseetnoCommands, options: (.Initial | .New), context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.CommentAnonymously, options: (.Initial | .New), context: nil)
-        
-        // mute
-        defaults.addObserver(self, forKeyPath: Parameters.EnableMuteUserIds, options: (.Initial | .New), context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.MuteUserIds, options: (.Initial | .New), context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.EnableMuteWords, options: (.Initial | .New), context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.MuteWords, options: (.Initial | .New), context: nil)
-    }
-    
-    // MARK: - KVO Functions
-    override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
-        // log.debug("detected observing value changed: key[\(keyPath)]")
-        
-        switch keyPath {
-        case Parameters.ShowIfseetnoCommands:
-            if let changed = change["new"] as? Bool {
-                self.changeShowHbIfseetnoCommands(changed)
-            }
-            
-        case Parameters.CommentAnonymously:
-            if let changed = change["new"] as? Bool {
-                self.commentAnonymously = changed
-            }
-            
-        case Parameters.EnableMuteUserIds:
-            if let changed = change["new"] as? Bool {
-                self.changeEnableMuteUserIds(changed)
-            }
-            
-        case Parameters.MuteUserIds:
-            if let changed = change["new"] as? [[String: String]] {
-                self.changeMuteUserIds(changed)
-            }
-            
-        case Parameters.EnableMuteWords:
-            if let changed = change["new"] as? Bool {
-                self.changeEnableMuteWords(changed)
-            }
-            
-        case Parameters.MuteWords:
-            if let changed = change["new"] as? [[String: String]] {
-                self.changeMuteWords(changed)
-            }
-            
-        default:
-            break
         }
     }
     
@@ -599,7 +537,8 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             return
         }
 
-        NicoUtility.sharedInstance.comment(comment, anonymously: self.commentAnonymously)
+        let anonymously = NSUserDefaults.standardUserDefaults().boolForKey(Parameters.CommentAnonymously)
+        NicoUtility.sharedInstance.comment(comment, anonymously: anonymously)
         self.commentTextField.stringValue = ""
         
         if self.commentHistory.count == 0 || self.commentHistory.last != comment {
