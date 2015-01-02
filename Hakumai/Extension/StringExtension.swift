@@ -18,34 +18,26 @@ extension String {
     }
     
     // "立ち見A列".extractRegexpPattern("立ち見(\\w)列") -> Optional("A")
-    // "ab1 cd2 ef3 ab4".extractRegexpPattern("(ab\\d)") -> Optional("ab1")
-    // "ab1 cd2 ef3 ab4".extractRegexpPattern("(ab\\d)", index: 0) -> Optional("ab1")
-    // "ab1 cd2 ef3 ab4".extractRegexpPattern("(ab\\d)", index: 1) -> Optional("ab4")
     func extractRegexpPattern(pattern: String, index: Int = 0) -> String? {
-        let hasOpenBracket = (pattern.rangeOfString("(") != nil)
-        let hasCloseBracket = (pattern.rangeOfString(")") != nil)
-        assert(hasOpenBracket && hasCloseBracket, "pattern should have a pair of open and close bracket")
+        // convert String to NSString to handle regular expression as expected.
+        // with String, we could not handle the pattern like "ﾊﾃﾞだなｗ".extranctRegexpPattern("(ｗ)")
+        // see detail at http://stackoverflow.com/a/27192734
+        let nsStringSelf = (self as NSString)
         
         let regexp: NSRegularExpression! = NSRegularExpression(pattern: pattern, options: nil, error: nil)
-        
         if regexp == nil {
             return nil
         }
         
-        let matched = regexp.matchesInString(self, options: nil, range: NSMakeRange(0, self.utf16Count))
-        // log.debug(matched.count)
-        
-        if matched.count < index + 1 {
+        let matched = regexp.firstMatchInString(nsStringSelf, options: nil, range: NSMakeRange(0, nsStringSelf.length))
+        if matched == nil {
             return nil
         }
         
-        let nsRange = matched[index].rangeAtIndex(1)
-        let start = advance(self.startIndex, nsRange.location)
-        let end = advance(self.startIndex, nsRange.location + nsRange.length)
-        let range = Range<String.Index>(start: start, end: end)
-        let substring = self.substringWithRange(range)
-        
-        return substring
+        let nsRange = matched!.rangeAtIndex(1)
+        let nsSubstring = nsStringSelf.substringWithRange(nsRange)
+
+        return (nsSubstring as String)
     }
     
     func hasRegexpPattern(pattern: String) -> Bool {
@@ -53,10 +45,12 @@ extension String {
     }
     
     func stringByRemovingPattern(pattern: String) -> String {
-        let regexp = NSRegularExpression(pattern: pattern, options: nil, error: nil)!
-        let removed = regexp.stringByReplacingMatchesInString(self, options: nil, range: NSMakeRange(0, self.utf16Count), withTemplate: "")
+        let nsStringSelf = (self as NSString)
         
-        return removed
+        let regexp = NSRegularExpression(pattern: pattern, options: nil, error: nil)!
+        let removed = regexp.stringByReplacingMatchesInString(nsStringSelf, options: nil, range: NSMakeRange(0, nsStringSelf.length), withTemplate: "")
+        
+        return (removed as String)
     }
     
     func numberStringWithSeparatorComma() -> String? {

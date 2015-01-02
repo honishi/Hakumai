@@ -133,7 +133,7 @@ class MenuDelegate: NSObject, NSMenuDelegate {
             return nil
         }
         
-        return chat.comment!.extractRegexpPattern("(https?://[\\w/:%#\\$&\\?\\(\\)~\\.=\\+\\-]+)", index: 0)
+        return chat.comment!.extractRegexpPattern("(https?://[\\w/:%#\\$&\\?\\(\\)~\\.=\\+\\-]+)")
     }
     
     func copyStringToPasteBoard(string: String) -> Bool {

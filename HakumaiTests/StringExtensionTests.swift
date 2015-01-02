@@ -41,8 +41,8 @@ class StringExtensionTests: XCTestCase {
         XCTAssert("abc".hasRegexpPattern("b") == true, "")
         XCTAssert("abc".hasRegexpPattern("1") == false, "")
         
-        // not resolved bug case. http://stackoverflow.com/a/27192734
-        // XCTAssert("すげーﾊﾃﾞだなｗ".hasRegexpPattern("ｗ") == true, "")
+        // half-width character with (han)daku-on case. http://stackoverflow.com/a/27192734
+        XCTAssert("ﾊﾃﾞｗ".hasRegexpPattern("ｗ") == true, "")
     }
     
     func testStringByRemovingPattern() {
