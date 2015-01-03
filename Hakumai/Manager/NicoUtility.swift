@@ -527,8 +527,10 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             }
         }
         
-        let liveId = self.live!.liveId!
-        self.cookiedAsyncRequest("GET", url: kHeartbeatUrl, parameters: ["v": liveId], completion: httpCompletion)
+        // self.live may be nil if live is time-shifted. so use optional binding.
+        if let liveId = self.live?.liveId {
+            self.cookiedAsyncRequest("GET", url: kHeartbeatUrl, parameters: ["v": liveId], completion: httpCompletion)
+        }
     }
     
     // MARK: Misc Utility
