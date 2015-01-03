@@ -371,10 +371,9 @@
 				DB414C0A1A4811C4008D2F40 /* Global.swift */,
 				DB682D411A36E6AE00499C72 /* Parameter.swift */,
 				DB2AE0C31A0EE2FD00B1CE4D /* AppDelegate.swift */,
-				DB3426751A3D86C6001494A6 /* Common */,
-				DBA414CE1A1A16FB00E0CAD3 /* Extension */,
-				DBA414CA1A1A13FC00E0CAD3 /* Manager */,
-				DBE73ECC1A1A1B9600A8BCA9 /* WindowController */,
+				DBA414CE1A1A16FB00E0CAD3 /* Extensions */,
+				DBA414CA1A1A13FC00E0CAD3 /* Models */,
+				DBE73ECC1A1A1B9600A8BCA9 /* Controllers */,
 				DB2AE0C71A0EE2FD00B1CE4D /* Images.xcassets */,
 				DB2AE0C11A0EE2FD00B1CE4D /* Supporting Files */,
 			);
@@ -392,12 +391,12 @@
 		DB2AE0D31A0EE2FD00B1CE4D /* HakumaiTests */ = {
 			isa = PBXGroup;
 			children = (
-				DBFA88921A1CAE8B005349AD /* sample */,
 				DB2AE1041A0F2BAA00B1CE4D /* HakumaiTests-Bridging-Header.h */,
 				DB2AE0D61A0EE2FD00B1CE4D /* HakumaiTests.swift */,
-				DBA414D01A1A175000E0CAD3 /* Extension */,
-				DBA414CF1A1A174500E0CAD3 /* NicoManager */,
-				DBE73ECB1A1A1B7E00A8BCA9 /* ViewControllers */,
+				DBFA88921A1CAE8B005349AD /* Resources */,
+				DBA414D01A1A175000E0CAD3 /* Extensions */,
+				DBA414CF1A1A174500E0CAD3 /* Models */,
+				DBE73ECB1A1A1B7E00A8BCA9 /* Controllers */,
 				DB2AE0D41A0EE2FD00B1CE4D /* Supporting Files */,
 			);
 			path = HakumaiTests;
@@ -450,13 +449,6 @@
 			name = FMDB;
 			sourceTree = "<group>";
 		};
-		DB3426751A3D86C6001494A6 /* Common */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Common;
-			sourceTree = "<group>";
-		};
 		DB346B9D1A548F8400137639 /* Ono */ = {
 			isa = PBXGroup;
 			children = (
@@ -494,20 +486,17 @@
 			path = TableCellView;
 			sourceTree = "<group>";
 		};
-		DBA414CA1A1A13FC00E0CAD3 /* Manager */ = {
+		DBA414CA1A1A13FC00E0CAD3 /* Models */ = {
 			isa = PBXGroup;
 			children = (
 				DB0ED64E1A20B07E007E9318 /* Cookie */,
-				DBFA887D1A1BC264005349AD /* Model */,
-				DBAAA7501A0FDA4500981004 /* NicoUtility.swift */,
-				DB8E71B41A544A5E00C6E696 /* NicoUtilityExtractor.swift */,
-				DB8E71B91A544D7B00C6E696 /* NicoUtilityHttpClient.swift */,
-				DBA414C51A188A7400E0CAD3 /* RoomListener.swift */,
+				DBFA887D1A1BC264005349AD /* Entities */,
+				DBE093F61A585EC5004554FD /* Api */,
 			);
-			path = Manager;
+			path = Models;
 			sourceTree = "<group>";
 		};
-		DBA414CE1A1A16FB00E0CAD3 /* Extension */ = {
+		DBA414CE1A1A16FB00E0CAD3 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
 				DBA414CB1A1A16F300E0CAD3 /* StringExtension.swift */,
@@ -516,10 +505,10 @@
 				DB9EFC731A3E974A0087D302 /* NSWindowExtension.swift */,
 				DBB473051A35909F002C797E /* NSXMLElementExtension.swift */,
 			);
-			path = Extension;
+			path = Extensions;
 			sourceTree = "<group>";
 		};
-		DBA414CF1A1A174500E0CAD3 /* NicoManager */ = {
+		DBA414CF1A1A174500E0CAD3 /* Models */ = {
 			isa = PBXGroup;
 			children = (
 				DB346B9B1A548C3B00137639 /* CommunityTests.swift */,
@@ -528,15 +517,15 @@
 				DB0F0ECC1A16441D00F8BDC5 /* NicoUtilityTests.swift */,
 				DBA414C81A189D7D00E0CAD3 /* RoomListenerTests.swift */,
 			);
-			name = NicoManager;
+			path = Models;
 			sourceTree = "<group>";
 		};
-		DBA414D01A1A175000E0CAD3 /* Extension */ = {
+		DBA414D01A1A175000E0CAD3 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
 				DBA414D11A1A176E00E0CAD3 /* StringExtensionTests.swift */,
 			);
-			name = Extension;
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		DBAAA7341A0F58E700981004 /* SSKeychain */ = {
@@ -572,16 +561,27 @@
 			path = UnusedLayeredView;
 			sourceTree = "<group>";
 		};
-		DBE73ECB1A1A1B7E00A8BCA9 /* ViewControllers */ = {
+		DBE093F61A585EC5004554FD /* Api */ = {
+			isa = PBXGroup;
+			children = (
+				DBAAA7501A0FDA4500981004 /* NicoUtility.swift */,
+				DB8E71B41A544A5E00C6E696 /* NicoUtilityExtractor.swift */,
+				DB8E71B91A544D7B00C6E696 /* NicoUtilityHttpClient.swift */,
+				DBA414C51A188A7400E0CAD3 /* RoomListener.swift */,
+			);
+			path = Api;
+			sourceTree = "<group>";
+		};
+		DBE73ECB1A1A1B7E00A8BCA9 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
 				DBE73EC91A1A1B6A00A8BCA9 /* MainViewControllerTests.swift */,
 				DBCA40D61A30BC38006299A9 /* MenuDelegateTests.swift */,
 			);
-			name = ViewControllers;
+			path = Controllers;
 			sourceTree = "<group>";
 		};
-		DBE73ECC1A1A1B9600A8BCA9 /* WindowController */ = {
+		DBE73ECC1A1A1B9600A8BCA9 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
 				DB7B3DE71A246EE200205470 /* UIHelper.swift */,
@@ -590,7 +590,7 @@
 				DB414C031A48106B008D2F40 /* UserWindowController */,
 				DBFB814D1A36B4F300294934 /* PreferenceWindowController */,
 			);
-			path = WindowController;
+			path = Controllers;
 			sourceTree = "<group>";
 		};
 		DBFA886B1A1BA353005349AD /* Products */ = {
@@ -603,7 +603,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		DBFA887D1A1BC264005349AD /* Model */ = {
+		DBFA887D1A1BC264005349AD /* Entities */ = {
 			isa = PBXGroup;
 			children = (
 				DBFA88811A1BC8C9005349AD /* Enum.swift */,
@@ -616,10 +616,10 @@
 				DBFA887A1A1BC25A005349AD /* Chat.swift */,
 				DB52B0B11A21226900E78C6A /* ChatResult.swift */,
 			);
-			path = Model;
+			path = Entities;
 			sourceTree = "<group>";
 		};
-		DBFA88921A1CAE8B005349AD /* sample */ = {
+		DBFA88921A1CAE8B005349AD /* Resources */ = {
 			isa = PBXGroup;
 			children = (
 				DBFA88901A1CAE85005349AD /* community_user.html */,
@@ -629,7 +629,7 @@
 				DBB4730F1A35CE72002C797E /* heartbeat_ok.xml */,
 				DBB473111A35CE86002C797E /* heartbeat_fail.xml */,
 			);
-			path = sample;
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		DBFB814D1A36B4F300294934 /* PreferenceWindowController */ = {
