@@ -13,7 +13,7 @@ import XCGLogger
 
 extension NicoUtility {
     // MARK: - General
-    func isErrorResponse(xmlData: NSData) -> Bool {
+    func isErrorResponse(xmlData: NSData) -> (error: Bool, code: String) {
         var error: NSError?
         let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &error)
         let rootElement = xmlDocument?.rootElement()
@@ -23,14 +23,16 @@ extension NicoUtility {
         if status == "fail" {
             log.warning("failed to load message server")
             
-            if let errorCode = rootElement?.firstStringValueForXPathNode("/getplayerstatus/error/code") {
-                log.warning("error code: \(errorCode)")
+            var code = ""
+            if let codeInResponse = rootElement?.firstStringValueForXPathNode("/getplayerstatus/error/code") {
+                log.warning("error code: \(codeInResponse)")
+                code = codeInResponse
             }
             
-            return true
+            return (error: true, code: code)
         }
         
-        return false
+        return (error: false, code: "")
     }
     
     // MARK: - GetPlayerStatus

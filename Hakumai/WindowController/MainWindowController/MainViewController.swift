@@ -350,19 +350,21 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             self.communityTitleLabel.stringValue = live.community.title! + " (Lv." + level + ")"
             self.roomPositionLabel.stringValue = user.roomLabel! + " - " + String(user.seatNo!)
             
+            self.startTimers()
             self.loadThumbnail()
             self.focusCommentTextField()
         })
         
         self.logSystemMessageToTableView("放送情報を取得しました.")
     }
+    
+    func nicoUtilityDidFailToPrepareLive(nicoUtility: NicoUtility, reason: String) {
+        self.logSystemMessageToTableView(reason)
+    }
+
 
     func nicoUtilityDidStartListening(nicoUtility: NicoUtility, roomPosition: RoomPosition) {
         log.info("started listening \(roomPosition.label()).")
-        
-        if roomPosition == .Arena {
-            self.startTimers()
-        }
     }
 
     func nicoUtilityDidReceiveFirstChat(nicoUtility: NicoUtility, chat: Chat) {
