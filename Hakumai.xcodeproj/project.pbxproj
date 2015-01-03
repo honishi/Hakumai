@@ -492,6 +492,7 @@
 				DB0ED64E1A20B07E007E9318 /* Cookie */,
 				DBFA887D1A1BC264005349AD /* Entities */,
 				DBE093F61A585EC5004554FD /* Api */,
+				DB1E32C41A2C0CCE00CD874A /* MessageContainer */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -585,7 +586,6 @@
 			isa = PBXGroup;
 			children = (
 				DB7B3DE71A246EE200205470 /* UIHelper.swift */,
-				DB1E32C41A2C0CCE00CD874A /* MessageContainer */,
 				DBD65C191A2E0C3200B84C97 /* MainWindowController */,
 				DB414C031A48106B008D2F40 /* UserWindowController */,
 				DBFB814D1A36B4F300294934 /* PreferenceWindowController */,
