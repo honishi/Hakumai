@@ -1169,6 +1169,10 @@
                                 <action selector="copyUrl:" target="Riw-FG-ugq" id="3qv-Pf-isq"/>
                             </connections>
                         </menuItem>
+                        <menuItem isSeparatorItem="YES" id="y1N-7S-bEE"/>
+                        <menuItem title="Remove Handle Name" id="vop-lQ-wo6">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                        </menuItem>
                         <menuItem isSeparatorItem="YES" id="uwl-U0-wdQ"/>
                         <menuItem title="Add to Mute User" id="vkF-qq-cvh">
                             <modifierMask key="keyEquivalentModifierMask"/>

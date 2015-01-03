@@ -9,42 +9,61 @@
 import Foundation
 import AppKit
 
+private let kImageNameUserIdHandleName = "UserIdHandleName"
+private let kImageNameUserIdRawId = "UserIdRawId"
+private let kImageNameUserId184Id = "UserId184Id"
+
 class UserIdTableCellView: NSTableCellView {
     @IBOutlet weak var userIdTextField: NSTextField!
     @IBOutlet weak var userIdImageView: NSImageView!
     
-    var userId: String? = nil {
+    var chat: Chat? = nil {
         didSet {
-            if self.userId == nil {
+            if self.chat == nil || self.chat?.userId == nil || self.chat?.premium == nil || self.chat?.comment == nil {
                 self.userIdImageView.image = nil
                 self.userIdTextField.stringValue = ""
                 return
             }
             
-            self.userIdImageView.image = self.imageForUserId(self.userId!)
-            self.userIdTextField.stringValue = self.userId!
-            self.resolveAndSetLabel(self.userId!)
+            let handleName = HandleNameManager.sharedManager.handleNameForChat(self.chat!)
+            
+            self.userIdImageView.image = self.imageForHandleName(handleName, userId: self.chat!.userId!)
+            self.setUserIdLabelWithUserId(self.chat!.userId!, premium: self.chat!.premium!, handleName: handleName)
         }
     }
     
     // MARK: - Internal Functions
-    func imageForUserId(userId: String) -> NSImage {
+    func imageForHandleName(handleName: String?, userId: String) -> NSImage {
         var image: NSImage
-        let isRawUserId = NicoUtility.sharedInstance.isRawUserId(userId)
         
-        if isRawUserId {
-            image = NSImage(named: "UserIdRaw")!
+        if handleName != nil {
+            image = NSImage(named: kImageNameUserIdHandleName)!
         }
         else {
-            image = NSImage(named: "UserId184")!
+            if NicoUtility.sharedInstance.isRawUserId(userId) {
+                image = NSImage(named: kImageNameUserIdRawId)!
+            }
+            else {
+                image = NSImage(named: kImageNameUserId184Id)!
+            }
         }
         
         return image
     }
     
-    func resolveAndSetLabel(userId: String) {
+    func setUserIdLabelWithUserId(userId: String, premium: Premium, handleName: String?) {
+        // set default name
+        self.userIdTextField.stringValue = self.concatUserNameWithUserId(userId, userName: nil, handleName: handleName)
+        
+        // if needed, then resolve userid
+        let isRawId = NicoUtility.sharedInstance.isRawUserId(userId)
+        let isUserComment = (premium == .Ippan || premium == .Premium || premium == .BSP)
+        if handleName != nil || !isRawId || !isUserComment {
+            return
+        }
+        
         if let userName = NicoUtility.sharedInstance.cachedUsernames[userId] {
-            self.userIdTextField.stringValue = userName
+            self.userIdTextField.stringValue = self.concatUserNameWithUserId(userId, userName: userName, handleName: handleName)
             return
         }
         
@@ -54,10 +73,26 @@ class UserIdTableCellView: NSTableCellView {
             }
             
             dispatch_async(dispatch_get_main_queue(), {
-                self.userIdTextField.stringValue = userName!
+                self.userIdTextField.stringValue = self.concatUserNameWithUserId(userId, userName: userName, handleName: handleName)
             })
         }
         
         NicoUtility.sharedInstance.resolveUsername(userId, completion: completion)
+    }
+    
+    func concatUserNameWithUserId(userId: String, userName: String?, handleName: String?) -> String {
+        var concatenated = ""
+        
+        if handleName != nil {
+            concatenated = handleName! + " (" + userId + ")"
+        }
+        else if userName != nil {
+            concatenated = userName! + " (" + userId + ")"
+        }
+        else {
+            concatenated = userId
+        }
+        
+        return concatenated
     }
 }

@@ -250,7 +250,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             let attributed = NSAttributedString(string: content, attributes: attributes)
             view.textField?.attributedStringValue = attributed
         case kUserIdColumnIdentifier:
-            (view as UserIdTableCellView).userId = nil
+            (view as UserIdTableCellView).chat = nil
         default:
             break
         }
@@ -272,7 +272,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             let (content, attributes) = self.contentAndAttributesForMessage(message)
             attributed = NSAttributedString(string: content, attributes: attributes)
         case kUserIdColumnIdentifier:
-            (view as UserIdTableCellView).userId = chat.userId
+            (view as UserIdTableCellView).chat = chat
         case kPremiumColumnIdentifier:
             (view as PremiumTableCellView).premium = chat.premium!
         case kMailColumnIdentifier:
@@ -379,6 +379,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
 
     func nicoUtilityDidReceiveChat(nicoUtility: NicoUtility, chat: Chat) {
         // log.debug("\(chat.mail),\(chat.comment)")
+        HandleNameManager.sharedManager.updateHandleNameForChat(chat)
         self.appendTableView(chat)
         
         for userWindowController in self.userWindowControllers {

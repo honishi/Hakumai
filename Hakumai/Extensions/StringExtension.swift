@@ -18,7 +18,7 @@ extension String {
     }
     
     // "立ち見A列".extractRegexpPattern("立ち見(\\w)列") -> Optional("A")
-    func extractRegexpPattern(pattern: String, index: Int = 0) -> String? {
+    func extractRegexpPattern(pattern: String) -> String? {
         // convert String to NSString to handle regular expression as expected.
         // with String, we could not handle the pattern like "ﾊﾃﾞだなｗ".extranctRegexpPattern("(ｗ)")
         // see detail at http://stackoverflow.com/a/27192734

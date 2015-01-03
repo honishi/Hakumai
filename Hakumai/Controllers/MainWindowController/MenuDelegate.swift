@@ -51,7 +51,9 @@ class MenuDelegate: NSObject, NSMenuDelegate {
         case self.copyUrlMenuItem:
             return self.urlStringInComment(chat) != nil ? true : false
         case self.openUserPageMenuItem:
-            return NicoUtility.sharedInstance.isRawUserId(chat.userId!) ? true : false
+            let isRawId = NicoUtility.sharedInstance.isRawUserId(chat.userId!)
+            let isUserComment = (chat.premium == .Ippan || chat.premium == .Premium || chat.premium == .BSP)
+            return (isRawId && isUserComment) ? true : false
         default:
             break
         }

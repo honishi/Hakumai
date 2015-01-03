@@ -9,6 +9,9 @@
 import Foundation
 import AppKit
 
+private let kImageNamePremium = "Premium"
+private let kImageNameIppan = "UserId184Id"
+
 class PremiumTableCellView: NSTableCellView {
     @IBOutlet weak var premiumImageView: NSImageView!
     @IBOutlet weak var premiumTextField: NSTextField!
@@ -32,7 +35,9 @@ class PremiumTableCellView: NSTableCellView {
         
         switch premium {
         case .Premium:
-            image = NSImage(named: "Premium")!
+            image = NSImage(named: kImageNamePremium)!
+        case .Ippan:
+            image = NSImage(named: kImageNameIppan)!
         default:
             break
         }
