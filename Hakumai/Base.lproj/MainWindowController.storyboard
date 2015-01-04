@@ -1170,8 +1170,17 @@
                             </connections>
                         </menuItem>
                         <menuItem isSeparatorItem="YES" id="y1N-7S-bEE"/>
+                        <menuItem title="Add Handle Name" id="cOM-FI-15Y">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="addHandleName:" target="Riw-FG-ugq" id="hYR-Hd-K2w"/>
+                            </connections>
+                        </menuItem>
                         <menuItem title="Remove Handle Name" id="vop-lQ-wo6">
                             <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="removeHandleName:" target="Riw-FG-ugq" id="yLO-gr-dGL"/>
+                            </connections>
                         </menuItem>
                         <menuItem isSeparatorItem="YES" id="uwl-U0-wdQ"/>
                         <menuItem title="Add to Mute User" id="vkF-qq-cvh">
@@ -1200,15 +1209,80 @@
                 </menu>
                 <customObject id="Riw-FG-ugq" customClass="MenuDelegate" customModule="Hakumai" customModuleProvider="target">
                     <connections>
+                        <outlet property="addHandleNameMenuItem" destination="cOM-FI-15Y" id="gbs-UV-eRI"/>
                         <outlet property="addToMuteUserMenuItem" destination="vkF-qq-cvh" id="lRE-o7-CNO"/>
                         <outlet property="copyCommentMenuItem" destination="CZ2-j4-uTm" id="FO6-qx-8DC"/>
                         <outlet property="copyUrlMenuItem" destination="rwi-Ju-wYL" id="ng5-yT-BNE"/>
                         <outlet property="openUserPageMenuItem" destination="9gC-Dv-kyp" id="Yqk-Mt-JHF"/>
+                        <outlet property="removeHandleNameMenuItem" destination="vop-lQ-wo6" id="eKS-r7-dtJ"/>
                         <outlet property="reportAsNgUserMenuItem" destination="L1C-9u-5sm" id="Edy-Ao-CgH"/>
                     </connections>
                 </customObject>
             </objects>
             <point key="canvasLocation" x="75.5" y="683"/>
+        </scene>
+        <!--Handle Name Add View Controller-->
+        <scene sceneID="tSQ-kR-qZi">
+            <objects>
+                <viewController storyboardIdentifier="HandleNameAddViewController" id="2hv-da-cfM" customClass="HandleNameAddViewController" customModule="Hakumai" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="Ej3-qk-QpB">
+                        <rect key="frame" x="0.0" y="0.0" width="290" height="117"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gR0-0B-UDL">
+                                <rect key="frame" x="18" y="80" width="171" height="17"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Add/Update Handle Name:" id="aQh-PC-Qu6">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oTt-jC-Q27">
+                                <rect key="frame" x="20" y="50" width="250" height="22"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="aZf-eF-6vH">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                                <connections>
+                                    <action selector="addHandleName:" target="2hv-da-cfM" id="xh1-2a-uo9"/>
+                                    <binding destination="2hv-da-cfM" name="value" keyPath="self.handleName" id="Vb6-CG-yru">
+                                        <dictionary key="options">
+                                            <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </textField>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Sw7-sV-cSm">
+                                <rect key="frame" x="196" y="14" width="80" height="32"/>
+                                <buttonCell key="cell" type="push" title="Add" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xCk-aI-qVP">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="addHandleName:" target="2hv-da-cfM" id="Rjb-LB-b3q"/>
+                                    <binding destination="2hv-da-cfM" name="enabled" keyPath="self.handleName.length" id="OQ0-Mz-k2r"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zwB-Mb-UaV">
+                                <rect key="frame" x="113" y="14" width="83" height="32"/>
+                                <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="a7x-T3-7pR">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                    <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="cancelToAdd:" target="2hv-da-cfM" id="8Rp-ue-Fha"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                    </view>
+                </viewController>
+                <customObject id="Jz0-En-dM8" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="75" y="1038.5"/>
         </scene>
     </scenes>
     <resources>

@@ -60,7 +60,7 @@ class UserIdTableCellView: NSTableCellView {
             return
         }
         
-        if let userName = NicoUtility.sharedInstance.cachedUsernames[userId] {
+        if let userName = NicoUtility.sharedInstance.cachedUserNameForUserId(userId) {
             self.userIdTextField.stringValue = self.concatUserNameWithUserId(userId, userName: userName, handleName: handleName)
             return
         }

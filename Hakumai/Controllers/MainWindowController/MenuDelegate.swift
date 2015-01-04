@@ -14,6 +14,8 @@ class MenuDelegate: NSObject, NSMenuDelegate {
     // MARK: Menu Outlets
     @IBOutlet weak var copyCommentMenuItem: NSMenuItem!
     @IBOutlet weak var copyUrlMenuItem: NSMenuItem!
+    @IBOutlet weak var addHandleNameMenuItem: NSMenuItem!
+    @IBOutlet weak var removeHandleNameMenuItem: NSMenuItem!
     @IBOutlet weak var addToMuteUserMenuItem: NSMenuItem!
     @IBOutlet weak var reportAsNgUserMenuItem: NSMenuItem!
     @IBOutlet weak var openUserPageMenuItem: NSMenuItem!
@@ -46,10 +48,17 @@ class MenuDelegate: NSObject, NSMenuDelegate {
         let chat = message.chat!
         
         switch menuItem {
-        case self.copyCommentMenuItem, self.addToMuteUserMenuItem, self.reportAsNgUserMenuItem:
+        case self.copyCommentMenuItem:
             return true
         case self.copyUrlMenuItem:
             return self.urlStringInComment(chat) != nil ? true : false
+        case self.addHandleNameMenuItem:
+            return chat.isUserComment()
+        case self.removeHandleNameMenuItem:
+            let hasHandleName = (HandleNameManager.sharedManager.handleNameForChat(chat) != nil)
+            return hasHandleName
+        case self.addToMuteUserMenuItem, self.reportAsNgUserMenuItem:
+            return chat.isUserComment()
         case self.openUserPageMenuItem:
             return (chat.isRawUserId() && chat.isUserComment()) ? true : false
         default:
@@ -95,6 +104,17 @@ class MenuDelegate: NSObject, NSMenuDelegate {
         let chat = MessageContainer.sharedContainer[self.tableView.clickedRow].chat!
         let toBeCopied = self.urlStringInComment(chat)!
         self.copyStringToPasteBoard(toBeCopied)
+    }
+    
+    @IBAction func addHandleName(sender: AnyObject) {
+        let chat = MessageContainer.sharedContainer[self.tableView.clickedRow].chat!
+        MainViewController.sharedInstance.showHandleNameAddViewController(chat)
+    }
+    
+    @IBAction func removeHandleName(sender: AnyObject) {
+        let chat = MessageContainer.sharedContainer[self.tableView.clickedRow].chat!
+        HandleNameManager.sharedManager.removeHandleNameWithChat(chat)
+        MainViewController.sharedInstance.refreshHandleName()
     }
     
     @IBAction func addToMuteUser(sender: AnyObject) {

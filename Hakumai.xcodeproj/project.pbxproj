@@ -64,6 +64,8 @@
 		DB7B3DE81A246EE200205470 /* UIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B3DE71A246EE200205470 /* UIHelper.swift */; };
 		DB7B3DE91A246EE200205470 /* UIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B3DE71A246EE200205470 /* UIHelper.swift */; };
 		DB7BA06E1A58B6B7000778CF /* ChatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA06D1A58B6B7000778CF /* ChatTests.swift */; };
+		DB7BA0721A58C021000778CF /* HandleNameAddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA0711A58C021000778CF /* HandleNameAddViewController.swift */; };
+		DB7BA0731A58C021000778CF /* HandleNameAddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA0711A58C021000778CF /* HandleNameAddViewController.swift */; };
 		DB7EB89C1A24AA3700C3BFB5 /* RoomPositionTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB7EB89B1A24AA3700C3BFB5 /* RoomPositionTableCellView.xib */; };
 		DB7EB89D1A24AA3700C3BFB5 /* RoomPositionTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB7EB89B1A24AA3700C3BFB5 /* RoomPositionTableCellView.xib */; };
 		DB7EB8A21A24AA5100C3BFB5 /* RoomPositionTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7EB8A11A24AA5100C3BFB5 /* RoomPositionTableCellView.swift */; };
@@ -248,6 +250,7 @@
 		DB7B3DE41A2434FB00205470 /* ScoreTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScoreTableCellView.swift; sourceTree = "<group>"; };
 		DB7B3DE71A246EE200205470 /* UIHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIHelper.swift; sourceTree = "<group>"; };
 		DB7BA06D1A58B6B7000778CF /* ChatTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatTests.swift; sourceTree = "<group>"; };
+		DB7BA0711A58C021000778CF /* HandleNameAddViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HandleNameAddViewController.swift; sourceTree = "<group>"; };
 		DB7EB89B1A24AA3700C3BFB5 /* RoomPositionTableCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RoomPositionTableCellView.xib; sourceTree = "<group>"; };
 		DB7EB8A11A24AA5100C3BFB5 /* RoomPositionTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomPositionTableCellView.swift; sourceTree = "<group>"; };
 		DB7F21AF1A210017008D17E0 /* Community.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Community.swift; sourceTree = "<group>"; };
@@ -559,6 +562,7 @@
 				DB2AE0C51A0EE2FD00B1CE4D /* MainViewController.swift */,
 				DB80CA861A2575A0002636E0 /* MainViewControllerExtensions.swift */,
 				DBCA40D31A30AD48006299A9 /* MenuDelegate.swift */,
+				DB7BA0711A58C021000778CF /* HandleNameAddViewController.swift */,
 			);
 			path = MainWindowController;
 			sourceTree = "<group>";
@@ -852,6 +856,7 @@
 				DB73A38C1A4F43F6008423D0 /* MuteAddViewController.swift in Sources */,
 				DBFA887B1A1BC25A005349AD /* Chat.swift in Sources */,
 				DB2AE1121A0F2BAB00B1CE4D /* FMDatabaseAdditions.m in Sources */,
+				DB7BA0721A58C021000778CF /* HandleNameAddViewController.swift in Sources */,
 				DB9EFC741A3E974A0087D302 /* NSWindowExtension.swift in Sources */,
 				DB7F21B01A210017008D17E0 /* Community.swift in Sources */,
 				DB2AE1161A0F2BAB00B1CE4D /* FMDatabaseQueue.m in Sources */,
@@ -894,6 +899,7 @@
 				DB7F21B11A210017008D17E0 /* Community.swift in Sources */,
 				DB80CA881A2575A0002636E0 /* MainViewControllerExtensions.swift in Sources */,
 				DB0F0ECD1A16441D00F8BDC5 /* NicoUtilityTests.swift in Sources */,
+				DB7BA0731A58C021000778CF /* HandleNameAddViewController.swift in Sources */,
 				DB682D451A36E73D00499C72 /* Parameter.swift in Sources */,
 				DB7BA06E1A58B6B7000778CF /* ChatTests.swift in Sources */,
 				DB8E71BB1A544D7B00C6E696 /* NicoUtilityHttpClient.swift in Sources */,

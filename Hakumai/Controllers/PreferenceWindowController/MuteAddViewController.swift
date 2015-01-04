@@ -14,9 +14,10 @@ class MuteAddViewController: NSViewController {
     // MARK: - Properties
     // this property contains mute target value, and is also used binding between text filed and add button.
     // http://stackoverflow.com/a/24017991
-    var muteStringValue: String!
+    // also see more detailed note in HandleNameAddViewController's propery
+    dynamic var muteValue: NSString!
     
-    var completion: ((cancelled: Bool, muteStringValue: String?) -> Void)?
+    var completion: ((cancelled: Bool, muteValue: String?) -> Void)?
     
     private let log = XCGLogger.defaultInstance()
 
@@ -31,21 +32,19 @@ class MuteAddViewController: NSViewController {
     
     // MARK: - Internal Functions
     // MARK: Button Handlers
-    @IBAction func detectedEnterInTextField(sender: AnyObject) {
-        if 0 < countElements((sender as NSTextField).stringValue) {
-            self.addMute(self)
-        }
-    }
-    
     @IBAction func addMute(sender: AnyObject) {
+        if !(0 < self.muteValue.length) {
+            return
+        }
+        
         if self.completion != nil {
-            self.completion!(cancelled: false, muteStringValue: self.muteStringValue)
+            self.completion!(cancelled: false, muteValue: self.muteValue)
         }
     }
     
     @IBAction func cancelAddMute(sender: AnyObject) {
         if self.completion != nil {
-            self.completion!(cancelled: true, muteStringValue: nil)
+            self.completion!(cancelled: true, muteValue: nil)
         }
     }
 }

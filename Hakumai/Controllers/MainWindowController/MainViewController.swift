@@ -9,6 +9,9 @@
 import Foundation
 import XCGLogger
 
+private let kStoryboardNameMainWindowController = "MainWindowController"
+private let kStoryboardIdHandleNameAddViewController = "HandleNameAddViewController"
+
 private let kCalculateActiveInterval: NSTimeInterval = 3
 
 class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate, NSControlTextEditingDelegate, NicoUtilityDelegate, UserWindowControllerDelegate {
@@ -379,7 +382,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
 
     func nicoUtilityDidReceiveChat(nicoUtility: NicoUtility, chat: Chat) {
         // log.debug("\(chat.mail),\(chat.comment)")
-        HandleNameManager.sharedManager.updateHandleNameForChat(chat)
+        HandleNameManager.sharedManager.extractAndUpdateHandleNameWithChat(chat)
         self.appendTableView(chat)
         
         for userWindowController in self.userWindowControllers {
@@ -500,7 +503,56 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         }
     }
     
-    // MARK: - Live Info Updater
+    // MARK: - Public Functions
+    func showHandleNameAddViewController(chat: Chat) {
+        let storyboard = NSStoryboard(name: kStoryboardNameMainWindowController, bundle: nil)!
+        let handleNameAddViewController = storyboard.instantiateControllerWithIdentifier(kStoryboardIdHandleNameAddViewController) as HandleNameAddViewController
+        
+        handleNameAddViewController.handleName = (self.defaultHandleNameWithChat(chat) ?? "")
+        handleNameAddViewController.completion = {(cancelled: Bool, handleName: String?) -> Void in
+            if !cancelled {
+                HandleNameManager.sharedManager.updateHandleNameWithChat(chat, handleName: handleName!)
+                MainViewController.sharedInstance.refreshHandleName()
+            }
+            
+            self.dismissViewController(handleNameAddViewController)
+            // TODO: deinit in handleNameViewController is not called after this completion
+        }
+        
+        self.presentViewControllerAsSheet(handleNameAddViewController)
+    }
+    
+    func defaultHandleNameWithChat(chat: Chat) -> String? {
+        var defaultHandleName: String?
+        
+        if let handleName = HandleNameManager.sharedManager.handleNameForChat(chat) {
+            defaultHandleName = handleName
+        }
+        else {
+            if let userName = NicoUtility.sharedInstance.cachedUserNameForChat(chat) {
+                defaultHandleName = userName
+            }
+        }
+        
+        return defaultHandleName
+    }
+    
+    func refreshHandleName() {
+        self.tableView.reloadData()
+        self.scrollView.flashScrollers()
+    }
+    
+    // MARK: Hotkeys
+    func focusLiveTextField() {
+        self.liveTextField.becomeFirstResponder()
+    }
+
+    func focusCommentTextField() {
+        self.commentTextField.becomeFirstResponder()
+    }
+    
+    // MARK: - Internal Functions
+    // MARK: Live Info Updater
     func loadThumbnail() {
         NicoUtility.sharedInstance.loadThumbnail { (imageData) -> (Void) in
             dispatch_async(dispatch_get_main_queue(), {
@@ -533,24 +585,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         })
     }
     
-    // MARK: - Comment TextField Action
-    @IBAction func comment(sender: AnyObject) {
-        let comment = self.commentTextField.stringValue
-        if countElements(comment) == 0 {
-            return
-        }
-
-        let anonymously = NSUserDefaults.standardUserDefaults().boolForKey(Parameters.CommentAnonymously)
-        NicoUtility.sharedInstance.comment(comment, anonymously: anonymously)
-        self.commentTextField.stringValue = ""
-        
-        if self.commentHistory.count == 0 || self.commentHistory.last != comment {
-            self.commentHistory.append(comment)
-            self.commentHistoryIndex = self.commentHistory.count
-        }
-    }
-    
-    // MARK: - Control Handlers
+    // MARK: Control Handlers
     @IBAction func connectLive(sender: AnyObject) {
         if let liveNumber = MainViewController.extractLiveNumber(self.liveTextField.stringValue) {
             self.clearAllChats()
@@ -560,8 +595,20 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         }
     }
     
-    func focusLiveTextField() {
-        self.liveTextField.becomeFirstResponder()
+    @IBAction func comment(sender: AnyObject) {
+        let comment = self.commentTextField.stringValue
+        if countElements(comment) == 0 {
+            return
+        }
+        
+        let anonymously = NSUserDefaults.standardUserDefaults().boolForKey(Parameters.CommentAnonymously)
+        NicoUtility.sharedInstance.comment(comment, anonymously: anonymously)
+        self.commentTextField.stringValue = ""
+        
+        if self.commentHistory.count == 0 || self.commentHistory.last != comment {
+            self.commentHistory.append(comment)
+            self.commentHistoryIndex = self.commentHistory.count
+        }
     }
     
     func openUserWindow(sender: AnyObject?) {
@@ -600,11 +647,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         userWindowController!.showWindow(self)
     }
     
-    func focusCommentTextField() {
-        self.commentTextField.becomeFirstResponder()
-    }
-
-    // MARK: - Timer Functions
+    // MARK: Timer Functions
     func startTimers() {
         self.elapsedTimer = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "displayElapsed:", userInfo: nil, repeats: true)
         self.activeTimer = NSTimer.scheduledTimerWithTimeInterval(kCalculateActiveInterval, target: self, selector: "calculateActive:", userInfo: nil, repeats: true)
@@ -622,7 +665,6 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         }
     }
     
-    // MARK: Handlers
     func displayElapsed(timer: NSTimer) {
         var display = "--:--:--"
         
@@ -659,14 +701,13 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         }
     }
     
-    // MARK: - Internal Functions
+    // MARK: Misc Utility
     func clearAllChats() {
         MessageContainer.sharedContainer.removeAll()
         self.rowHeightCacher.removeAll(keepCapacity: false)
         self.tableView.reloadData()
     }
     
-    // MARK: Misc Utility
     class func extractLiveNumber(url: String) -> Int? {
         let liveNumberPattern = "\\d{9,}"
         var pattern: String

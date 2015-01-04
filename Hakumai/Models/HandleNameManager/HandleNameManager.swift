@@ -29,16 +29,34 @@ class HandleNameManager {
     // MARK: - [Protocol] Functions
     
     // MARK: - Public Functions
-    func updateHandleNameForChat(chat: Chat) {
+    func extractAndUpdateHandleNameWithChat(chat: Chat) {
         if chat.userId == nil || chat.comment == nil {
             return
         }
         
         if let handleName = self.extractHandleNameFromComment(chat.comment!) {
-            objc_sync_enter(self)
-            self.handleNames[chat.userId!] = handleName
-            objc_sync_exit(self)
+            self.updateHandleNameWithChat(chat, handleName: handleName)
         }
+    }
+    
+    func updateHandleNameWithChat(chat: Chat, handleName: String) {
+        if chat.userId == nil {
+            return
+        }
+        
+        objc_sync_enter(self)
+        self.handleNames[chat.userId!] = handleName
+        objc_sync_exit(self)
+    }
+    
+    func removeHandleNameWithChat(chat: Chat) {
+        if chat.userId == nil {
+            return
+        }
+        
+        objc_sync_enter(self)
+        self.handleNames.removeValueForKey(chat.userId!)
+        objc_sync_exit(self)
     }
     
     func handleNameForChat(chat: Chat) -> String? {

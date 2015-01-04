@@ -407,8 +407,8 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                                 <connections>
-                                    <action selector="detectedEnterInTextField:" target="9lI-n8-548" id="LhW-NP-lAf"/>
-                                    <binding destination="9lI-n8-548" name="value" keyPath="self.muteStringValue" id="0Zg-ra-aqa">
+                                    <action selector="addMute:" target="9lI-n8-548" id="EAY-Nd-vry"/>
+                                    <binding destination="9lI-n8-548" name="value" keyPath="self.muteValue" id="ch8-su-UWk">
                                         <dictionary key="options">
                                             <bool key="NSContinuouslyUpdatesValue" value="YES"/>
                                         </dictionary>
@@ -423,7 +423,7 @@
                                 </buttonCell>
                                 <connections>
                                     <action selector="addMute:" target="9lI-n8-548" id="hGr-Lv-coW"/>
-                                    <binding destination="9lI-n8-548" name="enabled" keyPath="self.muteStringValue.length" id="fwP-sR-fZJ"/>
+                                    <binding destination="9lI-n8-548" name="enabled" keyPath="self.muteValue.length" id="dAH-pn-RwO"/>
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2I5-fW-V6c">

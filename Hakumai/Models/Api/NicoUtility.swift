@@ -61,7 +61,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     private var roomListeners = [RoomListener]()
     private var receivedFirstChat = [RoomPosition: Bool]()
     
-    var cachedUsernames = [String: String]()
+    private var cachedUserNames = [String: String]()
     
     private var heartbeatTimer: NSTimer?
     
@@ -202,13 +202,29 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         self.cookiedAsyncRequest("GET", url: self.live!.community.thumbnailUrl!, parameters: nil, completion: httpCompletion)
     }
     
+    func cachedUserNameForChat(chat: Chat) -> String? {
+        if chat.userId == nil {
+            return nil
+        }
+        
+        return self.cachedUserNameForUserId(chat.userId!)
+    }
+    
+    func cachedUserNameForUserId(userId: String) -> String? {
+        if !Chat.isRawUserId(userId) {
+            return nil
+        }
+        
+        return self.cachedUserNames[userId]
+    }
+
     func resolveUsername(userId: String, completion: (userName: String?) -> Void) {
         if !Chat.isRawUserId(userId) {
             completion(userName: nil)
             return
         }
         
-        if let cachedUsername = self.cachedUsernames[userId] {
+        if let cachedUsername = self.cachedUserNames[userId] {
             completion(userName: cachedUsername)
             return
         }
@@ -221,7 +237,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             }
             
             let username = self.extractUsername(data)
-            self.cachedUsernames[userId] = username
+            self.cachedUserNames[userId] = username
             
             completion(userName: username)
         }
