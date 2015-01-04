@@ -40,7 +40,7 @@ class UserIdTableCellView: NSTableCellView {
             image = NSImage(named: kImageNameUserIdHandleName)!
         }
         else {
-            if NicoUtility.sharedInstance.isRawUserId(userId) {
+            if Chat.isRawUserId(userId) {
                 image = NSImage(named: kImageNameUserIdRawId)!
             }
             else {
@@ -56,9 +56,7 @@ class UserIdTableCellView: NSTableCellView {
         self.userIdTextField.stringValue = self.concatUserNameWithUserId(userId, userName: nil, handleName: handleName)
         
         // if needed, then resolve userid
-        let isRawId = NicoUtility.sharedInstance.isRawUserId(userId)
-        let isUserComment = (premium == .Ippan || premium == .Premium || premium == .BSP)
-        if handleName != nil || !isRawId || !isUserComment {
+        if handleName != nil || !Chat.isRawUserId(userId) || !Chat.isUserComment(premium) {
             return
         }
         

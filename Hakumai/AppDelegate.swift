@@ -149,7 +149,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     // here no handlers for 'Always On Top' menu item. it should be implemented using KVO.
-    // see detail at http://stackoverflow.com/a/13613507
+    // see details at http://stackoverflow.com/a/13613507
     
     // MARK: Misc
     func makeWindowAlwaysOnTop(alwaysOnTop: Bool) {

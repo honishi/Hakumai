@@ -21,7 +21,7 @@ extension String {
     func extractRegexpPattern(pattern: String) -> String? {
         // convert String to NSString to handle regular expression as expected.
         // with String, we could not handle the pattern like "ﾊﾃﾞだなｗ".extranctRegexpPattern("(ｗ)")
-        // see detail at http://stackoverflow.com/a/27192734
+        // see details at http://stackoverflow.com/a/27192734
         let nsStringSelf = (self as NSString)
         
         let regexp: NSRegularExpression! = NSRegularExpression(pattern: pattern, options: nil, error: nil)

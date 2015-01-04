@@ -31,4 +31,34 @@ class Chat: Printable {
     init() {
         // nop
     }
+
+    // MARK: - Public Functions
+    class func isRawUserId(userId: String?) -> Bool {
+        if userId == nil {
+            return false
+        }
+        
+        let regexp = NSRegularExpression(pattern: "^\\d+$", options: nil, error: nil)!
+        let matched = regexp.firstMatchInString(userId!, options: nil, range: NSMakeRange(0, userId!.utf16Count))
+        
+        return matched != nil ? true : false
+    }
+    
+    func isRawUserId() -> Bool {
+        return Chat.isRawUserId(self.userId)
+    }
+    
+    class func isUserComment(premium: Premium?) -> Bool {
+        if premium == nil {
+            return false
+        }
+        
+        // use explicit unwrapping enum values, instead of implicit unwrapping like "premium == .Ippan"
+        // see details at http://stackoverflow.com/a/26204610
+        return (premium! == .Ippan || premium! == .Premium || premium! == .BSP)
+    }
+    
+    func isUserComment() -> Bool {
+        return Chat.isUserComment(self.premium)
+    }
 }

@@ -196,11 +196,6 @@ class NicoUtilityTests: XCTestCase {
         XCTAssert(resolved == "honishi", "")
     }
     
-    func testIsRawUserId() {
-        XCTAssert(NicoUtility.sharedInstance.isRawUserId("123") == true, "")
-        XCTAssert(NicoUtility.sharedInstance.isRawUserId("123a") == false, "")
-    }
-    
     /*
     func testResolveUsername() {
         var asyncExpectation: XCTestExpectation

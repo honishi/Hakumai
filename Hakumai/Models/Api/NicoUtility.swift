@@ -203,7 +203,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     func resolveUsername(userId: String, completion: (userName: String?) -> Void) {
-        if !self.isRawUserId(userId) {
+        if !Chat.isRawUserId(userId) {
             completion(userName: nil)
             return
         }

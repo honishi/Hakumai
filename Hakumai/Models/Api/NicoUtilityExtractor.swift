@@ -200,13 +200,6 @@ extension NicoUtility {
         return cleansed
     }
     
-    func isRawUserId(userId: String) -> Bool {
-        let regexp = NSRegularExpression(pattern: "^\\d+$", options: nil, error: nil)!
-        let matched = regexp.firstMatchInString(userId, options: nil, range: NSMakeRange(0, userId.utf16Count))
-        
-        return matched != nil ? true : false
-    }
-    
     // MARK: - Heartbeat
     func extractHeartbeat(xmlData: NSData) -> Heartbeat? {
         var error: NSError?
