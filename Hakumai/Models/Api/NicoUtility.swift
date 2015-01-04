@@ -65,6 +65,8 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     
     private var heartbeatTimer: NSTimer?
     
+    private var chatCount = 0
+    
     // cookie
     var cookie: String?
     
@@ -304,6 +306,8 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             chat.roomPosition == .Arena) {
                 self.disconnect()
         }
+        
+        self.chatCount++
     }
     
     // MARK: - Internal Functions
@@ -558,5 +562,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         self.messageServers.removeAll(keepCapacity: false)
         self.roomListeners.removeAll(keepCapacity: false)
         self.receivedFirstChat.removeAll(keepCapacity: false)
+        
+        self.chatCount = 0
     }
 }

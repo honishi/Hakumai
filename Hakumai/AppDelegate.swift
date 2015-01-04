@@ -20,6 +20,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.initializeLog()
         self.migrateApplicationVersion()
         self.initializeUserDefaults()
+        self.initializeHandleNameManager()
         self.addObserverForUserDefaults()
     }
 
@@ -79,6 +80,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         NSUserDefaults.standardUserDefaults().registerDefaults(defaults)
     }
     
+    func initializeHandleNameManager() {
+        // force to invoke setup methods in HandleNameManager()
+        HandleNameManager.sharedManager
+    }
+
     func addObserverForUserDefaults() {
         let defaults = NSUserDefaults.standardUserDefaults()
         

@@ -9,11 +9,25 @@
 import Foundation
 import XCGLogger
 
+private let kHandleNamesFileName = "HandleNames.plist"
+
+private let kHandleNamesDictionaryKeyHandleName = "HandleName"
+private let kHandleNamesDictionaryKeyUpdateDate = "UpdateDate"
+
+private let kHandleNameObsoleteThreshold = NSTimeInterval(60 * 60 * 24 * 7) // = 1 week
+
 // handle name manager
 class HandleNameManager {
     // MARK: - Properties
-    // userId: HandleName
-    private var handleNames = [String: String]()
+    
+    // handle name dictionary that have the following structrue:
+    // @{userId:
+    //     @{kHandleNamesDictionaryKeyHandleName: handleName,
+    //       kHandleNamesDictionaryKeyUpdateDate: updateDate}
+    // }
+    // implementing the dictionary using NSMutableDictionary instead of swift Dictionary.
+    // cause we use NSMutableDictionary's method like writeToFile() to serialize data.
+    private var handleNames = NSMutableDictionary()
     
     private let log = XCGLogger.defaultInstance()
     
@@ -24,10 +38,15 @@ class HandleNameManager {
         }
         return Static.instance
     }
-
-    // MARK: - [Super Class] Overrides
-    // MARK: - [Protocol] Functions
     
+    init() {
+        objc_sync_enter(self)
+        self.createApplicationDirectoryIfNotExists()
+        self.readHandleNamesFromDisk()
+        self.cleanObsoleteHandleNames()
+        objc_sync_exit(self)
+    }
+
     // MARK: - Public Functions
     func extractAndUpdateHandleNameWithChat(chat: Chat) {
         if chat.userId == nil || chat.comment == nil {
@@ -44,8 +63,13 @@ class HandleNameManager {
             return
         }
         
+        let handleNameValue = NSMutableDictionary()
+        handleNameValue[kHandleNamesDictionaryKeyHandleName] = handleName
+        handleNameValue[kHandleNamesDictionaryKeyUpdateDate] = NSDate()
+
         objc_sync_enter(self)
-        self.handleNames[chat.userId!] = handleName
+        self.handleNames[chat.userId!] = handleNameValue
+        self.writeHandleNamesToDisk()
         objc_sync_exit(self)
     }
     
@@ -55,7 +79,8 @@ class HandleNameManager {
         }
         
         objc_sync_enter(self)
-        self.handleNames.removeValueForKey(chat.userId!)
+        self.handleNames.removeObjectForKey(chat.userId!)
+        self.writeHandleNamesToDisk()
         objc_sync_exit(self)
     }
     
@@ -64,8 +89,14 @@ class HandleNameManager {
             return nil
         }
         
+        var handleName: String?
+        
         objc_sync_enter(self)
-        let handleName = self.handleNames[chat.userId!]
+        if let handleNameValue = self.handleNames[chat.userId!] as? NSDictionary {
+            if let cached = handleNameValue[kHandleNamesDictionaryKeyHandleName] as? String {
+                handleName = cached
+            }
+        }
         objc_sync_exit(self)
         
         return handleName
@@ -75,5 +106,72 @@ class HandleNameManager {
     func extractHandleNameFromComment(comment: String) -> String? {
         let handleName = comment.extractRegexpPattern(".*[@＠]\\s*(\\S{2,})\\s*")
         return handleName
+    }
+    
+    // MARK: Serialize Functions
+    func writeHandleNamesToDisk() {
+        self.handleNames.writeToFile(HandleNameManager.fullPathForHandleNamesFile(), atomically: true)
+    }
+    
+    func readHandleNamesFromDisk() {
+        log.debug("handle names file target:[\(HandleNameManager.fullPathForHandleNamesFile())]")
+        let nsHandleNames = NSMutableDictionary(contentsOfFile: HandleNameManager.fullPathForHandleNamesFile())
+        
+        if nsHandleNames != nil {
+            self.handleNames = nsHandleNames!
+            log.debug("found and read handle names on disk")
+        }
+        else {
+            log.debug("not found handle names on disk")
+        }
+    }
+    
+    func cleanObsoleteHandleNames() {
+        var userIdsTobeDeleted = [AnyObject]()
+        
+        for (userId, handleNameValue) in self.handleNames {
+            if Chat.isRawUserId((userId as String)) {
+                continue
+            }
+            
+            if let updateDate = handleNameValue[kHandleNamesDictionaryKeyUpdateDate] as? NSDate {
+                let obsoleted = (updateDate.timeIntervalSinceNow < -kHandleNameObsoleteThreshold)
+                if obsoleted {
+                    userIdsTobeDeleted.append(userId)
+                }
+            }
+        }
+        
+        log.debug("userIdsToBeDeleted:[\(userIdsTobeDeleted)]")
+        self.handleNames.removeObjectsForKeys(userIdsTobeDeleted)
+        self.writeHandleNamesToDisk()
+    }
+    
+    func createApplicationDirectoryIfNotExists() {
+        let directoryExists = NSFileManager.defaultManager().fileExistsAtPath(HandleNameManager.applicationDirectoryPath())
+        
+        if !directoryExists {
+            let created = NSFileManager.defaultManager().createDirectoryAtPath(HandleNameManager.applicationDirectoryPath(), withIntermediateDirectories: false, attributes: nil, error: nil)
+            
+            if created {
+                log.debug("created application directory")
+            }
+        }
+    }
+    
+    // MARK: File Path
+    class func applicationDirectoryPath() -> String {
+        let appSupportDirectory = NSSearchPathForDirectoriesInDomains(.ApplicationSupportDirectory, .UserDomainMask, true)[0] as String
+        
+        var bundleIdentifier = ""
+        if let bi = NSBundle.mainBundle().infoDictionary?["CFBundleIdentifier"] as? String {
+            bundleIdentifier = bi
+        }
+        
+        return appSupportDirectory + "/" + bundleIdentifier
+    }
+    
+    class func fullPathForHandleNamesFile() -> String {
+        return HandleNameManager.applicationDirectoryPath() + "/" + kHandleNamesFileName
     }
 }
