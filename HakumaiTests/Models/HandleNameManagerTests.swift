@@ -41,6 +41,13 @@ class HandleNameManagerTests: XCTestCase {
         // user comment that notifies live remaining minutes
         self.checkExtractHandleName("＠５", expected: nil)
         self.checkExtractHandleName("＠5", expected: nil)
+        self.checkExtractHandleName("＠10", expected: nil)
+        self.checkExtractHandleName("＠１０", expected: nil)
+        self.checkExtractHandleName("＠96猫", expected: "96猫")
+        self.checkExtractHandleName("＠９６猫", expected: "９６猫")
+        
+        // mail address
+        self.checkExtractHandleName("ご連絡はmail@example.comまで", expected: nil)
     }
     
     func checkExtractHandleName(comment: String, expected: String?) {

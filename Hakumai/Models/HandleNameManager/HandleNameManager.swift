@@ -10,11 +10,16 @@ import Foundation
 import XCGLogger
 
 private let kHandleNamesFileName = "HandleNames.plist"
-
 private let kHandleNamesDictionaryKeyHandleName = "HandleName"
 private let kHandleNamesDictionaryKeyUpdateDate = "UpdateDate"
 
 private let kHandleNameObsoleteThreshold = NSTimeInterval(60 * 60 * 24 * 7) // = 1 week
+
+// comment like "@5" (="あと5分")
+private let kRegexpRemainingTime = "[@＠][0-9０-９]{1,2}$"
+// mail address regular expression based on http://qiita.com/sakuro/items/1eaa307609ceaaf51123
+private let kRegexpMailAddress = "[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*"
+private let kRegexpHandleName = ".*[@＠]\\s*(\\S{2,})\\s*"
 
 // handle name manager
 class HandleNameManager {
@@ -104,7 +109,15 @@ class HandleNameManager {
     
     // MARK: - Internal Functions
     func extractHandleNameFromComment(comment: String) -> String? {
-        let handleName = comment.extractRegexpPattern(".*[@＠]\\s*(\\S{2,})\\s*")
+        if comment.hasRegexpPattern(kRegexpRemainingTime) {
+            return nil
+        }
+        
+        if comment.hasRegexpPattern(kRegexpMailAddress) {
+            return nil
+        }
+        
+        let handleName = comment.extractRegexpPattern(kRegexpHandleName)
         return handleName
     }
     
