@@ -267,7 +267,7 @@ class MessageContainer {
             
             if self.enableMuteWords {
                 for muteWord in self.muteWords {
-                    if let word = muteWord[Parameters.MuteWordKeyWord] {
+                    if let word = muteWord[MuteUserWordKey.Word] {
                         if comment.lowercaseString.rangeOfString(word.lowercaseString) != nil {
                             return false
                         }
@@ -280,7 +280,7 @@ class MessageContainer {
         if let userId = chat.userId {
             if self.enableMuteUserIds {
                 for muteUserId in self.muteUserIds {
-                    if muteUserId[Parameters.MuteUserIdKeyUserId] == userId {
+                    if muteUserId[MuteUserIdKey.UserId] == userId {
                         return false
                     }
                 }

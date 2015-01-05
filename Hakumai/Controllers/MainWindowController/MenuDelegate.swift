@@ -124,13 +124,13 @@ class MenuDelegate: NSObject, NSMenuDelegate {
         var muteUserIds = defaults.objectForKey(Parameters.MuteUserIds) as [[String: String]]
         
         for muteUserId in muteUserIds {
-            if chat.userId == muteUserId[Parameters.MuteUserIdKeyUserId] {
+            if chat.userId == muteUserId[MuteUserIdKey.UserId] {
                 log.debug("mute userid [\(chat.userId)] already registered, so skip")
                 return
             }
         }
         
-        muteUserIds.append([Parameters.MuteUserIdKeyUserId: chat.userId!])
+        muteUserIds.append([MuteUserIdKey.UserId: chat.userId!])
         defaults.setObject(muteUserIds, forKey: Parameters.MuteUserIds)
         defaults.synchronize()
     }

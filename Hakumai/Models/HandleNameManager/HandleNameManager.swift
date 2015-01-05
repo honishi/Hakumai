@@ -17,8 +17,6 @@ private let kHandleNameObsoleteThreshold = NSTimeInterval(60 * 60 * 24 * 7) // =
 
 // comment like "@5" (="あと5分")
 private let kRegexpRemainingTime = "[@＠][0-9０-９]{1,2}$"
-// mail address regular expression based on http://qiita.com/sakuro/items/1eaa307609ceaaf51123
-private let kRegexpMailAddress = "[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*"
 private let kRegexpHandleName = ".*[@＠]\\s*(\\S{2,})\\s*"
 
 // handle name manager

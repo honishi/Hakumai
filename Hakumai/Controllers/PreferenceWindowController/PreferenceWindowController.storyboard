@@ -68,7 +68,7 @@
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <matrix verticalHuggingPriority="750" fixedFrame="YES" allowsEmptySelection="NO" autorecalculatesCellSize="YES" translatesAutoresizingMaskIntoConstraints="NO" id="y0n-lu-hbG">
-                                            <rect key="frame" x="18" y="74" width="149" height="38"/>
+                                            <rect key="frame" x="18" y="74" width="118" height="38"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             <size key="cellSize" width="118" height="18"/>
                                             <size key="intercellSpacing" width="4" height="2"/>
@@ -78,28 +78,45 @@
                                             </buttonCell>
                                             <cells>
                                                 <column>
-                                                    <buttonCell type="radio" title="Chrome Cookie" imagePosition="left" alignment="left" state="on" tag="1" inset="2" id="Ici-yj-KuI">
+                                                    <buttonCell type="radio" title="Chrome Cookie" imagePosition="left" alignment="left" state="on" tag="1001" inset="2" id="Ici-yj-KuI">
                                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                         <font key="font" metaFont="system"/>
                                                     </buttonCell>
-                                                    <buttonCell type="radio" title="Direct Login" imagePosition="left" alignment="left" inset="2" id="wGq-x5-Aua">
+                                                    <buttonCell type="radio" title="Direct Login" imagePosition="left" alignment="left" tag="1000" inset="2" id="wGq-x5-Aua">
                                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                         <font key="font" metaFont="system"/>
                                                     </buttonCell>
                                                 </column>
                                             </cells>
+                                            <connections>
+                                                <action selector="detectedChangeInSessionManagementMatrix:" target="wCA-UG-k48" id="vog-sR-JFO"/>
+                                                <binding destination="Ex8-3g-KNv" name="selectedTag" keyPath="values.SessionManagement" id="PID-AQ-o5h"/>
+                                            </connections>
                                         </matrix>
                                         <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RF4-gC-rH4">
-                                            <rect key="frame" x="127" y="47" width="150" height="22"/>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="amz-FZ-x9r">
+                                            <rect key="frame" x="137" y="47" width="172" height="22"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="amz-FZ-x9r">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
+                                            <connections>
+                                                <action selector="detectedEnterInTextField:" target="wCA-UG-k48" id="5tb-tW-8li"/>
+                                                <binding destination="Ex8-3g-KNv" name="enabled" keyPath="values.SessionManagement" id="Oqf-lb-evU">
+                                                    <dictionary key="options">
+                                                        <string key="NSValueTransformerName">IsLoginSessionManagementTransformer</string>
+                                                    </dictionary>
+                                                </binding>
+                                                <binding destination="wCA-UG-k48" name="value" keyPath="self.mailAddress" id="MQ1-Nd-Pgf">
+                                                    <dictionary key="options">
+                                                        <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                                    </dictionary>
+                                                </binding>
+                                            </connections>
                                         </textField>
                                         <secureTextField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Gxu-j7-bHc">
-                                            <rect key="frame" x="127" y="21" width="150" height="22"/>
-                                            <secureTextFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="8o9-Ca-ajc">
+                                            <rect key="frame" x="137" y="21" width="172" height="22"/>
+                                            <secureTextFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="8o9-Ca-ajc">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -107,17 +124,30 @@
                                                     <string>NSAllRomanInputSourcesLocaleIdentifier</string>
                                                 </allowedInputSourceLocales>
                                             </secureTextFieldCell>
+                                            <connections>
+                                                <action selector="detectedEnterInTextField:" target="wCA-UG-k48" id="90S-cH-YSX"/>
+                                                <binding destination="Ex8-3g-KNv" name="enabled" keyPath="values.SessionManagement" id="OB4-Vb-KBg">
+                                                    <dictionary key="options">
+                                                        <string key="NSValueTransformerName">IsLoginSessionManagementTransformer</string>
+                                                    </dictionary>
+                                                </binding>
+                                                <binding destination="wCA-UG-k48" name="value" keyPath="self.password" id="nko-ZU-UJF">
+                                                    <dictionary key="options">
+                                                        <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                                    </dictionary>
+                                                </binding>
+                                            </connections>
                                         </secureTextField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EXx-bO-Ndv">
-                                            <rect key="frame" x="35" y="50" width="80" height="17"/>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Mail:" id="721-5w-6vS">
+                                            <rect key="frame" x="35" y="50" width="95" height="17"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Mail Address:" id="721-5w-6vS">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7zQ-8n-W5G">
-                                            <rect key="frame" x="35" y="24" width="80" height="17"/>
+                                            <rect key="frame" x="35" y="24" width="95" height="17"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Password:" id="rLD-L3-vRk">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -125,11 +155,19 @@
                                             </textFieldCell>
                                         </textField>
                                         <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="QxL-35-zQB">
-                                            <rect key="frame" x="290" y="19" width="80" height="25"/>
-                                            <buttonCell key="cell" type="roundTextured" title="Login Test" bezelStyle="texturedRounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="yXT-a3-sE5">
+                                            <rect key="frame" x="317" y="19" width="79" height="25"/>
+                                            <buttonCell key="cell" type="roundTextured" title="Login" bezelStyle="texturedRounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="yXT-a3-sE5">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
+                                            <connections>
+                                                <action selector="checkAccount:" target="wCA-UG-k48" id="Ie4-Sa-iLx"/>
+                                                <binding destination="Ex8-3g-KNv" name="enabled" keyPath="values.SessionManagement" id="uJv-7A-HXg">
+                                                    <dictionary key="options">
+                                                        <string key="NSValueTransformerName">IsLoginSessionManagementTransformer</string>
+                                                    </dictionary>
+                                                </binding>
+                                            </connections>
                                         </button>
                                     </subviews>
                                 </view>
@@ -159,6 +197,11 @@
                             </box>
                         </subviews>
                     </view>
+                    <connections>
+                        <outlet property="loginButton" destination="QxL-35-zQB" id="pI7-cA-Thq"/>
+                        <outlet property="mailAddressTextField" destination="RF4-gC-rH4" id="9L7-b0-tL6"/>
+                        <outlet property="sessionManagementMatrix" destination="y0n-lu-hbG" id="Dee-Od-G0x"/>
+                    </connections>
                 </viewController>
                 <customObject id="iZj-NB-vz6" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <userDefaultsController representsSharedInstance="YES" id="Ex8-3g-KNv"/>

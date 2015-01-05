@@ -71,11 +71,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func initializeUserDefaults() {
         let defaults: [String: AnyObject] = [
-            Parameters.AlwaysOnTop: false,
+            Parameters.SessionManagement: SessionManagementValue.Chrome,
             Parameters.ShowIfseetnoCommands: false,
-            Parameters.CommentAnonymously: true,
             Parameters.EnableMuteUserIds: false,
-            Parameters.EnableMuteWords: false]
+            Parameters.EnableMuteWords: false,
+            Parameters.AlwaysOnTop: false,
+            Parameters.CommentAnonymously: true]
 
         NSUserDefaults.standardUserDefaults().registerDefaults(defaults)
     }

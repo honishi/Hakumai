@@ -8,25 +8,45 @@
 
 import Foundation
 
-// parameters
+// top level parameters
 // http://stackoverflow.com/a/26252377
 struct Parameters {
-    // top level parameters
-    static let AlwaysOnTop = "AlwaysOnTop"
+    // general
+    static let SessionManagement = "SessionManagement"
     static let ShowIfseetnoCommands = "ShowHbIfseetnoCommands"
-    static let CommentAnonymously = "CommentAnonymously"
+    
+    // mute
     static let EnableMuteUserIds = "EnableMuteUserIds"
     static let EnableMuteWords = "EnableMuteWords"
-    
-    // management
-    static let LastLaunchedApplicationVersion = "LastLaunchedApplicationVersion"
-    
-    // mute userids
     static let MuteUserIds = "MuteUserIds"
-    static let MuteUserIdKeyUserId = "UserId"
-    
-    // mute words
     static let MuteWords = "MuteWords"
-    static let MuteWordKeyWord = "Word"
-    // static let MuteWordKeyEnableRegexp = "EnableRegexp"
+    
+    // misc
+    static let LastLaunchedApplicationVersion = "LastLaunchedApplicationVersion"
+    static let AlwaysOnTop = "AlwaysOnTop"
+    static let CommentAnonymously = "CommentAnonymously"
+}
+
+// session management
+struct SessionManagementValue {
+    static let Login = 1000
+    static let Chrome = 1001
+    // static let Safari = 1002
+}
+
+// keychain
+struct KeyChainLoginName {
+    static let MailAddress = "MailAddress"
+    static let Password = "Password"
+}
+
+// dictionary keys in MuteUserIds array objects
+struct MuteUserIdKey {
+    static let UserId = "UserId"
+}
+
+// dictionary keys in MuteUserWords array objects
+struct MuteUserWordKey {
+    static let Word = "Word"
+    // static let EnableRegexp = "EnableRegexp"
 }

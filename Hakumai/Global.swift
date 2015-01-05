@@ -20,3 +20,8 @@ let kCommentColumnIdentifier = "CommentColumn"
 let kUserIdColumnIdentifier = "UserIdColumn"
 let kPremiumColumnIdentifier = "PremiumColumn"
 let kMailColumnIdentifier = "MailColumn"
+
+// MARK: common regular expressions
+// mail address regular expression based on http://qiita.com/sakuro/items/1eaa307609ceaaf51123
+let kRegexpMailAddress = "[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*"
+let kRegexpPassword = ".{4,}"
