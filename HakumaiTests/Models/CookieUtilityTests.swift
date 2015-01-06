@@ -9,6 +9,8 @@
 import Foundation
 import XCTest
 
+private let kAsyncTimeout: NSTimeInterval = 3
+
 class CookieUtilityTests: XCTestCase {
     
     override func setUp() {
@@ -22,8 +24,30 @@ class CookieUtilityTests: XCTestCase {
     }
     
     // MARK: cookie utility
+    /*
+    func testLoginCookie() {
+        var asyncExpectation: XCTestExpectation
+
+        // test 1
+        asyncExpectation = self.expectationWithDescription("asyncExpectation")
+        
+        let mailAddress = "test1234@example.com"
+        let password = "password"
+        
+        CookieUtility.requestLoginCookieWithMailAddress(mailAddress, password: password) {(userSessionCookie) -> Void in
+            XCTAssert(userSessionCookie != nil, "")
+            asyncExpectation.fulfill()
+        }
+        
+        self.waitForExpectationsWithTimeout(kAsyncTimeout, handler: nil)
+        
+        // test 2
+        // ...
+    }
+     */
+    
     func testChromeCookie() {
-        let cookie = CookieUtility.cookie(CookieUtility.BrowserType.Chrome)
-        XCTAssert(0 < cookie?.utf16Count, "")
+        let userSessionCookie = CookieUtility.requestBrowserCookieWithBrowserType(.Chrome)
+        XCTAssert(0 < userSessionCookie?.utf16Count, "")
     }
 }

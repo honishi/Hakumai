@@ -9,20 +9,19 @@
 import Foundation
 
 class CookieUtility {
-    enum BrowserType {
-        case Chrome
-        case Safari
-        case Firefox
+    // MARK: - Public Functions
+    class func requestLoginCookieWithMailAddress(mailAddress: String, password: String, completion: (userSessionCookie: String?) -> Void) {
+        LoginCookie.requestCookieWithMailAddress(mailAddress, password: password, completion: completion)
     }
     
-    // MARK: - Public Functions
-    class func cookie(browserType: BrowserType) -> String? {
+    class func requestBrowserCookieWithBrowserType(browserType: BrowserType) -> String? {
         switch (browserType) {
         case .Chrome:
-            return ChromeCookie.cookie()
-        case .Safari, .Firefox:
-            // TODO: not implemented yet
-            return nil
+            return ChromeCookie.storedCookie()
+        default:
+            break
         }
+        
+        return nil
     }
 }

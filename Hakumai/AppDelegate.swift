@@ -71,7 +71,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func initializeUserDefaults() {
         let defaults: [String: AnyObject] = [
-            Parameters.SessionManagement: SessionManagementValue.Chrome,
+            Parameters.SessionManagement: SessionManagementType.Chrome.rawValue,
             Parameters.ShowIfseetnoCommands: false,
             Parameters.EnableMuteUserIds: false,
             Parameters.EnableMuteWords: false,
@@ -90,7 +90,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let defaults = NSUserDefaults.standardUserDefaults()
         
         // general
-        defaults.addObserver(self, forKeyPath: Parameters.AlwaysOnTop, options: (.Initial | .New), context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.SessionManagement, options: (.Initial | .New), context: nil)
         defaults.addObserver(self, forKeyPath: Parameters.ShowIfseetnoCommands, options: (.Initial | .New), context: nil)
         
         // mute
@@ -98,6 +98,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         defaults.addObserver(self, forKeyPath: Parameters.MuteUserIds, options: (.Initial | .New), context: nil)
         defaults.addObserver(self, forKeyPath: Parameters.EnableMuteWords, options: (.Initial | .New), context: nil)
         defaults.addObserver(self, forKeyPath: Parameters.MuteWords, options: (.Initial | .New), context: nil)
+        
+        // misc
+        defaults.addObserver(self, forKeyPath: Parameters.AlwaysOnTop, options: (.Initial | .New), context: nil)
     }
 
     // MARK: - Internal Functions
@@ -106,11 +109,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // log.debug("detected observing value changed: key[\(keyPath)]")
         
         switch keyPath {
-        case Parameters.AlwaysOnTop:
-            if let newValue = change["new"] as? Bool {
-                // log.debug("\(newValue)")
-                self.makeWindowAlwaysOnTop(newValue)
-            }
+        case Parameters.SessionManagement:
+            NicoUtility.sharedInstance.reserveToClearUserSessionCookie()
             
         case Parameters.ShowIfseetnoCommands:
             if let changed = change["new"] as? Bool {
@@ -135,6 +135,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         case Parameters.MuteWords:
             if let changed = change["new"] as? [[String: String]] {
                 MainViewController.sharedInstance.changeMuteWords(changed)
+            }
+
+        case Parameters.AlwaysOnTop:
+            if let newValue = change["new"] as? Bool {
+                // log.debug("\(newValue)")
+                self.makeWindowAlwaysOnTop(newValue)
             }
             
         default:

@@ -9,6 +9,13 @@
 import Foundation
 import XCGLogger
 
+// MARK: - enum
+enum BrowserType {
+    case Chrome
+    case Safari
+    case Firefox
+}
+
 // MARK: - protocol
 
 // note these functions are called in background thread, not main thread.
@@ -45,12 +52,16 @@ private let kCommunityUrlUser = "http://com.nicovideo.jp/community/"
 private let kCommunityUrlChannel = "http://ch.nicovideo.jp/"
 private let kUserUrl = "http://www.nicovideo.jp/user/"
 
+// request header
+let kCommonUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"
+
 // intervals
 private let kHeartbeatDefaultInterval: NSTimeInterval = 30
 
 // MARK: - class
 
 class NicoUtility : NSObject, RoomListenerDelegate {
+    // MARK: - Properties
     var delegate: NicoUtilityDelegate?
     
     var live: Live?
@@ -67,8 +78,9 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     
     private var chatCount = 0
     
-    // cookie
-    var cookie: String?
+    // session cookie
+    private var shouldClearUserSessionCookie = true
+    var userSessionCookie: String?
     
     // logger
     let log = XCGLogger.defaultInstance()
@@ -98,64 +110,36 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
 
     // MARK: - Public Interface
-    func connect(liveNumber: Int) {
-        if 0 < self.roomListeners.count {
-            self.disconnect()
-        }
-        
-        if let cookie = CookieUtility.cookie(CookieUtility.BrowserType.Chrome) {
-            self.cookie = cookie
-        }
-        else {
-            let message = "could not get cookie, canceled to connect"
-            log.error(message)
-            self.delegate?.nicoUtilityDidFailToPrepareLive(self, reason: message)
-            return
-        }
-        
-        func success(live: Live, user: User, server: MessageServer) {
-            self.log.debug("extracted live: \(live)")
-            self.log.debug("extracted server: \(server)")
-            
-            self.live = live
-            self.user = user
-            self.messageServer = server
-            
-            func communitySuccess() {
-                self.log.debug("loaded community:\(self.live!.community)")
-                
-                self.delegate?.nicoUtilityDidPrepareLive(self, user: self.user!, live: self.live!)
-                
-                self.messageServers = self.deriveMessageServersWithOriginServer(server, community: self.live!.community)
-                self.log.debug("derived message servers:")
-                for server in self.messageServers {
-                    self.log.debug("\(server)")
-                }
-                
-                self.openNewMessageServer()
-                self.scheduleHeartbeatTimer(immediateFire: true)
-            }
-            
-            func communityFailure(reason: String) {
-                let message = "failed to load community"
-                self.log.error(message)
-                self.delegate?.nicoUtilityDidFailToPrepareLive(self, reason: message)
-                return
-            }
-            
-            self.loadCommunity(self.live!.community, success: communitySuccess, failure: communityFailure)
-        }
-        
-        func failure(reason: String) {
-            let message = "could not extract live information: \(reason)"
-            self.log.error(message)
-            self.delegate?.nicoUtilityDidFailToPrepareLive(self, reason: message)
-            return
-        }
-        
-        self.requestGetPlayerStatus(liveNumber, success: success, failure: failure)
+    func reserveToClearUserSessionCookie() {
+        self.shouldClearUserSessionCookie = true
+        log.debug("reserved to clear user session cookie")
     }
     
+    func connectToLive(liveNumber: Int, mailAddress: String, password: String) {
+        self.clearUserSessionCookieIfReserved()
+        
+        if self.userSessionCookie == nil {
+            let completion = {(userSessionCookie: String?) -> Void in
+                self.connectToLive(liveNumber, userSessionCookie: userSessionCookie)
+            }
+            CookieUtility.requestLoginCookieWithMailAddress(mailAddress, password: password, completion: completion)
+        }
+        else {
+            connectToLive(liveNumber, userSessionCookie: self.userSessionCookie)
+        }
+    }
+    
+    func connectToLive(liveNumber: Int, browserType: BrowserType) {
+        self.clearUserSessionCookieIfReserved()
+        
+        switch browserType {
+        case .Chrome:
+            connectToLive(liveNumber, userSessionCookie: CookieUtility.requestBrowserCookieWithBrowserType(.Chrome))
+        default:
+            break
+        }
+    }
+
     func disconnect() {
         for listener in self.roomListeners {
             listener.closeSocket()
@@ -311,7 +295,72 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     // MARK: - Internal Functions
-    // MARK: Get Player Status
+    // MARK: Connect
+    private func clearUserSessionCookieIfReserved() {
+        if self.shouldClearUserSessionCookie {
+            self.shouldClearUserSessionCookie = false
+            self.userSessionCookie = nil
+            log.debug("cleared user session cookie")
+        }
+    }
+    
+    private func connectToLive(liveNumber: Int, userSessionCookie: String?) {
+        if userSessionCookie == nil {
+            let message = "no available cookie, canceled to connect"
+            log.error(message)
+            self.delegate?.nicoUtilityDidFailToPrepareLive(self, reason: message)
+            return
+        }
+        
+        self.userSessionCookie = userSessionCookie!
+        
+        if 0 < self.roomListeners.count {
+            self.disconnect()
+        }
+        
+        func success(live: Live, user: User, server: MessageServer) {
+            self.log.debug("extracted live: \(live)")
+            self.log.debug("extracted server: \(server)")
+            
+            self.live = live
+            self.user = user
+            self.messageServer = server
+            
+            func communitySuccess() {
+                self.log.debug("loaded community:\(self.live!.community)")
+                
+                self.delegate?.nicoUtilityDidPrepareLive(self, user: self.user!, live: self.live!)
+                
+                self.messageServers = self.deriveMessageServersWithOriginServer(server, community: self.live!.community)
+                self.log.debug("derived message servers:")
+                for server in self.messageServers {
+                    self.log.debug("\(server)")
+                }
+                
+                self.openNewMessageServer()
+                self.scheduleHeartbeatTimer(immediateFire: true)
+            }
+            
+            func communityFailure(reason: String) {
+                let message = "failed to load community"
+                self.log.error(message)
+                self.delegate?.nicoUtilityDidFailToPrepareLive(self, reason: message)
+                return
+            }
+            
+            self.loadCommunity(self.live!.community, success: communitySuccess, failure: communityFailure)
+        }
+        
+        func failure(reason: String) {
+            let message = "could not extract live information: \(reason)"
+            self.log.error(message)
+            self.delegate?.nicoUtilityDidFailToPrepareLive(self, reason: message)
+            return
+        }
+        
+        self.requestGetPlayerStatus(liveNumber, success: success, failure: failure)
+    }
+    
     private func requestGetPlayerStatus(liveNumber: Int, success: (live: Live, user: User, messageServer: MessageServer) -> Void, failure: (reason: String) -> Void) {
         func httpCompletion(response: NSURLResponse!, data: NSData!, connectionError: NSError!) {
             if connectionError != nil {
@@ -360,7 +409,6 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         self.cookiedAsyncRequest("GET", url: kGetPlayerStatusUrl, parameters: ["v": "lv" + String(liveNumber)], completion: httpCompletion)
     }
     
-    // MARK: Community
     private func loadCommunity(community: Community, success: () -> Void, failure: (reason: String) -> Void) {
         func httpCompletion(response: NSURLResponse!, data: NSData!, connectionError: NSError!) {
             if connectionError != nil {

@@ -12,6 +12,7 @@ import XCGLogger
 private let kStoryboardNameMainWindowController = "MainWindowController"
 private let kStoryboardIdHandleNameAddViewController = "HandleNameAddViewController"
 
+private let kUserWindowDefautlTopLeftPoint = NSMakePoint(100, 100)
 private let kCalculateActiveInterval: NSTimeInterval = 3
 
 class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate, NSControlTextEditingDelegate, NicoUtilityDelegate, UserWindowControllerDelegate {
@@ -64,6 +65,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     var activeTimer: NSTimer?
 
     var userWindowControllers = [UserWindowController]()
+    var nextUserWindowTopLeftPoint: NSPoint = NSZeroPoint
     
     // MARK: - Object Lifecycle
     override func awakeFromNib() {
@@ -358,7 +360,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             self.focusCommentTextField()
         })
         
-        self.logSystemMessageToTableView("放送情報を取得しました.")
+        self.logSystemMessageToTableView("放送情報を取得しました.[\(user.nickname!)]")
     }
     
     func nicoUtilityDidFailToPrepareLive(nicoUtility: NicoUtility, reason: String) {
@@ -591,7 +593,22 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             self.clearAllChats()
 
             NicoUtility.sharedInstance.delegate = self
-            NicoUtility.sharedInstance.connect(liveNumber)
+            
+            let defaults = NSUserDefaults.standardUserDefaults()
+            let sessionManagementType = SessionManagementType(rawValue: defaults.integerForKey(Parameters.SessionManagement))!
+            
+            switch sessionManagementType {
+            case .Login:
+                let mailAddress = ""
+                let password = ""
+                NicoUtility.sharedInstance.connectToLive(liveNumber, mailAddress: mailAddress, password: password)
+                
+            case .Chrome:
+                NicoUtility.sharedInstance.connectToLive(liveNumber, browserType: .Chrome)
+                
+            default:
+                break
+            }
         }
     }
     
@@ -626,9 +643,9 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         
         let chat = message.chat!
 
-        // existing?
         var userWindowController: UserWindowController?
         
+        // check if user window exists?
         for existing in self.userWindowControllers {
             if chat.userId == existing.userId {
                 userWindowController = existing
@@ -638,13 +655,24 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         }
         
         if userWindowController == nil {
-            // not existing. create and chache it
+            // not exist, so create and cache it
             userWindowController = UserWindowController.generateInstanceWithDelegate(self, userId: chat.userId!)
+            self.positionUserWindow(userWindowController!.window!)
             log.debug("no existing userwc found, create it:\(userWindowController)")
             self.userWindowControllers.append(userWindowController!)
         }
         
         userWindowController!.showWindow(self)
+    }
+    
+    private func positionUserWindow(userWindow: NSWindow) {
+        var topLeftPoint: NSPoint = self.nextUserWindowTopLeftPoint
+
+        if self.userWindowControllers.count == 0 {
+            topLeftPoint = kUserWindowDefautlTopLeftPoint
+        }
+        
+        self.nextUserWindowTopLeftPoint = userWindow.cascadeTopLeftFromPoint(topLeftPoint)
     }
     
     // MARK: Timer Functions

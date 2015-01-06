@@ -9,7 +9,7 @@
 import Foundation
 
 // request header
-private let kUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"
+private let kUserAgent = kCommonUserAgent
 
 // Internal Http Utility
 extension NicoUtility {
@@ -78,7 +78,7 @@ extension NicoUtility {
     }
     
     private func sessionCookie() -> NSHTTPCookie? {
-        if let cookie = self.cookie {
+        if let cookie = self.userSessionCookie {
             // log.debug("cookie:[\(cookie)]")
             
             let userSessionCookie = NSHTTPCookie(properties: [

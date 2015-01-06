@@ -28,10 +28,10 @@ struct Parameters {
 }
 
 // session management
-struct SessionManagementValue {
-    static let Login = 1000
-    static let Chrome = 1001
-    // static let Safari = 1002
+enum SessionManagementType: Int {
+    case Login = 1000
+    case Chrome = 1001
+    // case Safari = 1002
 }
 
 // keychain

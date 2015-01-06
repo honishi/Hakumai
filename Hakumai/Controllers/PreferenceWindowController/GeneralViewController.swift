@@ -22,7 +22,7 @@ private let kStoryboardIdGeneralViewController = "GeneralViewController"
     }
     
     override func transformedValue(value: AnyObject!) -> AnyObject? {
-        return value.integerValue == SessionManagementValue.Login ? NSNumber(bool: true) : NSNumber(bool: false)
+        return value.integerValue == SessionManagementType.Login.rawValue ? NSNumber(bool: true) : NSNumber(bool: false)
     }
 }
 
@@ -78,7 +78,7 @@ class GeneralViewController: NSViewController {
             return false
         }
         
-        let loginSelected = self.sessionManagementMatrix?.selectedTag() == SessionManagementValue.Login
+        let loginSelected = self.sessionManagementMatrix?.selectedTag() == SessionManagementType.Login.rawValue
         let hasValidMailAddress = (self.mailAddress as String).hasRegexpPattern(kRegexpMailAddress)
         let hasValidPassword = (self.password as String).hasRegexpPattern(kRegexpPassword)
         
@@ -89,7 +89,7 @@ class GeneralViewController: NSViewController {
         let matrix = (sender as NSMatrix)
         // log.debug("\(matrix.selectedTag())")
         
-        if matrix.selectedTag() == SessionManagementValue.Login {
+        if matrix.selectedTag() == SessionManagementType.Login.rawValue {
             self.mailAddressTextField.becomeFirstResponder()
         }
     }

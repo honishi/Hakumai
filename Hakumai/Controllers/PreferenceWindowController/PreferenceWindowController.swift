@@ -33,7 +33,11 @@ class PreferenceWindowController: NSWindowController {
     
     class func generateInstance() -> PreferenceWindowController {
         let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)!
-        return storyboard.instantiateControllerWithIdentifier(kStoryboardIdPreferenceWindowController) as PreferenceWindowController
+        let preferenceWindowController = storyboard.instantiateControllerWithIdentifier(kStoryboardIdPreferenceWindowController) as PreferenceWindowController
+        
+        preferenceWindowController.window?.center()
+        
+        return preferenceWindowController
     }
 
     // MARK: - Object Lifecycle

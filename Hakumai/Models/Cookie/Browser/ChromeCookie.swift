@@ -32,7 +32,7 @@ class ChromeCookie {
 
     // MARK: - Public Functions
     // based on http://n8henrie.com/2014/05/decrypt-chrome-cookies-with-python/
-    class func cookie() -> String? {
+    class func storedCookie() -> String? {
         let encryptedCookie = ChromeCookie.queryEncryptedCookie()
         
         if encryptedCookie == nil {
