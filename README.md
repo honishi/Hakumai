@@ -2,9 +2,7 @@ Hakumai
 ==
 niconama comment viewer alternative for mac os x.
 
-<!--
-![screenshot](./document/screenshot.png)
--->
+<img src="./document/screenshot/main.png" width="525px">
 
 project setup
 --
