@@ -18,21 +18,32 @@ class UserViewController: NSViewController {
     // MARK: - Properties
     // MARK: Outlets
     @IBOutlet weak var userIdLabel: NSTextField!
+    @IBOutlet weak var userNameLabel: NSTextField!
     @IBOutlet weak var tableView: NSTableView!
     @IBOutlet weak var scrollView: NSScrollView!
     
     // MARK: Basics
     var userId: String? {
         didSet {
-            self.userIdLabel.stringValue = "UserId: " + (self.userId ?? "-")
+            var userIdLabelValue: String?
+            var userNameLabelValue: String?
             
             if let userId = self.userId {
+                userIdLabelValue = userId
+                
+                if let userName = NicoUtility.sharedInstance.cachedUserNameForUserId(userId) {
+                    userNameLabelValue = userName
+                }
+                
                 self.messages = MessageContainer.sharedContainer.messagesWithUserId(userId)
             }
             else {
                 self.messages.removeAll(keepCapacity: false)
                 self.rowHeightCacher.removeAll(keepCapacity: false)
             }
+            
+            self.userIdLabel.stringValue = "UserId: " + (userIdLabelValue ?? "-----")
+            self.userNameLabel.stringValue = "UserName: " + (userNameLabelValue ?? "-----")
             
             self.reloadMessages()
         }

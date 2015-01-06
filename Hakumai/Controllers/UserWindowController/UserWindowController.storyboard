@@ -8,7 +8,7 @@
         <scene sceneID="DUY-7K-hko">
             <objects>
                 <windowController storyboardIdentifier="UserWindowController" id="cZt-aQ-wLA" customClass="UserWindowController" customModule="Hakumai" customModuleProvider="target" sceneMemberID="viewController">
-                    <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="BYN-XC-fU9" customClass="UserWindow" customModule="Hakumai" customModuleProvider="target">
+                    <window key="window" title="User" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="BYN-XC-fU9" customClass="UserWindow" customModule="Hakumai" customModuleProvider="target">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="163" y="199" width="480" height="400"/>
@@ -34,24 +34,22 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="djL-Ot-r3k">
-                                <rect key="frame" x="18" y="363" width="150" height="17"/>
+                                <rect key="frame" x="18" y="363" width="444" height="17"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="146" id="3EG-4a-hRI"/>
                                     <constraint firstAttribute="height" constant="17" id="HnU-NM-MJ0"/>
                                 </constraints>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="UserId: XXX" id="sr1-of-5We">
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="UserId: -----" id="sr1-of-5We">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CjM-Yf-m63">
-                                <rect key="frame" x="18" y="338" width="150" height="17"/>
+                                <rect key="frame" x="18" y="338" width="444" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="17" id="SIw-fo-zwM"/>
-                                    <constraint firstAttribute="width" constant="146" id="aD4-Ch-AEh"/>
                                 </constraints>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="UserName: XXX" id="NM3-nH-S7r">
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="UserName: -----" id="NM3-nH-S7r">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -196,9 +194,11 @@
                         </subviews>
                         <constraints>
                             <constraint firstItem="djL-Ot-r3k" firstAttribute="top" secondItem="goD-cx-5Hy" secondAttribute="top" constant="20" id="2vy-ji-q0f"/>
+                            <constraint firstAttribute="trailing" secondItem="djL-Ot-r3k" secondAttribute="trailing" constant="20" id="4VJ-pa-sdj"/>
                             <constraint firstItem="CjM-Yf-m63" firstAttribute="leading" secondItem="goD-cx-5Hy" secondAttribute="leading" constant="20" id="6nG-jq-gMv"/>
                             <constraint firstItem="CjM-Yf-m63" firstAttribute="top" secondItem="djL-Ot-r3k" secondAttribute="bottom" constant="8" id="Af5-b6-hsp"/>
                             <constraint firstItem="RVu-Jo-eWK" firstAttribute="top" secondItem="CjM-Yf-m63" secondAttribute="bottom" constant="8" id="F8U-2x-uaM"/>
+                            <constraint firstAttribute="trailing" secondItem="CjM-Yf-m63" secondAttribute="trailing" constant="20" id="IYu-tw-53q"/>
                             <constraint firstItem="RVu-Jo-eWK" firstAttribute="leading" secondItem="goD-cx-5Hy" secondAttribute="leading" constant="20" id="IdZ-vZ-1iS"/>
                             <constraint firstAttribute="bottom" secondItem="RVu-Jo-eWK" secondAttribute="bottom" constant="20" id="Q2K-bk-f7E"/>
                             <constraint firstItem="djL-Ot-r3k" firstAttribute="leading" secondItem="goD-cx-5Hy" secondAttribute="leading" constant="20" id="hpg-Wy-pv8"/>
@@ -209,6 +209,7 @@
                         <outlet property="scrollView" destination="RVu-Jo-eWK" id="P9H-Ow-ldh"/>
                         <outlet property="tableView" destination="2W3-fv-MQQ" id="829-Ty-khQ"/>
                         <outlet property="userIdLabel" destination="djL-Ot-r3k" id="whM-Uj-ONH"/>
+                        <outlet property="userNameLabel" destination="CjM-Yf-m63" id="kYl-ZS-7pm"/>
                     </connections>
                 </viewController>
                 <customObject id="XGh-yc-TS2" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

@@ -8,7 +8,7 @@
         <scene sceneID="sqe-jO-hWG">
             <objects>
                 <windowController storyboardIdentifier="PreferenceWindowController" id="PlE-T2-INV" customClass="PreferenceWindowController" customModule="Hakumai" customModuleProvider="target" sceneMemberID="viewController">
-                    <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="h8Z-9J-qen" customClass="PreferenceWindow" customModule="Hakumai" customModuleProvider="target">
+                    <window key="window" title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="h8Z-9J-qen" customClass="PreferenceWindow" customModule="Hakumai" customModuleProvider="target">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="163" y="199" width="450" height="200"/>
@@ -39,8 +39,6 @@
                             <defaultToolbarItems>
                                 <toolbarItem reference="xvI-p0-CFd"/>
                                 <toolbarItem reference="K6p-dH-dVB"/>
-                                <toolbarItem reference="rjP-Jm-dZ9"/>
-                                <toolbarItem reference="Bes-Ty-Og4"/>
                             </defaultToolbarItems>
                         </toolbar>
                     </window>
