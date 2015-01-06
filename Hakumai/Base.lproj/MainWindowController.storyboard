@@ -907,7 +907,7 @@
                                                         </tableCellView>
                                                     </prototypeCellViews>
                                                 </tableColumn>
-                                                <tableColumn identifier="MailColumn" width="116" minWidth="40" maxWidth="1000" id="f9B-Ai-rQk">
+                                                <tableColumn identifier="MailColumn" width="116" minWidth="40" maxWidth="1000" hidden="YES" id="f9B-Ai-rQk">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Mail">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -982,7 +982,7 @@
                                 </constraints>
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NoImage" id="Rj1-mk-21r"/>
                             </imageView>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gpJ-ll-AbX">
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="gpJ-ll-AbX">
                                 <rect key="frame" x="70" y="324" width="275" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="17" id="Z7e-7q-EMI"/>
@@ -993,7 +993,7 @@
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="65a-aX-RIL">
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="65a-aX-RIL">
                                 <rect key="frame" x="70" y="343" width="275" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="17" id="aX3-eX-5Te"/>
@@ -1004,7 +1004,7 @@
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mqT-iT-cC6">
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="mqT-iT-cC6">
                                 <rect key="frame" x="70" y="305" width="275" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="17" id="x00-mC-etv"/>
