@@ -723,7 +723,7 @@
                                 <constraints>
                                     <constraint firstAttribute="width" constant="76" id="wxf-k4-uEw"/>
                                 </constraints>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Active: XXX" id="Gc8-kb-8sm">
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Active: ---" id="Gc8-kb-8sm">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -983,36 +983,33 @@
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NoImage" id="Rj1-mk-21r"/>
                             </imageView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gpJ-ll-AbX">
-                                <rect key="frame" x="70" y="324" width="154" height="17"/>
+                                <rect key="frame" x="70" y="324" width="275" height="17"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="150" id="A0C-sK-N8a"/>
                                     <constraint firstAttribute="height" constant="17" id="Z7e-7q-EMI"/>
                                 </constraints>
-                                <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Seat" id="yqU-Gi-9N3">
+                                <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="[Seat]" id="yqU-Gi-9N3">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="65a-aX-RIL">
-                                <rect key="frame" x="70" y="343" width="274" height="17"/>
+                                <rect key="frame" x="70" y="343" width="275" height="17"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="270" id="Dlb-TR-ZMJ"/>
                                     <constraint firstAttribute="height" constant="17" id="aX3-eX-5Te"/>
                                 </constraints>
-                                <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Live Name" id="dok-kh-Amw">
+                                <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="[Live Name]" id="dok-kh-Amw">
                                     <font key="font" metaFont="systemBold"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mqT-iT-cC6">
-                                <rect key="frame" x="70" y="305" width="254" height="17"/>
+                                <rect key="frame" x="70" y="305" width="275" height="17"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="250" id="h1j-o3-c8T"/>
                                     <constraint firstAttribute="height" constant="17" id="x00-mC-etv"/>
                                 </constraints>
-                                <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Community Name" id="jGH-vk-fS8">
+                                <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="[Community Name]" id="jGH-vk-fS8">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -1023,7 +1020,7 @@
                                 <constraints>
                                     <constraint firstAttribute="width" constant="116" id="Crb-XE-GjO"/>
                                 </constraints>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="Opened: XXX" id="kqW-3l-FJT">
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="Opened: ---" id="kqW-3l-FJT">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -1035,7 +1032,7 @@
                                     <constraint firstAttribute="height" constant="17" id="Z9u-tH-tXQ"/>
                                     <constraint firstAttribute="width" constant="126" id="jRn-6P-vSi"/>
                                 </constraints>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Elapsed: XX:XX:XX" id="Gf3-nI-of1">
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Elapsed: --:--:--" id="Gf3-nI-of1">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -1066,12 +1063,12 @@
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="x2d-KV-3zy">
-                                <rect key="frame" x="321" y="305" width="150" height="17"/>
+                                <rect key="frame" x="351" y="305" width="120" height="17"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="146" id="jUH-bY-qSj"/>
+                                    <constraint firstAttribute="width" constant="116" id="jUH-bY-qSj"/>
                                     <constraint firstAttribute="height" constant="17" id="wIy-NP-7rG"/>
                                 </constraints>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Remaining Seats: XXX" id="hY5-lP-fGs">
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Seats: XXX" id="hY5-lP-fGs">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -1113,6 +1110,7 @@
                             <constraint firstAttribute="trailing" secondItem="vmz-z1-HHp" secondAttribute="trailing" constant="10" id="W9o-q0-DKK"/>
                             <constraint firstAttribute="trailing" secondItem="gZN-es-bFO" secondAttribute="trailing" constant="10" id="X7M-qF-7Kx"/>
                             <constraint firstItem="3lG-BL-Thc" firstAttribute="top" secondItem="mqT-iT-cC6" secondAttribute="bottom" constant="15" id="YD8-67-POf"/>
+                            <constraint firstItem="8WA-yo-AuZ" firstAttribute="leading" secondItem="65a-aX-RIL" secondAttribute="trailing" constant="10" id="ZKg-0C-pes"/>
                             <constraint firstItem="8WA-yo-AuZ" firstAttribute="top" secondItem="gZN-es-bFO" secondAttribute="bottom" constant="11" id="b7N-zG-a12"/>
                             <constraint firstItem="x2d-KV-3zy" firstAttribute="top" secondItem="vmz-z1-HHp" secondAttribute="bottom" constant="2" id="bDz-aR-Vgk"/>
                             <constraint firstItem="0js-wz-rh5" firstAttribute="leading" secondItem="09h-Eb-cuW" secondAttribute="trailing" constant="15" id="cKm-sj-IvV"/>
@@ -1123,12 +1121,14 @@
                             <constraint firstItem="gpJ-ll-AbX" firstAttribute="leading" secondItem="NQm-lE-rVr" secondAttribute="trailing" constant="7" id="hOl-O8-4Lf"/>
                             <constraint firstAttribute="bottom" secondItem="A3m-ux-Ivm" secondAttribute="bottom" constant="6" id="hSM-78-CVv"/>
                             <constraint firstItem="mqT-iT-cC6" firstAttribute="top" secondItem="gpJ-ll-AbX" secondAttribute="bottom" constant="2" id="kMh-RI-gdD"/>
+                            <constraint firstItem="vmz-z1-HHp" firstAttribute="leading" secondItem="gpJ-ll-AbX" secondAttribute="trailing" constant="10" id="mkD-hG-Z3f"/>
                             <constraint firstAttribute="trailing" secondItem="8WA-yo-AuZ" secondAttribute="trailing" constant="10" id="n7U-xg-Exv"/>
                             <constraint firstItem="mqT-iT-cC6" firstAttribute="leading" secondItem="NQm-lE-rVr" secondAttribute="trailing" constant="7" id="nOx-yt-U1s"/>
                             <constraint firstAttribute="trailing" secondItem="UtQ-bi-lar" secondAttribute="trailing" constant="10" id="orh-Xr-aKq"/>
                             <constraint firstItem="UtQ-bi-lar" firstAttribute="top" secondItem="3lG-BL-Thc" secondAttribute="bottom" constant="12" id="rEi-SX-4jA"/>
                             <constraint firstItem="p3A-6s-IKD" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="12" id="s9Q-J0-Swd"/>
                             <constraint firstItem="gZN-es-bFO" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="10" id="sNm-LV-zdL"/>
+                            <constraint firstItem="x2d-KV-3zy" firstAttribute="leading" secondItem="mqT-iT-cC6" secondAttribute="trailing" constant="10" id="tOh-RC-UHH"/>
                             <constraint firstItem="65a-aX-RIL" firstAttribute="leading" secondItem="NQm-lE-rVr" secondAttribute="trailing" constant="7" id="uXa-Zt-5O6"/>
                             <constraint firstItem="09h-Eb-cuW" firstAttribute="leading" secondItem="p3A-6s-IKD" secondAttribute="trailing" constant="15" id="vG4-4x-VnS"/>
                             <constraint firstItem="3lG-BL-Thc" firstAttribute="top" secondItem="x2d-KV-3zy" secondAttribute="bottom" constant="15" id="wTe-lP-C7R"/>

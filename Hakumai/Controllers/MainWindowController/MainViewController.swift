@@ -375,7 +375,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     func nicoUtilityDidReceiveFirstChat(nicoUtility: NicoUtility, chat: Chat) {
         if let roomPositionLabel = chat.roomPosition?.label() {
             dispatch_async(dispatch_get_main_queue(), {
-                self.notificationLabel.stringValue = "opened:\(roomPositionLabel)"
+                self.notificationLabel.stringValue = "Opened:~\(roomPositionLabel)"
             })
             
             self.logSystemMessageToTableView("\(roomPositionLabel)がオープンしました.")
@@ -583,7 +583,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         dispatch_async(dispatch_get_main_queue(), {
             self.visitorsLabel.stringValue = "Visitors: " + visitors
             self.commentsLabel.stringValue = "Comments: " + comments
-            self.remainingSeatsLabel.stringValue = "Remaining Seats: " + remaining
+            self.remainingSeatsLabel.stringValue = "Seats: " + remaining
         })
     }
     
@@ -724,7 +724,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             }
             
             dispatch_async(dispatch_get_main_queue(), {
-                self.activeLabel.stringValue = "active:\(active!)"
+                self.activeLabel.stringValue = "Active:\(active!)"
             })
         }
     }
