@@ -95,16 +95,17 @@
                                         </matrix>
                                         <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RF4-gC-rH4">
                                             <rect key="frame" x="137" y="47" width="172" height="22"/>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" placeholderString="inakou@is.god" drawsBackground="YES" id="amz-FZ-x9r">
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" placeholderString="place holder is set at null placeholder in binding" drawsBackground="YES" id="amz-FZ-x9r">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                             <connections>
                                                 <action selector="detectedEnterInTextField:" target="wCA-UG-k48" id="5tb-tW-8li"/>
-                                                <binding destination="wCA-UG-k48" name="value" keyPath="self.mailAddress" id="MQ1-Nd-Pgf">
+                                                <binding destination="wCA-UG-k48" name="value" keyPath="self.mailAddress" id="TP2-eC-BXX">
                                                     <dictionary key="options">
                                                         <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                                        <string key="NSNullPlaceholder">inakou@is.god</string>
                                                     </dictionary>
                                                 </binding>
                                                 <binding destination="Ex8-3g-KNv" name="enabled" keyPath="values.SessionManagement" id="Oqf-lb-evU">
@@ -116,7 +117,7 @@
                                         </textField>
                                         <secureTextField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Gxu-j7-bHc">
                                             <rect key="frame" x="137" y="21" width="172" height="22"/>
-                                            <secureTextFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" placeholderString="p@ssw0rd" drawsBackground="YES" usesSingleLineMode="YES" id="8o9-Ca-ajc">
+                                            <secureTextFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" placeholderString="place holder is set at null placeholder in binding" drawsBackground="YES" usesSingleLineMode="YES" id="8o9-Ca-ajc">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -126,9 +127,10 @@
                                             </secureTextFieldCell>
                                             <connections>
                                                 <action selector="detectedEnterInTextField:" target="wCA-UG-k48" id="90S-cH-YSX"/>
-                                                <binding destination="wCA-UG-k48" name="value" keyPath="self.password" id="nko-ZU-UJF">
+                                                <binding destination="wCA-UG-k48" name="value" keyPath="self.password" id="1fM-Y4-UyO">
                                                     <dictionary key="options">
                                                         <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                                        <string key="NSNullPlaceholder">p@ssw0rd</string>
                                                     </dictionary>
                                                 </binding>
                                                 <binding destination="Ex8-3g-KNv" name="enabled" keyPath="values.SessionManagement" id="OB4-Vb-KBg">

@@ -107,6 +107,10 @@ class GeneralViewController: NSViewController {
     @IBAction func checkAccount(sender: AnyObject) {
         log.debug("login w/ [\(self.mailAddress)][\(self.password)]")
         
+        if self.canLogin() == false {
+            return
+        }
+        
         let completion = { (userSessionCookie: String?) -> Void in
             dispatch_async(dispatch_get_main_queue(), {
                 self.progressIndicator.stopAnimation(self)
