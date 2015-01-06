@@ -30,16 +30,18 @@ class GeneralViewController: NSViewController {
     // MARK: - Properties
     @IBOutlet weak var sessionManagementMatrix: NSMatrix!
     @IBOutlet weak var mailAddressTextField: NSTextField!
-    @IBOutlet weak var loginButton: NSButton!
+    @IBOutlet weak var checkAccountButton: NSButton!
+    @IBOutlet weak var progressIndicator: NSProgressIndicator!
+    @IBOutlet weak var checkAccountStatusLabel: NSTextField!
     
     dynamic var mailAddress: NSString! {
         didSet {
-            self.validateLoginButton()
+            self.validateCheckAccountButton()
         }
     }
     dynamic var password: NSString! {
         didSet {
-            self.validateLoginButton()
+            self.validateCheckAccountButton()
         }
     }
     
@@ -62,15 +64,17 @@ class GeneralViewController: NSViewController {
     override func viewDidAppear() {
         super.viewDidAppear()
         
-        self.mailAddress = "test@example.com"
-        self.password = "p@55w0rd"
+        if let account = KeychainUtility.accountInKeychain() {
+            self.mailAddress = account.mailAddress
+            self.password = account.password
+        }
         
-        self.validateLoginButton()
+        self.validateCheckAccountButton()
     }
 
     // MARK: - Internal Functions
-    func validateLoginButton() {
-        self.loginButton?.enabled = self.canLogin()
+    func validateCheckAccountButton() {
+        self.checkAccountButton?.enabled = self.canLogin()
     }
     
     func canLogin() -> Bool {
@@ -101,7 +105,25 @@ class GeneralViewController: NSViewController {
     }
     
     @IBAction func checkAccount(sender: AnyObject) {
-        // TODO: implement
         log.debug("login w/ [\(self.mailAddress)][\(self.password)]")
+        
+        let completion = { (userSessionCookie: String?) -> Void in
+            dispatch_async(dispatch_get_main_queue(), {
+                self.progressIndicator.stopAnimation(self)
+                
+                if userSessionCookie == nil {
+                    self.checkAccountStatusLabel.stringValue = "Status: Failed"
+                    return
+                }
+                
+                self.checkAccountStatusLabel.stringValue = "Status: Success"
+                
+                KeychainUtility.removeAllAccountsInKeychain()
+                KeychainUtility.setAccountToKeychainWith(self.mailAddress, password: self.password)
+            })
+        }
+
+        self.progressIndicator.startAnimation(self)
+        CookieUtility.requestLoginCookieWithMailAddress(self.mailAddress, password: self.password, completion: completion)
     }
 }

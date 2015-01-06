@@ -599,9 +599,11 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             
             switch sessionManagementType {
             case .Login:
-                let mailAddress = ""
-                let password = ""
-                NicoUtility.sharedInstance.connectToLive(liveNumber, mailAddress: mailAddress, password: password)
+                if let account = KeychainUtility.accountInKeychain() {
+                    let mailAddress = account.mailAddress
+                    let password = account.password
+                    NicoUtility.sharedInstance.connectToLive(liveNumber, mailAddress: mailAddress, password: password)
+                }
                 
             case .Chrome:
                 NicoUtility.sharedInstance.connectToLive(liveNumber, browserType: .Chrome)
