@@ -139,11 +139,11 @@ class MenuDelegate: NSObject, NSMenuDelegate {
         let chat = MessageContainer.sharedContainer[self.tableView.clickedRow].chat!
         NicoUtility.sharedInstance.reportAsNgUser(chat) {(userId: String?) -> Void in
             if userId == nil {
-                MainViewController.sharedInstance.appendTableView("Failed to report NG user.")
+                MainViewController.sharedInstance.logSystemMessageToTableView("Failed to report NG user.")
                 return
             }
             
-            MainViewController.sharedInstance.appendTableView("Completed to report NG user.")
+            MainViewController.sharedInstance.logSystemMessageToTableView("Completed to report NG user.")
         }
     }
     

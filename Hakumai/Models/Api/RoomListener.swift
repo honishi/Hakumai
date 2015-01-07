@@ -89,7 +89,7 @@ class RoomListener : NSObject, NSStreamDelegate {
         self.inputStream?.open()
         self.outputStream?.open()
         
-        let message = "<thread thread=\"\(server.thread)\" res_from=\"-10\" version=\"20061206\"/>"
+        let message = "<thread thread=\"\(server.thread)\" res_from=\"-0\" version=\"20061206\"/>"
         self.sendMessage(message)
         
         loop.run()

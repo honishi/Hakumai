@@ -51,6 +51,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
 
     let log = XCGLogger.defaultInstance()
 
+    var startedListeningLive = false
     var chats = [Chat]()
 
     // row-height cache
@@ -369,7 +370,10 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
 
 
     func nicoUtilityDidStartListening(nicoUtility: NicoUtility, roomPosition: RoomPosition) {
-        log.info("started listening \(roomPosition.label()).")
+        if self.startedListeningLive == false {
+            self.startedListeningLive = true
+            self.logSystemMessageToTableView("Started listening live. (\(roomPosition.label()))")
+        }
     }
 
     func nicoUtilityDidReceiveFirstChat(nicoUtility: NicoUtility, chat: Chat) {
@@ -403,6 +407,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     func nicoUtilityDidFinishListening(nicoUtility: NicoUtility) {
         self.logSystemMessageToTableView("Live closed.")
         self.stopTimers()
+        self.startedListeningLive = false
     }
     
     func nicoUtilityDidReceiveHeartbeat(nicoUtility: NicoUtility, heartbeat: Heartbeat) {
