@@ -150,7 +150,7 @@ class UserViewController: NSViewController {
             roomPositionView.roomPosition = chat.roomPosition!
             roomPositionView.commentNo = chat.no!
         case kScoreColumnIdentifier:
-            (view as ScoreTableCellView).score = chat.score!
+            (view as ScoreTableCellView).chat = chat
         case kCommentColumnIdentifier:
             let (content, attributes) = self.contentAndAttributesForMessage(message)
             attributed = NSAttributedString(string: content, attributes: attributes)

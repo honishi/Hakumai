@@ -26,6 +26,7 @@ protocol NicoUtilityDelegate {
     func nicoUtilityDidStartListening(nicoUtility: NicoUtility, roomPosition: RoomPosition)
     func nicoUtilityDidReceiveFirstChat(nicoUtility: NicoUtility, chat: Chat)
     func nicoUtilityDidReceiveChat(nicoUtility: NicoUtility, chat: Chat)
+    func nicoUtilityDidGetKickedOut(nicoUtility: NicoUtility)
     func nicoUtilityDidFinishListening(nicoUtility: NicoUtility)
     func nicoUtilityDidReceiveHeartbeat(nicoUtility: NicoUtility, heartbeat: Heartbeat)
 }
@@ -54,6 +55,9 @@ private let kUserUrl = "http://www.nicovideo.jp/user/"
 
 // request header
 let kCommonUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"
+
+// regular expression
+private let kRegexpSeatNo = "/hb ifseetno (\\d+)"
 
 // intervals
 private let kHeartbeatDefaultInterval: NSTimeInterval = 30
@@ -231,17 +235,16 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         self.cookiedAsyncRequest("GET", url: kUserUrl + String(userId), parameters: nil, completion: httpCompletion)
     }
     
-    func reportAsNgUser(chat: Chat) {
+    func reportAsNgUser(chat: Chat, completion: (userId: String?) -> Void) {
         func httpCompletion(response: NSURLResponse!, data: NSData!, connectionError: NSError!) {
             if connectionError != nil {
                 log.error("error in requesting ng user")
-                // TODO: error completion?
+                completion(userId: nil)
                 return
             }
             
             log.debug("completed to request ng user")
-            
-            // TODO: success completion?
+            completion(userId: chat.userId!)
         }
         
         let parameters: [String: Any] = [
@@ -285,13 +288,34 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         }
         
         self.delegate?.nicoUtilityDidReceiveChat(self, chat: chat)
+
+        if self.isKickedOutWithRoomListener(roomListener, chat: chat) {
+            self.delegate?.nicoUtilityDidGetKickedOut(self)
+            self.disconnect()
+        }
         
-        if (chat.comment == "/disconnect" && (chat.premium == .Caster || chat.premium == .System) &&
-            chat.roomPosition == .Arena) {
-                self.disconnect()
+        if self.isDisconnectedWithChat(chat) {
+            self.disconnect()
         }
         
         self.chatCount++
+    }
+    
+    func isKickedOutWithRoomListener(roomListener: RoomListener, chat: Chat) -> Bool {
+        if roomListener.server?.roomPosition != self.messageServer?.roomPosition {
+            return false
+        }
+        
+        if chat.comment?.extractRegexpPattern(kRegexpSeatNo)?.toInt() == self.user?.seatNo {
+            return true
+        }
+        
+        return false
+    }
+    
+    func isDisconnectedWithChat(chat: Chat) -> Bool {
+        return chat.comment == "/disconnect" && (chat.premium == .Caster || chat.premium == .System) &&
+            chat.roomPosition == .Arena
     }
     
     // MARK: - Internal Functions
@@ -509,7 +533,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     
     // MARK: Comment
     private func requestGetPostKey(success: (postKey: String) -> Void, failure: () -> Void) {
-        if messageServer == nil {
+        if self.messageServer == nil {
             log.error("cannot comment without messageServer")
             failure()
             return
@@ -542,8 +566,8 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             success(postKey: postKey!)
         }
         
-        let thread = messageServer!.thread
-        let blockNo = (roomListeners[messageServer!.roomPosition.rawValue].lastRes + 1) / 100
+        let thread = self.messageServer!.thread
+        let blockNo = (roomListeners[self.messageServer!.roomPosition.rawValue].lastRes + 1) / 100
         
         self.cookiedAsyncRequest("GET", url: kGetPostKeyUrl, parameters: ["thread": thread, "block_no": blockNo], completion: httpCompletion)
     }

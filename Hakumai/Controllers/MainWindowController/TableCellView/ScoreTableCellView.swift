@@ -17,11 +17,11 @@ private let kScoreThresholdOrange = -10000
 class ScoreTableCellView: NSTableCellView {
     @IBOutlet weak var coloredView: ColoredView!
     @IBOutlet weak var scoreLabel: NSTextField!
-    
-    var score: Int? = nil {
+
+    var chat: Chat? = nil {
         didSet {
-            self.coloredView.fillColor = self.colorForScore(self.score)
-            self.scoreLabel.stringValue = self.stringForScore(self.score)
+            self.coloredView.fillColor = self.colorForChatScore(self.chat)
+            self.scoreLabel.stringValue = self.stringForChatScore(self.chat)
         }
     }
 
@@ -34,33 +34,36 @@ class ScoreTableCellView: NSTableCellView {
     }
 
     // MARK: - Internal Functions
-    func colorForScore(score: Int?) -> NSColor {
+    func colorForChatScore(chat: Chat?) -> NSColor {
         // println("\(self.score)")
-        
-        if score == nil {
+        if chat == nil {
             return UIHelper.systemMessageColorBackground()
         }
         
-        if score == kScoreThresholdGreen {
+        if chat!.premium == .System || chat!.premium == .Caster || chat!.premium == .Operator {
+            return UIHelper.systemMessageColorBackground()
+        }
+        
+        if chat!.score == kScoreThresholdGreen {
             return UIHelper.scoreColorGreen()
         }
-        else if kScoreThresholdLightGreen < score && score < kScoreThresholdGreen {
+        else if kScoreThresholdLightGreen < chat!.score && chat!.score < kScoreThresholdGreen {
             return UIHelper.scoreColorLightGreen()
         }
-        else if kScoreThresholdYellow < score && score <= kScoreThresholdLightGreen {
+        else if kScoreThresholdYellow < chat!.score && chat!.score <= kScoreThresholdLightGreen {
             return UIHelper.scoreColorYellow()
         }
-        else if kScoreThresholdOrange < score && score <= kScoreThresholdYellow {
+        else if kScoreThresholdOrange < chat!.score && chat!.score <= kScoreThresholdYellow {
             return UIHelper.scoreColorOrange()
         }
         
         return UIHelper.scoreColorRed()
     }
     
-    func stringForScore(score: Int?) -> String {
+    func stringForChatScore(chat: Chat?) -> String {
         var string = ""
         
-        if let unwrapped = score {
+        if let unwrapped = chat?.score {
             string = String(unwrapped).numberStringWithSeparatorComma()!
         }
         

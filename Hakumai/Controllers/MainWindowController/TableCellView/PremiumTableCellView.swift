@@ -9,8 +9,9 @@
 import Foundation
 import AppKit
 
-private let kImageNamePremium = "Premium"
+private let kImageNamePremium = "PremiumPremium"
 private let kImageNameIppan = "UserId184Id"
+private let kImageNameMisc = "PremiumMisc"
 
 class PremiumTableCellView: NSTableCellView {
     @IBOutlet weak var premiumImageView: NSImageView!
@@ -38,6 +39,8 @@ class PremiumTableCellView: NSTableCellView {
             image = NSImage(named: kImageNamePremium)!
         case .Ippan:
             image = NSImage(named: kImageNameIppan)!
+        case .System, .Caster, .Operator, .BSP:
+            image = NSImage(named: kImageNameMisc)!
         default:
             break
         }

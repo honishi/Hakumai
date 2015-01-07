@@ -249,7 +249,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             roomPositionView.roomPosition = nil
             roomPositionView.commentNo = nil
         case kScoreColumnIdentifier:
-            (view as ScoreTableCellView).score = nil
+            (view as ScoreTableCellView).chat = nil
         case kCommentColumnIdentifier:
             let (content, attributes) = self.contentAndAttributesForMessage(message)
             let attributed = NSAttributedString(string: content, attributes: attributes)
@@ -272,7 +272,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             roomPositionView.roomPosition = chat.roomPosition!
             roomPositionView.commentNo = chat.no!
         case kScoreColumnIdentifier:
-            (view as ScoreTableCellView).score = chat.score!
+            (view as ScoreTableCellView).chat = chat
         case kCommentColumnIdentifier:
             let (content, attributes) = self.contentAndAttributesForMessage(message)
             attributed = NSAttributedString(string: content, attributes: attributes)
@@ -360,7 +360,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             self.focusCommentTextField()
         })
         
-        self.logSystemMessageToTableView("放送情報を取得しました.[\(user.nickname!)]")
+        self.logSystemMessageToTableView("Prepared live as user \(user.nickname!).")
     }
     
     func nicoUtilityDidFailToPrepareLive(nicoUtility: NicoUtility, reason: String) {
@@ -378,7 +378,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
                 self.notificationLabel.stringValue = "Opened:~\(roomPositionLabel)"
             })
             
-            self.logSystemMessageToTableView("\(roomPositionLabel)がオープンしました.")
+            self.logSystemMessageToTableView("Opened \(roomPositionLabel).")
         }
     }
 
@@ -396,8 +396,12 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         }
     }
     
+    func nicoUtilityDidGetKickedOut(nicoUtility: NicoUtility) {
+        self.logSystemMessageToTableView("Got kicked out...")
+    }
+    
     func nicoUtilityDidFinishListening(nicoUtility: NicoUtility) {
-        self.logSystemMessageToTableView("放送が終了しました.")
+        self.logSystemMessageToTableView("Live closed.")
         self.stopTimers()
     }
     
