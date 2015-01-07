@@ -10,3 +10,6 @@
 [submodule "vendor/Ono"]
 	path = vendor/Ono
 	url = git@github.com:mattt/Ono.git
+[submodule "vendor/Sparkle"]
+	path = vendor/Sparkle
+	url = git@github.com:sparkle-project/Sparkle.git

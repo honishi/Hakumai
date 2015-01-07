@@ -21,6 +21,12 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="VOq-y0-SEH"/>
+                                        <menuItem title="Check for Updates..." id="qnO-Bs-3iG">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="checkForUpdates:" target="zCO-sh-zt2" id="spw-5V-d7y"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="Preferences…" keyEquivalent="," id="BOF-NM-1cW">
                                             <connections>
                                                 <action selector="openPreferences:" target="Voe-Tx-rLC" id="l87-vD-sdO"/>
@@ -341,8 +347,9 @@
                 <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="Hakumai" customModuleProvider="target"/>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <userDefaultsController id="Qbm-2t-1Py"/>
+                <customObject id="zCO-sh-zt2" customClass="SUUpdater"/>
             </objects>
-            <point key="canvasLocation" x="75" y="0.0"/>
+            <point key="canvasLocation" x="-5.5" y="-302"/>
         </scene>
         <!--Window Controller-->
         <scene sceneID="R2V-B0-nI4">
