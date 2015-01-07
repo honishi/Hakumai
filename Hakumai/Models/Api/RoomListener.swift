@@ -89,6 +89,9 @@ class RoomListener : NSObject, NSStreamDelegate {
         self.inputStream?.open()
         self.outputStream?.open()
         
+        // res_from should be -0, because if not, like -10, we sometimes get unexpected
+        // kick out command like '/hb ifseetno *my_seetno*' just after opening socket.
+        // and this causes unexpected kick out.
         let message = "<thread thread=\"\(server.thread)\" res_from=\"-0\" version=\"20061206\"/>"
         self.sendMessage(message)
         
