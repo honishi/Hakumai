@@ -10,7 +10,7 @@ import Foundation
 import XCGLogger
 
 // sqlite
-private let kDatabasePath = NSHomeDirectory() + "/Library/Application Support/Google/Chrome/Default/Cookies"
+private let kDatabasePath = "/Google/Chrome/Default/Cookies"
 
 // aes key
 private let kSalt = "saltysalt"
@@ -71,7 +71,8 @@ class ChromeCookie {
     private class func queryEncryptedCookie() -> NSData? {
         var encryptedCookie: NSData?
         
-        let database = FMDatabase(path: kDatabasePath)
+        let appSupportDirectory = NSSearchPathForDirectoriesInDomains(.ApplicationSupportDirectory, .UserDomainMask, true)[0] as String
+        let database = FMDatabase(path: appSupportDirectory + kDatabasePath)
         
         let query = NSString(format: "SELECT host_key, name, encrypted_value FROM cookies " +
             "WHERE host_key = '%@' and name = 'user_session'", ".nicovideo.jp")

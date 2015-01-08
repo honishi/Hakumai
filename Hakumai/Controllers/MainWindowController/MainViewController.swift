@@ -52,6 +52,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     let log = XCGLogger.defaultInstance()
 
     var startedListeningLive = false
+    var openedRoomPosition: RoomPosition?
     var chats = [Chat]()
 
     // row-height cache
@@ -163,7 +164,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             self.progressIndicator.startAnimation(self)
             let shouldScroll = self.shouldTableViewScrollToBottom()
             
-            MessageContainer.sharedContainer.rebuildFilteredMessages({() -> Void in
+            MessageContainer.sharedContainer.rebuildFilteredMessages({ () -> Void in
                 self.tableView.reloadData()
                 
                 if shouldScroll {
@@ -355,6 +356,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             let level = live.community.level != nil ? String(live.community.level!) : "-"
             self.communityTitleLabel.stringValue = live.community.title! + " (Lv." + level + ")"
             self.roomPositionLabel.stringValue = user.roomLabel! + " - " + String(user.seatNo!)
+            self.notificationLabel.stringValue = "Opened: ---"
             
             self.startTimers()
             self.loadThumbnail()
@@ -365,25 +367,34 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
     
     func nicoUtilityDidFailToPrepareLive(nicoUtility: NicoUtility, reason: String) {
-        self.logSystemMessageToTableView(reason)
+        self.logSystemMessageToTableView("Failed to prepare live.(\(reason))")
     }
-
 
     func nicoUtilityDidStartListening(nicoUtility: NicoUtility, roomPosition: RoomPosition) {
         if self.startedListeningLive == false {
             self.startedListeningLive = true
-            self.logSystemMessageToTableView("Started listening live. (\(roomPosition.label()))")
+            self.logSystemMessageToTableView("Started listening live.")
         }
     }
 
     func nicoUtilityDidReceiveFirstChat(nicoUtility: NicoUtility, chat: Chat) {
-        if let roomPositionLabel = chat.roomPosition?.label() {
-            dispatch_async(dispatch_get_main_queue(), {
-                self.notificationLabel.stringValue = "Opened:~\(roomPositionLabel)"
-            })
-            
-            self.logSystemMessageToTableView("Opened \(roomPositionLabel).")
+        if chat.roomPosition == nil {
+            return
         }
+
+        self.logSystemMessageToTableView("Opened \(chat.roomPosition!.label()).")
+
+        if self.openedRoomPosition == nil {
+            // nop
+        }
+        else if chat.roomPosition!.rawValue <= self.openedRoomPosition?.rawValue {
+            return
+        }
+        self.openedRoomPosition = chat.roomPosition
+        
+        dispatch_async(dispatch_get_main_queue(), {
+            self.notificationLabel.stringValue = "Opened:~\(chat.roomPosition!.label())"
+        })
     }
 
     func nicoUtilityDidReceiveChat(nicoUtility: NicoUtility, chat: Chat) {
@@ -408,6 +419,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         self.logSystemMessageToTableView("Live closed.")
         self.stopTimers()
         self.startedListeningLive = false
+        self.openedRoomPosition = nil
     }
     
     func nicoUtilityDidReceiveHeartbeat(nicoUtility: NicoUtility, heartbeat: Heartbeat) {
@@ -493,7 +505,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             NSAnimationContext.beginGrouping()
             NSAnimationContext.currentContext().duration = 0.5
             
-            NSAnimationContext.currentContext().completionHandler = {() -> Void in
+            NSAnimationContext.currentContext().completionHandler = { () -> Void in
                 self.currentScrollAnimationCount -= 1
                 // self.log.debug("  end scroll animation:\(self.currentScrollAnimationCount)")
             }
@@ -520,7 +532,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         let handleNameAddViewController = storyboard.instantiateControllerWithIdentifier(kStoryboardIdHandleNameAddViewController) as HandleNameAddViewController
         
         handleNameAddViewController.handleName = (self.defaultHandleNameWithChat(chat) ?? "")
-        handleNameAddViewController.completion = {(cancelled: Bool, handleName: String?) -> Void in
+        handleNameAddViewController.completion = { (cancelled: Bool, handleName: String?) -> Void in
             if !cancelled {
                 HandleNameManager.sharedManager.updateHandleNameWithChat(chat, handleName: handleName!)
                 MainViewController.sharedInstance.refreshHandleName()
@@ -630,7 +642,11 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         }
         
         let anonymously = NSUserDefaults.standardUserDefaults().boolForKey(Parameters.CommentAnonymously)
-        NicoUtility.sharedInstance.comment(comment, anonymously: anonymously)
+        NicoUtility.sharedInstance.comment(comment, anonymously: anonymously) { (comment: String?) -> Void in
+            if comment == nil {
+                self.logSystemMessageToTableView("Failed to comment.")
+            }
+        }
         self.commentTextField.stringValue = ""
         
         if self.commentHistory.count == 0 || self.commentHistory.last != comment {

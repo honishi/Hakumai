@@ -123,7 +123,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         self.clearUserSessionCookieIfReserved()
         
         if self.userSessionCookie == nil {
-            let completion = {(userSessionCookie: String?) -> Void in
+            let completion = { (userSessionCookie: String?) -> Void in
                 self.connectToLive(liveNumber, userSessionCookie: userSessionCookie)
             }
             CookieUtility.requestLoginCookieWithMailAddress(mailAddress, password: password, completion: completion)
@@ -154,7 +154,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         self.reset()
     }
     
-    func comment(comment: String, anonymously: Bool = true) {
+    func comment(comment: String, anonymously: Bool = true, completion: (comment: String?) -> Void) {
         if self.live == nil || self.user == nil {
             self.log.debug("no available stream, or user")
             return
@@ -163,10 +163,12 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         func success(postKey: String) {
             let roomListener = self.roomListeners[self.messageServer!.roomPosition.rawValue]
             roomListener.comment(self.live!, user: self.user!, postKey: postKey, comment: comment, anonymously: anonymously)
+            completion(comment: comment)
         }
         
         func failure() {
             self.log.error("could not get post key")
+            completion(comment: nil)
         }
         
         self.requestGetPostKey(success, failure: failure)
@@ -330,9 +332,9 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     
     private func connectToLive(liveNumber: Int, userSessionCookie: String?) {
         if userSessionCookie == nil {
-            let message = "no available cookie, canceled to connect"
-            log.error(message)
-            self.delegate?.nicoUtilityDidFailToPrepareLive(self, reason: message)
+            let reason = "no available cookie"
+            log.error(reason)
+            self.delegate?.nicoUtilityDidFailToPrepareLive(self, reason: "no available cookie")
             return
         }
         
@@ -361,14 +363,16 @@ class NicoUtility : NSObject, RoomListenerDelegate {
                     self.log.debug("\(server)")
                 }
                 
-                self.openNewMessageServer()
+                for _ in 0...self.messageServer!.roomPosition.rawValue {
+                    self.openNewMessageServer()
+                }
                 self.scheduleHeartbeatTimer(immediateFire: true)
             }
             
             func communityFailure(reason: String) {
-                let message = "failed to load community"
-                self.log.error(message)
-                self.delegate?.nicoUtilityDidFailToPrepareLive(self, reason: message)
+                let reason = "failed to load community"
+                self.log.error(reason)
+                self.delegate?.nicoUtilityDidFailToPrepareLive(self, reason: reason)
                 return
             }
             
@@ -376,9 +380,8 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         }
         
         func failure(reason: String) {
-            let message = "could not extract live information: \(reason)"
-            self.log.error(message)
-            self.delegate?.nicoUtilityDidFailToPrepareLive(self, reason: message)
+            self.log.error(reason)
+            self.delegate?.nicoUtilityDidFailToPrepareLive(self, reason: reason)
             return
         }
         
@@ -523,12 +526,11 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         let targetServerIndex = self.roomListeners.count
         let targetServer = self.messageServers[targetServerIndex]
         let listener = RoomListener(delegate: self, server: targetServer)
+        self.roomListeners.append(listener)
         
         dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
             listener.openSocket()
         })
-        
-        self.roomListeners.append(listener)
     }
     
     // MARK: Comment
@@ -564,6 +566,12 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             }
             
             success(postKey: postKey!)
+        }
+        
+        let isMyRoomListenerOpened = (self.messageServer!.roomPosition.rawValue < roomListeners.count)
+        if !isMyRoomListenerOpened {
+            failure()
+            return
         }
         
         let thread = self.messageServer!.thread

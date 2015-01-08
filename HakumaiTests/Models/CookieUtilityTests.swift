@@ -34,7 +34,7 @@ class CookieUtilityTests: XCTestCase {
         let mailAddress = "test1234@example.com"
         let password = "password"
         
-        CookieUtility.requestLoginCookieWithMailAddress(mailAddress, password: password) {(userSessionCookie) -> Void in
+        CookieUtility.requestLoginCookieWithMailAddress(mailAddress, password: password) { (userSessionCookie) -> Void in
             XCTAssert(userSessionCookie != nil, "")
             asyncExpectation.fulfill()
         }
