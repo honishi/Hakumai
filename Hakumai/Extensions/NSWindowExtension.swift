@@ -29,6 +29,9 @@ extension NSWindow {
             let windowLevel = Int(CGWindowLevelForKey(windowLevelKey))
             
             self.level = windowLevel
+            
+            // .Managed to keep window being within spaces(mission control) even if special window level
+            self.collectionBehavior = .Managed
         }
     }
 }
