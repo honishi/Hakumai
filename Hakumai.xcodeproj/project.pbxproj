@@ -53,6 +53,7 @@
 		DB55AC641A33905200CFAD99 /* PremiumTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB55AC631A33905200CFAD99 /* PremiumTableCellView.xib */; };
 		DB55AC681A33908300CFAD99 /* PremiumTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB55AC671A33908300CFAD99 /* PremiumTableCellView.swift */; };
 		DB55AC691A3394EE00CFAD99 /* PremiumTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB55AC671A33908300CFAD99 /* PremiumTableCellView.swift */; };
+		DB5D21EC1A603973006ECD54 /* MainTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5D21EB1A603973006ECD54 /* MainTextField.swift */; };
 		DB682D421A36E6AE00499C72 /* Parameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB682D411A36E6AE00499C72 /* Parameter.swift */; };
 		DB682D451A36E73D00499C72 /* Parameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB682D411A36E6AE00499C72 /* Parameter.swift */; };
 		DB73A38C1A4F43F6008423D0 /* MuteAddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB73A38B1A4F43F6008423D0 /* MuteAddViewController.swift */; };
@@ -295,6 +296,7 @@
 		DB52B0B11A21226900E78C6A /* ChatResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatResult.swift; sourceTree = "<group>"; };
 		DB55AC631A33905200CFAD99 /* PremiumTableCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PremiumTableCellView.xib; sourceTree = "<group>"; };
 		DB55AC671A33908300CFAD99 /* PremiumTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PremiumTableCellView.swift; sourceTree = "<group>"; };
+		DB5D21EB1A603973006ECD54 /* MainTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainTextField.swift; sourceTree = "<group>"; };
 		DB682D411A36E6AE00499C72 /* Parameter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Parameter.swift; sourceTree = "<group>"; };
 		DB73A38B1A4F43F6008423D0 /* MuteAddViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MuteAddViewController.swift; sourceTree = "<group>"; };
 		DB7B3DDB1A23B35300205470 /* ColoredView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColoredView.swift; sourceTree = "<group>"; };
@@ -636,7 +638,7 @@
 		DBD65C191A2E0C3200B84C97 /* MainWindowController */ = {
 			isa = PBXGroup;
 			children = (
-				DBD65C1E1A2E2EA600B84C97 /* UnusedLayeredView */,
+				DBD65C1E1A2E2EA600B84C97 /* Unused */,
 				DB7B3DE01A242D4100205470 /* TableCellView */,
 				DB2AE0C91A0EE2FD00B1CE4D /* MainWindowController.storyboard */,
 				DBADF3301A5EFA4D00A3A037 /* MainWindowController.swift */,
@@ -648,13 +650,14 @@
 			path = MainWindowController;
 			sourceTree = "<group>";
 		};
-		DBD65C1E1A2E2EA600B84C97 /* UnusedLayeredView */ = {
+		DBD65C1E1A2E2EA600B84C97 /* Unused */ = {
 			isa = PBXGroup;
 			children = (
 				DBD65C1C1A2E0FB900B84C97 /* LayeredScrollView.swift */,
 				DBD65C1A1A2E0C6600B84C97 /* LayeredClipView.swift */,
+				DB5D21EB1A603973006ECD54 /* MainTextField.swift */,
 			);
-			path = UnusedLayeredView;
+			path = Unused;
 			sourceTree = "<group>";
 		};
 		DBE093F61A585EC5004554FD /* Api */ = {
@@ -936,6 +939,7 @@
 			files = (
 				DB9EFC781A3E9EB10087D302 /* PreferenceWindow.swift in Sources */,
 				DB414C071A4810A5008D2F40 /* UserViewController.swift in Sources */,
+				DB5D21EC1A603973006ECD54 /* MainTextField.swift in Sources */,
 				DB7B3DDC1A23B35300205470 /* ColoredView.swift in Sources */,
 				DBD65C1D1A2E0FB900B84C97 /* LayeredScrollView.swift in Sources */,
 				DB2AE1101A0F2BAB00B1CE4D /* FMDatabase.m in Sources */,

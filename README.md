@@ -23,9 +23,9 @@ notes about submodules
 contribution
 --
 1. fork it ( http://github.com//honishi/Hakumai )
-2. create your feature branch (git checkout -b my-new-feature)
-3. commit your changes (git commit -am 'add some feature')
-4. push to the branch (git push origin my-new-feature)
+2. create your feature branch (`git checkout -b my-new-feature`)
+3. commit your changes (`git commit -am 'add some feature'`)
+4. push to the branch (`git push origin my-new-feature`)
 5. create new pull request
 
 license
