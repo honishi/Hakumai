@@ -106,6 +106,8 @@
 		DBAB695F1A5B79AF002FCD95 /* LoginCookie.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAB695B1A5B70A5002FCD95 /* LoginCookie.swift */; };
 		DBAB69621A5C1A70002FCD95 /* KeychainUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAB69611A5C1A70002FCD95 /* KeychainUtility.swift */; };
 		DBAB69631A5C1A70002FCD95 /* KeychainUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAB69611A5C1A70002FCD95 /* KeychainUtility.swift */; };
+		DBADF3311A5EFA4D00A3A037 /* MainWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBADF3301A5EFA4D00A3A037 /* MainWindowController.swift */; };
+		DBADF3321A5EFA4D00A3A037 /* MainWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBADF3301A5EFA4D00A3A037 /* MainWindowController.swift */; };
 		DBB473001A358FFC002C797E /* CharacterExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB472FF1A358FFC002C797E /* CharacterExtension.swift */; };
 		DBB473041A359082002C797E /* IntExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB473031A359082002C797E /* IntExtension.swift */; };
 		DBB473061A35909F002C797E /* NSXMLElementExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB473051A35909F002C797E /* NSXMLElementExtension.swift */; };
@@ -327,6 +329,7 @@
 		DBAAA7501A0FDA4500981004 /* NicoUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicoUtility.swift; sourceTree = "<group>"; };
 		DBAB695B1A5B70A5002FCD95 /* LoginCookie.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginCookie.swift; sourceTree = "<group>"; };
 		DBAB69611A5C1A70002FCD95 /* KeychainUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = KeychainUtility.swift; path = Hakumai/Models/Keychain/KeychainUtility.swift; sourceTree = SOURCE_ROOT; };
+		DBADF3301A5EFA4D00A3A037 /* MainWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainWindowController.swift; sourceTree = "<group>"; };
 		DBB472FF1A358FFC002C797E /* CharacterExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacterExtension.swift; sourceTree = "<group>"; };
 		DBB473031A359082002C797E /* IntExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntExtension.swift; sourceTree = "<group>"; };
 		DBB473051A35909F002C797E /* NSXMLElementExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSXMLElementExtension.swift; sourceTree = "<group>"; };
@@ -636,6 +639,7 @@
 				DBD65C1E1A2E2EA600B84C97 /* UnusedLayeredView */,
 				DB7B3DE01A242D4100205470 /* TableCellView */,
 				DB2AE0C91A0EE2FD00B1CE4D /* MainWindowController.storyboard */,
+				DBADF3301A5EFA4D00A3A037 /* MainWindowController.swift */,
 				DB2AE0C51A0EE2FD00B1CE4D /* MainViewController.swift */,
 				DB80CA861A2575A0002636E0 /* MainViewControllerExtensions.swift */,
 				DBCA40D31A30AD48006299A9 /* MenuDelegate.swift */,
@@ -974,6 +978,7 @@
 				DBFA88821A1BC8C9005349AD /* Enum.swift in Sources */,
 				DB73A38C1A4F43F6008423D0 /* MuteAddViewController.swift in Sources */,
 				DBFA887B1A1BC25A005349AD /* Chat.swift in Sources */,
+				DBADF3311A5EFA4D00A3A037 /* MainWindowController.swift in Sources */,
 				DB2AE1121A0F2BAB00B1CE4D /* FMDatabaseAdditions.m in Sources */,
 				DB7BA0721A58C021000778CF /* HandleNameAddViewController.swift in Sources */,
 				DB9EFC741A3E974A0087D302 /* NSWindowExtension.swift in Sources */,
@@ -1026,6 +1031,7 @@
 				DBCA40D71A30BC38006299A9 /* MenuDelegateTests.swift in Sources */,
 				DBB4730C1A359685002C797E /* Heartbeat.swift in Sources */,
 				DB52B0B31A21226900E78C6A /* ChatResult.swift in Sources */,
+				DBADF3321A5EFA4D00A3A037 /* MainWindowController.swift in Sources */,
 				DB80CA831A256F9A002636E0 /* MessageContainer.swift in Sources */,
 				DB8E71B61A544A5E00C6E696 /* NicoUtilityExtractor.swift in Sources */,
 				DBAAA7521A0FDA4500981004 /* NicoUtility.swift in Sources */,
