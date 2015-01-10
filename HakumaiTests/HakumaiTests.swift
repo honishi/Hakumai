@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Hiroyuki Onishi. All rights reserved.
 //
 
-import Cocoa
+import Foundation
 import XCTest
 
 class HakumaiTests: XCTestCase {
@@ -21,6 +21,7 @@ class HakumaiTests: XCTestCase {
         super.tearDown()
     }
     
+    // MARK: example
     func testExample() {
         // This is an example of a functional test case.
         XCTAssert(true, "Pass")
@@ -32,5 +33,4 @@ class HakumaiTests: XCTestCase {
             // Put the code you want to measure the time of here.
         }
     }
-    
 }

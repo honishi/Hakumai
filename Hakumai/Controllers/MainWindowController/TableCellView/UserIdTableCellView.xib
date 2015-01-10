@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner"/>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="c22-O7-iKe" customClass="UserIdTableCellView" customModule="Hakumai" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="100" height="50"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Khl-KA-YVW">
+                    <rect key="frame" x="20" y="17" width="82" height="17"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" id="5gd-H5-3cs">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="WOK-sa-2n9">
+                    <rect key="frame" x="0.0" y="17" width="17" height="17"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="17" id="Dsg-rV-h29"/>
+                    </constraints>
+                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="UserIdRawId" id="mw3-QE-7jV"/>
+                </imageView>
+            </subviews>
+            <constraints>
+                <constraint firstAttribute="centerY" secondItem="WOK-sa-2n9" secondAttribute="centerY" id="6dK-Gj-Yf7"/>
+                <constraint firstItem="WOK-sa-2n9" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" id="Wag-Kg-sBZ"/>
+                <constraint firstItem="Khl-KA-YVW" firstAttribute="leading" secondItem="WOK-sa-2n9" secondAttribute="trailing" constant="5" id="irt-hP-aeU"/>
+                <constraint firstAttribute="centerY" secondItem="Khl-KA-YVW" secondAttribute="centerY" id="k1m-yf-pTH"/>
+                <constraint firstAttribute="trailing" secondItem="Khl-KA-YVW" secondAttribute="trailing" id="pzU-XN-uxq"/>
+            </constraints>
+            <connections>
+                <outlet property="userIdImageView" destination="WOK-sa-2n9" id="Ws2-sK-9kF"/>
+                <outlet property="userIdTextField" destination="Khl-KA-YVW" id="7S3-kO-7SE"/>
+            </connections>
+        </customView>
+    </objects>
+    <resources>
+        <image name="UserIdRawId" width="17" height="17"/>
+    </resources>
+</document>
