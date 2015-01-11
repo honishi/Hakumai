@@ -56,11 +56,9 @@ private let kUserUrl = "http://www.nicovideo.jp/user/"
 // request header
 let kCommonUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"
 
-// regular expression
-private let kRegexpSeatNo = "/hb ifseetno (\\d+)"
-
-// intervals
+// intervals & sleep
 private let kHeartbeatDefaultInterval: NSTimeInterval = 30
+private let kSleepBeforeReconnect: Double = 1
 
 // MARK: - class
 
@@ -281,19 +279,20 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     func roomListenerDidReceiveChat(roomListener: RoomListener, chat: Chat) {
-        // open next room, if first comment in the room received
-        if chat.premium == .Ippan || chat.premium == .Premium {
-            if let room = roomListener.server?.roomPosition {
-                if self.receivedFirstChat[room] == nil || self.receivedFirstChat[room] == false {
-                    self.receivedFirstChat[room] = true
-                    self.openNewMessageServer()
-                    
-                    self.delegate?.nicoUtilityDidReceiveFirstChat(self, chat: chat)
-                }
+        if self.isFirstChatWithRoomListener(roomListener, chat: chat) {
+            self.delegate?.nicoUtilityDidReceiveFirstChat(self, chat: chat)
+
+            // open next room, if needed
+            let isCurrentLastRoomChat = (chat.roomPosition?.rawValue == self.roomListeners.count - 1)
+            if isCurrentLastRoomChat {
+                log.debug("found user comment in current last room, so try to open new message server.")
+                self.openNewMessageServer()
             }
         }
         
-        self.delegate?.nicoUtilityDidReceiveChat(self, chat: chat)
+        if self.shouldNotifyChatToDelegateWithChat(chat) {
+            self.delegate?.nicoUtilityDidReceiveChat(self, chat: chat)
+        }
 
         if self.isKickedOutWithRoomListener(roomListener, chat: chat) {
             self.delegate?.nicoUtilityDidGetKickedOut(self)
@@ -306,13 +305,47 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         
         self.chatCount++
     }
+
+    // MARK: Chat Checkers
+    func isFirstChatWithRoomListener(roomListener: RoomListener, chat: Chat) -> Bool {
+        if chat.isUserComment {
+            if let room = roomListener.server?.roomPosition {
+                if self.receivedFirstChat[room] == nil || self.receivedFirstChat[room] == false {
+                    self.receivedFirstChat[room] = true
+                    return true
+                }
+            }
+        }
+        
+        return false
+    }
+    
+    func shouldNotifyChatToDelegateWithChat(chat: Chat) -> Bool {
+        // premium == 0, 1
+        if chat.isUserComment {
+            return true
+        }
+
+        // comment == '/hb ifseetno xx'
+        if chat.kickOutSeatNo != nil {
+            return true
+        }
+        
+        // others. is chat my assigned room's one?
+        if self.isAssignedMessageServerChatWithChat(chat) {
+            return true
+        }
+        
+        return false
+    }
     
     func isKickedOutWithRoomListener(roomListener: RoomListener, chat: Chat) -> Bool {
+        // XXX: should use self.isAssignedMessageServerChatWithChat()
         if roomListener.server?.roomPosition != self.messageServer?.roomPosition {
             return false
         }
         
-        if chat.comment?.extractRegexpPattern(kRegexpSeatNo)?.toInt() == self.user?.seatNo {
+        if chat.kickOutSeatNo == self.user?.seatNo {
             return true
         }
         
@@ -320,8 +353,11 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     func isDisconnectedWithChat(chat: Chat) -> Bool {
-        return chat.comment == "/disconnect" && (chat.premium == .Caster || chat.premium == .System) &&
-            chat.roomPosition == .Arena
+        return (chat.comment == "/disconnect" && chat.isSystemComment && self.isAssignedMessageServerChatWithChat(chat))
+    }
+    
+    func isAssignedMessageServerChatWithChat(chat: Chat) -> Bool {
+        return chat.roomPosition == self.messageServer?.roomPosition
     }
     
     // MARK: - Internal Functions
@@ -345,7 +381,16 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         self.userSessionCookie = userSessionCookie!
         
         if 0 < self.roomListeners.count {
+            log.debug("already has established connection, so disconnect and sleep ...")
             self.disconnect()
+            
+            let delay = kSleepBeforeReconnect * Double(NSEC_PER_SEC)
+            let time  = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
+            dispatch_after(time, dispatch_get_main_queue()) {
+                self.connectToLive(liveNumber, userSessionCookie: userSessionCookie)
+            }
+            
+            return
         }
         
         func success(live: Live, user: User, server: MessageServer) {
@@ -459,7 +504,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
                 return
             }
             
-            if community.isChannel() == true {
+            if community.isChannel == true {
                 self.extractChannelCommunity(data, community: community)
             }
             else {
@@ -469,13 +514,13 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             success()
         }
         
-        let url = (community.isChannel() == true ? kCommunityUrlChannel : kCommunityUrlUser) + community.community!
+        let url = (community.isChannel == true ? kCommunityUrlChannel : kCommunityUrlUser) + community.community!
         self.cookiedAsyncRequest("GET", url: url, parameters: nil, completion: httpCompletion)
     }
     
     // MARK: Message Server Functions
     func deriveMessageServersWithOriginServer(originServer: MessageServer, community: Community) -> [MessageServer] {
-        if community.isUser() == true && community.level == nil {
+        if community.isUser == true && community.level == nil {
             // could not read community level (possible ban case)
             return [originServer]
         }
@@ -491,7 +536,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         var servers = [arenaServer]
         var standRoomCount = 0
         
-        if community.isUser() == true {
+        if community.isUser == true {
             if let level = community.level {
                 standRoomCount = self.standRoomCountForCommunityLevel(level)
             }
@@ -522,19 +567,24 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     private func openNewMessageServer() {
+        objc_sync_enter(self)
+        
         if self.roomListeners.count == self.messageServers.count {
             log.info("already opened max servers.")
-            return
+        }
+        else {
+            let targetServerIndex = self.roomListeners.count
+            let targetServer = self.messageServers[targetServerIndex]
+            let listener = RoomListener(delegate: self, server: targetServer)
+            self.roomListeners.append(listener)
+            log.info("created room listener instance:\(listener)")
+            
+            dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
+                listener.openSocket()
+            })
         }
         
-        let targetServerIndex = self.roomListeners.count
-        let targetServer = self.messageServers[targetServerIndex]
-        let listener = RoomListener(delegate: self, server: targetServer)
-        self.roomListeners.append(listener)
-        
-        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
-            listener.openSocket()
-        })
+        objc_sync_exit(self)
     }
     
     // MARK: Comment

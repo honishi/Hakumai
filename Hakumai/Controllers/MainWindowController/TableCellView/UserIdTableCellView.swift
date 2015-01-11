@@ -56,7 +56,7 @@ class UserIdTableCellView: NSTableCellView {
         self.userIdTextField.stringValue = self.concatUserNameWithUserId(userId, userName: nil, handleName: handleName)
         
         // if needed, then resolve userid
-        if handleName != nil || !Chat.isRawUserId(userId) || !Chat.isUserComment(premium) {
+        if handleName != nil || !Chat.isRawUserId(userId) || !(Chat.isUserComment(premium) || Chat.isBSPComment(premium)) {
             return
         }
         

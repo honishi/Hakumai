@@ -26,6 +26,15 @@ class MessageServer: Printable {
     let port: Int
     let thread: Int
     
+    var isChannel: Bool {
+        if self.address.hasRegexpPattern(kRegExpPatternHostChannel) {
+            return true
+        }
+        
+        // skip to examine kRegExpPatternHostUser, default live type is 'user'
+        return false
+    }
+    
     var description: String {
         return (
             "MessageServer: roomPosition[\(self.roomPosition)] " +
@@ -42,22 +51,13 @@ class MessageServer: Printable {
     }
 
     // MARK: - Public Functions
-    func isChannel() -> Bool {
-        if self.address.hasRegexpPattern(kRegExpPatternHostChannel) {
-            return true
-        }
-        
-        // skip to examine kRegExpPatternHostUser, default live type is 'user'
-        return false
-    }
-    
     func previous() -> MessageServer {
         let roomPosition = RoomPosition(rawValue: self.roomPosition.rawValue - 1)
         var address = self.address
         var port = self.port
         let thread = self.thread - 1
 
-        if self.isChannel() {
+        if self.isChannel {
             if let serverNumber = MessageServer.extractServerNumber(address) {
                 if serverNumber == kMessageServerNumberFirst {
                     address = MessageServer.reconstructServerAddressWithBaseAddress(address, serverNumber: kMessageServerNumberLast)
@@ -100,7 +100,7 @@ class MessageServer: Printable {
         var port = self.port
         let thread = self.thread + 1
         
-        if self.isChannel() {
+        if self.isChannel {
             if let serverNumber = MessageServer.extractServerNumber(address) {
                 if serverNumber == kMessageServerNumberLast {
                     address = MessageServer.reconstructServerAddressWithBaseAddress(address, serverNumber: kMessageServerNumberFirst)

@@ -50,7 +50,7 @@ class MessageContainer {
         else if let chat = object as? Chat {
             var isFirstChat = false
             
-            if chat.premium == .Ippan || chat.premium == .Premium {
+            if chat.isUserComment {
                 isFirstChat = (self.firstChat[chat.userId!] == nil ? true : false)
                 if isFirstChat {
                     self.firstChat[chat.userId!] = true
@@ -162,7 +162,7 @@ class MessageContainer {
                     continue
                 }
                 
-                if !(chat.premium == .Ippan || chat.premium == .Premium) {
+                if !chat.isUserComment {
                     continue
                 }
                 
@@ -249,12 +249,6 @@ class MessageContainer {
         }
         
         let chat = message.chat!
-
-        // filter by premium
-        if (chat.premium == .System || chat.premium == .Operator || chat.premium == .BSP) &&
-            chat.roomPosition != .Arena {
-            return false
-        }
 
         // filter by comment
         if let comment = chat.comment {

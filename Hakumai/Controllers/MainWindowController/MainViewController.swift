@@ -13,7 +13,7 @@ private let kStoryboardNameMainWindowController = "MainWindowController"
 private let kStoryboardIdHandleNameAddViewController = "HandleNameAddViewController"
 
 private let kUserWindowDefautlTopLeftPoint = NSMakePoint(100, 100)
-private let kCalculateActiveInterval: NSTimeInterval = 3
+private let kCalculateActiveInterval: NSTimeInterval = 5
 
 class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate, NSControlTextEditingDelegate, NicoUtilityDelegate, UserWindowControllerDelegate {
     // MARK: Main Outlets
@@ -258,6 +258,8 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             view.textField?.attributedStringValue = attributed
         case kUserIdColumnIdentifier:
             (view as UserIdTableCellView).chat = nil
+        case kPremiumColumnIdentifier:
+            (view as PremiumTableCellView).premium = nil
         default:
             break
         }
@@ -575,6 +577,15 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
     
     // MARK: - Internal Functions
+    func initializeHandleNameManager() {
+        self.progressIndicator.startAnimation(self)
+        
+        // force to invoke setup methods in HandleNameManager()
+        HandleNameManager.sharedManager
+        
+        self.progressIndicator.stopAnimation(self)
+    }
+    
     // MARK: Live Info Updater
     func loadThumbnail() {
         NicoUtility.sharedInstance.loadThumbnail { (imageData) -> (Void) in
@@ -610,6 +621,8 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     
     // MARK: Control Handlers
     @IBAction func connectLive(sender: AnyObject) {
+        self.initializeHandleNameManager()
+        
         if let liveNumber = MainViewController.extractLiveNumber(self.liveTextField.stringValue) {
             self.clearAllChats()
 

@@ -40,7 +40,7 @@ class ScoreTableCellView: NSTableCellView {
             return UIHelper.systemMessageColorBackground()
         }
         
-        if chat!.premium == .System || chat!.premium == .Caster || chat!.premium == .Operator {
+        if chat!.isSystemComment {
             return UIHelper.systemMessageColorBackground()
         }
         

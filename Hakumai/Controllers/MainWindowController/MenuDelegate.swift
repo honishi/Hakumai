@@ -54,14 +54,14 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         case self.copyUrlMenuItem:
             return self.urlStringInComment(chat) != nil ? true : false
         case self.addHandleNameMenuItem:
-            return chat.isUserComment()
+            return (chat.isUserComment || chat.isBSPComment)
         case self.removeHandleNameMenuItem:
             let hasHandleName = (HandleNameManager.sharedManager.handleNameForChat(chat) != nil)
             return hasHandleName
         case self.addToMuteUserMenuItem, self.reportAsNgUserMenuItem:
-            return chat.isUserComment()
+            return (chat.isUserComment || chat.isBSPComment)
         case self.openUserPageMenuItem:
-            return (chat.isRawUserId() && chat.isUserComment()) ? true : false
+            return (chat.isRawUserId && (chat.isUserComment || chat.isBSPComment)) ? true : false
         default:
             break
         }

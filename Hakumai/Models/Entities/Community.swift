@@ -18,6 +18,14 @@ class Community: Printable {
     var level: Int?
     var thumbnailUrl: NSURL?
 
+    var isUser: Bool? {
+        return self.community?.hasRegexpPattern(kCommunityPrefixUser)
+    }
+    
+    var isChannel: Bool? {
+        return self.community?.hasRegexpPattern(kCommunityPrefixChannel)
+    }
+    
     var description: String {
         return (
             "Community: community[\(self.community)] title[\(self.title)] level[\(self.level)] " +
@@ -28,14 +36,5 @@ class Community: Printable {
     // MARK: Object Lifecycle
     init() {
         // nop
-    }
-    
-    // MARK: - Public Functions
-    func isUser() -> Bool? {
-        return self.community?.hasRegexpPattern(kCommunityPrefixUser)
-    }
-    
-    func isChannel() -> Bool? {
-        return self.community?.hasRegexpPattern(kCommunityPrefixChannel)
     }
 }

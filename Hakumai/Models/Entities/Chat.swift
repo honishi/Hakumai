@@ -8,6 +8,9 @@
 
 import Foundation
 
+// regular expression
+private let kRegexpSeatNo = "/hb ifseetno (\\d+)"
+
 class Chat: Printable {
     var roomPosition: RoomPosition?
     var no: Int?
@@ -18,6 +21,26 @@ class Chat: Printable {
     var premium: Premium?
     var comment: String?
     var score: Int?
+    
+    var isRawUserId: Bool {
+        return Chat.isRawUserId(self.userId)
+    }
+    
+    var isUserComment: Bool {
+        return Chat.isUserComment(self.premium)
+    }
+    
+    var isBSPComment: Bool {
+        return Chat.isBSPComment(self.premium)
+    }
+    
+    var isSystemComment: Bool {
+        return Chat.isSystemComment(self.premium)
+    }
+    
+    var kickOutSeatNo: Int? {
+        return self.comment?.extractRegexpPattern(kRegexpSeatNo)?.toInt()
+    }
     
     var description: String {
         return (
@@ -44,10 +67,6 @@ class Chat: Printable {
         return matched != nil ? true : false
     }
     
-    func isRawUserId() -> Bool {
-        return Chat.isRawUserId(self.userId)
-    }
-    
     class func isUserComment(premium: Premium?) -> Bool {
         if premium == nil {
             return false
@@ -55,10 +74,22 @@ class Chat: Printable {
         
         // use explicit unwrapping enum values, instead of implicit unwrapping like "premium == .Ippan"
         // see details at http://stackoverflow.com/a/26204610
-        return (premium! == .Ippan || premium! == .Premium || premium! == .BSP)
+        return (premium! == .Ippan || premium! == .Premium)
     }
     
-    func isUserComment() -> Bool {
-        return Chat.isUserComment(self.premium)
+    class func isBSPComment(premium: Premium?) -> Bool {
+        if premium == nil {
+            return false
+        }
+        
+        return (premium! == .BSP)
+    }
+    
+    class func isSystemComment(premium: Premium?) -> Bool {
+        if premium == nil {
+            return false
+        }
+        
+        return (premium! == .System || premium! == .Caster || premium! == .Operator)
     }
 }

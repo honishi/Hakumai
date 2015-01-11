@@ -25,9 +25,9 @@ class CommunityTests: XCTestCase {
         let community: Community = Community()
         
         community.community = "ch12345"
-        XCTAssert(community.isChannel() == true, "")
+        XCTAssert(community.isChannel == true, "")
         
         community.community = "co12345"
-        XCTAssert(community.isChannel() == false, "")
+        XCTAssert(community.isChannel == false, "")
     }
 }

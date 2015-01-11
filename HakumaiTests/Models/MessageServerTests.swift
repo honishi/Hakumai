@@ -25,10 +25,10 @@ class MessageServerTests: XCTestCase {
         var server: MessageServer!
         
         server = MessageServer(roomPosition: .Arena, address: "msg102.live.nicovideo.jp", port: 2810, thread: 100)
-        XCTAssert(server.isChannel() == false, "")
+        XCTAssert(server.isChannel == false, "")
         
         server = MessageServer(roomPosition: .Arena, address: "omsg102.live.nicovideo.jp", port: 2810, thread: 100)
-        XCTAssert(server.isChannel() == true, "")
+        XCTAssert(server.isChannel == true, "")
     }
     
     func testServerNumber() {
