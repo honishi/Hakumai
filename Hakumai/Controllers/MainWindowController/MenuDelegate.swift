@@ -10,10 +10,11 @@ import Foundation
 import AppKit
 import XCGLogger
 
-class MenuDelegate: NSObject, NSMenuDelegate {
+class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     // MARK: Menu Outlets
     @IBOutlet weak var copyCommentMenuItem: NSMenuItem!
     @IBOutlet weak var copyUrlMenuItem: NSMenuItem!
+    @IBOutlet weak var tweetCommentMenuItem: NSMenuItem!
     @IBOutlet weak var addHandleNameMenuItem: NSMenuItem!
     @IBOutlet weak var removeHandleNameMenuItem: NSMenuItem!
     @IBOutlet weak var addToMuteUserMenuItem: NSMenuItem!
@@ -48,7 +49,7 @@ class MenuDelegate: NSObject, NSMenuDelegate {
         let chat = message.chat!
         
         switch menuItem {
-        case self.copyCommentMenuItem:
+        case self.copyCommentMenuItem, self.tweetCommentMenuItem:
             return true
         case self.copyUrlMenuItem:
             return self.urlStringInComment(chat) != nil ? true : false
@@ -104,6 +105,24 @@ class MenuDelegate: NSObject, NSMenuDelegate {
         let chat = MessageContainer.sharedContainer[self.tableView.clickedRow].chat!
         let toBeCopied = self.urlStringInComment(chat)!
         self.copyStringToPasteBoard(toBeCopied)
+    }
+    
+    @IBAction func tweetComment(sender: AnyObject) {
+        let chat = MessageContainer.sharedContainer[self.tableView.clickedRow].chat!
+        let live = NicoUtility.sharedInstance.live!
+        
+        let comment = chat.comment ?? ""
+        let liveName = live.title ?? ""
+        let communityName = live.community.title ?? ""
+        let liveUrl = live.liveUrlString ?? ""
+        let communityId = live.community.community ?? ""
+        
+        let status = "「\(comment)」/ \(liveName) (\(communityName)) \(liveUrl) #\(communityId)"
+        
+        let service = NSSharingService(named: NSSharingServiceNamePostOnTwitter)
+        service?.delegate = self
+        
+        service?.performWithItems([status])
     }
     
     @IBAction func addHandleName(sender: AnyObject) {

@@ -388,7 +388,7 @@
                                     <action selector="connectLive:" target="XfG-lQ-9wD" id="wHs-05-aZb"/>
                                 </connections>
                             </textField>
-                            <textField toolTip="直近10分間に書き込みをしたアクティブユーザー数" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="09h-Eb-cuW">
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="09h-Eb-cuW">
                                 <rect key="frame" x="151" y="6" width="80" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="76" id="wxf-k4-uEw"/>
@@ -832,10 +832,16 @@
                                 <action selector="copyComment:" target="Riw-FG-ugq" id="eGt-6q-XnR"/>
                             </connections>
                         </menuItem>
-                        <menuItem title="Copy URL in comment" id="rwi-Ju-wYL">
+                        <menuItem title="Copy URL in Comment" id="rwi-Ju-wYL">
                             <modifierMask key="keyEquivalentModifierMask"/>
                             <connections>
                                 <action selector="copyUrl:" target="Riw-FG-ugq" id="3qv-Pf-isq"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="Tweet Comment" id="LCT-WR-Xfy">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="tweetComment:" target="Riw-FG-ugq" id="sZD-OS-6en"/>
                             </connections>
                         </menuItem>
                         <menuItem isSeparatorItem="YES" id="y1N-7S-bEE"/>
@@ -885,6 +891,7 @@
                         <outlet property="openUserPageMenuItem" destination="9gC-Dv-kyp" id="Yqk-Mt-JHF"/>
                         <outlet property="removeHandleNameMenuItem" destination="vop-lQ-wo6" id="eKS-r7-dtJ"/>
                         <outlet property="reportAsNgUserMenuItem" destination="L1C-9u-5sm" id="Edy-Ao-CgH"/>
+                        <outlet property="tweetCommentMenuItem" destination="LCT-WR-Xfy" id="CKd-Ww-fkG"/>
                     </connections>
                 </customObject>
             </objects>

@@ -402,7 +402,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             }
             
             let responseString = NSString(data: data, encoding: NSUTF8StringEncoding)
-            // log.debug("\(responseString)")
+            fileLog.debug("\(responseString)")
             
             if data == nil {
                 let message = "error in unpacking response data"

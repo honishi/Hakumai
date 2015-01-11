@@ -8,6 +8,8 @@
 
 import Foundation
 
+private let kLiveBaseUrl = "http://live.nicovideo.jp/watch/"
+
 class Live: Printable {
     // "lv" prefix is included in live id like "lv12345"
     var liveId: String?
@@ -16,6 +18,10 @@ class Live: Printable {
     var baseTime: NSDate?
     var openTime: NSDate?
     var startTime: NSDate?
+    
+    var liveUrlString: String {
+        return kLiveBaseUrl + (self.liveId ?? "")
+    }
     
     var description: String {
         return (
