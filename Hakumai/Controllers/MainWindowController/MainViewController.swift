@@ -57,6 +57,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
 
     // row-height cache
     var rowHeightCacher = [Int: CGFloat]()
+    var rowDefaultHeight: CGFloat!
     var lastShouldScrollToBottom = true
     var currentScrollAnimationCount = 0
     
@@ -108,6 +109,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     
     func setupTableView() {
         self.tableView.doubleAction = "openUserWindow:"
+        self.rowDefaultHeight = self.tableView.rowHeight
     }
     
     func registerNibs() {
@@ -212,7 +214,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: attributes)
         // log.debug("\(commentRect.size.width),\(commentRect.size.height)")
         
-        return commentRect.size.height
+        return max(commentRect.size.height, self.rowDefaultHeight)
     }
     
     func tableViewColumnDidResize(aNotification: NSNotification) {
