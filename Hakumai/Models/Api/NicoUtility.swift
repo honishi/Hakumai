@@ -60,6 +60,9 @@ let kCommonUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWeb
 private let kHeartbeatDefaultInterval: NSTimeInterval = 30
 private let kSleepBeforeReconnect: Double = 1
 
+// other threshold
+private let kResolveUserNameOperationQueueOverloadThreshold = 10
+
 // MARK: - class
 
 class NicoUtility : NSObject, RoomListenerDelegate {
@@ -74,6 +77,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     private var roomListeners = [RoomListener]()
     private var receivedFirstChat = [RoomPosition: Bool]()
     
+    private let resolveUserNameOperationQueue = NSOperationQueue()
     private var cachedUserNames = [String: String]()
     
     private var heartbeatTimer: NSTimer?
@@ -93,6 +97,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         super.init()
         
         self.initializeFileLog()
+        self.initializeInstance()
     }
     
     class var sharedInstance : NicoUtility {
@@ -113,6 +118,10 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         #else
             fileLog.setup(logLevel: .None, showLogLevel: false, showFileNames: false, showLineNumbers: false, writeToFile: nil)
         #endif
+    }
+    
+    func initializeInstance() {
+        self.resolveUserNameOperationQueue.maxConcurrentOperationCount = 1
     }
 
     // MARK: - Public Interface
@@ -222,21 +231,29 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             completion(userName: cachedUsername)
             return
         }
-        
-        func httpCompletion(response: NSURLResponse!, data: NSData!, connectionError: NSError!) {
-            if connectionError != nil {
-                log.error("error in resolving username")
-                completion(userName: nil)
-                return
-            }
-            
-            let username = self.extractUsername(data)
-            self.cachedUserNames[userId] = username
-            
-            completion(userName: username)
+
+        if kResolveUserNameOperationQueueOverloadThreshold < self.resolveUserNameOperationQueue.operationCount {
+            log.debug("detected overload, so skip resolve request")
+            completion(userName: nil)
+            return
         }
         
-        self.cookiedAsyncRequest("GET", url: kUserUrl + String(userId), parameters: nil, completion: httpCompletion)
+        self.resolveUserNameOperationQueue.addOperationWithBlock { () -> Void in
+            let resolveCompletion = { (response: NSURLResponse!, data: NSData!, connectionError: NSError!) -> Void in
+                if connectionError != nil {
+                    self.log.error("error in resolving username")
+                    completion(userName: nil)
+                    return
+                }
+                
+                let username = self.extractUsername(data)
+                self.cachedUserNames[userId] = username
+                
+                completion(userName: username)
+            }
+            
+            self.cookiedAsyncRequest("GET", url: kUserUrl + String(userId), parameters: nil, completion: resolveCompletion)
+        }
     }
     
     func reportAsNgUser(chat: Chat, completion: (userId: String?) -> Void) {
