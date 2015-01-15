@@ -23,11 +23,12 @@ enum BrowserType {
 protocol NicoUtilityDelegate: class {
     func nicoUtilityDidPrepareLive(nicoUtility: NicoUtility, user: User, live: Live)
     func nicoUtilityDidFailToPrepareLive(nicoUtility: NicoUtility, reason: String)
-    func nicoUtilityDidStartListening(nicoUtility: NicoUtility, roomPosition: RoomPosition)
+    func nicoUtilityDidConnectToLive(nicoUtility: NicoUtility, roomPosition: RoomPosition)
     func nicoUtilityDidReceiveFirstChat(nicoUtility: NicoUtility, chat: Chat)
     func nicoUtilityDidReceiveChat(nicoUtility: NicoUtility, chat: Chat)
     func nicoUtilityDidGetKickedOut(nicoUtility: NicoUtility)
-    func nicoUtilityDidFinishListening(nicoUtility: NicoUtility)
+    func nicoUtilityWillReconnectToLive(nicoUtility: NicoUtility)
+    func nicoUtilityDidDisconnect(nicoUtility: NicoUtility)
     func nicoUtilityDidReceiveHeartbeat(nicoUtility: NicoUtility, heartbeat: Heartbeat)
 }
 
@@ -58,17 +59,23 @@ let kCommonUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWeb
 
 // intervals & sleep
 private let kHeartbeatDefaultInterval: NSTimeInterval = 30
-private let kSleepBeforeReconnect: Double = 1
+private let kSleepBeforeReconnect: Double = 0.5
 
 // other threshold
 private let kResolveUserNameOperationQueueOverloadThreshold = 10
+
+// debug flag
+private let kDebugEnableForceReconnect = false
+private let kDebugForceReconnectChatCount = 20
 
 // MARK: - class
 
 class NicoUtility : NSObject, RoomListenerDelegate {
     // MARK: - Properties
     weak var delegate: NicoUtilityDelegate?
+    var lastLiveNumber: Int?
     
+    // live core information
     var live: Live?
     private var user: User?
     private var messageServer: MessageServer?
@@ -76,12 +83,12 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     private var messageServers = [MessageServer]()
     private var roomListeners = [RoomListener]()
     private var receivedFirstChat = [RoomPosition: Bool]()
-    
+
+    // other variables
     private let resolveUserNameOperationQueue = NSOperationQueue()
     private var cachedUserNames = [String: String]()
     
     private var heartbeatTimer: NSTimer?
-    
     private var chatCount = 0
     
     // session cookie
@@ -161,7 +168,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         }
         
         self.stopHeartbeatTimer()
-        self.delegate?.nicoUtilityDidFinishListening(self)
+        self.delegate?.nicoUtilityDidDisconnect(self)
         self.reset()
     }
     
@@ -292,7 +299,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     // MARK: - RoomListenerDelegate Functions
     func roomListenerDidReceiveThread(roomListener: RoomListener, thread: Thread) {
         log.debug("\(thread)")
-        self.delegate?.nicoUtilityDidStartListening(self, roomPosition: roomListener.server!.roomPosition)
+        self.delegate?.nicoUtilityDidConnectToLive(self, roomPosition: roomListener.server!.roomPosition)
     }
     
     func roomListenerDidReceiveChat(roomListener: RoomListener, chat: Chat) {
@@ -313,7 +320,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
 
         if self.isKickedOutWithRoomListener(roomListener, chat: chat) {
             self.delegate?.nicoUtilityDidGetKickedOut(self)
-            self.disconnect()
+            self.reconnectToLastLive()
         }
         
         if self.isDisconnectedWithChat(chat) {
@@ -321,6 +328,19 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         }
         
         self.chatCount++
+
+        // quick test for reconnect
+        #if DEBUG
+            if kDebugEnableForceReconnect {
+                self.debugForceReconnect()
+            }
+        #endif
+    }
+    
+    private func debugForceReconnect() {
+        if (self.chatCount % kDebugForceReconnectChatCount) == (kDebugForceReconnectChatCount - 1) {
+            self.reconnectToLastLive()
+        }
     }
 
     // MARK: Chat Checkers
@@ -387,15 +407,25 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         }
     }
     
-    private func connectToLive(liveNumber: Int, userSessionCookie: String?) {
-        if userSessionCookie == nil {
-            let reason = "no available cookie"
+    private func reconnectToLastLive() {
+        self.delegate?.nicoUtilityWillReconnectToLive(self)
+        self.connectToLive(self.lastLiveNumber, userSessionCookie: self.userSessionCookie)
+    }
+    
+    private func connectToLive(liveNumber: Int?, userSessionCookie: String?) {
+        if liveNumber == nil {
+            let reason = "no valid live number"
             log.error(reason)
-            self.delegate?.nicoUtilityDidFailToPrepareLive(self, reason: "no available cookie")
+            self.delegate?.nicoUtilityDidFailToPrepareLive(self, reason: reason)
             return
         }
         
-        self.userSessionCookie = userSessionCookie!
+        if userSessionCookie == nil {
+            let reason = "no available cookie"
+            log.error(reason)
+            self.delegate?.nicoUtilityDidFailToPrepareLive(self, reason: reason)
+            return
+        }
         
         if 0 < self.roomListeners.count {
             log.debug("already has established connection, so disconnect and sleep ...")
@@ -410,6 +440,9 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             return
         }
         
+        self.userSessionCookie = userSessionCookie!
+        self.lastLiveNumber = liveNumber!
+
         func success(live: Live, user: User, server: MessageServer) {
             self.log.debug("extracted live: \(live)")
             self.log.debug("extracted server: \(server)")
@@ -451,7 +484,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             return
         }
         
-        self.requestGetPlayerStatus(liveNumber, success: success, failure: failure)
+        self.requestGetPlayerStatus(liveNumber!, success: success, failure: failure)
     }
     
     private func requestGetPlayerStatus(liveNumber: Int, success: (live: Live, user: User, messageServer: MessageServer) -> Void, failure: (reason: String) -> Void) {

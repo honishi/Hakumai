@@ -51,7 +51,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
 
     let log = XCGLogger.defaultInstance()
 
-    var startedListeningLive = false
+    var connectedToLive = false
     var openedRoomPosition: RoomPosition?
     var chats = [Chat]()
 
@@ -374,10 +374,10 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         self.logSystemMessageToTableView("Failed to prepare live.(\(reason))")
     }
 
-    func nicoUtilityDidStartListening(nicoUtility: NicoUtility, roomPosition: RoomPosition) {
-        if self.startedListeningLive == false {
-            self.startedListeningLive = true
-            self.logSystemMessageToTableView("Started listening live.")
+    func nicoUtilityDidConnectToLive(nicoUtility: NicoUtility, roomPosition: RoomPosition) {
+        if self.connectedToLive == false {
+            self.connectedToLive = true
+            self.logSystemMessageToTableView("Connected to live.")
         }
     }
 
@@ -419,10 +419,14 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         self.logSystemMessageToTableView("Got kicked out...")
     }
     
-    func nicoUtilityDidFinishListening(nicoUtility: NicoUtility) {
+    func nicoUtilityWillReconnectToLive(nicoUtility: NicoUtility) {
+        self.logSystemMessageToTableView("Reconnecting...")
+    }
+    
+    func nicoUtilityDidDisconnect(nicoUtility: NicoUtility) {
         self.logSystemMessageToTableView("Live closed.")
         self.stopTimers()
-        self.startedListeningLive = false
+        self.connectedToLive = false
         self.openedRoomPosition = nil
     }
     

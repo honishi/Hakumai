@@ -24,8 +24,10 @@ class RoomListener : NSObject, NSStreamDelegate {
     weak var delegate: RoomListenerDelegate?
     let server: MessageServer?
     
-    var inputStream: NSInputStream!
-    var outputStream: NSOutputStream!
+    var runLoop: NSRunLoop!
+    
+    var inputStream: NSInputStream?
+    var outputStream: NSOutputStream?
     
     var parsingString: NSString = ""
     
@@ -45,6 +47,10 @@ class RoomListener : NSObject, NSStreamDelegate {
         self.initializeFileLog()
         
         log.info("listener initialized for message server:\(self.server)")
+    }
+    
+    deinit {
+        log.debug("")
     }
     
     func initializeFileLog() {
@@ -79,16 +85,16 @@ class RoomListener : NSObject, NSStreamDelegate {
             return
         }
         
-        self.inputStream = input!
-        self.outputStream = output!
+        self.inputStream = input
+        self.outputStream = output
         
         self.inputStream?.delegate = self
         self.outputStream?.delegate = self
         
-        let loop = NSRunLoop.currentRunLoop()
+        self.runLoop = NSRunLoop.currentRunLoop()
         
-        self.inputStream?.scheduleInRunLoop(loop, forMode: NSDefaultRunLoopMode)
-        self.outputStream?.scheduleInRunLoop(loop, forMode: NSDefaultRunLoopMode)
+        self.inputStream?.scheduleInRunLoop(self.runLoop, forMode: NSDefaultRunLoopMode)
+        self.outputStream?.scheduleInRunLoop(self.runLoop, forMode: NSDefaultRunLoopMode)
         
         self.inputStream?.open()
         self.outputStream?.open()
@@ -99,14 +105,25 @@ class RoomListener : NSObject, NSStreamDelegate {
         let message = "<thread thread=\"\(server.thread)\" res_from=\"-0\" version=\"20061206\"/>"
         self.sendMessage(message)
         
-        loop.run()
+        while self.inputStream != nil {
+            self.runLoop.runUntilDate(NSDate(timeIntervalSinceNow: NSTimeInterval(1)))
+        }
     }
     
     func closeSocket() {
         fileLog.debug("closed streams.")
         
+        self.inputStream?.delegate = nil
+        self.outputStream?.delegate = nil
+        
         self.inputStream?.close()
         self.outputStream?.close()
+        
+        self.inputStream?.removeFromRunLoop(self.runLoop, forMode: NSDefaultRunLoopMode)
+        self.outputStream?.removeFromRunLoop(self.runLoop, forMode: NSDefaultRunLoopMode)
+        
+        self.inputStream = nil
+        self.outputStream = nil
     }
     
     func comment(live: Live, user: User, postKey: String, comment: String, anonymously: Bool) {
@@ -147,13 +164,13 @@ class RoomListener : NSObject, NSStreamDelegate {
             
         case NSStreamEvent.HasBytesAvailable:
             // fileLog.debug("stream event has bytes available");
-
+            
             // http://stackoverflow.com/q/26360962
             var readByte = [UInt8](count: kReadBufferSize, repeatedValue: 0)
             
             var actualRead = 0
-            while self.inputStream.hasBytesAvailable {
-                actualRead = self.inputStream.read(&readByte, maxLength: kReadBufferSize)
+            while self.inputStream?.hasBytesAvailable == true {
+                actualRead = self.inputStream!.read(&readByte, maxLength: kReadBufferSize)
                 //fileLog.debug(readByte)
                 
                 if let readString = NSString(bytes: &readByte, length: actualRead, encoding: NSUTF8StringEncoding) {
