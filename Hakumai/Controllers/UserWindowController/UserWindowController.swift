@@ -14,13 +14,13 @@ import XCGLogger
 private let kStoryboardNameUserWindowController = "UserWindowController"
 private let kStoryboardIdUserWindowController = "UserWindowController"
 
-protocol UserWindowControllerDelegate {
+protocol UserWindowControllerDelegate: class {
     func userWindowControllerDidClose(userWindowController: UserWindowController)
 }
 
 class UserWindowController: NSWindowController, NSWindowDelegate {
     // MARK: - Properties
-    var delegate: UserWindowControllerDelegate?
+    weak var delegate: UserWindowControllerDelegate?
     var userId: String? {
         didSet {
             self.reloadMessages()

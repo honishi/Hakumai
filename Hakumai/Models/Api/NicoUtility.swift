@@ -20,7 +20,7 @@ enum BrowserType {
 
 // note these functions are called in background thread, not main thread.
 // so use explicit main thread for updating ui in these callbacks.
-protocol NicoUtilityDelegate {
+protocol NicoUtilityDelegate: class {
     func nicoUtilityDidPrepareLive(nicoUtility: NicoUtility, user: User, live: Live)
     func nicoUtilityDidFailToPrepareLive(nicoUtility: NicoUtility, reason: String)
     func nicoUtilityDidStartListening(nicoUtility: NicoUtility, roomPosition: RoomPosition)
@@ -67,7 +67,7 @@ private let kResolveUserNameOperationQueueOverloadThreshold = 10
 
 class NicoUtility : NSObject, RoomListenerDelegate {
     // MARK: - Properties
-    var delegate: NicoUtilityDelegate?
+    weak var delegate: NicoUtilityDelegate?
     
     var live: Live?
     private var user: User?

@@ -13,7 +13,7 @@ private let kReadBufferSize = 102400
 
 // MARK: protocol
 
-protocol RoomListenerDelegate {
+protocol RoomListenerDelegate: class {
     func roomListenerDidReceiveThread(roomListener: RoomListener, thread: Thread)
     func roomListenerDidReceiveChat(roomListener: RoomListener, chat: Chat)
 }
@@ -21,7 +21,7 @@ protocol RoomListenerDelegate {
 // MARK: main
 
 class RoomListener : NSObject, NSStreamDelegate {
-    let delegate: RoomListenerDelegate?
+    weak var delegate: RoomListenerDelegate?
     let server: MessageServer?
     
     var inputStream: NSInputStream!
