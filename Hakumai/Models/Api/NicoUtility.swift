@@ -570,11 +570,6 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     
     // MARK: Message Server Functions
     func deriveMessageServersWithOriginServer(originServer: MessageServer, community: Community) -> [MessageServer] {
-        if community.isUser == true && community.level == nil {
-            // could not read community level (possible ban case)
-            return [originServer]
-        }
-        
         var arenaServer = originServer
         
         if 0 < originServer.roomPosition.rawValue {
@@ -589,6 +584,10 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         if community.isUser == true {
             if let level = community.level {
                 standRoomCount = self.standRoomCountForCommunityLevel(level)
+            }
+            else {
+                // possible ban case. only stand a
+                standRoomCount = 1
             }
         }
         else {
