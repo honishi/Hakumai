@@ -274,7 +274,7 @@ class RoomListener : NSObject, NSStreamDelegate {
     }
     
     func parseThreadElement(rootElement: NSXMLElement) -> [Thread] {
-        var threads: Array<Thread> = []
+        var threads = [Thread]()
         let threadElements = rootElement.elementsForName("thread")
         
         for threadElement in threadElements {
@@ -300,7 +300,7 @@ class RoomListener : NSObject, NSStreamDelegate {
     }
     
     func parseChatElement(rootElement: NSXMLElement) -> [Chat] {
-        var chats: Array<Chat> = []
+        var chats = [Chat]()
         let chatElements = rootElement.elementsForName("chat")
         
         for chatElement in chatElements {
@@ -342,7 +342,7 @@ class RoomListener : NSObject, NSStreamDelegate {
     }
     
     func parseChatResultElement(rootElement: NSXMLElement) -> [ChatResult] {
-        var chatResults: Array<ChatResult> = []
+        var chatResults = [ChatResult]()
         let chatResultElements = rootElement.elementsForName("chat_result")
         
         for chatResultElement in chatResultElements {

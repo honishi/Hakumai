@@ -13,6 +13,7 @@ import XCGLogger
 class MessageContainer {
     // MARK: - Properties
     // MARK: Public
+    var beginDateToShowHbIfseetnoCommands: NSDate?
     var showHbIfseetnoCommands = false
     var enableMuteUserIds = false
     var muteUserIds = [[String: String]]()
@@ -252,10 +253,18 @@ class MessageContainer {
 
         // filter by comment
         if let comment = chat.comment {
-            if self.showHbIfseetnoCommands == false {
-                if comment.hasPrefix("/hb ifseetno ") == true {
-                    // log.debug("filtered: \(chat.comment!)")
+            if comment.hasPrefix("/hb ifseetno ") == true {
+                if self.showHbIfseetnoCommands == false {
                     return false
+                }
+
+                // kick-out commands should be ignored before live starts. espacially in channel live,
+                // there are tons of kick-out commands. and they forces application performance to be slowed down.
+                if chat.date != nil && self.beginDateToShowHbIfseetnoCommands != nil {
+                    // chat.date < self.beginDateToShowHbIfseetnoCommands
+                    if chat.date!.compare(self.beginDateToShowHbIfseetnoCommands!) == .OrderedAscending {
+                        return false
+                    }
                 }
             }
             

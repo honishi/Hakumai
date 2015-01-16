@@ -355,6 +355,11 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     
     // MARK: - NicoUtilityDelegate Functions
     func nicoUtilityDidPrepareLive(nicoUtility: NicoUtility, user: User, live: Live) {
+        if let startTime = live.startTime {
+            let beginDate = NSDate(timeInterval: NSTimeInterval(10), sinceDate: startTime)
+            MessageContainer.sharedContainer.beginDateToShowHbIfseetnoCommands = beginDate
+        }
+        
         dispatch_async(dispatch_get_main_queue(), {
             self.liveTitleLabel.stringValue = live.title!
             
