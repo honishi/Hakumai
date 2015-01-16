@@ -12,6 +12,7 @@ import XCGLogger
 private let kStoryboardNameMainWindowController = "MainWindowController"
 private let kStoryboardIdHandleNameAddViewController = "HandleNameAddViewController"
 
+private let kCommunityImageDefaultName = "NoImage"
 private let kUserWindowDefautlTopLeftPoint = NSMakePoint(100, 100)
 private let kCalculateActiveInterval: NSTimeInterval = 5
 
@@ -639,6 +640,8 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         
         if let liveNumber = MainViewController.extractLiveNumber(self.liveTextField.stringValue) {
             self.clearAllChats()
+
+            self.communityImageView.image = NSImage(named: kCommunityImageDefaultName)
 
             NicoUtility.sharedInstance.delegate = self
             

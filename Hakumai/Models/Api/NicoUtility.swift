@@ -586,8 +586,8 @@ class NicoUtility : NSObject, RoomListenerDelegate {
                 standRoomCount = self.standRoomCountForCommunityLevel(level)
             }
             else {
-                // possible ban case. only stand a
-                standRoomCount = 1
+                // possible ban case. stand a, or up to assigned room
+                standRoomCount = max(1, originServer.roomPosition.rawValue)
             }
         }
         else {

@@ -253,13 +253,13 @@ class MessageContainer {
 
         // filter by comment
         if let comment = chat.comment {
-            if comment.hasPrefix("/hb ifseetno ") == true {
+            if comment.hasPrefix("/hb ifseetno ") {
                 if self.showHbIfseetnoCommands == false {
                     return false
                 }
 
-                // kick-out commands should be ignored before live starts. espacially in channel live,
-                // there are tons of kick-out commands. and they forces application performance to be slowed down.
+                // kickout commands should be ignored before live starts. espacially in channel live,
+                // there are tons of kickout commands. and they forces application performance to be slowed down.
                 if chat.date != nil && self.beginDateToShowHbIfseetnoCommands != nil {
                     // chat.date < self.beginDateToShowHbIfseetnoCommands
                     if chat.date!.compare(self.beginDateToShowHbIfseetnoCommands!) == .OrderedAscending {
