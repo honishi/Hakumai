@@ -116,7 +116,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     
     func initializeFileLog() {
         #if DEBUG
-            let fileLogPath = NSHomeDirectory() + "/Hakumai.log"
+            let fileLogPath = NSHomeDirectory() + "/Hakumai_Api.log"
             fileLog.setup(logLevel: .Verbose, showLogLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: fileLogPath)
             
             if let console = fileLog.logDestination(XCGLogger.constants.baseConsoleLogDestinationIdentifier) {

@@ -25,6 +25,7 @@ private let kChromeAccount = "Chrome"
 
 // logger for class methods
 private let log = XCGLogger.defaultInstance()
+private var fileLog: XCGLogger!
 
 class ChromeCookie {
     // MARK: - Properties
@@ -33,13 +34,17 @@ class ChromeCookie {
     // MARK: - Public Functions
     // based on http://n8henrie.com/2014/05/decrypt-chrome-cookies-with-python/
     class func storedCookie() -> String? {
+        ChromeCookie.setupFileLog()
+        
         let encryptedCookie = ChromeCookie.queryEncryptedCookie()
+        fileLog.debug("encryptedCookie:[\(encryptedCookie)]")
         
         if encryptedCookie == nil {
             return nil
         }
         
         let encryptedCookieByRemovingPrefix = ChromeCookie.encryptedCookieByRemovingPrefix(encryptedCookie!)
+        fileLog.debug("encryptedCookieByRemovingPrefix:[\(encryptedCookieByRemovingPrefix)]")
         
         if encryptedCookieByRemovingPrefix == nil {
             return nil
@@ -49,25 +54,43 @@ class ChromeCookie {
         let salt = kSalt.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
 
         let aesKey = ChromeCookie.aesKeyForPassword(password, salt: salt, roundCount: kRoundCount)
-        // log.debug(aesKeyData)
+        fileLog.debug("aesKey:[\(aesKey)]")
         
         if aesKey == nil {
             return nil
         }
         
         let decrypted = ChromeCookie.decryptCookie(encryptedCookieByRemovingPrefix!, aesKey: aesKey!)
+        fileLog.debug("decrypted:[\(decrypted)]")
         
         if decrypted == nil {
             return nil
         }
         
         let decryptedString = ChromeCookie.decryptedStringByRemovingPadding(decrypted!)
-        // log.debug("decrypted cookie: [\(decryptedString)]")
+        fileLog.debug("decryptedString:[\(decryptedString)]")
         
         return decryptedString
     }
     
     // MARK: - Internal Functions
+    private class func setupFileLog() {
+        if fileLog == nil {
+            fileLog = XCGLogger()
+            
+            #if DEBUG
+                let fileLogPath = NSHomeDirectory() + "/Hakumai_Chrome.log"
+                fileLog.setup(logLevel: .Verbose, showLogLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: fileLogPath)
+                
+                if let console = fileLog.logDestination(XCGLogger.constants.baseConsoleLogDestinationIdentifier) {
+                    fileLog.removeLogDestination(console)
+                }
+            #else
+                fileLog.setup(logLevel: .None, showLogLevel: false, showFileNames: false, showLineNumbers: false, writeToFile: nil)
+            #endif
+        }
+    }
+    
     private class func queryEncryptedCookie() -> NSData? {
         var encryptedCookie: NSData?
         
