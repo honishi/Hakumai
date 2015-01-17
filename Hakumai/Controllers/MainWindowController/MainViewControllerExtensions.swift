@@ -47,7 +47,7 @@ extension MainViewController {
         chat.score = -(Int(arc4random()) % 30000)
         chat.comment = "hello " * (Int(arc4random()) % 100)
         chat.date = NSDate()
-        chat.mail = "184"
+        chat.mail = ["184"]
         chat.premium = Premium.Premium
         
         return chat

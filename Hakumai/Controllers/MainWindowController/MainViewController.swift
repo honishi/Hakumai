@@ -287,10 +287,12 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             (view as UserIdTableCellView).chat = chat
         case kPremiumColumnIdentifier:
             (view as PremiumTableCellView).premium = chat.premium!
+        /*
         case kMailColumnIdentifier:
             if let mail = chat.mail {
                 attributed = NSAttributedString(string: chat.mail!, attributes: UIHelper.normalCommentAttributes())
             }
+         */
         default:
             break
         }

@@ -16,7 +16,7 @@ class Chat: Printable {
     var no: Int?
     var date: NSDate?
     var dateUsec: Int?
-    var mail: String?
+    var mail = [String]()
     var userId: String?
     var premium: Premium?
     var comment: String?
