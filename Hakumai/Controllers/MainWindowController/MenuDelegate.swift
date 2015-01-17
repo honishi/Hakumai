@@ -13,7 +13,7 @@ import XCGLogger
 class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     // MARK: Menu Outlets
     @IBOutlet weak var copyCommentMenuItem: NSMenuItem!
-    @IBOutlet weak var copyUrlMenuItem: NSMenuItem!
+    @IBOutlet weak var openUrlMenuItem: NSMenuItem!
     @IBOutlet weak var tweetCommentMenuItem: NSMenuItem!
     @IBOutlet weak var addHandleNameMenuItem: NSMenuItem!
     @IBOutlet weak var removeHandleNameMenuItem: NSMenuItem!
@@ -51,7 +51,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         switch menuItem {
         case self.copyCommentMenuItem, self.tweetCommentMenuItem:
             return true
-        case self.copyUrlMenuItem:
+        case self.openUrlMenuItem:
             return self.urlStringInComment(chat) != nil ? true : false
         case self.addHandleNameMenuItem:
             return (chat.isUserComment || chat.isBSPComment)
@@ -101,10 +101,10 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         self.copyStringToPasteBoard(toBeCopied)
     }
     
-    @IBAction func copyUrl(sender: AnyObject) {
+    @IBAction func openUrl(sender: AnyObject) {
         let chat = MessageContainer.sharedContainer[self.tableView.clickedRow].chat!
-        let toBeCopied = self.urlStringInComment(chat)!
-        self.copyStringToPasteBoard(toBeCopied)
+        let urlString = self.urlStringInComment(chat)!
+        NSWorkspace.sharedWorkspace().openURL(NSURL(string: urlString)!)
     }
     
     @IBAction func tweetComment(sender: AnyObject) {

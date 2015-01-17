@@ -832,10 +832,10 @@
                                 <action selector="copyComment:" target="Riw-FG-ugq" id="eGt-6q-XnR"/>
                             </connections>
                         </menuItem>
-                        <menuItem title="Copy URL in Comment" id="rwi-Ju-wYL">
+                        <menuItem title="Open URL in Comment" id="rwi-Ju-wYL">
                             <modifierMask key="keyEquivalentModifierMask"/>
                             <connections>
-                                <action selector="copyUrl:" target="Riw-FG-ugq" id="3qv-Pf-isq"/>
+                                <action selector="openUrl:" target="Riw-FG-ugq" id="jeg-gC-zQl"/>
                             </connections>
                         </menuItem>
                         <menuItem title="Tweet Comment" id="LCT-WR-Xfy">
@@ -887,7 +887,7 @@
                         <outlet property="addHandleNameMenuItem" destination="cOM-FI-15Y" id="gbs-UV-eRI"/>
                         <outlet property="addToMuteUserMenuItem" destination="vkF-qq-cvh" id="lRE-o7-CNO"/>
                         <outlet property="copyCommentMenuItem" destination="CZ2-j4-uTm" id="FO6-qx-8DC"/>
-                        <outlet property="copyUrlMenuItem" destination="rwi-Ju-wYL" id="ng5-yT-BNE"/>
+                        <outlet property="openUrlMenuItem" destination="rwi-Ju-wYL" id="4ds-0I-koO"/>
                         <outlet property="openUserPageMenuItem" destination="9gC-Dv-kyp" id="Yqk-Mt-JHF"/>
                         <outlet property="removeHandleNameMenuItem" destination="vop-lQ-wo6" id="eKS-r7-dtJ"/>
                         <outlet property="reportAsNgUserMenuItem" destination="L1C-9u-5sm" id="Edy-Ao-CgH"/>
