@@ -212,7 +212,7 @@ class ChromeCookie {
     private class func decryptedStringByRemovingPadding(data: NSData) -> String? {
         if let decryptedString = NSString(data: data, encoding: NSUTF8StringEncoding) {
             var error: NSError?
-            let cleanseRegexp = NSRegularExpression(pattern: "(\n|\r)", options: nil, error: &error)
+            let cleanseRegexp = NSRegularExpression(pattern: "[^\\w\\d]", options: nil, error: &error)
             let range = NSMakeRange(0, decryptedString.length)
             let cleansed = cleanseRegexp?.stringByReplacingMatchesInString(decryptedString, options: nil, range: range, withTemplate: "")
             
