@@ -21,6 +21,7 @@ enum BrowserType {
 // note these functions are called in background thread, not main thread.
 // so use explicit main thread for updating ui in these callbacks.
 protocol NicoUtilityDelegate: class {
+    func nicoUtilityWillPrepareLive(nicoUtility: NicoUtility)
     func nicoUtilityDidPrepareLive(nicoUtility: NicoUtility, user: User, live: Live)
     func nicoUtilityDidFailToPrepareLive(nicoUtility: NicoUtility, reason: String)
     func nicoUtilityDidConnectToLive(nicoUtility: NicoUtility, roomPosition: RoomPosition)
@@ -484,6 +485,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             return
         }
         
+        self.delegate?.nicoUtilityWillPrepareLive(self)
         self.requestGetPlayerStatus(liveNumber!, success: success, failure: failure)
     }
     

@@ -106,7 +106,7 @@ class RoomListener : NSObject, NSStreamDelegate {
         self.sendMessage(message)
         
         while self.inputStream != nil {
-            self.runLoop.runUntilDate(NSDate(timeIntervalSinceNow: NSTimeInterval(1)))
+            self.runLoop.runUntilDate(NSDate(timeIntervalSinceNow: NSTimeInterval(0.5)))
         }
     }
     

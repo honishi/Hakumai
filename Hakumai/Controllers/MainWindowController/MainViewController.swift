@@ -14,6 +14,7 @@ private let kStoryboardIdHandleNameAddViewController = "HandleNameAddViewControl
 
 private let kCommunityImageDefaultName = "NoImage"
 private let kUserWindowDefautlTopLeftPoint = NSMakePoint(100, 100)
+private let kDelayToShowHbIfseetnoCommands: NSTimeInterval = 30
 private let kCalculateActiveInterval: NSTimeInterval = 5
 
 class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate, NSControlTextEditingDelegate, NicoUtilityDelegate, UserWindowControllerDelegate {
@@ -357,9 +358,13 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
     
     // MARK: - NicoUtilityDelegate Functions
+    func nicoUtilityWillPrepareLive(nicoUtility: NicoUtility) {
+        self.progressIndicator.startAnimation(self)
+    }
+
     func nicoUtilityDidPrepareLive(nicoUtility: NicoUtility, user: User, live: Live) {
         if let startTime = live.startTime {
-            let beginDate = NSDate(timeInterval: NSTimeInterval(10), sinceDate: startTime)
+            let beginDate = NSDate(timeInterval: kDelayToShowHbIfseetnoCommands, sinceDate: startTime)
             MessageContainer.sharedContainer.beginDateToShowHbIfseetnoCommands = beginDate
         }
         
@@ -383,12 +388,14 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     
     func nicoUtilityDidFailToPrepareLive(nicoUtility: NicoUtility, reason: String) {
         self.logSystemMessageToTableView("Failed to prepare live.(\(reason))")
+        self.progressIndicator.stopAnimation(self)
     }
 
     func nicoUtilityDidConnectToLive(nicoUtility: NicoUtility, roomPosition: RoomPosition) {
         if self.connectedToLive == false {
             self.connectedToLive = true
             self.logSystemMessageToTableView("Connected to live.")
+            self.progressIndicator.stopAnimation(self)
         }
     }
 
