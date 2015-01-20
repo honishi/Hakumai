@@ -16,6 +16,7 @@ private let kReadBufferSize = 102400
 protocol RoomListenerDelegate: class {
     func roomListenerDidReceiveThread(roomListener: RoomListener, thread: Thread)
     func roomListenerDidReceiveChat(roomListener: RoomListener, chat: Chat)
+    func roomListenerDidFinishListening(roomListener: RoomListener)
 }
 
 // MARK: main
@@ -106,8 +107,10 @@ class RoomListener : NSObject, NSStreamDelegate {
         self.sendMessage(message)
         
         while self.inputStream != nil {
-            self.runLoop.runUntilDate(NSDate(timeIntervalSinceNow: NSTimeInterval(0.5)))
+            self.runLoop.runUntilDate(NSDate(timeIntervalSinceNow: NSTimeInterval(1)))
         }
+        
+        self.delegate?.roomListenerDidFinishListening(self)
     }
     
     func closeSocket() {

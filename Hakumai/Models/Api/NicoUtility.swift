@@ -60,7 +60,6 @@ let kCommonUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWeb
 
 // intervals & sleep
 private let kHeartbeatDefaultInterval: NSTimeInterval = 30
-private let kSleepBeforeReconnect: Double = 0.5
 
 // other threshold
 private let kResolveUserNameOperationQueueOverloadThreshold = 10
@@ -90,6 +89,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     private var cachedUserNames = [String: String]()
     
     private var heartbeatTimer: NSTimer?
+    private var reservedToReconnect = false
     private var chatCount = 0
     
     // session cookie
@@ -163,14 +163,14 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         }
     }
 
-    func disconnect() {
+    func disconnect(reserveToReconnect: Bool = false) {
+        self.reservedToReconnect = reserveToReconnect
+        
         for listener in self.roomListeners {
             listener.closeSocket()
         }
         
         self.stopHeartbeatTimer()
-        self.delegate?.nicoUtilityDidDisconnect(self)
-        self.reset()
     }
     
     func comment(comment: String, anonymously: Bool = true, completion: (comment: String?) -> Void) {
@@ -343,6 +343,24 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             self.reconnectToLastLive()
         }
     }
+    
+    func roomListenerDidFinishListening(roomListener: RoomListener) {
+        objc_sync_enter(self)
+        if let index = find(self.roomListeners, roomListener) {
+            self.roomListeners.removeAtIndex(index)
+        }
+        objc_sync_exit(self)
+        
+        if self.roomListeners.count == 0 {
+            self.delegate?.nicoUtilityDidDisconnect(self)
+            self.reset()
+            
+            if self.reservedToReconnect {
+                self.reservedToReconnect = false
+                self.connectToLive(self.lastLiveNumber, userSessionCookie: self.userSessionCookie)
+            }
+        }
+    }
 
     // MARK: Chat Checkers
     func isFirstChatWithRoomListener(roomListener: RoomListener, chat: Chat) -> Bool {
@@ -410,7 +428,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     
     private func reconnectToLastLive() {
         self.delegate?.nicoUtilityWillReconnectToLive(self)
-        self.connectToLive(self.lastLiveNumber, userSessionCookie: self.userSessionCookie)
+        self.disconnect(reserveToReconnect: true)
     }
     
     private func connectToLive(liveNumber: Int?, userSessionCookie: String?) {
@@ -428,22 +446,15 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             return
         }
         
+        self.userSessionCookie = userSessionCookie!
+        self.lastLiveNumber = liveNumber!
+        
         if 0 < self.roomListeners.count {
             log.debug("already has established connection, so disconnect and sleep ...")
-            self.disconnect()
-            
-            let delay = kSleepBeforeReconnect * Double(NSEC_PER_SEC)
-            let time  = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
-            dispatch_after(time, dispatch_get_main_queue()) {
-                self.connectToLive(liveNumber, userSessionCookie: userSessionCookie)
-            }
-            
+            self.disconnect(reserveToReconnect: true)
             return
         }
         
-        self.userSessionCookie = userSessionCookie!
-        self.lastLiveNumber = liveNumber!
-
         func success(live: Live, user: User, server: MessageServer) {
             self.log.debug("extracted live: \(live)")
             self.log.debug("extracted server: \(server)")
