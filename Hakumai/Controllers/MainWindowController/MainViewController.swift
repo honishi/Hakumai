@@ -644,6 +644,13 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
     
     // MARK: Control Handlers
+    @IBAction func grabUrlFromBrowser(sender: AnyObject) {
+        if let url = BrowserHelper.urlFromBrowser(.Chrome) {
+            self.liveTextField.stringValue = url
+            self.connectLive(self)
+        }
+    }
+    
     @IBAction func connectLive(sender: AnyObject) {
         self.initializeHandleNameManager()
         

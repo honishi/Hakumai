@@ -73,6 +73,11 @@
                                                 <action selector="openUrl:" target="Voe-Tx-rLC" id="22B-I0-jYi"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Grab URL from Chrome" keyEquivalent="u" id="Jqb-00-zb4">
+                                            <connections>
+                                                <action selector="grabUrlFromChrome:" target="Voe-Tx-rLC" id="qgK-4S-6R8"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem isSeparatorItem="YES" id="m54-Is-iLE"/>
                                         <menuItem title="New Comment" keyEquivalent="n" id="Ev7-F1-Fdp">
                                             <connections>
@@ -378,7 +383,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gZN-es-bFO">
-                                <rect key="frame" x="10" y="371" width="459" height="22"/>
+                                <rect key="frame" x="53" y="372" width="416" height="21"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" placeholderString="⌘L (live url, live#)" drawsBackground="YES" usesSingleLineMode="YES" id="iDS-0h-Uje">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -400,7 +405,7 @@
                                 </textFieldCell>
                             </textField>
                             <scrollView wantsLayer="YES" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" horizontalScrollElasticity="none" verticalScrollElasticity="allowed" translatesAutoresizingMaskIntoConstraints="NO" id="3lG-BL-Thc">
-                                <rect key="frame" x="10" y="56" width="459" height="234"/>
+                                <rect key="frame" x="10" y="56" width="459" height="235"/>
                                 <clipView key="contentView" id="2u9-qQ-bep">
                                     <rect key="frame" x="1" y="0.0" width="238" height="134"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -644,7 +649,7 @@
                                 </connections>
                             </textField>
                             <imageView wantsLayer="YES" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="NQm-lE-rVr">
-                                <rect key="frame" x="10" y="305" width="55" height="55"/>
+                                <rect key="frame" x="10" y="306" width="55" height="55"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="55" id="NLv-j6-Vde"/>
                                     <constraint firstAttribute="width" constant="55" id="pr9-rr-7yq"/>
@@ -652,7 +657,7 @@
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NoImage" id="Rj1-mk-21r"/>
                             </imageView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="gpJ-ll-AbX">
-                                <rect key="frame" x="70" y="324" width="275" height="17"/>
+                                <rect key="frame" x="70" y="325" width="275" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="17" id="Z7e-7q-EMI"/>
                                 </constraints>
@@ -663,7 +668,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="65a-aX-RIL">
-                                <rect key="frame" x="70" y="343" width="275" height="17"/>
+                                <rect key="frame" x="70" y="344" width="275" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="17" id="aX3-eX-5Te"/>
                                 </constraints>
@@ -674,7 +679,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="mqT-iT-cC6">
-                                <rect key="frame" x="70" y="305" width="275" height="17"/>
+                                <rect key="frame" x="70" y="306" width="275" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="17" id="x00-mC-etv"/>
                                 </constraints>
@@ -708,7 +713,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8WA-yo-AuZ">
-                                <rect key="frame" x="351" y="343" width="120" height="17"/>
+                                <rect key="frame" x="351" y="344" width="120" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="116" id="VEt-2I-5r5"/>
                                     <constraint firstAttribute="height" constant="17" id="sqq-LC-XiV"/>
@@ -720,7 +725,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vmz-z1-HHp">
-                                <rect key="frame" x="351" y="324" width="120" height="17"/>
+                                <rect key="frame" x="351" y="325" width="120" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="17" id="5UV-iv-lkf"/>
                                     <constraint firstAttribute="width" constant="116" id="Lbm-Vj-amk"/>
@@ -732,7 +737,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="x2d-KV-3zy">
-                                <rect key="frame" x="351" y="305" width="120" height="17"/>
+                                <rect key="frame" x="351" y="306" width="120" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="116" id="jUH-bY-qSj"/>
                                     <constraint firstAttribute="height" constant="17" id="wIy-NP-7rG"/>
@@ -756,6 +761,20 @@
                                     <binding destination="hty-zy-fnb" name="value" keyPath="values.CommentAnonymously" id="fX6-nA-8cx"/>
                                 </connections>
                             </button>
+                            <button toolTip="Grab URL from Chrome (⌘U)" translatesAutoresizingMaskIntoConstraints="NO" id="GRS-m4-7KE">
+                                <rect key="frame" x="10" y="373" width="40" height="23"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="23" id="QDB-d2-UO4"/>
+                                    <constraint firstAttribute="width" constant="40" id="eGg-Kp-cGi"/>
+                                </constraints>
+                                <buttonCell key="cell" type="squareTextured" bezelStyle="texturedSquare" image="ImportChrome" imagePosition="overlaps" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="T07-Jf-o94">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="grabUrlFromBrowser:" target="XfG-lQ-9wD" id="yJa-cb-vIG"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="x2d-KV-3zy" secondAttribute="trailing" constant="10" id="06t-Fh-ICK"/>
@@ -770,8 +789,11 @@
                             <constraint firstItem="gZN-es-bFO" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="7" id="Ias-02-mgL"/>
                             <constraint firstItem="09h-Eb-cuW" firstAttribute="top" secondItem="pml-Sh-s7e" secondAttribute="bottom" constant="3" id="Ivg-Iy-ST6"/>
                             <constraint firstItem="vmz-z1-HHp" firstAttribute="top" secondItem="8WA-yo-AuZ" secondAttribute="bottom" constant="2" id="J0R-dd-SNv"/>
+                            <constraint firstItem="gZN-es-bFO" firstAttribute="leading" secondItem="GRS-m4-7KE" secondAttribute="trailing" constant="3" id="JVO-c5-pMe"/>
                             <constraint firstItem="NQm-lE-rVr" firstAttribute="top" secondItem="gZN-es-bFO" secondAttribute="bottom" constant="11" id="KgN-ci-c6C"/>
                             <constraint firstItem="65a-aX-RIL" firstAttribute="top" secondItem="gZN-es-bFO" secondAttribute="bottom" constant="11" id="KnC-9C-IjS"/>
+                            <constraint firstItem="GRS-m4-7KE" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="10" id="M6U-f2-PFt"/>
+                            <constraint firstItem="GRS-m4-7KE" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="4" id="Mh4-sm-GZD"/>
                             <constraint firstItem="A3m-ux-Ivm" firstAttribute="top" secondItem="UtQ-bi-lar" secondAttribute="bottom" constant="8" id="PuZ-6W-JmR"/>
                             <constraint firstItem="pml-Sh-s7e" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="10" id="QPY-ri-0Ko"/>
                             <constraint firstAttribute="trailing" secondItem="A3m-ux-Ivm" secondAttribute="trailing" constant="10" id="U6e-qq-p1R"/>
@@ -783,6 +805,7 @@
                             <constraint firstItem="8WA-yo-AuZ" firstAttribute="top" secondItem="gZN-es-bFO" secondAttribute="bottom" constant="11" id="b7N-zG-a12"/>
                             <constraint firstItem="x2d-KV-3zy" firstAttribute="top" secondItem="vmz-z1-HHp" secondAttribute="bottom" constant="2" id="bDz-aR-Vgk"/>
                             <constraint firstItem="0js-wz-rh5" firstAttribute="leading" secondItem="09h-Eb-cuW" secondAttribute="trailing" constant="15" id="cKm-sj-IvV"/>
+                            <constraint firstItem="NQm-lE-rVr" firstAttribute="top" secondItem="GRS-m4-7KE" secondAttribute="bottom" constant="12" id="cPF-1p-eOV"/>
                             <constraint firstItem="UtQ-bi-lar" firstAttribute="leading" secondItem="pml-Sh-s7e" secondAttribute="trailing" constant="8" id="dxX-hn-x7N"/>
                             <constraint firstItem="vmz-z1-HHp" firstAttribute="top" secondItem="8WA-yo-AuZ" secondAttribute="bottom" constant="2" id="fCv-li-LKJ"/>
                             <constraint firstAttribute="bottom" secondItem="09h-Eb-cuW" secondAttribute="bottom" constant="6" id="fxK-1G-hxJ"/>
@@ -796,7 +819,6 @@
                             <constraint firstAttribute="trailing" secondItem="UtQ-bi-lar" secondAttribute="trailing" constant="10" id="orh-Xr-aKq"/>
                             <constraint firstItem="UtQ-bi-lar" firstAttribute="top" secondItem="3lG-BL-Thc" secondAttribute="bottom" constant="12" id="rEi-SX-4jA"/>
                             <constraint firstItem="p3A-6s-IKD" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="12" id="s9Q-J0-Swd"/>
-                            <constraint firstItem="gZN-es-bFO" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="10" id="sNm-LV-zdL"/>
                             <constraint firstItem="x2d-KV-3zy" firstAttribute="leading" secondItem="mqT-iT-cC6" secondAttribute="trailing" constant="10" id="tOh-RC-UHH"/>
                             <constraint firstItem="65a-aX-RIL" firstAttribute="leading" secondItem="NQm-lE-rVr" secondAttribute="trailing" constant="7" id="uXa-Zt-5O6"/>
                             <constraint firstItem="09h-Eb-cuW" firstAttribute="leading" secondItem="p3A-6s-IKD" secondAttribute="trailing" constant="15" id="vG4-4x-VnS"/>
@@ -962,6 +984,7 @@ Gw
         </scene>
     </scenes>
     <resources>
+        <image name="ImportChrome" width="400" height="220"/>
         <image name="NoImage" width="128" height="128"/>
     </resources>
 </document>

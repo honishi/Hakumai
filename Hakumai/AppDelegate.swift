@@ -151,6 +151,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         MainViewController.sharedInstance.focusLiveTextField()
     }
     
+    @IBAction func grabUrlFromChrome(sender: AnyObject) {
+        MainViewController.sharedInstance.grabUrlFromBrowser(self)
+    }
+
     @IBAction func newComment(sender: AnyObject) {
         MainViewController.sharedInstance.focusCommentTextField()
     }
