@@ -35,6 +35,7 @@ class RoomListener : NSObject, NSStreamDelegate {
     var thread: Thread?
     var startDate: NSDate?
     var lastRes: Int = 0
+    var internalNo: Int = 0
     
     let log = XCGLogger.defaultInstance()
     let fileLog = XCGLogger()
@@ -73,7 +74,7 @@ class RoomListener : NSObject, NSStreamDelegate {
     }
     
     // MARK: - Public Functions
-    func openSocket() {
+    func openSocket(resFrom: Int = 0) {
         let server = self.server!
         
         var input :NSInputStream?
@@ -100,10 +101,7 @@ class RoomListener : NSObject, NSStreamDelegate {
         self.inputStream?.open()
         self.outputStream?.open()
         
-        // res_from should be -0, because if not, like -10, we sometimes get unexpected
-        // kick out command like '/hb ifseetno *my_seetno*' just after opening socket.
-        // and this causes unexpected kick out.
-        let message = "<thread thread=\"\(server.thread)\" res_from=\"-0\" version=\"20061206\"/>"
+        let message = "<thread thread=\"\(server.thread)\" res_from=\"-\(resFrom)\" version=\"20061206\"/>"
         self.sendMessage(message)
         
         while self.inputStream != nil {
@@ -309,6 +307,7 @@ class RoomListener : NSObject, NSStreamDelegate {
         for chatElement in chatElements {
             let chat = Chat()
 
+            chat.internalNo = self.internalNo++
             chat.roomPosition = self.server?.roomPosition
             
             if let premium = chatElement.attributeForName("premium")?.stringValue?.toInt() {

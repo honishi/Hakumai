@@ -12,6 +12,7 @@ import Foundation
 private let kRegexpSeatNo = "/hb ifseetno (\\d+)"
 
 class Chat: Printable {
+    var internalNo: Int?
     var roomPosition: RoomPosition?
     var no: Int?
     var date: NSDate?
@@ -44,8 +45,8 @@ class Chat: Printable {
     
     var description: String {
         return (
-            "Chat: roomPosition[\(self.roomPosition)] no[\(self.no)] date[\(self.date)] " +
-            "dateUsec[\(self.dateUsec)] mail[\(self.mail)] userId[\(self.userId)]" +
+            "Chat: internalNo[\(self.internalNo)] roomPosition[\(self.roomPosition)] no[\(self.no)] " +
+            "date[\(self.date)] dateUsec[\(self.dateUsec)] mail[\(self.mail)] userId[\(self.userId)] " +
             "premium[\(self.premium)] comment[\(self.comment)] score[\(self.score)]"
         )
     }

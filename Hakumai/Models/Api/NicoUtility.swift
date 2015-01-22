@@ -62,6 +62,7 @@ let kCommonUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWeb
 private let kHeartbeatDefaultInterval: NSTimeInterval = 30
 
 // other threshold
+private let kDefaultResFrom = 20
 private let kResolveUserNameOperationQueueOverloadThreshold = 10
 
 // debug flag
@@ -304,6 +305,8 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     func roomListenerDidReceiveChat(roomListener: RoomListener, chat: Chat) {
+        // log.debug("\(chat)")
+        
         if self.isFirstChatWithRoomListener(roomListener, chat: chat) {
             self.delegate?.nicoUtilityDidReceiveFirstChat(self, chat: chat)
 
@@ -398,6 +401,11 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     func isKickedOutWithRoomListener(roomListener: RoomListener, chat: Chat) -> Bool {
         // XXX: should use self.isAssignedMessageServerChatWithChat()
         if roomListener.server?.roomPosition != self.messageServer?.roomPosition {
+            return false
+        }
+        
+        if chat.internalNo < kDefaultResFrom {
+            // there is a possibility the kickout command is invoked as a result of my connection start. so ignore.
             return false
         }
         
@@ -642,7 +650,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             log.info("created room listener instance:\(listener)")
             
             dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
-                listener.openSocket()
+                listener.openSocket(resFrom: kDefaultResFrom)
             })
         }
         
