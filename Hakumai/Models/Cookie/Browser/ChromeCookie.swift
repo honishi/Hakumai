@@ -208,17 +208,14 @@ class ChromeCookie {
         
         return decryptedData
     }
-    
+
+    // http://stackoverflow.com/a/14205319
     private class func decryptedStringByRemovingPadding(data: NSData) -> String? {
-        if let decryptedString = NSString(data: data, encoding: NSUTF8StringEncoding) {
-            var error: NSError?
-            let cleanseRegexp = NSRegularExpression(pattern: "[^\\w\\d]", options: nil, error: &error)
-            let range = NSMakeRange(0, decryptedString.length)
-            let cleansed = cleanseRegexp?.stringByReplacingMatchesInString(decryptedString, options: nil, range: range, withTemplate: "")
-            
-            return cleansed
-        }
+        let paddingCount = Int(UnsafePointer<UInt8>(data.bytes)[data.length - 1])
+        fileLog.debug("padding character count:[\(paddingCount)]")
         
-        return nil
+        let trimmedData = data.subdataWithRange(NSRange(location: 0, length: data.length - paddingCount))
+        
+        return NSString(data: trimmedData, encoding: NSUTF8StringEncoding)
     }
 }
