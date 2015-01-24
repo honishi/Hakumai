@@ -287,7 +287,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         case kUserIdColumnIdentifier:
             (view as UserIdTableCellView).chat = chat
         case kPremiumColumnIdentifier:
-            (view as PremiumTableCellView).premium = chat.premium!
+            (view as PremiumTableCellView).premium = chat.premium
         /*
         case kMailColumnIdentifier:
             if let mail = chat.mail {
