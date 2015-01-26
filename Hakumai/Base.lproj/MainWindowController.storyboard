@@ -84,6 +84,12 @@
                                                 <action selector="newComment:" target="Voe-Tx-rLC" id="fIv-c4-V7t"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="Cmf-8h-m6S"/>
+                                        <menuItem title="Enable 184" keyEquivalent="8" id="2e5-0U-xeR">
+                                            <connections>
+                                                <binding destination="Qbm-2t-1Py" name="value" keyPath="values.CommentAnonymously" id="hJB-zU-DOM"/>
+                                            </connections>
+                                        </menuItem>
                                     </items>
                                 </menu>
                             </menuItem>
@@ -751,7 +757,7 @@
                             <progressIndicator horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="A3m-ux-Ivm">
                                 <rect key="frame" x="453" y="6" width="16" height="16"/>
                             </progressIndicator>
-                            <button translatesAutoresizingMaskIntoConstraints="NO" id="UtQ-bi-lar">
+                            <button toolTip="Toggle 184 (⌘8)" translatesAutoresizingMaskIntoConstraints="NO" id="UtQ-bi-lar">
                                 <rect key="frame" x="426" y="28" width="45" height="18"/>
                                 <buttonCell key="cell" type="check" title="184" bezelStyle="regularSquare" imagePosition="left" alignment="right" state="on" inset="2" id="XOy-JF-DaI">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
