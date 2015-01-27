@@ -16,7 +16,7 @@
 		DB0FC12B1A262CF0000FADDD /* XCGLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBFA88731A1BA353005349AD /* XCGLogger.framework */; };
 		DB0FC12C1A262CF0000FADDD /* XCGLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DBFA88731A1BA353005349AD /* XCGLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		DB1CD2D01A2EE5BB00D3108A /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD65C1F1A2EB08D00B84C97 /* Message.swift */; };
-		DB1E32BF1A2B95C600CD874A /* user.html in Resources */ = {isa = PBXBuildFile; fileRef = DB1E32BE1A2B95C600CD874A /* user.html */; };
+		DB1E32BF1A2B95C600CD874A /* user_1.html in Resources */ = {isa = PBXBuildFile; fileRef = DB1E32BE1A2B95C600CD874A /* user_1.html */; };
 		DB1E32C31A2BA53700CD874A /* user_me.html in Resources */ = {isa = PBXBuildFile; fileRef = DB1E32C21A2BA53700CD874A /* user_me.html */; };
 		DB1E32C91A2CC85C00CD874A /* UserIdTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1E32C81A2CC85C00CD874A /* UserIdTableCellView.swift */; };
 		DB1E32CB1A2CC87200CD874A /* UserIdTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB1E32CA1A2CC87200CD874A /* UserIdTableCellView.xib */; };
@@ -128,6 +128,7 @@
 		DBD65C1B1A2E0C6600B84C97 /* LayeredClipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD65C1A1A2E0C6600B84C97 /* LayeredClipView.swift */; };
 		DBD65C1D1A2E0FB900B84C97 /* LayeredScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD65C1C1A2E0FB900B84C97 /* LayeredScrollView.swift */; };
 		DBD65C201A2EB08D00B84C97 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD65C1F1A2EB08D00B84C97 /* Message.swift */; };
+		DBD675A71A7738110068A558 /* user_2.html in Resources */ = {isa = PBXBuildFile; fileRef = DBD675A61A7738110068A558 /* user_2.html */; };
 		DBE093FF1A5869A2004554FD /* HandleNameManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE093FE1A5869A2004554FD /* HandleNameManagerTests.swift */; };
 		DBE094021A586FFC004554FD /* HandleNameManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE094011A586FFC004554FD /* HandleNameManager.swift */; };
 		DBE094031A586FFC004554FD /* HandleNameManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE094011A586FFC004554FD /* HandleNameManager.swift */; };
@@ -257,7 +258,7 @@
 		DB0E10671A39B6DD00A10E00 /* MuteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MuteViewController.swift; sourceTree = "<group>"; };
 		DB0ED6511A20B0A7007E9318 /* ChromeCookie.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChromeCookie.swift; sourceTree = "<group>"; };
 		DB0F0ECC1A16441D00F8BDC5 /* NicoUtilityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicoUtilityTests.swift; sourceTree = "<group>"; };
-		DB1E32BE1A2B95C600CD874A /* user.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = user.html; sourceTree = "<group>"; };
+		DB1E32BE1A2B95C600CD874A /* user_1.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = user_1.html; sourceTree = "<group>"; };
 		DB1E32C21A2BA53700CD874A /* user_me.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = user_me.html; sourceTree = "<group>"; };
 		DB1E32C81A2CC85C00CD874A /* UserIdTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserIdTableCellView.swift; sourceTree = "<group>"; };
 		DB1E32CA1A2CC87200CD874A /* UserIdTableCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UserIdTableCellView.xib; sourceTree = "<group>"; };
@@ -346,6 +347,7 @@
 		DBD65C1A1A2E0C6600B84C97 /* LayeredClipView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LayeredClipView.swift; sourceTree = "<group>"; };
 		DBD65C1C1A2E0FB900B84C97 /* LayeredScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LayeredScrollView.swift; sourceTree = "<group>"; };
 		DBD65C1F1A2EB08D00B84C97 /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		DBD675A61A7738110068A558 /* user_2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = user_2.html; sourceTree = "<group>"; };
 		DBE093FE1A5869A2004554FD /* HandleNameManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HandleNameManagerTests.swift; sourceTree = "<group>"; };
 		DBE094011A586FFC004554FD /* HandleNameManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HandleNameManager.swift; sourceTree = "<group>"; };
 		DBE73EC91A1A1B6A00A8BCA9 /* MainViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewControllerTests.swift; sourceTree = "<group>"; };
@@ -734,7 +736,8 @@
 			children = (
 				DBFA88901A1CAE85005349AD /* community_user.html */,
 				DB346B991A54648100137639 /* community_channel.html */,
-				DB1E32BE1A2B95C600CD874A /* user.html */,
+				DB1E32BE1A2B95C600CD874A /* user_1.html */,
+				DBD675A61A7738110068A558 /* user_2.html */,
 				DB1E32C21A2BA53700CD874A /* user_me.html */,
 				DBB4730F1A35CE72002C797E /* heartbeat_ok.xml */,
 				DBB473111A35CE86002C797E /* heartbeat_fail.xml */,
@@ -925,10 +928,11 @@
 			files = (
 				DBB473101A35CE72002C797E /* heartbeat_ok.xml in Resources */,
 				DB7B3DE31A242D7B00205470 /* ScoreTableCellView.xib in Resources */,
+				DBD675A71A7738110068A558 /* user_2.html in Resources */,
 				DBB473121A35CE86002C797E /* heartbeat_fail.xml in Resources */,
 				DB7EB89D1A24AA3700C3BFB5 /* RoomPositionTableCellView.xib in Resources */,
 				DBFA88911A1CAE85005349AD /* community_user.html in Resources */,
-				DB1E32BF1A2B95C600CD874A /* user.html in Resources */,
+				DB1E32BF1A2B95C600CD874A /* user_1.html in Resources */,
 				DB346B9A1A54648100137639 /* community_channel.html in Resources */,
 				DB1E32C31A2BA53700CD874A /* user_me.html in Resources */,
 			);

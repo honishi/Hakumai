@@ -187,9 +187,14 @@ class NicoUtilityTests: XCTestCase {
         var data: NSData!
         var resolved: String?
         
-        data = self.dataForResource("user.html")
+        data = self.dataForResource("user_1.html")
         resolved = NicoUtility.sharedInstance.extractUsername(data)
         XCTAssert(resolved == "野田草履", "")
+        
+        // should extract ナオキ兄さん, not ナオキ兄
+        data = self.dataForResource("user_2.html")
+        resolved = NicoUtility.sharedInstance.extractUsername(data)
+        XCTAssert(resolved == "ナオキ兄さん", "")
         
         data = self.dataForResource("user_me.html")
         resolved = NicoUtility.sharedInstance.extractUsername(data)

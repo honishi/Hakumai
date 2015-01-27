@@ -10,6 +10,9 @@ import Foundation
 
 // request header
 private let kUserAgent = kCommonUserAgent
+private let kCookieDomain = "nicovideo.jp"
+private let kCookieExpire = NSTimeInterval(7200)
+private let kCookiePath = "/"
 
 // Internal Http Utility
 extension NicoUtility {
@@ -32,8 +35,8 @@ extension NicoUtility {
             request.HTTPBody = constructedParameters!.dataUsingEncoding(NSUTF8StringEncoding)
         }
         
-        if let cookie = self.sessionCookie() {
-            let requestHeader = NSHTTPCookie.requestHeaderFieldsWithCookies([cookie])
+        if let cookies = self.sessionCookies() {
+            let requestHeader = NSHTTPCookie.requestHeaderFieldsWithCookies(cookies)
             request.allHTTPHeaderFields = requestHeader
         }
         else {
@@ -77,20 +80,25 @@ extension NicoUtility {
         return mutableRequest
     }
     
-    private func sessionCookie() -> NSHTTPCookie? {
-        if let cookie = self.userSessionCookie {
-            // log.debug("cookie:[\(cookie)]")
-            
-            let userSessionCookie = NSHTTPCookie(properties: [
-                NSHTTPCookieDomain: "nicovideo.jp",
-                NSHTTPCookieName: "user_session",
-                NSHTTPCookieValue: cookie,
-                NSHTTPCookieExpires: NSDate().dateByAddingTimeInterval(7200),
-                NSHTTPCookiePath: "/"])
-            
-            return userSessionCookie
+    private func sessionCookies() -> [NSHTTPCookie]? {
+        // log.debug("userSessionCookie:[\(self.userSessionCookie)]")
+        if self.userSessionCookie == nil {
+            return nil
         }
         
-        return nil
+        var cookies = [NSHTTPCookie]()
+        
+        for (name, value) in [("user_session", self.userSessionCookie!), ("area", "JP"), ("lang", "ja-jp")] {
+            if let cookie = NSHTTPCookie(properties: [
+                NSHTTPCookieDomain: kCookieDomain,
+                NSHTTPCookieName: name,
+                NSHTTPCookieValue: value,
+                NSHTTPCookieExpires: NSDate().dateByAddingTimeInterval(kCookieExpire),
+                NSHTTPCookiePath: kCookiePath]) {
+                cookies.append(cookie)
+            }
+        }
+        
+        return cookies
     }
 }
