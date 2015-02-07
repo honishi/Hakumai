@@ -75,20 +75,12 @@ class ChromeCookie {
     
     // MARK: - Internal Functions
     private class func setupFileLog() {
-        if fileLog == nil {
-            fileLog = XCGLogger()
-            
-            #if DEBUG
-                let fileLogPath = NSHomeDirectory() + "/Hakumai_Chrome.log"
-                fileLog.setup(logLevel: .Verbose, showLogLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: fileLogPath)
-                
-                if let console = fileLog.logDestination(XCGLogger.constants.baseConsoleLogDestinationIdentifier) {
-                    fileLog.removeLogDestination(console)
-                }
-            #else
-                fileLog.setup(logLevel: .None, showLogLevel: false, showFileNames: false, showLineNumbers: false, writeToFile: nil)
-            #endif
+        if fileLog != nil {
+            return
         }
+        
+        fileLog = XCGLogger()
+        ApiHelper.setupFileLog(fileLog, fileName: "Hakumai_Chrome.log")
     }
     
     private class func queryEncryptedCookie() -> NSData? {

@@ -44,7 +44,7 @@ class HandleNameManager {
     
     init() {
         objc_sync_enter(self)
-        self.createApplicationDirectoryIfNotExists()
+        ApiHelper.createApplicationDirectoryIfNotExists()
         self.readHandleNamesFromDisk()
         self.cleanObsoleteHandleNames()
         objc_sync_exit(self)
@@ -158,31 +158,8 @@ class HandleNameManager {
         self.writeHandleNamesToDisk()
     }
     
-    func createApplicationDirectoryIfNotExists() {
-        let directoryExists = NSFileManager.defaultManager().fileExistsAtPath(HandleNameManager.applicationDirectoryPath())
-        
-        if !directoryExists {
-            let created = NSFileManager.defaultManager().createDirectoryAtPath(HandleNameManager.applicationDirectoryPath(), withIntermediateDirectories: false, attributes: nil, error: nil)
-            
-            if created {
-                log.debug("created application directory")
-            }
-        }
-    }
-    
     // MARK: File Path
-    class func applicationDirectoryPath() -> String {
-        let appSupportDirectory = NSSearchPathForDirectoriesInDomains(.ApplicationSupportDirectory, .UserDomainMask, true)[0] as String
-        
-        var bundleIdentifier = ""
-        if let bi = NSBundle.mainBundle().infoDictionary?["CFBundleIdentifier"] as? String {
-            bundleIdentifier = bi
-        }
-        
-        return appSupportDirectory + "/" + bundleIdentifier
-    }
-    
     class func fullPathForHandleNamesFile() -> String {
-        return HandleNameManager.applicationDirectoryPath() + "/" + kHandleNamesFileName
+        return ApiHelper.applicationDirectoryPath() + "/" + kHandleNamesFileName
     }
 }

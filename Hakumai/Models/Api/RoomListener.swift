@@ -61,16 +61,7 @@ class RoomListener : NSObject, NSStreamDelegate {
             logNumber = server.roomPosition.rawValue
         }
         
-        #if DEBUG
-            let fileLogPath = NSHomeDirectory() + "/Hakumai_\(logNumber).log"
-            fileLog.setup(logLevel: .Verbose, showLogLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: fileLogPath)
-            
-            if let console = fileLog.logDestination(XCGLogger.constants.baseConsoleLogDestinationIdentifier) {
-            fileLog.removeLogDestination(console)
-            }
-        #else
-            fileLog.setup(logLevel: .None, showLogLevel: false, showFileNames: false, showLineNumbers: false, writeToFile: nil)
-        #endif
+        ApiHelper.setupFileLog(fileLog, fileName: "Hakumai_\(logNumber).log")
     }
     
     // MARK: - Public Functions
