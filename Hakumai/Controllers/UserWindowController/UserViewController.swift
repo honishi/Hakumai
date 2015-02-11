@@ -114,7 +114,7 @@ class UserViewController: NSViewController {
     }
     
     func tableViewColumnDidResize(aNotification: NSNotification) {
-        let column = aNotification.userInfo?["NSTableColumn"] as NSTableColumn
+        let column = aNotification.userInfo?["NSTableColumn"] as! NSTableColumn
         
         if column.identifier == kCommentColumnIdentifier {
             self.rowHeightCacher.removeAll(keepCapacity: false)
@@ -146,14 +146,14 @@ class UserViewController: NSViewController {
         
         switch tableColumn.identifier {
         case kRoomPositionColumnIdentifier:
-            let roomPositionView = (view as RoomPositionTableCellView)
+            let roomPositionView = (view as! RoomPositionTableCellView)
             roomPositionView.roomPosition = chat.roomPosition!
             roomPositionView.commentNo = chat.no!
         case kScoreColumnIdentifier:
-            (view as ScoreTableCellView).chat = chat
+            (view as! ScoreTableCellView).chat = chat
         case kCommentColumnIdentifier:
             let (content, attributes) = self.contentAndAttributesForMessage(message)
-            attributed = NSAttributedString(string: content, attributes: attributes)
+            attributed = NSAttributedString(string: content as! String, attributes: attributes)
         default:
             break
         }

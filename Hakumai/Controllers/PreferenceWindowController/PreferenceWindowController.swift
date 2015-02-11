@@ -33,7 +33,7 @@ class PreferenceWindowController: NSWindowController {
     
     class func generateInstance() -> PreferenceWindowController {
         let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)!
-        let preferenceWindowController = storyboard.instantiateControllerWithIdentifier(kStoryboardIdPreferenceWindowController) as PreferenceWindowController
+        let preferenceWindowController = storyboard.instantiateControllerWithIdentifier(kStoryboardIdPreferenceWindowController) as! PreferenceWindowController
         
         preferenceWindowController.window?.center()
         
@@ -68,7 +68,7 @@ class PreferenceWindowController: NSWindowController {
     
     // MARK: - NSToolbar Handlers
     @IBAction func changeViewController(sender: AnyObject) {
-        let toolbarItem = (sender as NSToolbarItem)
+        let toolbarItem = (sender as! NSToolbarItem)
         var viewController: NSViewController?
         
         switch toolbarItem.itemIdentifier {

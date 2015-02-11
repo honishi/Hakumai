@@ -44,7 +44,7 @@ class ApiHelper {
     }
 
     class func applicationDirectoryPath() -> String {
-        let appSupportDirectory = NSSearchPathForDirectoriesInDomains(.ApplicationSupportDirectory, .UserDomainMask, true)[0] as String
+        let appSupportDirectory = NSSearchPathForDirectoriesInDomains(.ApplicationSupportDirectory, .UserDomainMask, true)[0] as! String
         
         var bundleIdentifier = ""
         if let bi = NSBundle.mainBundle().infoDictionary?["CFBundleIdentifier"] as? String {

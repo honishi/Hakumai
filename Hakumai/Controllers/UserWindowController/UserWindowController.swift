@@ -45,7 +45,7 @@ class UserWindowController: NSWindowController, NSWindowDelegate {
     
     class func generateInstanceWithDelegate(delegate: UserWindowControllerDelegate?, userId: String) -> UserWindowController {
         let storyboard = NSStoryboard(name: kStoryboardNameUserWindowController, bundle: nil)!
-        let userWindowController = storyboard.instantiateControllerWithIdentifier(kStoryboardIdUserWindowController) as UserWindowController
+        let userWindowController = storyboard.instantiateControllerWithIdentifier(kStoryboardIdUserWindowController) as! UserWindowController
         
         userWindowController.delegate = delegate
         userWindowController.userId = userId
@@ -66,7 +66,7 @@ class UserWindowController: NSWindowController, NSWindowDelegate {
     
     // MARK: - Public Functions
     func reloadMessages() {
-        let userViewController = self.contentViewController as UserViewController
+        let userViewController = self.contentViewController as! UserViewController
         userViewController.userId = userId
     }
     

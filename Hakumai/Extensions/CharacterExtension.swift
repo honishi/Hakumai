@@ -25,5 +25,6 @@ extension Character {
 // MARK: operator overload
 
 func -(left: Character, right: Character) -> Int {
-    return left.unicodeScalarCodePoint() - right.unicodeScalarCodePoint()
+    // TODO: remove this redundant Int(), but we need this to build w/ xcode 6.3 beta
+    return Int(left.unicodeScalarCodePoint()) - Int(right.unicodeScalarCodePoint())
 }

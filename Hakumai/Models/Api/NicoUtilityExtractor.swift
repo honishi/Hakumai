@@ -15,7 +15,7 @@ extension NicoUtility {
     // MARK: - General
     func isErrorResponse(xmlData: NSData) -> (error: Bool, code: String) {
         var error: NSError?
-        let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &error)
+        let xmlDocument = NSXMLDocument(data: xmlData, options: 0, error: &error)
         let rootElement = xmlDocument?.rootElement()
         
         let status = rootElement?.attributeForName("status")?.stringValue
@@ -38,7 +38,7 @@ extension NicoUtility {
     // MARK: - GetPlayerStatus
     func extractLive(xmlData: NSData) -> Live? {
         var error: NSError?
-        let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &error)
+        let xmlDocument = NSXMLDocument(data: xmlData, options: 0, error: &error)
         let rootElement = xmlDocument?.rootElement()
         
         let live = Live()
@@ -56,7 +56,7 @@ extension NicoUtility {
     
     func extractUser(xmlData: NSData) -> User? {
         var error: NSError?
-        let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &error)
+        let xmlDocument = NSXMLDocument(data: xmlData, options: 0, error: &error)
         let rootElement = xmlDocument?.rootElement()
         
         let user = User()
@@ -73,7 +73,7 @@ extension NicoUtility {
     
     func extractMessageServer(xmlData: NSData, user: User) -> MessageServer? {
         var error: NSError?
-        let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &error)
+        let xmlDocument = NSXMLDocument(data: xmlData, options: 0, error: &error)
         let rootElement = xmlDocument?.rootElement()
         
         let status = rootElement?.attributeForName("status")?.stringValue
@@ -203,7 +203,7 @@ extension NicoUtility {
     // MARK: - Heartbeat
     func extractHeartbeat(xmlData: NSData) -> Heartbeat? {
         var error: NSError?
-        let xmlDocument = NSXMLDocument(data: xmlData, options: kNilOptions, error: &error)
+        let xmlDocument = NSXMLDocument(data: xmlData, options: 0, error: &error)
         let rootElement = xmlDocument?.rootElement()
         
         let heartbeat = Heartbeat()

@@ -29,7 +29,7 @@ extension String {
             return nil
         }
         
-        let matched = regexp.firstMatchInString(nsStringSelf, options: nil, range: NSMakeRange(0, nsStringSelf.length))
+        let matched = regexp.firstMatchInString(nsStringSelf as! String, options: nil, range: NSMakeRange(0, nsStringSelf.length))
         if matched == nil {
             return nil
         }
@@ -48,7 +48,7 @@ extension String {
         let nsStringSelf = (self as NSString)
         
         let regexp = NSRegularExpression(pattern: pattern, options: nil, error: nil)!
-        let removed = regexp.stringByReplacingMatchesInString(nsStringSelf, options: nil, range: NSMakeRange(0, nsStringSelf.length), withTemplate: "")
+        let removed = regexp.stringByReplacingMatchesInString(nsStringSelf as! String, options: nil, range: NSMakeRange(0, nsStringSelf.length), withTemplate: "")
         
         return (removed as String)
     }

@@ -41,13 +41,12 @@ class RoomListener : NSObject, NSStreamDelegate {
     let fileLog = XCGLogger()
     
     init(delegate: RoomListenerDelegate?, server: MessageServer?) {
-        super.init()
-        
         self.delegate = delegate
         self.server = server
         
-        self.initializeFileLog()
+        super.init()
         
+        self.initializeFileLog()
         log.info("listener initialized for message server:\(self.server)")
     }
     
@@ -166,22 +165,22 @@ class RoomListener : NSObject, NSStreamDelegate {
                 //fileLog.debug(readByte)
                 
                 if let readString = NSString(bytes: &readByte, length: actualRead, encoding: NSUTF8StringEncoding) {
-                    fileLog.debug("read: [ " + readString + " ]")
+                    fileLog.debug("read: [ " + (readString as! String) + " ]")
                     
-                    self.parsingString = self.parsingString + self.streamByRemovingNull(readString)
+                    self.parsingString = self.parsingString as! String + self.streamByRemovingNull(readString as! String)
                     
-                    if !self.hasValidCloseBracket(self.parsingString) {
+                    if !self.hasValidCloseBracket(self.parsingString as! String) {
                         fileLog.warning("detected no-close-bracket stream, continue reading...")
                         continue
                     }
                     
-                    if !self.hasValidOpenBracket(self.parsingString) {
+                    if !self.hasValidOpenBracket(self.parsingString as! String) {
                         fileLog.warning("detected no-open-bracket stream, clearing buffer and continue reading...")
                         self.parsingString = ""
                         continue
                     }
                     
-                    self.parseInputStream(self.parsingString)
+                    self.parseInputStream(self.parsingString as! String)
                     self.parsingString = ""
                 }
             }

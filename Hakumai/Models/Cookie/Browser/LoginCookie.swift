@@ -28,7 +28,7 @@ class LoginCookie {
                 return
             }
             
-            let httpResponse = (response as NSHTTPURLResponse)
+            let httpResponse = (response as! NSHTTPURLResponse)
             if httpResponse.statusCode != 200 {
                 log.error("login failed. got unexpected status code::[\(httpResponse.statusCode)]")
                 completion(userSessionCookie: nil)
@@ -69,7 +69,7 @@ class LoginCookie {
         }
         
         for cookie in cookies! {
-            cookieStorage.deleteCookie((cookie as NSHTTPCookie))
+            cookieStorage.deleteCookie((cookie as! NSHTTPCookie))
         }
     }
     
@@ -82,7 +82,7 @@ class LoginCookie {
         }
         
         for cookie in cookies! {
-            let castedCookie = (cookie as NSHTTPCookie)
+            let castedCookie = (cookie as! NSHTTPCookie)
             if castedCookie.name == "user_session" {
                 return castedCookie.value()!
             }

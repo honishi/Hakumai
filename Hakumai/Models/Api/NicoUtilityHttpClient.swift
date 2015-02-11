@@ -57,10 +57,10 @@ extension NicoUtility {
         
         for (key, value) in parameters! {
             if 0 < constructed.length {
-                constructed = constructed + "&"
+                constructed = constructed as! String + "&"
             }
             
-            constructed = constructed + "\(key)=\(value)"
+            constructed = constructed as! String + "\(key)=\(value)"
         }
         
         // use custom escape character sets instead of NSCharacterSet.URLQueryAllowedCharacterSet()

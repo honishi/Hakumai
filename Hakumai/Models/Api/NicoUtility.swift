@@ -672,7 +672,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
                 return
             }
             
-            let postKey = (responseString as String).extractRegexpPattern("postkey=(.+)")
+            let postKey = (responseString as! String).extractRegexpPattern("postkey=(.+)")
             
             if postKey == nil {
                 log.error("error in extracting postkey")

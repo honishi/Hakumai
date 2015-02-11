@@ -14,7 +14,7 @@ extension NSXMLElement {
         
         if let nodes = self.nodesForXPath(xpath, error: &err) {
             if 0 < nodes.count {
-                return (nodes[0] as NSXMLNode).stringValue
+                return (nodes[0] as! NSXMLNode).stringValue
             }
         }
         

@@ -86,7 +86,7 @@ class ChromeCookie {
     private class func queryEncryptedCookie() -> NSData? {
         var encryptedCookie: NSData?
         
-        let appSupportDirectory = NSSearchPathForDirectoriesInDomains(.ApplicationSupportDirectory, .UserDomainMask, true)[0] as String
+        let appSupportDirectory = NSSearchPathForDirectoriesInDomains(.ApplicationSupportDirectory, .UserDomainMask, true)[0] as! String
         let database = FMDatabase(path: appSupportDirectory + kDatabasePath)
         
         let query = NSString(format: "SELECT host_key, name, encrypted_value FROM cookies " +
@@ -94,7 +94,7 @@ class ChromeCookie {
         
         database.open()
         
-        var rows = database.executeQuery(query, withArgumentsInArray: [""])
+        var rows = database.executeQuery(query as! String, withArgumentsInArray: [""])
         
         while (rows != nil && rows.next()) {
             var name = rows.stringForColumn("name")
@@ -208,6 +208,6 @@ class ChromeCookie {
         
         let trimmedData = data.subdataWithRange(NSRange(location: 0, length: data.length - paddingCount))
         
-        return NSString(data: trimmedData, encoding: NSUTF8StringEncoding)
+        return NSString(data: trimmedData, encoding: NSUTF8StringEncoding) as? String
     }
 }

@@ -164,7 +164,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     // MARK: Misc
     func makeWindowAlwaysOnTop(alwaysOnTop: Bool) {
-        let window = NSApplication.sharedApplication().windows[0] as NSWindow
+        let window = NSApplication.sharedApplication().windows[0] as! NSWindow
         window.alwaysOnTop = alwaysOnTop
         
         log.debug("changed always on top: \(alwaysOnTop)")
