@@ -168,14 +168,14 @@ class ChromeCookie {
         // log.debug("aesKeyPointer = \(aesKeyPointer), aesKeyLength = \(aesKeyData.length)")
         
         let encryptedPointer = UnsafePointer<UInt8>(encrypted.bytes)
-        let encryptedLength = UInt(encrypted.length)
+        let encryptedLength = size_t(encrypted.length)
         // log.debug("encryptedPointer = \(encryptedPointer), encryptedDataLength = \(encryptedLength)")
         
         let decryptedData: NSMutableData! = NSMutableData(length: Int(encryptedLength) + kCCBlockSizeAES128)
         var decryptedPointer = UnsafeMutablePointer<UInt8>(decryptedData.mutableBytes)
         let decryptedLength = size_t(decryptedData.length)
         
-        var numBytesEncrypted :UInt = 0
+        var numBytesEncrypted :size_t = 0
         
         var cryptStatus = CCCrypt(
             CCOperation(kCCDecrypt),

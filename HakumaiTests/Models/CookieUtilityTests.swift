@@ -48,6 +48,6 @@ class CookieUtilityTests: XCTestCase {
     
     func testChromeCookie() {
         let userSessionCookie = CookieUtility.requestBrowserCookieWithBrowserType(.Chrome)
-        XCTAssert(0 < userSessionCookie?.utf16Count, "")
+        XCTAssert(0 < count(userSessionCookie!.utf16), "")
     }
 }
