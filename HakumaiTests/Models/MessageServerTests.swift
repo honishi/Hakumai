@@ -59,8 +59,17 @@ class MessageServerTests: XCTestCase {
         XCTAssert(previous == expected, "")
         
         server = MessageServer(roomPosition: .StandA, address: "msg101.live.nicovideo.jp", port: 2805, thread: 100)
+        expected = MessageServer(roomPosition: .Arena, address: "msg105.live.nicovideo.jp", port: 2854, thread: 99)
+        previous = server.previous()
+        
+        server = MessageServer(roomPosition: .StandA, address: "msg105.live.nicovideo.jp", port: 2852, thread: 100)
+        expected = MessageServer(roomPosition: .Arena, address: "msg105.live.nicovideo.jp", port: 2851, thread: 99)
+        previous = server.previous()
+
+        server = MessageServer(roomPosition: .StandA, address: "msg105.live.nicovideo.jp", port: 2845, thread: 100)
         expected = MessageServer(roomPosition: .Arena, address: "msg104.live.nicovideo.jp", port: 2814, thread: 99)
         previous = server.previous()
+        
         XCTAssert(previous == expected, "")
     }
     
@@ -80,6 +89,16 @@ class MessageServerTests: XCTestCase {
         XCTAssert(next == expected, "")
         
         server = MessageServer(roomPosition: .StandA, address: "msg104.live.nicovideo.jp", port: 2814, thread: 100)
+        expected = MessageServer(roomPosition: .StandB, address: "msg105.live.nicovideo.jp", port: 2845, thread: 101)
+        next = server.next()
+        XCTAssert(next == expected, "")
+        
+        server = MessageServer(roomPosition: .StandA, address: "msg105.live.nicovideo.jp", port: 2852, thread: 100)
+        expected = MessageServer(roomPosition: .StandB, address: "msg105.live.nicovideo.jp", port: 2853, thread: 101)
+        next = server.next()
+        XCTAssert(next == expected, "")
+
+        server = MessageServer(roomPosition: .StandA, address: "msg105.live.nicovideo.jp", port: 2854, thread: 100)
         expected = MessageServer(roomPosition: .StandB, address: "msg101.live.nicovideo.jp", port: 2805, thread: 101)
         next = server.next()
         XCTAssert(next == expected, "")

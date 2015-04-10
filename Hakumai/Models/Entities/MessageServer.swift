@@ -11,14 +11,24 @@ import Foundation
 private let kRegExpPatternHostUser = "msg\\d+\\..+"
 private let kRegExpPatternHostChannel = "omsg\\d+\\..+"
 
-private let kMessageServerNumberFirst = 101
-private let kMessageServerNumberLast = 104
+private let kMessageServersUser: [(serverNumber: Int, port: Int)] = [
+    (101, 2805), (101, 2806), (101, 2807), (101, 2808), (101, 2809),
+    (101, 2810), (101, 2811), (101, 2812), (101, 2813), (101, 2814),
+    (102, 2805), (102, 2806), (102, 2807), (102, 2808), (102, 2809),
+    (102, 2810), (102, 2811), (102, 2812), (102, 2813), (102, 2814),
+    (103, 2805), (103, 2806), (103, 2807), (103, 2808), (103, 2809),
+    (103, 2810), (103, 2811), (103, 2812), (103, 2813), (103, 2814),
+    (104, 2805), (104, 2806), (104, 2807), (104, 2808), (104, 2809),
+    (104, 2810), (104, 2811), (104, 2812), (104, 2813), (104, 2814),
+    (105, 2845), (105, 2846), (105, 2847), (105, 2848), (105, 2849),
+    (105, 2850), (105, 2851), (105, 2852), (105, 2853), (105, 2854)
+]
 
-private let kMessageServerPortFirstUser = 2805
-private let kMessageServerPortLastUser = 2814
-
-private let kMessageServerPortFirstChannel = 2815
-private let kMessageServerPortLastChannel = 2817
+private let kMessageServersChannel: [(serverNumber: Int, port: Int)] = [
+    (101, 2815), (102, 2815), (103, 2815), (104, 2815),
+    (101, 2816), (102, 2816), (103, 2816), (104, 2816),
+    (101, 2817), (102, 2817), (103, 2817), (104, 2817)
+]
 
 class MessageServer: Printable {
     let roomPosition: RoomPosition
@@ -51,97 +61,94 @@ class MessageServer: Printable {
     }
 
     // MARK: - Public Functions
-    func previous() -> MessageServer {
-        let roomPosition = RoomPosition(rawValue: self.roomPosition.rawValue - 1)
+    func previous() -> MessageServer? {
+        return self.neighbor(direction: -1)
+    }
+    
+    func next() -> MessageServer? {
+        return self.neighbor(direction: 1)
+    }
+    
+    func neighbor(#direction: Int) -> MessageServer? {
+        assert(direction == -1 || direction == 1)
+        
+        let roomPosition = RoomPosition(rawValue: self.roomPosition.rawValue + direction)
         var address = self.address
         var port = self.port
-        let thread = self.thread - 1
+        let thread = self.thread + direction
 
-        if self.isChannel {
-            if let serverNumber = MessageServer.extractServerNumber(address) {
-                if serverNumber == kMessageServerNumberFirst {
-                    address = MessageServer.reconstructServerAddressWithBaseAddress(address, serverNumber: kMessageServerNumberLast)
-                    if port == kMessageServerPortFirstChannel {
-                        port = kMessageServerPortLastChannel
-                    }
-                    else {
-                        port -= 1
-                    }
-                }
-                else {
-                    address = MessageServer.reconstructServerAddressWithBaseAddress(address, serverNumber: serverNumber - 1)
-                }
-            }
+        var serverNumber = MessageServer.extractServerNumber(address)
+        
+        if serverNumber == nil {
+            return nil
+        }
+        
+        var serverIndex = MessageServer.serverIndexWithChannel(self.isChannel, serverNumber: serverNumber!, port: port)
+        
+        if serverIndex == nil {
+            return nil
+        }
+        
+        var derived: (serverNumber: Int, port: Int)
+        
+        if direction == -1 && MessageServer.isFirstServerWithChannel(self.isChannel, serverNumber: serverNumber!, port: port) {
+            derived = MessageServer.lastMessageServerWithChannel(self.isChannel)
+        }
+        else if direction == 1 && MessageServer.isLastServerWithChannel(self.isChannel, serverNumber: serverNumber!, port: port) {
+            derived = MessageServer.firstMessageServerWithChannel(self.isChannel)
         }
         else {
-            if port == kMessageServerPortFirstUser {
-                port = kMessageServerPortLastUser
-                
-                if let serverNumber = MessageServer.extractServerNumber(address) {
-                    if serverNumber == kMessageServerNumberFirst {
-                        address = MessageServer.reconstructServerAddressWithBaseAddress(address, serverNumber: kMessageServerNumberLast)
-                    }
-                    else {
-                        address = MessageServer.reconstructServerAddressWithBaseAddress(address, serverNumber: serverNumber - 1)
-                    }
-                }
-            }
-            else {
-                port -= 1
-            }
+            let index = serverIndex! + direction
+            derived = self.isChannel ? kMessageServersChannel[index] : kMessageServersUser[index]
         }
         
-        return MessageServer(roomPosition: roomPosition!, address: address, port: port, thread: thread)
+        address = MessageServer.reconstructServerAddressWithBaseAddress(address, serverNumber: derived.serverNumber)
+
+        return MessageServer(roomPosition: roomPosition!, address: address, port: derived.port, thread: thread)
     }
     
-    func next() -> MessageServer {
-        let roomPosition = RoomPosition(rawValue: self.roomPosition.rawValue + 1)
-        var address = self.address
-        var port = self.port
-        let thread = self.thread + 1
-        
-        if self.isChannel {
-            if let serverNumber = MessageServer.extractServerNumber(address) {
-                if serverNumber == kMessageServerNumberLast {
-                    address = MessageServer.reconstructServerAddressWithBaseAddress(address, serverNumber: kMessageServerNumberFirst)
-                    if port == kMessageServerPortLastChannel {
-                        port = kMessageServerPortFirstChannel
-                    }
-                    else {
-                        port += 1
-                    }
-                }
-                else {
-                    address = MessageServer.reconstructServerAddressWithBaseAddress(address, serverNumber: serverNumber + 1)
-                }
-            }
-        }
-        else {
-            if port == kMessageServerPortLastUser {
-                port = kMessageServerPortFirstUser
-                
-                if let serverNumber = MessageServer.extractServerNumber(address) {
-                    if serverNumber == kMessageServerNumberLast {
-                        address = MessageServer.reconstructServerAddressWithBaseAddress(address, serverNumber: kMessageServerNumberFirst)
-                    }
-                    else {
-                        address = MessageServer.reconstructServerAddressWithBaseAddress(address, serverNumber: serverNumber + 1)
-                    }
-                }
-            }
-            else {
-                port += 1
-            }
-        }
-        
-        return MessageServer(roomPosition: roomPosition!, address: address, port: port, thread: thread)
-    }
-    
+    // MARK: - Private Functions
     class func extractServerNumber(address: String) -> Int? {
         let regexp = "\\D+(\\d+).+"
         let serverNumber = address.extractRegexpPattern(regexp)
         
         return serverNumber?.toInt()
+    }
+    
+    class func serverIndexWithChannel(isChannel: Bool, serverNumber: Int, port: Int) -> Int? {
+        var index = 0
+        
+        for (n, p) in isChannel ? kMessageServersChannel : kMessageServersUser {
+            if serverNumber == n && port == p {
+                return index
+            }
+            
+            index++
+        }
+        
+        return nil
+    }
+    
+    class func isFirstServerWithChannel(isChannel: Bool, serverNumber: Int, port: Int) -> Bool {
+        let firstServer = MessageServer.firstMessageServerWithChannel(isChannel)
+        let isFirst = (firstServer.serverNumber == serverNumber && firstServer.port == port)
+        return isFirst
+    }
+    
+    class func isLastServerWithChannel(isChannel: Bool, serverNumber: Int, port: Int) -> Bool {
+        let lastServer = MessageServer.lastMessageServerWithChannel(isChannel)
+        let isLast = (lastServer.serverNumber == serverNumber && lastServer.port == port)
+        return isLast
+    }
+    
+    class func firstMessageServerWithChannel(isChannel: Bool) -> (serverNumber: Int, port: Int) {
+        let messageServers = isChannel ? kMessageServersChannel : kMessageServersUser
+        return messageServers[0]
+    }
+
+    class func lastMessageServerWithChannel(isChannel: Bool) -> (serverNumber: Int, port: Int) {
+        let messageServers = isChannel ? kMessageServersChannel : kMessageServersUser
+        return messageServers[messageServers.count - 1]
     }
     
     class func reconstructServerAddressWithBaseAddress(baseAddress: String, serverNumber: Int) -> String {

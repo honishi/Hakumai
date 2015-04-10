@@ -586,7 +586,12 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         
         if 0 < originServer.roomPosition.rawValue {
             for _ in 1...(originServer.roomPosition.rawValue) {
-                arenaServer = arenaServer.previous()
+                if let previous = arenaServer.previous() {
+                    arenaServer = previous
+                }
+                else {
+                    return [originServer]
+                }
             }
         }
         
@@ -608,7 +613,12 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         }
         
         for _ in 1...standRoomCount {
-            servers.append(servers.last!.next())
+            if let next = servers.last!.next() {
+                servers.append(next)
+            }
+            else {
+                return [originServer]
+            }
         }
         
         return servers
