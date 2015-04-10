@@ -70,6 +70,46 @@ enum RoomPosition: Int, Printable {
     }
     
     func shortLabel() -> String {
+        // TODO: should replace this if-else clause with switch-clause below.
+        // this is damned workaround for complile-time 'segmentation fault 11' issue.
+        // http://stackoverflow.com/questions/28696248/segmentation-fault-11-when-building-for-profiling-in-a-swift-enum
+        if self == .Arena {
+            return "ア"
+        }
+        else if self == .StandA {
+            return "A"
+        }
+        else if self == .StandB {
+            return "B"
+        }
+        else if self == .StandC {
+            return "C"
+        }
+        else if self == .StandD {
+            return "D"
+        }
+        else if self == .StandE {
+            return "E"
+        }
+        else if self == .StandF {
+            return "F"
+        }
+        else if self == .StandG {
+            return "G"
+        }
+        else if self == .StandH {
+            return "H"
+        }
+        else if self == .StandI {
+            return "I"
+        }
+        else if self == .StandJ {
+            return "J"
+        }
+        
+        return "?"
+
+        /*
         switch self {
         case .Arena:
             return "ア"
@@ -94,6 +134,7 @@ enum RoomPosition: Int, Printable {
         case .StandJ:
             return "J"
         }
+         */
     }
 }
 
