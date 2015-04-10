@@ -63,7 +63,7 @@ class Chat: Printable {
         }
         
         let regexp = NSRegularExpression(pattern: "^\\d+$", options: nil, error: nil)!
-        let matched = regexp.firstMatchInString(userId!, options: nil, range: NSMakeRange(0, userId!.utf16Count))
+        let matched = regexp.firstMatchInString(userId!, options: nil, range: NSMakeRange(0, count(userId!.utf16)))
         
         return matched != nil ? true : false
     }

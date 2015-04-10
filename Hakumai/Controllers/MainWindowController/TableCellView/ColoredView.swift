@@ -21,10 +21,6 @@ class ColoredView: NSView {
         super.init(frame: frame)
     }
     
-    override init() {
-        super.init()
-    }
-
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }

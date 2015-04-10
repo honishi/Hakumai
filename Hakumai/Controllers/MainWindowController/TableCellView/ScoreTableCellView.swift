@@ -24,10 +24,6 @@ class ScoreTableCellView: NSTableCellView {
             self.scoreLabel.stringValue = self.stringForChatScore(self.chat)
         }
     }
-
-    override init() {
-        super.init()
-    }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)

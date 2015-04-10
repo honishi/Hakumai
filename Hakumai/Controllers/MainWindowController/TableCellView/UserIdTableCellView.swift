@@ -9,9 +9,10 @@
 import Foundation
 import AppKit
 
-private let kImageNameUserIdHandleName = "UserIdHandleName"
 private let kImageNameUserIdRawId = "UserIdRawId"
 private let kImageNameUserId184Id = "UserId184Id"
+private let kImageNameHandleNameOver184Id = "HandleNameOver184Id"
+private let kImageNameHandleNameOverRawId = "HandleNameOverRawId"
 
 class UserIdTableCellView: NSTableCellView {
     @IBOutlet weak var userIdTextField: NSTextField!
@@ -34,21 +35,16 @@ class UserIdTableCellView: NSTableCellView {
     
     // MARK: - Internal Functions
     func imageForHandleName(handleName: String?, userId: String) -> NSImage {
-        var image: NSImage
+        var imageName: String
         
         if handleName != nil {
-            image = NSImage(named: kImageNameUserIdHandleName)!
+            imageName = Chat.isRawUserId(userId) ? kImageNameHandleNameOverRawId : kImageNameHandleNameOver184Id
         }
         else {
-            if Chat.isRawUserId(userId) {
-                image = NSImage(named: kImageNameUserIdRawId)!
-            }
-            else {
-                image = NSImage(named: kImageNameUserId184Id)!
-            }
+            imageName = Chat.isRawUserId(userId) ? kImageNameUserIdRawId : kImageNameUserId184Id
         }
         
-        return image
+        return NSImage(named: imageName)!
     }
     
     func setUserIdLabelWithUserId(userId: String, premium: Premium, handleName: String?) {

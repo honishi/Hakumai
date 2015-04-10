@@ -140,7 +140,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         let chat = MessageContainer.sharedContainer[self.tableView.clickedRow].chat!
         
         let defaults = NSUserDefaults.standardUserDefaults()
-        var muteUserIds = defaults.objectForKey(Parameters.MuteUserIds) as [[String: String]]
+        var muteUserIds = defaults.objectForKey(Parameters.MuteUserIds) as! [[String: String]]
         
         for muteUserId in muteUserIds {
             if chat.userId == muteUserId[MuteUserIdKey.UserId] {

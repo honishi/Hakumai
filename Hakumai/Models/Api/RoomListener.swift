@@ -41,13 +41,12 @@ class RoomListener : NSObject, NSStreamDelegate {
     let fileLog = XCGLogger()
     
     init(delegate: RoomListenerDelegate?, server: MessageServer?) {
-        super.init()
-        
         self.delegate = delegate
         self.server = server
         
-        self.initializeFileLog()
+        super.init()
         
+        self.initializeFileLog()
         log.info("listener initialized for message server:\(self.server)")
     }
     
@@ -166,22 +165,22 @@ class RoomListener : NSObject, NSStreamDelegate {
                 //fileLog.debug(readByte)
                 
                 if let readString = NSString(bytes: &readByte, length: actualRead, encoding: NSUTF8StringEncoding) {
-                    fileLog.debug("read: [ " + readString + " ]")
+                    fileLog.debug("read: [ " + (readString as! String) + " ]")
                     
-                    self.parsingString = self.parsingString + self.streamByRemovingNull(readString)
+                    self.parsingString = self.parsingString as! String + self.streamByRemovingNull(readString as! String)
                     
-                    if !self.hasValidCloseBracket(self.parsingString) {
+                    if !self.hasValidCloseBracket(self.parsingString as! String) {
                         fileLog.warning("detected no-close-bracket stream, continue reading...")
                         continue
                     }
                     
-                    if !self.hasValidOpenBracket(self.parsingString) {
+                    if !self.hasValidOpenBracket(self.parsingString as! String) {
                         fileLog.warning("detected no-open-bracket stream, clearing buffer and continue reading...")
                         self.parsingString = ""
                         continue
                     }
                     
-                    self.parseInputStream(self.parsingString)
+                    self.parseInputStream(self.parsingString as! String)
                     self.parsingString = ""
                 }
             }
@@ -205,7 +204,7 @@ class RoomListener : NSObject, NSStreamDelegate {
     // MARK: Read Utility
     func streamByRemovingNull(stream: String) -> String {
         let regexp = NSRegularExpression(pattern: "\0", options: nil, error: nil)!
-        let removed = regexp.stringByReplacingMatchesInString(stream, options: nil, range: NSMakeRange(0, stream.utf16Count), withTemplate: "")
+        let removed = regexp.stringByReplacingMatchesInString(stream, options: nil, range: NSMakeRange(0, count(stream.utf16)), withTemplate: "")
         
         return removed
     }
@@ -220,7 +219,7 @@ class RoomListener : NSObject, NSStreamDelegate {
     
     func hasValidPatternInStream(pattern: String, stream: String) -> Bool {
         let regexp = NSRegularExpression(pattern: pattern, options: nil, error: nil)!
-        let matched = regexp.firstMatchInString(stream, options: nil, range: NSMakeRange(0, stream.utf16Count))
+        let matched = regexp.firstMatchInString(stream, options: nil, range: NSMakeRange(0, count(stream.utf16)))
         
         return matched != nil ? true : false
     }

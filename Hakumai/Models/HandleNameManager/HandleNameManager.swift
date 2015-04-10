@@ -141,7 +141,7 @@ class HandleNameManager {
         var userIdsTobeDeleted = [AnyObject]()
         
         for (userId, handleNameValue) in self.handleNames {
-            if Chat.isRawUserId((userId as String)) {
+            if Chat.isRawUserId((userId as! String)) {
                 continue
             }
             

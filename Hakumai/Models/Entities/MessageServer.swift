@@ -149,7 +149,7 @@ class MessageServer: Printable {
         // - msg102.live.nicovideo.jp (user)
         // - omsg103.live.nicovideo.jp (channel)
         let regexp = NSRegularExpression(pattern: "(\\D+)\\d+(.+)", options: nil, error: nil)!
-        let matched = regexp.matchesInString(baseAddress, options: nil, range: NSMakeRange(0, baseAddress.utf16Count))
+        let matched = regexp.matchesInString(baseAddress, options: nil, range: NSMakeRange(0, count(baseAddress.utf16)))
         
         let hostPrefix = MessageServer.substringFromBaseString(baseAddress, nsRange: matched[0].rangeAtIndex(1))
         let domain = MessageServer.substringFromBaseString(baseAddress, nsRange: matched[0].rangeAtIndex(2))

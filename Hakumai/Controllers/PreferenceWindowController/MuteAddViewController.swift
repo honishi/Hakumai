@@ -38,7 +38,7 @@ class MuteAddViewController: NSViewController {
         }
         
         if self.completion != nil {
-            self.completion!(cancelled: false, muteValue: self.muteValue)
+            self.completion!(cancelled: false, muteValue: self.muteValue as? String)
         }
     }
     

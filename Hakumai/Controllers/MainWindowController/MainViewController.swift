@@ -220,7 +220,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
     
     func tableViewColumnDidResize(aNotification: NSNotification) {
-        let column = aNotification.userInfo?["NSTableColumn"] as NSTableColumn
+        let column = aNotification.userInfo?["NSTableColumn"] as! NSTableColumn
         
         if column.identifier == kCommentColumnIdentifier {
             self.rowHeightCacher.removeAll(keepCapacity: false)
@@ -251,19 +251,19 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     func configureViewForSystemMessage(message: Message, tableColumn: NSTableColumn, view: NSTableCellView) {
         switch tableColumn.identifier {
         case kRoomPositionColumnIdentifier:
-            let roomPositionView = (view as RoomPositionTableCellView)
+            let roomPositionView = (view as! RoomPositionTableCellView)
             roomPositionView.roomPosition = nil
             roomPositionView.commentNo = nil
         case kScoreColumnIdentifier:
-            (view as ScoreTableCellView).chat = nil
+            (view as! ScoreTableCellView).chat = nil
         case kCommentColumnIdentifier:
             let (content, attributes) = self.contentAndAttributesForMessage(message)
-            let attributed = NSAttributedString(string: content, attributes: attributes)
+            let attributed = NSAttributedString(string: content as! String, attributes: attributes)
             view.textField?.attributedStringValue = attributed
         case kUserIdColumnIdentifier:
-            (view as UserIdTableCellView).chat = nil
+            (view as! UserIdTableCellView).chat = nil
         case kPremiumColumnIdentifier:
-            (view as PremiumTableCellView).premium = nil
+            (view as! PremiumTableCellView).premium = nil
         default:
             break
         }
@@ -276,18 +276,18 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         
         switch tableColumn.identifier {
         case kRoomPositionColumnIdentifier:
-            let roomPositionView = (view as RoomPositionTableCellView)
+            let roomPositionView = (view as! RoomPositionTableCellView)
             roomPositionView.roomPosition = chat.roomPosition!
             roomPositionView.commentNo = chat.no!
         case kScoreColumnIdentifier:
-            (view as ScoreTableCellView).chat = chat
+            (view as! ScoreTableCellView).chat = chat
         case kCommentColumnIdentifier:
             let (content, attributes) = self.contentAndAttributesForMessage(message)
-            attributed = NSAttributedString(string: content, attributes: attributes)
+            attributed = NSAttributedString(string: content as! String, attributes: attributes)
         case kUserIdColumnIdentifier:
-            (view as UserIdTableCellView).chat = chat
+            (view as! UserIdTableCellView).chat = chat
         case kPremiumColumnIdentifier:
-            (view as PremiumTableCellView).premium = chat.premium
+            (view as! PremiumTableCellView).premium = chat.premium
         /*
         case kMailColumnIdentifier:
             if let mail = chat.mail {
@@ -555,7 +555,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     // MARK: - Public Functions
     func showHandleNameAddViewController(chat: Chat) {
         let storyboard = NSStoryboard(name: kStoryboardNameMainWindowController, bundle: nil)!
-        let handleNameAddViewController = storyboard.instantiateControllerWithIdentifier(kStoryboardIdHandleNameAddViewController) as HandleNameAddViewController
+        let handleNameAddViewController = storyboard.instantiateControllerWithIdentifier(kStoryboardIdHandleNameAddViewController) as! HandleNameAddViewController
         
         handleNameAddViewController.handleName = (self.defaultHandleNameWithChat(chat) ?? "")
         handleNameAddViewController.completion = { (cancelled: Bool, handleName: String?) -> Void in
@@ -683,7 +683,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     
     @IBAction func comment(sender: AnyObject) {
         let comment = self.commentTextField.stringValue
-        if countElements(comment) == 0 {
+        if count(comment) == 0 {
             return
         }
         

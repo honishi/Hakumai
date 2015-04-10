@@ -10,7 +10,7 @@ import Foundation
 import AppKit
 
 private let kImageNamePremium = "PremiumPremium"
-private let kImageNameIppan = "UserId184Id"
+private let kImageNameIppan = "PremiumIppan"
 private let kImageNameMisc = "PremiumMisc"
 
 class PremiumTableCellView: NSTableCellView {

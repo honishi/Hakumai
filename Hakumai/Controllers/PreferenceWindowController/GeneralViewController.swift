@@ -57,7 +57,7 @@ class GeneralViewController: NSViewController {
 
     class func generateInstance() -> GeneralViewController? {
         let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)!
-        return (storyboard.instantiateControllerWithIdentifier(kStoryboardIdGeneralViewController) as GeneralViewController)
+        return (storyboard.instantiateControllerWithIdentifier(kStoryboardIdGeneralViewController) as! GeneralViewController)
     }
     
     // MARK: - NSViewController Overrides
@@ -90,7 +90,7 @@ class GeneralViewController: NSViewController {
     }
     
     @IBAction func detectedChangeInSessionManagementMatrix(sender: AnyObject) {
-        let matrix = (sender as NSMatrix)
+        let matrix = (sender as! NSMatrix)
         // log.debug("\(matrix.selectedTag())")
         
         if matrix.selectedTag() == SessionManagementType.Login.rawValue {
@@ -123,11 +123,11 @@ class GeneralViewController: NSViewController {
                 self.checkAccountStatusLabel.stringValue = "Status: Success"
                 
                 KeychainUtility.removeAllAccountsInKeychain()
-                KeychainUtility.setAccountToKeychainWith(self.mailAddress, password: self.password)
+                KeychainUtility.setAccountToKeychainWith(self.mailAddress as! String, password: self.password as! String)
             })
         }
 
         self.progressIndicator.startAnimation(self)
-        CookieUtility.requestLoginCookieWithMailAddress(self.mailAddress, password: self.password, completion: completion)
+        CookieUtility.requestLoginCookieWithMailAddress(self.mailAddress as! String, password: self.password as! String, completion: completion)
     }
 }
