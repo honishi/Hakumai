@@ -172,7 +172,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         }
         
         func success(postKey: String) {
-            let roomListener = self.roomListeners[self.messageServer!.roomPosition.rawValue]
+            let roomListener = self.assignedRoomListener()!
             roomListener.comment(self.live!, user: self.user!, postKey: postKey, comment: comment, anonymously: anonymously)
             completion(comment: comment)
         }
@@ -693,16 +693,31 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             success(postKey: postKey!)
         }
         
-        let isMyRoomListenerOpened = (self.messageServer!.roomPosition.rawValue < roomListeners.count)
-        if !isMyRoomListenerOpened {
+        let assignedRoomListener = self.assignedRoomListener()
+        
+        if assignedRoomListener == nil {
+            log.error("could not find assigned room listener")
             failure()
             return
         }
         
         let thread = self.messageServer!.thread
-        let blockNo = (roomListeners[self.messageServer!.roomPosition.rawValue].lastRes + 1) / 100
+        let blockNo = (assignedRoomListener!.lastRes + 1) / 100
         
         self.cookiedAsyncRequest("GET", url: kGetPostKeyUrl, parameters: ["thread": thread, "block_no": blockNo], completion: httpCompletion)
+    }
+    
+    private func assignedRoomListener() -> RoomListener? {
+        var assigned: RoomListener? = nil
+        
+        for roomListener in self.roomListeners {
+            if roomListener.server! == self.messageServer! {
+                assigned = roomListener
+                break
+            }
+        }
+        
+        return assigned
     }
     
     // MARK: Heartbeat
