@@ -27,7 +27,9 @@ private let kMessageServersUser: [(serverNumber: Int, port: Int)] = [
 private let kMessageServersChannel: [(serverNumber: Int, port: Int)] = [
     (101, 2815), (102, 2815), (103, 2815), (104, 2815),
     (101, 2816), (102, 2816), (103, 2816), (104, 2816),
-    (101, 2817), (102, 2817), (103, 2817), (104, 2817)
+    (101, 2817), (102, 2817), (103, 2817), (104, 2817),
+    (105, 2867), (106, 2880), (105, 2868), (106, 2881),
+    (105, 2869), (106, 2882)
 ]
 
 class MessageServer: Printable {
