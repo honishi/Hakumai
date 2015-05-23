@@ -10,6 +10,7 @@ import Foundation
 import XCGLogger
 
 private let kReadBufferSize = 102400
+private let kPingInterval: NSTimeInterval = 60
 
 // MARK: protocol
 
@@ -360,7 +361,7 @@ class RoomListener : NSObject, NSStreamDelegate {
     // MARK: - Private Functions
     func startPingTimer() {
         self.pingTimer = NSTimer.scheduledTimerWithTimeInterval(
-            60, target: self, selector: Selector("sendPing:"), userInfo: nil, repeats: true)
+            kPingInterval, target: self, selector: Selector("sendPing:"), userInfo: nil, repeats: true)
     }
 
     func stopPingTimer() {
