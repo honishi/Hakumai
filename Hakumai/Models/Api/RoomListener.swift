@@ -29,6 +29,7 @@ class RoomListener : NSObject, NSStreamDelegate {
     
     var inputStream: NSInputStream?
     var outputStream: NSOutputStream?
+    var pingTimer: NSTimer?
     
     var parsingString: NSString = ""
     
@@ -94,6 +95,8 @@ class RoomListener : NSObject, NSStreamDelegate {
         let message = "<thread thread=\"\(server.thread)\" res_from=\"-\(resFrom)\" version=\"20061206\"/>"
         self.sendMessage(message)
         
+        self.startPingTimer()
+
         while self.inputStream != nil {
             self.runLoop.runUntilDate(NSDate(timeIntervalSinceNow: NSTimeInterval(1)))
         }
@@ -104,6 +107,8 @@ class RoomListener : NSObject, NSStreamDelegate {
     func closeSocket() {
         fileLog.debug("closed streams.")
         
+        self.stopPingTimer()
+
         self.inputStream?.delegate = nil
         self.outputStream?.delegate = nil
         
@@ -350,5 +355,20 @@ class RoomListener : NSObject, NSStreamDelegate {
         }
         
         return chatResults
+    }
+
+    // MARK: - Private Functions
+    func startPingTimer() {
+        self.pingTimer = NSTimer.scheduledTimerWithTimeInterval(
+            60, target: self, selector: Selector("sendPing:"), userInfo: nil, repeats: true)
+    }
+
+    func stopPingTimer() {
+        self.pingTimer?.invalidate()
+        self.pingTimer = nil
+    }
+
+    func sendPing(timer: NSTimer) {
+        sendMessage("<ping>PING</ping>")
     }
 }
