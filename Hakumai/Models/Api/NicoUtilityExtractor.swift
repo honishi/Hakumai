@@ -131,7 +131,7 @@ extension NicoUtility {
     }
     
     private func isArena(roomLabel: String) -> Bool {
-        let regexp = NSRegularExpression(pattern: "c(?:o|h)\\d+", options: nil, error: nil)!
+        let regexp = NSRegularExpression(pattern: "(?:c[oh]\\d+|バックステージパス)", options: nil, error: nil)!
         let matched = regexp.firstMatchInString(roomLabel, options: nil, range: NSMakeRange(0, count(roomLabel.utf16)))
         
         return matched != nil ? true : false

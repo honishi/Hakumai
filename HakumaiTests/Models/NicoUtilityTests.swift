@@ -61,6 +61,9 @@ class NicoUtilityTests: XCTestCase {
         roomPosition = NicoUtility.sharedInstance.roomPositionByRoomLabel("ch123")
         XCTAssert(roomPosition == .Arena, "")
         
+        roomPosition = NicoUtility.sharedInstance.roomPositionByRoomLabel("バックステージパス")
+        XCTAssert(roomPosition == .Arena, "")
+
         roomPosition = NicoUtility.sharedInstance.roomPositionByRoomLabel("立ち見A列")
         XCTAssert(roomPosition == .StandA, "")
         
