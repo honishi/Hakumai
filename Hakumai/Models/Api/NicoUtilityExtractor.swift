@@ -11,6 +11,8 @@ import XCGLogger
 
 // collection of xml extractor
 
+private let kPlaceholderSeatNo = -1
+
 extension NicoUtility {
     // MARK: - General
     func isErrorResponse(xmlData: NSData) -> (error: Bool, code: String) {
@@ -67,7 +69,12 @@ extension NicoUtility {
         user.isPremium = rootElement?.firstIntValueForXPathNode(baseXPath + "is_premium")
         user.roomLabel = rootElement?.firstStringValueForXPathNode(baseXPath + "room_label")
         user.seatNo = rootElement?.firstIntValueForXPathNode(baseXPath + "room_seetno")
-        
+
+        // fill seat no if extraction fails, espacially for backstage pass case
+        if user.seatNo == nil {
+            user.seatNo = kPlaceholderSeatNo
+        }
+
         return user
     }
     
