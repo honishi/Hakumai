@@ -95,11 +95,7 @@ extension NicoUtility {
             return nil
         }
         
-        if user.roomLabel == nil {
-            return nil
-        }
-        
-        let roomPosition = self.roomPositionByRoomLabel(user.roomLabel!)
+        let roomPosition = self.roomPositionByUser(user)
         
         if roomPosition == nil {
             return nil
@@ -121,14 +117,18 @@ extension NicoUtility {
         return server
     }
     
-    func roomPositionByRoomLabel(roomLabel: String) -> RoomPosition? {
+    func roomPositionByUser(user: User) -> RoomPosition? {
         // log.debug("roomLabel:\(roomLabel)")
         
-        if self.isArena(roomLabel) == true {
+        if user.roomLabel == nil {
+            return nil
+        }
+
+        if user.isArena == true || user.isBSP == true {
             return RoomPosition(rawValue: 0)
         }
         
-        if let standCharacter = self.extractStandCharacter(roomLabel) {
+        if let roomLabel = user.roomLabel, let standCharacter = self.extractStandCharacter(roomLabel) {
             log.debug("extracted standCharacter:\(standCharacter)")
             let raw = (standCharacter - ("A" as Character)) + 1
             return RoomPosition(rawValue: raw)
@@ -136,14 +136,7 @@ extension NicoUtility {
         
         return nil
     }
-    
-    private func isArena(roomLabel: String) -> Bool {
-        let regexp = NSRegularExpression(pattern: "(?:c[oh]\\d+|バックステージパス)", options: nil, error: nil)!
-        let matched = regexp.firstMatchInString(roomLabel, options: nil, range: NSMakeRange(0, count(roomLabel.utf16)))
-        
-        return matched != nil ? true : false
-    }
-    
+
     private func extractStandCharacter(roomLabel: String) -> Character? {
         let matched = roomLabel.extractRegexpPattern("立ち見(\\w)列")
         

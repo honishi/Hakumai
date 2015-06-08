@@ -8,6 +8,9 @@
 
 import Foundation
 
+private let kRoomLabelForArena = "c[oh]\\d+"
+private let kRoomLabelForBSP = "バックステージパス"
+
 class User: Printable {
     var userId: Int?
     var nickname: String?
@@ -15,10 +18,18 @@ class User: Printable {
     var roomLabel: String?
     var seatNo: Int?
     
+    var isArena: Bool? {
+        return self.roomLabel?.hasRegexpPattern(kRoomLabelForArena)
+    }
+
+    var isBSP: Bool? {
+        return self.roomLabel?.hasRegexpPattern(kRoomLabelForBSP)
+    }
+
     var description: String {
         return (
             "User: userId[\(self.userId)] nickname[\(self.nickname)] isPremium[\(self.isPremium)] " +
-            "roomLabel[\(self.roomLabel)] seatNo[\(self.seatNo)]"
+            "roomLabel[\(self.roomLabel)] seatNo[\(self.seatNo)] isArena[\(self.isArena)] isBSP[\(self.isBSP)]"
         )
     }
     
