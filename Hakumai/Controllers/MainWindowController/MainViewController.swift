@@ -34,6 +34,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     @IBOutlet weak var tableView: NSTableView!
     
     @IBOutlet weak var commentTextField: NSTextField!
+    @IBOutlet weak var commentAnonymouslyButton: NSButton!
     @IBOutlet weak var elapsedLabel: NSTextField!
     @IBOutlet weak var activeLabel: NSTextField!
     @IBOutlet weak var notificationLabel: NSTextField!
@@ -375,7 +376,15 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             let level = live.community.level != nil ? String(live.community.level!) : "-"
             self.communityTitleLabel.stringValue = communityTitle + " (Lv." + level + ")"
             self.roomPositionLabel.stringValue = user.roomLabel! + " - " + String(user.seatNo!)
-            
+
+            let commentPlaceholder = (user.isBSP == true) ?
+                "BSP Comment is not yet implemented. :P" : "⌘N (enter to comment)"
+            let commentEnabled = (user.isBSP == true) ? false : true
+
+            self.commentTextField.placeholderString = commentPlaceholder
+            self.commentTextField.enabled = commentEnabled
+            self.commentAnonymouslyButton.enabled = commentEnabled
+
             self.notificationLabel.stringValue = "Opened: ---"
             
             self.startTimers()

@@ -50,25 +50,25 @@ class NicoUtilityTests: XCTestCase {
     
     // MARK: - Room Position
     func testRoomPosition() {
-        var roomPosition: RoomPosition?
-        
-        roomPosition = NicoUtility.sharedInstance.roomPositionByRoomLabel("x")
-        XCTAssert(roomPosition == nil, "")
-        
-        roomPosition = NicoUtility.sharedInstance.roomPositionByRoomLabel("co123")
-        XCTAssert(roomPosition == .Arena, "")
-        
-        roomPosition = NicoUtility.sharedInstance.roomPositionByRoomLabel("ch123")
-        XCTAssert(roomPosition == .Arena, "")
-        
-        roomPosition = NicoUtility.sharedInstance.roomPositionByRoomLabel("バックステージパス")
-        XCTAssert(roomPosition == .Arena, "")
+        var user = User()
 
-        roomPosition = NicoUtility.sharedInstance.roomPositionByRoomLabel("立ち見A列")
-        XCTAssert(roomPosition == .StandA, "")
+        user.roomLabel = "x"
+        XCTAssert(NicoUtility.sharedInstance.roomPositionByUser(user) == nil, "")
         
-        roomPosition = NicoUtility.sharedInstance.roomPositionByRoomLabel("立ち見C列")
-        XCTAssert(roomPosition == .StandC, "")
+        user.roomLabel = "co123"
+        XCTAssert(NicoUtility.sharedInstance.roomPositionByUser(user) == .Arena, "")
+
+        user.roomLabel = "ch123"
+        XCTAssert(NicoUtility.sharedInstance.roomPositionByUser(user) == .Arena, "")
+
+        user.roomLabel = "バックステージパス"
+        XCTAssert(NicoUtility.sharedInstance.roomPositionByUser(user) == .Arena, "")
+
+        user.roomLabel = "立ち見A列"
+        XCTAssert(NicoUtility.sharedInstance.roomPositionByUser(user) == .StandA, "")
+
+        user.roomLabel = "立ち見C列"
+        XCTAssert(NicoUtility.sharedInstance.roomPositionByUser(user) == .StandC, "")
     }
     
     func testDeriveMessageServersUser() {
