@@ -27,15 +27,6 @@ class UserWindowController: NSWindowController, NSWindowDelegate {
         }
     }
     
-    // MARK: Properties for Singleton
-    /*
-    class var sharedInstance : UserWindowController {
-        struct Static {
-            static let instance : UserWindowController = UserWindowController.generateInstance()!
-        }
-        return Static.instance
-    }
-    */
     let log = XCGLogger.defaultInstance()
     
     // MARK: - Object Lifecycle
@@ -52,8 +43,6 @@ class UserWindowController: NSWindowController, NSWindowDelegate {
         
         return userWindowController
     }
-    
-    // MARK: - [Super Class] Overrides
     
     // MARK: - NSWindowDelegate Functions
     func windowWillClose(notification: NSNotification) {

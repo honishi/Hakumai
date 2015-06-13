@@ -73,6 +73,8 @@ private let kDebugForceReconnectChatCount = 20
 
 class NicoUtility : NSObject, RoomListenerDelegate {
     // MARK: - Properties
+    static let sharedInstance = NicoUtility()
+
     weak var delegate: NicoUtilityDelegate?
     var lastLiveNumber: Int?
     
@@ -108,14 +110,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         self.initializeFileLog()
         self.initializeInstance()
     }
-    
-    class var sharedInstance : NicoUtility {
-        struct Static {
-            static let instance : NicoUtility = NicoUtility()
-        }
-        return Static.instance
-    }
-    
+
     func initializeFileLog() {
         ApiHelper.setupFileLog(fileLog, fileName: "Hakumai_Api.log")
     }

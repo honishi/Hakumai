@@ -22,6 +22,7 @@ private let kRegexpHandleName = ".*[@＠]\\s*(\\S{2,})\\s*"
 // handle name manager
 class HandleNameManager {
     // MARK: - Properties
+    static let sharedManager = HandleNameManager()
     
     // handle name dictionary that have the following structrue:
     // @{userId:
@@ -35,13 +36,6 @@ class HandleNameManager {
     private let log = XCGLogger.defaultInstance()
     
     // MARK: - Object Lifecycle
-    class var sharedManager : HandleNameManager {
-        struct Static {
-            static let instance = HandleNameManager()
-        }
-        return Static.instance
-    }
-    
     init() {
         objc_sync_enter(self)
         ApiHelper.createApplicationDirectoryIfNotExists()

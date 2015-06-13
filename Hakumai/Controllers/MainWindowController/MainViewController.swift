@@ -18,6 +18,9 @@ private let kDelayToShowHbIfseetnoCommands: NSTimeInterval = 30
 private let kCalculateActiveInterval: NSTimeInterval = 5
 
 class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate, NSControlTextEditingDelegate, NicoUtilityDelegate, UserWindowControllerDelegate {
+    // MARK: - Properties
+    static var sharedInstance: MainViewController!
+
     // MARK: Main Outlets
     @IBOutlet weak var liveTextField: NSTextField!
     
@@ -44,14 +47,6 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     @IBOutlet var menuDelegate: MenuDelegate!
     
     // MARK: General Properties
-    struct Static {
-        static var instance: MainViewController!
-    }
-    
-    class var sharedInstance : MainViewController {
-        return Static.instance
-    }
-
     let log = XCGLogger.defaultInstance()
 
     var connectedToLive = false
@@ -77,7 +72,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     override func awakeFromNib() {
         super.awakeFromNib()
 
-        Static.instance = self
+        MainViewController.sharedInstance = self
     }
 
     // MARK: - NSViewController Functions

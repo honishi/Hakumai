@@ -19,18 +19,13 @@ private let kToolbarItemIdentifierMute = "MuteToolbarItem"
 
 class PreferenceWindowController: NSWindowController {
     // MARK: - Properties
+    static let sharedInstance = PreferenceWindowController.generateInstance()
+
     @IBOutlet weak var toolbar: NSToolbar!
 
     let log = XCGLogger.defaultInstance()
     
     // MARK: Properties for Singleton
-    class var sharedInstance : PreferenceWindowController {
-        struct Static {
-            static let instance : PreferenceWindowController = PreferenceWindowController.generateInstance()
-        }
-        return Static.instance
-    }
-    
     class func generateInstance() -> PreferenceWindowController {
         let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)!
         let preferenceWindowController = storyboard.instantiateControllerWithIdentifier(kStoryboardIdPreferenceWindowController) as! PreferenceWindowController

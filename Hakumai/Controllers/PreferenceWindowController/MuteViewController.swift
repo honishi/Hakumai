@@ -17,19 +17,14 @@ private let kStoryboardIdMuteAddViewController = "MuteAddViewController"
 
 class MuteViewController: NSViewController {
     // MARK: - Properties
+    static let sharedInstance = MuteViewController.generateInstance()
+    
     @IBOutlet var muteUserIdsArrayController: NSArrayController!
     @IBOutlet var muteWordsArrayController: NSArrayController!
     
     private let log = XCGLogger.defaultInstance()
     
     // MARK: - Object Lifecycle
-    class var sharedInstance : MuteViewController {
-        struct Static {
-            static let instance : MuteViewController = MuteViewController.generateInstance()
-        }
-        return Static.instance
-    }
-    
     class func generateInstance() -> MuteViewController {
         let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)!
         return storyboard.instantiateControllerWithIdentifier(kStoryboardIdMuteViewController) as! MuteViewController

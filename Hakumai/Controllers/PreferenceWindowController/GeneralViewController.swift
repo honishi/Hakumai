@@ -28,6 +28,8 @@ private let kStoryboardIdGeneralViewController = "GeneralViewController"
 
 class GeneralViewController: NSViewController {
     // MARK: - Properties
+    static let sharedInstance = GeneralViewController.generateInstance()
+
     @IBOutlet weak var sessionManagementMatrix: NSMatrix!
     @IBOutlet weak var mailAddressTextField: NSTextField!
     @IBOutlet weak var checkAccountButton: NSButton!
@@ -46,16 +48,9 @@ class GeneralViewController: NSViewController {
     }
     
     private let log = XCGLogger.defaultInstance()
-    
-    // MARK: - Object Lifecycle
-    class var sharedInstance : GeneralViewController {
-        struct Static {
-            static let instance : GeneralViewController = GeneralViewController.generateInstance()!
-        }
-        return Static.instance
-    }
 
-    class func generateInstance() -> GeneralViewController? {
+    // MARK: - Object Lifecycle
+    class func generateInstance() -> GeneralViewController {
         let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)!
         return (storyboard.instantiateControllerWithIdentifier(kStoryboardIdGeneralViewController) as! GeneralViewController)
     }

@@ -13,6 +13,8 @@ import XCGLogger
 class MessageContainer {
     // MARK: - Properties
     // MARK: Public
+    static let sharedContainer = MessageContainer()
+
     var beginDateToShowHbIfseetnoCommands: NSDate?
     var showHbIfseetnoCommands = false
     var enableMuteUserIds = false
@@ -30,14 +32,6 @@ class MessageContainer {
     private var calculatingActive = false
     
     private let log = XCGLogger.defaultInstance()
-    
-    // MARK: - Object Lifecycle
-    class var sharedContainer : MessageContainer {
-        struct Static {
-            static let instance = MessageContainer()
-        }
-        return Static.instance
-    }
     
     // MARK: - Basic Operation to Content Array
     func append(chatOrSystemMessage object: AnyObject) -> (appended: Bool, count: Int) {
