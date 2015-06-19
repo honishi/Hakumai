@@ -67,7 +67,7 @@ class MessageServerTests: XCTestCase {
         previous = server.previous()
 
         server = MessageServer(roomPosition: .StandA, address: "msg105.live.nicovideo.jp", port: 2845, thread: 100)
-        expected = MessageServer(roomPosition: .Arena, address: "msg104.live.nicovideo.jp", port: 2814, thread: 99)
+        expected = MessageServer(roomPosition: .Arena, address: "msg104.live.nicovideo.jp", port: 2844, thread: 99)
         previous = server.previous()
         
         XCTAssert(previous == expected, "")
@@ -88,7 +88,7 @@ class MessageServerTests: XCTestCase {
         next = server.next()
         XCTAssert(next == expected, "")
         
-        server = MessageServer(roomPosition: .StandA, address: "msg104.live.nicovideo.jp", port: 2814, thread: 100)
+        server = MessageServer(roomPosition: .StandA, address: "msg104.live.nicovideo.jp", port: 2844, thread: 100)
         expected = MessageServer(roomPosition: .StandB, address: "msg105.live.nicovideo.jp", port: 2845, thread: 101)
         next = server.next()
         XCTAssert(next == expected, "")

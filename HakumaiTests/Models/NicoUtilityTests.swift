@@ -138,7 +138,7 @@ class NicoUtilityTests: XCTestCase {
         let server0 = MessageServer(roomPosition: .Arena, address: "omsg101.live.nicovideo.jp", port: 2816, thread: 100)
         let server1 = MessageServer(roomPosition: .StandA, address: "omsg102.live.nicovideo.jp", port: 2816, thread: 101)
         let server2 = MessageServer(roomPosition: .StandB, address: "omsg103.live.nicovideo.jp", port: 2816, thread: 102)
-        let server3 = MessageServer(roomPosition: .StandC, address: "omsg104.live.nicovideo.jp", port: 2816, thread: 103)
+        let server3 = MessageServer(roomPosition: .StandC, address: "omsg104.live.nicovideo.jp", port: 2855, thread: 103)
         let server4 = MessageServer(roomPosition: .StandD, address: "omsg101.live.nicovideo.jp", port: 2817, thread: 104)
         let server5 = MessageServer(roomPosition: .StandE, address: "omsg102.live.nicovideo.jp", port: 2817, thread: 105)
         
