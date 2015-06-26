@@ -1,15 +1,15 @@
 [submodule "vendor/SSKeychain"]
 	path = vendor/SSKeychain
-	url = git@github.com:soffes/sskeychain.git
+	url = https://github.com/soffes/sskeychain.git
 [submodule "vendor/FMDB"]
 	path = vendor/FMDB
-	url = git@github.com:ccgus/fmdb.git
+	url = https://github.com/ccgus/fmdb.git
 [submodule "vendor/XCGLogger"]
 	path = vendor/XCGLogger
-	url = git@github.com:DaveWoodCom/XCGLogger.git
+	url = https://github.com/DaveWoodCom/XCGLogger.git
 [submodule "vendor/Ono"]
 	path = vendor/Ono
-	url = git@github.com:mattt/Ono.git
+	url = https://github.com/mattt/Ono.git
 [submodule "vendor/Sparkle"]
 	path = vendor/Sparkle
-	url = git@github.com:sparkle-project/Sparkle.git
+	url = https://github.com/sparkle-project/Sparkle.git

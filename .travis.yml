@@ -1,0 +1,8 @@
+language: objective-c
+osx_image: beta-xcode6.3
+before_install:
+  - gem install xcpretty
+before_script:
+  - ./script/disable_sparkle.sh
+script:
+  - xcodebuild -project Hakumai.xcodeproj -scheme Hakumai -configuration Debug -destination 'platform=OS X' CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO test | xcpretty -c
