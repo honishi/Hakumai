@@ -48,12 +48,12 @@ class MessageServerTests: XCTestCase {
         var expected: MessageServer!
         var previous: MessageServer!
         
-        server = MessageServer(roomPosition: .StandA, address: "msg102.live.nicovideo.jp", port: 2810, thread: 100)
-        expected = MessageServer(roomPosition: .Arena, address: "msg102.live.nicovideo.jp", port: 2809, thread: 99)
+        server = MessageServer(roomPosition: .StandA, address: "msg102.live.nicovideo.jp", port: 2820, thread: 100)
+        expected = MessageServer(roomPosition: .Arena, address: "msg102.live.nicovideo.jp", port: 2819, thread: 99)
         previous = server.previous()
         XCTAssert(previous == expected, "")
         
-        server = MessageServer(roomPosition: .StandA, address: "msg102.live.nicovideo.jp", port: 2805, thread: 100)
+        server = MessageServer(roomPosition: .StandA, address: "msg102.live.nicovideo.jp", port: 2815, thread: 100)
         expected = MessageServer(roomPosition: .Arena, address: "msg101.live.nicovideo.jp", port: 2814, thread: 99)
         previous = server.previous()
         XCTAssert(previous == expected, "")
@@ -78,13 +78,13 @@ class MessageServerTests: XCTestCase {
         var expected: MessageServer!
         var next: MessageServer!
         
-        server = MessageServer(roomPosition: .StandA, address: "msg102.live.nicovideo.jp", port: 2810, thread: 100)
-        expected = MessageServer(roomPosition: .StandB, address: "msg102.live.nicovideo.jp", port: 2811, thread: 101)
+        server = MessageServer(roomPosition: .StandA, address: "msg102.live.nicovideo.jp", port: 2815, thread: 100)
+        expected = MessageServer(roomPosition: .StandB, address: "msg102.live.nicovideo.jp", port: 2816, thread: 101)
         next = server.next()
         XCTAssert(next == expected, "")
         
-        server = MessageServer(roomPosition: .StandA, address: "msg102.live.nicovideo.jp", port: 2814, thread: 100)
-        expected = MessageServer(roomPosition: .StandB, address: "msg103.live.nicovideo.jp", port: 2805, thread: 101)
+        server = MessageServer(roomPosition: .StandA, address: "msg102.live.nicovideo.jp", port: 2824, thread: 100)
+        expected = MessageServer(roomPosition: .StandB, address: "msg103.live.nicovideo.jp", port: 2825, thread: 101)
         next = server.next()
         XCTAssert(next == expected, "")
         
