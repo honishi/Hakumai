@@ -9,8 +9,8 @@
 import Foundation
 import AppKit
 
-private let kWindowLevelKeyForNormal = kCGNormalWindowLevelKey
-private let kWindowLevelKeyForAlwaysOnTop = kCGFloatingWindowLevelKey
+private let kWindowLevelKeyForNormal = CGWindowLevelKey.NormalWindowLevelKey
+private let kWindowLevelKeyForAlwaysOnTop = CGWindowLevelKey.FloatingWindowLevelKey
 
 extension NSWindow {
     // http://qiita.com/rryu/items/04af65d772e81d2beb7a

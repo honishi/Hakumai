@@ -9,7 +9,7 @@
 import Foundation
 
 class ChatResult {
-    enum Status: Int, Printable {
+    enum Status: Int, CustomStringConvertible {
         case Success = 0
         case Failure
         case InvalidThread

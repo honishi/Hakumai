@@ -50,7 +50,7 @@ class NicoUtilityTests: XCTestCase {
     
     // MARK: - Room Position
     func testRoomPosition() {
-        var user = User()
+        let user = User()
 
         user.roomLabel = "x"
         XCTAssert(NicoUtility.sharedInstance.roomPositionByUser(user) == nil, "")
@@ -91,10 +91,10 @@ class NicoUtilityTests: XCTestCase {
         // level 999
         community.level = 999
         expected = [server0, server1, server2, server3, server4, server5, server6, server7]
-        println("expected:\(expected)")
+        print("expected:\(expected)")
         
         derived = NicoUtility.sharedInstance.deriveMessageServersWithOriginServer(server0, community: community)
-        println("derived:\(derived)")
+        print("derived:\(derived)")
         XCTAssert(derived == expected, "")
         
         derived = NicoUtility.sharedInstance.deriveMessageServersWithOriginServer(server1, community: community)
@@ -143,10 +143,10 @@ class NicoUtilityTests: XCTestCase {
         let server5 = MessageServer(roomPosition: .StandE, address: "omsg102.live.nicovideo.jp", port: 2830, thread: 105)
         
         expected = [server0, server1, server2, server3, server4, server5]
-        println("expected:\(expected)")
+        print("expected:\(expected)")
         
         derived = NicoUtility.sharedInstance.deriveMessageServersWithOriginServer(server0, community: community)
-        println("derived:\(derived)")
+        print("derived:\(derived)")
         XCTAssert(derived == expected, "")
         
         derived = NicoUtility.sharedInstance.deriveMessageServersWithOriginServer(server1, community: community)
@@ -159,7 +159,7 @@ class NicoUtilityTests: XCTestCase {
     // MARK: - Community
     func testLoadCommunityUser() {
         let data = self.dataForResource("community_user.html")
-        var community = Community()
+        let community = Community()
         
         NicoUtility.sharedInstance.extractUserCommunity(data, community: community)
         XCTAssert(community.title == "野田草履のからし高菜炎上", "")
@@ -169,7 +169,7 @@ class NicoUtilityTests: XCTestCase {
     
     func testLoadCommunityChannel() {
         let data = self.dataForResource("community_channel.html")
-        var community = Community()
+        let community = Community()
         
         NicoUtility.sharedInstance.extractChannelCommunity(data, community: community)
         XCTAssert(community.title == "暗黒黙示録", "")

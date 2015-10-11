@@ -32,7 +32,13 @@ class ApiHelper {
         let directoryExists = NSFileManager.defaultManager().fileExistsAtPath(ApiHelper.applicationDirectoryPath())
         
         if !directoryExists {
-            let created = NSFileManager.defaultManager().createDirectoryAtPath(ApiHelper.applicationDirectoryPath(), withIntermediateDirectories: false, attributes: nil, error: nil)
+            let created: Bool
+            do {
+                try NSFileManager.defaultManager().createDirectoryAtPath(ApiHelper.applicationDirectoryPath(), withIntermediateDirectories: false, attributes: nil)
+                created = true
+            } catch _ {
+                created = false
+            }
             
             if created {
                 log.debug("created application directory")
@@ -44,7 +50,7 @@ class ApiHelper {
     }
 
     class func applicationDirectoryPath() -> String {
-        let appSupportDirectory = NSSearchPathForDirectoriesInDomains(.ApplicationSupportDirectory, .UserDomainMask, true)[0] as! String
+        let appSupportDirectory = NSSearchPathForDirectoriesInDomains(.ApplicationSupportDirectory, .UserDomainMask, true)[0] 
         
         var bundleIdentifier = ""
         if let bi = NSBundle.mainBundle().infoDictionary?["CFBundleIdentifier"] as? String {

@@ -86,7 +86,7 @@ class ChromeCookie {
     private class func queryEncryptedCookie() -> NSData? {
         var encryptedCookie: NSData?
         
-        let appSupportDirectory = NSSearchPathForDirectoriesInDomains(.ApplicationSupportDirectory, .UserDomainMask, true)[0] as! String
+        let appSupportDirectory = NSSearchPathForDirectoriesInDomains(.ApplicationSupportDirectory, .UserDomainMask, true)[0] 
         let database = FMDatabase(path: appSupportDirectory + kDatabasePath)
         
         let query = NSString(format: "SELECT host_key, name, encrypted_value FROM cookies " +
@@ -94,13 +94,13 @@ class ChromeCookie {
         
         database.open()
         
-        var rows = database.executeQuery(query as! String, withArgumentsInArray: [""])
+        let rows = database.executeQuery(query as String, withArgumentsInArray: [""])
         
         while (rows != nil && rows.next()) {
             var name = rows.stringForColumn("name")
             // log.debug(name)
             
-            var encryptedValue = rows.dataForColumn("encrypted_value")
+            let encryptedValue = rows.dataForColumn("encrypted_value")
             // log.debug(encryptedValue)
             // we could not extract string from binary here
             

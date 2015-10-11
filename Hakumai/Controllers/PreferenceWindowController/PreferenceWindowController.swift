@@ -27,7 +27,7 @@ class PreferenceWindowController: NSWindowController {
     
     // MARK: Properties for Singleton
     class func generateInstance() -> PreferenceWindowController {
-        let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)!
+        let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
         let preferenceWindowController = storyboard.instantiateControllerWithIdentifier(kStoryboardIdPreferenceWindowController) as! PreferenceWindowController
         
         preferenceWindowController.window?.center()
@@ -101,7 +101,7 @@ class PreferenceWindowController: NSWindowController {
         var frame = self.window!.frame
 
         let titleHeight: CGFloat = 22
-        var resizedHeight = viewSize.height + titleHeight + self.toolbarHeight()
+        let resizedHeight = viewSize.height + titleHeight + self.toolbarHeight()
         
         frame.origin.y += frame.size.height - resizedHeight
         frame.size.height = resizedHeight

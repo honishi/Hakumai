@@ -20,7 +20,7 @@ class KeychainUtility {
         if let accounts = SSKeychain.accountsForService(serviceName) {
             for account in accounts {
                 if let accountName = (account as? NSDictionary)?[kSSKeychainAccountKey] as? NSString {
-                    if SSKeychain.deletePasswordForService(serviceName, account: accountName as! String) == true {
+                    if SSKeychain.deletePasswordForService(serviceName, account: accountName as String) == true {
                         log.debug("completed to delete account from keychain:[\(accountName)]")
                     }
                     else {
@@ -57,7 +57,7 @@ class KeychainUtility {
             }
             
             log.debug("found account in keychain:[\(accountName!)]")
-            return (accountName! as! String, password!)
+            return (accountName! as String, password!)
         }
         
         log.debug("found no account in keychain")

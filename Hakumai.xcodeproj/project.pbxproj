@@ -818,6 +818,8 @@
 		DB2AE0B61A0EE2FD00B1CE4D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftMigration = 0700;
+				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 0610;
 				ORGANIZATIONNAME = "Hiroyuki Onishi";
 				TargetAttributes = {

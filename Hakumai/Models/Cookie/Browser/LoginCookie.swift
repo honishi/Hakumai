@@ -69,7 +69,7 @@ class LoginCookie {
         }
         
         for cookie in cookies! {
-            cookieStorage.deleteCookie((cookie as! NSHTTPCookie))
+            cookieStorage.deleteCookie((cookie ))
         }
     }
     
@@ -82,9 +82,9 @@ class LoginCookie {
         }
         
         for cookie in cookies! {
-            let castedCookie = (cookie as! NSHTTPCookie)
+            let castedCookie = (cookie )
             if castedCookie.name == "user_session" {
-                return castedCookie.value()!
+                return castedCookie.value
             }
         }
         

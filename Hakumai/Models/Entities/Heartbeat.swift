@@ -16,9 +16,9 @@ private let kHeartbeatErrorCodes = [
     "NOTFOUND_SLOT",
     "NOTFOUND_USERLIVESLOT"]
 
-class Heartbeat: Printable {
+class Heartbeat: CustomStringConvertible {
     // MARK: - Enums
-    enum Status: Int, Printable {
+    enum Status: Int, CustomStringConvertible {
         case Ok = 0
         case Fail
         
@@ -27,7 +27,7 @@ class Heartbeat: Printable {
         }
     }
     
-    enum ErrorCode: Int, Printable {
+    enum ErrorCode: Int, CustomStringConvertible {
         case NotFoundSlot = 0
         case NotFoundUserLiveSlot
         

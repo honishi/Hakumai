@@ -335,7 +335,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     
     func roomListenerDidFinishListening(roomListener: RoomListener) {
         objc_sync_enter(self)
-        if let index = find(self.roomListeners, roomListener) {
+        if let index = self.roomListeners.indexOf(roomListener) {
             self.roomListeners.removeAtIndex(index)
         }
         objc_sync_exit(self)
@@ -422,7 +422,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     
     private func reconnectToLastLive() {
         self.delegate?.nicoUtilityWillReconnectToLive(self)
-        self.disconnect(reserveToReconnect: true)
+        self.disconnect(true)
     }
     
     private func connectToLive(liveNumber: Int?, userSessionCookie: String?) {
@@ -445,7 +445,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         
         if 0 < self.roomListeners.count {
             log.debug("already has established connection, so disconnect and sleep ...")
-            self.disconnect(reserveToReconnect: true)
+            self.disconnect(true)
             return
         }
         
@@ -471,7 +471,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
                 for _ in 0...self.messageServer!.roomPosition.rawValue {
                     self.openNewMessageServer()
                 }
-                self.scheduleHeartbeatTimer(immediateFire: true)
+                self.scheduleHeartbeatTimer(true)
             }
             
             func communityFailure(reason: String) {
@@ -646,7 +646,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             log.info("created room listener instance:\(listener)")
             
             dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
-                listener.openSocket(resFrom: kDefaultResFrom)
+                listener.openSocket(kDefaultResFrom)
             })
         }
         
@@ -758,7 +758,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             
             if let interval = heartbeat?.waitTime {
                 self.stopHeartbeatTimer()
-                self.scheduleHeartbeatTimer(immediateFire: false, interval: NSTimeInterval(interval))
+                self.scheduleHeartbeatTimer(false, interval: NSTimeInterval(interval))
             }
         }
         

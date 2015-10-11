@@ -37,7 +37,7 @@ class ColoredView: NSView {
         self.wantsLayer = true
     }
 
-    override func drawLayer(layer: CALayer!, inContext ctx: CGContext!) {
+    override func drawLayer(layer: CALayer, inContext ctx: CGContext) {
         CGContextSetFillColorWithColor(ctx, self.fillColor.CGColor)
         CGContextFillRect(ctx, self.bounds)
     }

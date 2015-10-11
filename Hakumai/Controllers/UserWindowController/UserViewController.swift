@@ -153,7 +153,7 @@ class UserViewController: NSViewController {
             (view as! ScoreTableCellView).chat = chat
         case kCommentColumnIdentifier:
             let (content, attributes) = self.contentAndAttributesForMessage(message)
-            attributed = NSAttributedString(string: content as! String, attributes: attributes)
+            attributed = NSAttributedString(string: content as String, attributes: attributes)
         default:
             break
         }

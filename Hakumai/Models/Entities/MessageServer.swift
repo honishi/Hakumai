@@ -32,7 +32,7 @@ private let kMessageServersChannel: [(serverNumber: Int, port: Int)] = [
     (105, 2869), (106, 2882)
 ]
 
-class MessageServer: Printable {
+class MessageServer: CustomStringConvertible {
     let roomPosition: RoomPosition
     let address: String
     let port: Int
@@ -71,21 +71,21 @@ class MessageServer: Printable {
         return self.neighbor(direction: 1)
     }
     
-    func neighbor(#direction: Int) -> MessageServer? {
+    func neighbor(direction direction: Int) -> MessageServer? {
         assert(direction == -1 || direction == 1)
         
         let roomPosition = RoomPosition(rawValue: self.roomPosition.rawValue + direction)
         var address = self.address
-        var port = self.port
+        let port = self.port
         let thread = self.thread + direction
 
-        var serverNumber = MessageServer.extractServerNumber(address)
+        let serverNumber = MessageServer.extractServerNumber(address)
         
         if serverNumber == nil {
             return nil
         }
         
-        var serverIndex = MessageServer.serverIndexWithChannel(self.isChannel, serverNumber: serverNumber!, port: port)
+        let serverIndex = MessageServer.serverIndexWithChannel(self.isChannel, serverNumber: serverNumber!, port: port)
         
         if serverIndex == nil {
             return nil
@@ -114,7 +114,7 @@ class MessageServer: Printable {
         let regexp = "\\D+(\\d+).+"
         let serverNumber = address.extractRegexpPattern(regexp)
         
-        return serverNumber?.toInt()
+        return Int(serverNumber?)
     }
     
     class func serverIndexWithChannel(isChannel: Bool, serverNumber: Int, port: Int) -> Int? {
@@ -157,8 +157,8 @@ class MessageServer: Printable {
         // split server address like followings, and reconstruct using given server number
         // - msg102.live.nicovideo.jp (user)
         // - omsg103.live.nicovideo.jp (channel)
-        let regexp = NSRegularExpression(pattern: "(\\D+)\\d+(.+)", options: nil, error: nil)!
-        let matched = regexp.matchesInString(baseAddress, options: nil, range: NSMakeRange(0, count(baseAddress.utf16)))
+        let regexp = try! NSRegularExpression(pattern: "(\\D+)\\d+(.+)", options: [])
+        let matched = regexp.matchesInString(baseAddress, options: [], range: NSMakeRange(0, baseAddress.utf16.count))
         
         let hostPrefix = MessageServer.substringFromBaseString(baseAddress, nsRange: matched[0].rangeAtIndex(1))
         let domain = MessageServer.substringFromBaseString(baseAddress, nsRange: matched[0].rangeAtIndex(2))
@@ -167,8 +167,8 @@ class MessageServer: Printable {
     }
     
     class func substringFromBaseString(base: String, nsRange: NSRange) -> String {
-        let start = advance(base.startIndex, nsRange.location)
-        let end = advance(base.startIndex, nsRange.location + nsRange.length)
+        let start = base.startIndex.advancedBy(nsRange.location)
+        let end = base.startIndex.advancedBy(nsRange.location + nsRange.length)
         let range = Range<String.Index>(start: start, end: end)
         let substring = base.substringWithRange(range)
         

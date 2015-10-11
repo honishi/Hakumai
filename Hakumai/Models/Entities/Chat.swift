@@ -11,7 +11,7 @@ import Foundation
 // regular expression
 private let kRegexpSeatNo = "/hb ifseetno (\\d+)"
 
-class Chat: Printable {
+class Chat: CustomStringConvertible {
     var internalNo: Int?
     var roomPosition: RoomPosition?
     var no: Int?
@@ -40,7 +40,7 @@ class Chat: Printable {
     }
     
     var kickOutSeatNo: Int? {
-        return self.comment?.extractRegexpPattern(kRegexpSeatNo)?.toInt()
+        return Int(self.comment?.extractRegexpPattern(kRegexpSeatNo)?)
     }
     
     var description: String {
@@ -62,8 +62,8 @@ class Chat: Printable {
             return false
         }
         
-        let regexp = NSRegularExpression(pattern: "^\\d+$", options: nil, error: nil)!
-        let matched = regexp.firstMatchInString(userId!, options: nil, range: NSMakeRange(0, count(userId!.utf16)))
+        let regexp = try! NSRegularExpression(pattern: "^\\d+$", options: [])
+        let matched = regexp.firstMatchInString(userId!, options: [], range: NSMakeRange(0, userId!.utf16.count))
         
         return matched != nil ? true : false
     }

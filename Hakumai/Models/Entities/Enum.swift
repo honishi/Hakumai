@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum RoomPosition: Int, Printable {
+enum RoomPosition: Int, CustomStringConvertible {
     case Arena = 0
     case StandA
     case StandB
@@ -138,7 +138,7 @@ enum RoomPosition: Int, Printable {
     }
 }
 
-enum Premium: Int, Printable {
+enum Premium: Int, CustomStringConvertible {
     case Ippan = 0
     case Premium = 1
     case System = 2     // '/disconnect'

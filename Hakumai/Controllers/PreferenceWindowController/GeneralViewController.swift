@@ -51,7 +51,7 @@ class GeneralViewController: NSViewController {
 
     // MARK: - Object Lifecycle
     class func generateInstance() -> GeneralViewController {
-        let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)!
+        let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
         return (storyboard.instantiateControllerWithIdentifier(kStoryboardIdGeneralViewController) as! GeneralViewController)
     }
     
@@ -118,11 +118,11 @@ class GeneralViewController: NSViewController {
                 self.checkAccountStatusLabel.stringValue = "Status: Success"
                 
                 KeychainUtility.removeAllAccountsInKeychain()
-                KeychainUtility.setAccountToKeychainWith(self.mailAddress as! String, password: self.password as! String)
+                KeychainUtility.setAccountToKeychainWith(self.mailAddress as String, password: self.password as String)
             })
         }
 
         self.progressIndicator.startAnimation(self)
-        CookieUtility.requestLoginCookieWithMailAddress(self.mailAddress as! String, password: self.password as! String, completion: completion)
+        CookieUtility.requestLoginCookieWithMailAddress(self.mailAddress as String, password: self.password as String, completion: completion)
     }
 }
