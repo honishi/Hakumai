@@ -60,11 +60,7 @@ class RoomPositionTableCellView: NSTableCellView {
             return UIHelper.roomColorStandI()
         case .StandJ:
             return UIHelper.roomColorStandJ()
-        default:
-            break
         }
-        
-        return NSColor.grayColor()
     }
     
     func stringForRoomPosition(roomPosition: RoomPosition?) -> String {

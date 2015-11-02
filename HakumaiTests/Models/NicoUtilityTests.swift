@@ -72,7 +72,6 @@ class NicoUtilityTests: XCTestCase {
     }
     
     func testDeriveMessageServersUser() {
-        var server: MessageServer!
         var expected: [MessageServer]
         var derived: [MessageServer]
         
@@ -128,7 +127,6 @@ class NicoUtilityTests: XCTestCase {
     }
     
     func testDeriveMessageServersChannel() {
-        var server: MessageServer!
         var expected: [MessageServer]
         var derived: [MessageServer]
         

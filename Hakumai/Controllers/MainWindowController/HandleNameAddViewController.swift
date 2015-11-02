@@ -38,7 +38,7 @@ class HandleNameAddViewController: NSViewController {
         }
         
         if self.completion != nil {
-            self.completion!(cancelled: false, handleName: self.handleName as? String)
+            self.completion!(cancelled: false, handleName: self.handleName as String)
         }
     }
     

@@ -53,6 +53,7 @@ extension NicoUtility {
         } catch let error1 as NSError {
             error = error1
             xmlDocument = nil
+            XCGLogger.error("\(error)")
         }
         let rootElement = xmlDocument?.rootElement()
         
@@ -77,6 +78,7 @@ extension NicoUtility {
         } catch let error1 as NSError {
             error = error1
             xmlDocument = nil
+            XCGLogger.error("\(error)")
         }
         let rootElement = xmlDocument?.rootElement()
         
@@ -102,9 +104,10 @@ extension NicoUtility {
         let xmlDocument: NSXMLDocument?
         do {
             xmlDocument = try NSXMLDocument(data: xmlData, options: 0)
-        } catch var error1 as NSError {
+        } catch let error1 as NSError {
             error = error1
             xmlDocument = nil
+            XCGLogger.error("\(error)")
         }
         let rootElement = xmlDocument?.rootElement()
         
@@ -175,9 +178,10 @@ extension NicoUtility {
         let htmlDocument: ONOXMLDocument!
         do {
             htmlDocument = try ONOXMLDocument.HTMLDocumentWithData(htmlData)
-        } catch var error1 as NSError {
+        } catch let error1 as NSError {
             error = error1
             htmlDocument = nil
+            XCGLogger.error("\(error)")
         }
         let rootElement = htmlDocument?.rootElement
         
@@ -233,6 +237,7 @@ extension NicoUtility {
         } catch let error1 as NSError {
             error = error1
             htmlDocument = nil
+            XCGLogger.error("\(error)")
         }
         let rootElement = htmlDocument?.rootElement
         
@@ -253,6 +258,7 @@ extension NicoUtility {
         } catch let error1 as NSError {
             error = error1
             xmlDocument = nil
+            XCGLogger.error("\(error)")
         }
         let rootElement = xmlDocument?.rootElement()
         
