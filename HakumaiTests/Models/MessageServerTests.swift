@@ -49,27 +49,28 @@ class MessageServerTests: XCTestCase {
         var previous: MessageServer!
         
         server = MessageServer(roomPosition: .StandA, address: "msg102.live.nicovideo.jp", port: 2820, thread: 100)
-        expected = MessageServer(roomPosition: .Arena, address: "msg102.live.nicovideo.jp", port: 2819, thread: 99)
+        expected = MessageServer(roomPosition: .Arena, address: "msg101.live.nicovideo.jp", port: 2810, thread: 99)
         previous = server.previous()
         XCTAssert(previous == expected, "")
         
         server = MessageServer(roomPosition: .StandA, address: "msg102.live.nicovideo.jp", port: 2815, thread: 100)
-        expected = MessageServer(roomPosition: .Arena, address: "msg101.live.nicovideo.jp", port: 2814, thread: 99)
+        expected = MessageServer(roomPosition: .Arena, address: "msg101.live.nicovideo.jp", port: 2805, thread: 99)
         previous = server.previous()
         XCTAssert(previous == expected, "")
         
         server = MessageServer(roomPosition: .StandA, address: "msg101.live.nicovideo.jp", port: 2805, thread: 100)
         expected = MessageServer(roomPosition: .Arena, address: "msg105.live.nicovideo.jp", port: 2854, thread: 99)
         previous = server.previous()
-        
+        XCTAssert(previous == expected, "")
+
         server = MessageServer(roomPosition: .StandA, address: "msg105.live.nicovideo.jp", port: 2852, thread: 100)
-        expected = MessageServer(roomPosition: .Arena, address: "msg105.live.nicovideo.jp", port: 2851, thread: 99)
+        expected = MessageServer(roomPosition: .Arena, address: "msg104.live.nicovideo.jp", port: 2842, thread: 99)
         previous = server.previous()
+        XCTAssert(previous == expected, "")
 
         server = MessageServer(roomPosition: .StandA, address: "msg105.live.nicovideo.jp", port: 2845, thread: 100)
-        expected = MessageServer(roomPosition: .Arena, address: "msg104.live.nicovideo.jp", port: 2844, thread: 99)
+        expected = MessageServer(roomPosition: .Arena, address: "msg104.live.nicovideo.jp", port: 2835, thread: 99)
         previous = server.previous()
-        
         XCTAssert(previous == expected, "")
     }
     
@@ -79,22 +80,22 @@ class MessageServerTests: XCTestCase {
         var next: MessageServer!
         
         server = MessageServer(roomPosition: .StandA, address: "msg102.live.nicovideo.jp", port: 2815, thread: 100)
-        expected = MessageServer(roomPosition: .StandB, address: "msg102.live.nicovideo.jp", port: 2816, thread: 101)
-        next = server.next()
-        XCTAssert(next == expected, "")
-        
-        server = MessageServer(roomPosition: .StandA, address: "msg102.live.nicovideo.jp", port: 2824, thread: 100)
         expected = MessageServer(roomPosition: .StandB, address: "msg103.live.nicovideo.jp", port: 2825, thread: 101)
         next = server.next()
         XCTAssert(next == expected, "")
         
+        server = MessageServer(roomPosition: .StandA, address: "msg102.live.nicovideo.jp", port: 2824, thread: 100)
+        expected = MessageServer(roomPosition: .StandB, address: "msg103.live.nicovideo.jp", port: 2834, thread: 101)
+        next = server.next()
+        XCTAssert(next == expected, "")
+        
         server = MessageServer(roomPosition: .StandA, address: "msg104.live.nicovideo.jp", port: 2844, thread: 100)
-        expected = MessageServer(roomPosition: .StandB, address: "msg105.live.nicovideo.jp", port: 2845, thread: 101)
+        expected = MessageServer(roomPosition: .StandB, address: "msg105.live.nicovideo.jp", port: 2854, thread: 101)
         next = server.next()
         XCTAssert(next == expected, "")
         
         server = MessageServer(roomPosition: .StandA, address: "msg105.live.nicovideo.jp", port: 2852, thread: 100)
-        expected = MessageServer(roomPosition: .StandB, address: "msg105.live.nicovideo.jp", port: 2853, thread: 101)
+        expected = MessageServer(roomPosition: .StandB, address: "msg101.live.nicovideo.jp", port: 2813, thread: 101)
         next = server.next()
         XCTAssert(next == expected, "")
 
