@@ -41,8 +41,6 @@ class PremiumTableCellView: NSTableCellView {
             image = NSImage(named: kImageNameIppan)!
         case .System, .Caster, .Operator, .BSP:
             image = NSImage(named: kImageNameMisc)!
-        default:
-            break
         }
         
         return image

@@ -14,7 +14,7 @@ import Foundation
 // based on http://stackoverflow.com/a/24144365
 extension String {
     subscript (i: Int) -> Character {
-        return Array(self)[i]
+        return Array(self.characters)[i]
     }
     
     // "立ち見A列".extractRegexpPattern("立ち見(\\w)列") -> Optional("A")
@@ -24,12 +24,12 @@ extension String {
         // see details at http://stackoverflow.com/a/27192734
         let nsStringSelf = (self as NSString)
         
-        let regexp: NSRegularExpression! = NSRegularExpression(pattern: pattern, options: nil, error: nil)
+        let regexp: NSRegularExpression! = try? NSRegularExpression(pattern: pattern, options: [])
         if regexp == nil {
             return nil
         }
         
-        let matched = regexp.firstMatchInString(nsStringSelf as! String, options: nil, range: NSMakeRange(0, nsStringSelf.length))
+        let matched = regexp.firstMatchInString(nsStringSelf as String, options: [], range: NSMakeRange(0, nsStringSelf.length))
         if matched == nil {
             return nil
         }
@@ -47,22 +47,22 @@ extension String {
     func stringByRemovingPattern(pattern: String) -> String {
         let nsStringSelf = (self as NSString)
         
-        let regexp = NSRegularExpression(pattern: pattern, options: nil, error: nil)!
-        let removed = regexp.stringByReplacingMatchesInString(nsStringSelf as! String, options: nil, range: NSMakeRange(0, nsStringSelf.length), withTemplate: "")
+        let regexp = try! NSRegularExpression(pattern: pattern, options: [])
+        let removed = regexp.stringByReplacingMatchesInString(nsStringSelf as String, options: [], range: NSMakeRange(0, nsStringSelf.length), withTemplate: "")
         
         return (removed as String)
     }
     
     func numberStringWithSeparatorComma() -> String? {
-        let intValue: Int! = self.toInt()
+        let intValue: Int! = Int(self)
         
         if intValue == nil {
             return nil
         }
         
-        var number = NSNumber(integer: intValue)
+        let number = NSNumber(integer: intValue)
         
-        var formatter = NSNumberFormatter()
+        let formatter = NSNumberFormatter()
         formatter.numberStyle = .DecimalStyle
         formatter.groupingSeparator = ","
         formatter.groupingSize = 3

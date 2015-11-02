@@ -21,7 +21,7 @@ private let log = XCGLogger.defaultInstance()
 class LoginCookie {
     // MARK: - Public Functions
     class func requestCookieWithMailAddress(mailAddress: String, password: String, completion: (userSessionCookie: String?) -> Void) {
-        func httpCompletion(response: NSURLResponse!, data: NSData!, connectionError: NSError!) {
+        func httpCompletion(response: NSURLResponse?, data: NSData?, connectionError: NSError?) {
             if connectionError != nil {
                 log.error("login failed. connection error:[\(connectionError)]")
                 completion(userSessionCookie: nil)
@@ -50,7 +50,7 @@ class LoginCookie {
         
         let parameters = "mail=\(mailAddress)&password=\(password)"
         
-        var request = NSMutableURLRequest(URL: NSURL(string: kLoginUrl)!)
+        let request = NSMutableURLRequest(URL: NSURL(string: kLoginUrl)!)
         request.setValue(kUserAgent, forHTTPHeaderField: "User-Agent")
         request.HTTPMethod = "POST"
         request.HTTPBody = parameters.dataUsingEncoding(NSUTF8StringEncoding)
@@ -69,7 +69,7 @@ class LoginCookie {
         }
         
         for cookie in cookies! {
-            cookieStorage.deleteCookie((cookie as! NSHTTPCookie))
+            cookieStorage.deleteCookie((cookie ))
         }
     }
     
@@ -82,9 +82,9 @@ class LoginCookie {
         }
         
         for cookie in cookies! {
-            let castedCookie = (cookie as! NSHTTPCookie)
+            let castedCookie = (cookie )
             if castedCookie.name == "user_session" {
-                return castedCookie.value()!
+                return castedCookie.value
             }
         }
         

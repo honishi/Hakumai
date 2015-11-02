@@ -16,11 +16,11 @@ private let kCookiePath = "/"
 
 // Internal Http Utility
 extension NicoUtility {
-    func cookiedAsyncRequest(httpMethod: String, url: NSURL, parameters: [String: Any]?, completion: (NSURLResponse!, NSData!, NSError!) -> Void) {
-        self.cookiedAsyncRequest(httpMethod, url: url.absoluteString!, parameters: parameters, completion: completion)
+    func cookiedAsyncRequest(httpMethod: String, url: NSURL, parameters: [String: Any]?, completion: (NSURLResponse?, NSData?, NSError?) -> Void) {
+        self.cookiedAsyncRequest(httpMethod, url: url.absoluteString, parameters: parameters, completion: completion)
     }
     
-    func cookiedAsyncRequest(httpMethod: String, url: String, parameters: [String: Any]?, completion: (NSURLResponse!, NSData!, NSError!) -> Void) {
+    func cookiedAsyncRequest(httpMethod: String, url: String, parameters: [String: Any]?, completion: (NSURLResponse?, NSData?, NSError?) -> Void) {
         var parameteredUrl: String = url
         let constructedParameters = self.constructParameters(parameters)
         
@@ -28,7 +28,7 @@ extension NicoUtility {
             parameteredUrl += "?" + constructedParameters!
         }
         
-        var request = self.mutableRequestWithCustomHeaders(parameteredUrl)
+        let request = self.mutableRequestWithCustomHeaders(parameteredUrl)
         request.HTTPMethod = httpMethod
         
         if httpMethod == "POST" && constructedParameters != nil {
@@ -57,15 +57,15 @@ extension NicoUtility {
         
         for (key, value) in parameters! {
             if 0 < constructed.length {
-                constructed = constructed as! String + "&"
+                constructed = constructed as String + "&"
             }
             
-            constructed = constructed as! String + "\(key)=\(value)"
+            constructed = constructed as String + "\(key)=\(value)"
         }
         
         // use custom escape character sets instead of NSCharacterSet.URLQueryAllowedCharacterSet()
         // cause we need to escape strings like this: tpos=1416842780%2E802121&comment%5Flocale=ja%2Djp
-        var allowed = NSMutableCharacterSet.alphanumericCharacterSet()
+        let allowed = NSMutableCharacterSet.alphanumericCharacterSet()
         allowed.addCharactersInString("?=&")
         
         return constructed.stringByAddingPercentEncodingWithAllowedCharacters(allowed)
@@ -73,7 +73,7 @@ extension NicoUtility {
     
     private func mutableRequestWithCustomHeaders(url: String) -> NSMutableURLRequest {
         let urlObject = NSURL(string: url)!
-        var mutableRequest = NSMutableURLRequest(URL: urlObject)
+        let mutableRequest = NSMutableURLRequest(URL: urlObject)
         
         mutableRequest.setValue(kUserAgent, forHTTPHeaderField: "User-Agent")
         

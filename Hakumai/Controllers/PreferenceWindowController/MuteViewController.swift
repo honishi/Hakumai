@@ -26,7 +26,7 @@ class MuteViewController: NSViewController {
     
     // MARK: - Object Lifecycle
     class func generateInstance() -> MuteViewController {
-        let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)!
+        let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
         return storyboard.instantiateControllerWithIdentifier(kStoryboardIdMuteViewController) as! MuteViewController
     }
     
@@ -44,7 +44,7 @@ class MuteViewController: NSViewController {
     }
     
     func addMute(completion: String -> Void) {
-        let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)!
+        let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
         let muteAddViewController = storyboard.instantiateControllerWithIdentifier(kStoryboardIdMuteAddViewController) as! MuteAddViewController
         
         muteAddViewController.completion = { (cancelled: Bool, muteStringValue: String?) -> Void in

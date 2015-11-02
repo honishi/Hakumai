@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Thread: Printable {
+class Thread: CustomStringConvertible {
     var resultCode: Int?
     var thread: Int?
     var lastRes: Int? = 0

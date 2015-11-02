@@ -50,7 +50,7 @@ class NicoUtilityTests: XCTestCase {
     
     // MARK: - Room Position
     func testRoomPosition() {
-        var user = User()
+        let user = User()
 
         user.roomLabel = "x"
         XCTAssert(NicoUtility.sharedInstance.roomPositionByUser(user) == nil, "")
@@ -72,7 +72,6 @@ class NicoUtilityTests: XCTestCase {
     }
     
     func testDeriveMessageServersUser() {
-        var server: MessageServer!
         var expected: [MessageServer]
         var derived: [MessageServer]
         
@@ -80,21 +79,21 @@ class NicoUtilityTests: XCTestCase {
         community.community = "co12345"
         
         let server0 = MessageServer(roomPosition: .Arena, address: "msg102.live.nicovideo.jp", port: 2820, thread: 100)
-        let server1 = MessageServer(roomPosition: .StandA, address: "msg102.live.nicovideo.jp", port: 2821, thread: 101)
-        let server2 = MessageServer(roomPosition: .StandB, address: "msg102.live.nicovideo.jp", port: 2822, thread: 102)
-        let server3 = MessageServer(roomPosition: .StandC, address: "msg102.live.nicovideo.jp", port: 2823, thread: 103)
-        let server4 = MessageServer(roomPosition: .StandD, address: "msg102.live.nicovideo.jp", port: 2824, thread: 104)
-        let server5 = MessageServer(roomPosition: .StandE, address: "msg103.live.nicovideo.jp", port: 2825, thread: 105)
-        let server6 = MessageServer(roomPosition: .StandF, address: "msg103.live.nicovideo.jp", port: 2826, thread: 106)
-        let server7 = MessageServer(roomPosition: .StandG, address: "msg103.live.nicovideo.jp", port: 2827, thread: 107)
+        let server1 = MessageServer(roomPosition: .StandA, address: "msg103.live.nicovideo.jp", port: 2830, thread: 101)
+        let server2 = MessageServer(roomPosition: .StandB, address: "msg104.live.nicovideo.jp", port: 2840, thread: 102)
+        let server3 = MessageServer(roomPosition: .StandC, address: "msg105.live.nicovideo.jp", port: 2850, thread: 103)
+        let server4 = MessageServer(roomPosition: .StandD, address: "msg101.live.nicovideo.jp", port: 2811, thread: 104)
+        let server5 = MessageServer(roomPosition: .StandE, address: "msg102.live.nicovideo.jp", port: 2821, thread: 105)
+        let server6 = MessageServer(roomPosition: .StandF, address: "msg103.live.nicovideo.jp", port: 2831, thread: 106)
+        let server7 = MessageServer(roomPosition: .StandG, address: "msg104.live.nicovideo.jp", port: 2841, thread: 107)
 
         // level 999
         community.level = 999
         expected = [server0, server1, server2, server3, server4, server5, server6, server7]
-        println("expected:\(expected)")
+        print("expected:\(expected)")
         
         derived = NicoUtility.sharedInstance.deriveMessageServersWithOriginServer(server0, community: community)
-        println("derived:\(derived)")
+        print("derived:\(derived)")
         XCTAssert(derived == expected, "")
         
         derived = NicoUtility.sharedInstance.deriveMessageServersWithOriginServer(server1, community: community)
@@ -128,25 +127,24 @@ class NicoUtilityTests: XCTestCase {
     }
     
     func testDeriveMessageServersChannel() {
-        var server: MessageServer!
         var expected: [MessageServer]
         var derived: [MessageServer]
         
         let community = Community()
         community.community = "ch12345"
         
-        let server0 = MessageServer(roomPosition: .Arena, address: "omsg101.live.nicovideo.jp", port: 2816, thread: 100)
-        let server1 = MessageServer(roomPosition: .StandA, address: "omsg102.live.nicovideo.jp", port: 2829, thread: 101)
-        let server2 = MessageServer(roomPosition: .StandB, address: "omsg103.live.nicovideo.jp", port: 2842, thread: 102)
-        let server3 = MessageServer(roomPosition: .StandC, address: "omsg104.live.nicovideo.jp", port: 2855, thread: 103)
-        let server4 = MessageServer(roomPosition: .StandD, address: "omsg101.live.nicovideo.jp", port: 2817, thread: 104)
-        let server5 = MessageServer(roomPosition: .StandE, address: "omsg102.live.nicovideo.jp", port: 2830, thread: 105)
+        let server0 = MessageServer(roomPosition: .Arena, address: "omsg101.live.nicovideo.jp", port: 2815, thread: 100)
+        let server1 = MessageServer(roomPosition: .StandA, address: "omsg102.live.nicovideo.jp", port: 2828, thread: 101)
+        let server2 = MessageServer(roomPosition: .StandB, address: "omsg103.live.nicovideo.jp", port: 2841, thread: 102)
+        let server3 = MessageServer(roomPosition: .StandC, address: "omsg104.live.nicovideo.jp", port: 2854, thread: 103)
+        let server4 = MessageServer(roomPosition: .StandD, address: "omsg105.live.nicovideo.jp", port: 2867, thread: 104)
+        let server5 = MessageServer(roomPosition: .StandE, address: "omsg106.live.nicovideo.jp", port: 2880, thread: 105)
         
         expected = [server0, server1, server2, server3, server4, server5]
-        println("expected:\(expected)")
+        print("expected:\(expected)")
         
         derived = NicoUtility.sharedInstance.deriveMessageServersWithOriginServer(server0, community: community)
-        println("derived:\(derived)")
+        print("derived:\(derived)")
         XCTAssert(derived == expected, "")
         
         derived = NicoUtility.sharedInstance.deriveMessageServersWithOriginServer(server1, community: community)
@@ -159,7 +157,7 @@ class NicoUtilityTests: XCTestCase {
     // MARK: - Community
     func testLoadCommunityUser() {
         let data = self.dataForResource("community_user.html")
-        var community = Community()
+        let community = Community()
         
         NicoUtility.sharedInstance.extractUserCommunity(data, community: community)
         XCTAssert(community.title == "野田草履のからし高菜炎上", "")
@@ -169,7 +167,7 @@ class NicoUtilityTests: XCTestCase {
     
     func testLoadCommunityChannel() {
         let data = self.dataForResource("community_channel.html")
-        var community = Community()
+        let community = Community()
         
         NicoUtility.sharedInstance.extractChannelCommunity(data, community: community)
         XCTAssert(community.title == "暗黒黙示録", "")

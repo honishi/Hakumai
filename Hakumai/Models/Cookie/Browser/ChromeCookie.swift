@@ -86,7 +86,7 @@ class ChromeCookie {
     private class func queryEncryptedCookie() -> NSData? {
         var encryptedCookie: NSData?
         
-        let appSupportDirectory = NSSearchPathForDirectoriesInDomains(.ApplicationSupportDirectory, .UserDomainMask, true)[0] as! String
+        let appSupportDirectory = NSSearchPathForDirectoriesInDomains(.ApplicationSupportDirectory, .UserDomainMask, true)[0] 
         let database = FMDatabase(path: appSupportDirectory + kDatabasePath)
         
         let query = NSString(format: "SELECT host_key, name, encrypted_value FROM cookies " +
@@ -94,13 +94,13 @@ class ChromeCookie {
         
         database.open()
         
-        var rows = database.executeQuery(query as! String, withArgumentsInArray: [""])
+        let rows = database.executeQuery(query as String, withArgumentsInArray: [""])
         
         while (rows != nil && rows.next()) {
-            var name = rows.stringForColumn("name")
+            // var name = rows.stringForColumn("name")
             // log.debug(name)
             
-            var encryptedValue = rows.dataForColumn("encrypted_value")
+            let encryptedValue = rows.dataForColumn("encrypted_value")
             // log.debug(encryptedValue)
             // we could not extract string from binary here
             
@@ -139,7 +139,7 @@ class ChromeCookie {
         let saltLength = size_t(salt.length)
         
         let derivedKey = NSMutableData(length: kCCKeySizeAES128)!
-        var derivedKeyPointer = UnsafeMutablePointer<UInt8>(derivedKey.mutableBytes)
+        let derivedKeyPointer = UnsafeMutablePointer<UInt8>(derivedKey.mutableBytes)
         let derivedKeyLength = size_t(derivedKey.length)
         
         let result = CCKeyDerivationPBKDF(
@@ -172,12 +172,12 @@ class ChromeCookie {
         // log.debug("encryptedPointer = \(encryptedPointer), encryptedDataLength = \(encryptedLength)")
         
         let decryptedData: NSMutableData! = NSMutableData(length: Int(encryptedLength) + kCCBlockSizeAES128)
-        var decryptedPointer = UnsafeMutablePointer<UInt8>(decryptedData.mutableBytes)
+        let decryptedPointer = UnsafeMutablePointer<UInt8>(decryptedData.mutableBytes)
         let decryptedLength = size_t(decryptedData.length)
         
         var numBytesEncrypted :size_t = 0
         
-        var cryptStatus = CCCrypt(
+        let cryptStatus = CCCrypt(
             CCOperation(kCCDecrypt),
             CCAlgorithm(kCCAlgorithmAES128),
             CCOptions(),

@@ -12,27 +12,25 @@ private let kRegExpPatternHostUser = "msg\\d+\\..+"
 private let kRegExpPatternHostChannel = "omsg\\d+\\..+"
 
 private let kMessageServersUser: [(serverNumber: Int, port: Int)] = [
-    (101, 2805), (101, 2806), (101, 2807), (101, 2808), (101, 2809),
-    (101, 2810), (101, 2811), (101, 2812), (101, 2813), (101, 2814),
-    (102, 2815), (102, 2816), (102, 2817), (102, 2818), (102, 2819),
-    (102, 2820), (102, 2821), (102, 2822), (102, 2823), (102, 2824),
-    (103, 2825), (103, 2826), (103, 2827), (103, 2828), (103, 2829),
-    (103, 2830), (103, 2831), (103, 2832), (103, 2833), (103, 2834),
-    (104, 2835), (104, 2836), (104, 2837), (104, 2838), (104, 2839),
-    (104, 2840), (104, 2841), (104, 2842), (104, 2843), (104, 2844),
-    (105, 2845), (105, 2846), (105, 2847), (105, 2848), (105, 2849),
-    (105, 2850), (105, 2851), (105, 2852), (105, 2853), (105, 2854)
+    (101, 2805), (102, 2815), (103, 2825), (104, 2835), (105, 2845),
+    (101, 2806), (102, 2816), (103, 2826), (104, 2836), (105, 2846),
+    (101, 2807), (102, 2817), (103, 2827), (104, 2837), (105, 2847),
+    (101, 2808), (102, 2818), (103, 2828), (104, 2838), (105, 2848),
+    (101, 2809), (102, 2819), (103, 2829), (104, 2839), (105, 2849),
+    (101, 2810), (102, 2820), (103, 2830), (104, 2840), (105, 2850),
+    (101, 2811), (102, 2821), (103, 2831), (104, 2841), (105, 2851),
+    (101, 2812), (102, 2822), (103, 2832), (104, 2842), (105, 2852),
+    (101, 2813), (102, 2823), (103, 2833), (104, 2843), (105, 2853),
+    (101, 2814), (102, 2824), (103, 2834), (104, 2844), (105, 2854),
 ]
 
 private let kMessageServersChannel: [(serverNumber: Int, port: Int)] = [
-    (101, 2815), (102, 2828), (103, 2841), (104, 2854),
-    (101, 2816), (102, 2829), (103, 2842), (104, 2855),
-    (101, 2817), (102, 2830), (103, 2843), (104, 2856),
-    (105, 2867), (106, 2880), (105, 2868), (106, 2881),
-    (105, 2869), (106, 2882)
+    (101, 2815), (102, 2828), (103, 2841), (104, 2854), (105, 2867), (106, 2880),
+    (101, 2816), (102, 2829), (103, 2842), (104, 2855), (105, 2868), (106, 2881),
+    (101, 2817), (102, 2830), (103, 2843), (104, 2856), (105, 2869), (106, 2882),
 ]
 
-class MessageServer: Printable {
+class MessageServer: CustomStringConvertible {
     let roomPosition: RoomPosition
     let address: String
     let port: Int
@@ -71,21 +69,21 @@ class MessageServer: Printable {
         return self.neighbor(direction: 1)
     }
     
-    func neighbor(#direction: Int) -> MessageServer? {
+    func neighbor(direction direction: Int) -> MessageServer? {
         assert(direction == -1 || direction == 1)
         
         let roomPosition = RoomPosition(rawValue: self.roomPosition.rawValue + direction)
         var address = self.address
-        var port = self.port
+        let port = self.port
         let thread = self.thread + direction
 
-        var serverNumber = MessageServer.extractServerNumber(address)
+        let serverNumber = MessageServer.extractServerNumber(address)
         
         if serverNumber == nil {
             return nil
         }
         
-        var serverIndex = MessageServer.serverIndexWithChannel(self.isChannel, serverNumber: serverNumber!, port: port)
+        let serverIndex = MessageServer.serverIndexWithChannel(self.isChannel, serverNumber: serverNumber!, port: port)
         
         if serverIndex == nil {
             return nil
@@ -114,7 +112,7 @@ class MessageServer: Printable {
         let regexp = "\\D+(\\d+).+"
         let serverNumber = address.extractRegexpPattern(regexp)
         
-        return serverNumber?.toInt()
+        return serverNumber == nil ? nil : Int(serverNumber!)
     }
     
     class func serverIndexWithChannel(isChannel: Bool, serverNumber: Int, port: Int) -> Int? {
@@ -157,8 +155,8 @@ class MessageServer: Printable {
         // split server address like followings, and reconstruct using given server number
         // - msg102.live.nicovideo.jp (user)
         // - omsg103.live.nicovideo.jp (channel)
-        let regexp = NSRegularExpression(pattern: "(\\D+)\\d+(.+)", options: nil, error: nil)!
-        let matched = regexp.matchesInString(baseAddress, options: nil, range: NSMakeRange(0, count(baseAddress.utf16)))
+        let regexp = try! NSRegularExpression(pattern: "(\\D+)\\d+(.+)", options: [])
+        let matched = regexp.matchesInString(baseAddress, options: [], range: NSMakeRange(0, baseAddress.utf16.count))
         
         let hostPrefix = MessageServer.substringFromBaseString(baseAddress, nsRange: matched[0].rangeAtIndex(1))
         let domain = MessageServer.substringFromBaseString(baseAddress, nsRange: matched[0].rangeAtIndex(2))
@@ -167,8 +165,8 @@ class MessageServer: Printable {
     }
     
     class func substringFromBaseString(base: String, nsRange: NSRange) -> String {
-        let start = advance(base.startIndex, nsRange.location)
-        let end = advance(base.startIndex, nsRange.location + nsRange.length)
+        let start = base.startIndex.advancedBy(nsRange.location)
+        let end = base.startIndex.advancedBy(nsRange.location + nsRange.length)
         let range = Range<String.Index>(start: start, end: end)
         let substring = base.substringWithRange(range)
         

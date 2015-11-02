@@ -11,7 +11,7 @@ import Foundation
 private let kRoomLabelForArena = "c[oh]\\d+"
 private let kRoomLabelForBSP = "バックステージパス"
 
-class User: Printable {
+class User: CustomStringConvertible {
     var userId: Int?
     var nickname: String?
     var isPremium: Int?

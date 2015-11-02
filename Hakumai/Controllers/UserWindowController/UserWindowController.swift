@@ -35,7 +35,7 @@ class UserWindowController: NSWindowController, NSWindowDelegate {
     }
     
     class func generateInstanceWithDelegate(delegate: UserWindowControllerDelegate?, userId: String) -> UserWindowController {
-        let storyboard = NSStoryboard(name: kStoryboardNameUserWindowController, bundle: nil)!
+        let storyboard = NSStoryboard(name: kStoryboardNameUserWindowController, bundle: nil)
         let userWindowController = storyboard.instantiateControllerWithIdentifier(kStoryboardIdUserWindowController) as! UserWindowController
         
         userWindowController.delegate = delegate

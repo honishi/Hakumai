@@ -73,8 +73,14 @@ class RoomListenerTests: XCTestCase {
     func xmlRootElementFromXMLString(xmlString: String) -> NSXMLElement {
         let wrapped = "<items>" + xmlString + "</items>"
 
-        var err: NSError?
-        let xmlDocument = NSXMLDocument(XMLString: wrapped, options: Int(NSXMLDocumentTidyXML), error: &err)
+        // var err: NSError?
+        let xmlDocument: NSXMLDocument?
+        do {
+            xmlDocument = try NSXMLDocument(XMLString: wrapped, options: Int(NSXMLDocumentTidyXML))
+        } catch _ as NSError {
+            // err = error
+            xmlDocument = nil
+        }
         let rootElement = xmlDocument!.rootElement()
 
         return rootElement!

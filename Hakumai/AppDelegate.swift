@@ -32,7 +32,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     // MARK: Application Initialize Utility
     func initializeLog() {
-        log.setup(logLevel: .Debug, showLogLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: nil)
+        log.setup(.Debug, showLogLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: nil)
     }
     
     func migrateApplicationVersion() {
@@ -46,8 +46,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             log.info("detected app first launch, no need to migrate application version")
         }
         else {
-            let lastVersionNumber = lastVersion!.toInt()!
-            let currentVersionNumber = currentVersion!.toInt()!
+            let lastVersionNumber = Int(lastVersion!)!
+            let currentVersionNumber = Int(currentVersion!)!
             
             if lastVersionNumber < currentVersionNumber {
                 // do some app version migration here
@@ -84,24 +84,27 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let defaults = NSUserDefaults.standardUserDefaults()
         
         // general
-        defaults.addObserver(self, forKeyPath: Parameters.SessionManagement, options: (.Initial | .New), context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.ShowIfseetnoCommands, options: (.Initial | .New), context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.SessionManagement, options: ([.Initial, .New]), context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.ShowIfseetnoCommands, options: ([.Initial, .New]), context: nil)
         
         // mute
-        defaults.addObserver(self, forKeyPath: Parameters.EnableMuteUserIds, options: (.Initial | .New), context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.MuteUserIds, options: (.Initial | .New), context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.EnableMuteWords, options: (.Initial | .New), context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.MuteWords, options: (.Initial | .New), context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.EnableMuteUserIds, options: ([.Initial, .New]), context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.MuteUserIds, options: ([.Initial, .New]), context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.EnableMuteWords, options: ([.Initial, .New]), context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.MuteWords, options: ([.Initial, .New]), context: nil)
         
         // misc
-        defaults.addObserver(self, forKeyPath: Parameters.AlwaysOnTop, options: (.Initial | .New), context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.AlwaysOnTop, options: ([.Initial, .New]), context: nil)
     }
 
     // MARK: - Internal Functions
     // MARK: KVO Functions
-    override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
+    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
         // log.debug("detected observing value changed: key[\(keyPath)]")
-        
+        guard let keyPath = keyPath, let change = change else {
+            return
+        }
+
         switch keyPath {
         case Parameters.SessionManagement:
             NicoUtility.sharedInstance.reserveToClearUserSessionCookie()
@@ -164,7 +167,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     // MARK: Misc
     func makeWindowAlwaysOnTop(alwaysOnTop: Bool) {
-        let window = NSApplication.sharedApplication().windows[0] as! NSWindow
+        let window = NSApplication.sharedApplication().windows[0] 
         window.alwaysOnTop = alwaysOnTop
         
         log.debug("changed always on top: \(alwaysOnTop)")

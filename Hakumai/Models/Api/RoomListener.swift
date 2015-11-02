@@ -171,22 +171,22 @@ class RoomListener : NSObject, NSStreamDelegate {
                 //fileLog.debug(readByte)
                 
                 if let readString = NSString(bytes: &readByte, length: actualRead, encoding: NSUTF8StringEncoding) {
-                    fileLog.debug("read: [ " + (readString as! String) + " ]")
+                    fileLog.debug("read: [ \(readString) ]")
                     
-                    self.parsingString = self.parsingString as! String + self.streamByRemovingNull(readString as! String)
+                    self.parsingString = self.parsingString as String + self.streamByRemovingNull(readString as String)
                     
-                    if !self.hasValidCloseBracket(self.parsingString as! String) {
+                    if !self.hasValidCloseBracket(self.parsingString as String) {
                         fileLog.warning("detected no-close-bracket stream, continue reading...")
                         continue
                     }
                     
-                    if !self.hasValidOpenBracket(self.parsingString as! String) {
+                    if !self.hasValidOpenBracket(self.parsingString as String) {
                         fileLog.warning("detected no-open-bracket stream, clearing buffer and continue reading...")
                         self.parsingString = ""
                         continue
                     }
                     
-                    self.parseInputStream(self.parsingString as! String)
+                    self.parseInputStream(self.parsingString as String)
                     self.parsingString = ""
                 }
             }
@@ -209,8 +209,8 @@ class RoomListener : NSObject, NSStreamDelegate {
 
     // MARK: Read Utility
     func streamByRemovingNull(stream: String) -> String {
-        let regexp = NSRegularExpression(pattern: "\0", options: nil, error: nil)!
-        let removed = regexp.stringByReplacingMatchesInString(stream, options: nil, range: NSMakeRange(0, count(stream.utf16)), withTemplate: "")
+        let regexp = try! NSRegularExpression(pattern: "\0", options: [])
+        let removed = regexp.stringByReplacingMatchesInString(stream, options: [], range: NSMakeRange(0, stream.utf16.count), withTemplate: "")
         
         return removed
     }
@@ -224,8 +224,8 @@ class RoomListener : NSObject, NSStreamDelegate {
     }
     
     func hasValidPatternInStream(pattern: String, stream: String) -> Bool {
-        let regexp = NSRegularExpression(pattern: pattern, options: nil, error: nil)!
-        let matched = regexp.firstMatchInString(stream, options: nil, range: NSMakeRange(0, count(stream.utf16)))
+        let regexp = try! NSRegularExpression(pattern: pattern, options: [])
+        let matched = regexp.firstMatchInString(stream, options: [], range: NSMakeRange(0, stream.utf16.count))
         
         return matched != nil ? true : false
     }
@@ -233,10 +233,17 @@ class RoomListener : NSObject, NSStreamDelegate {
     // MARK: - Parse Utility
     func parseInputStream(stream: String) {
         let wrappedStream = "<items>" + stream + "</items>"
-        fileLog.verbose("parsing: [ " + wrappedStream + " ]")
+        fileLog.verbose("parsing: [ \(wrappedStream) ]")
         
         var err: NSError?
-        let xmlDocument = NSXMLDocument(XMLString: wrappedStream, options: Int(NSXMLDocumentTidyXML), error: &err)
+        let xmlDocument: NSXMLDocument?
+        do {
+            xmlDocument = try NSXMLDocument(XMLString: wrappedStream, options: Int(NSXMLDocumentTidyXML))
+        } catch let error as NSError {
+            err = error
+            XCGLogger.error("\(err)")
+            xmlDocument = nil
+        }
         
         if xmlDocument == nil {
             fileLog.error("could not parse input stream:\(stream)")
@@ -276,20 +283,28 @@ class RoomListener : NSObject, NSStreamDelegate {
         
         for threadElement in threadElements {
             let thread = Thread()
-            
-            thread.resultCode = threadElement.attributeForName("resultcode")?.stringValue?.toInt()
-            thread.thread = threadElement.attributeForName("thread")?.stringValue?.toInt()
-            
-            if let lastRes = threadElement.attributeForName("last_res")?.stringValue?.toInt() {
-                thread.lastRes = lastRes
+
+            if let rc = threadElement.attributeForName("resultcode")?.stringValue, let intrc = Int(rc) {
+                thread.resultCode = intrc
+            }
+
+            if let th = threadElement.attributeForName("thread")?.stringValue, let intth = Int(th) {
+                thread.thread = intth
+            }
+
+            if let lr = threadElement.attributeForName("last_res")?.stringValue, let intlr = Int(lr) {
+                thread.lastRes = intlr
             }
             else {
                 thread.lastRes = 0
             }
             
             thread.ticket = threadElement.attributeForName("ticket")?.stringValue
-            thread.serverTime = threadElement.attributeForName("server_time")?.stringValue?.toInt()?.toDateAsTimeIntervalSince1970()
-            
+
+            if let st = threadElement.attributeForName("server_time")?.stringValue, let intst = Int(st) {
+                thread.serverTime = intst.toDateAsTimeIntervalSince1970()
+            }
+
             threads.append(thread)
         }
         
@@ -306,27 +321,37 @@ class RoomListener : NSObject, NSStreamDelegate {
             chat.internalNo = self.internalNo++
             chat.roomPosition = self.server?.roomPosition
             
-            if let premium = chatElement.attributeForName("premium")?.stringValue?.toInt() {
-                chat.premium = Premium(rawValue: premium)
+            if let pr = chatElement.attributeForName("premium")?.stringValue, let intpr = Int(pr) {
+                chat.premium = Premium(rawValue: intpr)
             }
             else {
                 // assume no attribute provided as Ippan(0)
                 chat.premium = Premium(rawValue: 0)
             }
             
-            if let score = chatElement.attributeForName("score")?.stringValue?.toInt() {
-                chat.score = score
+            if let sc = chatElement.attributeForName("score")?.stringValue, let intsc = Int(sc) {
+                chat.score = intsc
             }
             else {
                 chat.score = 0
             }
-            
-            chat.no = chatElement.attributeForName("no")?.stringValue?.toInt()
-            chat.date = chatElement.attributeForName("date")?.stringValue?.toInt()?.toDateAsTimeIntervalSince1970()
-            chat.dateUsec = chatElement.attributeForName("date_usec")?.stringValue?.toInt()
+
+            if let no = chatElement.attributeForName("no")?.stringValue, let intno = Int(no) {
+                chat.no = intno
+            }
+
+            if let dt = chatElement.attributeForName("date")?.stringValue, let intdt = Int(dt) {
+                chat.date = intdt.toDateAsTimeIntervalSince1970()
+            }
+
+            if let du = chatElement.attributeForName("date_usec")?.stringValue, let intdu = Int(du) {
+                chat.dateUsec = intdu
+            }
+
             if let separated = chatElement.attributeForName("mail")?.stringValue?.componentsSeparatedByString(" ") {
                 chat.mail = separated
             }
+
             chat.userId = chatElement.attributeForName("user_id")?.stringValue
             chat.comment = chatElement.stringValue
             
@@ -348,8 +373,8 @@ class RoomListener : NSObject, NSStreamDelegate {
         for chatResultElement in chatResultElements {
             let chatResult = ChatResult()
             
-            if let status = chatResultElement.attributeForName("status")?.stringValue?.toInt() {
-                chatResult.status = ChatResult.Status(rawValue: status)
+            if let st = chatResultElement.attributeForName("status")?.stringValue, let intst = Int(st) {
+                chatResult.status = ChatResult.Status(rawValue: intst)
             }
             
             chatResults.append(chatResult)

@@ -9,23 +9,19 @@
 import Foundation
 import AppKit
 
-private let kWindowLevelKeyForNormal = kCGNormalWindowLevelKey
-private let kWindowLevelKeyForAlwaysOnTop = kCGFloatingWindowLevelKey
+private let kWindowLevelKeyForNormal = CGWindowLevelKey.NormalWindowLevelKey
+private let kWindowLevelKeyForAlwaysOnTop = CGWindowLevelKey.FloatingWindowLevelKey
 
 extension NSWindow {
     // http://qiita.com/rryu/items/04af65d772e81d2beb7a
     var alwaysOnTop: Bool {
         get {
-            let windowLevelKey = Int32(kWindowLevelKeyForAlwaysOnTop)
-            let windowLevel = Int(CGWindowLevelForKey(windowLevelKey))
-            
+            let windowLevel = Int(CGWindowLevelForKey(kWindowLevelKeyForAlwaysOnTop))
             return self.level == windowLevel
         }
         
         set(newAlwaysOnTop) {
-            let key = newAlwaysOnTop ? kWindowLevelKeyForAlwaysOnTop : kWindowLevelKeyForNormal
-            
-            let windowLevelKey = Int32(key)
+            let windowLevelKey = newAlwaysOnTop ? kWindowLevelKeyForAlwaysOnTop : kWindowLevelKeyForNormal
             let windowLevel = Int(CGWindowLevelForKey(windowLevelKey))
             
             self.level = windowLevel

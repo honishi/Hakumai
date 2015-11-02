@@ -190,8 +190,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         }
         
         var rowHeight: CGFloat = 0
-        var content: String? = ""
-        
+
         let commentTableColumn = self.tableView.tableColumnWithIdentifier(kCommentColumnIdentifier)!
         let commentColumnWidth = commentTableColumn.width
         rowHeight = self.commentColumnHeight(message, width: commentColumnWidth)
@@ -254,7 +253,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             (view as! ScoreTableCellView).chat = nil
         case kCommentColumnIdentifier:
             let (content, attributes) = self.contentAndAttributesForMessage(message)
-            let attributed = NSAttributedString(string: content as! String, attributes: attributes)
+            let attributed = NSAttributedString(string: content as String, attributes: attributes)
             view.textField?.attributedStringValue = attributed
         case kUserIdColumnIdentifier:
             (view as! UserIdTableCellView).chat = nil
@@ -279,7 +278,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             (view as! ScoreTableCellView).chat = chat
         case kCommentColumnIdentifier:
             let (content, attributes) = self.contentAndAttributesForMessage(message)
-            attributed = NSAttributedString(string: content as! String, attributes: attributes)
+            attributed = NSAttributedString(string: content as String, attributes: attributes)
         case kUserIdColumnIdentifier:
             (view as! UserIdTableCellView).chat = chat
         case kPremiumColumnIdentifier:
@@ -300,9 +299,9 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
     
     // MARK: Utility
-    func contentAndAttributesForMessage(message: Message) -> (NSString, [NSString: AnyObject]) {
+    func contentAndAttributesForMessage(message: Message) -> (NSString, [String: AnyObject]) {
         var content: NSString!
-        var attributes: [NSString: AnyObject]!
+        var attributes: [String: AnyObject]!
         
         if message.messageType == .System {
             content = message.message!
@@ -335,7 +334,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         return false
     }
     
-    func handleCommentTextFieldKeyUpDown(#isMovedUp: Bool, isMovedDown: Bool) {
+    func handleCommentTextFieldKeyUpDown(isMovedUp isMovedUp: Bool, isMovedDown: Bool) {
         if isMovedUp && 0 <= self.commentHistoryIndex {
             self.commentHistoryIndex! -= 1
         }
@@ -493,7 +492,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             content = message.chat!.comment
         }
         
-        log.debug("[ " + content! + " ]")
+        log.debug("[ \(content!) ]")
     }
     
     func shouldTableViewScrollToBottom() -> Bool {
@@ -551,14 +550,14 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     func userWindowControllerDidClose(userWindowController: UserWindowController) {
         log.debug("")
         
-        if let index = find(self.userWindowControllers, userWindowController) {
+        if let index = self.userWindowControllers.indexOf(userWindowController) {
             self.userWindowControllers.removeAtIndex(index)
         }
     }
     
     // MARK: - Public Functions
     func showHandleNameAddViewController(chat: Chat) {
-        let storyboard = NSStoryboard(name: kStoryboardNameMainWindowController, bundle: nil)!
+        let storyboard = NSStoryboard(name: kStoryboardNameMainWindowController, bundle: nil)
         let handleNameAddViewController = storyboard.instantiateControllerWithIdentifier(kStoryboardIdHandleNameAddViewController) as! HandleNameAddViewController
         
         handleNameAddViewController.handleName = (self.defaultHandleNameWithChat(chat) ?? "")
@@ -678,16 +677,13 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
                 
             case .Chrome:
                 NicoUtility.sharedInstance.connectToLive(liveNumber, browserType: .Chrome)
-                
-            default:
-                break
             }
         }
     }
     
     @IBAction func comment(sender: AnyObject) {
         let comment = self.commentTextField.stringValue
-        if count(comment) == 0 {
+        if comment.characters.count == 0 {
             return
         }
         
@@ -820,19 +816,19 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         pattern = "http:\\/\\/live\\.nicovideo\\.jp\\/watch\\/lv(" + liveNumberPattern + ").*"
 
         if let extracted = url.extractRegexpPattern(pattern) {
-            return extracted.toInt()
+            return Int(extracted)
         }
 
         pattern = "lv(" + liveNumberPattern + ")"
 
         if let extracted = url.extractRegexpPattern(pattern) {
-            return extracted.toInt()
+            return Int(extracted)
         }
 
         pattern = "(" + liveNumberPattern + ")"
 
         if let extracted = url.extractRegexpPattern(pattern) {
-            return extracted.toInt()
+            return Int(extracted)
         }
 
         return nil

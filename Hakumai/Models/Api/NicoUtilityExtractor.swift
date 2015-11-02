@@ -17,7 +17,14 @@ extension NicoUtility {
     // MARK: - General
     func isErrorResponse(xmlData: NSData) -> (error: Bool, code: String) {
         var error: NSError?
-        let xmlDocument = NSXMLDocument(data: xmlData, options: 0, error: &error)
+        let xmlDocument: NSXMLDocument?
+        do {
+            xmlDocument = try NSXMLDocument(data: xmlData, options: 0)
+        } catch let error1 as NSError {
+            error = error1
+            XCGLogger.error("\(error)")
+            xmlDocument = nil
+        }
         let rootElement = xmlDocument?.rootElement()
         
         let status = rootElement?.attributeForName("status")?.stringValue
@@ -40,7 +47,14 @@ extension NicoUtility {
     // MARK: - GetPlayerStatus
     func extractLive(xmlData: NSData) -> Live? {
         var error: NSError?
-        let xmlDocument = NSXMLDocument(data: xmlData, options: 0, error: &error)
+        let xmlDocument: NSXMLDocument?
+        do {
+            xmlDocument = try NSXMLDocument(data: xmlData, options: 0)
+        } catch let error1 as NSError {
+            error = error1
+            xmlDocument = nil
+            XCGLogger.error("\(error)")
+        }
         let rootElement = xmlDocument?.rootElement()
         
         let live = Live()
@@ -58,7 +72,14 @@ extension NicoUtility {
     
     func extractUser(xmlData: NSData) -> User? {
         var error: NSError?
-        let xmlDocument = NSXMLDocument(data: xmlData, options: 0, error: &error)
+        let xmlDocument: NSXMLDocument?
+        do {
+            xmlDocument = try NSXMLDocument(data: xmlData, options: 0)
+        } catch let error1 as NSError {
+            error = error1
+            xmlDocument = nil
+            XCGLogger.error("\(error)")
+        }
         let rootElement = xmlDocument?.rootElement()
         
         let user = User()
@@ -80,7 +101,14 @@ extension NicoUtility {
     
     func extractMessageServer(xmlData: NSData, user: User) -> MessageServer? {
         var error: NSError?
-        let xmlDocument = NSXMLDocument(data: xmlData, options: 0, error: &error)
+        let xmlDocument: NSXMLDocument?
+        do {
+            xmlDocument = try NSXMLDocument(data: xmlData, options: 0)
+        } catch let error1 as NSError {
+            error = error1
+            xmlDocument = nil
+            XCGLogger.error("\(error)")
+        }
         let rootElement = xmlDocument?.rootElement()
         
         let status = rootElement?.attributeForName("status")?.stringValue
@@ -147,7 +175,14 @@ extension NicoUtility {
     // MARK: - Community
     func extractUserCommunity(htmlData: NSData, community: Community) {
         var error: NSError?
-        let htmlDocument = ONOXMLDocument.HTMLDocumentWithData(htmlData, error: &error)
+        let htmlDocument: ONOXMLDocument!
+        do {
+            htmlDocument = try ONOXMLDocument.HTMLDocumentWithData(htmlData)
+        } catch let error1 as NSError {
+            error = error1
+            htmlDocument = nil
+            XCGLogger.error("\(error)")
+        }
         let rootElement = htmlDocument?.rootElement
         
         if rootElement == nil {
@@ -159,7 +194,7 @@ extension NicoUtility {
         community.title = rootElement?.firstChildWithXPath(xpathTitle)?.stringValue().stringByRemovingPattern("\n")
         
         let xpathLevel = "//*[@id=\"cbox_profile\"]/table/tr/td[1]/table/tr[1]/td[2]/strong[1]"
-        community.level = rootElement?.firstChildWithXPath(xpathLevel)?.stringValue().toInt()
+        community.level = Int(rootElement?.firstChildWithXPath(xpathLevel)?.stringValue() ?? "1")
         
         let xpathThumbnailUrl = "//*[@id=\"cbox_profile\"]/table/tr/td[2]/p/img/@src"
         if let thumbnailUrl = rootElement?.firstChildWithXPath(xpathThumbnailUrl)?.stringValue() {
@@ -169,7 +204,14 @@ extension NicoUtility {
     
     func extractChannelCommunity(htmlData: NSData, community: Community) {
         var error: NSError?
-        let htmlDocument = ONOXMLDocument.HTMLDocumentWithData(htmlData, error: &error)
+        let htmlDocument: ONOXMLDocument!
+        do {
+            htmlDocument = try ONOXMLDocument.HTMLDocumentWithData(htmlData)
+        } catch let error1 as NSError {
+            error = error1
+            XCGLogger.error("\(error)")
+            htmlDocument = nil
+        }
         let rootElement = htmlDocument?.rootElement
         
         if rootElement == nil {
@@ -189,7 +231,14 @@ extension NicoUtility {
     // MARK: - Username
     func extractUsername(htmlData: NSData) -> String? {
         var error: NSError?
-        let htmlDocument = ONOXMLDocument.HTMLDocumentWithData(htmlData, error: &error)
+        let htmlDocument: ONOXMLDocument!
+        do {
+            htmlDocument = try ONOXMLDocument.HTMLDocumentWithData(htmlData)
+        } catch let error1 as NSError {
+            error = error1
+            htmlDocument = nil
+            XCGLogger.error("\(error)")
+        }
         let rootElement = htmlDocument?.rootElement
         
         // /html/body/div[3]/div[2]/h2/text() -> other's userpage
@@ -203,7 +252,14 @@ extension NicoUtility {
     // MARK: - Heartbeat
     func extractHeartbeat(xmlData: NSData) -> Heartbeat? {
         var error: NSError?
-        let xmlDocument = NSXMLDocument(data: xmlData, options: 0, error: &error)
+        let xmlDocument: NSXMLDocument?
+        do {
+            xmlDocument = try NSXMLDocument(data: xmlData, options: 0)
+        } catch let error1 as NSError {
+            error = error1
+            xmlDocument = nil
+            XCGLogger.error("\(error)")
+        }
         let rootElement = xmlDocument?.rootElement()
         
         let heartbeat = Heartbeat()

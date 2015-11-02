@@ -88,8 +88,7 @@ class UserViewController: NSViewController {
         }
         
         var rowHeight: CGFloat = 0
-        var content: String? = ""
-        
+
         let commentTableColumn = self.tableView.tableColumnWithIdentifier(kCommentColumnIdentifier)!
         let commentColumnWidth = commentTableColumn.width
         rowHeight = self.commentColumnHeight(message, width: commentColumnWidth)
@@ -153,7 +152,7 @@ class UserViewController: NSViewController {
             (view as! ScoreTableCellView).chat = chat
         case kCommentColumnIdentifier:
             let (content, attributes) = self.contentAndAttributesForMessage(message)
-            attributed = NSAttributedString(string: content as! String, attributes: attributes)
+            attributed = NSAttributedString(string: content as String, attributes: attributes)
         default:
             break
         }
@@ -164,9 +163,9 @@ class UserViewController: NSViewController {
     }
     
     // MARK: Utility
-    func contentAndAttributesForMessage(message: Message) -> (NSString, [NSString: AnyObject]) {
+    func contentAndAttributesForMessage(message: Message) -> (NSString, [String: AnyObject]) {
         var content: NSString!
-        var attributes: [NSString: AnyObject]!
+        var attributes: [String: AnyObject]!
         
         if message.messageType == .System {
             content = message.message!
