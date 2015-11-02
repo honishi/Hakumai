@@ -190,8 +190,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         }
         
         var rowHeight: CGFloat = 0
-        var content: String? = ""
-        
+
         let commentTableColumn = self.tableView.tableColumnWithIdentifier(kCommentColumnIdentifier)!
         let commentColumnWidth = commentTableColumn.width
         rowHeight = self.commentColumnHeight(message, width: commentColumnWidth)
@@ -300,9 +299,9 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
     
     // MARK: Utility
-    func contentAndAttributesForMessage(message: Message) -> (NSString, [NSString: AnyObject]) {
+    func contentAndAttributesForMessage(message: Message) -> (NSString, [String: AnyObject]) {
         var content: NSString!
-        var attributes: [NSString: AnyObject]!
+        var attributes: [String: AnyObject]!
         
         if message.messageType == .System {
             content = message.message!
@@ -493,7 +492,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             content = message.chat!.comment
         }
         
-        log.debug("[ " + content! + " ]")
+        log.debug("[ \(content!) ]")
     }
     
     func shouldTableViewScrollToBottom() -> Bool {
@@ -558,7 +557,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     
     // MARK: - Public Functions
     func showHandleNameAddViewController(chat: Chat) {
-        let storyboard = NSStoryboard(name: kStoryboardNameMainWindowController, bundle: nil)!
+        let storyboard = NSStoryboard(name: kStoryboardNameMainWindowController, bundle: nil)
         let handleNameAddViewController = storyboard.instantiateControllerWithIdentifier(kStoryboardIdHandleNameAddViewController) as! HandleNameAddViewController
         
         handleNameAddViewController.handleName = (self.defaultHandleNameWithChat(chat) ?? "")
@@ -678,16 +677,13 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
                 
             case .Chrome:
                 NicoUtility.sharedInstance.connectToLive(liveNumber, browserType: .Chrome)
-                
-            default:
-                break
             }
         }
     }
     
     @IBAction func comment(sender: AnyObject) {
         let comment = self.commentTextField.stringValue
-        if comment.count == 0 {
+        if comment.characters.count == 0 {
             return
         }
         

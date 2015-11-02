@@ -114,7 +114,7 @@ class MessageServer: CustomStringConvertible {
         let regexp = "\\D+(\\d+).+"
         let serverNumber = address.extractRegexpPattern(regexp)
         
-        return Int(serverNumber?)
+        return serverNumber == nil ? nil : Int(serverNumber!)
     }
     
     class func serverIndexWithChannel(isChannel: Bool, serverNumber: Int, port: Int) -> Int? {

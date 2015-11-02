@@ -20,8 +20,9 @@ extension NicoUtility {
         let xmlDocument: NSXMLDocument?
         do {
             xmlDocument = try NSXMLDocument(data: xmlData, options: 0)
-        } catch var error1 as NSError {
+        } catch let error1 as NSError {
             error = error1
+            XCGLogger.error("\(error)")
             xmlDocument = nil
         }
         let rootElement = xmlDocument?.rootElement()
@@ -189,7 +190,7 @@ extension NicoUtility {
         community.title = rootElement?.firstChildWithXPath(xpathTitle)?.stringValue().stringByRemovingPattern("\n")
         
         let xpathLevel = "//*[@id=\"cbox_profile\"]/table/tr/td[1]/table/tr[1]/td[2]/strong[1]"
-        community.level = Int(rootElement?.firstChildWithXPath(xpathLevel)?.stringValue())
+        community.level = Int(rootElement?.firstChildWithXPath(xpathLevel)?.stringValue() ?? "1")
         
         let xpathThumbnailUrl = "//*[@id=\"cbox_profile\"]/table/tr/td[2]/p/img/@src"
         if let thumbnailUrl = rootElement?.firstChildWithXPath(xpathThumbnailUrl)?.stringValue() {
@@ -202,8 +203,9 @@ extension NicoUtility {
         let htmlDocument: ONOXMLDocument!
         do {
             htmlDocument = try ONOXMLDocument.HTMLDocumentWithData(htmlData)
-        } catch var error1 as NSError {
+        } catch let error1 as NSError {
             error = error1
+            XCGLogger.error("\(error)")
             htmlDocument = nil
         }
         let rootElement = htmlDocument?.rootElement

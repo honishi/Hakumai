@@ -171,7 +171,7 @@ class RoomListener : NSObject, NSStreamDelegate {
                 //fileLog.debug(readByte)
                 
                 if let readString = NSString(bytes: &readByte, length: actualRead, encoding: NSUTF8StringEncoding) {
-                    fileLog.debug("read: [ " + (readString as! String) + " ]")
+                    fileLog.debug("read: [ \(readString) ]")
                     
                     self.parsingString = self.parsingString as String + self.streamByRemovingNull(readString as String)
                     
@@ -233,14 +233,15 @@ class RoomListener : NSObject, NSStreamDelegate {
     // MARK: - Parse Utility
     func parseInputStream(stream: String) {
         let wrappedStream = "<items>" + stream + "</items>"
-        fileLog.verbose("parsing: [ " + wrappedStream + " ]")
+        fileLog.verbose("parsing: [ \(wrappedStream) ]")
         
         var err: NSError?
         let xmlDocument: NSXMLDocument?
         do {
             xmlDocument = try NSXMLDocument(XMLString: wrappedStream, options: Int(NSXMLDocumentTidyXML))
-        } catch var error as NSError {
+        } catch let error as NSError {
             err = error
+            XCGLogger.error("\(err)")
             xmlDocument = nil
         }
         
@@ -282,20 +283,28 @@ class RoomListener : NSObject, NSStreamDelegate {
         
         for threadElement in threadElements {
             let thread = Thread()
-            
-            thread.resultCode = Int(threadElement.attributeForName("resultcode")?.stringValue?)
-            thread.thread = Int(threadElement.attributeForName("thread")?.stringValue?)
-            
-            if let lastRes = Int(threadElement.attributeForName("last_res")?.stringValue?) {
-                thread.lastRes = lastRes
+
+            if let rc = threadElement.attributeForName("resultcode")?.stringValue, let intrc = Int(rc) {
+                thread.resultCode = intrc
+            }
+
+            if let th = threadElement.attributeForName("thread")?.stringValue, let intth = Int(th) {
+                thread.thread = intth
+            }
+
+            if let lr = threadElement.attributeForName("last_res")?.stringValue, let intlr = Int(lr) {
+                thread.lastRes = intlr
             }
             else {
                 thread.lastRes = 0
             }
             
             thread.ticket = threadElement.attributeForName("ticket")?.stringValue
-            thread.serverTime = Int(threadElement.attributeForName("server_time")?.stringValue?)?.toDateAsTimeIntervalSince1970()
-            
+
+            if let st = threadElement.attributeForName("server_time")?.stringValue, let intst = Int(st) {
+                thread.serverTime = intst.toDateAsTimeIntervalSince1970()
+            }
+
             threads.append(thread)
         }
         
@@ -312,27 +321,37 @@ class RoomListener : NSObject, NSStreamDelegate {
             chat.internalNo = self.internalNo++
             chat.roomPosition = self.server?.roomPosition
             
-            if let premium = Int(chatElement.attributeForName("premium")?.stringValue?) {
-                chat.premium = Premium(rawValue: premium)
+            if let pr = chatElement.attributeForName("premium")?.stringValue, let intpr = Int(pr) {
+                chat.premium = Premium(rawValue: intpr)
             }
             else {
                 // assume no attribute provided as Ippan(0)
                 chat.premium = Premium(rawValue: 0)
             }
             
-            if let score = Int(chatElement.attributeForName("score")?.stringValue?) {
-                chat.score = score
+            if let sc = chatElement.attributeForName("score")?.stringValue, let intsc = Int(sc) {
+                chat.score = intsc
             }
             else {
                 chat.score = 0
             }
-            
-            chat.no = Int(chatElement.attributeForName("no")?.stringValue?)
-            chat.date = Int(chatElement.attributeForName("date")?.stringValue?)?.toDateAsTimeIntervalSince1970()
-            chat.dateUsec = Int(chatElement.attributeForName("date_usec")?.stringValue?)
+
+            if let no = chatElement.attributeForName("no")?.stringValue, let intno = Int(no) {
+                chat.no = intno
+            }
+
+            if let dt = chatElement.attributeForName("date")?.stringValue, let intdt = Int(dt) {
+                chat.date = intdt.toDateAsTimeIntervalSince1970()
+            }
+
+            if let du = chatElement.attributeForName("date_usec")?.stringValue, let intdu = Int(du) {
+                chat.dateUsec = intdu
+            }
+
             if let separated = chatElement.attributeForName("mail")?.stringValue?.componentsSeparatedByString(" ") {
                 chat.mail = separated
             }
+
             chat.userId = chatElement.attributeForName("user_id")?.stringValue
             chat.comment = chatElement.stringValue
             
@@ -354,8 +373,8 @@ class RoomListener : NSObject, NSStreamDelegate {
         for chatResultElement in chatResultElements {
             let chatResult = ChatResult()
             
-            if let status = Int(chatResultElement.attributeForName("status")?.stringValue?) {
-                chatResult.status = ChatResult.Status(rawValue: status)
+            if let st = chatResultElement.attributeForName("status")?.stringValue, let intst = Int(st) {
+                chatResult.status = ChatResult.Status(rawValue: intst)
             }
             
             chatResults.append(chatResult)

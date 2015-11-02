@@ -40,7 +40,8 @@ class Chat: CustomStringConvertible {
     }
     
     var kickOutSeatNo: Int? {
-        return Int(self.comment?.extractRegexpPattern(kRegexpSeatNo)?)
+        let seatNo = self.comment?.extractRegexpPattern(kRegexpSeatNo)
+        return seatNo == nil ? nil : Int(seatNo!)
     }
     
     var description: String {

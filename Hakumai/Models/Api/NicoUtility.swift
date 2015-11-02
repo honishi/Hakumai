@@ -187,7 +187,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             return
         }
         
-        func httpCompletion(response: NSURLResponse!, data: NSData!, connectionError: NSError!) {
+        func httpCompletion(response: NSURLResponse?, data: NSData?, connectionError: NSError?) {
             if connectionError != nil {
                 log.error("error in loading thumbnail request")
                 completion(imageData: nil)
@@ -234,14 +234,14 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         }
         
         self.resolveUserNameOperationQueue.addOperationWithBlock { () -> Void in
-            let resolveCompletion = { (response: NSURLResponse!, data: NSData!, connectionError: NSError!) -> Void in
+            let resolveCompletion = { (response: NSURLResponse?, data: NSData?, connectionError: NSError?) -> Void in
                 if connectionError != nil {
                     self.log.error("error in resolving username")
                     completion(userName: nil)
                     return
                 }
                 
-                let username = self.extractUsername(data)
+                let username = self.extractUsername(data!)
                 self.cachedUserNames[userId] = username
                 
                 completion(userName: username)
@@ -252,7 +252,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     func reportAsNgUser(chat: Chat, completion: (userId: String?) -> Void) {
-        func httpCompletion(response: NSURLResponse!, data: NSData!, connectionError: NSError!) {
+        func httpCompletion(response: NSURLResponse?, data: NSData?, connectionError: NSError?) {
             if connectionError != nil {
                 log.error("error in requesting ng user")
                 completion(userId: nil)
@@ -495,18 +495,18 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     private func requestGetPlayerStatus(liveNumber: Int, success: (live: Live, user: User, messageServer: MessageServer) -> Void, failure: (reason: String) -> Void) {
-        func httpCompletion(response: NSURLResponse!, data: NSData!, connectionError: NSError!) {
+        func httpCompletion(response: NSURLResponse?, data: NSData?, connectionError: NSError?) {
             if connectionError != nil {
                 let message = "error in cookied async request"
                 log.error(message)
                 failure(reason: message)
                 return
             }
-            
-            let responseString = NSString(data: data, encoding: NSUTF8StringEncoding)
-            fileLog.debug("\(responseString)")
-            
-            if data == nil {
+
+            // let responseString = NSString(data: data, encoding: NSUTF8StringEncoding)
+            // fileLog.debug("\(responseString)")
+
+            guard let data = data else {
                 let message = "error in unpacking response data"
                 log.error(message)
                 failure(reason: message)
@@ -543,24 +543,24 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     private func loadCommunity(community: Community, success: () -> Void, failure: (reason: String) -> Void) {
-        func httpCompletion(response: NSURLResponse!, data: NSData!, connectionError: NSError!) {
+        func httpCompletion(response: NSURLResponse?, data: NSData?, connectionError: NSError?) {
             if connectionError != nil {
                 let message = "error in cookied async request"
                 log.error(message)
                 failure(reason: message)
                 return
             }
-            
-            let responseString = NSString(data: data, encoding: NSUTF8StringEncoding)
+
+            // let responseString = NSString(data: data, encoding: NSUTF8StringEncoding)
             // log.debug("\(responseString)")
-            
-            if data == nil {
+
+            guard let data = data else {
                 let message = "error in unpacking response data"
                 log.error(message)
                 failure(reason: message)
                 return
             }
-            
+
             if community.isChannel == true {
                 self.extractChannelCommunity(data, community: community)
             }
@@ -661,21 +661,21 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             return
         }
         
-        func httpCompletion(response: NSURLResponse!, data: NSData!, connectionError: NSError!) {
+        func httpCompletion(response: NSURLResponse?, data: NSData?, connectionError: NSError?) {
             if connectionError != nil {
                 log.error("error in cookied async request")
                 failure()
                 return
             }
             
-            let responseString = NSString(data: data, encoding: NSUTF8StringEncoding)
-            log.debug("\(responseString)")
-            
-            if data == nil {
+            guard let data = data else {
                 log.error("error in unpacking response data")
                 failure()
                 return
             }
+
+            let responseString = NSString(data: data, encoding: NSUTF8StringEncoding)
+            log.debug("\(responseString)")
             
             let postKey = (responseString as! String).extractRegexpPattern("postkey=(.+)")
             
@@ -737,12 +737,16 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     func checkHeartbeat(timer: NSTimer) {
-        func httpCompletion(response: NSURLResponse!, data: NSData!, connectionError: NSError!) {
+        func httpCompletion(response: NSURLResponse?, data: NSData?, connectionError: NSError?) {
             if connectionError != nil {
                 log.error("error in checking heartbeat")
                 return
             }
-            
+
+            guard let data = data else {
+                return
+            }
+
             let responseString = NSString(data: data, encoding: NSUTF8StringEncoding)
             fileLog.debug("\(responseString)")
             

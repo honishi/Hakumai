@@ -32,7 +32,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     // MARK: Application Initialize Utility
     func initializeLog() {
-        log.setup(logLevel: .Debug, showLogLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: nil)
+        log.setup(.Debug, showLogLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: nil)
     }
     
     func migrateApplicationVersion() {
@@ -101,7 +101,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: KVO Functions
     override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
         // log.debug("detected observing value changed: key[\(keyPath)]")
-        
+        guard let keyPath = keyPath, let change = change else {
+            return
+        }
+
         switch keyPath {
         case Parameters.SessionManagement:
             NicoUtility.sharedInstance.reserveToClearUserSessionCookie()
