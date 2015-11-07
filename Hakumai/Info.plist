@@ -35,6 +35,13 @@
 				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
 				<true/>
 			</dict>
+			<key>nimg.jp</key>
+			<dict>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
 			<key>s3.amazonaws.com</key>
 			<dict>
 				<key>NSIncludesSubdomains</key>
