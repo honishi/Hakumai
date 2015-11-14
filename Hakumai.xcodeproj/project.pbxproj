@@ -26,8 +26,6 @@
 		DB2AE0D71A0EE2FD00B1CE4D /* HakumaiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0D61A0EE2FD00B1CE4D /* HakumaiTests.swift */; };
 		DB346B9A1A54648100137639 /* community_channel.html in Resources */ = {isa = PBXBuildFile; fileRef = DB346B991A54648100137639 /* community_channel.html */; };
 		DB346B9C1A548C3B00137639 /* CommunityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB346B9B1A548C3B00137639 /* CommunityTests.swift */; };
-		DB346BA41A5491B400137639 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DB346BA31A5491B400137639 /* libxml2.dylib */; };
-		DB346BA51A54928A00137639 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DB346BA31A5491B400137639 /* libxml2.dylib */; };
 		DB414C071A4810A5008D2F40 /* UserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB414C061A4810A5008D2F40 /* UserViewController.swift */; };
 		DB414C091A481138008D2F40 /* UserWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB414C081A481138008D2F40 /* UserWindowController.swift */; };
 		DB414C0B1A4811C4008D2F40 /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB414C0A1A4811C4008D2F40 /* Global.swift */; };
@@ -259,7 +257,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DB346BA41A5491B400137639 /* libxml2.dylib in Frameworks */,
 				DBAAA7421A0F5FEF00981004 /* SystemConfiguration.framework in Frameworks */,
 				DBAAA73E1A0F594700981004 /* Security.framework in Frameworks */,
 				B2DAE5DB6280B4F2231CF6B3 /* Pods.framework in Frameworks */,
@@ -270,7 +267,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DB346BA51A54928A00137639 /* libxml2.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
