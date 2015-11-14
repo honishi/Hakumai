@@ -2,15 +2,24 @@ PODS:
   - FMDB (2.5):
     - FMDB/standard (= 2.5)
   - FMDB/common (2.5)
+  - FMDB/SQLCipher (2.5):
+    - FMDB/common
+    - SQLCipher
   - FMDB/standard (2.5):
     - FMDB/common
   - Ono (1.2.2)
   - Sparkle (1.11.0)
+  - SQLCipher (3.1.0):
+    - SQLCipher/standard (= 3.1.0)
+  - SQLCipher/common (3.1.0)
+  - SQLCipher/standard (3.1.0):
+    - SQLCipher/common
   - SSKeychain (1.2.3)
   - XCGLogger (3.0)
 
 DEPENDENCIES:
   - FMDB (~> 2.5)
+  - FMDB/SQLCipher (~> 2.5)
   - Ono (~> 1.2.2)
   - Sparkle (~> 1.11.0)
   - SSKeychain (~> 1.2.3)
@@ -20,6 +29,7 @@ SPEC CHECKSUMS:
   FMDB: 96e8f1bcc1329e269330f99770ad4285d9003e52
   Ono: 80b1c686777d3f6d5d5ce6fcac8a74afef4ca197
   Sparkle: cf10103ef35fd89caa35373bfd772c5d6f9c7d73
+  SQLCipher: c44fcca49c31483c2489cfb79aa7a69407f3794a
   SSKeychain: 3f42991739c6c60a9cf1bbd4dff6c0d3694bcf3d
   XCGLogger: 5802533aff8bafc8b3b9776ab8972576f31d0a4e
 

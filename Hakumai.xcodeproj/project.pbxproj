@@ -24,8 +24,6 @@
 		DB2AE0C81A0EE2FD00B1CE4D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB2AE0C71A0EE2FD00B1CE4D /* Images.xcassets */; };
 		DB2AE0CB1A0EE2FD00B1CE4D /* MainWindowController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DB2AE0C91A0EE2FD00B1CE4D /* MainWindowController.storyboard */; };
 		DB2AE0D71A0EE2FD00B1CE4D /* HakumaiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0D61A0EE2FD00B1CE4D /* HakumaiTests.swift */; };
-		DB2AE11A1A0F2C8200B1CE4D /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DB2AE0F71A0EF18200B1CE4D /* libsqlite3.dylib */; };
-		DB2AE11B1A0F2D4C00B1CE4D /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DB2AE0F71A0EF18200B1CE4D /* libsqlite3.dylib */; };
 		DB346B9A1A54648100137639 /* community_channel.html in Resources */ = {isa = PBXBuildFile; fileRef = DB346B991A54648100137639 /* community_channel.html */; };
 		DB346B9C1A548C3B00137639 /* CommunityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB346B9B1A548C3B00137639 /* CommunityTests.swift */; };
 		DB346BA41A5491B400137639 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DB346BA31A5491B400137639 /* libxml2.dylib */; };
@@ -264,7 +262,6 @@
 				DB346BA41A5491B400137639 /* libxml2.dylib in Frameworks */,
 				DBAAA7421A0F5FEF00981004 /* SystemConfiguration.framework in Frameworks */,
 				DBAAA73E1A0F594700981004 /* Security.framework in Frameworks */,
-				DB2AE11A1A0F2C8200B1CE4D /* libsqlite3.dylib in Frameworks */,
 				B2DAE5DB6280B4F2231CF6B3 /* Pods.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -274,7 +271,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				DB346BA51A54928A00137639 /* libxml2.dylib in Frameworks */,
-				DB2AE11B1A0F2D4C00B1CE4D /* libsqlite3.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -620,6 +616,7 @@
 				DB0FC12F1A262CF0000FADDD /* Embed Frameworks */,
 				E7C08992B1B202101577D64D /* Embed Pods Frameworks */,
 				4BFFC268C0C279206D997090 /* Copy Pods Resources */,
+				DBD940CF1BF6EA76001BDB47 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -751,6 +748,19 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		DBD940CF1BF6EA76001BDB47 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#\n# code sign script, based on http://sparkle-project.org/documentation/cocoapods/\n#\nLOCATION=\"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\n\n# Usually set by Xcode\n# CODE_SIGN_IDENTITY=\"xDeveloper ID Application: XXX\"\n\necho \"Code Signing Sparkle.framework with Identity \\\"$CODE_SIGN_IDENTITY\\\"\"\n\n# for ci, allow signing error by using '|| true'\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Sparkle.framework/Versions/A\" || true";
 		};
 		E7C08992B1B202101577D64D /* Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
