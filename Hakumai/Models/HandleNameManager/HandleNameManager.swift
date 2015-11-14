@@ -7,12 +7,11 @@
 //
 
 import Foundation
+import FMDB
 import XCGLogger
 
-private let kHandleNamesFileName = "HandleNames.plist"
-private let kHandleNamesDictionaryKeyHandleName = "HandleName"
-private let kHandleNamesDictionaryKeyUpdateDate = "UpdateDate"
-
+private let kHandleNamesDatabase = "HandleNames"
+private let kHandleNamesTable = "handle_names"
 private let kHandleNameObsoleteThreshold = NSTimeInterval(60 * 60 * 24 * 7) // = 1 week
 
 // comment like "@5" (="あと5分")
@@ -24,14 +23,8 @@ class HandleNameManager {
     // MARK: - Properties
     static let sharedManager = HandleNameManager()
     
-    // handle name dictionary that have the following structrue:
-    // @{userId:
-    //     @{kHandleNamesDictionaryKeyHandleName: handleName,
-    //       kHandleNamesDictionaryKeyUpdateDate: updateDate}
-    // }
-    // implementing the dictionary using NSMutableDictionary instead of swift Dictionary.
-    // cause we use NSMutableDictionary's method like writeToFile() to serialize data.
-    private var handleNames = NSMutableDictionary()
+    private var database: FMDatabase!
+    private var databaseQueue: FMDatabaseQueue!
     
     private let log = XCGLogger.defaultInstance()
     
@@ -39,64 +32,47 @@ class HandleNameManager {
     init() {
         objc_sync_enter(self)
         ApiHelper.createApplicationDirectoryIfNotExists()
-        self.readHandleNamesFromDisk()
-        self.cleanObsoleteHandleNames()
+        self.database = HandleNameManager.databaseForHandleNames()
+        self.databaseQueue = HandleNameManager.databaseQueueForHandleNames()
+        self.createHandleNamesTableIfNotExists()
+        self.deleteObsoletedHandleNames()
         objc_sync_exit(self)
     }
 
     // MARK: - Public Functions
-    func extractAndUpdateHandleNameWithChat(chat: Chat) {
+    func extractAndUpdateHandleNameWithLive(live: Live, chat: Chat) {
         if chat.userId == nil || chat.comment == nil {
             return
         }
         
         if let handleName = self.extractHandleNameFromComment(chat.comment!) {
-            self.updateHandleNameWithChat(chat, handleName: handleName)
+            self.updateHandleNameWithLive(live, chat: chat, handleName: handleName)
         }
     }
     
-    func updateHandleNameWithChat(chat: Chat, handleName: String) {
-        if chat.userId == nil {
+    func updateHandleNameWithLive(live: Live, chat: Chat, handleName: String) {
+        guard let communityId = live.community.community, let userId = chat.userId else {
             return
         }
         
-        let handleNameValue = NSMutableDictionary()
-        handleNameValue[kHandleNamesDictionaryKeyHandleName] = handleName
-        handleNameValue[kHandleNamesDictionaryKeyUpdateDate] = NSDate()
+        let anonymous = !chat.isRawUserId
+        self.insertOrReplaceHandleNameWithCommunityId(communityId, userId: userId, anonymous: anonymous, handleName: handleName)
+    }
+    
+    func removeHandleNameWithLive(live: Live, chat: Chat) {
+        guard let communityId = live.community.community, let userId = chat.userId else {
+            return
+        }
 
-        objc_sync_enter(self)
-        self.handleNames[chat.userId!] = handleNameValue
-        self.writeHandleNamesToDisk()
-        objc_sync_exit(self)
+        self.deleteHandleNameWithCommunityId(communityId, userId: userId)
     }
     
-    func removeHandleNameWithChat(chat: Chat) {
-        if chat.userId == nil {
-            return
-        }
-        
-        objc_sync_enter(self)
-        self.handleNames.removeObjectForKey(chat.userId!)
-        self.writeHandleNamesToDisk()
-        objc_sync_exit(self)
-    }
-    
-    func handleNameForChat(chat: Chat) -> String? {
-        if chat.userId == nil {
+    func handleNameForLive(live: Live, chat: Chat) -> String? {
+        guard let communityId = live.community.community, let userId = chat.userId else {
             return nil
         }
         
-        var handleName: String?
-        
-        objc_sync_enter(self)
-        if let handleNameValue = self.handleNames[chat.userId!] as? NSDictionary {
-            if let cached = handleNameValue[kHandleNamesDictionaryKeyHandleName] as? String {
-                handleName = cached
-            }
-        }
-        objc_sync_exit(self)
-        
-        return handleName
+        return selectHandleNameWithCommunityId(communityId, userId: userId)
     }
     
     // MARK: - Internal Functions
@@ -113,47 +89,128 @@ class HandleNameManager {
         return handleName
     }
     
-    // MARK: Serialize Functions
-    func writeHandleNamesToDisk() {
-        self.handleNames.writeToFile(HandleNameManager.fullPathForHandleNamesFile(), atomically: true)
-    }
-    
-    func readHandleNamesFromDisk() {
-        log.debug("handle names file target:[\(HandleNameManager.fullPathForHandleNamesFile())]")
-        let nsHandleNames = NSMutableDictionary(contentsOfFile: HandleNameManager.fullPathForHandleNamesFile())
-        
-        if nsHandleNames != nil {
-            self.handleNames = nsHandleNames!
-            log.debug("found and read handle names on disk")
-        }
-        else {
-            log.debug("not found handle names on disk")
-        }
-    }
-    
-    func cleanObsoleteHandleNames() {
-        var userIdsTobeDeleted = [AnyObject]()
-        
-        for (userId, handleNameValue) in self.handleNames {
-            if Chat.isRawUserId((userId as! String)) {
-                continue
-            }
-            
-            if let updateDate = handleNameValue[kHandleNamesDictionaryKeyUpdateDate] as? NSDate {
-                let obsoleted = (updateDate.timeIntervalSinceNow < -kHandleNameObsoleteThreshold)
-                if obsoleted {
-                    userIdsTobeDeleted.append(userId)
-                }
-            }
+    // MARK: Database Functions
+    // for test
+    func dropHandleNamesTableIfExists() {
+        guard let database = self.database else {
+            return
         }
         
-        log.debug("userIdsToBeDeleted:[\(userIdsTobeDeleted)]")
-        self.handleNames.removeObjectsForKeys(userIdsTobeDeleted)
-        self.writeHandleNamesToDisk()
+        let dropTableSql = "drop table if exists " + kHandleNamesTable
+        
+        objc_sync_enter(self)
+        let success = database.executeUpdate(dropTableSql, withArgumentsInArray: nil)
+        objc_sync_exit(self)
+        
+        if !success {
+            XCGLogger.error("failed to drop table: \(database.lastErrorMessage())")
+        }
     }
     
-    // MARK: File Path
-    class func fullPathForHandleNamesFile() -> String {
-        return ApiHelper.applicationDirectoryPath() + "/" + kHandleNamesFileName
+    func createHandleNamesTableIfNotExists() {
+        guard let database = self.database else {
+            return
+        }
+
+        // currently not used but reserved columns; color, reserved1, reserved2, reserved3
+        let createTableSql = "create table if not exists " + kHandleNamesTable + " " +
+            "(community_id text, user_id text, handle_name text, anonymous integer, color text, updated integer, " +
+            "reserved1 text, reserved2 text, reserved3 text, " +
+            "primary key (community_id, user_id))"
+        
+        objc_sync_enter(self)
+        let success = database.executeUpdate(createTableSql, withArgumentsInArray: nil)
+        objc_sync_exit(self)
+        
+        if !success {
+            XCGLogger.error("failed to create table: \(database.lastErrorMessage())")
+        }
+    }
+    
+    func insertOrReplaceHandleNameWithCommunityId(communityId: String, userId: String, anonymous: Bool, handleName: String) {
+        guard self.databaseQueue != nil else {
+            XCGLogger.warning("database not ready")
+            return
+        }
+        
+        let insertSql = "insert or replace into " + kHandleNamesTable + " " +
+            "values (?, ?, ?, ?, null, strftime('%s', 'now'), null, null, null)"
+
+        self.databaseQueue.inDatabase { database in
+            database.executeUpdate(insertSql, withArgumentsInArray: [communityId, userId, handleName, anonymous])
+        }
+    }
+
+    func selectHandleNameWithCommunityId(communityId: String, userId: String) -> String? {
+        guard let database = self.database else {
+            return nil
+        }
+      
+        let selectSql = "select handle_name from " + kHandleNamesTable + " where community_id = ? and user_id = ?"
+        var handleName: String?
+        
+        objc_sync_enter(self)
+        let resultSet = database.executeQuery(selectSql, withArgumentsInArray: [communityId, userId])
+        while resultSet.next() {
+            handleName = resultSet.stringForColumn("handle_name")
+            break
+        }
+        resultSet.close()
+        objc_sync_exit(self)
+        
+        return handleName
+    }
+    
+    func deleteHandleNameWithCommunityId(communityId: String, userId: String) {
+        guard let database = self.database else {
+            return
+        }
+        
+        let deleteSql = "delete from " + kHandleNamesTable + " where community_id = ? and user_id = ?"
+        
+        objc_sync_enter(self)
+        let success = database.executeUpdate(deleteSql, withArgumentsInArray: [communityId, userId])
+        objc_sync_exit(self)
+        
+        if !success {
+            XCGLogger.error("failed to delete table: \(database.lastErrorMessage())")
+        }
+    }
+    
+    func deleteObsoletedHandleNames() {
+        guard let database = self.database else {
+            return
+        }
+        
+        let deleteSql = "delete from " + kHandleNamesTable + " where updated < ? and anonymous = 1"
+        let threshold = NSDate().timeIntervalSince1970 - kHandleNameObsoleteThreshold
+        
+        objc_sync_enter(self)
+        let success = database.executeUpdate(deleteSql, withArgumentsInArray: [threshold])
+        objc_sync_exit(self)
+        
+        if !success {
+            XCGLogger.error("failed to delete table: \(database.lastErrorMessage())")
+        }
+    }
+    
+    // MARK: Database Instance Utility
+    private class func fullPathForHandleNamesDatabase() -> String {
+        return ApiHelper.applicationDirectoryPath() + "/" + kHandleNamesDatabase
+    }
+    
+    private class func databaseForHandleNames() -> FMDatabase? {
+        let database = FMDatabase(path: HandleNameManager.fullPathForHandleNamesDatabase())
+        
+        if !database.open() {
+            XCGLogger.error("unable to open database")
+            return nil
+        }
+        
+        return database
+    }
+    
+    private class func databaseQueueForHandleNames() -> FMDatabaseQueue? {
+        return FMDatabaseQueue(path: HandleNameManager.fullPathForHandleNamesDatabase())
     }
 }

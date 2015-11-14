@@ -50,6 +50,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     let log = XCGLogger.defaultInstance()
 
     var connectedToLive = false
+    var live: Live?
     var openedRoomPosition: RoomPosition?
     var chats = [Chat]()
 
@@ -256,7 +257,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             let attributed = NSAttributedString(string: content as String, attributes: attributes)
             view.textField?.attributedStringValue = attributed
         case kUserIdColumnIdentifier:
-            (view as! UserIdTableCellView).chat = nil
+            (view as! UserIdTableCellView).info = nil
         case kPremiumColumnIdentifier:
             (view as! PremiumTableCellView).premium = nil
         default:
@@ -280,7 +281,8 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             let (content, attributes) = self.contentAndAttributesForMessage(message)
             attributed = NSAttributedString(string: content as String, attributes: attributes)
         case kUserIdColumnIdentifier:
-            (view as! UserIdTableCellView).chat = chat
+            let handleName = HandleNameManager.sharedManager.handleNameForLive(self.live!, chat: chat)
+            (view as! UserIdTableCellView).info = (handleName: handleName, userId: chat.userId, premium: chat.premium, comment: chat.comment)
         case kPremiumColumnIdentifier:
             (view as! PremiumTableCellView).premium = chat.premium
         /*
@@ -354,10 +356,14 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     
     // MARK: - NicoUtilityDelegate Functions
     func nicoUtilityWillPrepareLive(nicoUtility: NicoUtility) {
-        self.progressIndicator.startAnimation(self)
+        dispatch_async(dispatch_get_main_queue()) {
+            self.progressIndicator.startAnimation(self)
+        }
     }
 
     func nicoUtilityDidPrepareLive(nicoUtility: NicoUtility, user: User, live: Live) {
+        self.live = live
+        
         if let startTime = live.startTime {
             let beginDate = NSDate(timeInterval: kDelayToShowHbIfseetnoCommands, sinceDate: startTime)
             MessageContainer.sharedContainer.beginDateToShowHbIfseetnoCommands = beginDate
@@ -391,14 +397,18 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     
     func nicoUtilityDidFailToPrepareLive(nicoUtility: NicoUtility, reason: String) {
         self.logSystemMessageToTableView("Failed to prepare live.(\(reason))")
-        self.progressIndicator.stopAnimation(self)
+        dispatch_async(dispatch_get_main_queue()) {
+            self.progressIndicator.stopAnimation(self)
+        }
     }
 
     func nicoUtilityDidConnectToLive(nicoUtility: NicoUtility, roomPosition: RoomPosition) {
         if self.connectedToLive == false {
             self.connectedToLive = true
             self.logSystemMessageToTableView("Connected to live.")
-            self.progressIndicator.stopAnimation(self)
+            dispatch_async(dispatch_get_main_queue()) {
+                self.progressIndicator.stopAnimation(self)
+            }
         }
     }
 
@@ -424,7 +434,9 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
 
     func nicoUtilityDidReceiveChat(nicoUtility: NicoUtility, chat: Chat) {
         // log.debug("\(chat.mail),\(chat.comment)")
-        HandleNameManager.sharedManager.extractAndUpdateHandleNameWithChat(chat)
+        if let live = self.live {
+            HandleNameManager.sharedManager.extractAndUpdateHandleNameWithLive(live, chat: chat)
+        }
         self.appendTableView(chat)
         
         for userWindowController in self.userWindowControllers {
@@ -556,14 +568,14 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
     
     // MARK: - Public Functions
-    func showHandleNameAddViewController(chat: Chat) {
+    func showHandleNameAddViewControllerWithLive(live: Live, chat: Chat) {
         let storyboard = NSStoryboard(name: kStoryboardNameMainWindowController, bundle: nil)
         let handleNameAddViewController = storyboard.instantiateControllerWithIdentifier(kStoryboardIdHandleNameAddViewController) as! HandleNameAddViewController
         
-        handleNameAddViewController.handleName = (self.defaultHandleNameWithChat(chat) ?? "")
+        handleNameAddViewController.handleName = (self.defaultHandleNameWithLive(live, chat: chat) ?? "")
         handleNameAddViewController.completion = { (cancelled: Bool, handleName: String?) -> Void in
             if !cancelled {
-                HandleNameManager.sharedManager.updateHandleNameWithChat(chat, handleName: handleName!)
+                HandleNameManager.sharedManager.updateHandleNameWithLive(live, chat: chat, handleName: handleName!)
                 MainViewController.sharedInstance.refreshHandleName()
             }
             
@@ -574,10 +586,10 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         self.presentViewControllerAsSheet(handleNameAddViewController)
     }
     
-    func defaultHandleNameWithChat(chat: Chat) -> String? {
+    func defaultHandleNameWithLive(live: Live, chat: Chat) -> String? {
         var defaultHandleName: String?
         
-        if let handleName = HandleNameManager.sharedManager.handleNameForChat(chat) {
+        if let handleName = HandleNameManager.sharedManager.handleNameForLive(live, chat: chat) {
             defaultHandleName = handleName
         }
         else {

@@ -29,6 +29,10 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         return MainViewController.sharedInstance.tableView
     }
     
+    var live: Live? {
+        return MainViewController.sharedInstance.live
+    }
+    
     // MARK: - Object Lifecycle
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -54,9 +58,15 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         case self.openUrlMenuItem:
             return self.urlStringInComment(chat) != nil ? true : false
         case self.addHandleNameMenuItem:
+            if self.live == nil {
+                return false
+            }
             return (chat.isUserComment || chat.isBSPComment)
         case self.removeHandleNameMenuItem:
-            let hasHandleName = (HandleNameManager.sharedManager.handleNameForChat(chat) != nil)
+            guard let live = self.live else {
+                return false
+            }
+            let hasHandleName = (HandleNameManager.sharedManager.handleNameForLive(live, chat: chat) != nil)
             return hasHandleName
         case self.addToMuteUserMenuItem, self.reportAsNgUserMenuItem:
             return (chat.isUserComment || chat.isBSPComment)
@@ -126,13 +136,15 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     }
     
     @IBAction func addHandleName(sender: AnyObject) {
+        let live = self.live!
         let chat = MessageContainer.sharedContainer[self.tableView.clickedRow].chat!
-        MainViewController.sharedInstance.showHandleNameAddViewController(chat)
+        MainViewController.sharedInstance.showHandleNameAddViewControllerWithLive(live, chat: chat)
     }
     
     @IBAction func removeHandleName(sender: AnyObject) {
+        let live = self.live!
         let chat = MessageContainer.sharedContainer[self.tableView.clickedRow].chat!
-        HandleNameManager.sharedManager.removeHandleNameWithChat(chat)
+        HandleNameManager.sharedManager.removeHandleNameWithLive(live, chat: chat)
         MainViewController.sharedInstance.refreshHandleName()
     }
     

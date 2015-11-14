@@ -53,4 +53,15 @@ class HandleNameManagerTests: XCTestCase {
     func checkExtractHandleName(comment: String, expected: String?) {
         XCTAssert(HandleNameManager.sharedManager.extractHandleNameFromComment(comment) == expected, "")
     }
+    
+    func testInsertOrReplaceThenSelectHandleName() {
+        let communityId = "co" + String(arc4random() % 100)
+        let userId = String(arc4random() % 100)
+        let handleName = "山田"
+        
+        HandleNameManager.sharedManager.insertOrReplaceHandleNameWithCommunityId(communityId, userId: userId, anonymous: false, handleName: handleName)
+        
+        let resolved = HandleNameManager.sharedManager.selectHandleNameWithCommunityId(communityId, userId: userId)
+        XCTAssert(resolved == handleName, "")
+    }
 }
