@@ -8,11 +8,11 @@ Hakumai [![Build Status](https://travis-ci.org/honishi/Hakumai.svg?branch=develo
 project setup
 --
 ````
-git submodule update --init
-open Hakumai.xcodeproj
+pod install
+open Hakumai.xcworkspace
 ````
 
-notes about submodules
+notes about dependencies
 --
 * `XCGLogger` is general purpose logger.
 * `FMDB` is used to query chrome's cookie store in sqlite.
