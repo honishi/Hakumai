@@ -18,18 +18,16 @@ class UserIdTableCellView: NSTableCellView {
     @IBOutlet weak var userIdTextField: NSTextField!
     @IBOutlet weak var userIdImageView: NSImageView!
     
-    var chat: Chat? = nil {
+    var info: (handleName: String?, userId: String?, premium: Premium?, comment: String?)? = nil {
         didSet {
-            if self.chat == nil || self.chat?.userId == nil || self.chat?.premium == nil || self.chat?.comment == nil {
+            guard let userId = info?.userId, let premium = info?.premium else {
                 self.userIdImageView.image = nil
                 self.userIdTextField.stringValue = ""
                 return
             }
             
-            let handleName = HandleNameManager.sharedManager.handleNameForChat(self.chat!)
-            
-            self.userIdImageView.image = self.imageForHandleName(handleName, userId: self.chat!.userId!)
-            self.setUserIdLabelWithUserId(self.chat!.userId!, premium: self.chat!.premium!, handleName: handleName)
+            self.userIdImageView.image = self.imageForHandleName(info?.handleName, userId: userId)
+            self.setUserIdLabelWithUserId(userId, premium: premium, handleName: info?.handleName)
         }
     }
     

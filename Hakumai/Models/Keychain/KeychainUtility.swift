@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SSKeychain
 import XCGLogger
 
 // logger for class methods
