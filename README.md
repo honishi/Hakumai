@@ -3,7 +3,7 @@ Hakumai [![Build Status](https://travis-ci.org/honishi/Hakumai.svg?branch=develo
 * niconama comment viewer alternative for mac os x.
 * download available at [http://honishi.github.io/Hakumai](http://honishi.github.io/Hakumai).
 
-<img src="./document/screenshot/main.png" width="525px">
+<img src="./document/screenshot/main.png" width="600px">
 
 project setup
 --
