@@ -118,7 +118,18 @@
 
 #pragma mark - original functions
 + (BOOL)isAvailable {
-    return [YukkuroidClient getYukProxy] != nil;
+    BOOL available = false;
+
+    // catch exception from proxy like;
+    // 'connection went invalid while waiting for a reply'
+    @try {
+        available = [YukkuroidClient getYukProxy] != nil;
+    }
+    @catch (NSException *exception) {
+        // NSLog(@"caught, and ignore exception: %@", exception);
+    }
+    
+    return available;
 }
 
 + (NSNumber *)getVersion{

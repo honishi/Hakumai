@@ -25,6 +25,7 @@ class SpeechManager: NSObject {
     private var chatQueue: [Chat] = []
     private var voiceSpeed = kVoiceSpeedNormal
     private var timer: NSTimer?
+    private var yukkuroidAvailable = false
     
     // MARK: - Object Lifecycle
     override init() {
@@ -49,6 +50,15 @@ class SpeechManager: NSObject {
     }
     
     func dequeueChat(timer: NSTimer?) {
+        let currentAvailable = YukkuroidClient.isAvailable()
+        
+        if yukkuroidAvailable != currentAvailable {
+            objc_sync_enter(self)
+            chatQueue.removeAll()
+            objc_sync_exit(self)
+            yukkuroidAvailable = currentAvailable
+        }
+        
         objc_sync_enter(self)
         let shouldSkip = 0 == chatQueue.count || YukkuroidClient.isStillPlaying(0)
         objc_sync_exit(self)
@@ -95,6 +105,7 @@ class SpeechManager: NSObject {
             return
         }
         
+        // use explicit main queue to ensure that the timer continues to run even when caller thread ends.
         dispatch_async(dispatch_get_main_queue()) {
             self.timer = NSTimer.scheduledTimerWithTimeInterval(kDequeuChatTimerInterval, target: self,
                 selector: "dequeueChat:", userInfo: nil, repeats: true)
