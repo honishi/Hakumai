@@ -117,6 +117,10 @@
 }
 
 #pragma mark - original functions
++ (BOOL)isAvailable {
+    return [YukkuroidClient getYukProxy] != nil;
+}
+
 + (NSNumber *)getVersion{
     NSProxy *proxy = [YukkuroidClient getYukProxy];
     return [(id)proxy getVersion];

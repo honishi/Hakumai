@@ -69,6 +69,8 @@
 		DB80CA881A2575A0002636E0 /* MainViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB80CA861A2575A0002636E0 /* MainViewControllerExtensions.swift */; };
 		DB82B39C1C07207900EFE3D9 /* YukkuroidClient.m in Sources */ = {isa = PBXBuildFile; fileRef = DB82B39B1C07207900EFE3D9 /* YukkuroidClient.m */; };
 		DB82B39D1C07207900EFE3D9 /* YukkuroidClient.m in Sources */ = {isa = PBXBuildFile; fileRef = DB82B39B1C07207900EFE3D9 /* YukkuroidClient.m */; };
+		DB82B3A11C0724C000EFE3D9 /* SpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB82B3A01C0724C000EFE3D9 /* SpeechManager.swift */; };
+		DB82B3A21C0724C000EFE3D9 /* SpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB82B3A01C0724C000EFE3D9 /* SpeechManager.swift */; };
 		DB8E71B51A544A5E00C6E696 /* NicoUtilityExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8E71B41A544A5E00C6E696 /* NicoUtilityExtractor.swift */; };
 		DB8E71B61A544A5E00C6E696 /* NicoUtilityExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8E71B41A544A5E00C6E696 /* NicoUtilityExtractor.swift */; };
 		DB8E71BA1A544D7B00C6E696 /* NicoUtilityHttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8E71B91A544D7B00C6E696 /* NicoUtilityHttpClient.swift */; };
@@ -211,6 +213,7 @@
 		DB80CA861A2575A0002636E0 /* MainViewControllerExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewControllerExtensions.swift; sourceTree = "<group>"; };
 		DB82B39A1C07207900EFE3D9 /* YukkuroidClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YukkuroidClient.h; path = Libraries/YukkuroidClient/YukkuroidClient.h; sourceTree = "<group>"; };
 		DB82B39B1C07207900EFE3D9 /* YukkuroidClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YukkuroidClient.m; path = Libraries/YukkuroidClient/YukkuroidClient.m; sourceTree = "<group>"; };
+		DB82B3A01C0724C000EFE3D9 /* SpeechManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SpeechManager.swift; path = SpeechManager/SpeechManager.swift; sourceTree = "<group>"; };
 		DB8E71B41A544A5E00C6E696 /* NicoUtilityExtractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicoUtilityExtractor.swift; sourceTree = "<group>"; };
 		DB8E71B91A544D7B00C6E696 /* NicoUtilityHttpClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicoUtilityHttpClient.swift; sourceTree = "<group>"; };
 		DB9EFC731A3E974A0087D302 /* NSWindowExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSWindowExtension.swift; sourceTree = "<group>"; };
@@ -447,6 +450,14 @@
 			name = YukkuroidClient;
 			sourceTree = "<group>";
 		};
+		DB82B39F1C07248700EFE3D9 /* SpeechManager */ = {
+			isa = PBXGroup;
+			children = (
+				DB82B3A01C0724C000EFE3D9 /* SpeechManager.swift */,
+			);
+			name = SpeechManager;
+			sourceTree = "<group>";
+		};
 		DBA414CA1A1A13FC00E0CAD3 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -457,6 +468,7 @@
 				DBE093F61A585EC5004554FD /* Api */,
 				DB1E32C41A2C0CCE00CD874A /* MessageContainer */,
 				DBE093F91A5867A7004554FD /* HandleNameManager */,
+				DB82B39F1C07248700EFE3D9 /* SpeechManager */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -815,6 +827,7 @@
 				DB0E10641A39B6C200A10E00 /* GeneralViewController.swift in Sources */,
 				DB414C0B1A4811C4008D2F40 /* Global.swift in Sources */,
 				DB2AE0C61A0EE2FD00B1CE4D /* MainViewController.swift in Sources */,
+				DB82B3A11C0724C000EFE3D9 /* SpeechManager.swift in Sources */,
 				DBAB69621A5C1A70002FCD95 /* KeychainUtility.swift in Sources */,
 				DB80CA871A2575A0002636E0 /* MainViewControllerExtensions.swift in Sources */,
 				DB1E32C91A2CC85C00CD874A /* UserIdTableCellView.swift in Sources */,
@@ -903,6 +916,7 @@
 				DBAAA7521A0FDA4500981004 /* NicoUtility.swift in Sources */,
 				DBFA88831A1BC8C9005349AD /* Enum.swift in Sources */,
 				DBFA88801A1BC7FF005349AD /* Thread.swift in Sources */,
+				DB82B3A21C0724C000EFE3D9 /* SpeechManager.swift in Sources */,
 				DBFA88891A1BCF77005349AD /* MessageServerTests.swift in Sources */,
 				DB414C0D1A4814F2008D2F40 /* UserViewController.swift in Sources */,
 				DB55AC691A3394EE00CFAD99 /* PremiumTableCellView.swift in Sources */,

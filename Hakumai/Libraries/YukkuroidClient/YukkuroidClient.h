@@ -44,6 +44,7 @@
 +(int)getVoiceVolume:(int)setting;
 
 #pragma mark - original functions
++(BOOL)isAvailable;
 +(NSNumber *)getVersion;
 +(BOOL)isStillPlaying:(int)setting;
 +(void)playSync:(int)setting;

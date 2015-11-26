@@ -439,6 +439,11 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         }
         self.appendTableView(chat)
         
+        SpeechManager.sharedManager.addChat(chat)
+        if SpeechManager.sharedManager.refreshChatQueueIfQueuedTooMuch() {
+            self.logSystemMessageToTableView("Refreshed speech queue.")
+        }
+        
         for userWindowController in self.userWindowControllers {
             if chat.userId == userWindowController.userId {
                 dispatch_async(dispatch_get_main_queue(), {
