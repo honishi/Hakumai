@@ -32,7 +32,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     // MARK: Application Initialize Utility
     func initializeLog() {
-        log.setup(.Debug, showLogLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: nil)
+        #if DEBUG
+            log.setup(.Debug, showLogLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: nil)
+        #else
+            log.setup(.None, showLogLevel: false, showFileNames: false, showLineNumbers: false, writeToFile: nil)
+        #endif
     }
     
     func migrateApplicationVersion() {
@@ -72,6 +76,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let defaults: [String: AnyObject] = [
             Parameters.SessionManagement: SessionManagementType.Chrome.rawValue,
             Parameters.ShowIfseetnoCommands: false,
+            Parameters.EnableCommentSpeech: false,
             Parameters.EnableMuteUserIds: false,
             Parameters.EnableMuteWords: false,
             Parameters.AlwaysOnTop: false,
@@ -86,6 +91,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // general
         defaults.addObserver(self, forKeyPath: Parameters.SessionManagement, options: ([.Initial, .New]), context: nil)
         defaults.addObserver(self, forKeyPath: Parameters.ShowIfseetnoCommands, options: ([.Initial, .New]), context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.EnableCommentSpeech, options: ([.Initial, .New]), context: nil)
         
         // mute
         defaults.addObserver(self, forKeyPath: Parameters.EnableMuteUserIds, options: ([.Initial, .New]), context: nil)
@@ -112,6 +118,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         case Parameters.ShowIfseetnoCommands:
             if let changed = change["new"] as? Bool {
                 MainViewController.sharedInstance.changeShowHbIfseetnoCommands(changed)
+            }
+            
+        case Parameters.EnableCommentSpeech:
+            if let changed = change["new"] as? Bool {
+                MainViewController.sharedInstance.changeEnableCommentSpeech(changed)
             }
             
         case Parameters.EnableMuteUserIds:

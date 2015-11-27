@@ -67,6 +67,11 @@
 		DB80CA831A256F9A002636E0 /* MessageContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB80CA811A256F9A002636E0 /* MessageContainer.swift */; };
 		DB80CA871A2575A0002636E0 /* MainViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB80CA861A2575A0002636E0 /* MainViewControllerExtensions.swift */; };
 		DB80CA881A2575A0002636E0 /* MainViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB80CA861A2575A0002636E0 /* MainViewControllerExtensions.swift */; };
+		DB82B39C1C07207900EFE3D9 /* YukkuroidClient.m in Sources */ = {isa = PBXBuildFile; fileRef = DB82B39B1C07207900EFE3D9 /* YukkuroidClient.m */; };
+		DB82B39D1C07207900EFE3D9 /* YukkuroidClient.m in Sources */ = {isa = PBXBuildFile; fileRef = DB82B39B1C07207900EFE3D9 /* YukkuroidClient.m */; };
+		DB82B3A11C0724C000EFE3D9 /* SpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB82B3A01C0724C000EFE3D9 /* SpeechManager.swift */; };
+		DB82B3A21C0724C000EFE3D9 /* SpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB82B3A01C0724C000EFE3D9 /* SpeechManager.swift */; };
+		DB82B3A41C087BA200EFE3D9 /* SpeechManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB82B3A31C087BA200EFE3D9 /* SpeechManagerTests.swift */; };
 		DB8E71B51A544A5E00C6E696 /* NicoUtilityExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8E71B41A544A5E00C6E696 /* NicoUtilityExtractor.swift */; };
 		DB8E71B61A544A5E00C6E696 /* NicoUtilityExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8E71B41A544A5E00C6E696 /* NicoUtilityExtractor.swift */; };
 		DB8E71BA1A544D7B00C6E696 /* NicoUtilityHttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8E71B91A544D7B00C6E696 /* NicoUtilityHttpClient.swift */; };
@@ -207,6 +212,10 @@
 		DB7F21AF1A210017008D17E0 /* Community.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Community.swift; sourceTree = "<group>"; };
 		DB80CA811A256F9A002636E0 /* MessageContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageContainer.swift; sourceTree = "<group>"; };
 		DB80CA861A2575A0002636E0 /* MainViewControllerExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewControllerExtensions.swift; sourceTree = "<group>"; };
+		DB82B39A1C07207900EFE3D9 /* YukkuroidClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YukkuroidClient.h; path = Libraries/YukkuroidClient/YukkuroidClient.h; sourceTree = "<group>"; };
+		DB82B39B1C07207900EFE3D9 /* YukkuroidClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YukkuroidClient.m; path = Libraries/YukkuroidClient/YukkuroidClient.m; sourceTree = "<group>"; };
+		DB82B3A01C0724C000EFE3D9 /* SpeechManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SpeechManager.swift; path = SpeechManager/SpeechManager.swift; sourceTree = "<group>"; };
+		DB82B3A31C087BA200EFE3D9 /* SpeechManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechManagerTests.swift; sourceTree = "<group>"; };
 		DB8E71B41A544A5E00C6E696 /* NicoUtilityExtractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicoUtilityExtractor.swift; sourceTree = "<group>"; };
 		DB8E71B91A544D7B00C6E696 /* NicoUtilityHttpClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicoUtilityHttpClient.swift; sourceTree = "<group>"; };
 		DB9EFC731A3E974A0087D302 /* NSWindowExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSWindowExtension.swift; sourceTree = "<group>"; };
@@ -344,6 +353,7 @@
 		DB2AE0C01A0EE2FD00B1CE4D /* Hakumai */ = {
 			isa = PBXGroup;
 			children = (
+				DB82B3991C071FF500EFE3D9 /* Libraries */,
 				DB2AE1031A0F2BAA00B1CE4D /* Hakumai-Bridging-Header.h */,
 				DB414C0A1A4811C4008D2F40 /* Global.swift */,
 				DB682D411A36E6AE00499C72 /* Parameter.swift */,
@@ -425,6 +435,31 @@
 			path = TableCellView;
 			sourceTree = "<group>";
 		};
+		DB82B3991C071FF500EFE3D9 /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				DB82B39E1C0723DA00EFE3D9 /* YukkuroidClient */,
+			);
+			name = Libraries;
+			sourceTree = "<group>";
+		};
+		DB82B39E1C0723DA00EFE3D9 /* YukkuroidClient */ = {
+			isa = PBXGroup;
+			children = (
+				DB82B39A1C07207900EFE3D9 /* YukkuroidClient.h */,
+				DB82B39B1C07207900EFE3D9 /* YukkuroidClient.m */,
+			);
+			name = YukkuroidClient;
+			sourceTree = "<group>";
+		};
+		DB82B39F1C07248700EFE3D9 /* SpeechManager */ = {
+			isa = PBXGroup;
+			children = (
+				DB82B3A01C0724C000EFE3D9 /* SpeechManager.swift */,
+			);
+			name = SpeechManager;
+			sourceTree = "<group>";
+		};
 		DBA414CA1A1A13FC00E0CAD3 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -435,6 +470,7 @@
 				DBE093F61A585EC5004554FD /* Api */,
 				DB1E32C41A2C0CCE00CD874A /* MessageContainer */,
 				DBE093F91A5867A7004554FD /* HandleNameManager */,
+				DB82B39F1C07248700EFE3D9 /* SpeechManager */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -461,6 +497,7 @@
 				DB0F0ECC1A16441D00F8BDC5 /* NicoUtilityTests.swift */,
 				DBA414C81A189D7D00E0CAD3 /* RoomListenerTests.swift */,
 				DBE093FE1A5869A2004554FD /* HandleNameManagerTests.swift */,
+				DB82B3A31C087BA200EFE3D9 /* SpeechManagerTests.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -793,6 +830,7 @@
 				DB0E10641A39B6C200A10E00 /* GeneralViewController.swift in Sources */,
 				DB414C0B1A4811C4008D2F40 /* Global.swift in Sources */,
 				DB2AE0C61A0EE2FD00B1CE4D /* MainViewController.swift in Sources */,
+				DB82B3A11C0724C000EFE3D9 /* SpeechManager.swift in Sources */,
 				DBAB69621A5C1A70002FCD95 /* KeychainUtility.swift in Sources */,
 				DB80CA871A2575A0002636E0 /* MainViewControllerExtensions.swift in Sources */,
 				DB1E32C91A2CC85C00CD874A /* UserIdTableCellView.swift in Sources */,
@@ -813,6 +851,7 @@
 				DBCA40D41A30AD48006299A9 /* MenuDelegate.swift in Sources */,
 				DB0ED6521A20B0A7007E9318 /* ChromeCookie.swift in Sources */,
 				DB0E10681A39B6DD00A10E00 /* MuteViewController.swift in Sources */,
+				DB82B39C1C07207900EFE3D9 /* YukkuroidClient.m in Sources */,
 				DBB4730B1A35951C002C797E /* Heartbeat.swift in Sources */,
 				DBFB81511A36B52E00294934 /* PreferenceWindowController.swift in Sources */,
 				DB8E71BA1A544D7B00C6E696 /* NicoUtilityHttpClient.swift in Sources */,
@@ -849,6 +888,7 @@
 				DB346B9C1A548C3B00137639 /* CommunityTests.swift in Sources */,
 				DBB473091A3590C5002C797E /* NSXMLElementExtension.swift in Sources */,
 				DB7B3DE61A2434FB00205470 /* ScoreTableCellView.swift in Sources */,
+				DB82B39D1C07207900EFE3D9 /* YukkuroidClient.m in Sources */,
 				DB1CD2D01A2EE5BB00D3108A /* Message.swift in Sources */,
 				DBE094031A586FFC004554FD /* HandleNameManager.swift in Sources */,
 				DBA414D21A1A176E00E0CAD3 /* StringExtensionTests.swift in Sources */,
@@ -879,8 +919,10 @@
 				DBAAA7521A0FDA4500981004 /* NicoUtility.swift in Sources */,
 				DBFA88831A1BC8C9005349AD /* Enum.swift in Sources */,
 				DBFA88801A1BC7FF005349AD /* Thread.swift in Sources */,
+				DB82B3A21C0724C000EFE3D9 /* SpeechManager.swift in Sources */,
 				DBFA88891A1BCF77005349AD /* MessageServerTests.swift in Sources */,
 				DB414C0D1A4814F2008D2F40 /* UserViewController.swift in Sources */,
+				DB82B3A41C087BA200EFE3D9 /* SpeechManagerTests.swift in Sources */,
 				DB55AC691A3394EE00CFAD99 /* PremiumTableCellView.swift in Sources */,
 				DBAB69631A5C1A70002FCD95 /* KeychainUtility.swift in Sources */,
 				DBD65C121A2CD1AD00B84C97 /* UserIdTableCellView.swift in Sources */,
@@ -958,6 +1000,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SDKROOT)/usr/include/libxml2\"",
+					"\"$(PROJECT_DIR)/Hakumai/Libraries/YukkuroidClient\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -1000,6 +1043,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SDKROOT)/usr/include/libxml2\"",
+					"\"$(PROJECT_DIR)/Hakumai/Libraries/YukkuroidClient\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
