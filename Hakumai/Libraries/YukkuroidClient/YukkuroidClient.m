@@ -78,10 +78,9 @@
     return [(id)proxy getVoiceEffect:setting];
 }
 
-+(void)setIntonation:(BOOL)isOn setting:(int)setting{
++(void)setVoiceIntonation:(BOOL)isOn setting:(int)setting{
     NSProxy *proxy = [YukkuroidClient getYukProxy];
-    // [(id)proxy setVoiceIntonation:isOn setting:setting];
-    [(id)proxy setIntonation:isOn setting:setting];
+    [(id)proxy setVoiceIntonation:isOn setting:setting];
 }
 
 +(BOOL)getIntonation:(int)setting{

@@ -29,7 +29,9 @@
 +(int)getVoiceType:(int)setting;
 +(void)setVoiceEffect:(int)index setting:(int)setting;
 +(int)getVoiceEffect:(int)setting;
-+(void)setIntonation:(BOOL)isOn setting:(int)setting;
+// although intonation method name for set is setVoiceIntonation, name for get is getIntonation.
+// this is possible api naming bug... :-/
++(void)setVoiceIntonation:(BOOL)isOn setting:(int)setting;
 +(BOOL)getIntonation:(int)setting;
 
 #pragma mark bottom center
