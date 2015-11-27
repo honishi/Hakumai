@@ -438,11 +438,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             HandleNameManager.sharedManager.extractAndUpdateHandleNameWithLive(live, chat: chat)
         }
         self.appendTableView(chat)
-        
-        SpeechManager.sharedManager.addChat(chat)
-        if SpeechManager.sharedManager.refreshChatQueueIfQueuedTooMuch() {
-            self.logSystemMessageToTableView("Refreshed speech queue.")
-        }
+        self.handleSpeechWithChat(chat)
         
         for userWindowController in self.userWindowControllers {
             if chat.userId == userWindowController.userId {
@@ -819,6 +815,17 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         }
     }
     
+    // MARK: Speech Handlers
+    private func handleSpeechWithChat(chat: Chat) {
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) {
+            SpeechManager.sharedManager.enqueueChat(chat)
+            
+            if SpeechManager.sharedManager.refreshChatQueueIfQueuedTooMuch() {
+                // self.logSystemMessageToTableView("Refreshed speech queue.")
+            }
+        }
+    }
+
     // MARK: Misc Utility
     func clearAllChats() {
         MessageContainer.sharedContainer.removeAll()

@@ -38,7 +38,7 @@ class SpeechManager: NSObject {
     }
     
     // MARK: - Public Functions
-    func addChat(chat: Chat) {
+    func enqueueChat(chat: Chat) {
         guard YukkuroidClient.isAvailable() else {
             return
         }
@@ -48,58 +48,51 @@ class SpeechManager: NSObject {
         }
         
         objc_sync_enter(self)
+        defer { objc_sync_exit(self) }
+        
         chatQueue.append(chat)
-        objc_sync_exit(self)
     }
     
     func dequeueChat(timer: NSTimer?) {
+        objc_sync_enter(self)
+        defer { objc_sync_exit(self) }
+        
         let currentAvailable = YukkuroidClient.isAvailable()
         
         if yukkuroidAvailable != currentAvailable {
-            objc_sync_enter(self)
             chatQueue.removeAll()
-            objc_sync_exit(self)
             yukkuroidAvailable = currentAvailable
         }
         
-        objc_sync_enter(self)
-        let shouldSkip = 0 == chatQueue.count || YukkuroidClient.isStillPlaying(0)
-        objc_sync_exit(self)
-        
-        if shouldSkip {
+        if 0 == chatQueue.count || YukkuroidClient.isStillPlaying(0) {
             return
         }
         
-        objc_sync_enter(self)
-        let chat: Chat! = chatQueue.first
-        if chat != nil {
-            chatQueue.removeFirst()
-        }
-        let chatQueueCount = chatQueue.count
-        objc_sync_exit(self)
-        
-        guard chat != nil && chat.comment != nil else {
+        guard let chat = chatQueue.first else {
             return
         }
-        // XCGLogger.debug("\(chat.comment)")
+        chatQueue.removeFirst()
         
-        voiceSpeed = adjustedVoiceSpeedWithChatQueueCount(chatQueueCount, currentVoiceSpeed: voiceSpeed)
+        guard let comment = chat.comment else {
+            return
+        }
+        
+        voiceSpeed = adjustedVoiceSpeedWithChatQueueCount(chatQueue.count, currentVoiceSpeed: voiceSpeed)
         YukkuroidClient.setVoiceSpeed(Int32(voiceSpeed), setting: 0)
-        YukkuroidClient.setKanjiText(cleanComment(chat.comment!))
+        YukkuroidClient.setKanjiText(cleanComment(comment))
         YukkuroidClient.pushPlayButton(0)
     }
 
     func refreshChatQueueIfQueuedTooMuch() -> Bool {
-        var refreshed = false
-        
         objc_sync_enter(self)
+        defer { objc_sync_exit(self) }
+        
         if kRefreshChatQueueThreshold < chatQueue.count {
             chatQueue.removeAll()
-            refreshed = true
+            return true
         }
-        objc_sync_exit(self)
         
-        return refreshed
+        return false
     }
     
     // MARK: - Private Functions
