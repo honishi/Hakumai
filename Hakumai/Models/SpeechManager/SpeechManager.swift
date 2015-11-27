@@ -9,14 +9,16 @@
 import Foundation
 import XCGLogger
 
-private let kDequeuChatTimerInterval: NSTimeInterval = 0.5
+private let kDequeuChatTimerInterval: NSTimeInterval = 0.2
 
-private let kVoiceSpeedNormal = 100
-private let kVoiceSpeedFast = 150
-private let kVoiceSpeedVeryFast = 200
-private let kVoiceSpeedVeryVeryFast = 250
-
-private let kRefreshChatQueueThreshold = 20
+private let kVoiceSpeedMap: [(queuCountRange: Range<Int>, speed: Int)] = [
+    (0..<5, 100),
+    (5..<10, 125),
+    (10..<15, 150),
+    (15..<20, 175),
+    (20..<100, 200),
+]
+private let kRefreshChatQueueThreshold = 30
 
 private let kCleanCommentPatterns = [
     "^/\\w+ \\w+ \\w+ ",
@@ -27,7 +29,7 @@ class SpeechManager: NSObject {
     static let sharedManager = SpeechManager()
     
     private var chatQueue: [Chat] = []
-    private var voiceSpeed = kVoiceSpeedNormal
+    private var voiceSpeed = kVoiceSpeedMap[0].speed
     private var timer: NSTimer?
     private var yukkuroidAvailable = false
     
@@ -109,21 +111,17 @@ class SpeechManager: NSObject {
     }
     
     private func adjustedVoiceSpeedWithChatQueueCount(count: Int, currentVoiceSpeed: Int) -> Int {
+        var candidateSpeed = kVoiceSpeedMap[0].speed
+        
         if count == 0 {
-            return kVoiceSpeedNormal
+            return candidateSpeed
         }
         
-        var candidateSpeed: Int
-        
-        switch count {
-        case 0..<5:
-            candidateSpeed = kVoiceSpeedNormal
-        case 5..<10:
-            candidateSpeed = kVoiceSpeedFast
-        case 10..<15:
-            candidateSpeed = kVoiceSpeedVeryFast
-        default:
-            candidateSpeed = kVoiceSpeedVeryVeryFast
+        for (queueCountRange, speed) in kVoiceSpeedMap {
+            if queueCountRange.contains(count) {
+                candidateSpeed = speed
+                break
+            }
         }
         
         return currentVoiceSpeed < candidateSpeed ? candidateSpeed : currentVoiceSpeed
