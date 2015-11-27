@@ -32,7 +32,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     // MARK: Application Initialize Utility
     func initializeLog() {
-        log.setup(.Debug, showLogLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: nil)
+        #if DEBUG
+            log.setup(.Debug, showLogLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: nil)
+        #else
+            log.setup(.None, showLogLevel: false, showFileNames: false, showLineNumbers: false, writeToFile: nil)
+        #endif
     }
     
     func migrateApplicationVersion() {
