@@ -213,6 +213,26 @@
                                                 <binding destination="Ex8-3g-KNv" name="value" keyPath="values.ShowHbIfseetnoCommands" id="GhX-q1-pDV"/>
                                             </connections>
                                         </button>
+                                        <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0Hr-Qy-rNC">
+                                            <rect key="frame" x="16" y="106" width="140" height="18"/>
+                                            <animations/>
+                                            <buttonCell key="cell" type="check" title="Comment Speech" bezelStyle="regularSquare" imagePosition="left" inset="2" id="Sfr-6s-I9O">
+                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <binding destination="Ex8-3g-KNv" name="value" keyPath="values.EnableCommentSpeech" id="kmp-sm-chz"/>
+                                            </connections>
+                                        </button>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="96M-cf-km6">
+                                            <rect key="frame" x="148" y="107" width="160" height="16"/>
+                                            <animations/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="(requies Yukkuroid for Mac)" id="Z9e-Le-1XY">
+                                                <font key="font" metaFont="system" size="12"/>
+                                                <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
                                     </subviews>
                                     <animations/>
                                 </view>

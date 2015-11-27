@@ -14,6 +14,7 @@ struct Parameters {
     // general
     static let SessionManagement = "SessionManagement"
     static let ShowIfseetnoCommands = "ShowHbIfseetnoCommands"
+    static let EnableCommentSpeech = "EnableCommentSpeech"
     
     // mute
     static let EnableMuteUserIds = "EnableMuteUserIds"

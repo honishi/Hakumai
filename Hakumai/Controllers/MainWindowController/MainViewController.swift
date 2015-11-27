@@ -132,6 +132,11 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         self.rebuildFilteredMessages()
     }
     
+    func changeEnableCommentSpeech(enabled: Bool) {
+        // XCGLogger.debug("\(enabled)")
+        self.updateSpeechManagerState()
+    }
+    
     func changeEnableMuteUserIds(enabled: Bool) {
         MessageContainer.sharedContainer.enableMuteUserIds = enabled
         log.debug("changed enable mute userids: \(enabled)")
@@ -409,6 +414,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             dispatch_async(dispatch_get_main_queue()) {
                 self.progressIndicator.stopAnimation(self)
             }
+            self.updateSpeechManagerState()
         }
     }
 
@@ -462,6 +468,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         self.stopTimers()
         self.connectedToLive = false
         self.openedRoomPosition = nil
+        self.updateSpeechManagerState()
     }
     
     func nicoUtilityDidReceiveHeartbeat(nicoUtility: NicoUtility, heartbeat: Heartbeat) {
@@ -768,15 +775,11 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
     
     func stopTimers() {
-        if self.elapsedTimer != nil {
-            self.elapsedTimer!.invalidate()
-            self.elapsedTimer = nil
-        }
+        self.elapsedTimer?.invalidate()
+        self.elapsedTimer = nil
         
-        if self.activeTimer != nil {
-            self.activeTimer!.invalidate()
-            self.activeTimer = nil
-        }
+        self.activeTimer?.invalidate()
+        self.activeTimer = nil
     }
     
     func displayElapsed(timer: NSTimer) {
@@ -816,7 +819,24 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
     
     // MARK: Speech Handlers
+    private func updateSpeechManagerState() {
+        let enabled = NSUserDefaults.standardUserDefaults().boolForKey(Parameters.EnableCommentSpeech)
+        
+        if enabled && self.connectedToLive {
+            SpeechManager.sharedManager.startManager()
+        }
+        else {
+            SpeechManager.sharedManager.stopManager()
+        }
+    }
+    
     private func handleSpeechWithChat(chat: Chat) {
+        let enabled = NSUserDefaults.standardUserDefaults().boolForKey(Parameters.EnableCommentSpeech)
+        
+        guard enabled else {
+            return
+        }
+
         dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) {
             SpeechManager.sharedManager.enqueueChat(chat)
             
