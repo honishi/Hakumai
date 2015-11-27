@@ -9,7 +9,7 @@
 import Foundation
 import XCGLogger
 
-private let kDequeuChatTimerInterval: NSTimeInterval = 0.2
+private let kDequeuChatTimerInterval: NSTimeInterval = 0.5
 
 private let kVoiceSpeedMap: [(queuCountRange: Range<Int>, speed: Int)] = [
     (0..<5, 100),
