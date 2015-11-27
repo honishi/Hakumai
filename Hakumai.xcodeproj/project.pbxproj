@@ -71,6 +71,7 @@
 		DB82B39D1C07207900EFE3D9 /* YukkuroidClient.m in Sources */ = {isa = PBXBuildFile; fileRef = DB82B39B1C07207900EFE3D9 /* YukkuroidClient.m */; };
 		DB82B3A11C0724C000EFE3D9 /* SpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB82B3A01C0724C000EFE3D9 /* SpeechManager.swift */; };
 		DB82B3A21C0724C000EFE3D9 /* SpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB82B3A01C0724C000EFE3D9 /* SpeechManager.swift */; };
+		DB82B3A41C087BA200EFE3D9 /* SpeechManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB82B3A31C087BA200EFE3D9 /* SpeechManagerTests.swift */; };
 		DB8E71B51A544A5E00C6E696 /* NicoUtilityExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8E71B41A544A5E00C6E696 /* NicoUtilityExtractor.swift */; };
 		DB8E71B61A544A5E00C6E696 /* NicoUtilityExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8E71B41A544A5E00C6E696 /* NicoUtilityExtractor.swift */; };
 		DB8E71BA1A544D7B00C6E696 /* NicoUtilityHttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8E71B91A544D7B00C6E696 /* NicoUtilityHttpClient.swift */; };
@@ -214,6 +215,7 @@
 		DB82B39A1C07207900EFE3D9 /* YukkuroidClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YukkuroidClient.h; path = Libraries/YukkuroidClient/YukkuroidClient.h; sourceTree = "<group>"; };
 		DB82B39B1C07207900EFE3D9 /* YukkuroidClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YukkuroidClient.m; path = Libraries/YukkuroidClient/YukkuroidClient.m; sourceTree = "<group>"; };
 		DB82B3A01C0724C000EFE3D9 /* SpeechManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SpeechManager.swift; path = SpeechManager/SpeechManager.swift; sourceTree = "<group>"; };
+		DB82B3A31C087BA200EFE3D9 /* SpeechManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechManagerTests.swift; sourceTree = "<group>"; };
 		DB8E71B41A544A5E00C6E696 /* NicoUtilityExtractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicoUtilityExtractor.swift; sourceTree = "<group>"; };
 		DB8E71B91A544D7B00C6E696 /* NicoUtilityHttpClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicoUtilityHttpClient.swift; sourceTree = "<group>"; };
 		DB9EFC731A3E974A0087D302 /* NSWindowExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSWindowExtension.swift; sourceTree = "<group>"; };
@@ -495,6 +497,7 @@
 				DB0F0ECC1A16441D00F8BDC5 /* NicoUtilityTests.swift */,
 				DBA414C81A189D7D00E0CAD3 /* RoomListenerTests.swift */,
 				DBE093FE1A5869A2004554FD /* HandleNameManagerTests.swift */,
+				DB82B3A31C087BA200EFE3D9 /* SpeechManagerTests.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -919,6 +922,7 @@
 				DB82B3A21C0724C000EFE3D9 /* SpeechManager.swift in Sources */,
 				DBFA88891A1BCF77005349AD /* MessageServerTests.swift in Sources */,
 				DB414C0D1A4814F2008D2F40 /* UserViewController.swift in Sources */,
+				DB82B3A41C087BA200EFE3D9 /* SpeechManagerTests.swift in Sources */,
 				DB55AC691A3394EE00CFAD99 /* PremiumTableCellView.swift in Sources */,
 				DBAB69631A5C1A70002FCD95 /* KeychainUtility.swift in Sources */,
 				DBD65C121A2CD1AD00B84C97 /* UserIdTableCellView.swift in Sources */,

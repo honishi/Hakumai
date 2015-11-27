@@ -18,6 +18,10 @@ private let kVoiceSpeedVeryVeryFast = 250
 
 private let kRefreshChatQueueThreshold = 20
 
+private let kCleanCommentPatterns = [
+    "^/\\w+ \\w+ \\w+ ",
+]
+
 class SpeechManager: NSObject {
     // MARK: - Properties
     static let sharedManager = SpeechManager()
@@ -39,8 +43,7 @@ class SpeechManager: NSObject {
             return
         }
         
-        // TODO: BSP
-        guard chat.premium == .Ippan || chat.premium == .Premium else {
+        guard chat.premium == .Ippan || chat.premium == .Premium || chat.premium == .BSP else {
             return
         }
         
@@ -75,14 +78,14 @@ class SpeechManager: NSObject {
         let chatQueueCount = chatQueue.count
         objc_sync_exit(self)
         
-        guard chat != nil else {
+        guard chat != nil && chat.comment != nil else {
             return
         }
         // XCGLogger.debug("\(chat.comment)")
         
         voiceSpeed = adjustedVoiceSpeedWithChatQueueCount(chatQueueCount, currentVoiceSpeed: voiceSpeed)
         YukkuroidClient.setVoiceSpeed(Int32(voiceSpeed), setting: 0)
-        YukkuroidClient.setKanjiText(chat.comment)
+        YukkuroidClient.setKanjiText(cleanComment(chat.comment!))
         YukkuroidClient.pushPlayButton(0)
     }
 
@@ -131,5 +134,16 @@ class SpeechManager: NSObject {
         }
         
         return currentVoiceSpeed < candidateSpeed ? candidateSpeed : currentVoiceSpeed
+    }
+    
+    // define as 'internal' for test
+    func cleanComment(comment: String) -> String {
+        var clean: String = ""
+        
+        for pattern in kCleanCommentPatterns {
+            clean = comment.stringByRemovingPattern(pattern)
+        }
+        
+        return clean
     }
 }

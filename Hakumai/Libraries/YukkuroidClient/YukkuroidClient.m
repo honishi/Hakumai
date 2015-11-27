@@ -120,6 +120,7 @@
 + (BOOL)isAvailable {
     BOOL available = false;
 
+    // TODO: move this to getyukproxy.
     // catch exception from proxy like;
     // 'connection went invalid while waiting for a reply'
     @try {
