@@ -11,7 +11,17 @@
 @implementation YukkuroidClient
 
 +(NSProxy *)getYukProxy {
-    return [NSConnection rootProxyForConnectionWithRegisteredName:@"com.yukkuroid.rpc" host:@""];
+    NSProxy *proxy = nil;
+    
+    // catch exception from proxy like 'connection went invalid while waiting for a reply'
+    @try {
+        proxy = [NSConnection rootProxyForConnectionWithRegisteredName:@"com.yukkuroid.rpc" host:@""];
+    }
+    @catch (NSException *exception) {
+        // NSLog(@"caught, and ignore exception: %@", exception);
+    }
+
+    return proxy;
 }
 
 #pragma mark - on panel
@@ -118,19 +128,7 @@
 
 #pragma mark - original functions
 + (BOOL)isAvailable {
-    BOOL available = false;
-
-    // TODO: move this to getyukproxy.
-    // catch exception from proxy like;
-    // 'connection went invalid while waiting for a reply'
-    @try {
-        available = [YukkuroidClient getYukProxy] != nil;
-    }
-    @catch (NSException *exception) {
-        // NSLog(@"caught, and ignore exception: %@", exception);
-    }
-    
-    return available;
+    return [YukkuroidClient getYukProxy] != nil;
 }
 
 + (NSNumber *)getVersion{
