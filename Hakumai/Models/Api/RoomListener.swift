@@ -146,11 +146,13 @@ class RoomListener : NSObject, NSStreamDelegate {
         self.sendMessage(message)
     }
     
-    func sendMessage(message: String) {
+    func sendMessage(message: String, logging: Bool = true) {
         let data: NSData = (message + "\0").dataUsingEncoding(NSUTF8StringEncoding)!
         self.outputStream?.write(UnsafePointer<UInt8>(data.bytes), maxLength: data.length)
-        
-        logger.debug(message)
+ 
+        if logging {
+            logger.debug(message)
+        }
     }
     
     // MARK: - NSStreamDelegate Functions
@@ -398,6 +400,6 @@ class RoomListener : NSObject, NSStreamDelegate {
     }
 
     func sendPing(timer: NSTimer) {
-        sendMessage("<ping>PING</ping>")
+        sendMessage("<ping>PING</ping>", logging: false)
     }
 }
