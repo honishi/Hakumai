@@ -29,30 +29,29 @@ class MuteViewController: NSViewController {
     
     // MARK: - Button Handlers
     @IBAction func addMuteUserId(sender: AnyObject) {
-        self.addMute({ (muteStringValue: String) -> Void in
+        addMute { muteStringValue in
             self.muteUserIdsArrayController.addObject(["UserId": muteStringValue])
-        })
+        }
     }
     
     @IBAction func addMuteWord(sender: AnyObject) {
-        self.addMute({ (muteStringValue: String) -> Void in
+        addMute { muteStringValue in
             self.muteWordsArrayController.addObject(["Word": muteStringValue])
-        })
+        }
     }
     
     func addMute(completion: String -> Void) {
         let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
         let muteAddViewController = storyboard.instantiateControllerWithIdentifier(kStoryboardIdMuteAddViewController) as! MuteAddViewController
         
-        muteAddViewController.completion = { (cancelled: Bool, muteStringValue: String?) -> Void in
+        muteAddViewController.completion = { (cancelled, muteStringValue) in
             if !cancelled {
                 completion(muteStringValue!)
             }
-            
             self.dismissViewController(muteAddViewController)
             // TODO: deinit in muteAddViewController is not called after this completion
         }
         
-        self.presentViewControllerAsSheet(muteAddViewController)
+        presentViewControllerAsSheet(muteAddViewController)
     }
 }

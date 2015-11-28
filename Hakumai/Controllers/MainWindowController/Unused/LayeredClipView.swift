@@ -14,13 +14,13 @@ class LayeredClipView: NSClipView {
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        self.enableScrollLayer()
+        enableScrollLayer()
     }
 
     func enableScrollLayer() {
-        self.layer = CAScrollLayer()
-        self.wantsLayer = true
-        // self.layerContentsRedrawPolicy = .Never
-        self.layerContentsRedrawPolicy = .OnSetNeedsDisplay
+        layer = CAScrollLayer()
+        wantsLayer = true
+        // layerContentsRedrawPolicy = .Never
+        layerContentsRedrawPolicy = .OnSetNeedsDisplay
     }
 }

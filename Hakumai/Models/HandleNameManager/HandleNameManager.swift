@@ -29,10 +29,10 @@ class HandleNameManager {
     init() {
         objc_sync_enter(self)
         Helper.createApplicationDirectoryIfNotExists()
-        self.database = HandleNameManager.databaseForHandleNames()
-        self.databaseQueue = HandleNameManager.databaseQueueForHandleNames()
-        self.createHandleNamesTableIfNotExists()
-        self.deleteObsoletedHandleNames()
+        database = HandleNameManager.databaseForHandleNames()
+        databaseQueue = HandleNameManager.databaseQueueForHandleNames()
+        createHandleNamesTableIfNotExists()
+        deleteObsoletedHandleNames()
         objc_sync_exit(self)
     }
 
@@ -42,8 +42,8 @@ class HandleNameManager {
             return
         }
         
-        if let handleName = self.extractHandleNameFromComment(chat.comment!) {
-            self.updateHandleNameWithLive(live, chat: chat, handleName: handleName)
+        if let handleName = extractHandleNameFromComment(chat.comment!) {
+            updateHandleNameWithLive(live, chat: chat, handleName: handleName)
         }
     }
     
@@ -53,7 +53,7 @@ class HandleNameManager {
         }
         
         let anonymous = !chat.isRawUserId
-        self.insertOrReplaceHandleNameWithCommunityId(communityId, userId: userId, anonymous: anonymous, handleName: handleName)
+        insertOrReplaceHandleNameWithCommunityId(communityId, userId: userId, anonymous: anonymous, handleName: handleName)
     }
     
     func removeHandleNameWithLive(live: Live, chat: Chat) {
@@ -61,7 +61,7 @@ class HandleNameManager {
             return
         }
 
-        self.deleteHandleNameWithCommunityId(communityId, userId: userId)
+        deleteHandleNameWithCommunityId(communityId, userId: userId)
     }
     
     func handleNameForLive(live: Live, chat: Chat) -> String? {
@@ -89,7 +89,7 @@ class HandleNameManager {
     // MARK: Database Functions
     // for test
     func dropHandleNamesTableIfExists() {
-        guard let database = self.database else {
+        guard let database = database else {
             return
         }
         
@@ -105,7 +105,7 @@ class HandleNameManager {
     }
     
     func createHandleNamesTableIfNotExists() {
-        guard let database = self.database else {
+        guard let database = database else {
             return
         }
 
@@ -125,7 +125,7 @@ class HandleNameManager {
     }
     
     func insertOrReplaceHandleNameWithCommunityId(communityId: String, userId: String, anonymous: Bool, handleName: String) {
-        guard self.databaseQueue != nil else {
+        guard databaseQueue != nil else {
             logger.warning("database not ready")
             return
         }
@@ -133,13 +133,13 @@ class HandleNameManager {
         let insertSql = "insert or replace into " + kHandleNamesTable + " " +
             "values (?, ?, ?, ?, null, strftime('%s', 'now'), null, null, null)"
 
-        self.databaseQueue.inDatabase { database in
+        databaseQueue.inDatabase { database in
             database.executeUpdate(insertSql, withArgumentsInArray: [communityId, userId, handleName, anonymous])
         }
     }
 
     func selectHandleNameWithCommunityId(communityId: String, userId: String) -> String? {
-        guard let database = self.database else {
+        guard let database = database else {
             return nil
         }
       
@@ -159,7 +159,7 @@ class HandleNameManager {
     }
     
     func deleteHandleNameWithCommunityId(communityId: String, userId: String) {
-        guard let database = self.database else {
+        guard let database = database else {
             return
         }
         
@@ -175,7 +175,7 @@ class HandleNameManager {
     }
     
     func deleteObsoletedHandleNames() {
-        guard let database = self.database else {
+        guard let database = database else {
             return
         }
         

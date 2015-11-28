@@ -50,7 +50,7 @@ class RoomListener : NSObject, NSStreamDelegate {
         
         super.init()
         
-        self.initializeFileLogger()
+        initializeFileLogger()
         logger.info("listener initialized for message server:\(self.server)")
     }
     
@@ -60,7 +60,7 @@ class RoomListener : NSObject, NSStreamDelegate {
     
     func initializeFileLogger() {
         var logNumber = 0
-        if let server = self.server {
+        if let server = server {
             logNumber = server.roomPosition.rawValue
         }
         
@@ -70,7 +70,9 @@ class RoomListener : NSObject, NSStreamDelegate {
     
     // MARK: - Public Functions
     func openSocket(resFrom: Int = 0) {
-        let server = self.server!
+        guard let server = server else {
+            return
+        }
         
         var input :NSInputStream?
         var output :NSOutputStream?
@@ -82,73 +84,73 @@ class RoomListener : NSObject, NSStreamDelegate {
             return
         }
         
-        self.inputStream = input
-        self.outputStream = output
+        inputStream = input
+        outputStream = output
         
-        self.inputStream?.delegate = self
-        self.outputStream?.delegate = self
+        inputStream?.delegate = self
+        outputStream?.delegate = self
         
-        self.runLoop = NSRunLoop.currentRunLoop()
+        runLoop = NSRunLoop.currentRunLoop()
         
-        self.inputStream?.scheduleInRunLoop(self.runLoop, forMode: NSDefaultRunLoopMode)
-        self.outputStream?.scheduleInRunLoop(self.runLoop, forMode: NSDefaultRunLoopMode)
+        inputStream?.scheduleInRunLoop(runLoop, forMode: NSDefaultRunLoopMode)
+        outputStream?.scheduleInRunLoop(runLoop, forMode: NSDefaultRunLoopMode)
         
-        self.inputStream?.open()
-        self.outputStream?.open()
+        inputStream?.open()
+        outputStream?.open()
         
         let message = "<thread thread=\"\(server.thread)\" res_from=\"-\(resFrom)\" version=\"20061206\"/>"
-        self.sendMessage(message)
+        sendMessage(message)
         
-        self.startPingTimer()
+        startPingTimer()
 
-        while self.inputStream != nil {
-            self.runLoop.runUntilDate(NSDate(timeIntervalSinceNow: NSTimeInterval(1)))
+        while inputStream != nil {
+            runLoop.runUntilDate(NSDate(timeIntervalSinceNow: NSTimeInterval(1)))
         }
         
-        self.delegate?.roomListenerDidFinishListening(self)
+        delegate?.roomListenerDidFinishListening(self)
     }
     
     func closeSocket() {
         fileLogger.debug("closed streams.")
         
-        self.stopPingTimer()
+        stopPingTimer()
 
-        self.inputStream?.delegate = nil
-        self.outputStream?.delegate = nil
+        inputStream?.delegate = nil
+        outputStream?.delegate = nil
         
-        self.inputStream?.close()
-        self.outputStream?.close()
+        inputStream?.close()
+        outputStream?.close()
         
-        self.inputStream?.removeFromRunLoop(self.runLoop, forMode: NSDefaultRunLoopMode)
-        self.outputStream?.removeFromRunLoop(self.runLoop, forMode: NSDefaultRunLoopMode)
+        inputStream?.removeFromRunLoop(runLoop, forMode: NSDefaultRunLoopMode)
+        outputStream?.removeFromRunLoop(runLoop, forMode: NSDefaultRunLoopMode)
         
-        self.inputStream = nil
-        self.outputStream = nil
+        inputStream = nil
+        outputStream = nil
     }
     
     func comment(live: Live, user: User, postKey: String, comment: String, anonymously: Bool) {
-        if self.thread == nil {
+        guard let thread = thread else {
             logger.debug("could not get thread information")
             return
         }
         
-        let thread = self.thread!.thread!
-        let ticket = self.thread!.ticket!
-        let originTime = Int(self.thread!.serverTime!.timeIntervalSince1970) - Int(live.baseTime!.timeIntervalSince1970)
-        let elapsedTime = Int(NSDate().timeIntervalSince1970) - Int(self.startDate!.timeIntervalSince1970)
+        let threadNumber = thread.thread!
+        let ticket = thread.ticket!
+        let originTime = Int(thread.serverTime!.timeIntervalSince1970) - Int(live.baseTime!.timeIntervalSince1970)
+        let elapsedTime = Int(NSDate().timeIntervalSince1970) - Int(startDate!.timeIntervalSince1970)
         let vpos = (originTime + elapsedTime) * 100
         let mail = anonymously ? "184" : ""
         let userId = user.userId!
         let premium = user.isPremium!
         
-        let message = "<chat thread=\"\(thread)\" ticket=\"\(ticket)\" vpos=\"\(vpos)\" postkey=\"\(postKey)\" mail=\"\(mail)\" user_id=\"\(userId)\" premium=\"\(premium)\">\(comment)</chat>"
+        let message = "<chat thread=\"\(threadNumber)\" ticket=\"\(ticket)\" vpos=\"\(vpos)\" postkey=\"\(postKey)\" mail=\"\(mail)\" user_id=\"\(userId)\" premium=\"\(premium)\">\(comment)</chat>"
         
-        self.sendMessage(message)
+        sendMessage(message)
     }
     
     func sendMessage(message: String, logging: Bool = true) {
         let data: NSData = (message + "\0").dataUsingEncoding(NSUTF8StringEncoding)!
-        self.outputStream?.write(UnsafePointer<UInt8>(data.bytes), maxLength: data.length)
+        outputStream?.write(UnsafePointer<UInt8>(data.bytes), maxLength: data.length)
  
         if logging {
             logger.debug(message)
@@ -171,28 +173,28 @@ class RoomListener : NSObject, NSStreamDelegate {
             var readByte = [UInt8](count: kReadBufferSize, repeatedValue: 0)
             
             var actualRead = 0
-            while self.inputStream?.hasBytesAvailable == true {
-                actualRead = self.inputStream!.read(&readByte, maxLength: kReadBufferSize)
+            while inputStream?.hasBytesAvailable == true {
+                actualRead = inputStream!.read(&readByte, maxLength: kReadBufferSize)
                 //fileLogger.debug(readByte)
                 
                 if let readString = NSString(bytes: &readByte, length: actualRead, encoding: NSUTF8StringEncoding) {
                     fileLogger.debug("read: [ \(readString) ]")
                     
-                    self.parsingString = self.parsingString as String + self.streamByRemovingNull(readString as String)
+                    parsingString = parsingString as String + streamByRemovingNull(readString as String)
                     
-                    if !self.hasValidCloseBracket(self.parsingString as String) {
+                    if !hasValidCloseBracket(parsingString as String) {
                         fileLogger.warning("detected no-close-bracket stream, continue reading...")
                         continue
                     }
                     
-                    if !self.hasValidOpenBracket(self.parsingString as String) {
+                    if !hasValidOpenBracket(parsingString as String) {
                         fileLogger.warning("detected no-open-bracket stream, clearing buffer and continue reading...")
-                        self.parsingString = ""
+                        parsingString = ""
                         continue
                     }
                     
-                    self.parseInputStream(self.parsingString as String)
-                    self.parsingString = ""
+                    parseInputStream(parsingString as String)
+                    parsingString = ""
                 }
             }
             
@@ -202,7 +204,7 @@ class RoomListener : NSObject, NSStreamDelegate {
             
         case NSStreamEvent.ErrorOccurred:
             fileLogger.error("stream event error occurred");
-            self.closeSocket();
+            closeSocket();
             
         case NSStreamEvent.EndEncountered:
             fileLogger.debug("stream event end encountered");
@@ -221,11 +223,11 @@ class RoomListener : NSObject, NSStreamDelegate {
     }
     
     func hasValidOpenBracket(stream: String) -> Bool {
-        return self.hasValidPatternInStream("^<", stream: stream)
+        return hasValidPatternInStream("^<", stream: stream)
     }
     
     func hasValidCloseBracket(stream: String) -> Bool {
-        return self.hasValidPatternInStream(">$", stream: stream)
+        return hasValidPatternInStream(">$", stream: stream)
     }
     
     func hasValidPatternInStream(pattern: String, stream: String) -> Bool {
@@ -258,24 +260,24 @@ class RoomListener : NSObject, NSStreamDelegate {
         if let rootElement = xmlDocument?.rootElement() {
             // rootElement = '<items>...</item>'
 
-            let threads = self.parseThreadElement(rootElement)
-            for thread in threads {
-                self.thread = thread
-                self.lastRes = thread.lastRes!
-                self.startDate = NSDate()
-                self.delegate?.roomListenerDidReceiveThread(self, thread: thread)
+            let threads = parseThreadElement(rootElement)
+            for _thread in threads {
+                thread = _thread
+                lastRes = _thread.lastRes!
+                startDate = NSDate()
+                delegate?.roomListenerDidReceiveThread(self, thread: _thread)
             }
         
-            let chats = self.parseChatElement(rootElement)
+            let chats = parseChatElement(rootElement)
             for chat in chats {
                 if let chatNo = chat.no {
-                    self.lastRes = chatNo
+                    lastRes = chatNo
                 }
                 
-                self.delegate?.roomListenerDidReceiveChat(self, chat: chat)
+                delegate?.roomListenerDidReceiveChat(self, chat: chat)
             }
             
-            let chatResults = self.parseChatResultElement(rootElement)
+            let chatResults = parseChatResultElement(rootElement)
             for chatResult in chatResults {
                 logger.debug("\(chatResult.description)")
             }
@@ -323,8 +325,8 @@ class RoomListener : NSObject, NSStreamDelegate {
         for chatElement in chatElements {
             let chat = Chat()
 
-            chat.internalNo = self.internalNo++
-            chat.roomPosition = self.server?.roomPosition
+            chat.internalNo = internalNo++
+            chat.roomPosition = server?.roomPosition
             
             if let pr = chatElement.attributeForName("premium")?.stringValue, let intpr = Int(pr) {
                 chat.premium = Premium(rawValue: intpr)
@@ -390,13 +392,13 @@ class RoomListener : NSObject, NSStreamDelegate {
 
     // MARK: - Private Functions
     func startPingTimer() {
-        self.pingTimer = NSTimer.scheduledTimerWithTimeInterval(
+        pingTimer = NSTimer.scheduledTimerWithTimeInterval(
             kPingInterval, target: self, selector: Selector("sendPing:"), userInfo: nil, repeats: true)
     }
 
     func stopPingTimer() {
-        self.pingTimer?.invalidate()
-        self.pingTimer = nil
+        pingTimer?.invalidate()
+        pingTimer = nil
     }
 
     func sendPing(timer: NSTimer) {

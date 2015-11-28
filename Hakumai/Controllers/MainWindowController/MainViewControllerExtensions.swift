@@ -12,14 +12,14 @@ import Foundation
 extension MainViewController {
     // MARK: - NSTableView Performance
     func kickTableViewStressTest() {
-        // self.kickParallelTableViewStressTest(5, interval: 0.5, count: 100000)
-        self.kickParallelTableViewStressTest(4, interval: 2, count: 100000)
-        // self.kickParallelTableViewStressTest(1, interval: 0.01, count: 100)
+        // kickParallelTableViewStressTest(5, interval: 0.5, count: 100000)
+        kickParallelTableViewStressTest(4, interval: 2, count: 100000)
+        // kickParallelTableViewStressTest(1, interval: 0.01, count: 100)
     }
 
     func kickParallelTableViewStressTest(parallelism: Int, interval: NSTimeInterval, count: Int) {
         for _ in 1...parallelism {
-            self.kickTableViewStressTest(interval, count: count)
+            kickTableViewStressTest(interval, count: count)
             
             let randomWait = Float(arc4random() % 10) * 0.1
             NSThread.sleepForTimeInterval(NSTimeInterval(randomWait))
@@ -27,13 +27,13 @@ extension MainViewController {
     }
     
     func kickTableViewStressTest(interval: NSTimeInterval, count: Int) {
-        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) {
             for _ in 1...count {
                 let chat = self.randomChat()
                 MainViewController.sharedInstance.nicoUtilityDidReceiveChat(NicoUtility.sharedInstance, chat: chat)
                 NSThread.sleepForTimeInterval(interval)
             }
-        })
+        }
         
         // NSRunLoop.currentRunLoop().run()
     }

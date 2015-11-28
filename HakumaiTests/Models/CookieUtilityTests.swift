@@ -29,7 +29,7 @@ class CookieUtilityTests: XCTestCase {
         var asyncExpectation: XCTestExpectation
 
         // test 1
-        asyncExpectation = self.expectationWithDescription("asyncExpectation")
+        asyncExpectation = expectationWithDescription("asyncExpectation")
         
         let mailAddress = "test1234@example.com"
         let password = "password"
@@ -39,7 +39,7 @@ class CookieUtilityTests: XCTestCase {
             asyncExpectation.fulfill()
         }
         
-        self.waitForExpectationsWithTimeout(kAsyncTimeout, handler: nil)
+        waitForExpectationsWithTimeout(kAsyncTimeout, handler: nil)
         
         // test 2
         // ...

@@ -13,7 +13,7 @@ extension NSXMLElement {
         var err: NSError?
         
         do {
-            let nodes = try self.nodesForXPath(xpath)
+            let nodes = try nodesForXPath(xpath)
             if 0 < nodes.count {
                 return (nodes[0] ).stringValue
             }
@@ -26,7 +26,7 @@ extension NSXMLElement {
     }
     
     func firstIntValueForXPathNode(xpath: String) -> Int? {
-        let stringValue = self.firstStringValueForXPathNode(xpath)
+        let stringValue = firstStringValueForXPathNode(xpath)
         
         return stringValue == nil ? nil : Int(stringValue!)
     }

@@ -14,9 +14,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: - NSApplicationDelegate Functions
     func applicationDidFinishLaunching(aNotification: NSNotification) {
         Helper.setupLogger(logger)
-        self.migrateApplicationVersion()
-        self.initializeUserDefaults()
-        self.addObserverForUserDefaults()
+        migrateApplicationVersion()
+        initializeUserDefaults()
+        addObserverForUserDefaults()
     }
 
     func applicationWillTerminate(aNotification: NSNotification) {
@@ -136,7 +136,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         case Parameters.AlwaysOnTop:
             if let newValue = change["new"] as? Bool {
                 // logger.debug("\(newValue)")
-                self.makeWindowAlwaysOnTop(newValue)
+                makeWindowAlwaysOnTop(newValue)
             }
             
         default:

@@ -37,7 +37,7 @@ class MessageServer: CustomStringConvertible {
     let thread: Int
     
     var isChannel: Bool {
-        if self.address.hasRegexpPattern(kRegExpPatternHostChannel) {
+        if address.hasRegexpPattern(kRegExpPatternHostChannel) {
             return true
         }
         
@@ -47,8 +47,8 @@ class MessageServer: CustomStringConvertible {
     
     var description: String {
         return (
-            "MessageServer: roomPosition[\(self.roomPosition)] " +
-            "address[\(self.address)] port[\(self.port)] thread[\(self.thread)]"
+            "MessageServer: roomPosition[\(roomPosition)] " +
+            "address[\(address)] port[\(port)] thread[\(thread)]"
         )
     }
     
@@ -62,11 +62,11 @@ class MessageServer: CustomStringConvertible {
 
     // MARK: - Public Functions
     func previous() -> MessageServer? {
-        return self.neighbor(direction: -1)
+        return neighbor(direction: -1)
     }
     
     func next() -> MessageServer? {
-        return self.neighbor(direction: 1)
+        return neighbor(direction: 1)
     }
     
     func neighbor(direction direction: Int) -> MessageServer? {
@@ -83,7 +83,7 @@ class MessageServer: CustomStringConvertible {
             return nil
         }
         
-        let serverIndex = MessageServer.serverIndexWithChannel(self.isChannel, serverNumber: serverNumber!, port: port)
+        let serverIndex = MessageServer.serverIndexWithChannel(isChannel, serverNumber: serverNumber!, port: port)
         
         if serverIndex == nil {
             return nil
@@ -91,15 +91,15 @@ class MessageServer: CustomStringConvertible {
         
         var derived: (serverNumber: Int, port: Int)
         
-        if direction == -1 && MessageServer.isFirstServerWithChannel(self.isChannel, serverNumber: serverNumber!, port: port) {
-            derived = MessageServer.lastMessageServerWithChannel(self.isChannel)
+        if direction == -1 && MessageServer.isFirstServerWithChannel(isChannel, serverNumber: serverNumber!, port: port) {
+            derived = MessageServer.lastMessageServerWithChannel(isChannel)
         }
-        else if direction == 1 && MessageServer.isLastServerWithChannel(self.isChannel, serverNumber: serverNumber!, port: port) {
-            derived = MessageServer.firstMessageServerWithChannel(self.isChannel)
+        else if direction == 1 && MessageServer.isLastServerWithChannel(isChannel, serverNumber: serverNumber!, port: port) {
+            derived = MessageServer.firstMessageServerWithChannel(isChannel)
         }
         else {
             let index = serverIndex! + direction
-            derived = self.isChannel ? kMessageServersChannel[index] : kMessageServersUser[index]
+            derived = isChannel ? kMessageServersChannel[index] : kMessageServersUser[index]
         }
         
         address = MessageServer.reconstructServerAddressWithBaseAddress(address, serverNumber: derived.serverNumber)

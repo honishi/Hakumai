@@ -20,8 +20,8 @@ class ScoreTableCellView: NSTableCellView {
 
     var chat: Chat? = nil {
         didSet {
-            self.coloredView.fillColor = self.colorForChatScore(self.chat)
-            self.scoreLabel.stringValue = self.stringForChatScore(self.chat)
+            coloredView.fillColor = colorForChatScore(chat)
+            scoreLabel.stringValue = stringForChatScore(chat)
         }
     }
     
@@ -31,7 +31,7 @@ class ScoreTableCellView: NSTableCellView {
 
     // MARK: - Internal Functions
     func colorForChatScore(chat: Chat?) -> NSColor {
-        // println("\(self.score)")
+        // println("\(score)")
         if chat == nil {
             return UIHelper.systemMessageColorBackground()
         }

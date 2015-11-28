@@ -123,7 +123,7 @@ extension NicoUtility {
             return nil
         }
         
-        let roomPosition = self.roomPositionByUser(user)
+        let roomPosition = roomPositionByUser(user)
         
         if roomPosition == nil {
             return nil
@@ -156,7 +156,7 @@ extension NicoUtility {
             return RoomPosition(rawValue: 0)
         }
         
-        if let roomLabel = user.roomLabel, let standCharacter = self.extractStandCharacter(roomLabel) {
+        if let roomLabel = user.roomLabel, let standCharacter = extractStandCharacter(roomLabel) {
             logger.debug("extracted standCharacter:\(standCharacter)")
             let raw = (standCharacter - ("A" as Character)) + 1
             return RoomPosition(rawValue: raw)

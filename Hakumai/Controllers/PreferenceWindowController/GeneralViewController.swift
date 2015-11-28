@@ -37,12 +37,12 @@ class GeneralViewController: NSViewController {
     
     dynamic var mailAddress: NSString! {
         didSet {
-            self.validateCheckAccountButton()
+            validateCheckAccountButton()
         }
     }
     dynamic var password: NSString! {
         didSet {
-            self.validateCheckAccountButton()
+            validateCheckAccountButton()
         }
     }
     
@@ -57,26 +57,26 @@ class GeneralViewController: NSViewController {
         super.viewDidAppear()
         
         if let account = KeychainUtility.accountInKeychain() {
-            self.mailAddress = account.mailAddress
-            self.password = account.password
+            mailAddress = account.mailAddress
+            password = account.password
         }
         
-        self.validateCheckAccountButton()
+        validateCheckAccountButton()
     }
 
     // MARK: - Internal Functions
     func validateCheckAccountButton() {
-        self.checkAccountButton?.enabled = self.canLogin()
+        checkAccountButton?.enabled = canLogin()
     }
     
     func canLogin() -> Bool {
-        if self.mailAddress == nil || self.password == nil {
+        if mailAddress == nil || password == nil {
             return false
         }
         
-        let loginSelected = self.sessionManagementMatrix?.selectedTag() == SessionManagementType.Login.rawValue
-        let hasValidMailAddress = (self.mailAddress as String).hasRegexpPattern(kRegexpMailAddress)
-        let hasValidPassword = (self.password as String).hasRegexpPattern(kRegexpPassword)
+        let loginSelected = sessionManagementMatrix?.selectedTag() == SessionManagementType.Login.rawValue
+        let hasValidMailAddress = (mailAddress as String).hasRegexpPattern(kRegexpMailAddress)
+        let hasValidPassword = (password as String).hasRegexpPattern(kRegexpPassword)
         
         return (loginSelected && hasValidMailAddress && hasValidPassword)
     }
@@ -86,25 +86,25 @@ class GeneralViewController: NSViewController {
         // log.debug("\(matrix.selectedTag())")
         
         if matrix.selectedTag() == SessionManagementType.Login.rawValue {
-            self.mailAddressTextField.becomeFirstResponder()
+            mailAddressTextField.becomeFirstResponder()
         }
     }
     
     @IBAction func detectedEnterInTextField(sender: AnyObject) {
-        if self.canLogin() {
-            self.checkAccount(self)
+        if canLogin() {
+            checkAccount(self)
         }
     }
     
     @IBAction func checkAccount(sender: AnyObject) {
-        logger.debug("login w/ [\(self.mailAddress)][\(self.password)]")
+        logger.debug("login w/ [\(mailAddress)][\(password)]")
         
-        if self.canLogin() == false {
+        if canLogin() == false {
             return
         }
         
         let completion = { (userSessionCookie: String?) -> Void in
-            dispatch_async(dispatch_get_main_queue(), {
+            dispatch_async(dispatch_get_main_queue()) {
                 self.progressIndicator.stopAnimation(self)
                 
                 if userSessionCookie == nil {
@@ -116,10 +116,10 @@ class GeneralViewController: NSViewController {
                 
                 KeychainUtility.removeAllAccountsInKeychain()
                 KeychainUtility.setAccountToKeychainWith(self.mailAddress as String, password: self.password as String)
-            })
+            }
         }
 
-        self.progressIndicator.startAnimation(self)
-        CookieUtility.requestLoginCookieWithMailAddress(self.mailAddress as String, password: self.password as String, completion: completion)
+        progressIndicator.startAnimation(self)
+        CookieUtility.requestLoginCookieWithMailAddress(mailAddress as String, password: password as String, completion: completion)
     }
 }

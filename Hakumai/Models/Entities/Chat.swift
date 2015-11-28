@@ -24,31 +24,31 @@ class Chat: CustomStringConvertible {
     var score: Int?
     
     var isRawUserId: Bool {
-        return Chat.isRawUserId(self.userId)
+        return Chat.isRawUserId(userId)
     }
     
     var isUserComment: Bool {
-        return Chat.isUserComment(self.premium)
+        return Chat.isUserComment(premium)
     }
     
     var isBSPComment: Bool {
-        return Chat.isBSPComment(self.premium)
+        return Chat.isBSPComment(premium)
     }
     
     var isSystemComment: Bool {
-        return Chat.isSystemComment(self.premium)
+        return Chat.isSystemComment(premium)
     }
     
     var kickOutSeatNo: Int? {
-        let seatNo = self.comment?.extractRegexpPattern(kRegexpSeatNo)
+        let seatNo = comment?.extractRegexpPattern(kRegexpSeatNo)
         return seatNo == nil ? nil : Int(seatNo!)
     }
     
     var description: String {
         return (
-            "Chat: internalNo[\(self.internalNo)] roomPosition[\(self.roomPosition)] no[\(self.no)] " +
-            "date[\(self.date)] dateUsec[\(self.dateUsec)] mail[\(self.mail)] userId[\(self.userId)] " +
-            "premium[\(self.premium)] comment[\(self.comment)] score[\(self.score)]"
+            "Chat: internalNo[\(internalNo)] roomPosition[\(roomPosition)] no[\(no)] " +
+            "date[\(date)] dateUsec[\(dateUsec)] mail[\(mail)] userId[\(userId)] " +
+            "premium[\(premium)] comment[\(comment)] score[\(score)]"
         )
     }
     

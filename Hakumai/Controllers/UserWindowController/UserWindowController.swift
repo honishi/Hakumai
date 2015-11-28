@@ -22,7 +22,7 @@ class UserWindowController: NSWindowController, NSWindowDelegate {
     weak var delegate: UserWindowControllerDelegate?
     var userId: String? {
         didSet {
-            self.reloadMessages()
+            reloadMessages()
         }
     }
     
@@ -46,13 +46,13 @@ class UserWindowController: NSWindowController, NSWindowDelegate {
         let window: AnyObject? = notification.object
         
         if window is UserWindow {
-            self.delegate?.userWindowControllerDidClose(self)
+            delegate?.userWindowControllerDidClose(self)
         }
     }
     
     // MARK: - Public Functions
     func reloadMessages() {
-        let userViewController = self.contentViewController as! UserViewController
+        let userViewController = contentViewController as! UserViewController
         userViewController.userId = userId
     }
     

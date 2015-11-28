@@ -16,14 +16,14 @@ class RoomPositionTableCellView: NSTableCellView {
     
     var roomPosition: RoomPosition? = nil {
         didSet {
-            self.roomPositionLabel.stringValue = self.stringForRoomPosition(self.roomPosition)
-            self.coloredView.fillColor = self.colorForRoomPosition(self.roomPosition)
+            roomPositionLabel.stringValue = stringForRoomPosition(roomPosition)
+            coloredView.fillColor = colorForRoomPosition(roomPosition)
         }
     }
     
     var commentNo: Int? = nil {
         didSet {
-            self.commentNoLabel.stringValue = self.commentNoString(self.commentNo)
+            commentNoLabel.stringValue = commentNoString(commentNo)
         }
     }
     

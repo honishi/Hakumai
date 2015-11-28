@@ -20,13 +20,13 @@ class Live: CustomStringConvertible {
     var startTime: NSDate?
     
     var liveUrlString: String {
-        return kLiveBaseUrl + (self.liveId ?? "")
+        return kLiveBaseUrl + (liveId ?? "")
     }
     
     var description: String {
         return (
-            "Live: liveId[\(self.liveId)] title[\(self.title)] community[\(self.community)] " +
-            "baseTime[\(self.baseTime)] openTime[\(self.openTime)] startTime[\(self.startTime)]"
+            "Live: liveId[\(liveId)] title[\(title)] community[\(community)] " +
+            "baseTime[\(baseTime)] openTime[\(openTime)] startTime[\(startTime)]"
         )
     }
     

@@ -78,14 +78,14 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.buildViews()
-        self.setupTableView()
-        self.registerNibs()
+        buildViews()
+        setupTableView()
+        registerNibs()
     }
     
     override func viewDidAppear() {
-        // self.kickTableViewStressTest()
-        // self.updateStandardUserDefaults()
+        // kickTableViewStressTest()
+        // updateStandardUserDefaults()
     }
     
     override var representedObject: AnyObject? {
@@ -97,16 +97,16 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     // MARK: Configure Views
     func buildViews() {
         // use async to properly render border line. if not async, the line sometimes disappears
-        dispatch_async(dispatch_get_main_queue(), {
+        dispatch_async(dispatch_get_main_queue()) {
             self.communityImageView.layer?.borderWidth = 0.5
             self.communityImageView.layer?.masksToBounds = true
             self.communityImageView.layer?.borderColor = NSColor.blackColor().CGColor
-        })
+        }
     }
     
     func setupTableView() {
-        self.tableView.doubleAction = "openUserWindow:"
-        self.rowDefaultHeight = self.tableView.rowHeight
+        tableView.doubleAction = "openUserWindow:"
+        rowDefaultHeight = tableView.rowHeight
     }
     
     func registerNibs() {
@@ -118,7 +118,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         
         for (nibName, identifier) in nibs {
             let nib = NSNib(nibNamed: nibName, bundle: NSBundle.mainBundle())
-            self.tableView.registerNib(nib!, forIdentifier: identifier)
+            tableView.registerNib(nib!, forIdentifier: identifier)
         }
     }
     
@@ -127,48 +127,48 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         MessageContainer.sharedContainer.showHbIfseetnoCommands = show
         logger.debug("changed show 'hbifseetno' commands: \(show)")
         
-        self.rebuildFilteredMessages()
+        rebuildFilteredMessages()
     }
     
     func changeEnableCommentSpeech(enabled: Bool) {
         // logger.debug("\(enabled)")
-        self.updateSpeechManagerState()
+        updateSpeechManagerState()
     }
     
     func changeEnableMuteUserIds(enabled: Bool) {
         MessageContainer.sharedContainer.enableMuteUserIds = enabled
         logger.debug("changed enable mute userids: \(enabled)")
         
-        self.rebuildFilteredMessages()
+        rebuildFilteredMessages()
     }
     
     func changeMuteUserIds(muteUserIds: [[String: String]]) {
         MessageContainer.sharedContainer.muteUserIds = muteUserIds
         logger.debug("changed mute userids: \(muteUserIds)")
         
-        self.rebuildFilteredMessages()
+        rebuildFilteredMessages()
     }
     
     func changeEnableMuteWords(enabled: Bool) {
         MessageContainer.sharedContainer.enableMuteWords = enabled
         logger.debug("changed enable mute words: \(enabled)")
         
-        self.rebuildFilteredMessages()
+        rebuildFilteredMessages()
     }
     
     func changeMuteWords(muteWords: [[String: String]]) {
         MessageContainer.sharedContainer.muteWords = muteWords
         logger.debug("changed mute words: \(muteWords)")
         
-        self.rebuildFilteredMessages()
+        rebuildFilteredMessages()
     }
     
     func rebuildFilteredMessages() {
-        dispatch_async(dispatch_get_main_queue(), {
+        dispatch_async(dispatch_get_main_queue()) {
             self.progressIndicator.startAnimation(self)
             let shouldScroll = self.shouldTableViewScrollToBottom()
             
-            MessageContainer.sharedContainer.rebuildFilteredMessages({ () -> Void in
+            MessageContainer.sharedContainer.rebuildFilteredMessages {
                 self.tableView.reloadData()
                 
                 if shouldScroll {
@@ -177,8 +177,8 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
                 self.scrollView.flashScrollers()
                 
                 self.progressIndicator.stopAnimation(self)
-            })
-        })
+            }
+        }
     }
     
     // MARK: - NSTableViewDataSource Functions
@@ -189,17 +189,17 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     func tableView(tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
         let message = MessageContainer.sharedContainer[row]
         
-        if let cached = self.rowHeightCacher[message.messageNo] {
+        if let cached = rowHeightCacher[message.messageNo] {
             return cached
         }
         
         var rowHeight: CGFloat = 0
 
-        let commentTableColumn = self.tableView.tableColumnWithIdentifier(kCommentColumnIdentifier)!
+        let commentTableColumn = tableView.tableColumnWithIdentifier(kCommentColumnIdentifier)!
         let commentColumnWidth = commentTableColumn.width
-        rowHeight = self.commentColumnHeight(message, width: commentColumnWidth)
+        rowHeight = commentColumnHeight(message, width: commentColumnWidth)
         
-        self.rowHeightCacher[message.messageNo] = rowHeight
+        rowHeightCacher[message.messageNo] = rowHeight
         
         return rowHeight
     }
@@ -209,21 +209,21 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         let trailingSpace: CGFloat = 2
         let widthPadding = leadingSpace + trailingSpace
 
-        let (content, attributes) = self.contentAndAttributesForMessage(message)
+        let (content, attributes) = contentAndAttributesForMessage(message)
         
         let commentRect = content.boundingRectWithSize(CGSizeMake(width - widthPadding, 0),
             options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: attributes)
         // logger.debug("\(commentRect.size.width),\(commentRect.size.height)")
         
-        return max(commentRect.size.height, self.rowDefaultHeight)
+        return max(commentRect.size.height, rowDefaultHeight)
     }
     
     func tableViewColumnDidResize(aNotification: NSNotification) {
         let column = aNotification.userInfo?["NSTableColumn"] as! NSTableColumn
         
         if column.identifier == kCommentColumnIdentifier {
-            self.rowHeightCacher.removeAll(keepCapacity: false)
-            self.tableView.reloadData()
+            rowHeightCacher.removeAll(keepCapacity: false)
+            tableView.reloadData()
         }
     }
 
@@ -238,10 +238,10 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         let message = MessageContainer.sharedContainer[row]
         
         if message.messageType == .System {
-            self.configureViewForSystemMessage(message, tableColumn: tableColumn!, view: view!)
+            configureViewForSystemMessage(message, tableColumn: tableColumn!, view: view!)
         }
         else if message.messageType == .Chat {
-            self.configureViewForChat(message, tableColumn: tableColumn!, view: view!)
+            configureViewForChat(message, tableColumn: tableColumn!, view: view!)
         }
         
         return view
@@ -256,7 +256,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         case kScoreColumnIdentifier:
             (view as! ScoreTableCellView).chat = nil
         case kCommentColumnIdentifier:
-            let (content, attributes) = self.contentAndAttributesForMessage(message)
+            let (content, attributes) = contentAndAttributesForMessage(message)
             let attributed = NSAttributedString(string: content as String, attributes: attributes)
             view.textField?.attributedStringValue = attributed
         case kUserIdColumnIdentifier:
@@ -281,10 +281,10 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         case kScoreColumnIdentifier:
             (view as! ScoreTableCellView).chat = chat
         case kCommentColumnIdentifier:
-            let (content, attributes) = self.contentAndAttributesForMessage(message)
+            let (content, attributes) = contentAndAttributesForMessage(message)
             attributed = NSAttributedString(string: content as String, attributes: attributes)
         case kUserIdColumnIdentifier:
-            let handleName = HandleNameManager.sharedManager.handleNameForLive(self.live!, chat: chat)
+            let handleName = HandleNameManager.sharedManager.handleNameForLive(live!, chat: chat)
             (view as! UserIdTableCellView).info = (handleName: handleName, userId: chat.userId, premium: chat.premium, comment: chat.comment)
         case kPremiumColumnIdentifier:
             (view as! PremiumTableCellView).premium = chat.premium
@@ -326,11 +326,11 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         let isMovedDown = commandSelector == "moveDown:"
         
         if isMovedUp || isMovedDown {
-            if self.commentHistory.count == 0 {
+            if commentHistory.count == 0 {
                 // nop
             }
             else {
-                self.handleCommentTextFieldKeyUpDown(isMovedUp: isMovedUp, isMovedDown: isMovedDown)
+                handleCommentTextFieldKeyUpDown(isMovedUp: isMovedUp, isMovedDown: isMovedDown)
             }
             
             return true
@@ -340,16 +340,16 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
     
     func handleCommentTextFieldKeyUpDown(isMovedUp isMovedUp: Bool, isMovedDown: Bool) {
-        if isMovedUp && 0 <= self.commentHistoryIndex {
-            self.commentHistoryIndex! -= 1
+        if isMovedUp && 0 <= commentHistoryIndex {
+            commentHistoryIndex! -= 1
         }
-        else if isMovedDown && self.commentHistoryIndex <= (self.commentHistory.count - 1) {
-            self.commentHistoryIndex! += 1
+        else if isMovedDown && commentHistoryIndex <= (commentHistory.count - 1) {
+            commentHistoryIndex! += 1
         }
         
-        let inValidHistoryRange = (0 <= self.commentHistoryIndex && self.commentHistoryIndex <= (self.commentHistory.count - 1))
+        let inValidHistoryRange = (0 <= commentHistoryIndex && commentHistoryIndex <= (commentHistory.count - 1))
         
-        self.commentTextField.stringValue = (inValidHistoryRange ? self.commentHistory[self.commentHistoryIndex!] : "")
+        commentTextField.stringValue = (inValidHistoryRange ? commentHistory[commentHistoryIndex!] : "")
         
         // selectText() should be called in next run loop, http://stackoverflow.com/a/2196751
         dispatch_after(0, dispatch_get_main_queue()) {
@@ -372,7 +372,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             MessageContainer.sharedContainer.beginDateToShowHbIfseetnoCommands = beginDate
         }
         
-        dispatch_async(dispatch_get_main_queue(), {
+        dispatch_async(dispatch_get_main_queue()) {
             self.liveTitleLabel.stringValue = live.title!
             
             let communityTitle = live.community.title ?? "-"
@@ -393,26 +393,26 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             self.startTimers()
             self.loadThumbnail()
             self.focusCommentTextField()
-        })
+        }
         
-        self.logSystemMessageToTableView("Prepared live as user \(user.nickname!).")
+        logSystemMessageToTableView("Prepared live as user \(user.nickname!).")
     }
     
     func nicoUtilityDidFailToPrepareLive(nicoUtility: NicoUtility, reason: String) {
-        self.logSystemMessageToTableView("Failed to prepare live.(\(reason))")
+        logSystemMessageToTableView("Failed to prepare live.(\(reason))")
         dispatch_async(dispatch_get_main_queue()) {
             self.progressIndicator.stopAnimation(self)
         }
     }
 
     func nicoUtilityDidConnectToLive(nicoUtility: NicoUtility, roomPosition: RoomPosition) {
-        if self.connectedToLive == false {
-            self.connectedToLive = true
-            self.logSystemMessageToTableView("Connected to live.")
+        if connectedToLive == false {
+            connectedToLive = true
+            logSystemMessageToTableView("Connected to live.")
             dispatch_async(dispatch_get_main_queue()) {
                 self.progressIndicator.stopAnimation(self)
             }
-            self.updateSpeechManagerState()
+            updateSpeechManagerState()
         }
     }
 
@@ -421,15 +421,15 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             return
         }
 
-        self.logSystemMessageToTableView("Opened \(chat.roomPosition!.label()).")
+        logSystemMessageToTableView("Opened \(chat.roomPosition!.label()).")
 
-        if self.openedRoomPosition == nil {
+        if openedRoomPosition == nil {
             // nop
         }
-        else if chat.roomPosition!.rawValue <= self.openedRoomPosition?.rawValue {
+        else if chat.roomPosition!.rawValue <= openedRoomPosition?.rawValue {
             return
         }
-        self.openedRoomPosition = chat.roomPosition
+        openedRoomPosition = chat.roomPosition
         
         dispatch_async(dispatch_get_main_queue(), {
             self.notificationLabel.stringValue = "Opened:~\(chat.roomPosition!.label())"
@@ -438,13 +438,13 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
 
     func nicoUtilityDidReceiveChat(nicoUtility: NicoUtility, chat: Chat) {
         // logger.debug("\(chat.mail),\(chat.comment)")
-        if let live = self.live {
+        if let live = live {
             HandleNameManager.sharedManager.extractAndUpdateHandleNameWithLive(live, chat: chat)
         }
-        self.appendTableView(chat)
-        self.handleSpeechWithChat(chat)
+        appendTableView(chat)
+        handleSpeechWithChat(chat)
         
-        for userWindowController in self.userWindowControllers {
+        for userWindowController in userWindowControllers {
             if chat.userId == userWindowController.userId {
                 dispatch_async(dispatch_get_main_queue(), {
                     userWindowController.reloadMessages()
@@ -454,33 +454,33 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
     
     func nicoUtilityDidGetKickedOut(nicoUtility: NicoUtility) {
-        self.logSystemMessageToTableView("Got kicked out...")
+        logSystemMessageToTableView("Got kicked out...")
     }
     
     func nicoUtilityWillReconnectToLive(nicoUtility: NicoUtility) {
-        self.logSystemMessageToTableView("Reconnecting...")
+        logSystemMessageToTableView("Reconnecting...")
     }
     
     func nicoUtilityDidDisconnect(nicoUtility: NicoUtility) {
-        self.logSystemMessageToTableView("Live closed.")
-        self.stopTimers()
-        self.connectedToLive = false
-        self.openedRoomPosition = nil
-        self.updateSpeechManagerState()
+        logSystemMessageToTableView("Live closed.")
+        stopTimers()
+        connectedToLive = false
+        openedRoomPosition = nil
+        updateSpeechManagerState()
     }
     
     func nicoUtilityDidReceiveHeartbeat(nicoUtility: NicoUtility, heartbeat: Heartbeat) {
-        self.updateHeartbeatInformation(heartbeat)
+        updateHeartbeatInformation(heartbeat)
     }
     
     // MARK: System Message Utility
     func logSystemMessageToTableView(message: String) {
-        self.appendTableView(message)
+        appendTableView(message)
     }
     
     // MARK: Chat Append Utility
     func appendTableView(chatOrSystemMessage: AnyObject) {
-        dispatch_async(dispatch_get_main_queue(), {
+        dispatch_async(dispatch_get_main_queue()) {
             let shouldScroll = self.shouldTableViewScrollToBottom()
             
             let (appended, count) = MessageContainer.sharedContainer.append(chatOrSystemMessage: chatOrSystemMessage)
@@ -497,7 +497,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
                 
                 self.scrollView.flashScrollers()
             }
-        })
+        }
     }
     
     func logMessage(message: Message) {
@@ -514,12 +514,12 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
     
     func shouldTableViewScrollToBottom() -> Bool {
-        if 0 < self.currentScrollAnimationCount {
-            return self.lastShouldScrollToBottom
+        if 0 < currentScrollAnimationCount {
+            return lastShouldScrollToBottom
         }
         
-        let viewRect = self.scrollView.contentView.documentRect
-        let visibleRect = self.scrollView.contentView.documentVisibleRect
+        let viewRect = scrollView.contentView.documentRect
+        let visibleRect = scrollView.contentView.documentVisibleRect
         // logger.debug("\(viewRect)-\(visibleRect)")
         
         let bottomY = viewRect.size.height
@@ -527,13 +527,13 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         let allowance: CGFloat = 10
 
         let shouldScroll = (bottomY <= (offsetBottomY + allowance))
-        self.lastShouldScrollToBottom = shouldScroll
+        lastShouldScrollToBottom = shouldScroll
         
         return shouldScroll
     }
     
     func scrollTableViewToBottom(animated: Bool = false) {
-        let clipView = self.scrollView.contentView
+        let clipView = scrollView.contentView
         let x = clipView.documentVisibleRect.origin.x
         let y = clipView.documentRect.size.height - clipView.documentVisibleRect.size.height
         let origin = NSMakePoint(x, y)
@@ -541,13 +541,13 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         if !animated {
             // note: do not use scrollRowToVisible here.
             // scroll will be sometimes stopped when very long comment arrives.
-            // self.tableView.scrollRowToVisible(self.tableView.numberOfRows - 1)
+            // tableView.scrollRowToVisible(tableView.numberOfRows - 1)
             clipView.setBoundsOrigin(origin)
         }
         else {
             // http://stackoverflow.com/questions/19399242/soft-scroll-animation-nsscrollview-scrolltopoint
-            self.currentScrollAnimationCount += 1
-            // logger.debug("start scroll animation:\(self.currentScrollAnimationCount)")
+            currentScrollAnimationCount += 1
+            // logger.debug("start scroll animation:\(currentScrollAnimationCount)")
             
             NSAnimationContext.beginGrouping()
             NSAnimationContext.currentContext().duration = 0.5
@@ -558,7 +558,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             }
             
             clipView.animator().setBoundsOrigin(origin)
-            // self.scrollView.reflectScrolledClipView(clipView)
+            // scrollView.reflectScrolledClipView(clipView)
             
             NSAnimationContext.endGrouping()
         }
@@ -568,8 +568,8 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     func userWindowControllerDidClose(userWindowController: UserWindowController) {
         logger.debug("")
         
-        if let index = self.userWindowControllers.indexOf(userWindowController) {
-            self.userWindowControllers.removeAtIndex(index)
+        if let index = userWindowControllers.indexOf(userWindowController) {
+            userWindowControllers.removeAtIndex(index)
         }
     }
     
@@ -578,7 +578,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         let storyboard = NSStoryboard(name: kStoryboardNameMainWindowController, bundle: nil)
         let handleNameAddViewController = storyboard.instantiateControllerWithIdentifier(kStoryboardIdHandleNameAddViewController) as! HandleNameAddViewController
         
-        handleNameAddViewController.handleName = (self.defaultHandleNameWithLive(live, chat: chat) ?? "")
+        handleNameAddViewController.handleName = (defaultHandleNameWithLive(live, chat: chat) ?? "")
         handleNameAddViewController.completion = { (cancelled: Bool, handleName: String?) -> Void in
             if !cancelled {
                 HandleNameManager.sharedManager.updateHandleNameWithLive(live, chat: chat, handleName: handleName!)
@@ -589,7 +589,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             // TODO: deinit in handleNameViewController is not called after this completion
         }
         
-        self.presentViewControllerAsSheet(handleNameAddViewController)
+        presentViewControllerAsSheet(handleNameAddViewController)
     }
     
     func defaultHandleNameWithLive(live: Live, chat: Chat) -> String? {
@@ -608,39 +608,38 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
     
     func refreshHandleName() {
-        self.tableView.reloadData()
-        self.scrollView.flashScrollers()
+        tableView.reloadData()
+        scrollView.flashScrollers()
     }
     
     // MARK: Hotkeys
     func focusLiveTextField() {
-        self.liveTextField.becomeFirstResponder()
+        liveTextField.becomeFirstResponder()
     }
 
     func focusCommentTextField() {
-        self.commentTextField.becomeFirstResponder()
+        commentTextField.becomeFirstResponder()
     }
     
     // MARK: - Internal Functions
     func initializeHandleNameManager() {
-        self.progressIndicator.startAnimation(self)
+        progressIndicator.startAnimation(self)
         
         // force to invoke setup methods in HandleNameManager()
         HandleNameManager.sharedManager
         
-        self.progressIndicator.stopAnimation(self)
+        progressIndicator.stopAnimation(self)
     }
     
     // MARK: Live Info Updater
     func loadThumbnail() {
         NicoUtility.sharedInstance.loadThumbnail { (imageData) -> (Void) in
-            dispatch_async(dispatch_get_main_queue(), {
+            dispatch_async(dispatch_get_main_queue()) {
                 if imageData == nil {
                     return
                 }
-                
                 self.communityImageView.image = NSImage(data: imageData!)
-            })
+            }
         }
     }
     
@@ -657,28 +656,28 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             remaining = free == 0 ? "満員" : String(free).numberStringWithSeparatorComma()!
         }
         
-        dispatch_async(dispatch_get_main_queue(), {
+        dispatch_async(dispatch_get_main_queue()) {
             self.visitorsLabel.stringValue = "Visitors: " + visitors
             self.commentsLabel.stringValue = "Comments: " + comments
             self.remainingSeatsLabel.stringValue = "Seats: " + remaining
-        })
+        }
     }
     
     // MARK: Control Handlers
     @IBAction func grabUrlFromBrowser(sender: AnyObject) {
         if let url = BrowserHelper.urlFromBrowser(.Chrome) {
-            self.liveTextField.stringValue = url
-            self.connectLive(self)
+            liveTextField.stringValue = url
+            connectLive(self)
         }
     }
     
     @IBAction func connectLive(sender: AnyObject) {
-        self.initializeHandleNameManager()
+        initializeHandleNameManager()
         
-        if let liveNumber = MainViewController.extractLiveNumber(self.liveTextField.stringValue) {
-            self.clearAllChats()
+        if let liveNumber = MainViewController.extractLiveNumber(liveTextField.stringValue) {
+            clearAllChats()
 
-            self.communityImageView.image = NSImage(named: kCommunityImageDefaultName)
+            communityImageView.image = NSImage(named: kCommunityImageDefaultName)
 
             NicoUtility.sharedInstance.delegate = self
             
@@ -700,27 +699,27 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
     
     @IBAction func comment(sender: AnyObject) {
-        let comment = self.commentTextField.stringValue
+        let comment = commentTextField.stringValue
         if comment.characters.count == 0 {
             return
         }
         
         let anonymously = NSUserDefaults.standardUserDefaults().boolForKey(Parameters.CommentAnonymously)
-        NicoUtility.sharedInstance.comment(comment, anonymously: anonymously) { (comment: String?) -> Void in
+        NicoUtility.sharedInstance.comment(comment, anonymously: anonymously) { comment in
             if comment == nil {
                 self.logSystemMessageToTableView("Failed to comment.")
             }
         }
-        self.commentTextField.stringValue = ""
+        commentTextField.stringValue = ""
         
-        if self.commentHistory.count == 0 || self.commentHistory.last != comment {
-            self.commentHistory.append(comment)
-            self.commentHistoryIndex = self.commentHistory.count
+        if commentHistory.count == 0 || commentHistory.last != comment {
+            commentHistory.append(comment)
+            commentHistoryIndex = commentHistory.count
         }
     }
     
     func openUserWindow(sender: AnyObject?) {
-        let clickedRow = self.tableView.clickedRow
+        let clickedRow = tableView.clickedRow
         
         if clickedRow == -1 {
             return
@@ -737,7 +736,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         var userWindowController: UserWindowController?
         
         // check if user window exists?
-        for existing in self.userWindowControllers {
+        for existing in userWindowControllers {
             if chat.userId == existing.userId {
                 userWindowController = existing
                 logger.debug("existing userwc found, use it:\(userWindowController)")
@@ -748,36 +747,36 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         if userWindowController == nil {
             // not exist, so create and cache it
             userWindowController = UserWindowController.generateInstanceWithDelegate(self, userId: chat.userId!)
-            self.positionUserWindow(userWindowController!.window!)
+            positionUserWindow(userWindowController!.window!)
             logger.debug("no existing userwc found, create it:\(userWindowController)")
-            self.userWindowControllers.append(userWindowController!)
+            userWindowControllers.append(userWindowController!)
         }
         
         userWindowController!.showWindow(self)
     }
     
     private func positionUserWindow(userWindow: NSWindow) {
-        var topLeftPoint: NSPoint = self.nextUserWindowTopLeftPoint
+        var topLeftPoint: NSPoint = nextUserWindowTopLeftPoint
 
-        if self.userWindowControllers.count == 0 {
+        if userWindowControllers.count == 0 {
             topLeftPoint = kUserWindowDefautlTopLeftPoint
         }
         
-        self.nextUserWindowTopLeftPoint = userWindow.cascadeTopLeftFromPoint(topLeftPoint)
+        nextUserWindowTopLeftPoint = userWindow.cascadeTopLeftFromPoint(topLeftPoint)
     }
     
     // MARK: Timer Functions
     func startTimers() {
-        self.elapsedTimer = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "displayElapsed:", userInfo: nil, repeats: true)
-        self.activeTimer = NSTimer.scheduledTimerWithTimeInterval(kCalculateActiveInterval, target: self, selector: "calculateActive:", userInfo: nil, repeats: true)
+        elapsedTimer = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "displayElapsed:", userInfo: nil, repeats: true)
+        activeTimer = NSTimer.scheduledTimerWithTimeInterval(kCalculateActiveInterval, target: self, selector: "calculateActive:", userInfo: nil, repeats: true)
     }
     
     func stopTimers() {
-        self.elapsedTimer?.invalidate()
-        self.elapsedTimer = nil
+        elapsedTimer?.invalidate()
+        elapsedTimer = nil
         
-        self.activeTimer?.invalidate()
-        self.activeTimer = nil
+        activeTimer?.invalidate()
+        activeTimer = nil
     }
     
     func displayElapsed(timer: NSTimer) {
@@ -799,9 +798,9 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             display = "\(prefix)\(hour):\(minute):\(second)"
         }
         
-        dispatch_async(dispatch_get_main_queue(), {
+        dispatch_async(dispatch_get_main_queue()) {
             self.elapsedLabel.stringValue = "Elapsed: " + display
-        })
+        }
     }
     
     func calculateActive(timer: NSTimer) {
@@ -810,9 +809,9 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
                 return
             }
             
-            dispatch_async(dispatch_get_main_queue(), {
+            dispatch_async(dispatch_get_main_queue()) {
                 self.activeLabel.stringValue = "Active:\(active!)"
-            })
+            }
         }
     }
     
@@ -820,7 +819,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     private func updateSpeechManagerState() {
         let enabled = NSUserDefaults.standardUserDefaults().boolForKey(Parameters.EnableCommentSpeech)
         
-        if enabled && self.connectedToLive {
+        if enabled && connectedToLive {
             SpeechManager.sharedManager.startManager()
         }
         else {
@@ -839,7 +838,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             SpeechManager.sharedManager.enqueueChat(chat)
             
             if SpeechManager.sharedManager.refreshChatQueueIfQueuedTooMuch() {
-                // self.logSystemMessageToTableView("Refreshed speech queue.")
+                // logSystemMessageToTableView("Refreshed speech queue.")
             }
         }
     }
@@ -847,8 +846,8 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     // MARK: Misc Utility
     func clearAllChats() {
         MessageContainer.sharedContainer.removeAll()
-        self.rowHeightCacher.removeAll(keepCapacity: false)
-        self.tableView.reloadData()
+        rowHeightCacher.removeAll(keepCapacity: false)
+        tableView.reloadData()
     }
     
     class func extractLiveNumber(url: String) -> Int? {

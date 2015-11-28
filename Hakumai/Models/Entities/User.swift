@@ -19,17 +19,17 @@ class User: CustomStringConvertible {
     var seatNo: Int?
     
     var isArena: Bool? {
-        return self.roomLabel?.hasRegexpPattern(kRoomLabelForArena)
+        return roomLabel?.hasRegexpPattern(kRoomLabelForArena)
     }
 
     var isBSP: Bool? {
-        return self.roomLabel?.hasRegexpPattern(kRoomLabelForBSP)
+        return roomLabel?.hasRegexpPattern(kRoomLabelForBSP)
     }
 
     var description: String {
         return (
-            "User: userId[\(self.userId)] nickname[\(self.nickname)] isPremium[\(self.isPremium)] " +
-            "roomLabel[\(self.roomLabel)] seatNo[\(self.seatNo)] isArena[\(self.isArena)] isBSP[\(self.isBSP)]"
+            "User: userId[\(userId)] nickname[\(nickname)] isPremium[\(isPremium)] " +
+            "roomLabel[\(roomLabel)] seatNo[\(seatNo)] isArena[\(isArena)] isBSP[\(isBSP)]"
         )
     }
     

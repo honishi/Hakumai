@@ -156,7 +156,7 @@ class NicoUtilityTests: XCTestCase {
     
     // MARK: - Community
     func testLoadCommunityUser() {
-        let data = self.dataForResource("community_user.html")
+        let data = dataForResource("community_user.html")
         let community = Community()
         
         NicoUtility.sharedInstance.extractUserCommunity(data, community: community)
@@ -166,7 +166,7 @@ class NicoUtilityTests: XCTestCase {
     }
     
     func testLoadCommunityChannel() {
-        let data = self.dataForResource("community_channel.html")
+        let data = dataForResource("community_channel.html")
         let community = Community()
         
         NicoUtility.sharedInstance.extractChannelCommunity(data, community: community)
@@ -188,16 +188,16 @@ class NicoUtilityTests: XCTestCase {
         var data: NSData!
         var resolved: String?
         
-        data = self.dataForResource("user_1.html")
+        data = dataForResource("user_1.html")
         resolved = NicoUtility.sharedInstance.extractUsername(data)
         XCTAssert(resolved == "野田草履", "")
         
         // should extract ナオキ兄さん, not ナオキ兄
-        data = self.dataForResource("user_2.html")
+        data = dataForResource("user_2.html")
         resolved = NicoUtility.sharedInstance.extractUsername(data)
         XCTAssert(resolved == "ナオキ兄さん", "")
         
-        data = self.dataForResource("user_me.html")
+        data = dataForResource("user_me.html")
         resolved = NicoUtility.sharedInstance.extractUsername(data)
         XCTAssert(resolved == "honishi", "")
     }
@@ -207,7 +207,7 @@ class NicoUtilityTests: XCTestCase {
         var asyncExpectation: XCTestExpectation
         
         // raw id case
-        asyncExpectation = self.expectationWithDescription("asyncExpectation")
+        asyncExpectation = expectationWithDescription("asyncExpectation")
         
         NicoUtility.sharedInstance.resolveUsername("79595", completion: { (userName) -> Void in
             // test: NSRunLoop.currentRunLoop().runUntilDate(NSDate(timeIntervalSinceNow: NSTimeInterval(5)))
@@ -216,17 +216,17 @@ class NicoUtilityTests: XCTestCase {
             asyncExpectation.fulfill()
         })
 
-        self.waitForExpectationsWithTimeout(kAsyncTimeout, handler: nil)
+        waitForExpectationsWithTimeout(kAsyncTimeout, handler: nil)
         
         // 184 id case
-        asyncExpectation = self.expectationWithDescription("asyncExpectation")
+        asyncExpectation = expectationWithDescription("asyncExpectation")
         
         NicoUtility.sharedInstance.resolveUsername("abc", completion: { (userName) -> (Void) in
             XCTAssert(userName == nil, "")
             asyncExpectation.fulfill()
         })
         
-        self.waitForExpectationsWithTimeout(kAsyncTimeout, handler: nil)
+        waitForExpectationsWithTimeout(kAsyncTimeout, handler: nil)
     }
      */
 
@@ -235,11 +235,11 @@ class NicoUtilityTests: XCTestCase {
         var data: NSData!
         var hb: Heartbeat?
         
-        data = self.dataForResource("heartbeat_ok.xml")
+        data = dataForResource("heartbeat_ok.xml")
         hb = NicoUtility.sharedInstance.extractHeartbeat(data)
         XCTAssert(hb?.status == Heartbeat.Status.Ok, "")
         
-        data = self.dataForResource("heartbeat_fail.xml")
+        data = dataForResource("heartbeat_fail.xml")
         hb = NicoUtility.sharedInstance.extractHeartbeat(data)
         XCTAssert(hb?.status == Heartbeat.Status.Fail, "")
         XCTAssert(hb?.errorCode == Heartbeat.ErrorCode.NotFoundSlot, "")

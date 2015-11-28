@@ -13,7 +13,7 @@ import QuartzCore
 class ColoredView: NSView {
     var fillColor: NSColor = NSColor.grayColor() {
         didSet {
-            self.layer?.setNeedsDisplay()
+            layer?.setNeedsDisplay()
         }
     }
     
@@ -29,23 +29,23 @@ class ColoredView: NSView {
         // calyer implementation based on http://rway.tumblr.com/post/4525503228
         let layer = CALayer()
         layer.delegate = self
-        layer.bounds = self.bounds
+        layer.bounds = bounds
         layer.needsDisplayOnBoundsChange = true
         layer.setNeedsDisplay()
         
         self.layer = layer
-        self.wantsLayer = true
+        wantsLayer = true
     }
 
     override func drawLayer(layer: CALayer, inContext ctx: CGContext) {
-        CGContextSetFillColorWithColor(ctx, self.fillColor.CGColor)
-        CGContextFillRect(ctx, self.bounds)
+        CGContextSetFillColorWithColor(ctx, fillColor.CGColor)
+        CGContextFillRect(ctx, bounds)
     }
     
     /*
     override func drawRect(dirtyRect: NSRect) {
         // http://stackoverflow.com/a/2962882
-        self.fillColor.setFill()
+        fillColor.setFill()
         NSRectFill(dirtyRect);
         
         super.drawRect(dirtyRect)

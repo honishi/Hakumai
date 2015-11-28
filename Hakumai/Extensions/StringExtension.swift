@@ -14,7 +14,7 @@ import Foundation
 // based on http://stackoverflow.com/a/24144365
 extension String {
     subscript (i: Int) -> Character {
-        return Array(self.characters)[i]
+        return Array(characters)[i]
     }
     
     // "立ち見A列".extractRegexpPattern("立ち見(\\w)列") -> Optional("A")
@@ -41,7 +41,7 @@ extension String {
     }
     
     func hasRegexpPattern(pattern: String) -> Bool {
-        return (self.extractRegexpPattern("(" + pattern + ")") != nil)
+        return (extractRegexpPattern("(" + pattern + ")") != nil)
     }
     
     func stringByRemovingPattern(pattern: String) -> String {

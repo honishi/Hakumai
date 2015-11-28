@@ -20,7 +20,7 @@ class ChatResult {
         case TooLong
         
         var description: String {
-            return "ChatResult.Status: \(self.rawValue)(\(self.label()))"
+            return "ChatResult.Status: \(rawValue)(\(label()))"
         }
         
         func label() -> String {
@@ -49,7 +49,7 @@ class ChatResult {
     
     var description: String {
         return (
-            "ChatResult: status[\(self.status)]"
+            "ChatResult: status[\(status)]"
         )
     }
 
