@@ -8,10 +8,6 @@
 
 import Foundation
 import SSKeychain
-import XCGLogger
-
-// logger for class methods
-private let log = XCGLogger.defaultInstance()
 
 class KeychainUtility {
     // MARK: - Public Functions
@@ -22,10 +18,10 @@ class KeychainUtility {
             for account in accounts {
                 if let accountName = (account as? NSDictionary)?[kSSKeychainAccountKey] as? NSString {
                     if SSKeychain.deletePasswordForService(serviceName, account: accountName as String) == true {
-                        log.debug("completed to delete account from keychain:[\(accountName)]")
+                        logger.debug("completed to delete account from keychain:[\(accountName)]")
                     }
                     else {
-                        log.error("failed to delete account from keychain:[\(accountName)]")
+                        logger.error("failed to delete account from keychain:[\(accountName)]")
                     }
                 }
             }
@@ -36,10 +32,10 @@ class KeychainUtility {
         let serviceName = KeychainUtility.keychainServiceName()
         
         if SSKeychain.setPassword(password, forService: serviceName, account: mailAddress) == true {
-            log.debug("completed to set account into keychain:[\(mailAddress)]")
+            logger.debug("completed to set account into keychain:[\(mailAddress)]")
         }
         else {
-            log.error("failed to set account into keychain:[\(mailAddress)]")
+            logger.error("failed to set account into keychain:[\(mailAddress)]")
         }
     }
     
@@ -57,11 +53,11 @@ class KeychainUtility {
                 return nil
             }
             
-            log.debug("found account in keychain:[\(accountName!)]")
+            logger.debug("found account in keychain:[\(accountName!)]")
             return (accountName! as String, password!)
         }
         
-        log.debug("found no account in keychain")
+        logger.debug("found no account in keychain")
         return nil
     }
     

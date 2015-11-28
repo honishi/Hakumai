@@ -7,6 +7,10 @@
 //
 
 import Foundation
+import XCGLogger
+
+// global logger
+let logger = XCGLogger.defaultInstance()
 
 // MARK: constant value for storyboard contents
 let kNibNameRoomPositionTableCellView = "RoomPositionTableCellView"

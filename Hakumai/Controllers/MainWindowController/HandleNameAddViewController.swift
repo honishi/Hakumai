@@ -8,7 +8,6 @@
 
 import Foundation
 import AppKit
-import XCGLogger
 
 class HandleNameAddViewController: NSViewController {
     // MARK: - Properties
@@ -24,11 +23,9 @@ class HandleNameAddViewController: NSViewController {
     
     var completion: ((cancelled: Bool, handleName: String?) -> Void)?
 
-    private let log = XCGLogger.defaultInstance()
-    
     // MARK: - Object Lifecycle
     deinit {
-        log.debug("")
+        logger.debug("")
     }
 
     // MARK: - Internal Functions

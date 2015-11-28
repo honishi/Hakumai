@@ -8,7 +8,6 @@
 
 import Foundation
 import AppKit
-import XCGLogger
 
 // constant value for storyboard
 private let kStoryboardNamePreferenceWindowController = "PreferenceWindowController"
@@ -23,8 +22,6 @@ class PreferenceWindowController: NSWindowController {
 
     @IBOutlet weak var toolbar: NSToolbar!
 
-    let log = XCGLogger.defaultInstance()
-    
     // MARK: Properties for Singleton
     class func generateInstance() -> PreferenceWindowController {
         let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
@@ -41,7 +38,7 @@ class PreferenceWindowController: NSWindowController {
     }
     
     deinit {
-        log.debug("")
+        logger.debug("")
     }
     
     // MARK: - NSObject Overrides

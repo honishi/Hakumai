@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import XCGLogger
+import AppKit
 
 private let kStoryboardNameMainWindowController = "MainWindowController"
 private let kStoryboardIdHandleNameAddViewController = "HandleNameAddViewController"
@@ -47,8 +47,6 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     @IBOutlet var menuDelegate: MenuDelegate!
     
     // MARK: General Properties
-    let log = XCGLogger.defaultInstance()
-
     var connectedToLive = false
     var live: Live?
     var openedRoomPosition: RoomPosition?
@@ -127,40 +125,40 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     // MARK: Utility
     func changeShowHbIfseetnoCommands(show: Bool) {
         MessageContainer.sharedContainer.showHbIfseetnoCommands = show
-        log.debug("changed show 'hbifseetno' commands: \(show)")
+        logger.debug("changed show 'hbifseetno' commands: \(show)")
         
         self.rebuildFilteredMessages()
     }
     
     func changeEnableCommentSpeech(enabled: Bool) {
-        // XCGLogger.debug("\(enabled)")
+        // logger.debug("\(enabled)")
         self.updateSpeechManagerState()
     }
     
     func changeEnableMuteUserIds(enabled: Bool) {
         MessageContainer.sharedContainer.enableMuteUserIds = enabled
-        log.debug("changed enable mute userids: \(enabled)")
+        logger.debug("changed enable mute userids: \(enabled)")
         
         self.rebuildFilteredMessages()
     }
     
     func changeMuteUserIds(muteUserIds: [[String: String]]) {
         MessageContainer.sharedContainer.muteUserIds = muteUserIds
-        log.debug("changed mute userids: \(muteUserIds)")
+        logger.debug("changed mute userids: \(muteUserIds)")
         
         self.rebuildFilteredMessages()
     }
     
     func changeEnableMuteWords(enabled: Bool) {
         MessageContainer.sharedContainer.enableMuteWords = enabled
-        log.debug("changed enable mute words: \(enabled)")
+        logger.debug("changed enable mute words: \(enabled)")
         
         self.rebuildFilteredMessages()
     }
     
     func changeMuteWords(muteWords: [[String: String]]) {
         MessageContainer.sharedContainer.muteWords = muteWords
-        log.debug("changed mute words: \(muteWords)")
+        logger.debug("changed mute words: \(muteWords)")
         
         self.rebuildFilteredMessages()
     }
@@ -215,7 +213,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         
         let commentRect = content.boundingRectWithSize(CGSizeMake(width - widthPadding, 0),
             options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: attributes)
-        // log.debug("\(commentRect.size.width),\(commentRect.size.height)")
+        // logger.debug("\(commentRect.size.width),\(commentRect.size.height)")
         
         return max(commentRect.size.height, self.rowDefaultHeight)
     }
@@ -439,7 +437,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
 
     func nicoUtilityDidReceiveChat(nicoUtility: NicoUtility, chat: Chat) {
-        // log.debug("\(chat.mail),\(chat.comment)")
+        // logger.debug("\(chat.mail),\(chat.comment)")
         if let live = self.live {
             HandleNameManager.sharedManager.extractAndUpdateHandleNameWithLive(live, chat: chat)
         }
@@ -512,7 +510,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             content = message.chat!.comment
         }
         
-        log.debug("[ \(content!) ]")
+        logger.debug("[ \(content!) ]")
     }
     
     func shouldTableViewScrollToBottom() -> Bool {
@@ -522,7 +520,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         
         let viewRect = self.scrollView.contentView.documentRect
         let visibleRect = self.scrollView.contentView.documentVisibleRect
-        // log.debug("\(viewRect)-\(visibleRect)")
+        // logger.debug("\(viewRect)-\(visibleRect)")
         
         let bottomY = viewRect.size.height
         let offsetBottomY = visibleRect.origin.y + visibleRect.size.height
@@ -549,14 +547,14 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         else {
             // http://stackoverflow.com/questions/19399242/soft-scroll-animation-nsscrollview-scrolltopoint
             self.currentScrollAnimationCount += 1
-            // log.debug("start scroll animation:\(self.currentScrollAnimationCount)")
+            // logger.debug("start scroll animation:\(self.currentScrollAnimationCount)")
             
             NSAnimationContext.beginGrouping()
             NSAnimationContext.currentContext().duration = 0.5
             
             NSAnimationContext.currentContext().completionHandler = { () -> Void in
                 self.currentScrollAnimationCount -= 1
-                // self.log.debug("  end scroll animation:\(self.currentScrollAnimationCount)")
+                // logger.debug("  end scroll animation:\(self.currentScrollAnimationCount)")
             }
             
             clipView.animator().setBoundsOrigin(origin)
@@ -568,7 +566,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     
     // MARK: - UserWindowControllerDelegate Functions
     func userWindowControllerDidClose(userWindowController: UserWindowController) {
-        log.debug("")
+        logger.debug("")
         
         if let index = self.userWindowControllers.indexOf(userWindowController) {
             self.userWindowControllers.removeAtIndex(index)
@@ -742,7 +740,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         for existing in self.userWindowControllers {
             if chat.userId == existing.userId {
                 userWindowController = existing
-                log.debug("existing userwc found, use it:\(userWindowController)")
+                logger.debug("existing userwc found, use it:\(userWindowController)")
                 break
             }
         }
@@ -751,7 +749,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             // not exist, so create and cache it
             userWindowController = UserWindowController.generateInstanceWithDelegate(self, userId: chat.userId!)
             self.positionUserWindow(userWindowController!.window!)
-            log.debug("no existing userwc found, create it:\(userWindowController)")
+            logger.debug("no existing userwc found, create it:\(userWindowController)")
             self.userWindowControllers.append(userWindowController!)
         }
         

@@ -8,7 +8,6 @@
 
 import Foundation
 import AppKit
-import XCGLogger
 
 class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     // MARK: Menu Outlets
@@ -21,9 +20,6 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     @IBOutlet weak var reportAsNgUserMenuItem: NSMenuItem!
     @IBOutlet weak var openUserPageMenuItem: NSMenuItem!
     
-    // MARK: General Properties
-    let log = XCGLogger.defaultInstance()
-
     // MARK: Computed Properties
     var tableView: NSTableView {
         return MainViewController.sharedInstance.tableView
@@ -156,7 +152,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         
         for muteUserId in muteUserIds {
             if chat.userId == muteUserId[MuteUserIdKey.UserId] {
-                log.debug("mute userid [\(chat.userId)] already registered, so skip")
+                logger.debug("mute userid [\(chat.userId)] already registered, so skip")
                 return
             }
         }
@@ -198,7 +194,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         let pasteBoard = NSPasteboard.generalPasteboard()
         pasteBoard.declareTypes([NSStringPboardType], owner: nil)
         let result = pasteBoard.setString(string, forType: NSStringPboardType)
-        log.debug("copied \(string) w/ result \(result)")
+        logger.debug("copied \(string) w/ result \(result)")
         
         return result
     }

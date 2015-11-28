@@ -8,7 +8,6 @@
 
 import Foundation
 import AppKit
-import XCGLogger
 
 // constant value for storyboard
 private let kStoryboardNamePreferenceWindowController = "PreferenceWindowController"
@@ -21,8 +20,6 @@ class MuteViewController: NSViewController {
     
     @IBOutlet var muteUserIdsArrayController: NSArrayController!
     @IBOutlet var muteWordsArrayController: NSArrayController!
-    
-    private let log = XCGLogger.defaultInstance()
     
     // MARK: - Object Lifecycle
     class func generateInstance() -> MuteViewController {

@@ -7,10 +7,6 @@
 //
 
 import Foundation
-import XCGLogger
-
-// logger for class methods
-private let log = XCGLogger.defaultInstance()
 
 class BrowserHelper {
     enum BrowserType {

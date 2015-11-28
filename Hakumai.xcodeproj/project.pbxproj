@@ -110,8 +110,8 @@
 		DBB4730C1A359685002C797E /* Heartbeat.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB4730A1A35951C002C797E /* Heartbeat.swift */; };
 		DBB473101A35CE72002C797E /* heartbeat_ok.xml in Resources */ = {isa = PBXBuildFile; fileRef = DBB4730F1A35CE72002C797E /* heartbeat_ok.xml */; };
 		DBB473121A35CE86002C797E /* heartbeat_fail.xml in Resources */ = {isa = PBXBuildFile; fileRef = DBB473111A35CE86002C797E /* heartbeat_fail.xml */; };
-		DBB952161A8655AB0059850A /* ApiHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB952151A8655AB0059850A /* ApiHelper.swift */; };
-		DBB952171A8655AB0059850A /* ApiHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB952151A8655AB0059850A /* ApiHelper.swift */; };
+		DBB952161A8655AB0059850A /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB952151A8655AB0059850A /* Helper.swift */; };
+		DBB952171A8655AB0059850A /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB952151A8655AB0059850A /* Helper.swift */; };
 		DBCA40D41A30AD48006299A9 /* MenuDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA40D31A30AD48006299A9 /* MenuDelegate.swift */; };
 		DBCA40D51A30B607006299A9 /* MenuDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA40D31A30AD48006299A9 /* MenuDelegate.swift */; };
 		DBCA40D71A30BC38006299A9 /* MenuDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA40D61A30BC38006299A9 /* MenuDelegateTests.swift */; };
@@ -240,7 +240,7 @@
 		DBB4730A1A35951C002C797E /* Heartbeat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Heartbeat.swift; sourceTree = "<group>"; };
 		DBB4730F1A35CE72002C797E /* heartbeat_ok.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = heartbeat_ok.xml; sourceTree = "<group>"; };
 		DBB473111A35CE86002C797E /* heartbeat_fail.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = heartbeat_fail.xml; sourceTree = "<group>"; };
-		DBB952151A8655AB0059850A /* ApiHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApiHelper.swift; sourceTree = "<group>"; };
+		DBB952151A8655AB0059850A /* Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
 		DBCA40D31A30AD48006299A9 /* MenuDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuDelegate.swift; sourceTree = "<group>"; };
 		DBCA40D61A30BC38006299A9 /* MenuDelegateTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuDelegateTests.swift; sourceTree = "<group>"; };
 		DBD65C1A1A2E0C6600B84C97 /* LayeredClipView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LayeredClipView.swift; sourceTree = "<group>"; };
@@ -358,6 +358,7 @@
 				DB414C0A1A4811C4008D2F40 /* Global.swift */,
 				DB682D411A36E6AE00499C72 /* Parameter.swift */,
 				DB2AE0C31A0EE2FD00B1CE4D /* AppDelegate.swift */,
+				DBC94B901C0911FE00100886 /* Common */,
 				DBA414CE1A1A16FB00E0CAD3 /* Extensions */,
 				DBA414CA1A1A13FC00E0CAD3 /* Models */,
 				DBE73ECC1A1A1B9600A8BCA9 /* Controllers */,
@@ -463,7 +464,6 @@
 		DBA414CA1A1A13FC00E0CAD3 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				DBB952211A865A470059850A /* Helper */,
 				DBAB69601A5C1A2F002FCD95 /* Keychain */,
 				DB0ED64E1A20B07E007E9318 /* Cookie */,
 				DBFA887D1A1BC264005349AD /* Entities */,
@@ -519,12 +519,12 @@
 			path = HandleNameManager;
 			sourceTree = "<group>";
 		};
-		DBB952211A865A470059850A /* Helper */ = {
+		DBC94B901C0911FE00100886 /* Common */ = {
 			isa = PBXGroup;
 			children = (
-				DBB952151A8655AB0059850A /* ApiHelper.swift */,
+				DBB952151A8655AB0059850A /* Helper.swift */,
 			);
-			path = Helper;
+			path = Common;
 			sourceTree = "<group>";
 		};
 		DBD65C191A2E0C3200B84C97 /* MainWindowController */ = {
@@ -839,7 +839,7 @@
 				DB414C091A481138008D2F40 /* UserWindowController.swift in Sources */,
 				DBA541E31A4821D4005FF218 /* UserWindow.swift in Sources */,
 				DB7B3DE81A246EE200205470 /* UIHelper.swift in Sources */,
-				DBB952161A8655AB0059850A /* ApiHelper.swift in Sources */,
+				DBB952161A8655AB0059850A /* Helper.swift in Sources */,
 				DBA414C61A188A7400E0CAD3 /* RoomListener.swift in Sources */,
 				DBE094021A586FFC004554FD /* HandleNameManager.swift in Sources */,
 				DB8E71B51A544A5E00C6E696 /* NicoUtilityExtractor.swift in Sources */,
@@ -882,7 +882,7 @@
 				DB080B851A17CA0100896228 /* CookieUtilityTests.swift in Sources */,
 				DB73A38D1A4F43F6008423D0 /* MuteAddViewController.swift in Sources */,
 				DBFA88861A1BC925005349AD /* MessageServer.swift in Sources */,
-				DBB952171A8655AB0059850A /* ApiHelper.swift in Sources */,
+				DBB952171A8655AB0059850A /* Helper.swift in Sources */,
 				DBFA887C1A1BC25A005349AD /* Chat.swift in Sources */,
 				DBB473071A3590BE002C797E /* CharacterExtension.swift in Sources */,
 				DB346B9C1A548C3B00137639 /* CommunityTests.swift in Sources */,

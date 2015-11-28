@@ -8,7 +8,6 @@
 
 import Foundation
 import AppKit
-import XCGLogger
 
 class MuteAddViewController: NSViewController {
     // MARK: - Properties
@@ -19,15 +18,13 @@ class MuteAddViewController: NSViewController {
     
     var completion: ((cancelled: Bool, muteValue: String?) -> Void)?
     
-    private let log = XCGLogger.defaultInstance()
-
     // MARK: - Object Lifecycle
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
     
     deinit {
-        log.debug("")
+        logger.debug("")
     }
     
     // MARK: - Internal Functions

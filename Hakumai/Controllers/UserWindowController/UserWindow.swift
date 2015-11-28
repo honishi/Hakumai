@@ -8,13 +8,10 @@
 
 import Foundation
 import AppKit
-import XCGLogger
 
 class UserWindow: NSWindow {
-    // MARK: - Properties
-    let log = XCGLogger.defaultInstance()
-
     /*
+    // MARK: - Properties
     // MARK: - Object Lifecycle
     
     // MARK: - NSResponder Overrides

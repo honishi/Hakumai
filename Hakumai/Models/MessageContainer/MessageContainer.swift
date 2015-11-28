@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import XCGLogger
 
 // thread safe chat container
 class MessageContainer {
@@ -30,8 +29,6 @@ class MessageContainer {
     
     private var rebuildingFilteredMessages = false
     private var calculatingActive = false
-    
-    private let log = XCGLogger.defaultInstance()
     
     // MARK: - Basic Operation to Content Array
     func append(chatOrSystemMessage object: AnyObject) -> (appended: Bool, count: Int) {
@@ -114,13 +111,13 @@ class MessageContainer {
     // MARK: - Utility
     func calculateActive(completion: (active: Int?) -> (Void)) {
         if self.rebuildingFilteredMessages {
-            log.debug("detected rebuilding filtered messages, so skip calculating active.")
+            logger.debug("detected rebuilding filtered messages, so skip calculating active.")
             completion(active: nil)
             return
         }
         
         if self.calculatingActive {
-            log.debug("detected duplicate calculating, so skip calculating active.")
+            logger.debug("detected duplicate calculating, so skip calculating active.")
             completion(active: nil)
             return
         }
@@ -129,14 +126,14 @@ class MessageContainer {
         self.calculatingActive = true
         objc_sync_exit(self)
         
-        // log.debug("calcurating active")
+        // logger.debug("calcurating active")
         
         // swift way to use background gcd, http://stackoverflow.com/a/25070476
         dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
             var activeUsers = Dictionary<String, Bool>()
             let tenMinutesAgo = NSDate(timeIntervalSinceNow: (Double)(-10 * 60))
             
-            // self.log.debug("start counting active")
+            // logger.debug("start counting active")
             
             objc_sync_enter(self)
             let count = self.sourceMessages.count
@@ -169,7 +166,7 @@ class MessageContainer {
                 activeUsers[chat.userId!] = true
             }
             
-            // self.log.debug("end counting active")
+            // logger.debug("end counting active")
             
             completion(active: activeUsers.count)
             
@@ -184,7 +181,7 @@ class MessageContainer {
         // 1st pass:
         // copy and filter source messages. this could be long operation so use background thread
         dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
-            // self.log.debug("started 1st pass rebuilding filtered messages (bg section)")
+            // logger.debug("started 1st pass rebuilding filtered messages (bg section)")
             
             var workingMessages = [Message]()
             let sourceCount = self.sourceMessages.count
@@ -193,32 +190,32 @@ class MessageContainer {
                 self.appendMessage(self.sourceMessages[i], messages: &workingMessages)
             }
             
-            // self.log.debug("completed 1st pass")
+            // logger.debug("completed 1st pass")
             
             // 2nd pass:
             // we need to replace old filtered messages with new one with the following conditions;
             // - exclusive to ui updates, so use main thread
             // - atomic to any other operation like append, count, calcurate and so on, so use objc_sync_enter/exit
             dispatch_async(dispatch_get_main_queue(), {
-                // self.log.debug("started 2nd pass rebuilding filtered messages (critical section)")
+                // logger.debug("started 2nd pass rebuilding filtered messages (critical section)")
                 
                 objc_sync_enter(self)
                 self.rebuildingFilteredMessages = true
                 
                 self.filteredMessages = workingMessages
-                // self.log.debug("copied working messages to filtered messages")
+                // logger.debug("copied working messages to filtered messages")
                 
                 let deltaCount = self.sourceMessages.count
                 for i in sourceCount..<deltaCount {
                     self.appendMessage(self.sourceMessages[i], messages: &self.filteredMessages)
                 }
-                // self.log.debug("copied delta messages \(sourceCount)..<\(deltaCount)")
+                // logger.debug("copied delta messages \(sourceCount)..<\(deltaCount)")
                 
                 self.rebuildingFilteredMessages = false
                 objc_sync_exit(self)
                 
-                // self.log.debug("completed 2nd pass")
-                self.log.debug("completed to rebuild filtered messages")
+                // logger.debug("completed 2nd pass")
+                logger.debug("completed to rebuild filtered messages")
                 
                 completion()
             })

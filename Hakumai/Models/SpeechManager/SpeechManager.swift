@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import XCGLogger
 
 private let kDequeuChatTimerInterval: NSTimeInterval = 0.5
 
@@ -50,7 +49,7 @@ class SpeechManager: NSObject {
                 selector: "dequeueChat:", userInfo: nil, repeats: true)
         }
         
-        XCGLogger.debug("started speech manager.")
+        logger.debug("started speech manager.")
     }
     
     func stopManager() {
@@ -64,7 +63,7 @@ class SpeechManager: NSObject {
         
         chatQueue.removeAll()
         
-        XCGLogger.debug("stopped speech manager.")
+        logger.debug("stopped speech manager.")
     }
     
     func enqueueChat(chat: Chat) {

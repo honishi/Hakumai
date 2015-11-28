@@ -40,7 +40,7 @@ extension NicoUtility {
             request.allHTTPHeaderFields = requestHeader
         }
         else {
-            log.error("could not get cookie")
+            logger.error("could not get cookie")
             completion(nil, nil, NSError(domain:"", code:0, userInfo: nil))
         }
         
@@ -81,7 +81,7 @@ extension NicoUtility {
     }
     
     private func sessionCookies() -> [NSHTTPCookie]? {
-        // log.debug("userSessionCookie:[\(self.userSessionCookie)]")
+        // logger.debug("userSessionCookie:[\(self.userSessionCookie)]")
         if self.userSessionCookie == nil {
             return nil
         }

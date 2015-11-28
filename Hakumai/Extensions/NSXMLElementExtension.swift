@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import XCGLogger
 
 extension NSXMLElement {
     func firstStringValueForXPathNode(xpath: String) -> String? {
@@ -20,7 +19,7 @@ extension NSXMLElement {
             }
         } catch let error as NSError {
             err = error
-            XCGLogger.debug("\(err)")
+            logger.debug("\(err)")
         }
         
         return nil

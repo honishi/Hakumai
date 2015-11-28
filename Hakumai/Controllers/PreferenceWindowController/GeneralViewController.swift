@@ -8,7 +8,6 @@
 
 import Foundation
 import AppKit
-import XCGLogger
 
 // constant value for storyboard
 private let kStoryboardNamePreferenceWindowController = "PreferenceWindowController"
@@ -47,8 +46,6 @@ class GeneralViewController: NSViewController {
         }
     }
     
-    private let log = XCGLogger.defaultInstance()
-
     // MARK: - Object Lifecycle
     class func generateInstance() -> GeneralViewController {
         let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
@@ -100,7 +97,7 @@ class GeneralViewController: NSViewController {
     }
     
     @IBAction func checkAccount(sender: AnyObject) {
-        log.debug("login w/ [\(self.mailAddress)][\(self.password)]")
+        logger.debug("login w/ [\(self.mailAddress)][\(self.password)]")
         
         if self.canLogin() == false {
             return

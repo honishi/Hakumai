@@ -8,7 +8,6 @@
 
 import Foundation
 import FMDB
-import XCGLogger
 
 private let kHandleNamesDatabase = "HandleNames"
 private let kHandleNamesTable = "handle_names"
@@ -26,12 +25,10 @@ class HandleNameManager {
     private var database: FMDatabase!
     private var databaseQueue: FMDatabaseQueue!
     
-    private let log = XCGLogger.defaultInstance()
-    
     // MARK: - Object Lifecycle
     init() {
         objc_sync_enter(self)
-        ApiHelper.createApplicationDirectoryIfNotExists()
+        Helper.createApplicationDirectoryIfNotExists()
         self.database = HandleNameManager.databaseForHandleNames()
         self.databaseQueue = HandleNameManager.databaseQueueForHandleNames()
         self.createHandleNamesTableIfNotExists()
@@ -103,7 +100,7 @@ class HandleNameManager {
         objc_sync_exit(self)
         
         if !success {
-            XCGLogger.error("failed to drop table: \(database.lastErrorMessage())")
+            logger.error("failed to drop table: \(database.lastErrorMessage())")
         }
     }
     
@@ -123,13 +120,13 @@ class HandleNameManager {
         objc_sync_exit(self)
         
         if !success {
-            XCGLogger.error("failed to create table: \(database.lastErrorMessage())")
+            logger.error("failed to create table: \(database.lastErrorMessage())")
         }
     }
     
     func insertOrReplaceHandleNameWithCommunityId(communityId: String, userId: String, anonymous: Bool, handleName: String) {
         guard self.databaseQueue != nil else {
-            XCGLogger.warning("database not ready")
+            logger.warning("database not ready")
             return
         }
         
@@ -173,7 +170,7 @@ class HandleNameManager {
         objc_sync_exit(self)
         
         if !success {
-            XCGLogger.error("failed to delete table: \(database.lastErrorMessage())")
+            logger.error("failed to delete table: \(database.lastErrorMessage())")
         }
     }
     
@@ -190,20 +187,20 @@ class HandleNameManager {
         objc_sync_exit(self)
         
         if !success {
-            XCGLogger.error("failed to delete table: \(database.lastErrorMessage())")
+            logger.error("failed to delete table: \(database.lastErrorMessage())")
         }
     }
     
     // MARK: Database Instance Utility
     private class func fullPathForHandleNamesDatabase() -> String {
-        return ApiHelper.applicationDirectoryPath() + "/" + kHandleNamesDatabase
+        return Helper.applicationDirectoryPath() + "/" + kHandleNamesDatabase
     }
     
     private class func databaseForHandleNames() -> FMDatabase? {
         let database = FMDatabase(path: HandleNameManager.fullPathForHandleNamesDatabase())
         
         if !database.open() {
-            XCGLogger.error("unable to open database")
+            logger.error("unable to open database")
             return nil
         }
         

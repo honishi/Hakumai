@@ -8,7 +8,6 @@
 
 import Foundation
 import AppKit
-import XCGLogger
 
 // constant value for storyboard
 private let kStoryboardNameUserWindowController = "UserWindowController"
@@ -27,11 +26,9 @@ class UserWindowController: NSWindowController, NSWindowDelegate {
         }
     }
     
-    let log = XCGLogger.defaultInstance()
-    
     // MARK: - Object Lifecycle
     deinit {
-        log.debug("")
+        logger.debug("")
     }
     
     class func generateInstanceWithDelegate(delegate: UserWindowControllerDelegate?, userId: String) -> UserWindowController {

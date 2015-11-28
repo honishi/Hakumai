@@ -8,16 +8,12 @@
 
 import Foundation
 import AppKit
-import XCGLogger
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
-    // MARK: - Properties
-    let log = XCGLogger.defaultInstance()
-    
     // MARK: - NSApplicationDelegate Functions
     func applicationDidFinishLaunching(aNotification: NSNotification) {
-        self.initializeLog()
+        Helper.setupLogger(logger)
         self.migrateApplicationVersion()
         self.initializeUserDefaults()
         self.addObserverForUserDefaults()
@@ -31,23 +27,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     // MARK: Application Initialize Utility
-    func initializeLog() {
-        #if DEBUG
-            log.setup(.Debug, showLogLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: nil)
-        #else
-            log.setup(.None, showLogLevel: false, showFileNames: false, showLineNumbers: false, writeToFile: nil)
-        #endif
-    }
-    
     func migrateApplicationVersion() {
         let defaults = NSUserDefaults.standardUserDefaults()
         
         let lastVersion = defaults.stringForKey(Parameters.LastLaunchedApplicationVersion)
         let currentVersion = (NSBundle.mainBundle().infoDictionary!["CFBundleVersion"] as? String)
-        log.info("last launched app version:[\(lastVersion)] current app version:[\(currentVersion)]")
+        logger.info("last launched app version:[\(lastVersion)] current app version:[\(currentVersion)]")
 
         if lastVersion == nil {
-            log.info("detected app first launch, no need to migrate application version")
+            logger.info("detected app first launch, no need to migrate application version")
         }
         else {
             let lastVersionNumber = Int(lastVersion!)!
@@ -55,7 +43,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             
             if lastVersionNumber < currentVersionNumber {
                 // do some app version migration here
-                log.info("detected app version up from:[\(lastVersionNumber)] to:[\(currentVersionNumber)]")
+                logger.info("detected app version up from:[\(lastVersionNumber)] to:[\(currentVersionNumber)]")
                 
                 // version migration sample
                 /*
@@ -106,7 +94,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: - Internal Functions
     // MARK: KVO Functions
     override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
-        // log.debug("detected observing value changed: key[\(keyPath)]")
+        // logger.debug("detected observing value changed: key[\(keyPath)]")
         guard let keyPath = keyPath, let change = change else {
             return
         }
@@ -147,7 +135,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         case Parameters.AlwaysOnTop:
             if let newValue = change["new"] as? Bool {
-                // log.debug("\(newValue)")
+                // logger.debug("\(newValue)")
                 self.makeWindowAlwaysOnTop(newValue)
             }
             
@@ -181,7 +169,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let window = NSApplication.sharedApplication().windows[0] 
         window.alwaysOnTop = alwaysOnTop
         
-        log.debug("changed always on top: \(alwaysOnTop)")
+        logger.debug("changed always on top: \(alwaysOnTop)")
     }
 }
 
