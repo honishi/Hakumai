@@ -164,10 +164,10 @@ class RoomListener : NSObject, NSStreamDelegate {
             fileLogger.debug("stream event none")
             
         case NSStreamEvent.OpenCompleted:
-            fileLogger.debug("stream event open completed");
+            fileLogger.debug("stream event open completed")
             
         case NSStreamEvent.HasBytesAvailable:
-            // fileLogger.debug("stream event has bytes available");
+            // fileLogger.debug("stream event has bytes available")
             
             // http://stackoverflow.com/q/26360962
             var readByte = [UInt8](count: kReadBufferSize, repeatedValue: 0)
@@ -200,17 +200,17 @@ class RoomListener : NSObject, NSStreamDelegate {
             
             
         case NSStreamEvent.HasSpaceAvailable:
-            fileLogger.debug("stream event has space available");
+            fileLogger.debug("stream event has space available")
             
         case NSStreamEvent.ErrorOccurred:
-            fileLogger.error("stream event error occurred");
-            closeSocket();
+            fileLogger.error("stream event error occurred")
+            closeSocket()
             
         case NSStreamEvent.EndEncountered:
-            fileLogger.debug("stream event end encountered");
+            fileLogger.debug("stream event end encountered")
             
         default:
-            fileLogger.warning("unexpected stream event");
+            fileLogger.warning("unexpected stream event")
         }
     }
 

@@ -46,7 +46,7 @@ class ColoredView: NSView {
     override func drawRect(dirtyRect: NSRect) {
         // http://stackoverflow.com/a/2962882
         fillColor.setFill()
-        NSRectFill(dirtyRect);
+        NSRectFill(dirtyRect)
         
         super.drawRect(dirtyRect)
     }
