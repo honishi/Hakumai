@@ -24,9 +24,9 @@ class Helper {
     class func setupLogger(logger: XCGLogger) {
         #if DEBUG
             Helper.colorizeLogger(logger)
-            logger.setup(.Debug, showLogLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: nil)
+            logger.setup(.Debug, showLogLevel: true, showFileNames: true, showThreadName: true, showLineNumbers: true, writeToFile: nil)
         #else
-            logger.setup(.None, showLogLevel: false, showFileNames: false, showLineNumbers: false, writeToFile: nil)
+            logger.setup(.None, showLogLevel: false, showFileNames: false, showThreadName: false, showLineNumbers: false, writeToFile: nil)
         #endif
     }
     
@@ -36,13 +36,13 @@ class Helper {
             
             Helper.createApplicationDirectoryIfNotExists()
             let path = Helper.applicationDirectoryPath() + "/" + fileName
-            logger.setup(.Verbose, showLogLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: path)
+            logger.setup(.Verbose, showLogLevel: true, showFileNames: true, showThreadName: true, showLineNumbers: true, writeToFile: path)
             
             if let console = logger.logDestination(XCGLogger.constants.baseConsoleLogDestinationIdentifier) {
                 logger.removeLogDestination(console)
             }
         #else
-            logger.setup(.None, showLogLevel: false, showFileNames: false, showLineNumbers: false, writeToFile: nil)
+            logger.setup(.None, showLogLevel: false, showFileNames: false, showThreadName: false, showLineNumbers: false, writeToFile: nil)
         #endif
     }
     
