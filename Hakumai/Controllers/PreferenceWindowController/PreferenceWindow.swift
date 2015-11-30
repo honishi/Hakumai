@@ -13,12 +13,12 @@ class PreferenceWindow: NSWindow {
     // MARK: - NSObject Overrides
     override func awakeFromNib() {
         super.awakeFromNib()
-        // self.alwaysOnTop = true
+        // alwaysOnTop = true
     }
 
     // MARK: - NSResponder Overrides
     // http://genjiapp.com/blog/2012/10/25/how-to-develop-a-preferences-window-for-os-x-app.html
     override func cancelOperation(sender: AnyObject?) {
-        self.close()
+        close()
     }
 }

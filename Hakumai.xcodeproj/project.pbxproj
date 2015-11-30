@@ -110,8 +110,8 @@
 		DBB4730C1A359685002C797E /* Heartbeat.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB4730A1A35951C002C797E /* Heartbeat.swift */; };
 		DBB473101A35CE72002C797E /* heartbeat_ok.xml in Resources */ = {isa = PBXBuildFile; fileRef = DBB4730F1A35CE72002C797E /* heartbeat_ok.xml */; };
 		DBB473121A35CE86002C797E /* heartbeat_fail.xml in Resources */ = {isa = PBXBuildFile; fileRef = DBB473111A35CE86002C797E /* heartbeat_fail.xml */; };
-		DBB952161A8655AB0059850A /* ApiHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB952151A8655AB0059850A /* ApiHelper.swift */; };
-		DBB952171A8655AB0059850A /* ApiHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB952151A8655AB0059850A /* ApiHelper.swift */; };
+		DBB952161A8655AB0059850A /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB952151A8655AB0059850A /* Helper.swift */; };
+		DBB952171A8655AB0059850A /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB952151A8655AB0059850A /* Helper.swift */; };
 		DBCA40D41A30AD48006299A9 /* MenuDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA40D31A30AD48006299A9 /* MenuDelegate.swift */; };
 		DBCA40D51A30B607006299A9 /* MenuDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA40D31A30AD48006299A9 /* MenuDelegate.swift */; };
 		DBCA40D71A30BC38006299A9 /* MenuDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA40D61A30BC38006299A9 /* MenuDelegateTests.swift */; };
@@ -183,13 +183,11 @@
 		DB2AE0CA1A0EE2FD00B1CE4D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainWindowController.storyboard; sourceTree = "<group>"; };
 		DB2AE0D01A0EE2FD00B1CE4D /* HakumaiTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HakumaiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB2AE0D51A0EE2FD00B1CE4D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DB2AE0D61A0EE2FD00B1CE4D /* HakumaiTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HakumaiTests.swift; sourceTree = "<group>"; };
-		DB2AE0F71A0EF18200B1CE4D /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		DB2AE0D61A0EE2FD00B1CE4D /* HakumaiTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HakumaiTests.swift; path = HakumaiTests/HakumaiTests.swift; sourceTree = "<group>"; };
 		DB2AE1031A0F2BAA00B1CE4D /* Hakumai-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Hakumai-Bridging-Header.h"; sourceTree = "<group>"; };
-		DB2AE1041A0F2BAA00B1CE4D /* HakumaiTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HakumaiTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		DB2AE1041A0F2BAA00B1CE4D /* HakumaiTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "HakumaiTests-Bridging-Header.h"; path = "HakumaiTests/HakumaiTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		DB346B991A54648100137639 /* community_channel.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = community_channel.html; sourceTree = "<group>"; };
 		DB346B9B1A548C3B00137639 /* CommunityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommunityTests.swift; sourceTree = "<group>"; };
-		DB346BA31A5491B400137639 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
 		DB414C061A4810A5008D2F40 /* UserViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserViewController.swift; sourceTree = "<group>"; };
 		DB414C081A481138008D2F40 /* UserWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserWindowController.swift; sourceTree = "<group>"; };
 		DB414C0A1A4811C4008D2F40 /* Global.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
@@ -240,7 +238,7 @@
 		DBB4730A1A35951C002C797E /* Heartbeat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Heartbeat.swift; sourceTree = "<group>"; };
 		DBB4730F1A35CE72002C797E /* heartbeat_ok.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = heartbeat_ok.xml; sourceTree = "<group>"; };
 		DBB473111A35CE86002C797E /* heartbeat_fail.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = heartbeat_fail.xml; sourceTree = "<group>"; };
-		DBB952151A8655AB0059850A /* ApiHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApiHelper.swift; sourceTree = "<group>"; };
+		DBB952151A8655AB0059850A /* Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
 		DBCA40D31A30AD48006299A9 /* MenuDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuDelegate.swift; sourceTree = "<group>"; };
 		DBCA40D61A30BC38006299A9 /* MenuDelegateTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuDelegateTests.swift; sourceTree = "<group>"; };
 		DBD65C1A1A2E0C6600B84C97 /* LayeredClipView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LayeredClipView.swift; sourceTree = "<group>"; };
@@ -311,8 +309,8 @@
 		DB0ED6541A20B0AD007E9318 /* Browsers */ = {
 			isa = PBXGroup;
 			children = (
-				DBAB695B1A5B70A5002FCD95 /* LoginCookie.swift */,
 				DB0ED6511A20B0A7007E9318 /* ChromeCookie.swift */,
+				DBAB695B1A5B70A5002FCD95 /* LoginCookie.swift */,
 			);
 			name = Browsers;
 			path = Browser;
@@ -321,8 +319,8 @@
 		DB1E32C41A2C0CCE00CD874A /* MessageContainer */ = {
 			isa = PBXGroup;
 			children = (
-				DB80CA811A256F9A002636E0 /* MessageContainer.swift */,
 				DBD65C1F1A2EB08D00B84C97 /* Message.swift */,
+				DB80CA811A256F9A002636E0 /* MessageContainer.swift */,
 			);
 			path = MessageContainer;
 			sourceTree = "<group>";
@@ -333,6 +331,8 @@
 				DB2AE0C01A0EE2FD00B1CE4D /* Hakumai */,
 				DB2AE1011A0F29BA00B1CE4D /* frameworks */,
 				DB2AE0D31A0EE2FD00B1CE4D /* HakumaiTests */,
+				DB2AE1041A0F2BAA00B1CE4D /* HakumaiTests-Bridging-Header.h */,
+				DB2AE0D61A0EE2FD00B1CE4D /* HakumaiTests.swift */,
 				DB2AE0BF1A0EE2FD00B1CE4D /* Products */,
 				52C727AEA36EF6D5D5363FE2 /* Pods */,
 				4A163BC4A3936157E6B4E259 /* Frameworks */,
@@ -353,16 +353,17 @@
 		DB2AE0C01A0EE2FD00B1CE4D /* Hakumai */ = {
 			isa = PBXGroup;
 			children = (
+				DBC94B901C0911FE00100886 /* Common */,
+				DBE73ECC1A1A1B9600A8BCA9 /* Controllers */,
+				DBA414CE1A1A16FB00E0CAD3 /* Extensions */,
 				DB82B3991C071FF500EFE3D9 /* Libraries */,
+				DBA414CA1A1A13FC00E0CAD3 /* Models */,
+				DB2AE0C11A0EE2FD00B1CE4D /* Supporting Files */,
 				DB2AE1031A0F2BAA00B1CE4D /* Hakumai-Bridging-Header.h */,
+				DB2AE0C31A0EE2FD00B1CE4D /* AppDelegate.swift */,
 				DB414C0A1A4811C4008D2F40 /* Global.swift */,
 				DB682D411A36E6AE00499C72 /* Parameter.swift */,
-				DB2AE0C31A0EE2FD00B1CE4D /* AppDelegate.swift */,
-				DBA414CE1A1A16FB00E0CAD3 /* Extensions */,
-				DBA414CA1A1A13FC00E0CAD3 /* Models */,
-				DBE73ECC1A1A1B9600A8BCA9 /* Controllers */,
 				DB2AE0C71A0EE2FD00B1CE4D /* Images.xcassets */,
-				DB2AE0C11A0EE2FD00B1CE4D /* Supporting Files */,
 			);
 			path = Hakumai;
 			sourceTree = "<group>";
@@ -378,12 +379,10 @@
 		DB2AE0D31A0EE2FD00B1CE4D /* HakumaiTests */ = {
 			isa = PBXGroup;
 			children = (
-				DB2AE1041A0F2BAA00B1CE4D /* HakumaiTests-Bridging-Header.h */,
-				DB2AE0D61A0EE2FD00B1CE4D /* HakumaiTests.swift */,
-				DBFA88921A1CAE8B005349AD /* Resources */,
+				DBE73ECB1A1A1B7E00A8BCA9 /* Controllers */,
 				DBA414D01A1A175000E0CAD3 /* Extensions */,
 				DBA414CF1A1A174500E0CAD3 /* Models */,
-				DBE73ECB1A1A1B7E00A8BCA9 /* Controllers */,
+				DBFA88921A1CAE8B005349AD /* Resources */,
 				DB2AE0D41A0EE2FD00B1CE4D /* Supporting Files */,
 			);
 			path = HakumaiTests;
@@ -400,8 +399,6 @@
 		DB2AE1011A0F29BA00B1CE4D /* frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				DB2AE0F71A0EF18200B1CE4D /* libsqlite3.dylib */,
-				DB346BA31A5491B400137639 /* libxml2.dylib */,
 				DBAAA7411A0F5FEF00981004 /* SystemConfiguration.framework */,
 				DBAAA73D1A0F594700981004 /* Security.framework */,
 			);
@@ -411,10 +408,10 @@
 		DB414C031A48106B008D2F40 /* UserWindowController */ = {
 			isa = PBXGroup;
 			children = (
+				DB414C061A4810A5008D2F40 /* UserViewController.swift */,
+				DBA541E21A4821D4005FF218 /* UserWindow.swift */,
 				DBA541E71A483710005FF218 /* UserWindowController.storyboard */,
 				DB414C081A481138008D2F40 /* UserWindowController.swift */,
-				DBA541E21A4821D4005FF218 /* UserWindow.swift */,
-				DB414C061A4810A5008D2F40 /* UserViewController.swift */,
 			);
 			path = UserWindowController;
 			sourceTree = "<group>";
@@ -423,14 +420,14 @@
 			isa = PBXGroup;
 			children = (
 				DB7B3DDB1A23B35300205470 /* ColoredView.swift */,
-				DB7B3DE41A2434FB00205470 /* ScoreTableCellView.swift */,
-				DB7B3DE11A242D7B00205470 /* ScoreTableCellView.xib */,
-				DB7EB8A11A24AA5100C3BFB5 /* RoomPositionTableCellView.swift */,
-				DB7EB89B1A24AA3700C3BFB5 /* RoomPositionTableCellView.xib */,
-				DB1E32C81A2CC85C00CD874A /* UserIdTableCellView.swift */,
-				DB1E32CA1A2CC87200CD874A /* UserIdTableCellView.xib */,
 				DB55AC671A33908300CFAD99 /* PremiumTableCellView.swift */,
 				DB55AC631A33905200CFAD99 /* PremiumTableCellView.xib */,
+				DB7EB8A11A24AA5100C3BFB5 /* RoomPositionTableCellView.swift */,
+				DB7EB89B1A24AA3700C3BFB5 /* RoomPositionTableCellView.xib */,
+				DB7B3DE41A2434FB00205470 /* ScoreTableCellView.swift */,
+				DB7B3DE11A242D7B00205470 /* ScoreTableCellView.xib */,
+				DB1E32C81A2CC85C00CD874A /* UserIdTableCellView.swift */,
+				DB1E32CA1A2CC87200CD874A /* UserIdTableCellView.xib */,
 			);
 			path = TableCellView;
 			sourceTree = "<group>";
@@ -463,13 +460,12 @@
 		DBA414CA1A1A13FC00E0CAD3 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				DBB952211A865A470059850A /* Helper */,
-				DBAB69601A5C1A2F002FCD95 /* Keychain */,
+				DBE093F61A585EC5004554FD /* Api */,
 				DB0ED64E1A20B07E007E9318 /* Cookie */,
 				DBFA887D1A1BC264005349AD /* Entities */,
-				DBE093F61A585EC5004554FD /* Api */,
-				DB1E32C41A2C0CCE00CD874A /* MessageContainer */,
 				DBE093F91A5867A7004554FD /* HandleNameManager */,
+				DBAB69601A5C1A2F002FCD95 /* Keychain */,
+				DB1E32C41A2C0CCE00CD874A /* MessageContainer */,
 				DB82B39F1C07248700EFE3D9 /* SpeechManager */,
 			);
 			path = Models;
@@ -478,11 +474,11 @@
 		DBA414CE1A1A16FB00E0CAD3 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				DBA414CB1A1A16F300E0CAD3 /* StringExtension.swift */,
 				DBB472FF1A358FFC002C797E /* CharacterExtension.swift */,
 				DBB473031A359082002C797E /* IntExtension.swift */,
 				DB9EFC731A3E974A0087D302 /* NSWindowExtension.swift */,
 				DBB473051A35909F002C797E /* NSXMLElementExtension.swift */,
+				DBA414CB1A1A16F300E0CAD3 /* StringExtension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -492,11 +488,11 @@
 			children = (
 				DB7BA06D1A58B6B7000778CF /* ChatTests.swift */,
 				DB346B9B1A548C3B00137639 /* CommunityTests.swift */,
-				DBFA88871A1BCF77005349AD /* MessageServerTests.swift */,
 				DB080B841A17CA0100896228 /* CookieUtilityTests.swift */,
+				DBE093FE1A5869A2004554FD /* HandleNameManagerTests.swift */,
+				DBFA88871A1BCF77005349AD /* MessageServerTests.swift */,
 				DB0F0ECC1A16441D00F8BDC5 /* NicoUtilityTests.swift */,
 				DBA414C81A189D7D00E0CAD3 /* RoomListenerTests.swift */,
-				DBE093FE1A5869A2004554FD /* HandleNameManagerTests.swift */,
 				DB82B3A31C087BA200EFE3D9 /* SpeechManagerTests.swift */,
 			);
 			path = Models;
@@ -519,25 +515,25 @@
 			path = HandleNameManager;
 			sourceTree = "<group>";
 		};
-		DBB952211A865A470059850A /* Helper */ = {
+		DBC94B901C0911FE00100886 /* Common */ = {
 			isa = PBXGroup;
 			children = (
-				DBB952151A8655AB0059850A /* ApiHelper.swift */,
+				DBB952151A8655AB0059850A /* Helper.swift */,
 			);
-			path = Helper;
+			path = Common;
 			sourceTree = "<group>";
 		};
 		DBD65C191A2E0C3200B84C97 /* MainWindowController */ = {
 			isa = PBXGroup;
 			children = (
-				DBD65C1E1A2E2EA600B84C97 /* Unused */,
 				DB7B3DE01A242D4100205470 /* TableCellView */,
-				DB2AE0C91A0EE2FD00B1CE4D /* MainWindowController.storyboard */,
-				DBADF3301A5EFA4D00A3A037 /* MainWindowController.swift */,
+				DBD65C1E1A2E2EA600B84C97 /* Unused */,
+				DB7BA0711A58C021000778CF /* HandleNameAddViewController.swift */,
 				DB2AE0C51A0EE2FD00B1CE4D /* MainViewController.swift */,
 				DB80CA861A2575A0002636E0 /* MainViewControllerExtensions.swift */,
+				DB2AE0C91A0EE2FD00B1CE4D /* MainWindowController.storyboard */,
+				DBADF3301A5EFA4D00A3A037 /* MainWindowController.swift */,
 				DBCA40D31A30AD48006299A9 /* MenuDelegate.swift */,
-				DB7BA0711A58C021000778CF /* HandleNameAddViewController.swift */,
 			);
 			path = MainWindowController;
 			sourceTree = "<group>";
@@ -545,8 +541,8 @@
 		DBD65C1E1A2E2EA600B84C97 /* Unused */ = {
 			isa = PBXGroup;
 			children = (
-				DBD65C1C1A2E0FB900B84C97 /* LayeredScrollView.swift */,
 				DBD65C1A1A2E0C6600B84C97 /* LayeredClipView.swift */,
+				DBD65C1C1A2E0FB900B84C97 /* LayeredScrollView.swift */,
 				DB5D21EB1A603973006ECD54 /* MainTextField.swift */,
 			);
 			path = Unused;
@@ -583,11 +579,11 @@
 		DBE73ECC1A1A1B9600A8BCA9 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				DB7B3DE71A246EE200205470 /* UIHelper.swift */,
-				DB74B86B1A6E790C0064AC28 /* BrowserHelper.swift */,
 				DBD65C191A2E0C3200B84C97 /* MainWindowController */,
-				DB414C031A48106B008D2F40 /* UserWindowController */,
 				DBFB814D1A36B4F300294934 /* PreferenceWindowController */,
+				DB414C031A48106B008D2F40 /* UserWindowController */,
+				DB74B86B1A6E790C0064AC28 /* BrowserHelper.swift */,
+				DB7B3DE71A246EE200205470 /* UIHelper.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -595,15 +591,15 @@
 		DBFA887D1A1BC264005349AD /* Entities */ = {
 			isa = PBXGroup;
 			children = (
-				DBFA88811A1BC8C9005349AD /* Enum.swift */,
-				DBFA888A1A1C9A56005349AD /* Live.swift */,
-				DB7F21AF1A210017008D17E0 /* Community.swift */,
-				DBFA88841A1BC925005349AD /* MessageServer.swift */,
-				DB52B0AC1A2102C700E78C6A /* User.swift */,
-				DBB4730A1A35951C002C797E /* Heartbeat.swift */,
-				DBFA887E1A1BC7FF005349AD /* Thread.swift */,
 				DBFA887A1A1BC25A005349AD /* Chat.swift */,
 				DB52B0B11A21226900E78C6A /* ChatResult.swift */,
+				DB7F21AF1A210017008D17E0 /* Community.swift */,
+				DBFA88811A1BC8C9005349AD /* Enum.swift */,
+				DBB4730A1A35951C002C797E /* Heartbeat.swift */,
+				DBFA888A1A1C9A56005349AD /* Live.swift */,
+				DBFA88841A1BC925005349AD /* MessageServer.swift */,
+				DBFA887E1A1BC7FF005349AD /* Thread.swift */,
+				DB52B0AC1A2102C700E78C6A /* User.swift */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -611,13 +607,13 @@
 		DBFA88921A1CAE8B005349AD /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				DBFA88901A1CAE85005349AD /* community_user.html */,
 				DB346B991A54648100137639 /* community_channel.html */,
+				DBFA88901A1CAE85005349AD /* community_user.html */,
+				DBB473111A35CE86002C797E /* heartbeat_fail.xml */,
+				DBB4730F1A35CE72002C797E /* heartbeat_ok.xml */,
 				DB1E32BE1A2B95C600CD874A /* user_1.html */,
 				DBD675A61A7738110068A558 /* user_2.html */,
 				DB1E32C21A2BA53700CD874A /* user_me.html */,
-				DBB4730F1A35CE72002C797E /* heartbeat_ok.xml */,
-				DBB473111A35CE86002C797E /* heartbeat_fail.xml */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -625,12 +621,12 @@
 		DBFB814D1A36B4F300294934 /* PreferenceWindowController */ = {
 			isa = PBXGroup;
 			children = (
+				DB0E10631A39B6C200A10E00 /* GeneralViewController.swift */,
+				DB73A38B1A4F43F6008423D0 /* MuteAddViewController.swift */,
+				DB0E10671A39B6DD00A10E00 /* MuteViewController.swift */,
+				DB9EFC771A3E9EB10087D302 /* PreferenceWindow.swift */,
 				DBA541E91A4838F4005FF218 /* PreferenceWindowController.storyboard */,
 				DBFB81501A36B52E00294934 /* PreferenceWindowController.swift */,
-				DB9EFC771A3E9EB10087D302 /* PreferenceWindow.swift */,
-				DB0E10631A39B6C200A10E00 /* GeneralViewController.swift */,
-				DB0E10671A39B6DD00A10E00 /* MuteViewController.swift */,
-				DB73A38B1A4F43F6008423D0 /* MuteAddViewController.swift */,
 			);
 			path = PreferenceWindowController;
 			sourceTree = "<group>";
@@ -839,7 +835,7 @@
 				DB414C091A481138008D2F40 /* UserWindowController.swift in Sources */,
 				DBA541E31A4821D4005FF218 /* UserWindow.swift in Sources */,
 				DB7B3DE81A246EE200205470 /* UIHelper.swift in Sources */,
-				DBB952161A8655AB0059850A /* ApiHelper.swift in Sources */,
+				DBB952161A8655AB0059850A /* Helper.swift in Sources */,
 				DBA414C61A188A7400E0CAD3 /* RoomListener.swift in Sources */,
 				DBE094021A586FFC004554FD /* HandleNameManager.swift in Sources */,
 				DB8E71B51A544A5E00C6E696 /* NicoUtilityExtractor.swift in Sources */,
@@ -882,7 +878,7 @@
 				DB080B851A17CA0100896228 /* CookieUtilityTests.swift in Sources */,
 				DB73A38D1A4F43F6008423D0 /* MuteAddViewController.swift in Sources */,
 				DBFA88861A1BC925005349AD /* MessageServer.swift in Sources */,
-				DBB952171A8655AB0059850A /* ApiHelper.swift in Sources */,
+				DBB952171A8655AB0059850A /* Helper.swift in Sources */,
 				DBFA887C1A1BC25A005349AD /* Chat.swift in Sources */,
 				DBB473071A3590BE002C797E /* CharacterExtension.swift in Sources */,
 				DB346B9C1A548C3B00137639 /* CommunityTests.swift in Sources */,

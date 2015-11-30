@@ -47,7 +47,7 @@ class RoomListenerTests: XCTestCase {
         var parsed: [Thread]
         
         thread = "<thread resultcode=\"0\" thread=\"1394699813\" ticket=\"0x2e8e4000\" revision=\"1\" server_time=\"1416296072\"/>"
-        parsed = listener.parseThreadElement(self.xmlRootElementFromXMLString(thread))
+        parsed = listener.parseThreadElement(xmlRootElementFromXMLString(thread))
         XCTAssert(parsed.count == 1, "")
     }
     
@@ -62,11 +62,11 @@ class RoomListenerTests: XCTestCase {
         
         chat = "<chat thread=\"1394262335\" no=\"5978\" vpos=\"78500\" date=\"1416127205\" date_usec=\"581876\" "
         chat += "mail=\"184\" user_id=\"HSZnsQy73fvuRsoFo1C4N3-Ixyw\" premium=\"3\" anonymity=\"1\">/hb ifseetno 152</chat>"
-        parsed = listener.parseChatElement(self.xmlRootElementFromXMLString(chat))
+        parsed = listener.parseChatElement(xmlRootElementFromXMLString(chat))
         XCTAssert(parsed.count == 1, "")
         
         chat += chat
-        parsed = listener.parseChatElement(self.xmlRootElementFromXMLString(chat))
+        parsed = listener.parseChatElement(xmlRootElementFromXMLString(chat))
         XCTAssert(parsed.count == 2, "")
     }
 

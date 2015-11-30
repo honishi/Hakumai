@@ -34,5 +34,4 @@ class SpeechManagerTests: XCTestCase {
         actual = SpeechManager.sharedManager.cleanComment(comment)
         XCTAssert(expected == actual, "")
     }
-
 }

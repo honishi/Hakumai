@@ -8,7 +8,6 @@
 
 import Foundation
 import Ono
-import XCGLogger
 
 // collection of xml extractor
 
@@ -23,7 +22,7 @@ extension NicoUtility {
             xmlDocument = try NSXMLDocument(data: xmlData, options: 0)
         } catch let error1 as NSError {
             error = error1
-            XCGLogger.error("\(error)")
+            logger.error("\(error)")
             xmlDocument = nil
         }
         let rootElement = xmlDocument?.rootElement()
@@ -31,11 +30,11 @@ extension NicoUtility {
         let status = rootElement?.attributeForName("status")?.stringValue
         
         if status == "fail" {
-            log.warning("failed to load message server")
+            logger.warning("failed to load message server")
             
             var code = ""
             if let codeInResponse = rootElement?.firstStringValueForXPathNode("/getplayerstatus/error/code") {
-                log.warning("error code: \(codeInResponse)")
+                logger.warning("error code: \(codeInResponse)")
                 code = codeInResponse
             }
             
@@ -54,7 +53,7 @@ extension NicoUtility {
         } catch let error1 as NSError {
             error = error1
             xmlDocument = nil
-            XCGLogger.error("\(error)")
+            logger.error("\(error)")
         }
         let rootElement = xmlDocument?.rootElement()
         
@@ -79,7 +78,7 @@ extension NicoUtility {
         } catch let error1 as NSError {
             error = error1
             xmlDocument = nil
-            XCGLogger.error("\(error)")
+            logger.error("\(error)")
         }
         let rootElement = xmlDocument?.rootElement()
         
@@ -108,23 +107,23 @@ extension NicoUtility {
         } catch let error1 as NSError {
             error = error1
             xmlDocument = nil
-            XCGLogger.error("\(error)")
+            logger.error("\(error)")
         }
         let rootElement = xmlDocument?.rootElement()
         
         let status = rootElement?.attributeForName("status")?.stringValue
         
         if status == "fail" {
-            log.warning("failed to load message server")
+            logger.warning("failed to load message server")
             
             if let errorCode = rootElement?.firstStringValueForXPathNode("/getplayerstatus/error/code") {
-                log.warning("error code: \(errorCode)")
+                logger.warning("error code: \(errorCode)")
             }
             
             return nil
         }
         
-        let roomPosition = self.roomPositionByUser(user)
+        let roomPosition = roomPositionByUser(user)
         
         if roomPosition == nil {
             return nil
@@ -135,7 +134,7 @@ extension NicoUtility {
         let address = rootElement?.firstStringValueForXPathNode(baseXPath + "addr")
         let port = rootElement?.firstIntValueForXPathNode(baseXPath + "port")
         let thread = rootElement?.firstIntValueForXPathNode(baseXPath + "thread")
-        // log.debug("\(address?),\(port),\(thread)")
+        // logger.debug("\(address?),\(port),\(thread)")
         
         if address == nil || port == nil || thread == nil {
             return nil
@@ -147,7 +146,7 @@ extension NicoUtility {
     }
     
     func roomPositionByUser(user: User) -> RoomPosition? {
-        // log.debug("roomLabel:\(roomLabel)")
+        // logger.debug("roomLabel:\(roomLabel)")
         
         if user.roomLabel == nil {
             return nil
@@ -157,8 +156,8 @@ extension NicoUtility {
             return RoomPosition(rawValue: 0)
         }
         
-        if let roomLabel = user.roomLabel, let standCharacter = self.extractStandCharacter(roomLabel) {
-            log.debug("extracted standCharacter:\(standCharacter)")
+        if let roomLabel = user.roomLabel, let standCharacter = extractStandCharacter(roomLabel) {
+            logger.debug("extracted standCharacter:\(standCharacter)")
             let raw = (standCharacter - ("A" as Character)) + 1
             return RoomPosition(rawValue: raw)
         }
@@ -182,12 +181,12 @@ extension NicoUtility {
         } catch let error1 as NSError {
             error = error1
             htmlDocument = nil
-            XCGLogger.error("\(error)")
+            logger.error("\(error)")
         }
         let rootElement = htmlDocument?.rootElement
         
         if rootElement == nil {
-            log.error("rootElement is nil")
+            logger.error("rootElement is nil")
             return
         }
         
@@ -210,13 +209,13 @@ extension NicoUtility {
             htmlDocument = try ONOXMLDocument.HTMLDocumentWithData(htmlData)
         } catch let error1 as NSError {
             error = error1
-            XCGLogger.error("\(error)")
+            logger.error("\(error)")
             htmlDocument = nil
         }
         let rootElement = htmlDocument?.rootElement
         
         if rootElement == nil {
-            log.error("rootElement is nil")
+            logger.error("rootElement is nil")
             return
         }
         
@@ -238,7 +237,7 @@ extension NicoUtility {
         } catch let error1 as NSError {
             error = error1
             htmlDocument = nil
-            XCGLogger.error("\(error)")
+            logger.error("\(error)")
         }
         let rootElement = htmlDocument?.rootElement
         
@@ -259,7 +258,7 @@ extension NicoUtility {
         } catch let error1 as NSError {
             error = error1
             xmlDocument = nil
-            XCGLogger.error("\(error)")
+            logger.error("\(error)")
         }
         let rootElement = xmlDocument?.rootElement()
         

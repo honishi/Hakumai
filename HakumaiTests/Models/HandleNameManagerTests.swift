@@ -23,31 +23,31 @@ class HandleNameManagerTests: XCTestCase {
     
     func testExtractHandleName() {
         // full-width at mark
-        self.checkExtractHandleName("わこ＠あいうえお", expected: "あいうえお")
-        self.checkExtractHandleName("＠あいうえお", expected: "あいうえお")
+        checkExtractHandleName("わこ＠あいうえお", expected: "あいうえお")
+        checkExtractHandleName("＠あいうえお", expected: "あいうえお")
 
         // normal at mark
-        self.checkExtractHandleName("わこ@あいうえお", expected: "あいうえお")
-        self.checkExtractHandleName("@あいうえお", expected: "あいうえお")
+        checkExtractHandleName("わこ@あいうえお", expected: "あいうえお")
+        checkExtractHandleName("@あいうえお", expected: "あいうえお")
         
         // has space
-        self.checkExtractHandleName("わこ@ あいうえお", expected: "あいうえお")
-        self.checkExtractHandleName("わこ@あいうえお ", expected: "あいうえお")
-        self.checkExtractHandleName("わこ@ あいうえお ", expected: "あいうえお")
-        self.checkExtractHandleName("わこ@　あいうえお", expected: "あいうえお")
-        self.checkExtractHandleName("わこ@あいうえお　", expected: "あいうえお")
-        self.checkExtractHandleName("わこ@　あいうえお　", expected: "あいうえお")
+        checkExtractHandleName("わこ@ あいうえお", expected: "あいうえお")
+        checkExtractHandleName("わこ@あいうえお ", expected: "あいうえお")
+        checkExtractHandleName("わこ@ あいうえお ", expected: "あいうえお")
+        checkExtractHandleName("わこ@　あいうえお", expected: "あいうえお")
+        checkExtractHandleName("わこ@あいうえお　", expected: "あいうえお")
+        checkExtractHandleName("わこ@　あいうえお　", expected: "あいうえお")
         
         // user comment that notifies live remaining minutes
-        self.checkExtractHandleName("＠５", expected: nil)
-        self.checkExtractHandleName("＠5", expected: nil)
-        self.checkExtractHandleName("＠10", expected: nil)
-        self.checkExtractHandleName("＠１０", expected: nil)
-        self.checkExtractHandleName("＠96猫", expected: "96猫")
-        self.checkExtractHandleName("＠９６猫", expected: "９６猫")
+        checkExtractHandleName("＠５", expected: nil)
+        checkExtractHandleName("＠5", expected: nil)
+        checkExtractHandleName("＠10", expected: nil)
+        checkExtractHandleName("＠１０", expected: nil)
+        checkExtractHandleName("＠96猫", expected: "96猫")
+        checkExtractHandleName("＠９６猫", expected: "９６猫")
         
         // mail address
-        self.checkExtractHandleName("ご連絡はmail@example.comまで", expected: nil)
+        checkExtractHandleName("ご連絡はmail@example.comまで", expected: nil)
     }
     
     func checkExtractHandleName(comment: String, expected: String?) {

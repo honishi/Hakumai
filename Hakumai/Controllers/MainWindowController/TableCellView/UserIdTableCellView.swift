@@ -21,13 +21,13 @@ class UserIdTableCellView: NSTableCellView {
     var info: (handleName: String?, userId: String?, premium: Premium?, comment: String?)? = nil {
         didSet {
             guard let userId = info?.userId, let premium = info?.premium else {
-                self.userIdImageView.image = nil
-                self.userIdTextField.stringValue = ""
+                userIdImageView.image = nil
+                userIdTextField.stringValue = ""
                 return
             }
             
-            self.userIdImageView.image = self.imageForHandleName(info?.handleName, userId: userId)
-            self.setUserIdLabelWithUserId(userId, premium: premium, handleName: info?.handleName)
+            userIdImageView.image = imageForHandleName(info?.handleName, userId: userId)
+            setUserIdLabelWithUserId(userId, premium: premium, handleName: info?.handleName)
         }
     }
     
@@ -47,7 +47,7 @@ class UserIdTableCellView: NSTableCellView {
     
     func setUserIdLabelWithUserId(userId: String, premium: Premium, handleName: String?) {
         // set default name
-        self.userIdTextField.stringValue = self.concatUserNameWithUserId(userId, userName: nil, handleName: handleName)
+        userIdTextField.stringValue = concatUserNameWithUserId(userId, userName: nil, handleName: handleName)
         
         // if needed, then resolve userid
         if handleName != nil || !Chat.isRawUserId(userId) || !(Chat.isUserComment(premium) || Chat.isBSPComment(premium)) {
@@ -55,7 +55,7 @@ class UserIdTableCellView: NSTableCellView {
         }
         
         if let userName = NicoUtility.sharedInstance.cachedUserNameForUserId(userId) {
-            self.userIdTextField.stringValue = self.concatUserNameWithUserId(userId, userName: userName, handleName: handleName)
+            userIdTextField.stringValue = concatUserNameWithUserId(userId, userName: userName, handleName: handleName)
             return
         }
         

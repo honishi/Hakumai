@@ -17,30 +17,30 @@ private let kCookiePath = "/"
 // Internal Http Utility
 extension NicoUtility {
     func cookiedAsyncRequest(httpMethod: String, url: NSURL, parameters: [String: Any]?, completion: (NSURLResponse?, NSData?, NSError?) -> Void) {
-        self.cookiedAsyncRequest(httpMethod, url: url.absoluteString, parameters: parameters, completion: completion)
+        cookiedAsyncRequest(httpMethod, url: url.absoluteString, parameters: parameters, completion: completion)
     }
     
     func cookiedAsyncRequest(httpMethod: String, url: String, parameters: [String: Any]?, completion: (NSURLResponse?, NSData?, NSError?) -> Void) {
         var parameteredUrl: String = url
-        let constructedParameters = self.constructParameters(parameters)
+        let constructedParameters = constructParameters(parameters)
         
         if httpMethod == "GET" && constructedParameters != nil {
             parameteredUrl += "?" + constructedParameters!
         }
         
-        let request = self.mutableRequestWithCustomHeaders(parameteredUrl)
+        let request = mutableRequestWithCustomHeaders(parameteredUrl)
         request.HTTPMethod = httpMethod
         
         if httpMethod == "POST" && constructedParameters != nil {
             request.HTTPBody = constructedParameters!.dataUsingEncoding(NSUTF8StringEncoding)
         }
         
-        if let cookies = self.sessionCookies() {
+        if let cookies = sessionCookies() {
             let requestHeader = NSHTTPCookie.requestHeaderFieldsWithCookies(cookies)
             request.allHTTPHeaderFields = requestHeader
         }
         else {
-            log.error("could not get cookie")
+            logger.error("could not get cookie")
             completion(nil, nil, NSError(domain:"", code:0, userInfo: nil))
         }
         
@@ -81,14 +81,14 @@ extension NicoUtility {
     }
     
     private func sessionCookies() -> [NSHTTPCookie]? {
-        // log.debug("userSessionCookie:[\(self.userSessionCookie)]")
-        if self.userSessionCookie == nil {
+        // logger.debug("userSessionCookie:[\(userSessionCookie)]")
+        if userSessionCookie == nil {
             return nil
         }
         
         var cookies = [NSHTTPCookie]()
         
-        for (name, value) in [("user_session", self.userSessionCookie!), ("area", "JP"), ("lang", "ja-jp")] {
+        for (name, value) in [("user_session", userSessionCookie!), ("area", "JP"), ("lang", "ja-jp")] {
             if let cookie = NSHTTPCookie(properties: [
                 NSHTTPCookieDomain: kCookieDomain,
                 NSHTTPCookieName: name,

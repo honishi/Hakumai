@@ -8,7 +8,6 @@
 
 import Foundation
 import AppKit
-import XCGLogger
 
 // constant value for storyboard
 private let kStoryboardNamePreferenceWindowController = "PreferenceWindowController"
@@ -23,8 +22,6 @@ class PreferenceWindowController: NSWindowController {
 
     @IBOutlet weak var toolbar: NSToolbar!
 
-    let log = XCGLogger.defaultInstance()
-    
     // MARK: Properties for Singleton
     class func generateInstance() -> PreferenceWindowController {
         let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
@@ -41,7 +38,7 @@ class PreferenceWindowController: NSWindowController {
     }
     
     deinit {
-        log.debug("")
+        logger.debug("")
     }
     
     // MARK: - NSObject Overrides
@@ -51,10 +48,10 @@ class PreferenceWindowController: NSWindowController {
     
     // MARK: - NSWindowController Overrides
     override func windowDidLoad() {
-        self.changeContent(GeneralViewController.sharedInstance, itemIdentifier: kToolbarItemIdentifierGeneral)
+        changeContent(GeneralViewController.sharedInstance, itemIdentifier: kToolbarItemIdentifierGeneral)
         
-        self.window?.center()
-        self.window?.makeKeyWindow()
+        window?.center()
+        window?.makeKeyWindow()
     }
     
     // MARK: - NSToolbar Handlers
@@ -74,7 +71,7 @@ class PreferenceWindowController: NSWindowController {
         }
         
         if viewController != nil {
-            self.changeContent(viewController!, itemIdentifier: toolbarItem.itemIdentifier)
+            changeContent(viewController!, itemIdentifier: toolbarItem.itemIdentifier)
         }
     }
 
@@ -84,38 +81,38 @@ class PreferenceWindowController: NSWindowController {
     // based on this implementation;
     // https://github.com/sequelpro/sequelpro/blob/fd3ff51dc624be5ce645ce25eb72d03e5a359416/Source/SPPreferenceController.m#L248
     func changeContent(viewController: NSViewController, itemIdentifier: String) {
-        if let subViews = self.window?.contentView?.subviews {
+        if let subViews = window?.contentView?.subviews {
             for subView in subViews {
                 subView.removeFromSuperview()
             }
         }
         
-        self.window?.contentView?.addSubview(viewController.view)
-        self.resizeWindowForContentView(viewController.view)
+        window?.contentView?.addSubview(viewController.view)
+        resizeWindowForContentView(viewController.view)
         
-        self.toolbar.selectedItemIdentifier = itemIdentifier
+        toolbar.selectedItemIdentifier = itemIdentifier
     }
     
     func resizeWindowForContentView(view: NSView) {
         let viewSize = view.frame.size
-        var frame = self.window!.frame
+        var frame = window!.frame
 
         let titleHeight: CGFloat = 22
-        let resizedHeight = viewSize.height + titleHeight + self.toolbarHeight()
+        let resizedHeight = viewSize.height + titleHeight + toolbarHeight()
         
         frame.origin.y += frame.size.height - resizedHeight
         frame.size.height = resizedHeight
         frame.size.width = viewSize.width
         
-        self.window?.setFrame(frame, display: true, animate: true)
+        window?.setFrame(frame, display: true, animate: true)
     }
 
     func toolbarHeight() -> CGFloat {
         var toolbarHeight: CGFloat = 0
         
-        if self.toolbar != nil && self.toolbar.visible {
-            let windowFrame = NSWindow.contentRectForFrameRect(self.window!.frame, styleMask: self.window!.styleMask)
-            toolbarHeight = NSHeight(windowFrame) - NSHeight(self.window!.contentView!.frame)
+        if toolbar != nil && toolbar.visible {
+            let windowFrame = NSWindow.contentRectForFrameRect(window!.frame, styleMask: window!.styleMask)
+            toolbarHeight = NSHeight(windowFrame) - NSHeight(window!.contentView!.frame)
         }
         
         return toolbarHeight

@@ -8,19 +8,16 @@
 
 import Foundation
 import AppKit
-import XCGLogger
 
 class UserWindow: NSWindow {
-    // MARK: - Properties
-    let log = XCGLogger.defaultInstance()
-
     /*
+    // MARK: - Properties
     // MARK: - Object Lifecycle
     
     // MARK: - NSResponder Overrides
     // http://genjiapp.com/blog/2012/10/25/how-to-develop-a-preferences-window-for-os-x-app.html
     override func cancelOperation(sender: AnyObject?) {
-        self.close()
+        close()
     }
 
     // MARK: - [Protocol] Functions

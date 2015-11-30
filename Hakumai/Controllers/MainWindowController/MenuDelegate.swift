@@ -8,7 +8,6 @@
 
 import Foundation
 import AppKit
-import XCGLogger
 
 class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     // MARK: Menu Outlets
@@ -21,9 +20,6 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     @IBOutlet weak var reportAsNgUserMenuItem: NSMenuItem!
     @IBOutlet weak var openUserPageMenuItem: NSMenuItem!
     
-    // MARK: General Properties
-    let log = XCGLogger.defaultInstance()
-
     // MARK: Computed Properties
     var tableView: NSTableView {
         return MainViewController.sharedInstance.tableView
@@ -40,7 +36,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     
     // MARK: - NSMenu Overrides
     override func validateMenuItem(menuItem: NSMenuItem) -> Bool {
-        let clickedRow = self.tableView.clickedRow
+        let clickedRow = tableView.clickedRow
         if clickedRow == -1 {
             return false
         }
@@ -53,24 +49,24 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         let chat = message.chat!
         
         switch menuItem {
-        case self.copyCommentMenuItem, self.tweetCommentMenuItem:
+        case copyCommentMenuItem, tweetCommentMenuItem:
             return true
-        case self.openUrlMenuItem:
-            return self.urlStringInComment(chat) != nil ? true : false
-        case self.addHandleNameMenuItem:
-            if self.live == nil {
+        case openUrlMenuItem:
+            return urlStringInComment(chat) != nil ? true : false
+        case addHandleNameMenuItem:
+            if live == nil {
                 return false
             }
             return (chat.isUserComment || chat.isBSPComment)
-        case self.removeHandleNameMenuItem:
-            guard let live = self.live else {
+        case removeHandleNameMenuItem:
+            guard let live = live else {
                 return false
             }
             let hasHandleName = (HandleNameManager.sharedManager.handleNameForLive(live, chat: chat) != nil)
             return hasHandleName
-        case self.addToMuteUserMenuItem, self.reportAsNgUserMenuItem:
+        case addToMuteUserMenuItem, reportAsNgUserMenuItem:
             return (chat.isUserComment || chat.isBSPComment)
-        case self.openUserPageMenuItem:
+        case openUserPageMenuItem:
             return (chat.isRawUserId && (chat.isUserComment || chat.isBSPComment)) ? true : false
         default:
             break
@@ -81,9 +77,9 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
 
     // MARK: - NSMenuDelegate Functions
     func menuWillOpen(menu: NSMenu) {
-        self.resetMenu()
+        resetMenu()
         
-        let clickedRow = self.tableView.clickedRow
+        let clickedRow = tableView.clickedRow
         if clickedRow == -1 {
             return
         }
@@ -94,7 +90,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
             return
         }
         
-        self.configureMenu(message.chat!)
+        configureMenu(message.chat!)
     }
     
     // MARK: Utility
@@ -106,19 +102,19 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
 
     // MARK: - Context Menu Handlers
     @IBAction func copyComment(sender: AnyObject) {
-        let chat = MessageContainer.sharedContainer[self.tableView.clickedRow].chat!
+        let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat!
         let toBeCopied = chat.comment!
-        self.copyStringToPasteBoard(toBeCopied)
+        copyStringToPasteBoard(toBeCopied)
     }
     
     @IBAction func openUrl(sender: AnyObject) {
-        let chat = MessageContainer.sharedContainer[self.tableView.clickedRow].chat!
-        let urlString = self.urlStringInComment(chat)!
+        let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat!
+        let urlString = urlStringInComment(chat)!
         NSWorkspace.sharedWorkspace().openURL(NSURL(string: urlString)!)
     }
     
     @IBAction func tweetComment(sender: AnyObject) {
-        let chat = MessageContainer.sharedContainer[self.tableView.clickedRow].chat!
+        let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat!
         let live = NicoUtility.sharedInstance.live!
         
         let comment = chat.comment ?? ""
@@ -136,27 +132,29 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     }
     
     @IBAction func addHandleName(sender: AnyObject) {
-        let live = self.live!
-        let chat = MessageContainer.sharedContainer[self.tableView.clickedRow].chat!
+        guard let live = live, let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat else {
+            return
+        }
         MainViewController.sharedInstance.showHandleNameAddViewControllerWithLive(live, chat: chat)
     }
     
     @IBAction func removeHandleName(sender: AnyObject) {
-        let live = self.live!
-        let chat = MessageContainer.sharedContainer[self.tableView.clickedRow].chat!
+        guard let live = live, let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat else {
+            return
+        }
         HandleNameManager.sharedManager.removeHandleNameWithLive(live, chat: chat)
         MainViewController.sharedInstance.refreshHandleName()
     }
     
     @IBAction func addToMuteUser(sender: AnyObject) {
-        let chat = MessageContainer.sharedContainer[self.tableView.clickedRow].chat!
+        let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat!
         
         let defaults = NSUserDefaults.standardUserDefaults()
         var muteUserIds = defaults.objectForKey(Parameters.MuteUserIds) as? [[String: String]] ?? [[String: String]]()
         
         for muteUserId in muteUserIds {
             if chat.userId == muteUserId[MuteUserIdKey.UserId] {
-                log.debug("mute userid [\(chat.userId)] already registered, so skip")
+                logger.debug("mute userid [\(chat.userId)] already registered, so skip")
                 return
             }
         }
@@ -167,8 +165,8 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     }
     
     @IBAction func reportAsNgUser(sender: AnyObject) {
-        let chat = MessageContainer.sharedContainer[self.tableView.clickedRow].chat!
-        NicoUtility.sharedInstance.reportAsNgUser(chat) { (userId: String?) -> Void in
+        let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat!
+        NicoUtility.sharedInstance.reportAsNgUser(chat) { userId in
             if userId == nil {
                 MainViewController.sharedInstance.logSystemMessageToTableView("Failed to report NG user.")
                 return
@@ -179,7 +177,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     }
     
     @IBAction func openUserPage(sender: AnyObject) {
-        let chat = MessageContainer.sharedContainer[self.tableView.clickedRow].chat!
+        let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat!
         let userPageUrlString = NicoUtility.sharedInstance.urlStringForUserId(chat.userId!)
         
         NSWorkspace.sharedWorkspace().openURL(NSURL(string: userPageUrlString)!)
@@ -198,7 +196,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         let pasteBoard = NSPasteboard.generalPasteboard()
         pasteBoard.declareTypes([NSStringPboardType], owner: nil)
         let result = pasteBoard.setString(string, forType: NSStringPboardType)
-        log.debug("copied \(string) w/ result \(result)")
+        logger.debug("copied \(string) w/ result \(result)")
         
         return result
     }

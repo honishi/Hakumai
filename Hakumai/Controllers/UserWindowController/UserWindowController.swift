@@ -8,7 +8,6 @@
 
 import Foundation
 import AppKit
-import XCGLogger
 
 // constant value for storyboard
 private let kStoryboardNameUserWindowController = "UserWindowController"
@@ -23,15 +22,13 @@ class UserWindowController: NSWindowController, NSWindowDelegate {
     weak var delegate: UserWindowControllerDelegate?
     var userId: String? {
         didSet {
-            self.reloadMessages()
+            reloadMessages()
         }
     }
     
-    let log = XCGLogger.defaultInstance()
-    
     // MARK: - Object Lifecycle
     deinit {
-        log.debug("")
+        logger.debug("")
     }
     
     class func generateInstanceWithDelegate(delegate: UserWindowControllerDelegate?, userId: String) -> UserWindowController {
@@ -49,13 +46,13 @@ class UserWindowController: NSWindowController, NSWindowDelegate {
         let window: AnyObject? = notification.object
         
         if window is UserWindow {
-            self.delegate?.userWindowControllerDidClose(self)
+            delegate?.userWindowControllerDidClose(self)
         }
     }
     
     // MARK: - Public Functions
     func reloadMessages() {
-        let userViewController = self.contentViewController as! UserViewController
+        let userViewController = contentViewController as! UserViewController
         userViewController.userId = userId
     }
     

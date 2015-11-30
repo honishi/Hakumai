@@ -28,24 +28,24 @@ class UserViewController: NSViewController {
             var userIdLabelValue: String?
             var userNameLabelValue: String?
             
-            if let userId = self.userId {
+            if let userId = userId {
                 userIdLabelValue = userId
                 
                 if let userName = NicoUtility.sharedInstance.cachedUserNameForUserId(userId) {
                     userNameLabelValue = userName
                 }
                 
-                self.messages = MessageContainer.sharedContainer.messagesWithUserId(userId)
+                messages = MessageContainer.sharedContainer.messagesWithUserId(userId)
             }
             else {
-                self.messages.removeAll(keepCapacity: false)
-                self.rowHeightCacher.removeAll(keepCapacity: false)
+                messages.removeAll(keepCapacity: false)
+                rowHeightCacher.removeAll(keepCapacity: false)
             }
             
-            self.userIdLabel.stringValue = "UserId: " + (userIdLabelValue ?? "-----")
-            self.userNameLabel.stringValue = "UserName: " + (userNameLabelValue ?? "-----")
+            userIdLabel.stringValue = "UserId: " + (userIdLabelValue ?? "-----")
+            userNameLabel.stringValue = "UserName: " + (userNameLabelValue ?? "-----")
             
-            self.reloadMessages()
+            reloadMessages()
         }
     }
     var messages = [Message]()
@@ -61,7 +61,7 @@ class UserViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.registerNibs()
+        registerNibs()
     }
     
     func registerNibs() {
@@ -71,29 +71,29 @@ class UserViewController: NSViewController {
         
         for (nibName, identifier) in nibs {
             let nib = NSNib(nibNamed: nibName, bundle: NSBundle.mainBundle())
-            self.tableView.registerNib(nib!, forIdentifier: identifier)
+            tableView.registerNib(nib!, forIdentifier: identifier)
         }
     }
     
     // MARK: - NSTableViewDataSource Functions
     func numberOfRowsInTableView(tableView: NSTableView) -> Int {
-        return self.messages.count
+        return messages.count
     }
     
     func tableView(tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
-        let message = self.messages[row]
+        let message = messages[row]
         
-        if let cached = self.rowHeightCacher[message.messageNo] {
+        if let cached = rowHeightCacher[message.messageNo] {
             return cached
         }
         
         var rowHeight: CGFloat = 0
 
-        let commentTableColumn = self.tableView.tableColumnWithIdentifier(kCommentColumnIdentifier)!
+        let commentTableColumn = tableView.tableColumnWithIdentifier(kCommentColumnIdentifier)!
         let commentColumnWidth = commentTableColumn.width
-        rowHeight = self.commentColumnHeight(message, width: commentColumnWidth)
+        rowHeight = commentColumnHeight(message, width: commentColumnWidth)
         
-        self.rowHeightCacher[message.messageNo] = rowHeight
+        rowHeightCacher[message.messageNo] = rowHeight
         
         return rowHeight
     }
@@ -103,7 +103,7 @@ class UserViewController: NSViewController {
         let trailingSpace: CGFloat = 2
         let widthPadding = leadingSpace + trailingSpace
         
-        let (content, attributes) = self.contentAndAttributesForMessage(message)
+        let (content, attributes) = contentAndAttributesForMessage(message)
         
         let commentRect = content.boundingRectWithSize(CGSizeMake(width - widthPadding, 0),
             options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: attributes)
@@ -116,8 +116,8 @@ class UserViewController: NSViewController {
         let column = aNotification.userInfo?["NSTableColumn"] as! NSTableColumn
         
         if column.identifier == kCommentColumnIdentifier {
-            self.rowHeightCacher.removeAll(keepCapacity: false)
-            self.tableView.reloadData()
+            rowHeightCacher.removeAll(keepCapacity: false)
+            tableView.reloadData()
         }
     }
     
@@ -129,10 +129,10 @@ class UserViewController: NSViewController {
             view?.textField?.stringValue = ""
         }
         
-        let message = self.messages[row]
+        let message = messages[row]
         
         if message.messageType == .Chat {
-            self.configureViewForChat(message, tableColumn: tableColumn!, view: view!)
+            configureViewForChat(message, tableColumn: tableColumn!, view: view!)
         }
         
         return view
@@ -151,7 +151,7 @@ class UserViewController: NSViewController {
         case kScoreColumnIdentifier:
             (view as! ScoreTableCellView).chat = chat
         case kCommentColumnIdentifier:
-            let (content, attributes) = self.contentAndAttributesForMessage(message)
+            let (content, attributes) = contentAndAttributesForMessage(message)
             attributed = NSAttributedString(string: content as String, attributes: attributes)
         default:
             break
@@ -180,8 +180,8 @@ class UserViewController: NSViewController {
     }
     
     func shouldTableViewScrollToBottom() -> Bool {
-        let viewRect = self.scrollView.contentView.documentRect
-        let visibleRect = self.scrollView.contentView.documentVisibleRect
+        let viewRect = scrollView.contentView.documentRect
+        let visibleRect = scrollView.contentView.documentVisibleRect
         // log.debug("\(viewRect)-\(visibleRect)")
         
         let bottomY = viewRect.size.height
@@ -194,7 +194,7 @@ class UserViewController: NSViewController {
     }
     
     func scrollTableViewToBottom() {
-        let clipView = self.scrollView.contentView
+        let clipView = scrollView.contentView
         let x = clipView.documentVisibleRect.origin.x
         let y = clipView.documentRect.size.height - clipView.documentVisibleRect.size.height
         let origin = NSMakePoint(x, y)
@@ -206,14 +206,14 @@ class UserViewController: NSViewController {
     
     // MARK: - Internal Functions
     func reloadMessages() {
-        let shouldScroll = self.shouldTableViewScrollToBottom()
+        let shouldScroll = shouldTableViewScrollToBottom()
         
-        self.tableView.reloadData()
+        tableView.reloadData()
         
         if shouldScroll {
-            self.scrollTableViewToBottom()
+            scrollTableViewToBottom()
         }
         
-        self.scrollView.flashScrollers()
+        scrollView.flashScrollers()
     }
 }

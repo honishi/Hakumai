@@ -8,7 +8,6 @@
 
 import Foundation
 import FMDB
-import XCGLogger
 
 private let kHandleNamesDatabase = "HandleNames"
 private let kHandleNamesTable = "handle_names"
@@ -26,16 +25,14 @@ class HandleNameManager {
     private var database: FMDatabase!
     private var databaseQueue: FMDatabaseQueue!
     
-    private let log = XCGLogger.defaultInstance()
-    
     // MARK: - Object Lifecycle
     init() {
         objc_sync_enter(self)
-        ApiHelper.createApplicationDirectoryIfNotExists()
-        self.database = HandleNameManager.databaseForHandleNames()
-        self.databaseQueue = HandleNameManager.databaseQueueForHandleNames()
-        self.createHandleNamesTableIfNotExists()
-        self.deleteObsoletedHandleNames()
+        Helper.createApplicationDirectoryIfNotExists()
+        database = HandleNameManager.databaseForHandleNames()
+        databaseQueue = HandleNameManager.databaseQueueForHandleNames()
+        createHandleNamesTableIfNotExists()
+        deleteObsoletedHandleNames()
         objc_sync_exit(self)
     }
 
@@ -45,8 +42,8 @@ class HandleNameManager {
             return
         }
         
-        if let handleName = self.extractHandleNameFromComment(chat.comment!) {
-            self.updateHandleNameWithLive(live, chat: chat, handleName: handleName)
+        if let handleName = extractHandleNameFromComment(chat.comment!) {
+            updateHandleNameWithLive(live, chat: chat, handleName: handleName)
         }
     }
     
@@ -56,7 +53,7 @@ class HandleNameManager {
         }
         
         let anonymous = !chat.isRawUserId
-        self.insertOrReplaceHandleNameWithCommunityId(communityId, userId: userId, anonymous: anonymous, handleName: handleName)
+        insertOrReplaceHandleNameWithCommunityId(communityId, userId: userId, anonymous: anonymous, handleName: handleName)
     }
     
     func removeHandleNameWithLive(live: Live, chat: Chat) {
@@ -64,7 +61,7 @@ class HandleNameManager {
             return
         }
 
-        self.deleteHandleNameWithCommunityId(communityId, userId: userId)
+        deleteHandleNameWithCommunityId(communityId, userId: userId)
     }
     
     func handleNameForLive(live: Live, chat: Chat) -> String? {
@@ -92,7 +89,7 @@ class HandleNameManager {
     // MARK: Database Functions
     // for test
     func dropHandleNamesTableIfExists() {
-        guard let database = self.database else {
+        guard let database = database else {
             return
         }
         
@@ -103,12 +100,12 @@ class HandleNameManager {
         objc_sync_exit(self)
         
         if !success {
-            XCGLogger.error("failed to drop table: \(database.lastErrorMessage())")
+            logger.error("failed to drop table: \(database.lastErrorMessage())")
         }
     }
     
     func createHandleNamesTableIfNotExists() {
-        guard let database = self.database else {
+        guard let database = database else {
             return
         }
 
@@ -123,26 +120,26 @@ class HandleNameManager {
         objc_sync_exit(self)
         
         if !success {
-            XCGLogger.error("failed to create table: \(database.lastErrorMessage())")
+            logger.error("failed to create table: \(database.lastErrorMessage())")
         }
     }
     
     func insertOrReplaceHandleNameWithCommunityId(communityId: String, userId: String, anonymous: Bool, handleName: String) {
-        guard self.databaseQueue != nil else {
-            XCGLogger.warning("database not ready")
+        guard databaseQueue != nil else {
+            logger.warning("database not ready")
             return
         }
         
         let insertSql = "insert or replace into " + kHandleNamesTable + " " +
             "values (?, ?, ?, ?, null, strftime('%s', 'now'), null, null, null)"
 
-        self.databaseQueue.inDatabase { database in
+        databaseQueue.inDatabase { database in
             database.executeUpdate(insertSql, withArgumentsInArray: [communityId, userId, handleName, anonymous])
         }
     }
 
     func selectHandleNameWithCommunityId(communityId: String, userId: String) -> String? {
-        guard let database = self.database else {
+        guard let database = database else {
             return nil
         }
       
@@ -162,7 +159,7 @@ class HandleNameManager {
     }
     
     func deleteHandleNameWithCommunityId(communityId: String, userId: String) {
-        guard let database = self.database else {
+        guard let database = database else {
             return
         }
         
@@ -173,12 +170,12 @@ class HandleNameManager {
         objc_sync_exit(self)
         
         if !success {
-            XCGLogger.error("failed to delete table: \(database.lastErrorMessage())")
+            logger.error("failed to delete table: \(database.lastErrorMessage())")
         }
     }
     
     func deleteObsoletedHandleNames() {
-        guard let database = self.database else {
+        guard let database = database else {
             return
         }
         
@@ -190,20 +187,20 @@ class HandleNameManager {
         objc_sync_exit(self)
         
         if !success {
-            XCGLogger.error("failed to delete table: \(database.lastErrorMessage())")
+            logger.error("failed to delete table: \(database.lastErrorMessage())")
         }
     }
     
     // MARK: Database Instance Utility
     private class func fullPathForHandleNamesDatabase() -> String {
-        return ApiHelper.applicationDirectoryPath() + "/" + kHandleNamesDatabase
+        return Helper.applicationDirectoryPath() + "/" + kHandleNamesDatabase
     }
     
     private class func databaseForHandleNames() -> FMDatabase? {
         let database = FMDatabase(path: HandleNameManager.fullPathForHandleNamesDatabase())
         
         if !database.open() {
-            XCGLogger.error("unable to open database")
+            logger.error("unable to open database")
             return nil
         }
         

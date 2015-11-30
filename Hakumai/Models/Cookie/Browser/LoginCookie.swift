@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import XCGLogger
 
 private let kNicoVideoDomain = "http://nicovideo.jp"
 private let kLoginUrl = "https://secure.nicovideo.jp/secure/login?site=niconico"
@@ -15,28 +14,25 @@ private let kLoginUrl = "https://secure.nicovideo.jp/secure/login?site=niconico"
 // request header
 private let kUserAgent = kCommonUserAgent
 
-// logger for class methods
-private let log = XCGLogger.defaultInstance()
-
 class LoginCookie {
     // MARK: - Public Functions
     class func requestCookieWithMailAddress(mailAddress: String, password: String, completion: (userSessionCookie: String?) -> Void) {
         func httpCompletion(response: NSURLResponse?, data: NSData?, connectionError: NSError?) {
             if connectionError != nil {
-                log.error("login failed. connection error:[\(connectionError)]")
+                logger.error("login failed. connection error:[\(connectionError)]")
                 completion(userSessionCookie: nil)
                 return
             }
             
             let httpResponse = (response as! NSHTTPURLResponse)
             if httpResponse.statusCode != 200 {
-                log.error("login failed. got unexpected status code::[\(httpResponse.statusCode)]")
+                logger.error("login failed. got unexpected status code::[\(httpResponse.statusCode)]")
                 completion(userSessionCookie: nil)
                 return
             }
 
             let userSessionCookie = LoginCookie.findUserSessionCookie()
-            log.debug("found session cookie:[\(userSessionCookie)]")
+            logger.debug("found session cookie:[\(userSessionCookie)]")
             
             if userSessionCookie == nil {
                 completion(userSessionCookie: nil)

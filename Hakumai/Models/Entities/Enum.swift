@@ -22,7 +22,7 @@ enum RoomPosition: Int, CustomStringConvertible {
     case StandJ
     
     var description: String {
-        return "\(self.rawValue)(\(self.label()))"
+        return "\(rawValue)(\(label()))"
     }
 
     // MARK: - Functions
@@ -31,7 +31,7 @@ enum RoomPosition: Int, CustomStringConvertible {
             return nil
         }
         
-        return RoomPosition(rawValue: self.rawValue - 1)
+        return RoomPosition(rawValue: rawValue - 1)
     }
     
     func next() -> RoomPosition? {
@@ -39,7 +39,7 @@ enum RoomPosition: Int, CustomStringConvertible {
             return nil
         }
         
-        return RoomPosition(rawValue: self.rawValue + 1)
+        return RoomPosition(rawValue: rawValue + 1)
     }
     
     func label() -> String {
@@ -147,7 +147,7 @@ enum Premium: Int, CustomStringConvertible {
     case BSP = 7
     
     var description: String {
-        return "\(self.rawValue)(\(self.label()))"
+        return "\(rawValue)(\(label()))"
     }
     
     func label() -> String {

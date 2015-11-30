@@ -23,7 +23,7 @@ class Heartbeat: CustomStringConvertible {
         case Fail
         
         var description: String {
-            return kHeartbeatStatuses[self.rawValue]
+            return kHeartbeatStatuses[rawValue]
         }
     }
     
@@ -32,7 +32,7 @@ class Heartbeat: CustomStringConvertible {
         case NotFoundUserLiveSlot
         
         var description: String {
-            return kHeartbeatErrorCodes[self.rawValue]
+            return kHeartbeatErrorCodes[rawValue]
         }
     }
     
@@ -49,9 +49,9 @@ class Heartbeat: CustomStringConvertible {
     
     var description: String {
         return (
-            "Heartbeat: status[\(self.status)] errorCode[\(self.errorCode)] watchCount[\(self.watchCount)] " +
-            "commentCount[\(self.commentCount)] freeSlotNum[\(self.freeSlotNum)] " +
-            "isRestrict[\(self.isRestrict)] ticket[\(self.ticket)] waitTime[\(self.waitTime)]"
+            "Heartbeat: status[\(status)] errorCode[\(errorCode)] watchCount[\(watchCount)] " +
+            "commentCount[\(commentCount)] freeSlotNum[\(freeSlotNum)] " +
+            "isRestrict[\(isRestrict)] ticket[\(ticket)] waitTime[\(waitTime)]"
         )
     }
     

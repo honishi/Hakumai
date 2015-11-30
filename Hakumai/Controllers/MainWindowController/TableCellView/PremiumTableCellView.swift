@@ -19,14 +19,14 @@ class PremiumTableCellView: NSTableCellView {
     
     var premium: Premium? = nil {
         didSet {
-            if self.premium == nil {
-                self.premiumImageView.image = nil
-                self.premiumTextField.stringValue = ""
+            guard let premium = premium else {
+                premiumImageView.image = nil
+                premiumTextField.stringValue = ""
                 return
             }
             
-            self.premiumImageView.image = self.imageForPremium(self.premium!)
-            self.premiumTextField.stringValue = self.premium!.label()
+            premiumImageView.image = imageForPremium(premium)
+            premiumTextField.stringValue = premium.label()
         }
     }
     

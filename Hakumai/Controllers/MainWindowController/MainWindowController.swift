@@ -17,6 +17,6 @@ class MainWindowController: NSWindowController {
         // autosave name setting in IB does not work properly, so set it manually.
         // - https://sites.google.com/site/xcodecodingmemo/home/mac-app-memo/resume-window-size-and-position
         // - http://d.hatena.ne.jp/RNatori/20070913
-        self.windowFrameAutosaveName = "MainWindow"
+        windowFrameAutosaveName = "MainWindow"
     }
 }

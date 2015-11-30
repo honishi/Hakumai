@@ -8,7 +8,6 @@
 
 import Foundation
 import AppKit
-import XCGLogger
 
 // constant value for storyboard
 private let kStoryboardNamePreferenceWindowController = "PreferenceWindowController"
@@ -22,8 +21,6 @@ class MuteViewController: NSViewController {
     @IBOutlet var muteUserIdsArrayController: NSArrayController!
     @IBOutlet var muteWordsArrayController: NSArrayController!
     
-    private let log = XCGLogger.defaultInstance()
-    
     // MARK: - Object Lifecycle
     class func generateInstance() -> MuteViewController {
         let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
@@ -32,30 +29,29 @@ class MuteViewController: NSViewController {
     
     // MARK: - Button Handlers
     @IBAction func addMuteUserId(sender: AnyObject) {
-        self.addMute({ (muteStringValue: String) -> Void in
+        addMute { muteStringValue in
             self.muteUserIdsArrayController.addObject(["UserId": muteStringValue])
-        })
+        }
     }
     
     @IBAction func addMuteWord(sender: AnyObject) {
-        self.addMute({ (muteStringValue: String) -> Void in
+        addMute { muteStringValue in
             self.muteWordsArrayController.addObject(["Word": muteStringValue])
-        })
+        }
     }
     
     func addMute(completion: String -> Void) {
         let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
         let muteAddViewController = storyboard.instantiateControllerWithIdentifier(kStoryboardIdMuteAddViewController) as! MuteAddViewController
         
-        muteAddViewController.completion = { (cancelled: Bool, muteStringValue: String?) -> Void in
+        muteAddViewController.completion = { (cancelled, muteStringValue) in
             if !cancelled {
                 completion(muteStringValue!)
             }
-            
             self.dismissViewController(muteAddViewController)
             // TODO: deinit in muteAddViewController is not called after this completion
         }
         
-        self.presentViewControllerAsSheet(muteAddViewController)
+        presentViewControllerAsSheet(muteAddViewController)
     }
 }

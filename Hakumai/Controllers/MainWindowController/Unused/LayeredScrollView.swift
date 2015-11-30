@@ -14,10 +14,10 @@ class LayeredScrollView: NSScrollView {
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        self.enableLayer()
+        enableLayer()
     }
     
     func enableLayer() {
-        self.wantsLayer = true
+        wantsLayer = true
     }
 }

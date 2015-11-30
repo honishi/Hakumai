@@ -19,17 +19,17 @@ class Community: CustomStringConvertible {
     var thumbnailUrl: NSURL?
 
     var isUser: Bool? {
-        return self.community?.hasRegexpPattern(kCommunityPrefixUser)
+        return community?.hasRegexpPattern(kCommunityPrefixUser)
     }
     
     var isChannel: Bool? {
-        return self.community?.hasRegexpPattern(kCommunityPrefixChannel)
+        return community?.hasRegexpPattern(kCommunityPrefixChannel)
     }
     
     var description: String {
         return (
-            "Community: community[\(self.community)] title[\(self.title)] level[\(self.level)] " +
-            "thumbnailUrl[\(self.thumbnailUrl)]"
+            "Community: community[\(community)] title[\(title)] level[\(level)] " +
+            "thumbnailUrl[\(thumbnailUrl)]"
         )
     }
 
