@@ -81,11 +81,11 @@ class NicoUtilityTests: XCTestCase {
         let server0 = MessageServer(roomPosition: .Arena, address: "msg102.live.nicovideo.jp", port: 2820, thread: 100)
         let server1 = MessageServer(roomPosition: .StandA, address: "msg103.live.nicovideo.jp", port: 2830, thread: 101)
         let server2 = MessageServer(roomPosition: .StandB, address: "msg104.live.nicovideo.jp", port: 2840, thread: 102)
-        let server3 = MessageServer(roomPosition: .StandC, address: "msg105.live.nicovideo.jp", port: 2850, thread: 103)
-        let server4 = MessageServer(roomPosition: .StandD, address: "msg101.live.nicovideo.jp", port: 2811, thread: 104)
-        let server5 = MessageServer(roomPosition: .StandE, address: "msg102.live.nicovideo.jp", port: 2821, thread: 105)
-        let server6 = MessageServer(roomPosition: .StandF, address: "msg103.live.nicovideo.jp", port: 2831, thread: 106)
-        let server7 = MessageServer(roomPosition: .StandG, address: "msg104.live.nicovideo.jp", port: 2841, thread: 107)
+        let server3 = MessageServer(roomPosition: .StandC, address: "msg101.live.nicovideo.jp", port: 2811, thread: 103)
+        let server4 = MessageServer(roomPosition: .StandD, address: "msg102.live.nicovideo.jp", port: 2821, thread: 104)
+        let server5 = MessageServer(roomPosition: .StandE, address: "msg103.live.nicovideo.jp", port: 2831, thread: 105)
+        let server6 = MessageServer(roomPosition: .StandF, address: "msg104.live.nicovideo.jp", port: 2841, thread: 106)
+        let server7 = MessageServer(roomPosition: .StandG, address: "msg101.live.nicovideo.jp", port: 2812, thread: 107)
 
         // level 999
         community.level = 999
