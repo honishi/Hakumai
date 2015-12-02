@@ -37,14 +37,16 @@ protocol NicoUtilityDelegate: class {
 }
 
 // MARK: constant value
-private let kCommunityLevelStandRoomTable: [(minLevel: Int, maxLevel: Int, standCount: Int)] = [
-    (1, 65, 1),     // a
-    (66, 69, 2),    // a, b
-    (70, 104, 3),   // a, b, c
-    (105, 149, 4),  // a, b, c, d
-    (150, 189, 5),  // a, b, c, d, e
-    (190, 231, 6),  // a, b, c, d, e, f
-    (232, 999, 7)   // a, b, c, d, e, f, g
+// mapping between community level and standing room is based on following articles:
+private let kCommunityLevelStandRoomTable: [(levelRange: Range<Int>, standCount: Int)] = [
+    (  1...49,  1),     // a
+    ( 50...69,  2),     // a, b
+    ( 70...104, 3),     // a, b, c
+    (105...149, 4),     // a, b, c, d
+    (150...189, 5),     // a, b, c, d, e
+    (190...229, 6),     // a, b, c, d, e, f
+    (230...255, 7),     // a, b, c, d, e, f, g
+    (256...999, 9),     // a, b, c, d, e, f, g, h, i
 ]
 
 // urls for api
@@ -621,16 +623,13 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     func standRoomCountForCommunityLevel(level: Int) -> Int {
-        var standRoomCount = 0
-        
-        for (minLevel, maxLevel, standCount) in kCommunityLevelStandRoomTable {
-            if minLevel <= level && level <= maxLevel {
-                standRoomCount = standCount
-                break
+        for (levelRange, standCount) in kCommunityLevelStandRoomTable {
+            if levelRange.contains(level) {
+                return standCount
             }
         }
         
-        return standRoomCount
+        return 0
     }
     
     private func openNewMessageServer() {
