@@ -78,7 +78,7 @@ class NicoUtilityTests: XCTestCase {
         let community = Community()
         community.community = "co12345"
         
-        let server0 = MessageServer(roomPosition: .Arena, address: "msg102.live.nicovideo.jp", port: 2820, thread: 100)
+        let server0 = MessageServer(roomPosition: .Arena,  address: "msg102.live.nicovideo.jp", port: 2820, thread: 100)
         let server1 = MessageServer(roomPosition: .StandA, address: "msg103.live.nicovideo.jp", port: 2830, thread: 101)
         let server2 = MessageServer(roomPosition: .StandB, address: "msg104.live.nicovideo.jp", port: 2840, thread: 102)
         let server3 = MessageServer(roomPosition: .StandC, address: "msg101.live.nicovideo.jp", port: 2811, thread: 103)
@@ -86,10 +86,12 @@ class NicoUtilityTests: XCTestCase {
         let server5 = MessageServer(roomPosition: .StandE, address: "msg103.live.nicovideo.jp", port: 2831, thread: 105)
         let server6 = MessageServer(roomPosition: .StandF, address: "msg104.live.nicovideo.jp", port: 2841, thread: 106)
         let server7 = MessageServer(roomPosition: .StandG, address: "msg101.live.nicovideo.jp", port: 2812, thread: 107)
+        let server8 = MessageServer(roomPosition: .StandH, address: "msg102.live.nicovideo.jp", port: 2822, thread: 108)
+        let server9 = MessageServer(roomPosition: .StandI, address: "msg103.live.nicovideo.jp", port: 2832, thread: 109)
 
         // level 999
         community.level = 999
-        expected = [server0, server1, server2, server3, server4, server5, server6, server7]
+        expected = [server0, server1, server2, server3, server4, server5, server6, server7, server8, server9]
         print("expected:\(expected)")
         
         derived = NicoUtility.sharedInstance.deriveMessageServersWithOriginServer(server0, community: community)
@@ -103,7 +105,7 @@ class NicoUtilityTests: XCTestCase {
         XCTAssert(derived == expected, "")
         
         // level 65
-        community.level = 65
+        community.level = 49
         expected = [server0, server1]
         
         derived = NicoUtility.sharedInstance.deriveMessageServersWithOriginServer(server0, community: community)
@@ -113,7 +115,7 @@ class NicoUtilityTests: XCTestCase {
         XCTAssert(derived == expected, "")
         
         // level 66
-        community.level = 66
+        community.level = 50
         expected = [server0, server1, server2]
         
         derived = NicoUtility.sharedInstance.deriveMessageServersWithOriginServer(server0, community: community)
@@ -176,8 +178,8 @@ class NicoUtilityTests: XCTestCase {
     }
     
     func testStandRoomCountForCommunityLevel() {
-        XCTAssert(NicoUtility.sharedInstance.standRoomCountForCommunityLevel(65) == 1, "")
-        XCTAssert(NicoUtility.sharedInstance.standRoomCountForCommunityLevel(66) == 2, "")
+        XCTAssert(NicoUtility.sharedInstance.standRoomCountForCommunityLevel(49) == 1, "")
+        XCTAssert(NicoUtility.sharedInstance.standRoomCountForCommunityLevel(50) == 2, "")
         
         XCTAssert(NicoUtility.sharedInstance.standRoomCountForCommunityLevel(104) == 3, "")
         XCTAssert(NicoUtility.sharedInstance.standRoomCountForCommunityLevel(105) == 4, "")
