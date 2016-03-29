@@ -34,7 +34,8 @@ class Message {
     // MARK: - Object Lifecycle
     init(messageType: MessageType, message: String?, chat: Chat?, firstChat: Bool?) {
         self.messageType = messageType
-        self.messageNo = Static.messageNo++
+        self.messageNo = Static.messageNo
+        Static.messageNo += 1
         self.message = message
         self.chat = chat
         self.firstChat = firstChat

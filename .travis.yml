@@ -1,7 +1,5 @@
 language: objective-c
-osx_image: xcode7.1
-before_install:
-  - gem install xcpretty
+osx_image: xcode7.3
 before_script:
   - ./script/disable_sparkle.sh
 script:

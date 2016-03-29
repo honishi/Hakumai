@@ -139,10 +139,12 @@ class MessageContainer {
             let count = self.sourceMessages.count
             objc_sync_exit(self)
             
-            for var i = count; 0 < i ; i-- {
+            var i = count
+            while 0 < i {
                 objc_sync_enter(self)
                 let message = self.sourceMessages[i - 1]
                 objc_sync_exit(self)
+                i -= 1
                 
                 if message.messageType == .System {
                     continue

@@ -325,7 +325,8 @@ class RoomListener : NSObject, NSStreamDelegate {
         for chatElement in chatElements {
             let chat = Chat()
 
-            chat.internalNo = internalNo++
+            chat.internalNo = internalNo
+            internalNo += 1
             chat.roomPosition = server?.roomPosition
             
             if let pr = chatElement.attributeForName("premium")?.stringValue, let intpr = Int(pr) {
@@ -393,7 +394,7 @@ class RoomListener : NSObject, NSStreamDelegate {
     // MARK: - Private Functions
     func startPingTimer() {
         pingTimer = NSTimer.scheduledTimerWithTimeInterval(
-            kPingInterval, target: self, selector: Selector("sendPing:"), userInfo: nil, repeats: true)
+            kPingInterval, target: self, selector: #selector(RoomListener.sendPing(_:)), userInfo: nil, repeats: true)
     }
 
     func stopPingTimer() {

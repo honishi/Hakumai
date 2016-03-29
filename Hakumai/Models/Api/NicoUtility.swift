@@ -321,7 +321,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             disconnect()
         }
         
-        chatCount++
+        chatCount += 1
 
         // quick test for reconnect
         #if DEBUG
@@ -718,7 +718,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         stopHeartbeatTimer()
         
         dispatch_async(dispatch_get_main_queue()) {
-            self.heartbeatTimer = NSTimer.scheduledTimerWithTimeInterval(interval, target: self, selector: "checkHeartbeat:", userInfo: nil, repeats: true)
+            self.heartbeatTimer = NSTimer.scheduledTimerWithTimeInterval(interval, target: self, selector: #selector(NicoUtility.checkHeartbeat(_:)), userInfo: nil, repeats: true)
             if immediateFire {
                 self.heartbeatTimer?.fire()
             }

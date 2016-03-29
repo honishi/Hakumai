@@ -46,7 +46,7 @@ class SpeechManager: NSObject {
         // use explicit main queue to ensure that the timer continues to run even when caller thread ends.
         dispatch_async(dispatch_get_main_queue()) {
             self.timer = NSTimer.scheduledTimerWithTimeInterval(kDequeuChatTimerInterval, target: self,
-                selector: "dequeueChat:", userInfo: nil, repeats: true)
+                selector: #selector(SpeechManager.dequeueChat(_:)), userInfo: nil, repeats: true)
         }
         
         logger.debug("started speech manager.")

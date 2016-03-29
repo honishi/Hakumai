@@ -105,7 +105,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
     
     func setupTableView() {
-        tableView.doubleAction = "openUserWindow:"
+        tableView.doubleAction = #selector(MainViewController.openUserWindow(_:))
         rowDefaultHeight = tableView.rowHeight
     }
     
@@ -322,8 +322,8 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     
     // MARK: - NSControlTextEditingDelegate Functions
     func control(control: NSControl, textView: NSTextView, doCommandBySelector commandSelector: Selector) -> Bool {
-        let isMovedUp = commandSelector == "moveUp:"
-        let isMovedDown = commandSelector == "moveDown:"
+        let isMovedUp = commandSelector == #selector(NSResponder.moveUp(_:))
+        let isMovedDown = commandSelector == #selector(NSResponder.moveDown(_:))
         
         if isMovedUp || isMovedDown {
             if commentHistory.count == 0 {
@@ -767,8 +767,8 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     
     // MARK: Timer Functions
     func startTimers() {
-        elapsedTimer = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "displayElapsed:", userInfo: nil, repeats: true)
-        activeTimer = NSTimer.scheduledTimerWithTimeInterval(kCalculateActiveInterval, target: self, selector: "calculateActive:", userInfo: nil, repeats: true)
+        elapsedTimer = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(MainViewController.displayElapsed(_:)), userInfo: nil, repeats: true)
+        activeTimer = NSTimer.scheduledTimerWithTimeInterval(kCalculateActiveInterval, target: self, selector: #selector(MainViewController.calculateActive(_:)), userInfo: nil, repeats: true)
     }
     
     func stopTimers() {
