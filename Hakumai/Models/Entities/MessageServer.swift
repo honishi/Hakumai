@@ -167,7 +167,7 @@ class MessageServer: CustomStringConvertible {
     class func substringFromBaseString(base: String, nsRange: NSRange) -> String {
         let start = base.startIndex.advancedBy(nsRange.location)
         let end = base.startIndex.advancedBy(nsRange.location + nsRange.length)
-        let range = Range<String.Index>(start: start, end: end)
+        let range = start ..< end
         let substring = base.substringWithRange(range)
         
         return substring
