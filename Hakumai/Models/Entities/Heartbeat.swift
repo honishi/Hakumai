@@ -64,7 +64,7 @@ class Heartbeat: CustomStringConvertible {
     class func statusFromString(status statusString: String) -> Heartbeat.Status? {
         var statusEnum: Heartbeat.Status?
         
-        for var index = 0; index < kHeartbeatStatuses.count; index++ {
+        for var index = 0; index < kHeartbeatStatuses.count; index += 1 {
             if statusString == kHeartbeatStatuses[index] {
                 statusEnum = Heartbeat.Status(rawValue: index)
                 break
@@ -77,7 +77,7 @@ class Heartbeat: CustomStringConvertible {
     class func errorCodeFromString(errorCode errorCodeString: String) -> Heartbeat.ErrorCode? {
         var errorCodeEnum: Heartbeat.ErrorCode?
         
-        for var index = 0; index < kHeartbeatErrorCodes.count; index++ {
+        for var index = 0; index < kHeartbeatErrorCodes.count; index += 1 {
             if errorCodeString == kHeartbeatErrorCodes[index] {
                 errorCodeEnum = Heartbeat.ErrorCode(rawValue: index)
                 break

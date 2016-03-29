@@ -321,7 +321,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             disconnect()
         }
         
-        chatCount++
+        chatCount += 1
 
         // quick test for reconnect
         #if DEBUG

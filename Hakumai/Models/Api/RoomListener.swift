@@ -325,7 +325,8 @@ class RoomListener : NSObject, NSStreamDelegate {
         for chatElement in chatElements {
             let chat = Chat()
 
-            chat.internalNo = internalNo++
+            chat.internalNo = internalNo
+            internalNo += 1
             chat.roomPosition = server?.roomPosition
             
             if let pr = chatElement.attributeForName("premium")?.stringValue, let intpr = Int(pr) {

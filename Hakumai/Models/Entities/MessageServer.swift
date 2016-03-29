@@ -123,7 +123,7 @@ class MessageServer: CustomStringConvertible {
                 return index
             }
             
-            index++
+            index += 1
         }
         
         return nil
