@@ -6,7 +6,7 @@ pod 'FMDB', '~> 2.5'
 pod 'Ono', '~> 1.2.2'
 pod 'Sparkle', '~> 1.11.0'
 pod 'SSKeychain', '~> 1.2.3'
-pod 'XCGLogger', '~> 3.0'
+pod 'XCGLogger', '~> 3.3'
 
 # work around #1/2 for FMDB swift integration issue, https://github.com/ccgus/fmdb/issues/309#issuecomment-135291683
 pod 'FMDB/SQLCipher', '~> 2.5'
