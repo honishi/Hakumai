@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9060" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9060"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner"/>
@@ -16,14 +16,12 @@
                     <constraints>
                         <constraint firstAttribute="width" constant="10" id="niz-L9-Qvp"/>
                     </constraints>
-                    <animations/>
                 </customView>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dH9-2I-2zy">
                     <rect key="frame" x="0.0" y="17" width="90" height="17"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="86" id="lQD-yG-phZ"/>
                     </constraints>
-                    <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Label" id="Rbv-4W-eyi">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -38,7 +36,6 @@
                 <constraint firstItem="Vu3-Tp-uTq" firstAttribute="top" secondItem="c22-O7-iKe" secondAttribute="top" id="pY8-mb-hMe"/>
                 <constraint firstItem="Vu3-Tp-uTq" firstAttribute="leading" secondItem="dH9-2I-2zy" secondAttribute="trailing" constant="2" id="xEt-L3-ykS"/>
             </constraints>
-            <animations/>
             <connections>
                 <outlet property="coloredView" destination="Vu3-Tp-uTq" id="vhj-lr-IG8"/>
                 <outlet property="scoreLabel" destination="dH9-2I-2zy" id="tZ5-Ph-WlX"/>

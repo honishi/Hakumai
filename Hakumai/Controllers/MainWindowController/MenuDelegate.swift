@@ -94,10 +94,10 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     }
     
     // MARK: Utility
-    func resetMenu() {
+    private func resetMenu() {
     }
-    
-    func configureMenu(chat: Chat) {
+
+    private func configureMenu(chat: Chat) {
     }
 
     // MARK: - Context Menu Handlers

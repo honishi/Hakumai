@@ -40,7 +40,7 @@ class MuteViewController: NSViewController {
         }
     }
     
-    func addMute(completion: String -> Void) {
+    private func addMute(completion: String -> Void) {
         let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
         let muteAddViewController = storyboard.instantiateControllerWithIdentifier(kStoryboardIdMuteAddViewController) as! MuteAddViewController
         

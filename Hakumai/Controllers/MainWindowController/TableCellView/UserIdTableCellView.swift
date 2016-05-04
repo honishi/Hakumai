@@ -31,8 +31,14 @@ class UserIdTableCellView: NSTableCellView {
         }
     }
     
+    var fontSize: CGFloat? {
+        didSet {
+            setFontSize(fontSize)
+        }
+    }
+    
     // MARK: - Internal Functions
-    func imageForHandleName(handleName: String?, userId: String) -> NSImage {
+    private func imageForHandleName(handleName: String?, userId: String) -> NSImage {
         var imageName: String
         
         if handleName != nil {
@@ -45,7 +51,7 @@ class UserIdTableCellView: NSTableCellView {
         return NSImage(named: imageName)!
     }
     
-    func setUserIdLabelWithUserId(userId: String, premium: Premium, handleName: String?) {
+    private func setUserIdLabelWithUserId(userId: String, premium: Premium, handleName: String?) {
         // set default name
         userIdTextField.stringValue = concatUserNameWithUserId(userId, userName: nil, handleName: handleName)
         
@@ -72,7 +78,7 @@ class UserIdTableCellView: NSTableCellView {
         NicoUtility.sharedInstance.resolveUsername(userId, completion: completion)
     }
     
-    func concatUserNameWithUserId(userId: String, userName: String?, handleName: String?) -> String {
+    private func concatUserNameWithUserId(userId: String, userName: String?, handleName: String?) -> String {
         var concatenated = ""
         
         if handleName != nil {
@@ -86,5 +92,10 @@ class UserIdTableCellView: NSTableCellView {
         }
         
         return concatenated
+    }
+    
+    private func setFontSize(fontSize: CGFloat?) {
+        let size = fontSize ?? CGFloat(kDefaultFontSize)
+        userIdTextField.font = NSFont.systemFontOfSize(size)
     }
 }

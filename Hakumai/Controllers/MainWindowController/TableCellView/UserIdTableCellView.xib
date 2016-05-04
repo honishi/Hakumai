@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9060" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9060"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner"/>
@@ -13,7 +13,6 @@
             <subviews>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Khl-KA-YVW">
                     <rect key="frame" x="20" y="17" width="82" height="17"/>
-                    <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" id="5gd-H5-3cs">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -25,7 +24,6 @@
                     <constraints>
                         <constraint firstAttribute="width" constant="17" id="Dsg-rV-h29"/>
                     </constraints>
-                    <animations/>
                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="UserIdRawId" id="mw3-QE-7jV"/>
                 </imageView>
             </subviews>
@@ -36,7 +34,6 @@
                 <constraint firstAttribute="centerY" secondItem="Khl-KA-YVW" secondAttribute="centerY" id="k1m-yf-pTH"/>
                 <constraint firstAttribute="trailing" secondItem="Khl-KA-YVW" secondAttribute="trailing" id="pzU-XN-uxq"/>
             </constraints>
-            <animations/>
             <connections>
                 <outlet property="userIdImageView" destination="WOK-sa-2n9" id="Ws2-sK-9kF"/>
                 <outlet property="userIdTextField" destination="Khl-KA-YVW" id="7S3-kO-7SE"/>

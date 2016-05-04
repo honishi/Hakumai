@@ -25,12 +25,14 @@ class ScoreTableCellView: NSTableCellView {
         }
     }
     
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
+    var fontSize: CGFloat? {
+        didSet {
+            setFontSize(fontSize)
+        }
     }
-
+    
     // MARK: - Internal Functions
-    func colorForChatScore(chat: Chat?) -> NSColor {
+    private func colorForChatScore(chat: Chat?) -> NSColor {
         // println("\(score)")
         if chat == nil {
             return UIHelper.systemMessageColorBackground()
@@ -56,7 +58,7 @@ class ScoreTableCellView: NSTableCellView {
         return UIHelper.scoreColorRed()
     }
     
-    func stringForChatScore(chat: Chat?) -> String {
+    private func stringForChatScore(chat: Chat?) -> String {
         var string = ""
         
         if let unwrapped = chat?.score {
@@ -64,5 +66,10 @@ class ScoreTableCellView: NSTableCellView {
         }
         
         return string
+    }
+    
+    private func setFontSize(fontSize: CGFloat?) {
+        let size = fontSize ?? CGFloat(kDefaultFontSize)
+        scoreLabel.font = NSFont.systemFontOfSize(size)
     }
 }

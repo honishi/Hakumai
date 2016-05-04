@@ -56,7 +56,7 @@ class LoginCookie {
     }
     
     // MARK: - Internal Functions
-    class func removeAllStoredCookie() {
+    private class func removeAllStoredCookie() {
         let cookieStorage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
         let cookies = cookieStorage.cookiesForURL(NSURL(string: kNicoVideoDomain)!)
         
@@ -69,7 +69,7 @@ class LoginCookie {
         }
     }
     
-    class func findUserSessionCookie() -> String? {
+    private class func findUserSessionCookie() -> String? {
         let cookieStorage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
         let cookies = cookieStorage.cookiesForURL(NSURL(string: kNicoVideoDomain)!)
         

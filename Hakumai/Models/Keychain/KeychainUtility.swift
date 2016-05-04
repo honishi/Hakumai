@@ -61,7 +61,7 @@ class KeychainUtility {
         return nil
     }
     
-    class func keychainServiceName() -> String {
+    private class func keychainServiceName() -> String {
         var bundleIdentifier = ""
         if let bi = NSBundle.mainBundle().infoDictionary?["CFBundleIdentifier"] as? String {
             bundleIdentifier = bi

@@ -80,7 +80,7 @@ class PreferenceWindowController: NSWindowController {
     // MARK: Content View Utility
     // based on this implementation;
     // https://github.com/sequelpro/sequelpro/blob/fd3ff51dc624be5ce645ce25eb72d03e5a359416/Source/SPPreferenceController.m#L248
-    func changeContent(viewController: NSViewController, itemIdentifier: String) {
+    private func changeContent(viewController: NSViewController, itemIdentifier: String) {
         if let subViews = window?.contentView?.subviews {
             for subView in subViews {
                 subView.removeFromSuperview()
@@ -93,7 +93,7 @@ class PreferenceWindowController: NSWindowController {
         toolbar.selectedItemIdentifier = itemIdentifier
     }
     
-    func resizeWindowForContentView(view: NSView) {
+    private func resizeWindowForContentView(view: NSView) {
         let viewSize = view.frame.size
         var frame = window!.frame
 
@@ -107,7 +107,7 @@ class PreferenceWindowController: NSWindowController {
         window?.setFrame(frame, display: true, animate: true)
     }
 
-    func toolbarHeight() -> CGFloat {
+    private func toolbarHeight() -> CGFloat {
         var toolbarHeight: CGFloat = 0
         
         if toolbar != nil && toolbar.visible {
