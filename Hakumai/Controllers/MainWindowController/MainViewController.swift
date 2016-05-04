@@ -140,7 +140,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     func changeFontSize(fontSize: CGFloat) {
         tableViewFontSize = fontSize
         
-        minimumRowHeight = caculateMinimumRowHeightWithFontSize(tableViewFontSize)
+        minimumRowHeight = calculateMinimumRowHeightWithFontSize(tableViewFontSize)
         tableView.rowHeight = minimumRowHeight
         rowHeightCacher.removeAll(keepCapacity: false)
         tableView.reloadData()
@@ -230,7 +230,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         return max(commentRect.size.height, minimumRowHeight)
     }
     
-    private func caculateMinimumRowHeightWithFontSize(fontSize: CGFloat) -> CGFloat {
+    private func calculateMinimumRowHeightWithFontSize(fontSize: CGFloat) -> CGFloat {
         let placeholderContent = "." as NSString
         let placeholderAttributes = UIHelper.normalCommentAttributesWithFontSize(fontSize)
         let rect = placeholderContent.boundingRectWithSize(
