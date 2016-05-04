@@ -88,7 +88,7 @@ class HandleNameManager {
     
     // MARK: Database Functions
     // for test
-    func dropHandleNamesTableIfExists() {
+    private func dropHandleNamesTableIfExists() {
         guard let database = database else {
             return
         }
@@ -104,7 +104,7 @@ class HandleNameManager {
         }
     }
     
-    func createHandleNamesTableIfNotExists() {
+    private func createHandleNamesTableIfNotExists() {
         guard let database = database else {
             return
         }
@@ -158,7 +158,7 @@ class HandleNameManager {
         return handleName
     }
     
-    func deleteHandleNameWithCommunityId(communityId: String, userId: String) {
+    private func deleteHandleNameWithCommunityId(communityId: String, userId: String) {
         guard let database = database else {
             return
         }
@@ -174,7 +174,7 @@ class HandleNameManager {
         }
     }
     
-    func deleteObsoletedHandleNames() {
+    private func deleteObsoletedHandleNames() {
         guard let database = database else {
             return
         }

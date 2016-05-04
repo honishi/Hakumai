@@ -178,7 +178,6 @@ class MessageContainer {
         }
     }
     
-    // MARK: - Internal Functions
     func rebuildFilteredMessages(completion: () -> Void) {
         // 1st pass:
         // copy and filter source messages. this could be long operation so use background thread
@@ -224,8 +223,9 @@ class MessageContainer {
         }
     }
     
+    // MARK: - Internal Functions
     // MARK: Filtered Message Append Utility
-    func appendMessage(message: Message, inout messages: [Message]) -> Bool {
+    private func appendMessage(message: Message, inout messages: [Message]) -> Bool {
         var appended = false
         
         if shouldAppendMessage(message) {
@@ -236,7 +236,7 @@ class MessageContainer {
         return appended
     }
 
-    func shouldAppendMessage(message: Message) -> Bool {
+    private func shouldAppendMessage(message: Message) -> Bool {
         // filter by message type
         if message.messageType == .System {
             return true

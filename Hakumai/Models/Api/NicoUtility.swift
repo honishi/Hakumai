@@ -115,11 +115,11 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         initializeInstance()
     }
 
-    func initializeFileLogger() {
+    private func initializeFileLogger() {
         Helper.setupFileLogger(fileLogger, fileName: kFileLogName)
     }
     
-    func initializeInstance() {
+    private func initializeInstance() {
         resolveUserNameOperationQueue.maxConcurrentOperationCount = 1
     }
 
@@ -356,7 +356,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
 
     // MARK: Chat Checkers
-    func isFirstChatWithRoomListener(roomListener: RoomListener, chat: Chat) -> Bool {
+    private func isFirstChatWithRoomListener(roomListener: RoomListener, chat: Chat) -> Bool {
         if chat.isUserComment {
             if let room = roomListener.server?.roomPosition {
                 if receivedFirstChat[room] == nil || receivedFirstChat[room] == false {
@@ -369,7 +369,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         return false
     }
     
-    func shouldNotifyChatToDelegateWithChat(chat: Chat) -> Bool {
+    private func shouldNotifyChatToDelegateWithChat(chat: Chat) -> Bool {
         // premium == 0, 1
         if chat.isUserComment {
             return true
@@ -388,7 +388,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         return false
     }
     
-    func isKickedOutWithRoomListener(roomListener: RoomListener, chat: Chat) -> Bool {
+    private func isKickedOutWithRoomListener(roomListener: RoomListener, chat: Chat) -> Bool {
         // XXX: should use isAssignedMessageServerChatWithChat()
         if roomListener.server?.roomPosition != messageServer?.roomPosition {
             return false
@@ -406,11 +406,11 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         return false
     }
     
-    func isDisconnectedWithChat(chat: Chat) -> Bool {
+    private func isDisconnectedWithChat(chat: Chat) -> Bool {
         return (chat.comment == "/disconnect" && chat.isSystemComment && isAssignedMessageServerChatWithChat(chat))
     }
     
-    func isAssignedMessageServerChatWithChat(chat: Chat) -> Bool {
+    private func isAssignedMessageServerChatWithChat(chat: Chat) -> Bool {
         return chat.roomPosition == messageServer?.roomPosition
     }
     
@@ -767,7 +767,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     // MARK: Misc Utility
-    func reset() {
+    private func reset() {
         live = nil
         user = nil
         messageServer = nil

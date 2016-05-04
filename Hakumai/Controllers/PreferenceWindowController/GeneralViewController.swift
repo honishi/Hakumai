@@ -65,11 +65,11 @@ class GeneralViewController: NSViewController {
     }
 
     // MARK: - Internal Functions
-    func validateCheckAccountButton() {
+    private func validateCheckAccountButton() {
         checkAccountButton?.enabled = canLogin()
     }
     
-    func canLogin() -> Bool {
+    private func canLogin() -> Bool {
         if mailAddress == nil || password == nil {
             return false
         }

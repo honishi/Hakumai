@@ -29,18 +29,18 @@ class RoomListener : NSObject, NSStreamDelegate {
     weak var delegate: RoomListenerDelegate?
     let server: MessageServer?
     
-    var runLoop: NSRunLoop!
+    private var runLoop: NSRunLoop!
     
-    var inputStream: NSInputStream?
-    var outputStream: NSOutputStream?
-    var pingTimer: NSTimer?
+    private var inputStream: NSInputStream?
+    private var outputStream: NSOutputStream?
+    private var pingTimer: NSTimer?
     
-    var parsingString: NSString = ""
+    private var parsingString: NSString = ""
     
-    var thread: Thread?
-    var startDate: NSDate?
-    var lastRes: Int = 0
-    var internalNo: Int = 0
+    private var thread: Thread?
+    private var startDate: NSDate?
+    private(set) var lastRes: Int = 0
+    private var internalNo: Int = 0
     
     private let fileLogger = XCGLogger()
     
@@ -58,7 +58,7 @@ class RoomListener : NSObject, NSStreamDelegate {
         logger.debug("")
     }
     
-    func initializeFileLogger() {
+    private func initializeFileLogger() {
         var logNumber = 0
         if let server = server {
             logNumber = server.roomPosition.rawValue
@@ -148,7 +148,7 @@ class RoomListener : NSObject, NSStreamDelegate {
         sendMessage(message)
     }
     
-    func sendMessage(message: String, logging: Bool = true) {
+    private func sendMessage(message: String, logging: Bool = true) {
         let data: NSData = (message + "\0").dataUsingEncoding(NSUTF8StringEncoding)!
         outputStream?.write(UnsafePointer<UInt8>(data.bytes), maxLength: data.length)
  
@@ -230,7 +230,7 @@ class RoomListener : NSObject, NSStreamDelegate {
         return hasValidPatternInStream(">$", stream: stream)
     }
     
-    func hasValidPatternInStream(pattern: String, stream: String) -> Bool {
+    private func hasValidPatternInStream(pattern: String, stream: String) -> Bool {
         let regexp = try! NSRegularExpression(pattern: pattern, options: [])
         let matched = regexp.firstMatchInString(stream, options: [], range: NSMakeRange(0, stream.utf16.count))
         
@@ -238,7 +238,7 @@ class RoomListener : NSObject, NSStreamDelegate {
     }
     
     // MARK: - Parse Utility
-    func parseInputStream(stream: String) {
+    private func parseInputStream(stream: String) {
         let wrappedStream = "<items>" + stream + "</items>"
         fileLogger.verbose("parsing: [ \(wrappedStream) ]")
         
@@ -374,7 +374,7 @@ class RoomListener : NSObject, NSStreamDelegate {
         return chats
     }
     
-    func parseChatResultElement(rootElement: NSXMLElement) -> [ChatResult] {
+    private func parseChatResultElement(rootElement: NSXMLElement) -> [ChatResult] {
         var chatResults = [ChatResult]()
         let chatResultElements = rootElement.elementsForName("chat_result")
         
@@ -392,12 +392,12 @@ class RoomListener : NSObject, NSStreamDelegate {
     }
 
     // MARK: - Private Functions
-    func startPingTimer() {
+    private func startPingTimer() {
         pingTimer = NSTimer.scheduledTimerWithTimeInterval(
             kPingInterval, target: self, selector: #selector(RoomListener.sendPing(_:)), userInfo: nil, repeats: true)
     }
 
-    func stopPingTimer() {
+    private func stopPingTimer() {
         pingTimer?.invalidate()
         pingTimer = nil
     }

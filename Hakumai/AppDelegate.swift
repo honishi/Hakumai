@@ -27,7 +27,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     // MARK: Application Initialize Utility
-    func migrateApplicationVersion() {
+    private func migrateApplicationVersion() {
         let defaults = NSUserDefaults.standardUserDefaults()
         
         let lastVersion = defaults.stringForKey(Parameters.LastLaunchedApplicationVersion)
@@ -60,7 +60,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         defaults.synchronize()
     }
     
-    func initializeUserDefaults() {
+    private func initializeUserDefaults() {
         let defaults: [String: AnyObject] = [
             Parameters.SessionManagement: SessionManagementType.Chrome.rawValue,
             Parameters.ShowIfseetnoCommands: false,
@@ -74,7 +74,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         NSUserDefaults.standardUserDefaults().registerDefaults(defaults)
     }
     
-    func addObserverForUserDefaults() {
+    private func addObserverForUserDefaults() {
         let defaults = NSUserDefaults.standardUserDefaults()
         
         // general
@@ -183,7 +183,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // see details at http://stackoverflow.com/a/13613507
     
     // MARK: Misc
-    func makeWindowAlwaysOnTop(alwaysOnTop: Bool) {
+    private func makeWindowAlwaysOnTop(alwaysOnTop: Bool) {
         let window = NSApplication.sharedApplication().windows[0] 
         window.alwaysOnTop = alwaysOnTop
         

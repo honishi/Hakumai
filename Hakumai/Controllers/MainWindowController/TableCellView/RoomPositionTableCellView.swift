@@ -33,12 +33,8 @@ class RoomPositionTableCellView: NSTableCellView {
         }
     }
     
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
-    
     // MARK: - Internal Functions
-    func colorForRoomPosition(roomPosition: RoomPosition?) -> NSColor {
+    private func colorForRoomPosition(roomPosition: RoomPosition?) -> NSColor {
         if roomPosition == nil {
             return UIHelper.systemMessageColorBackground()
         }
@@ -69,27 +65,23 @@ class RoomPositionTableCellView: NSTableCellView {
         }
     }
     
-    func stringForRoomPosition(roomPosition: RoomPosition?) -> String {
-        var string = ""
+    private func stringForRoomPosition(roomPosition: RoomPosition?) -> String {
+        guard let roomPosition = roomPosition else {
+            return ""
+        }
 
-        if let unwrapped = roomPosition {
-            string = unwrapped.shortLabel() + ":"
-        }
-        
-        return string
+        return roomPosition.shortLabel() + ":"
     }
     
-    func commentNoString(commentNo: Int?) -> String {
-        var string = ""
-        
-        if let unwrapped = commentNo {
-            string = String(unwrapped).numberStringWithSeparatorComma()!
+    private func commentNoString(commentNo: Int?) -> String {
+        guard let commentNo = commentNo else {
+            return ""
         }
-        
-        return string
+
+        return String(commentNo).numberStringWithSeparatorComma()!
     }
     
-    func setFontSize(fontSize: CGFloat?) {
+    private func setFontSize(fontSize: CGFloat?) {
         let size = fontSize ?? CGFloat(kDefaultFontSize)
         roomPositionLabel.font = NSFont.systemFontOfSize(size)
         commentNoLabel.font = NSFont.systemFontOfSize(size)

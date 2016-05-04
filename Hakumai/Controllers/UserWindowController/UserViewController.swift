@@ -64,7 +64,7 @@ class UserViewController: NSViewController {
         registerNibs()
     }
     
-    func registerNibs() {
+    private func registerNibs() {
         let nibs = [
             (kNibNameRoomPositionTableCellView, kRoomPositionColumnIdentifier),
             (kNibNameScoreTableCellView, kScoreColumnIdentifier)]
@@ -98,7 +98,7 @@ class UserViewController: NSViewController {
         return rowHeight
     }
     
-    func commentColumnHeight(message: Message, width: CGFloat) -> CGFloat {
+    private func commentColumnHeight(message: Message, width: CGFloat) -> CGFloat {
         let leadingSpace: CGFloat = 2
         let trailingSpace: CGFloat = 2
         let widthPadding = leadingSpace + trailingSpace
@@ -138,7 +138,7 @@ class UserViewController: NSViewController {
         return view
     }
     
-    func configureViewForChat(message: Message, tableColumn: NSTableColumn, view: NSTableCellView) {
+    private func configureViewForChat(message: Message, tableColumn: NSTableColumn, view: NSTableCellView) {
         let chat = message.chat!
         
         var attributed: NSAttributedString?
@@ -163,7 +163,7 @@ class UserViewController: NSViewController {
     }
     
     // MARK: Utility
-    func contentAndAttributesForMessage(message: Message) -> (NSString, [String: AnyObject]) {
+    private func contentAndAttributesForMessage(message: Message) -> (NSString, [String: AnyObject]) {
         var content: NSString!
         var attributes: [String: AnyObject]!
         
@@ -179,7 +179,7 @@ class UserViewController: NSViewController {
         return (content, attributes)
     }
     
-    func shouldTableViewScrollToBottom() -> Bool {
+    private func shouldTableViewScrollToBottom() -> Bool {
         let viewRect = scrollView.contentView.documentRect
         let visibleRect = scrollView.contentView.documentVisibleRect
         // log.debug("\(viewRect)-\(visibleRect)")
@@ -193,7 +193,7 @@ class UserViewController: NSViewController {
         return shouldScroll
     }
     
-    func scrollTableViewToBottom() {
+    private func scrollTableViewToBottom() {
         let clipView = scrollView.contentView
         let x = clipView.documentVisibleRect.origin.x
         let y = clipView.documentRect.size.height - clipView.documentVisibleRect.size.height
@@ -205,7 +205,7 @@ class UserViewController: NSViewController {
     // MARK: - Public Functions
     
     // MARK: - Internal Functions
-    func reloadMessages() {
+    private func reloadMessages() {
         let shouldScroll = shouldTableViewScrollToBottom()
         
         tableView.reloadData()

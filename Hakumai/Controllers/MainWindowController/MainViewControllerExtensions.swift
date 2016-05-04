@@ -11,13 +11,13 @@ import Foundation
 // MainViewController test utility collection
 extension MainViewController {
     // MARK: - NSTableView Performance
-    func kickTableViewStressTest() {
+    private func kickTableViewStressTest() {
         // kickParallelTableViewStressTest(5, interval: 0.5, count: 100000)
         kickParallelTableViewStressTest(4, interval: 2, count: 100000)
         // kickParallelTableViewStressTest(1, interval: 0.01, count: 100)
     }
 
-    func kickParallelTableViewStressTest(parallelism: Int, interval: NSTimeInterval, count: Int) {
+    private func kickParallelTableViewStressTest(parallelism: Int, interval: NSTimeInterval, count: Int) {
         for _ in 1...parallelism {
             kickTableViewStressTest(interval, count: count)
             
@@ -26,7 +26,7 @@ extension MainViewController {
         }
     }
     
-    func kickTableViewStressTest(interval: NSTimeInterval, count: Int) {
+    private func kickTableViewStressTest(interval: NSTimeInterval, count: Int) {
         dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) {
             for _ in 1...count {
                 let chat = self.randomChat()
@@ -38,7 +38,7 @@ extension MainViewController {
         // NSRunLoop.currentRunLoop().run()
     }
     
-    func randomChat() -> Chat {
+    private func randomChat() -> Chat {
         let chat = Chat()
         
         chat.roomPosition = RoomPosition.Arena
@@ -54,7 +54,7 @@ extension MainViewController {
     }
     
     // MARK: - Standard User Defaults
-    func updateStandardUserDefaults() {
+    private func updateStandardUserDefaults() {
         let delay = 2.0 * Double(NSEC_PER_SEC)
         let time  = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
         dispatch_after(time, dispatch_get_main_queue()) {
