@@ -64,6 +64,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let defaults: [String: AnyObject] = [
             Parameters.SessionManagement: SessionManagementType.Chrome.rawValue,
             Parameters.ShowIfseetnoCommands: false,
+            Parameters.FontSize: kDefaultFontSize,
             Parameters.EnableCommentSpeech: false,
             Parameters.EnableMuteUserIds: false,
             Parameters.EnableMuteWords: false,
@@ -88,6 +89,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         defaults.addObserver(self, forKeyPath: Parameters.MuteWords, options: ([.Initial, .New]), context: nil)
         
         // misc
+        defaults.addObserver(self, forKeyPath: Parameters.FontSize, options: ([.Initial, .New]), context: nil)
         defaults.addObserver(self, forKeyPath: Parameters.AlwaysOnTop, options: ([.Initial, .New]), context: nil)
     }
 
@@ -133,9 +135,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 MainViewController.sharedInstance.changeMuteWords(changed)
             }
 
+        case Parameters.FontSize:
+            if let changed = change["new"] as? Float {
+                MainViewController.sharedInstance.changeFontSize(CGFloat(changed))
+            }
+            
         case Parameters.AlwaysOnTop:
             if let newValue = change["new"] as? Bool {
-                // logger.debug("\(newValue)")
                 makeWindowAlwaysOnTop(newValue)
             }
             
@@ -161,6 +167,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         MainViewController.sharedInstance.focusCommentTextField()
     }
     
+    @IBAction func zoomDefault(sender: AnyObject) {
+        setFontSize(kDefaultFontSize)
+    }
+    
+    @IBAction func zoomIn(sender: AnyObject) {
+        incrementFontSize(1)
+    }
+    
+    @IBAction func zoomOut(sender: AnyObject) {
+        incrementFontSize(-1)
+    }
+
     // here no handlers for 'Always On Top' menu item. it should be implemented using KVO.
     // see details at http://stackoverflow.com/a/13613507
     
@@ -170,6 +188,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         window.alwaysOnTop = alwaysOnTop
         
         logger.debug("changed always on top: \(alwaysOnTop)")
+    }
+    
+    private func incrementFontSize(increment: Float) {
+        setFontSize(NSUserDefaults.standardUserDefaults().floatForKey(Parameters.FontSize) + increment)
+    }
+    
+    private func setFontSize(fontSize: Float) {
+        guard kMinimumFontSize...kMaximumFontSize ~= fontSize else {
+            return
+        }
+        
+        let defaults = NSUserDefaults.standardUserDefaults()
+        defaults.setFloat(fontSize, forKey: Parameters.FontSize)
+        defaults.synchronize()
     }
 }
 

@@ -16,6 +16,8 @@ private let kCommunityImageDefaultName = "NoImage"
 private let kUserWindowDefautlTopLeftPoint = NSMakePoint(100, 100)
 private let kDelayToShowHbIfseetnoCommands: NSTimeInterval = 30
 private let kCalculateActiveInterval: NSTimeInterval = 5
+private let kMaximumFontSizeForNonMainColumn: CGFloat = 16
+private let kDefaultMinimumRowHeight: CGFloat = 17
 
 class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate, NSControlTextEditingDelegate, NicoUtilityDelegate, UserWindowControllerDelegate {
     // MARK: - Properties
@@ -54,9 +56,10 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
 
     // row-height cache
     var rowHeightCacher = [Int: CGFloat]()
-    var rowDefaultHeight: CGFloat!
+    var minimumRowHeight: CGFloat = kDefaultMinimumRowHeight
     var lastShouldScrollToBottom = true
     var currentScrollAnimationCount = 0
+    var tableViewFontSize: CGFloat = CGFloat(kDefaultFontSize)
     
     var commentHistory = [String]()
     var commentHistoryIndex: Int?
@@ -106,7 +109,6 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     
     func setupTableView() {
         tableView.doubleAction = #selector(MainViewController.openUserWindow(_:))
-        rowDefaultHeight = tableView.rowHeight
     }
     
     func registerNibs() {
@@ -133,6 +135,15 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     func changeEnableCommentSpeech(enabled: Bool) {
         // logger.debug("\(enabled)")
         updateSpeechManagerState()
+    }
+    
+    func changeFontSize(fontSize: CGFloat) {
+        tableViewFontSize = fontSize
+        
+        minimumRowHeight = caculateMinimumRowHeightWithFontSize(tableViewFontSize)
+        tableView.rowHeight = minimumRowHeight
+        rowHeightCacher.removeAll(keepCapacity: false)
+        tableView.reloadData()
     }
     
     func changeEnableMuteUserIds(enabled: Bool) {
@@ -211,11 +222,20 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
 
         let (content, attributes) = contentAndAttributesForMessage(message)
         
-        let commentRect = content.boundingRectWithSize(CGSizeMake(width - widthPadding, 0),
-            options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: attributes)
+        let commentRect = content.boundingRectWithSize(
+            CGSizeMake(width - widthPadding, 0), options: NSStringDrawingOptions.UsesLineFragmentOrigin,
+            attributes: attributes)
         // logger.debug("\(commentRect.size.width),\(commentRect.size.height)")
         
-        return max(commentRect.size.height, rowDefaultHeight)
+        return max(commentRect.size.height, minimumRowHeight)
+    }
+    
+    private func caculateMinimumRowHeightWithFontSize(fontSize: CGFloat) -> CGFloat {
+        let placeholderContent = "." as NSString
+        let placeholderAttributes = UIHelper.normalCommentAttributesWithFontSize(fontSize)
+        let rect = placeholderContent.boundingRectWithSize(
+            CGSizeMake(1, 0), options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: placeholderAttributes)
+        return rect.size.height
     }
     
     func tableViewColumnDidResize(aNotification: NSNotification) {
@@ -253,16 +273,23 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             let roomPositionView = (view as! RoomPositionTableCellView)
             roomPositionView.roomPosition = nil
             roomPositionView.commentNo = nil
+            roomPositionView.fontSize = nil
         case kScoreColumnIdentifier:
-            (view as! ScoreTableCellView).chat = nil
+            let scoreView = view as! ScoreTableCellView
+            scoreView.chat = nil
+            scoreView.fontSize = nil
         case kCommentColumnIdentifier:
             let (content, attributes) = contentAndAttributesForMessage(message)
             let attributed = NSAttributedString(string: content as String, attributes: attributes)
             view.textField?.attributedStringValue = attributed
         case kUserIdColumnIdentifier:
-            (view as! UserIdTableCellView).info = nil
+            let userIdView = view as! UserIdTableCellView
+            userIdView.info = nil
+            userIdView.fontSize = nil
         case kPremiumColumnIdentifier:
-            (view as! PremiumTableCellView).premium = nil
+            let premiumView = view as! PremiumTableCellView
+            premiumView.premium = nil
+            premiumView.fontSize = nil
         default:
             break
         }
@@ -271,35 +298,31 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     func configureViewForChat(message: Message, tableColumn: NSTableColumn, view: NSTableCellView) {
         let chat = message.chat!
         
-        var attributed: NSAttributedString?
-        
         switch tableColumn.identifier {
         case kRoomPositionColumnIdentifier:
-            let roomPositionView = (view as! RoomPositionTableCellView)
+            let roomPositionView = view as! RoomPositionTableCellView
             roomPositionView.roomPosition = chat.roomPosition!
             roomPositionView.commentNo = chat.no!
+            roomPositionView.fontSize = min(tableViewFontSize, kMaximumFontSizeForNonMainColumn)
         case kScoreColumnIdentifier:
-            (view as! ScoreTableCellView).chat = chat
+            let scoreView = view as! ScoreTableCellView
+            scoreView.chat = chat
+            scoreView.fontSize = min(tableViewFontSize, kMaximumFontSizeForNonMainColumn)
         case kCommentColumnIdentifier:
             let (content, attributes) = contentAndAttributesForMessage(message)
-            attributed = NSAttributedString(string: content as String, attributes: attributes)
+            let attributed = NSAttributedString(string: content as String, attributes: attributes)
+            view.textField?.attributedStringValue = attributed
         case kUserIdColumnIdentifier:
+            let userIdView = view as! UserIdTableCellView
             let handleName = HandleNameManager.sharedManager.handleNameForLive(live!, chat: chat)
-            (view as! UserIdTableCellView).info = (handleName: handleName, userId: chat.userId, premium: chat.premium, comment: chat.comment)
+            userIdView.info = (handleName: handleName, userId: chat.userId, premium: chat.premium, comment: chat.comment)
+            userIdView.fontSize = tableViewFontSize
         case kPremiumColumnIdentifier:
-            (view as! PremiumTableCellView).premium = chat.premium
-        /*
-        case kMailColumnIdentifier:
-            if let mail = chat.mail {
-                attributed = NSAttributedString(string: chat.mail!, attributes: UIHelper.normalCommentAttributes())
-            }
-         */
+            let premiumView = view as! PremiumTableCellView
+            premiumView.premium = chat.premium
+            premiumView.fontSize = min(tableViewFontSize, kMaximumFontSizeForNonMainColumn)
         default:
             break
-        }
-
-        if attributed != nil {
-            view.textField?.attributedStringValue = attributed!
         }
     }
     
@@ -310,11 +333,16 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         
         if message.messageType == .System {
             content = message.message!
-            attributes = UIHelper.normalCommentAttributes()
+            attributes = UIHelper.normalCommentAttributesWithFontSize(tableViewFontSize)
         }
         else if message.messageType == .Chat {
             content = message.chat!.comment!
-            attributes = (message.firstChat == true ? UIHelper.boldCommentAttributes() : UIHelper.normalCommentAttributes())
+            if message.firstChat == true {
+                attributes = UIHelper.boldCommentAttributesWithFontSize(tableViewFontSize)
+            }
+            else {
+                attributes = UIHelper.normalCommentAttributesWithFontSize(tableViewFontSize)
+            }
         }
         
         return (content, attributes)

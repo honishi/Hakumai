@@ -31,6 +31,12 @@ class UserIdTableCellView: NSTableCellView {
         }
     }
     
+    var fontSize: CGFloat? {
+        didSet {
+            setFontSize(fontSize)
+        }
+    }
+    
     // MARK: - Internal Functions
     func imageForHandleName(handleName: String?, userId: String) -> NSImage {
         var imageName: String
@@ -86,5 +92,10 @@ class UserIdTableCellView: NSTableCellView {
         }
         
         return concatenated
+    }
+    
+    func setFontSize(fontSize: CGFloat?) {
+        let size = fontSize ?? CGFloat(kDefaultFontSize)
+        userIdTextField.font = NSFont.systemFontOfSize(size)
     }
 }

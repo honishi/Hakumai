@@ -30,6 +30,12 @@ class PremiumTableCellView: NSTableCellView {
         }
     }
     
+    var fontSize: CGFloat? {
+        didSet {
+            setFontSize(fontSize)
+        }
+    }
+    
     // MARK: - Internal Functions
     func imageForPremium(premium: Premium) -> NSImage? {
         var image: NSImage!
@@ -44,5 +50,10 @@ class PremiumTableCellView: NSTableCellView {
         }
         
         return image
+    }
+    
+    func setFontSize(fontSize: CGFloat?) {
+        let size = fontSize ?? CGFloat(kDefaultFontSize)
+        premiumTextField.font = NSFont.systemFontOfSize(size)
     }
 }

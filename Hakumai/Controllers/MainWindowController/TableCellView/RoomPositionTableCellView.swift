@@ -14,16 +14,22 @@ class RoomPositionTableCellView: NSTableCellView {
     @IBOutlet weak var roomPositionLabel: NSTextField!
     @IBOutlet weak var commentNoLabel: NSTextField!
     
-    var roomPosition: RoomPosition? = nil {
+    var roomPosition: RoomPosition? {
         didSet {
             roomPositionLabel.stringValue = stringForRoomPosition(roomPosition)
             coloredView.fillColor = colorForRoomPosition(roomPosition)
         }
     }
     
-    var commentNo: Int? = nil {
+    var commentNo: Int? {
         didSet {
             commentNoLabel.stringValue = commentNoString(commentNo)
+        }
+    }
+    
+    var fontSize: CGFloat? {
+        didSet {
+            setFontSize(fontSize)
         }
     }
     
@@ -81,5 +87,11 @@ class RoomPositionTableCellView: NSTableCellView {
         }
         
         return string
+    }
+    
+    func setFontSize(fontSize: CGFloat?) {
+        let size = fontSize ?? CGFloat(kDefaultFontSize)
+        roomPositionLabel.font = NSFont.systemFontOfSize(size)
+        commentNoLabel.font = NSFont.systemFontOfSize(size)
     }
 }

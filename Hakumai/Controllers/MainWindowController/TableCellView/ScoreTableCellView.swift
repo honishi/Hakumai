@@ -25,6 +25,12 @@ class ScoreTableCellView: NSTableCellView {
         }
     }
     
+    var fontSize: CGFloat? {
+        didSet {
+            setFontSize(fontSize)
+        }
+    }
+    
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
@@ -64,5 +70,10 @@ class ScoreTableCellView: NSTableCellView {
         }
         
         return string
+    }
+    
+    func setFontSize(fontSize: CGFloat?) {
+        let size = fontSize ?? CGFloat(kDefaultFontSize)
+        scoreLabel.font = NSFont.systemFontOfSize(size)
     }
 }

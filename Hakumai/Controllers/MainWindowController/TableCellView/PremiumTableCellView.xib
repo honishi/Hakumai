@@ -21,10 +21,6 @@
                 </imageView>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="x73-g1-ukJ">
                     <rect key="frame" x="20" y="17" width="82" height="17"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="78" id="DQ6-e2-QnB"/>
-                        <constraint firstAttribute="height" constant="17" id="c61-zb-r5s"/>
-                    </constraints>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" id="ZEw-1o-s0I">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -33,6 +29,7 @@
                 </textField>
             </subviews>
             <constraints>
+                <constraint firstAttribute="trailing" secondItem="x73-g1-ukJ" secondAttribute="trailing" id="Sqd-gv-A91"/>
                 <constraint firstItem="x73-g1-ukJ" firstAttribute="leading" secondItem="Jkm-KJ-qsN" secondAttribute="trailing" constant="5" id="TKl-VO-KZw"/>
                 <constraint firstAttribute="centerY" secondItem="x73-g1-ukJ" secondAttribute="centerY" id="YfU-Vp-gLj"/>
                 <constraint firstItem="Jkm-KJ-qsN" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" id="iaC-uB-26r"/>

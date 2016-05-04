@@ -119,14 +119,28 @@ class UIHelper {
     
     // MARK: - Font Attributes
     class func normalCommentAttributes() -> [String: AnyObject] {
-        let attributes = [NSFontAttributeName: NSFont.systemFontOfSize(13),
-            NSParagraphStyleAttributeName: NSParagraphStyle.defaultParagraphStyle()]
+        return normalCommentAttributesWithFontSize(CGFloat(kDefaultFontSize))
+    }
+    
+    class func normalCommentAttributesWithFontSize(fontSize: CGFloat) -> [String: AnyObject] {
+        let attributes = [NSFontAttributeName: NSFont.systemFontOfSize(fontSize),
+                          NSParagraphStyleAttributeName: NSParagraphStyle.defaultParagraphStyle()]
+        return attributes
+    }
+
+    class func boldCommentAttributes() -> [String: AnyObject] {
+        return boldCommentAttributesWithFontSize(CGFloat(kDefaultFontSize))
+    }
+
+    class func boldCommentAttributesWithFontSize(fontSize: CGFloat) -> [String: AnyObject] {
+        let attributes = [NSFontAttributeName: NSFont.boldSystemFontOfSize(fontSize),
+                          NSParagraphStyleAttributeName: NSParagraphStyle.defaultParagraphStyle()]
         return attributes
     }
     
-    class func boldCommentAttributes() -> [String: AnyObject] {
-        let attributes = [NSFontAttributeName: NSFont.boldSystemFontOfSize(13),
-            NSParagraphStyleAttributeName: NSParagraphStyle.defaultParagraphStyle()]
-        return attributes
+    private class func commonCommentParagraphStyleWithFontSize(fontSize: CGFloat) -> NSParagraphStyle {
+        let style = NSMutableParagraphStyle()
+        style.maximumLineHeight = fontSize * 1.2
+        return style
     }
 }

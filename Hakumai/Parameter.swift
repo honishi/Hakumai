@@ -26,6 +26,7 @@ struct Parameters {
     static let LastLaunchedApplicationVersion = "LastLaunchedApplicationVersion"
     static let AlwaysOnTop = "AlwaysOnTop"
     static let CommentAnonymously = "CommentAnonymously"
+    static let FontSize = "FontSize"
 }
 
 // session management
