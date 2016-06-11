@@ -470,7 +470,6 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             HandleNameManager.sharedManager.extractAndUpdateHandleNameWithLive(live, chat: chat)
         }
         appendTableView(chat)
-        handleSpeechWithChat(chat)
         
         for userWindowController in userWindowControllers {
             if chat.userId == userWindowController.userId {
@@ -515,12 +514,17 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             
             if appended {
                 let rowIndex = count - 1
-                
+                let message = MessageContainer.sharedContainer[rowIndex]
+
                 self.tableView.insertRowsAtIndexes(NSIndexSet(index: rowIndex), withAnimation: .EffectNone)
                 // self.logChat(chatOrSystemMessage)
                 
                 if shouldScroll {
                     self.scrollTableViewToBottom()
+                }
+                
+                if (message.messageType == .Chat) {
+                    self.handleSpeechWithChat(message.chat!)
                 }
                 
                 self.scrollView.flashScrollers()
