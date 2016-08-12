@@ -10,19 +10,19 @@ import Foundation
 
 class BrowserHelper {
     enum BrowserType {
-        case Chrome
-        case Safari
-        case Firefox
+        case chrome
+        case safari
+        case firefox
     }
     
     // http://stackoverflow.com/a/6111592
-    class func urlFromBrowser(browserType: BrowserType) -> String? {
+    class func urlFromBrowser(_ browserType: BrowserType) -> String? {
         var browserName = ""
         
         switch browserType {
-        case .Chrome:
+        case .chrome:
             browserName = "Google Chrome"
-        case .Safari:
+        case .safari:
             browserName = "Safari"
         default:
             break
@@ -38,9 +38,9 @@ class BrowserHelper {
         
         var result: String?
         
-        if let unicode = descriptor?.coerceToDescriptorType(UInt32(typeUnicodeText)) {
+        if let unicode = descriptor?.coerce(toDescriptorType: UInt32(typeUnicodeText)) {
             let data = unicode.data
-            result = NSString(characters: UnsafePointer<unichar>(data.bytes), length: (data.length / sizeof(unichar))) as String
+            result = NSString(characters: UnsafePointer<unichar>((data as NSData).bytes), length: (data.count / sizeof(unichar))) as String
         }
         
         return result

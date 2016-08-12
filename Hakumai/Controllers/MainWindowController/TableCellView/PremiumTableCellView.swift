@@ -30,7 +30,7 @@ class PremiumTableCellView: NSTableCellView {
     }
     
     // MARK: - Internal Functions
-    private func setPremium(premium: Premium?) {
+    private func setPremium(_ premium: Premium?) {
         guard let premium = premium else {
             premiumImageView.image = nil
             premiumTextField.stringValue = ""
@@ -41,23 +41,23 @@ class PremiumTableCellView: NSTableCellView {
         premiumTextField.stringValue = premium.label()
     }
     
-    private func imageForPremium(premium: Premium) -> NSImage? {
+    private func imageForPremium(_ premium: Premium) -> NSImage? {
         var image: NSImage!
         
         switch premium {
-        case .Premium:
+        case .premium:
             image = NSImage(named: kImageNamePremium)!
-        case .Ippan:
+        case .ippan:
             image = NSImage(named: kImageNameIppan)!
-        case .System, .Caster, .Operator, .BSP:
+        case .system, .caster, .operator, .bsp:
             image = NSImage(named: kImageNameMisc)!
         }
         
         return image
     }
     
-    private func setFontSize(fontSize: CGFloat?) {
+    private func setFontSize(_ fontSize: CGFloat?) {
         let size = fontSize ?? CGFloat(kDefaultFontSize)
-        premiumTextField.font = NSFont.systemFontOfSize(size)
+        premiumTextField.font = NSFont.systemFont(ofSize: size)
     }
 }

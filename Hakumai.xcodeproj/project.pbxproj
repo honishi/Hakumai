@@ -700,9 +700,11 @@
 				TargetAttributes = {
 					DB2AE0BD1A0EE2FD00B1CE4D = {
 						CreatedOnToolsVersion = 6.1;
+						LastSwiftMigration = 0800;
 					};
 					DB2AE0CF1A0EE2FD00B1CE4D = {
 						CreatedOnToolsVersion = 6.1;
+						LastSwiftMigration = 0800;
 						TestTargetID = DB2AE0BD1A0EE2FD00B1CE4D;
 					};
 				};
@@ -1129,6 +1131,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Hakumai/Hakumai-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -1154,6 +1157,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.honishi.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Hakumai/Hakumai-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -1178,6 +1182,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "HakumaiTests/HakumaiTests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hakumai.app/Contents/MacOS/Hakumai";
 			};
 			name = Debug;
@@ -1198,6 +1203,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.honishi.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "HakumaiTests/HakumaiTests-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hakumai.app/Contents/MacOS/Hakumai";
 			};
 			name = Release;

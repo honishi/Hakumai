@@ -9,7 +9,7 @@
 import Foundation
 import XCTest
 
-private let kAsyncTimeout: NSTimeInterval = 3
+private let kAsyncTimeout: TimeInterval = 3
 
 class NicoUtilityTests: XCTestCase {
     
@@ -56,19 +56,19 @@ class NicoUtilityTests: XCTestCase {
         XCTAssert(NicoUtility.sharedInstance.roomPositionByUser(user) == nil, "")
         
         user.roomLabel = "co123"
-        XCTAssert(NicoUtility.sharedInstance.roomPositionByUser(user) == .Arena, "")
+        XCTAssert(NicoUtility.sharedInstance.roomPositionByUser(user) == .arena, "")
 
         user.roomLabel = "ch123"
-        XCTAssert(NicoUtility.sharedInstance.roomPositionByUser(user) == .Arena, "")
+        XCTAssert(NicoUtility.sharedInstance.roomPositionByUser(user) == .arena, "")
 
         user.roomLabel = "バックステージパス"
-        XCTAssert(NicoUtility.sharedInstance.roomPositionByUser(user) == .Arena, "")
+        XCTAssert(NicoUtility.sharedInstance.roomPositionByUser(user) == .arena, "")
 
         user.roomLabel = "立ち見A列"
-        XCTAssert(NicoUtility.sharedInstance.roomPositionByUser(user) == .StandA, "")
+        XCTAssert(NicoUtility.sharedInstance.roomPositionByUser(user) == .standA, "")
 
         user.roomLabel = "立ち見C列"
-        XCTAssert(NicoUtility.sharedInstance.roomPositionByUser(user) == .StandC, "")
+        XCTAssert(NicoUtility.sharedInstance.roomPositionByUser(user) == .standC, "")
     }
     
     func testDeriveMessageServersUser() {
@@ -78,16 +78,16 @@ class NicoUtilityTests: XCTestCase {
         let community = Community()
         community.community = "co12345"
         
-        let server0 = MessageServer(roomPosition: .Arena,  address: "msg102.live.nicovideo.jp", port: 2820, thread: 100)
-        let server1 = MessageServer(roomPosition: .StandA, address: "msg103.live.nicovideo.jp", port: 2830, thread: 101)
-        let server2 = MessageServer(roomPosition: .StandB, address: "msg104.live.nicovideo.jp", port: 2840, thread: 102)
-        let server3 = MessageServer(roomPosition: .StandC, address: "msg105.live.nicovideo.jp", port: 2850, thread: 103)
-        let server4 = MessageServer(roomPosition: .StandD, address: "msg101.live.nicovideo.jp", port: 2811, thread: 104)
-        let server5 = MessageServer(roomPosition: .StandE, address: "msg102.live.nicovideo.jp", port: 2821, thread: 105)
-        let server6 = MessageServer(roomPosition: .StandF, address: "msg103.live.nicovideo.jp", port: 2831, thread: 106)
-        let server7 = MessageServer(roomPosition: .StandG, address: "msg104.live.nicovideo.jp", port: 2841, thread: 107)
-        let server8 = MessageServer(roomPosition: .StandH, address: "msg105.live.nicovideo.jp", port: 2851, thread: 108)
-        let server9 = MessageServer(roomPosition: .StandI, address: "msg101.live.nicovideo.jp", port: 2812, thread: 109)
+        let server0 = MessageServer(roomPosition: .arena,  address: "msg102.live.nicovideo.jp", port: 2820, thread: 100)
+        let server1 = MessageServer(roomPosition: .standA, address: "msg103.live.nicovideo.jp", port: 2830, thread: 101)
+        let server2 = MessageServer(roomPosition: .standB, address: "msg104.live.nicovideo.jp", port: 2840, thread: 102)
+        let server3 = MessageServer(roomPosition: .standC, address: "msg105.live.nicovideo.jp", port: 2850, thread: 103)
+        let server4 = MessageServer(roomPosition: .standD, address: "msg101.live.nicovideo.jp", port: 2811, thread: 104)
+        let server5 = MessageServer(roomPosition: .standE, address: "msg102.live.nicovideo.jp", port: 2821, thread: 105)
+        let server6 = MessageServer(roomPosition: .standF, address: "msg103.live.nicovideo.jp", port: 2831, thread: 106)
+        let server7 = MessageServer(roomPosition: .standG, address: "msg104.live.nicovideo.jp", port: 2841, thread: 107)
+        let server8 = MessageServer(roomPosition: .standH, address: "msg105.live.nicovideo.jp", port: 2851, thread: 108)
+        let server9 = MessageServer(roomPosition: .standI, address: "msg101.live.nicovideo.jp", port: 2812, thread: 109)
 
         // level 999
         community.level = 999
@@ -135,12 +135,12 @@ class NicoUtilityTests: XCTestCase {
         let community = Community()
         community.community = "ch12345"
         
-        let server0 = MessageServer(roomPosition: .Arena, address: "omsg101.live.nicovideo.jp", port: 2815, thread: 100)
-        let server1 = MessageServer(roomPosition: .StandA, address: "omsg102.live.nicovideo.jp", port: 2828, thread: 101)
-        let server2 = MessageServer(roomPosition: .StandB, address: "omsg103.live.nicovideo.jp", port: 2841, thread: 102)
-        let server3 = MessageServer(roomPosition: .StandC, address: "omsg104.live.nicovideo.jp", port: 2854, thread: 103)
-        let server4 = MessageServer(roomPosition: .StandD, address: "omsg105.live.nicovideo.jp", port: 2867, thread: 104)
-        let server5 = MessageServer(roomPosition: .StandE, address: "omsg106.live.nicovideo.jp", port: 2880, thread: 105)
+        let server0 = MessageServer(roomPosition: .arena, address: "omsg101.live.nicovideo.jp", port: 2815, thread: 100)
+        let server1 = MessageServer(roomPosition: .standA, address: "omsg102.live.nicovideo.jp", port: 2828, thread: 101)
+        let server2 = MessageServer(roomPosition: .standB, address: "omsg103.live.nicovideo.jp", port: 2841, thread: 102)
+        let server3 = MessageServer(roomPosition: .standC, address: "omsg104.live.nicovideo.jp", port: 2854, thread: 103)
+        let server4 = MessageServer(roomPosition: .standD, address: "omsg105.live.nicovideo.jp", port: 2867, thread: 104)
+        let server5 = MessageServer(roomPosition: .standE, address: "omsg106.live.nicovideo.jp", port: 2880, thread: 105)
         
         expected = [server0, server1, server2, server3, server4, server5]
         print("expected:\(expected)")
@@ -187,7 +187,7 @@ class NicoUtilityTests: XCTestCase {
     
     // MARK: - Username Resolver
     func testExtractUsername() {
-        var data: NSData!
+        var data: Data!
         var resolved: String?
         
         data = dataForResource("user_1.html")
@@ -234,24 +234,24 @@ class NicoUtilityTests: XCTestCase {
 
     // MARK: - Heartbeat
     func testExtractHeartbeat() {
-        var data: NSData!
+        var data: Data!
         var hb: Heartbeat?
         
         data = dataForResource("heartbeat_ok.xml")
         hb = NicoUtility.sharedInstance.extractHeartbeat(data)
-        XCTAssert(hb?.status == Heartbeat.Status.Ok, "")
+        XCTAssert(hb?.status == Heartbeat.Status.ok, "")
         
         data = dataForResource("heartbeat_fail.xml")
         hb = NicoUtility.sharedInstance.extractHeartbeat(data)
-        XCTAssert(hb?.status == Heartbeat.Status.Fail, "")
-        XCTAssert(hb?.errorCode == Heartbeat.ErrorCode.NotFoundSlot, "")
+        XCTAssert(hb?.status == Heartbeat.Status.fail, "")
+        XCTAssert(hb?.errorCode == Heartbeat.ErrorCode.notFoundSlot, "")
     }
     
     // MARK: - Test Utility
-    func dataForResource(fileName: String) -> NSData {
-        let bundle = NSBundle(forClass: NicoUtilityTests.self)
-        let path = bundle.pathForResource(fileName, ofType: nil)
-        let fileHandle = NSFileHandle(forReadingAtPath: path!)
+    func dataForResource(_ fileName: String) -> Data {
+        let bundle = Bundle(for: NicoUtilityTests.self)
+        let path = bundle.path(forResource: fileName, ofType: nil)
+        let fileHandle = FileHandle(forReadingAtPath: path!)
         let data = fileHandle?.readDataToEndOfFile()
         
         return data!

@@ -10,14 +10,14 @@ import Foundation
 
 class ChatResult {
     enum Status: Int, CustomStringConvertible {
-        case Success = 0
-        case Failure
-        case InvalidThread
-        case InvalidTicket
-        case InvalidPostkey
-        case Locked
-        case ReadOnly
-        case TooLong
+        case success = 0
+        case failure
+        case invalidThread
+        case invalidTicket
+        case invalidPostkey
+        case locked
+        case readOnly
+        case tooLong
         
         var description: String {
             return "ChatResult.Status: \(rawValue)(\(label()))"
@@ -25,21 +25,21 @@ class ChatResult {
         
         func label() -> String {
             switch (self) {
-            case .Success:
+            case .success:
                 return "Success"
-            case .Failure:
+            case .failure:
                 return "Failure"
-            case .InvalidThread:
+            case .invalidThread:
                 return "InvalidThread"
-            case .InvalidTicket:
+            case .invalidTicket:
                 return "InvalidTicket"
-            case .InvalidPostkey:
+            case .invalidPostkey:
                 return "InvalidPostkey"
-            case .Locked:
+            case .locked:
                 return "Locked"
-            case .ReadOnly:
+            case .readOnly:
                 return "ReadOnly"
-            case .TooLong:
+            case .tooLong:
                 return "TooLong"
             }
         }

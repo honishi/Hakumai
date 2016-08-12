@@ -17,21 +17,21 @@ extension MainViewController {
         // kickParallelTableViewStressTest(1, interval: 0.01, count: 100)
     }
 
-    private func kickParallelTableViewStressTest(parallelism: Int, interval: NSTimeInterval, count: Int) {
+    private func kickParallelTableViewStressTest(_ parallelism: Int, interval: TimeInterval, count: Int) {
         for _ in 1...parallelism {
             kickTableViewStressTest(interval, count: count)
             
             let randomWait = Float(arc4random() % 10) * 0.1
-            NSThread.sleepForTimeInterval(NSTimeInterval(randomWait))
+            Foundation.Thread.sleep(forTimeInterval: TimeInterval(randomWait))
         }
     }
     
-    private func kickTableViewStressTest(interval: NSTimeInterval, count: Int) {
-        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) {
+    private func kickTableViewStressTest(_ interval: TimeInterval, count: Int) {
+        DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async {
             for _ in 1...count {
                 let chat = self.randomChat()
                 MainViewController.sharedInstance.nicoUtilityDidReceiveChat(NicoUtility.sharedInstance, chat: chat)
-                NSThread.sleepForTimeInterval(interval)
+                Foundation.Thread.sleep(forTimeInterval: interval)
             }
         }
         
@@ -41,14 +41,14 @@ extension MainViewController {
     private func randomChat() -> Chat {
         let chat = Chat()
         
-        chat.roomPosition = RoomPosition.Arena
+        chat.roomPosition = RoomPosition.arena
         chat.userId = "xxx" + String(arc4random() % 1000)
         chat.no = (Int(arc4random()) % 1000)
         chat.score = -(Int(arc4random()) % 30000)
         chat.comment = "hello " * (Int(arc4random()) % 100)
-        chat.date = NSDate()
+        chat.date = Date()
         chat.mail = ["184"]
-        chat.premium = Premium.Premium
+        chat.premium = Premium.premium
         
         return chat
     }
@@ -56,11 +56,11 @@ extension MainViewController {
     // MARK: - Standard User Defaults
     private func updateStandardUserDefaults() {
         let delay = 2.0 * Double(NSEC_PER_SEC)
-        let time  = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
-        dispatch_after(time, dispatch_get_main_queue()) {
-            let d = NSUserDefaults.standardUserDefaults()
-            let v = d.boolForKey(Parameters.ShowIfseetnoCommands)
-            d.setBool(!v, forKey: Parameters.ShowIfseetnoCommands)
+        let time  = DispatchTime.now() + Double(Int64(delay)) / Double(NSEC_PER_SEC)
+        DispatchQueue.main.asyncAfter(deadline: time) {
+            let d = UserDefaults.standard
+            let v = d.bool(forKey: Parameters.ShowIfseetnoCommands)
+            d.set(!v, forKey: Parameters.ShowIfseetnoCommands)
             d.synchronize()
             logger.debug("")
         }

@@ -34,38 +34,38 @@ class RoomPositionTableCellView: NSTableCellView {
     }
     
     // MARK: - Internal Functions
-    private func colorForRoomPosition(roomPosition: RoomPosition?) -> NSColor {
+    private func colorForRoomPosition(_ roomPosition: RoomPosition?) -> NSColor {
         if roomPosition == nil {
             return UIHelper.systemMessageColorBackground()
         }
         
         switch (roomPosition!) {
-        case .Arena:
+        case .arena:
             return UIHelper.roomColorArena()
-        case .StandA:
+        case .standA:
             return UIHelper.roomColorStandA()
-        case .StandB:
+        case .standB:
             return UIHelper.roomColorStandB()
-        case .StandC:
+        case .standC:
             return UIHelper.roomColorStandC()
-        case .StandD:
+        case .standD:
             return UIHelper.roomColorStandD()
-        case .StandE:
+        case .standE:
             return UIHelper.roomColorStandE()
-        case .StandF:
+        case .standF:
             return UIHelper.roomColorStandF()
-        case .StandG:
+        case .standG:
             return UIHelper.roomColorStandG()
-        case .StandH:
+        case .standH:
             return UIHelper.roomColorStandH()
-        case .StandI:
+        case .standI:
             return UIHelper.roomColorStandI()
-        case .StandJ:
+        case .standJ:
             return UIHelper.roomColorStandJ()
         }
     }
     
-    private func stringForRoomPosition(roomPosition: RoomPosition?) -> String {
+    private func stringForRoomPosition(_ roomPosition: RoomPosition?) -> String {
         guard let roomPosition = roomPosition else {
             return ""
         }
@@ -73,7 +73,7 @@ class RoomPositionTableCellView: NSTableCellView {
         return roomPosition.shortLabel() + ":"
     }
     
-    private func commentNoString(commentNo: Int?) -> String {
+    private func commentNoString(_ commentNo: Int?) -> String {
         guard let commentNo = commentNo else {
             return ""
         }
@@ -81,9 +81,9 @@ class RoomPositionTableCellView: NSTableCellView {
         return String(commentNo).numberStringWithSeparatorComma()!
     }
     
-    private func setFontSize(fontSize: CGFloat?) {
+    private func setFontSize(_ fontSize: CGFloat?) {
         let size = fontSize ?? CGFloat(kDefaultFontSize)
-        roomPositionLabel.font = NSFont.systemFontOfSize(size)
-        commentNoLabel.font = NSFont.systemFontOfSize(size)
+        roomPositionLabel.font = NSFont.systemFont(ofSize: size)
+        commentNoLabel.font = NSFont.systemFont(ofSize: size)
     }
 }

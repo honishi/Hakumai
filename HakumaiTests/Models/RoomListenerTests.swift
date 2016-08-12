@@ -70,13 +70,13 @@ class RoomListenerTests: XCTestCase {
         XCTAssert(parsed.count == 2, "")
     }
 
-    func xmlRootElementFromXMLString(xmlString: String) -> NSXMLElement {
+    func xmlRootElementFromXMLString(_ xmlString: String) -> XMLElement {
         let wrapped = "<items>" + xmlString + "</items>"
 
         // var err: NSError?
-        let xmlDocument: NSXMLDocument?
+        let xmlDocument: XMLDocument?
         do {
-            xmlDocument = try NSXMLDocument(XMLString: wrapped, options: Int(NSXMLDocumentTidyXML))
+            xmlDocument = try XMLDocument(xmlString: wrapped, options: Int(NSXMLDocumentTidyXML))
         } catch _ as NSError {
             // err = error
             xmlDocument = nil

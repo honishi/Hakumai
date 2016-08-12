@@ -31,8 +31,8 @@ struct Parameters {
 
 // session management
 enum SessionManagementType: Int {
-    case Login = 1000
-    case Chrome = 1001
+    case login = 1000
+    case chrome = 1001
     // case Safari = 1002
 }
 

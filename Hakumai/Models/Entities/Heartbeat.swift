@@ -19,8 +19,8 @@ private let kHeartbeatErrorCodes = [
 class Heartbeat: CustomStringConvertible {
     // MARK: - Enums
     enum Status: Int, CustomStringConvertible {
-        case Ok = 0
-        case Fail
+        case ok = 0
+        case fail
         
         var description: String {
             return kHeartbeatStatuses[rawValue]
@@ -28,8 +28,8 @@ class Heartbeat: CustomStringConvertible {
     }
     
     enum ErrorCode: Int, CustomStringConvertible {
-        case NotFoundSlot = 0
-        case NotFoundUserLiveSlot
+        case notFoundSlot = 0
+        case notFoundUserLiveSlot
         
         var description: String {
             return kHeartbeatErrorCodes[rawValue]

@@ -38,7 +38,7 @@ class UserIdTableCellView: NSTableCellView {
     }
     
     // MARK: - Internal Functions
-    private func imageForHandleName(handleName: String?, userId: String) -> NSImage {
+    private func imageForHandleName(_ handleName: String?, userId: String) -> NSImage {
         var imageName: String
         
         if handleName != nil {
@@ -51,7 +51,7 @@ class UserIdTableCellView: NSTableCellView {
         return NSImage(named: imageName)!
     }
     
-    private func setUserIdLabelWithUserId(userId: String, premium: Premium, handleName: String?) {
+    private func setUserIdLabelWithUserId(_ userId: String, premium: Premium, handleName: String?) {
         // set default name
         userIdTextField.stringValue = concatUserNameWithUserId(userId, userName: nil, handleName: handleName)
         
@@ -65,12 +65,12 @@ class UserIdTableCellView: NSTableCellView {
             return
         }
         
-        func completion(userName: String?) {
+        func completion(_ userName: String?) {
             if userName == nil {
                 return
             }
             
-            dispatch_async(dispatch_get_main_queue(), {
+            DispatchQueue.main.async(execute: {
                 self.userIdTextField.stringValue = self.concatUserNameWithUserId(userId, userName: userName, handleName: handleName)
             })
         }
@@ -78,7 +78,7 @@ class UserIdTableCellView: NSTableCellView {
         NicoUtility.sharedInstance.resolveUsername(userId, completion: completion)
     }
     
-    private func concatUserNameWithUserId(userId: String, userName: String?, handleName: String?) -> String {
+    private func concatUserNameWithUserId(_ userId: String, userName: String?, handleName: String?) -> String {
         var concatenated = ""
         
         if handleName != nil {
@@ -94,8 +94,8 @@ class UserIdTableCellView: NSTableCellView {
         return concatenated
     }
     
-    private func setFontSize(fontSize: CGFloat?) {
+    private func setFontSize(_ fontSize: CGFloat?) {
         let size = fontSize ?? CGFloat(kDefaultFontSize)
-        userIdTextField.font = NSFont.systemFontOfSize(size)
+        userIdTextField.font = NSFont.systemFont(ofSize: size)
     }
 }

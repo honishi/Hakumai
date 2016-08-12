@@ -18,11 +18,11 @@ extension NSColor {
         var alpha: CGFloat = 1.0
         
         if rgba.hasPrefix("#") {
-            let index   = rgba.startIndex.advancedBy(1)
-            let hex     = rgba.substringFromIndex(index)
-            let scanner = NSScanner(string: hex)
+            let index   = rgba.characters.index(rgba.startIndex, offsetBy: 1)
+            let hex     = rgba.substring(from: index)
+            let scanner = Scanner(string: hex)
             var hexValue: CUnsignedLongLong = 0
-            if scanner.scanHexLongLong(&hexValue) {
+            if scanner.scanHexInt64(&hexValue) {
                 if hex.characters.count == 6 {
                     red   = CGFloat((hexValue & 0xFF0000) >> 16) / 255.0
                     green = CGFloat((hexValue & 0x00FF00) >> 8)  / 255.0
@@ -48,7 +48,7 @@ extension NSColor {
 class UIHelper {
     // MARK: - System Message Colors
     class func systemMessageColorBackground() -> NSColor {
-        return NSColor.lightGrayColor()
+        return NSColor.lightGray
     }
     
     // MARK: - Score Colors
@@ -122,9 +122,9 @@ class UIHelper {
         return normalCommentAttributesWithFontSize(CGFloat(kDefaultFontSize))
     }
     
-    class func normalCommentAttributesWithFontSize(fontSize: CGFloat) -> [String: AnyObject] {
-        let attributes = [NSFontAttributeName: NSFont.systemFontOfSize(fontSize),
-                          NSParagraphStyleAttributeName: NSParagraphStyle.defaultParagraphStyle()]
+    class func normalCommentAttributesWithFontSize(_ fontSize: CGFloat) -> [String: AnyObject] {
+        let attributes = [NSFontAttributeName: NSFont.systemFont(ofSize: fontSize),
+                          NSParagraphStyleAttributeName: NSParagraphStyle.default()]
         return attributes
     }
 
@@ -132,13 +132,13 @@ class UIHelper {
         return boldCommentAttributesWithFontSize(CGFloat(kDefaultFontSize))
     }
 
-    class func boldCommentAttributesWithFontSize(fontSize: CGFloat) -> [String: AnyObject] {
-        let attributes = [NSFontAttributeName: NSFont.boldSystemFontOfSize(fontSize),
-                          NSParagraphStyleAttributeName: NSParagraphStyle.defaultParagraphStyle()]
+    class func boldCommentAttributesWithFontSize(_ fontSize: CGFloat) -> [String: AnyObject] {
+        let attributes = [NSFontAttributeName: NSFont.boldSystemFont(ofSize: fontSize),
+                          NSParagraphStyleAttributeName: NSParagraphStyle.default()]
         return attributes
     }
     
-    private class func commonCommentParagraphStyleWithFontSize(fontSize: CGFloat) -> NSParagraphStyle {
+    private class func commonCommentParagraphStyleWithFontSize(_ fontSize: CGFloat) -> NSParagraphStyle {
         let style = NSMutableParagraphStyle()
         style.maximumLineHeight = fontSize * 1.2
         return style

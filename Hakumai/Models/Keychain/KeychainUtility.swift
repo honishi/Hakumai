@@ -14,10 +14,10 @@ class KeychainUtility {
     class func removeAllAccountsInKeychain() {
         let serviceName = KeychainUtility.keychainServiceName()
         
-        if let accounts = SAMKeychain.accountsForService(serviceName) {
+        if let accounts = SAMKeychain.accounts(forService: serviceName) {
             for account in accounts {
                 if let accountName = account[kSAMKeychainAccountKey] as? NSString {
-                    if SAMKeychain.deletePasswordForService(serviceName, account: accountName as String) == true {
+                    if SAMKeychain.deletePassword(forService: serviceName, account: accountName as String) == true {
                         logger.debug("completed to delete account from keychain:[\(accountName)]")
                     }
                     else {
@@ -28,7 +28,7 @@ class KeychainUtility {
         }
     }
     
-    class func setAccountToKeychainWith(mailAddress: String, password: String) {
+    class func setAccountToKeychainWith(_ mailAddress: String, password: String) {
         let serviceName = KeychainUtility.keychainServiceName()
         
         if SAMKeychain.setPassword(password, forService: serviceName, account: mailAddress) == true {
@@ -42,13 +42,13 @@ class KeychainUtility {
     class func accountInKeychain() -> (mailAddress: String, password: String)? {
         let serviceName = KeychainUtility.keychainServiceName()
         
-        if let accounts = SAMKeychain.accountsForService(serviceName) {
+        if let accounts = SAMKeychain.accounts(forService: serviceName) {
             let accountName = accounts.last?[kSAMKeychainAccountKey] as? NSString
             if accountName == nil {
                 return nil
             }
             
-            let password = SAMKeychain.passwordForService(serviceName, account: accountName as! String)
+            let password = SAMKeychain.password(forService: serviceName, account: accountName as! String)
             if password == nil {
                 return nil
             }
@@ -63,7 +63,7 @@ class KeychainUtility {
     
     private class func keychainServiceName() -> String {
         var bundleIdentifier = ""
-        if let bi = NSBundle.mainBundle().infoDictionary?["CFBundleIdentifier"] as? String {
+        if let bi = Bundle.main.infoDictionary?["CFBundleIdentifier"] as? String {
             bundleIdentifier = bi
         }
         

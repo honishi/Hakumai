@@ -16,7 +16,7 @@ class Community: CustomStringConvertible {
     var community: String?
     var title: String? = ""
     var level: Int?
-    var thumbnailUrl: NSURL?
+    var thumbnailUrl: URL?
 
     var isUser: Bool? {
         return community?.hasRegexpPattern(kCommunityPrefixUser)

@@ -69,7 +69,7 @@ class MessageServer: CustomStringConvertible {
         return neighbor(direction: 1)
     }
     
-    func neighbor(direction direction: Int) -> MessageServer? {
+    func neighbor(direction: Int) -> MessageServer? {
         assert(direction == -1 || direction == 1)
         
         let roomPosition = RoomPosition(rawValue: self.roomPosition.rawValue + direction)
@@ -108,14 +108,14 @@ class MessageServer: CustomStringConvertible {
     }
     
     // MARK: - Private Functions
-    class func extractServerNumber(address: String) -> Int? {
+    class func extractServerNumber(_ address: String) -> Int? {
         let regexp = "\\D+(\\d+).+"
         let serverNumber = address.extractRegexpPattern(regexp)
         
         return serverNumber == nil ? nil : Int(serverNumber!)
     }
     
-    class func serverIndexWithChannel(isChannel: Bool, serverNumber: Int, port: Int) -> Int? {
+    class func serverIndexWithChannel(_ isChannel: Bool, serverNumber: Int, port: Int) -> Int? {
         var index = 0
         
         for (n, p) in isChannel ? kMessageServersChannel : kMessageServersUser {
@@ -129,46 +129,46 @@ class MessageServer: CustomStringConvertible {
         return nil
     }
     
-    class func isFirstServerWithChannel(isChannel: Bool, serverNumber: Int, port: Int) -> Bool {
+    class func isFirstServerWithChannel(_ isChannel: Bool, serverNumber: Int, port: Int) -> Bool {
         let firstServer = MessageServer.firstMessageServerWithChannel(isChannel)
         let isFirst = (firstServer.serverNumber == serverNumber && firstServer.port == port)
         return isFirst
     }
     
-    class func isLastServerWithChannel(isChannel: Bool, serverNumber: Int, port: Int) -> Bool {
+    class func isLastServerWithChannel(_ isChannel: Bool, serverNumber: Int, port: Int) -> Bool {
         let lastServer = MessageServer.lastMessageServerWithChannel(isChannel)
         let isLast = (lastServer.serverNumber == serverNumber && lastServer.port == port)
         return isLast
     }
     
-    class func firstMessageServerWithChannel(isChannel: Bool) -> (serverNumber: Int, port: Int) {
+    class func firstMessageServerWithChannel(_ isChannel: Bool) -> (serverNumber: Int, port: Int) {
         let messageServers = isChannel ? kMessageServersChannel : kMessageServersUser
         return messageServers[0]
     }
 
-    class func lastMessageServerWithChannel(isChannel: Bool) -> (serverNumber: Int, port: Int) {
+    class func lastMessageServerWithChannel(_ isChannel: Bool) -> (serverNumber: Int, port: Int) {
         let messageServers = isChannel ? kMessageServersChannel : kMessageServersUser
         return messageServers[messageServers.count - 1]
     }
     
-    class func reconstructServerAddressWithBaseAddress(baseAddress: String, serverNumber: Int) -> String {
+    class func reconstructServerAddressWithBaseAddress(_ baseAddress: String, serverNumber: Int) -> String {
         // split server address like followings, and reconstruct using given server number
         // - msg102.live.nicovideo.jp (user)
         // - omsg103.live.nicovideo.jp (channel)
         let regexp = try! NSRegularExpression(pattern: "(\\D+)\\d+(.+)", options: [])
-        let matched = regexp.matchesInString(baseAddress, options: [], range: NSMakeRange(0, baseAddress.utf16.count))
+        let matched = regexp.matches(in: baseAddress, options: [], range: NSMakeRange(0, baseAddress.utf16.count))
         
-        let hostPrefix = MessageServer.substringFromBaseString(baseAddress, nsRange: matched[0].rangeAtIndex(1))
-        let domain = MessageServer.substringFromBaseString(baseAddress, nsRange: matched[0].rangeAtIndex(2))
+        let hostPrefix = MessageServer.substringFromBaseString(baseAddress, nsRange: matched[0].rangeAt(1))
+        let domain = MessageServer.substringFromBaseString(baseAddress, nsRange: matched[0].rangeAt(2))
 
         return hostPrefix + String(serverNumber) + domain
     }
     
-    class func substringFromBaseString(base: String, nsRange: NSRange) -> String {
-        let start = base.startIndex.advancedBy(nsRange.location)
-        let end = base.startIndex.advancedBy(nsRange.location + nsRange.length)
+    class func substringFromBaseString(_ base: String, nsRange: NSRange) -> String {
+        let start = base.characters.index(base.startIndex, offsetBy: nsRange.location)
+        let end = base.characters.index(base.startIndex, offsetBy: nsRange.location + nsRange.length)
         let range = start ..< end
-        let substring = base.substringWithRange(range)
+        let substring = base.substring(with: range)
         
         return substring
     }

@@ -50,7 +50,7 @@ class HandleNameManagerTests: XCTestCase {
         checkExtractHandleName("ご連絡はmail@example.comまで", expected: nil)
     }
     
-    func checkExtractHandleName(comment: String, expected: String?) {
+    func checkExtractHandleName(_ comment: String, expected: String?) {
         XCTAssert(HandleNameManager.sharedManager.extractHandleNameFromComment(comment) == expected, "")
     }
     

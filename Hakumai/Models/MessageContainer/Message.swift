@@ -15,14 +15,14 @@ class Message {
     }
     
     enum MessageType: Int {
-        case System = 0
-        case Chat
+        case system = 0
+        case chat
     }
 
     // MARK: - Properties
     let messageNo: Int
     let messageType: MessageType
-    let date: NSDate
+    let date: Date
 
     // property for system message
     let message: String?
@@ -39,15 +39,15 @@ class Message {
         self.message = message
         self.chat = chat
         self.firstChat = firstChat
-        self.date = NSDate()
+        self.date = Date()
     }
     
     convenience init(message: String) {
-        self.init(messageType: .System, message: message, chat: nil, firstChat: nil)
+        self.init(messageType: .system, message: message, chat: nil, firstChat: nil)
     }
     
     convenience init(chat: Chat, firstChat: Bool = false) {
-        self.init(messageType: .Chat, message: nil, chat: chat, firstChat: firstChat)
+        self.init(messageType: .chat, message: nil, chat: chat, firstChat: firstChat)
     }
     
     // MARK: - Public Functions

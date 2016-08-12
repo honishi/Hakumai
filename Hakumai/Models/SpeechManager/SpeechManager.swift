@@ -8,9 +8,9 @@
 
 import Foundation
 
-private let kDequeuChatTimerInterval: NSTimeInterval = 0.5
+private let kDequeuChatTimerInterval: TimeInterval = 0.5
 
-private let kVoiceSpeedMap: [(queuCountRange: Range<Int>, speed: Int)] = [
+private let kVoiceSpeedMap: [(queuCountRange: CountableRange<Int>, speed: Int)] = [
     (0..<5, 100),
     (5..<10, 125),
     (10..<15, 150),
@@ -29,7 +29,7 @@ class SpeechManager: NSObject {
     
     private var chatQueue: [Chat] = []
     private var voiceSpeed = kVoiceSpeedMap[0].speed
-    private var timer: NSTimer?
+    private var timer: Timer?
     private var yukkuroidAvailable = false
     
     // MARK: - Object Lifecycle
@@ -44,8 +44,8 @@ class SpeechManager: NSObject {
         }
         
         // use explicit main queue to ensure that the timer continues to run even when caller thread ends.
-        dispatch_async(dispatch_get_main_queue()) {
-            self.timer = NSTimer.scheduledTimerWithTimeInterval(kDequeuChatTimerInterval, target: self,
+        DispatchQueue.main.async {
+            self.timer = Timer.scheduledTimer(timeInterval: kDequeuChatTimerInterval, target: self,
                 selector: #selector(SpeechManager.dequeueChat(_:)), userInfo: nil, repeats: true)
         }
         
@@ -53,7 +53,7 @@ class SpeechManager: NSObject {
     }
     
     func stopManager() {
-        dispatch_async(dispatch_get_main_queue()) {
+        DispatchQueue.main.async {
             self.timer?.invalidate()
             self.timer = nil
         }
@@ -66,12 +66,12 @@ class SpeechManager: NSObject {
         logger.debug("stopped speech manager.")
     }
     
-    func enqueueChat(chat: Chat) {
+    func enqueueChat(_ chat: Chat) {
         guard YukkuroidClient.isAvailable() else {
             return
         }
         
-        guard chat.premium == .Ippan || chat.premium == .Premium || chat.premium == .BSP else {
+        guard chat.premium == .ippan || chat.premium == .premium || chat.premium == .bsp else {
             return
         }
         
@@ -81,7 +81,7 @@ class SpeechManager: NSObject {
         chatQueue.append(chat)
     }
     
-    func dequeueChat(timer: NSTimer?) {
+    func dequeueChat(_ timer: Timer?) {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
         
@@ -124,7 +124,7 @@ class SpeechManager: NSObject {
     }
     
     // MARK: - Private Functions
-    private func adjustedVoiceSpeedWithChatQueueCount(count: Int, currentVoiceSpeed: Int) -> Int {
+    private func adjustedVoiceSpeedWithChatQueueCount(_ count: Int, currentVoiceSpeed: Int) -> Int {
         var candidateSpeed = kVoiceSpeedMap[0].speed
         
         if count == 0 {
@@ -142,7 +142,7 @@ class SpeechManager: NSObject {
     }
     
     // define as 'internal' for test
-    func cleanComment(comment: String) -> String {
+    func cleanComment(_ comment: String) -> String {
         var clean: String = ""
         
         for pattern in kCleanCommentPatterns {

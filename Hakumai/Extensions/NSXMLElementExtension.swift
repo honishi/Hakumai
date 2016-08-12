@@ -8,12 +8,12 @@
 
 import Foundation
 
-extension NSXMLElement {
-    func firstStringValueForXPathNode(xpath: String) -> String? {
+extension XMLElement {
+    func firstStringValueForXPathNode(_ xpath: String) -> String? {
         var err: NSError?
         
         do {
-            let nodes = try nodesForXPath(xpath)
+            let nodes = try self.nodes(forXPath: xpath)
             if 0 < nodes.count {
                 return (nodes[0] ).stringValue
             }
@@ -25,7 +25,7 @@ extension NSXMLElement {
         return nil
     }
     
-    func firstIntValueForXPathNode(xpath: String) -> Int? {
+    func firstIntValueForXPathNode(_ xpath: String) -> Int? {
         let stringValue = firstStringValueForXPathNode(xpath)
         
         return stringValue == nil ? nil : Int(stringValue!)

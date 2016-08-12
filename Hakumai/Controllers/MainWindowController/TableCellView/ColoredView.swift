@@ -11,7 +11,7 @@ import AppKit
 import QuartzCore
 
 class ColoredView: NSView {
-    var fillColor: NSColor = NSColor.grayColor() {
+    var fillColor: NSColor = NSColor.gray {
         didSet {
             layer?.setNeedsDisplay()
         }
@@ -37,9 +37,9 @@ class ColoredView: NSView {
         wantsLayer = true
     }
 
-    override func drawLayer(layer: CALayer, inContext ctx: CGContext) {
-        CGContextSetFillColorWithColor(ctx, fillColor.CGColor)
-        CGContextFillRect(ctx, bounds)
+    override func layer(_ layer: CALayer, shouldInheritContentsScale ctx: CGFloat) {
+        ctx.setFillColor(fillColor.cgColor)
+        ctx.fill(bounds)
     }
     
     /*

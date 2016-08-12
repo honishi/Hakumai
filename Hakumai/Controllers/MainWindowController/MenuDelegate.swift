@@ -35,14 +35,14 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     }
     
     // MARK: - NSMenu Overrides
-    override func validateMenuItem(menuItem: NSMenuItem) -> Bool {
+    override func validate(_ menuItem: NSMenuItem) -> Bool {
         let clickedRow = tableView.clickedRow
         if clickedRow == -1 {
             return false
         }
         
         let message = MessageContainer.sharedContainer[clickedRow]
-        if message.messageType != .Chat {
+        if message.messageType != .chat {
             return false
         }
         
@@ -76,7 +76,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     }
 
     // MARK: - NSMenuDelegate Functions
-    func menuWillOpen(menu: NSMenu) {
+    func menuWillOpen(_ menu: NSMenu) {
         resetMenu()
         
         let clickedRow = tableView.clickedRow
@@ -86,7 +86,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         
         let message = MessageContainer.sharedContainer[clickedRow]
         
-        if message.messageType != .Chat {
+        if message.messageType != .chat {
             return
         }
         
@@ -97,23 +97,23 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     private func resetMenu() {
     }
 
-    private func configureMenu(chat: Chat) {
+    private func configureMenu(_ chat: Chat) {
     }
 
     // MARK: - Context Menu Handlers
-    @IBAction func copyComment(sender: AnyObject) {
+    @IBAction func copyComment(_ sender: AnyObject) {
         let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat!
         let toBeCopied = chat.comment!
         copyStringToPasteBoard(toBeCopied)
     }
     
-    @IBAction func openUrl(sender: AnyObject) {
+    @IBAction func openUrl(_ sender: AnyObject) {
         let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat!
         let urlString = urlStringInComment(chat)!
-        NSWorkspace.sharedWorkspace().openURL(NSURL(string: urlString)!)
+        NSWorkspace.shared().open(URL(string: urlString)!)
     }
     
-    @IBAction func tweetComment(sender: AnyObject) {
+    @IBAction func tweetComment(_ sender: AnyObject) {
         let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat!
         let live = NicoUtility.sharedInstance.live!
         
@@ -128,17 +128,17 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         let service = NSSharingService(named: NSSharingServiceNamePostOnTwitter)
         service?.delegate = self
         
-        service?.performWithItems([status])
+        service?.perform(withItems: [status])
     }
     
-    @IBAction func addHandleName(sender: AnyObject) {
+    @IBAction func addHandleName(_ sender: AnyObject) {
         guard let live = live, let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat else {
             return
         }
         MainViewController.sharedInstance.showHandleNameAddViewControllerWithLive(live, chat: chat)
     }
     
-    @IBAction func removeHandleName(sender: AnyObject) {
+    @IBAction func removeHandleName(_ sender: AnyObject) {
         guard let live = live, let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat else {
             return
         }
@@ -146,11 +146,11 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         MainViewController.sharedInstance.refreshHandleName()
     }
     
-    @IBAction func addToMuteUser(sender: AnyObject) {
+    @IBAction func addToMuteUser(_ sender: AnyObject) {
         let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat!
         
-        let defaults = NSUserDefaults.standardUserDefaults()
-        var muteUserIds = defaults.objectForKey(Parameters.MuteUserIds) as? [[String: String]] ?? [[String: String]]()
+        let defaults = UserDefaults.standard
+        var muteUserIds = defaults.object(forKey: Parameters.MuteUserIds) as? [[String: String]] ?? [[String: String]]()
         
         for muteUserId in muteUserIds {
             if chat.userId == muteUserId[MuteUserIdKey.UserId] {
@@ -160,11 +160,11 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         }
         
         muteUserIds.append([MuteUserIdKey.UserId: chat.userId!])
-        defaults.setObject(muteUserIds, forKey: Parameters.MuteUserIds)
+        defaults.set(muteUserIds, forKey: Parameters.MuteUserIds)
         defaults.synchronize()
     }
     
-    @IBAction func reportAsNgUser(sender: AnyObject) {
+    @IBAction func reportAsNgUser(_ sender: AnyObject) {
         let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat!
         NicoUtility.sharedInstance.reportAsNgUser(chat) { userId in
             if userId == nil {
@@ -176,15 +176,15 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         }
     }
     
-    @IBAction func openUserPage(sender: AnyObject) {
+    @IBAction func openUserPage(_ sender: AnyObject) {
         let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat!
         let userPageUrlString = NicoUtility.sharedInstance.urlStringForUserId(chat.userId!)
         
-        NSWorkspace.sharedWorkspace().openURL(NSURL(string: userPageUrlString)!)
+        NSWorkspace.shared().open(URL(string: userPageUrlString)!)
     }
     
     // MARK: - Internal Functions
-    func urlStringInComment(chat: Chat) -> String? {
+    func urlStringInComment(_ chat: Chat) -> String? {
         if chat.comment == nil {
             return nil
         }
@@ -192,8 +192,8 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         return chat.comment!.extractRegexpPattern("(https?://[\\w/:%#\\$&\\?\\(\\)~\\.=\\+\\-]+)")
     }
     
-    func copyStringToPasteBoard(string: String) -> Bool {
-        let pasteBoard = NSPasteboard.generalPasteboard()
+    func copyStringToPasteBoard(_ string: String) -> Bool {
+        let pasteBoard = NSPasteboard.general()
         pasteBoard.declareTypes([NSStringPboardType], owner: nil)
         let result = pasteBoard.setString(string, forType: NSStringPboardType)
         logger.debug("copied \(string) w/ result \(result)")

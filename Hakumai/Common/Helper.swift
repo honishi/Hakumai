@@ -21,7 +21,7 @@ private let kLogColors: [(fg: (Int, Int, Int)?, bg: (Int, Int, Int)?)] = [  // s
 
 class Helper {
     // MARK: - Public Interface
-    class func setupLogger(logger: XCGLogger) {
+    class func setupLogger(_ logger: XCGLogger) {
         #if DEBUG
             Helper.colorizeLogger(logger)
             logger.setup(.Debug, showLogLevel: true, showFileNames: true, showThreadName: true, showLineNumbers: true, writeToFile: nil)
@@ -30,7 +30,7 @@ class Helper {
         #endif
     }
     
-    class func setupFileLogger(logger: XCGLogger, fileName: String) {
+    class func setupFileLogger(_ logger: XCGLogger, fileName: String) {
         #if DEBUG
             Helper.colorizeLogger(logger)
             
@@ -49,12 +49,12 @@ class Helper {
     class func createApplicationDirectoryIfNotExists() {
         let path = Helper.applicationDirectoryPath()
         
-        guard !NSFileManager.defaultManager().fileExistsAtPath(path) else {
+        guard !FileManager.default.fileExists(atPath: path) else {
             return
         }
         
         do {
-            try NSFileManager.defaultManager().createDirectoryAtPath(path, withIntermediateDirectories: false, attributes: nil)
+            try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: false, attributes: nil)
             logger.debug("created application directory")
         }
         catch {
@@ -63,10 +63,10 @@ class Helper {
     }
 
     class func applicationDirectoryPath() -> String {
-        let appSupportDirectory = NSSearchPathForDirectoriesInDomains(.ApplicationSupportDirectory, .UserDomainMask, true)[0] 
+        let appSupportDirectory = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)[0] 
         
         var bundleIdentifier = ""
-        if let bi = NSBundle.mainBundle().infoDictionary?["CFBundleIdentifier"] as? String {
+        if let bi = Bundle.main.infoDictionary?["CFBundleIdentifier"] as? String {
             bundleIdentifier = bi
         }
         
@@ -74,7 +74,7 @@ class Helper {
     }
     
     // MARK: - Private Functions
-    private class func colorizeLogger(logger: XCGLogger) {
+    private class func colorizeLogger(_ logger: XCGLogger) {
         guard kEnableColorizedLogger else {
             return
         }

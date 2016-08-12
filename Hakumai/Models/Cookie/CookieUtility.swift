@@ -10,13 +10,13 @@ import Foundation
 
 class CookieUtility {
     // MARK: - Public Functions
-    class func requestLoginCookieWithMailAddress(mailAddress: String, password: String, completion: (userSessionCookie: String?) -> Void) {
+    class func requestLoginCookieWithMailAddress(_ mailAddress: String, password: String, completion: (userSessionCookie: String?) -> Void) {
         LoginCookie.requestCookieWithMailAddress(mailAddress, password: password, completion: completion)
     }
     
-    class func requestBrowserCookieWithBrowserType(browserType: BrowserType) -> String? {
+    class func requestBrowserCookieWithBrowserType(_ browserType: BrowserType) -> String? {
         switch (browserType) {
-        case .Chrome:
+        case .chrome:
             return ChromeCookie.storedCookie()
         default:
             break

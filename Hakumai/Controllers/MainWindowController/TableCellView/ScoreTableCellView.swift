@@ -32,7 +32,7 @@ class ScoreTableCellView: NSTableCellView {
     }
     
     // MARK: - Internal Functions
-    private func colorForChatScore(chat: Chat?) -> NSColor {
+    private func colorForChatScore(_ chat: Chat?) -> NSColor {
         // println("\(score)")
         if chat == nil {
             return UIHelper.systemMessageColorBackground()
@@ -58,7 +58,7 @@ class ScoreTableCellView: NSTableCellView {
         return UIHelper.scoreColorRed()
     }
     
-    private func stringForChatScore(chat: Chat?) -> String {
+    private func stringForChatScore(_ chat: Chat?) -> String {
         var string = ""
         
         if let unwrapped = chat?.score {
@@ -68,8 +68,8 @@ class ScoreTableCellView: NSTableCellView {
         return string
     }
     
-    private func setFontSize(fontSize: CGFloat?) {
+    private func setFontSize(_ fontSize: CGFloat?) {
         let size = fontSize ?? CGFloat(kDefaultFontSize)
-        scoreLabel.font = NSFont.systemFontOfSize(size)
+        scoreLabel.font = NSFont.systemFont(ofSize: size)
     }
 }

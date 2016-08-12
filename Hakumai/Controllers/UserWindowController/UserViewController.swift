@@ -38,8 +38,8 @@ class UserViewController: NSViewController {
                 messages = MessageContainer.sharedContainer.messagesWithUserId(userId)
             }
             else {
-                messages.removeAll(keepCapacity: false)
-                rowHeightCacher.removeAll(keepCapacity: false)
+                messages.removeAll(keepingCapacity: false)
+                rowHeightCacher.removeAll(keepingCapacity: false)
             }
             
             userIdLabel.stringValue = "UserId: " + (userIdLabelValue ?? "-----")
@@ -70,17 +70,17 @@ class UserViewController: NSViewController {
             (kNibNameScoreTableCellView, kScoreColumnIdentifier)]
         
         for (nibName, identifier) in nibs {
-            let nib = NSNib(nibNamed: nibName, bundle: NSBundle.mainBundle())
-            tableView.registerNib(nib!, forIdentifier: identifier)
+            let nib = NSNib(nibNamed: nibName, bundle: Bundle.main)
+            tableView.register(nib!, forIdentifier: identifier)
         }
     }
     
     // MARK: - NSTableViewDataSource Functions
-    func numberOfRowsInTableView(tableView: NSTableView) -> Int {
+    func numberOfRowsInTableView(_ tableView: NSTableView) -> Int {
         return messages.count
     }
     
-    func tableView(tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
+    func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
         let message = messages[row]
         
         if let cached = rowHeightCacher[message.messageNo] {
@@ -89,7 +89,7 @@ class UserViewController: NSViewController {
         
         var rowHeight: CGFloat = 0
 
-        let commentTableColumn = tableView.tableColumnWithIdentifier(kCommentColumnIdentifier)!
+        let commentTableColumn = tableView.tableColumn(withIdentifier: kCommentColumnIdentifier)!
         let commentColumnWidth = commentTableColumn.width
         rowHeight = commentColumnHeight(message, width: commentColumnWidth)
         
@@ -98,47 +98,47 @@ class UserViewController: NSViewController {
         return rowHeight
     }
     
-    private func commentColumnHeight(message: Message, width: CGFloat) -> CGFloat {
+    private func commentColumnHeight(_ message: Message, width: CGFloat) -> CGFloat {
         let leadingSpace: CGFloat = 2
         let trailingSpace: CGFloat = 2
         let widthPadding = leadingSpace + trailingSpace
         
         let (content, attributes) = contentAndAttributesForMessage(message)
         
-        let commentRect = content.boundingRectWithSize(CGSizeMake(width - widthPadding, 0),
-            options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: attributes)
+        let commentRect = content.boundingRect(with: CGSize(width: width - widthPadding, height: 0),
+            options: NSStringDrawingOptions.usesLineFragmentOrigin, attributes: attributes)
         // log.debug("\(commentRect.size.width),\(commentRect.size.height)")
         
         return commentRect.size.height
     }
     
-    func tableViewColumnDidResize(aNotification: NSNotification) {
-        let column = aNotification.userInfo?["NSTableColumn"] as! NSTableColumn
+    func tableViewColumnDidResize(_ aNotification: Notification) {
+        let column = (aNotification as NSNotification).userInfo?["NSTableColumn"] as! NSTableColumn
         
         if column.identifier == kCommentColumnIdentifier {
-            rowHeightCacher.removeAll(keepCapacity: false)
+            rowHeightCacher.removeAll(keepingCapacity: false)
             tableView.reloadData()
         }
     }
     
-    func tableView(tableView: NSTableView, viewForTableColumn tableColumn: NSTableColumn?, row: Int) -> NSView? {
+    func tableView(_ tableView: NSTableView, viewForTableColumn tableColumn: NSTableColumn?, row: Int) -> NSView? {
         var view: NSTableCellView?
         
         if let identifier = tableColumn?.identifier {
-            view = tableView.makeViewWithIdentifier(identifier, owner: self) as? NSTableCellView
+            view = tableView.make(withIdentifier: identifier, owner: self) as? NSTableCellView
             view?.textField?.stringValue = ""
         }
         
         let message = messages[row]
         
-        if message.messageType == .Chat {
+        if message.messageType == .chat {
             configureViewForChat(message, tableColumn: tableColumn!, view: view!)
         }
         
         return view
     }
     
-    private func configureViewForChat(message: Message, tableColumn: NSTableColumn, view: NSTableCellView) {
+    private func configureViewForChat(_ message: Message, tableColumn: NSTableColumn, view: NSTableCellView) {
         let chat = message.chat!
         
         var attributed: NSAttributedString?
@@ -163,15 +163,15 @@ class UserViewController: NSViewController {
     }
     
     // MARK: Utility
-    private func contentAndAttributesForMessage(message: Message) -> (NSString, [String: AnyObject]) {
+    private func contentAndAttributesForMessage(_ message: Message) -> (NSString, [String: AnyObject]) {
         var content: NSString!
         var attributes: [String: AnyObject]!
         
-        if message.messageType == .System {
+        if message.messageType == .system {
             content = message.message!
             attributes = UIHelper.normalCommentAttributes()
         }
-        else if message.messageType == .Chat {
+        else if message.messageType == .chat {
             content = message.chat!.comment!
             attributes = (message.firstChat == true ? UIHelper.boldCommentAttributes() : UIHelper.normalCommentAttributes())
         }

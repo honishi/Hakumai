@@ -9,17 +9,17 @@
 import Foundation
 
 enum RoomPosition: Int, CustomStringConvertible {
-    case Arena = 0
-    case StandA
-    case StandB
-    case StandC
-    case StandD
-    case StandE
-    case StandF
-    case StandG
-    case StandH
-    case StandI
-    case StandJ
+    case arena = 0
+    case standA
+    case standB
+    case standC
+    case standD
+    case standE
+    case standF
+    case standG
+    case standH
+    case standI
+    case standJ
     
     var description: String {
         return "\(rawValue)(\(label()))"
@@ -27,7 +27,7 @@ enum RoomPosition: Int, CustomStringConvertible {
 
     // MARK: - Functions
     func previous() -> RoomPosition? {
-        if self == .Arena {
+        if self == .arena {
             return nil
         }
         
@@ -35,7 +35,7 @@ enum RoomPosition: Int, CustomStringConvertible {
     }
     
     func next() -> RoomPosition? {
-        if self == .StandJ {
+        if self == .standJ {
             return nil
         }
         
@@ -44,27 +44,27 @@ enum RoomPosition: Int, CustomStringConvertible {
     
     func label() -> String {
         switch self {
-        case .Arena:
+        case .arena:
             return "アリーナ"
-        case .StandA:
+        case .standA:
             return "立ち見A"
-        case .StandB:
+        case .standB:
             return "立ち見B"
-        case .StandC:
+        case .standC:
             return "立ち見C"
-        case .StandD:
+        case .standD:
             return "立ち見D"
-        case .StandE:
+        case .standE:
             return "立ち見E"
-        case .StandF:
+        case .standF:
             return "立ち見F"
-        case .StandG:
+        case .standG:
             return "立ち見G"
-        case .StandH:
+        case .standH:
             return "立ち見H"
-        case .StandI:
+        case .standI:
             return "立ち見I"
-        case .StandJ:
+        case .standJ:
             return "立ち見J"
         }
     }
@@ -73,37 +73,37 @@ enum RoomPosition: Int, CustomStringConvertible {
         // TODO: should replace this if-else clause with switch-clause below.
         // this is damned workaround for complile-time 'segmentation fault 11' issue.
         // http://stackoverflow.com/questions/28696248/segmentation-fault-11-when-building-for-profiling-in-a-swift-enum
-        if self == .Arena {
+        if self == .arena {
             return "ア"
         }
-        else if self == .StandA {
+        else if self == .standA {
             return "A"
         }
-        else if self == .StandB {
+        else if self == .standB {
             return "B"
         }
-        else if self == .StandC {
+        else if self == .standC {
             return "C"
         }
-        else if self == .StandD {
+        else if self == .standD {
             return "D"
         }
-        else if self == .StandE {
+        else if self == .standE {
             return "E"
         }
-        else if self == .StandF {
+        else if self == .standF {
             return "F"
         }
-        else if self == .StandG {
+        else if self == .standG {
             return "G"
         }
-        else if self == .StandH {
+        else if self == .standH {
             return "H"
         }
-        else if self == .StandI {
+        else if self == .standI {
             return "I"
         }
-        else if self == .StandJ {
+        else if self == .standJ {
             return "J"
         }
         
@@ -139,12 +139,12 @@ enum RoomPosition: Int, CustomStringConvertible {
 }
 
 enum Premium: Int, CustomStringConvertible {
-    case Ippan = 0
-    case Premium = 1
-    case System = 2     // '/disconnect'
-    case Caster = 3
-    case Operator = 6
-    case BSP = 7
+    case ippan = 0
+    case premium = 1
+    case system = 2     // '/disconnect'
+    case caster = 3
+    case `operator` = 6
+    case bsp = 7
     
     var description: String {
         return "\(rawValue)(\(label()))"
@@ -152,17 +152,17 @@ enum Premium: Int, CustomStringConvertible {
     
     func label() -> String {
         switch self {
-        case .Ippan:
+        case .ippan:
             return "一般"
-        case .Premium:
+        case .premium:
             return "プレミアム"
-        case .System:
+        case .system:
             return "システム"
-        case .Caster:
+        case .caster:
             return "放送主"
-        case .Operator:
+        case .operator:
             return "運営"
-        case .BSP:
+        case .bsp:
             return "BSP"
         }
     }

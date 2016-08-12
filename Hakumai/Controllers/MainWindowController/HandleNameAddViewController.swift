@@ -29,14 +29,14 @@ class HandleNameAddViewController: NSViewController {
     }
 
     // MARK: - Internal Functions
-    @IBAction func addHandleName(sender: AnyObject) {
+    @IBAction func addHandleName(_ sender: AnyObject) {
         guard 0 < handleName.length else {
             return
         }
         completion?(cancelled: false, handleName: handleName as String)
     }
     
-    @IBAction func cancelToAdd(sender: AnyObject) {
+    @IBAction func cancelToAdd(_ sender: AnyObject) {
         completion?(cancelled: true, handleName: nil)
     }
 }

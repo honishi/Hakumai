@@ -14,9 +14,9 @@ private let kFileLogName = "Hakumai_Api.log"
 
 // MARK: - enum
 enum BrowserType {
-    case Chrome
-    case Safari
-    case Firefox
+    case chrome
+    case safari
+    case firefox
 }
 
 // MARK: - protocol
@@ -24,21 +24,21 @@ enum BrowserType {
 // note these functions are called in background thread, not main thread.
 // so use explicit main thread for updating ui in these callbacks.
 protocol NicoUtilityDelegate: class {
-    func nicoUtilityWillPrepareLive(nicoUtility: NicoUtility)
-    func nicoUtilityDidPrepareLive(nicoUtility: NicoUtility, user: User, live: Live)
-    func nicoUtilityDidFailToPrepareLive(nicoUtility: NicoUtility, reason: String)
-    func nicoUtilityDidConnectToLive(nicoUtility: NicoUtility, roomPosition: RoomPosition)
-    func nicoUtilityDidReceiveFirstChat(nicoUtility: NicoUtility, chat: Chat)
-    func nicoUtilityDidReceiveChat(nicoUtility: NicoUtility, chat: Chat)
-    func nicoUtilityDidGetKickedOut(nicoUtility: NicoUtility)
-    func nicoUtilityWillReconnectToLive(nicoUtility: NicoUtility)
-    func nicoUtilityDidDisconnect(nicoUtility: NicoUtility)
-    func nicoUtilityDidReceiveHeartbeat(nicoUtility: NicoUtility, heartbeat: Heartbeat)
+    func nicoUtilityWillPrepareLive(_ nicoUtility: NicoUtility)
+    func nicoUtilityDidPrepareLive(_ nicoUtility: NicoUtility, user: User, live: Live)
+    func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtility, reason: String)
+    func nicoUtilityDidConnectToLive(_ nicoUtility: NicoUtility, roomPosition: RoomPosition)
+    func nicoUtilityDidReceiveFirstChat(_ nicoUtility: NicoUtility, chat: Chat)
+    func nicoUtilityDidReceiveChat(_ nicoUtility: NicoUtility, chat: Chat)
+    func nicoUtilityDidGetKickedOut(_ nicoUtility: NicoUtility)
+    func nicoUtilityWillReconnectToLive(_ nicoUtility: NicoUtility)
+    func nicoUtilityDidDisconnect(_ nicoUtility: NicoUtility)
+    func nicoUtilityDidReceiveHeartbeat(_ nicoUtility: NicoUtility, heartbeat: Heartbeat)
 }
 
 // MARK: constant value
 // mapping between community level and standing room is based on following articles:
-private let kCommunityLevelStandRoomTable: [(levelRange: Range<Int>, standCount: Int)] = [
+private let kCommunityLevelStandRoomTable: [(levelRange: CountableRange<Int>, standCount: Int)] = [
     (  1...49,  1),     // a
     ( 50...69,  2),     // a, b
     ( 70...104, 3),     // a, b, c
@@ -64,7 +64,7 @@ private let kUserUrl = "http://www.nicovideo.jp/user/"
 let kCommonUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"
 
 // intervals & sleep
-private let kHeartbeatDefaultInterval: NSTimeInterval = 30
+private let kHeartbeatDefaultInterval: TimeInterval = 30
 
 // other threshold
 private let kDefaultResFrom = 20
@@ -93,10 +93,10 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     private var receivedFirstChat = [RoomPosition: Bool]()
 
     // other variables
-    private let resolveUserNameOperationQueue = NSOperationQueue()
+    private let resolveUserNameOperationQueue = OperationQueue()
     private var cachedUserNames = [String: String]()
     
-    private var heartbeatTimer: NSTimer?
+    private var heartbeatTimer: Timer?
     private var reservedToReconnect = false
     private var chatCount = 0
     
@@ -129,7 +129,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         logger.debug("reserved to clear user session cookie")
     }
     
-    func connectToLive(liveNumber: Int, mailAddress: String, password: String) {
+    func connectToLive(_ liveNumber: Int, mailAddress: String, password: String) {
         clearUserSessionCookieIfReserved()
         
         if userSessionCookie == nil {
@@ -143,18 +143,18 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         }
     }
     
-    func connectToLive(liveNumber: Int, browserType: BrowserType) {
+    func connectToLive(_ liveNumber: Int, browserType: BrowserType) {
         clearUserSessionCookieIfReserved()
         
         switch browserType {
-        case .Chrome:
-            connectToLive(liveNumber, userSessionCookie: CookieUtility.requestBrowserCookieWithBrowserType(.Chrome))
+        case .chrome:
+            connectToLive(liveNumber, userSessionCookie: CookieUtility.requestBrowserCookieWithBrowserType(.chrome))
         default:
             break
         }
     }
 
-    func disconnect(reserveToReconnect: Bool = false) {
+    func disconnect(_ reserveToReconnect: Bool = false) {
         reservedToReconnect = reserveToReconnect
         
         for listener in roomListeners {
@@ -164,7 +164,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         stopHeartbeatTimer()
     }
     
-    func comment(comment: String, anonymously: Bool = true, completion: (comment: String?) -> Void) {
+    func comment(_ comment: String, anonymously: Bool = true, completion: (comment: String?) -> Void) {
         if live == nil || user == nil {
             logger.debug("no available stream, or user")
             return
@@ -184,14 +184,14 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         requestGetPostKey(success, failure: failure)
     }
     
-    func loadThumbnail(completion: (imageData: NSData?) -> Void) {
+    func loadThumbnail(_ completion: (imageData: Data?) -> Void) {
         if live?.community.thumbnailUrl == nil {
             logger.debug("no thumbnail url")
             completion(imageData: nil)
             return
         }
         
-        let httpCompletion: (NSURLResponse?, NSData?, NSError?) -> () = { (response, data, connectionError) in
+        let httpCompletion: (URLResponse?, Data?, NSError?) -> () = { (response, data, connectionError) in
             if connectionError != nil {
                 logger.error("error in loading thumbnail request")
                 completion(imageData: nil)
@@ -204,7 +204,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         cookiedAsyncRequest("GET", url: live!.community.thumbnailUrl!, parameters: nil, completion: httpCompletion)
     }
     
-    func cachedUserNameForChat(chat: Chat) -> String? {
+    func cachedUserNameForChat(_ chat: Chat) -> String? {
         if chat.userId == nil {
             return nil
         }
@@ -212,7 +212,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         return cachedUserNameForUserId(chat.userId!)
     }
     
-    func cachedUserNameForUserId(userId: String) -> String? {
+    func cachedUserNameForUserId(_ userId: String) -> String? {
         if !Chat.isRawUserId(userId) {
             return nil
         }
@@ -220,7 +220,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         return cachedUserNames[userId]
     }
 
-    func resolveUsername(userId: String, completion: (userName: String?) -> Void) {
+    func resolveUsername(_ userId: String, completion: (userName: String?) -> Void) {
         if !Chat.isRawUserId(userId) {
             completion(userName: nil)
             return
@@ -237,8 +237,8 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             return
         }
         
-        resolveUserNameOperationQueue.addOperationWithBlock {
-            let resolveCompletion = { (response: NSURLResponse?, data: NSData?, connectionError: NSError?) in
+        resolveUserNameOperationQueue.addOperation {
+            let resolveCompletion = { (response: URLResponse?, data: Data?, connectionError: NSError?) in
                 if connectionError != nil {
                     logger.error("error in resolving username")
                     completion(userName: nil)
@@ -255,8 +255,8 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         }
     }
     
-    func reportAsNgUser(chat: Chat, completion: (userId: String?) -> Void) {
-        let httpCompletion: (NSURLResponse?, NSData?, NSError?) -> () = { (response, data, connectionError) in
+    func reportAsNgUser(_ chat: Chat, completion: (userId: String?) -> Void) {
+        let httpCompletion: (URLResponse?, Data?, NSError?) -> () = { (response, data, connectionError) in
             if connectionError != nil {
                 logger.error("error in requesting ng user")
                 completion(userId: nil)
@@ -284,17 +284,17 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         cookiedAsyncRequest("POST", url: kNgScoringUrl, parameters: parameters, completion: httpCompletion)
     }
     
-    func urlStringForUserId(userId: String) -> String {
+    func urlStringForUserId(_ userId: String) -> String {
         return kUserUrl + userId
     }
     
     // MARK: - RoomListenerDelegate Functions
-    func roomListenerDidReceiveThread(roomListener: RoomListener, thread: Thread) {
+    func roomListenerDidReceiveThread(_ roomListener: RoomListener, thread: Thread) {
         logger.debug("\(thread)")
         delegate?.nicoUtilityDidConnectToLive(self, roomPosition: roomListener.server!.roomPosition)
     }
     
-    func roomListenerDidReceiveChat(roomListener: RoomListener, chat: Chat) {
+    func roomListenerDidReceiveChat(_ roomListener: RoomListener, chat: Chat) {
         // logger.debug("\(chat)")
         
         if isFirstChatWithRoomListener(roomListener, chat: chat) {
@@ -337,10 +337,10 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         }
     }
     
-    func roomListenerDidFinishListening(roomListener: RoomListener) {
+    func roomListenerDidFinishListening(_ roomListener: RoomListener) {
         objc_sync_enter(self)
-        if let index = roomListeners.indexOf(roomListener) {
-            roomListeners.removeAtIndex(index)
+        if let index = roomListeners.index(of: roomListener) {
+            roomListeners.remove(at: index)
         }
         objc_sync_exit(self)
         
@@ -356,7 +356,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
 
     // MARK: Chat Checkers
-    private func isFirstChatWithRoomListener(roomListener: RoomListener, chat: Chat) -> Bool {
+    private func isFirstChatWithRoomListener(_ roomListener: RoomListener, chat: Chat) -> Bool {
         if chat.isUserComment {
             if let room = roomListener.server?.roomPosition {
                 if receivedFirstChat[room] == nil || receivedFirstChat[room] == false {
@@ -369,7 +369,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         return false
     }
     
-    private func shouldNotifyChatToDelegateWithChat(chat: Chat) -> Bool {
+    private func shouldNotifyChatToDelegateWithChat(_ chat: Chat) -> Bool {
         // premium == 0, 1
         if chat.isUserComment {
             return true
@@ -388,7 +388,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         return false
     }
     
-    private func isKickedOutWithRoomListener(roomListener: RoomListener, chat: Chat) -> Bool {
+    private func isKickedOutWithRoomListener(_ roomListener: RoomListener, chat: Chat) -> Bool {
         // XXX: should use isAssignedMessageServerChatWithChat()
         if roomListener.server?.roomPosition != messageServer?.roomPosition {
             return false
@@ -406,11 +406,11 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         return false
     }
     
-    private func isDisconnectedWithChat(chat: Chat) -> Bool {
+    private func isDisconnectedWithChat(_ chat: Chat) -> Bool {
         return (chat.comment == "/disconnect" && chat.isSystemComment && isAssignedMessageServerChatWithChat(chat))
     }
     
-    private func isAssignedMessageServerChatWithChat(chat: Chat) -> Bool {
+    private func isAssignedMessageServerChatWithChat(_ chat: Chat) -> Bool {
         return chat.roomPosition == messageServer?.roomPosition
     }
     
@@ -429,7 +429,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         disconnect(true)
     }
     
-    private func connectToLive(liveNumber: Int?, userSessionCookie: String?) {
+    private func connectToLive(_ liveNumber: Int?, userSessionCookie: String?) {
         if liveNumber == nil {
             let reason = "no valid live number"
             logger.error(reason)
@@ -497,8 +497,8 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         requestGetPlayerStatus(liveNumber!, success: success, failure: failure)
     }
     
-    private func requestGetPlayerStatus(liveNumber: Int, success: (live: Live, user: User, messageServer: MessageServer) -> Void, failure: (reason: String) -> Void) {
-        let httpCompletion: (NSURLResponse?, NSData?, NSError?) -> () = { (response, data, connectionError) in
+    private func requestGetPlayerStatus(_ liveNumber: Int, success: (live: Live, user: User, messageServer: MessageServer) -> Void, failure: (reason: String) -> Void) {
+        let httpCompletion: (URLResponse?, Data?, NSError?) -> () = { (response, data, connectionError) in
             if connectionError != nil {
                 let message = "error in cookied async request"
                 logger.error(message)
@@ -545,8 +545,8 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         cookiedAsyncRequest("GET", url: kGetPlayerStatusUrl, parameters: ["v": "lv" + String(liveNumber)], completion: httpCompletion)
     }
     
-    private func loadCommunity(community: Community, success: () -> Void, failure: (reason: String) -> Void) {
-        let httpCompletion: (NSURLResponse?, NSData?, NSError?) -> () = { (response, data, connectionError) in
+    private func loadCommunity(_ community: Community, success: () -> Void, failure: (reason: String) -> Void) {
+        let httpCompletion: (URLResponse?, Data?, NSError?) -> () = { (response, data, connectionError) in
             if connectionError != nil {
                 let message = "error in cookied async request"
                 logger.error(message)
@@ -579,7 +579,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     // MARK: Message Server Functions
-    func deriveMessageServersWithOriginServer(originServer: MessageServer, community: Community) -> [MessageServer] {
+    func deriveMessageServersWithOriginServer(_ originServer: MessageServer, community: Community) -> [MessageServer] {
         var arenaServer = originServer
         
         if 0 < originServer.roomPosition.rawValue {
@@ -622,7 +622,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         return servers
     }
     
-    func standRoomCountForCommunityLevel(level: Int) -> Int {
+    func standRoomCountForCommunityLevel(_ level: Int) -> Int {
         for (levelRange, standCount) in kCommunityLevelStandRoomTable {
             if levelRange.contains(level) {
                 return standCount
@@ -645,7 +645,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             roomListeners.append(listener)
             logger.info("created room listener instance:\(listener)")
             
-            dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
+            DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async(execute: {
                 listener.openSocket(kDefaultResFrom)
             })
         }
@@ -654,14 +654,14 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     // MARK: Comment
-    private func requestGetPostKey(success: (postKey: String) -> Void, failure: () -> Void) {
+    private func requestGetPostKey(_ success: (postKey: String) -> Void, failure: () -> Void) {
         if messageServer == nil {
             logger.error("cannot comment without messageServer")
             failure()
             return
         }
         
-        let httpCompletion: (NSURLResponse?, NSData?, NSError?) -> () = { (response, data, connectionError) in
+        let httpCompletion: (URLResponse?, Data?, NSError?) -> () = { (response, data, connectionError) in
             if connectionError != nil {
                 logger.error("error in cookied async request")
                 failure()
@@ -674,7 +674,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
                 return
             }
 
-            let responseString = NSString(data: data, encoding: NSUTF8StringEncoding)
+            let responseString = NSString(data: data, encoding: String.Encoding.utf8.rawValue)
             logger.debug("\(responseString)")
             
             let postKey = (responseString as! String).extractRegexpPattern("postkey=(.+)")
@@ -714,11 +714,11 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     // MARK: Heartbeat
-    private func scheduleHeartbeatTimer(immediateFire: Bool = false, interval: NSTimeInterval = kHeartbeatDefaultInterval) {
+    private func scheduleHeartbeatTimer(_ immediateFire: Bool = false, interval: TimeInterval = kHeartbeatDefaultInterval) {
         stopHeartbeatTimer()
         
-        dispatch_async(dispatch_get_main_queue()) {
-            self.heartbeatTimer = NSTimer.scheduledTimerWithTimeInterval(interval, target: self, selector: #selector(NicoUtility.checkHeartbeat(_:)), userInfo: nil, repeats: true)
+        DispatchQueue.main.async {
+            self.heartbeatTimer = Timer.scheduledTimer(timeInterval: interval, target: self, selector: #selector(NicoUtility.checkHeartbeat(_:)), userInfo: nil, repeats: true)
             if immediateFire {
                 self.heartbeatTimer?.fire()
             }
@@ -730,8 +730,8 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         heartbeatTimer = nil
     }
     
-    func checkHeartbeat(timer: NSTimer) {
-        let httpCompletion: (NSURLResponse?, NSData?, NSError?) -> () = { (response, data, connectionError) in
+    func checkHeartbeat(_ timer: Timer) {
+        let httpCompletion: (URLResponse?, Data?, NSError?) -> () = { (response, data, connectionError) in
             if connectionError != nil {
                 logger.error("error in checking heartbeat")
                 return
@@ -741,7 +741,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
                 return
             }
 
-            let responseString = NSString(data: data, encoding: NSUTF8StringEncoding)
+            let responseString = NSString(data: data, encoding: String.Encoding.utf8.rawValue)
             self.fileLogger.debug("\(responseString)")
             
             let heartbeat = self.extractHeartbeat(data)
@@ -756,7 +756,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             
             if let interval = heartbeat?.waitTime {
                 self.stopHeartbeatTimer()
-                self.scheduleHeartbeatTimer(false, interval: NSTimeInterval(interval))
+                self.scheduleHeartbeatTimer(false, interval: TimeInterval(interval))
             }
         }
         
@@ -772,9 +772,9 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         user = nil
         messageServer = nil
         
-        messageServers.removeAll(keepCapacity: false)
-        roomListeners.removeAll(keepCapacity: false)
-        receivedFirstChat.removeAll(keepCapacity: false)
+        messageServers.removeAll(keepingCapacity: false)
+        roomListeners.removeAll(keepingCapacity: false)
+        receivedFirstChat.removeAll(keepingCapacity: false)
         
         chatCount = 0
     }

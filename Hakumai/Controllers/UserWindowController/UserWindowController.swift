@@ -14,7 +14,7 @@ private let kStoryboardNameUserWindowController = "UserWindowController"
 private let kStoryboardIdUserWindowController = "UserWindowController"
 
 protocol UserWindowControllerDelegate: class {
-    func userWindowControllerDidClose(userWindowController: UserWindowController)
+    func userWindowControllerDidClose(_ userWindowController: UserWindowController)
 }
 
 class UserWindowController: NSWindowController, NSWindowDelegate {
@@ -31,9 +31,9 @@ class UserWindowController: NSWindowController, NSWindowDelegate {
         logger.debug("")
     }
     
-    class func generateInstanceWithDelegate(delegate: UserWindowControllerDelegate?, userId: String) -> UserWindowController {
+    class func generateInstanceWithDelegate(_ delegate: UserWindowControllerDelegate?, userId: String) -> UserWindowController {
         let storyboard = NSStoryboard(name: kStoryboardNameUserWindowController, bundle: nil)
-        let userWindowController = storyboard.instantiateControllerWithIdentifier(kStoryboardIdUserWindowController) as! UserWindowController
+        let userWindowController = storyboard.instantiateController(withIdentifier: kStoryboardIdUserWindowController) as! UserWindowController
         
         userWindowController.delegate = delegate
         userWindowController.userId = userId
@@ -42,7 +42,7 @@ class UserWindowController: NSWindowController, NSWindowDelegate {
     }
     
     // MARK: - NSWindowDelegate Functions
-    func windowWillClose(notification: NSNotification) {
+    func windowWillClose(_ notification: Notification) {
         let window: AnyObject? = notification.object
         
         if window is UserWindow {

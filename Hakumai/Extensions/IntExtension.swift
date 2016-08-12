@@ -9,7 +9,7 @@
 import Foundation
 
 extension Int {
-    func toDateAsTimeIntervalSince1970() -> NSDate {
-        return NSDate(timeIntervalSince1970: Double(self))
+    func toDateAsTimeIntervalSince1970() -> Date {
+        return Date(timeIntervalSince1970: Double(self))
     }
 }
