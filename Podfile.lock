@@ -3,24 +3,24 @@ PODS:
     - FMDB/standard (= 2.6.2)
   - FMDB/standard (2.6.2)
   - Ono (1.2.2)
+  - SAMKeychain (1.5.0)
   - Sparkle (1.14.0)
-  - SSKeychain (1.2.3)
   - XCGLogger (3.3)
 
 DEPENDENCIES:
   - FMDB (~> 2.6.2)
   - Ono (~> 1.2.2)
+  - SAMKeychain (~> 1.5.0)
   - Sparkle (~> 1.14.0)
-  - SSKeychain (~> 1.2.3)
   - XCGLogger (~> 3.3)
 
 SPEC CHECKSUMS:
   FMDB: 854a0341b4726e53276f2a8996f06f1b80f9259a
   Ono: 80b1c686777d3f6d5d5ce6fcac8a74afef4ca197
+  SAMKeychain: 1fc9ae02f576365395758b12888c84704eebc423
   Sparkle: ccd95233b12a3e3d4eeb55ff01dd4c8bb8188b07
-  SSKeychain: 3f42991739c6c60a9cf1bbd4dff6c0d3694bcf3d
   XCGLogger: d6e196e78940ff6daab17d6917107876f973fa31
 
-PODFILE CHECKSUM: 0c4d0aba7f2782123944da8c694060b634e7900f
+PODFILE CHECKSUM: b28c03b4e14fad13917e114d69c91a0d757e3c5c
 
 COCOAPODS: 1.0.1

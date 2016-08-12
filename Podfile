@@ -7,7 +7,7 @@ target 'Hakumai' do
   pod 'FMDB', '~> 2.6.2'
   pod 'Ono', '~> 1.2.2'
   pod 'Sparkle', '~> 1.14.0'
-  pod 'SSKeychain', '~> 1.2.3'
+  pod 'SAMKeychain', '~> 1.5.0'
   pod 'XCGLogger', '~> 3.3'
 
   target 'HakumaiTests' do
