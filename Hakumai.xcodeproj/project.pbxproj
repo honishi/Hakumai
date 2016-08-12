@@ -702,6 +702,7 @@
 						CreatedOnToolsVersion = 6.1;
 						DevelopmentTeam = N4SRN3NAQ3;
 						LastSwiftMigration = 0800;
+						ProvisioningStyle = Automatic;
 					};
 					DB2AE0CF1A0EE2FD00B1CE4D = {
 						CreatedOnToolsVersion = 6.1;
@@ -1150,7 +1151,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = N4SRN3NAQ3;
 				INFOPLIST_FILE = Hakumai/Info.plist;
