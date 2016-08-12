@@ -25,7 +25,7 @@ class PreferenceWindowController: NSWindowController {
     // MARK: Properties for Singleton
     class func generateInstance() -> PreferenceWindowController {
         let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
-        let preferenceWindowController = storyboard.instantiateControllerWithIdentifier(kStoryboardIdPreferenceWindowController) as! PreferenceWindowController
+        let preferenceWindowController = storyboard.instantiateController(withIdentifier: kStoryboardIdPreferenceWindowController) as! PreferenceWindowController
         
         preferenceWindowController.window?.center()
         
@@ -48,14 +48,14 @@ class PreferenceWindowController: NSWindowController {
     
     // MARK: - NSWindowController Overrides
     override func windowDidLoad() {
-        changeContent(GeneralViewController.sharedInstance, itemIdentifier: kToolbarItemIdentifierGeneral)
+        changeContent(viewController: GeneralViewController.sharedInstance, itemIdentifier: kToolbarItemIdentifierGeneral)
         
         window?.center()
-        window?.makeKeyWindow()
+        window?.makeKey()
     }
     
     // MARK: - NSToolbar Handlers
-    @IBAction func changeViewController(sender: AnyObject) {
+    @IBAction func changeViewController(_ sender: AnyObject) {
         let toolbarItem = (sender as! NSToolbarItem)
         var viewController: NSViewController?
         
@@ -71,7 +71,7 @@ class PreferenceWindowController: NSWindowController {
         }
         
         if viewController != nil {
-            changeContent(viewController!, itemIdentifier: toolbarItem.itemIdentifier)
+            changeContent(viewController: viewController!, itemIdentifier: toolbarItem.itemIdentifier)
         }
     }
 
@@ -88,7 +88,7 @@ class PreferenceWindowController: NSWindowController {
         }
         
         window?.contentView?.addSubview(viewController.view)
-        resizeWindowForContentView(viewController.view)
+        resizeWindowForContentView(view: viewController.view)
         
         toolbar.selectedItemIdentifier = itemIdentifier
     }
@@ -110,8 +110,8 @@ class PreferenceWindowController: NSWindowController {
     private func toolbarHeight() -> CGFloat {
         var toolbarHeight: CGFloat = 0
         
-        if toolbar != nil && toolbar.visible {
-            let windowFrame = NSWindow.contentRectForFrameRect(window!.frame, styleMask: window!.styleMask)
+        if toolbar != nil && toolbar.isVisible {
+            let windowFrame = NSWindow.contentRect(forFrameRect: window!.frame, styleMask: window!.styleMask)
             toolbarHeight = NSHeight(windowFrame) - NSHeight(window!.contentView!.frame)
         }
         

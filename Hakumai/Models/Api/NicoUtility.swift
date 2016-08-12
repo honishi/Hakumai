@@ -38,7 +38,7 @@ protocol NicoUtilityDelegate: class {
 
 // MARK: constant value
 // mapping between community level and standing room is based on following articles:
-private let kCommunityLevelStandRoomTable: [(levelRange: CountableRange<Int>, standCount: Int)] = [
+private let kCommunityLevelStandRoomTable: [(levelRange: CountableClosedRange<Int>, standCount: Int)] = [
     (  1...49,  1),     // a
     ( 50...69,  2),     // a, b
     ( 70...104, 3),     // a, b, c
@@ -191,7 +191,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             return
         }
         
-        let httpCompletion: (URLResponse?, Data?, NSError?) -> () = { (response, data, connectionError) in
+        let httpCompletion: (URLResponse?, Data?, Error?) -> () = { (response, data, connectionError) in
             if connectionError != nil {
                 logger.error("error in loading thumbnail request")
                 completion(imageData: nil)
@@ -238,7 +238,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         }
         
         resolveUserNameOperationQueue.addOperation {
-            let resolveCompletion = { (response: URLResponse?, data: Data?, connectionError: NSError?) in
+            let resolveCompletion = { (response: URLResponse?, data: Data?, connectionError: Error?) in
                 if connectionError != nil {
                     logger.error("error in resolving username")
                     completion(userName: nil)
@@ -256,7 +256,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     func reportAsNgUser(_ chat: Chat, completion: (userId: String?) -> Void) {
-        let httpCompletion: (URLResponse?, Data?, NSError?) -> () = { (response, data, connectionError) in
+        let httpCompletion: (URLResponse?, Data?, Error?) -> () = { (response, data, connectionError) in
             if connectionError != nil {
                 logger.error("error in requesting ng user")
                 completion(userId: nil)
@@ -498,7 +498,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     private func requestGetPlayerStatus(_ liveNumber: Int, success: (live: Live, user: User, messageServer: MessageServer) -> Void, failure: (reason: String) -> Void) {
-        let httpCompletion: (URLResponse?, Data?, NSError?) -> () = { (response, data, connectionError) in
+        let httpCompletion: (URLResponse?, Data?, Error?) -> () = { (response, data, connectionError) in
             if connectionError != nil {
                 let message = "error in cookied async request"
                 logger.error(message)
@@ -546,7 +546,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     private func loadCommunity(_ community: Community, success: () -> Void, failure: (reason: String) -> Void) {
-        let httpCompletion: (URLResponse?, Data?, NSError?) -> () = { (response, data, connectionError) in
+        let httpCompletion: (URLResponse?, Data?, Error?) -> () = { (response, data, connectionError) in
             if connectionError != nil {
                 let message = "error in cookied async request"
                 logger.error(message)
@@ -661,7 +661,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             return
         }
         
-        let httpCompletion: (URLResponse?, Data?, NSError?) -> () = { (response, data, connectionError) in
+        let httpCompletion: (URLResponse?, Data?, Error?) -> () = { (response, data, connectionError) in
             if connectionError != nil {
                 logger.error("error in cookied async request")
                 failure()
@@ -731,7 +731,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     func checkHeartbeat(_ timer: Timer) {
-        let httpCompletion: (URLResponse?, Data?, NSError?) -> () = { (response, data, connectionError) in
+        let httpCompletion: (URLResponse?, Data?, Error?) -> () = { (response, data, connectionError) in
             if connectionError != nil {
                 logger.error("error in checking heartbeat")
                 return

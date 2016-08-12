@@ -17,7 +17,7 @@ private let kUserAgent = kCommonUserAgent
 class LoginCookie {
     // MARK: - Public Functions
     class func requestCookieWithMailAddress(_ mailAddress: String, password: String, completion: (userSessionCookie: String?) -> Void) {
-        func httpCompletion(_ response: URLResponse?, data: Data?, connectionError: NSError?) {
+        func httpCompletion(_ response: URLResponse?, _ data: Data?, _ connectionError: Error?) {
             if connectionError != nil {
                 logger.error("login failed. connection error:[\(connectionError)]")
                 completion(userSessionCookie: nil)

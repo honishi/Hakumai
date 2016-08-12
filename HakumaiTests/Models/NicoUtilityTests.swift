@@ -45,7 +45,8 @@ class NicoUtilityTests: XCTestCase {
         
         // symbol in ngscoring
         parameters = NicoUtility.sharedInstance.constructParameters(["tpos": "1416842780.802121", "comment_locale": "ja-jp"])
-        XCTAssert(parameters == "tpos=1416842780%2E802121&comment%5Flocale=ja%2Djp", "")
+        // XCTAssert(parameters == "tpos=1416842780%2E802121&comment%5Flocale=ja%2Djp", "")
+        XCTAssert(parameters == "comment%5Flocale=ja%2Djp&tpos=1416842780%2E802121", "")
     }
     
     // MARK: - Room Position

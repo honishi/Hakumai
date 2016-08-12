@@ -245,7 +245,8 @@ class RoomListener : NSObject, StreamDelegate {
         var err: NSError?
         let xmlDocument: XMLDocument?
         do {
-            xmlDocument = try XMLDocument(xmlString: wrappedStream, options: Int(NSXMLDocumentTidyXML))
+            // NSXMLDocumentTidyXML
+            xmlDocument = try XMLDocument(xmlString: wrappedStream, options: Int(UInt(XMLDocument.ContentKind.xml.rawValue)))
         } catch let error as NSError {
             err = error
             logger.error("\(err)")

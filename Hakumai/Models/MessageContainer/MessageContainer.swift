@@ -188,7 +188,7 @@ class MessageContainer {
             let sourceCount = self.sourceMessages.count
             
             for i in 0..<sourceCount {
-                self.appendMessage(self.sourceMessages[i], messages: &workingMessages)
+                _ = self.appendMessage(self.sourceMessages[i], messages: &workingMessages)
             }
             
             // logger.debug("completed 1st pass")
@@ -208,7 +208,7 @@ class MessageContainer {
                 
                 let deltaCount = self.sourceMessages.count
                 for i in sourceCount..<deltaCount {
-                    self.appendMessage(self.sourceMessages[i], messages: &self.filteredMessages)
+                    _ = self.appendMessage(self.sourceMessages[i], messages: &self.filteredMessages)
                 }
                 // logger.debug("copied delta messages \(sourceCount)..<\(deltaCount)")
                 

@@ -35,7 +35,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     }
     
     // MARK: - NSMenu Overrides
-    override func validate(_ menuItem: NSMenuItem) -> Bool {
+    override func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         let clickedRow = tableView.clickedRow
         if clickedRow == -1 {
             return false
@@ -104,7 +104,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     @IBAction func copyComment(_ sender: AnyObject) {
         let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat!
         let toBeCopied = chat.comment!
-        copyStringToPasteBoard(toBeCopied)
+        _ = copyStringToPasteBoard(toBeCopied)
     }
     
     @IBAction func openUrl(_ sender: AnyObject) {

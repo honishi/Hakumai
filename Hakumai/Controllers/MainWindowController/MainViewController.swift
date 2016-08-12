@@ -380,7 +380,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         commentTextField.stringValue = (inValidHistoryRange ? commentHistory[commentHistoryIndex!] : "")
         
         // selectText() should be called in next run loop, http://stackoverflow.com/a/2196751
-        DispatchQueue.main.asyncAfter(deadline: 0) {
+        DispatchQueue.main.asyncAfter(deadline: .now()) {
             self.commentTextField.selectText(self)
         }
     }
@@ -658,7 +658,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         progressIndicator.startAnimation(self)
         
         // force to invoke setup methods in HandleNameManager()
-        HandleNameManager.sharedManager
+        _ = HandleNameManager.sharedManager
         
         progressIndicator.stopAnimation(self)
     }

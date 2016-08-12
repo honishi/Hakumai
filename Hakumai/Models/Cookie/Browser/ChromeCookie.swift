@@ -117,8 +117,8 @@ class ChromeCookie {
     
     private class func encryptedCookieByRemovingPrefix(_ encrypted: Data) -> Data? {
         let prefixString : NSString = "v10"
-        let rangeForDataWithoutPrefix = NSMakeRange(prefixString.length, encrypted.count - prefixString.length)
-        let encryptedByRemovingPrefix = encrypted.subdata(in: rangeForDataWithoutPrefix)
+        // let rangeForDataWithoutPrefix = NSMakeRange(prefixString.length, encrypted.count - prefixString.length)
+        let encryptedByRemovingPrefix = encrypted.subdata(in: prefixString.length..<encrypted.count)
         // logger.debug(encryptedByRemovingPrefix)
         
         return encryptedByRemovingPrefix
@@ -199,7 +199,7 @@ class ChromeCookie {
             logger.error("Error: \(cryptStatus)")
         }
         
-        return decryptedData
+        return decryptedData as Data?
     }
 
     // http://stackoverflow.com/a/14205319
@@ -207,8 +207,9 @@ class ChromeCookie {
         let paddingCount = Int(UnsafePointer<UInt8>((data as NSData).bytes)[data.count - 1])
         fileLogger.debug("padding character count:[\(paddingCount)]")
         
-        let trimmedData = data.subdata(in: NSRange(location: 0, length: data.count - paddingCount))
+        // NSRange(location: 0, length: data.count - paddingCount)
+        let trimmedData = data.subdata(in: 0..<(data.count - paddingCount))
         
-        return NSString(data: trimmedData, encoding: String.Encoding.utf8) as? String
+        return NSString(data: trimmedData, encoding: String.Encoding.utf8.rawValue) as? String
     }
 }

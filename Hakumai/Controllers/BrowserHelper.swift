@@ -40,7 +40,7 @@ class BrowserHelper {
         
         if let unicode = descriptor?.coerce(toDescriptorType: UInt32(typeUnicodeText)) {
             let data = unicode.data
-            result = NSString(characters: UnsafePointer<unichar>((data as NSData).bytes), length: (data.count / sizeof(unichar))) as String
+            result = NSString(characters: UnsafePointer<unichar>((data as NSData).bytes), length: (data.count / sizeof(unichar.self))) as String
         }
         
         return result

@@ -15,11 +15,9 @@ class MainTextField: NSTextField {
         let result = super.becomeFirstResponder()
         
         // need some delay here to wait for completion of focus animation
-        let delay = 0.4 * Double(NSEC_PER_SEC)
-        let time  = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
-        dispatch_after(time, dispatch_get_main_queue()) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4, execute: {
             self.selectText(self)
-        }
+        })
         
         return result
     }
