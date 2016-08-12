@@ -8,7 +8,7 @@
 
 import Foundation
 import FMDB
-import SSKeychain
+import SAMKeychain
 import XCGLogger
 
 // file log
@@ -125,7 +125,7 @@ class ChromeCookie {
     }
     
     private class func chromePassword() -> String {
-        let password = SSKeychain.passwordForService(kChromeServiceName, account: kChromeAccount)
+        let password = SAMKeychain.passwordForService(kChromeServiceName, account: kChromeAccount)
         // logger.debug(password)
         
         return password

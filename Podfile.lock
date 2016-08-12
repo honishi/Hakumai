@@ -1,36 +1,26 @@
 PODS:
-  - FMDB (2.5):
-    - FMDB/standard (= 2.5)
-  - FMDB/common (2.5)
-  - FMDB/SQLCipher (2.5):
-    - FMDB/common
-    - SQLCipher
-  - FMDB/standard (2.5):
-    - FMDB/common
+  - FMDB (2.6.2):
+    - FMDB/standard (= 2.6.2)
+  - FMDB/standard (2.6.2)
   - Ono (1.2.2)
-  - Sparkle (1.11.0)
-  - SQLCipher (3.1.0):
-    - SQLCipher/standard (= 3.1.0)
-  - SQLCipher/common (3.1.0)
-  - SQLCipher/standard (3.1.0):
-    - SQLCipher/common
-  - SSKeychain (1.2.3)
+  - SAMKeychain (1.5.0)
+  - Sparkle (1.14.0)
   - XCGLogger (3.3)
 
 DEPENDENCIES:
-  - FMDB (~> 2.5)
-  - FMDB/SQLCipher (~> 2.5)
+  - FMDB (~> 2.6.2)
   - Ono (~> 1.2.2)
-  - Sparkle (~> 1.11.0)
-  - SSKeychain (~> 1.2.3)
+  - SAMKeychain (~> 1.5.0)
+  - Sparkle (~> 1.14.0)
   - XCGLogger (~> 3.3)
 
 SPEC CHECKSUMS:
-  FMDB: 96e8f1bcc1329e269330f99770ad4285d9003e52
+  FMDB: 854a0341b4726e53276f2a8996f06f1b80f9259a
   Ono: 80b1c686777d3f6d5d5ce6fcac8a74afef4ca197
-  Sparkle: cf10103ef35fd89caa35373bfd772c5d6f9c7d73
-  SQLCipher: 4684434d5791db86512cd7e02172aefba575849e
-  SSKeychain: 3f42991739c6c60a9cf1bbd4dff6c0d3694bcf3d
+  SAMKeychain: 1fc9ae02f576365395758b12888c84704eebc423
+  Sparkle: ccd95233b12a3e3d4eeb55ff01dd4c8bb8188b07
   XCGLogger: d6e196e78940ff6daab17d6917107876f973fa31
 
-COCOAPODS: 0.39.0
+PODFILE CHECKSUM: b28c03b4e14fad13917e114d69c91a0d757e3c5c
+
+COCOAPODS: 1.0.1
