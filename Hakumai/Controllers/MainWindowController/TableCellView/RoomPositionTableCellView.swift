@@ -16,25 +16,25 @@ class RoomPositionTableCellView: NSTableCellView {
     
     var roomPosition: RoomPosition? {
         didSet {
-            roomPositionLabel.stringValue = stringForRoomPosition(roomPosition)
-            coloredView.fillColor = colorForRoomPosition(roomPosition)
+            roomPositionLabel.stringValue = string(forRoomPosition: roomPosition)
+            coloredView.fillColor = color(forRoomPosition: roomPosition)
         }
     }
     
     var commentNo: Int? {
         didSet {
-            commentNoLabel.stringValue = commentNoString(commentNo)
+            commentNoLabel.stringValue = string(ofCommentNo: commentNo)
         }
     }
     
     var fontSize: CGFloat? {
         didSet {
-            setFontSize(fontSize)
+            set(fontSize: fontSize)
         }
     }
     
     // MARK: - Internal Functions
-    private func colorForRoomPosition(_ roomPosition: RoomPosition?) -> NSColor {
+    private func color(forRoomPosition roomPosition: RoomPosition?) -> NSColor {
         if roomPosition == nil {
             return UIHelper.systemMessageColorBackground()
         }
@@ -65,7 +65,7 @@ class RoomPositionTableCellView: NSTableCellView {
         }
     }
     
-    private func stringForRoomPosition(_ roomPosition: RoomPosition?) -> String {
+    private func string(forRoomPosition roomPosition: RoomPosition?) -> String {
         guard let roomPosition = roomPosition else {
             return ""
         }
@@ -73,7 +73,7 @@ class RoomPositionTableCellView: NSTableCellView {
         return roomPosition.shortLabel() + ":"
     }
     
-    private func commentNoString(_ commentNo: Int?) -> String {
+    private func string(ofCommentNo commentNo: Int?) -> String {
         guard let commentNo = commentNo else {
             return ""
         }
@@ -81,7 +81,7 @@ class RoomPositionTableCellView: NSTableCellView {
         return String(commentNo).numberStringWithSeparatorComma()!
     }
     
-    private func setFontSize(_ fontSize: CGFloat?) {
+    private func set(fontSize: CGFloat?) {
         let size = fontSize ?? CGFloat(kDefaultFontSize)
         roomPositionLabel.font = NSFont.systemFont(ofSize: size)
         commentNoLabel.font = NSFont.systemFont(ofSize: size)

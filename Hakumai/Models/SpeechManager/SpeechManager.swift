@@ -146,7 +146,7 @@ class SpeechManager: NSObject {
         var clean: String = ""
         
         for pattern in kCleanCommentPatterns {
-            clean = comment.stringByRemovingPattern(pattern)
+            clean = comment.stringByRemovingRegexp(pattern: pattern)
         }
         
         return clean

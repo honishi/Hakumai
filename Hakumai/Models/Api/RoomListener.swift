@@ -69,7 +69,7 @@ class RoomListener : NSObject, StreamDelegate {
     }
     
     // MARK: - Public Functions
-    func openSocket(_ resFrom: Int = 0) {
+    func openSocket(resFrom: Int = 0) {
         guard let server = server else {
             return
         }
@@ -99,7 +99,7 @@ class RoomListener : NSObject, StreamDelegate {
         outputStream?.open()
         
         let message = "<thread thread=\"\(server.thread)\" res_from=\"-\(resFrom)\" version=\"20061206\"/>"
-        sendMessage(message)
+        send(message: message)
         
         startPingTimer()
 
@@ -128,7 +128,7 @@ class RoomListener : NSObject, StreamDelegate {
         outputStream = nil
     }
     
-    func comment(_ live: Live, user: User, postKey: String, comment: String, anonymously: Bool) {
+    func comment(live: Live, user: User, postKey: String, comment: String, anonymously: Bool) {
         guard let thread = thread else {
             logger.debug("could not get thread information")
             return
@@ -145,10 +145,10 @@ class RoomListener : NSObject, StreamDelegate {
         
         let message = "<chat thread=\"\(threadNumber)\" ticket=\"\(ticket)\" vpos=\"\(vpos)\" postkey=\"\(postKey)\" mail=\"\(mail)\" user_id=\"\(userId)\" premium=\"\(premium)\">\(comment)</chat>"
         
-        sendMessage(message)
+        send(message: message)
     }
     
-    private func sendMessage(_ message: String, logging: Bool = true) {
+    private func send(message: String, logging: Bool = true) {
         let data: Data = (message + "\0").data(using: String.Encoding.utf8)!
         outputStream?.write(UnsafePointer<UInt8>((data as NSData).bytes), maxLength: data.count)
  
@@ -404,6 +404,6 @@ class RoomListener : NSObject, StreamDelegate {
     }
 
     func sendPing(_ timer: Timer) {
-        sendMessage("<ping>PING</ping>", logging: false)
+        send(message: "<ping>PING</ping>", logging: false)
     }
 }

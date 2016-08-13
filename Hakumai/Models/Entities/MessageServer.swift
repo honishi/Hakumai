@@ -37,7 +37,7 @@ class MessageServer: CustomStringConvertible {
     let thread: Int
     
     var isChannel: Bool {
-        if address.hasRegexpPattern(kRegExpPatternHostChannel) {
+        if address.hasRegexp(pattern: kRegExpPatternHostChannel) {
             return true
         }
         
@@ -110,7 +110,7 @@ class MessageServer: CustomStringConvertible {
     // MARK: - Private Functions
     class func extractServerNumber(_ address: String) -> Int? {
         let regexp = "\\D+(\\d+).+"
-        let serverNumber = address.extractRegexpPattern(regexp)
+        let serverNumber = address.extractRegexp(pattern: regexp)
         
         return serverNumber == nil ? nil : Int(serverNumber!)
     }

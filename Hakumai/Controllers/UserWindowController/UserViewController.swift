@@ -31,7 +31,7 @@ class UserViewController: NSViewController {
             if let userId = userId {
                 userIdLabelValue = userId
                 
-                if let userName = NicoUtility.sharedInstance.cachedUserNameForUserId(userId) {
+                if let userName = NicoUtility.sharedInstance.cachedUserName(forUserId: userId) {
                     userNameLabelValue = userName
                 }
                 
@@ -103,7 +103,7 @@ class UserViewController: NSViewController {
         let trailingSpace: CGFloat = 2
         let widthPadding = leadingSpace + trailingSpace
         
-        let (content, attributes) = contentAndAttributesForMessage(message)
+        let (content, attributes) = contentAndAttributes(forMessage: message)
         
         let commentRect = content.boundingRect(with: CGSize(width: width - widthPadding, height: 0),
             options: NSStringDrawingOptions.usesLineFragmentOrigin, attributes: attributes)
@@ -132,13 +132,13 @@ class UserViewController: NSViewController {
         let message = messages[row]
         
         if message.messageType == .chat {
-            configureViewForChat(message, tableColumn: tableColumn!, view: view!)
+            configureView(forChat: message, tableColumn: tableColumn!, view: view!)
         }
         
         return view
     }
     
-    private func configureViewForChat(_ message: Message, tableColumn: NSTableColumn, view: NSTableCellView) {
+    private func configureView(forChat message: Message, tableColumn: NSTableColumn, view: NSTableCellView) {
         let chat = message.chat!
         
         var attributed: NSAttributedString?
@@ -151,7 +151,7 @@ class UserViewController: NSViewController {
         case kScoreColumnIdentifier:
             (view as! ScoreTableCellView).chat = chat
         case kCommentColumnIdentifier:
-            let (content, attributes) = contentAndAttributesForMessage(message)
+            let (content, attributes) = contentAndAttributes(forMessage: message)
             attributed = NSAttributedString(string: content as String, attributes: attributes)
         default:
             break
@@ -163,7 +163,7 @@ class UserViewController: NSViewController {
     }
     
     // MARK: Utility
-    private func contentAndAttributesForMessage(_ message: Message) -> (NSString, [String: AnyObject]) {
+    private func contentAndAttributes(forMessage message: Message) -> (NSString, [String: AnyObject]) {
         var content: NSString!
         var attributes: [String: AnyObject]!
         

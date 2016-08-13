@@ -26,16 +26,16 @@ class MainViewControllerTests: XCTestCase {
         var extracted: Int?
         let expected = 200433812
         
-        extracted = MainViewController.extractLiveNumber("http://live.nicovideo.jp/watch/lv200433812?ref=zero_mynicorepo")
+        extracted = MainViewController.extractLiveNumber(from: "http://live.nicovideo.jp/watch/lv200433812?ref=zero_mynicorepo")
         XCTAssert(extracted == expected, "")
         
-        extracted = MainViewController.extractLiveNumber("http://live.nicovideo.jp/watch/lv200433812")
+        extracted = MainViewController.extractLiveNumber(from: "http://live.nicovideo.jp/watch/lv200433812")
         XCTAssert(extracted == expected, "")
         
-        extracted = MainViewController.extractLiveNumber("lv200433812")
+        extracted = MainViewController.extractLiveNumber(from: "lv200433812")
         XCTAssert(extracted == expected, "")
         
-        extracted = MainViewController.extractLiveNumber("200433812")
+        extracted = MainViewController.extractLiveNumber(from: "200433812")
         XCTAssert(extracted == expected, "")
     }
 }

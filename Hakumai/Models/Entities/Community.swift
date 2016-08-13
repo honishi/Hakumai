@@ -19,11 +19,11 @@ class Community: CustomStringConvertible {
     var thumbnailUrl: URL?
 
     var isUser: Bool? {
-        return community?.hasRegexpPattern(kCommunityPrefixUser)
+        return community?.hasRegexp(pattern: kCommunityPrefixUser)
     }
     
     var isChannel: Bool? {
-        return community?.hasRegexpPattern(kCommunityPrefixChannel)
+        return community?.hasRegexp(pattern: kCommunityPrefixChannel)
     }
     
     var description: String {

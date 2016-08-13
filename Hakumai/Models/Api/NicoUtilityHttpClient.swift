@@ -16,19 +16,19 @@ private let kCookiePath = "/"
 
 // Internal Http Utility
 extension NicoUtility {
-    func cookiedAsyncRequest(_ httpMethod: String, url: URL, parameters: [String: Any]?, completion: (URLResponse?, Data?, Error?) -> Void) {
-        cookiedAsyncRequest(httpMethod, url: url.absoluteString, parameters: parameters, completion: completion)
+    func cookiedAsyncRequest(httpMethod: String, url: URL, parameters: [String: Any]?, completion: (URLResponse?, Data?, Error?) -> Void) {
+        cookiedAsyncRequest(httpMethod: httpMethod, url: url.absoluteString, parameters: parameters, completion: completion)
     }
     
-    func cookiedAsyncRequest(_ httpMethod: String, url: String, parameters: [String: Any]?, completion: (URLResponse?, Data?, Error?) -> Void) {
+    func cookiedAsyncRequest(httpMethod: String, url: String, parameters: [String: Any]?, completion: (URLResponse?, Data?, Error?) -> Void) {
         var parameteredUrl: String = url
-        let constructedParameters = constructParameters(parameters)
+        let constructedParameters = construct(parameters: parameters)
         
         if httpMethod == "GET" && constructedParameters != nil {
             parameteredUrl += "?" + constructedParameters!
         }
         
-        let request = mutableRequestWithCustomHeaders(parameteredUrl)
+        let request = mutableRequest(customHeaders: parameteredUrl)
         request.httpMethod = httpMethod
         
         if httpMethod == "POST" && constructedParameters != nil {
@@ -48,7 +48,7 @@ extension NicoUtility {
         NSURLConnection.sendAsynchronousRequest(request as URLRequest, queue: queue, completionHandler: completion)
     }
     
-    func constructParameters(_ parameters: [String: Any]?) -> String? {
+    func construct(parameters: [String: Any]?) -> String? {
         if parameters == nil {
             return nil
         }
@@ -71,7 +71,7 @@ extension NicoUtility {
         return constructed.addingPercentEncoding(withAllowedCharacters: allowed as CharacterSet)
     }
     
-    private func mutableRequestWithCustomHeaders(_ url: String) -> NSMutableURLRequest {
+    private func mutableRequest(customHeaders url: String) -> NSMutableURLRequest {
         let urlObject = URL(string: url)!
         let mutableRequest = NSMutableURLRequest(url: urlObject)
         

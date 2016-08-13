@@ -31,7 +31,7 @@ class UserWindowController: NSWindowController, NSWindowDelegate {
         logger.debug("")
     }
     
-    class func generateInstanceWithDelegate(_ delegate: UserWindowControllerDelegate?, userId: String) -> UserWindowController {
+    class func generateInstance(delegate: UserWindowControllerDelegate?, userId: String) -> UserWindowController {
         let storyboard = NSStoryboard(name: kStoryboardNameUserWindowController, bundle: nil)
         let userWindowController = storyboard.instantiateController(withIdentifier: kStoryboardIdUserWindowController) as! UserWindowController
         

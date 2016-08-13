@@ -140,7 +140,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     func changeFontSize(_ fontSize: CGFloat) {
         tableViewFontSize = fontSize
         
-        minimumRowHeight = calculateMinimumRowHeightWithFontSize(tableViewFontSize)
+        minimumRowHeight = calculateMinimumRowHeight(fontSize: tableViewFontSize)
         tableView.rowHeight = minimumRowHeight
         rowHeightCacher.removeAll(keepingCapacity: false)
         tableView.reloadData()
@@ -208,19 +208,19 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
 
         let commentTableColumn = tableView.tableColumn(withIdentifier: kCommentColumnIdentifier)!
         let commentColumnWidth = commentTableColumn.width
-        rowHeight = commentColumnHeight(message, width: commentColumnWidth)
+        rowHeight = commentColumnHeight(message: message, width: commentColumnWidth)
         
         rowHeightCacher[message.messageNo] = rowHeight
         
         return rowHeight
     }
     
-    private func commentColumnHeight(_ message: Message, width: CGFloat) -> CGFloat {
+    private func commentColumnHeight(message: Message, width: CGFloat) -> CGFloat {
         let leadingSpace: CGFloat = 2
         let trailingSpace: CGFloat = 2
         let widthPadding = leadingSpace + trailingSpace
 
-        let (content, attributes) = contentAndAttributesForMessage(message)
+        let (content, attributes) = contentAndAttributes(forMessage: message)
         
         let commentRect = content.boundingRect(
             with: CGSize(width: width - widthPadding, height: 0), options: NSStringDrawingOptions.usesLineFragmentOrigin,
@@ -230,9 +230,9 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         return max(commentRect.size.height, minimumRowHeight)
     }
     
-    private func calculateMinimumRowHeightWithFontSize(_ fontSize: CGFloat) -> CGFloat {
+    private func calculateMinimumRowHeight(fontSize: CGFloat) -> CGFloat {
         let placeholderContent = "." as NSString
-        let placeholderAttributes = UIHelper.normalCommentAttributesWithFontSize(fontSize)
+        let placeholderAttributes = UIHelper.normalCommentAttributes(fontSize: fontSize)
         let rect = placeholderContent.boundingRect(
             with: CGSize(width: 1, height: 0), options: NSStringDrawingOptions.usesLineFragmentOrigin, attributes: placeholderAttributes)
         return rect.size.height
@@ -258,16 +258,16 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         let message = MessageContainer.sharedContainer[row]
         
         if message.messageType == .system {
-            configureViewForSystemMessage(message, tableColumn: tableColumn!, view: view!)
+            configureView(forSystemMessage: message, tableColumn: tableColumn!, view: view!)
         }
         else if message.messageType == .chat {
-            configureViewForChat(message, tableColumn: tableColumn!, view: view!)
+            configureView(forChat: message, tableColumn: tableColumn!, view: view!)
         }
         
         return view
     }
     
-    private func configureViewForSystemMessage(_ message: Message, tableColumn: NSTableColumn, view: NSTableCellView) {
+    private func configureView(forSystemMessage message: Message, tableColumn: NSTableColumn, view: NSTableCellView) {
         switch tableColumn.identifier {
         case kRoomPositionColumnIdentifier:
             let roomPositionView = (view as! RoomPositionTableCellView)
@@ -279,7 +279,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             scoreView.chat = nil
             scoreView.fontSize = nil
         case kCommentColumnIdentifier:
-            let (content, attributes) = contentAndAttributesForMessage(message)
+            let (content, attributes) = contentAndAttributes(forMessage: message)
             let attributed = NSAttributedString(string: content as String, attributes: attributes)
             view.textField?.attributedStringValue = attributed
         case kUserIdColumnIdentifier:
@@ -295,7 +295,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         }
     }
 
-    private func configureViewForChat(_ message: Message, tableColumn: NSTableColumn, view: NSTableCellView) {
+    private func configureView(forChat message: Message, tableColumn: NSTableColumn, view: NSTableCellView) {
         let chat = message.chat!
         
         switch tableColumn.identifier {
@@ -309,7 +309,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             scoreView.chat = chat
             scoreView.fontSize = min(tableViewFontSize, kMaximumFontSizeForNonMainColumn)
         case kCommentColumnIdentifier:
-            let (content, attributes) = contentAndAttributesForMessage(message)
+            let (content, attributes) = contentAndAttributes(forMessage: message)
             let attributed = NSAttributedString(string: content as String, attributes: attributes)
             view.textField?.attributedStringValue = attributed
         case kUserIdColumnIdentifier:
@@ -327,21 +327,21 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
     
     // MARK: Utility
-    private func contentAndAttributesForMessage(_ message: Message) -> (NSString, [String: AnyObject]) {
+    private func contentAndAttributes(forMessage message: Message) -> (NSString, [String: AnyObject]) {
         var content: NSString!
         var attributes: [String: AnyObject]!
         
         if message.messageType == .system {
             content = message.message!
-            attributes = UIHelper.normalCommentAttributesWithFontSize(tableViewFontSize)
+            attributes = UIHelper.normalCommentAttributes(fontSize: tableViewFontSize)
         }
         else if message.messageType == .chat {
             content = message.chat!.comment!
             if message.firstChat == true {
-                attributes = UIHelper.boldCommentAttributesWithFontSize(tableViewFontSize)
+                attributes = UIHelper.boldCommentAttributes(fontSize: tableViewFontSize)
             }
             else {
-                attributes = UIHelper.normalCommentAttributesWithFontSize(tableViewFontSize)
+                attributes = UIHelper.normalCommentAttributes(fontSize: tableViewFontSize)
             }
         }
         
@@ -497,7 +497,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
     
     func nicoUtilityDidReceiveHeartbeat(_ nicoUtility: NicoUtility, heartbeat: Heartbeat) {
-        updateHeartbeatInformation(heartbeat)
+        updateLiveStatistics(heartbeat: heartbeat)
     }
     
     // MARK: System Message Utility
@@ -564,7 +564,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         return shouldScroll
     }
     
-    private func scrollTableViewToBottom(_ animated: Bool = false) {
+    private func scrollTableViewToBottom(animated: Bool = false) {
         let clipView = scrollView.contentView
         let x = clipView.documentVisibleRect.origin.x
         let y = clipView.documentRect.size.height - clipView.documentVisibleRect.size.height
@@ -606,11 +606,11 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
     
     // MARK: - Public Functions
-    func showHandleNameAddViewControllerWithLive(_ live: Live, chat: Chat) {
+    func showHandleNameAddViewController(live: Live, chat: Chat) {
         let storyboard = NSStoryboard(name: kStoryboardNameMainWindowController, bundle: nil)
         let handleNameAddViewController = storyboard.instantiateController(withIdentifier: kStoryboardIdHandleNameAddViewController) as! HandleNameAddViewController
         
-        handleNameAddViewController.handleName = (defaultHandleNameWithLive(live, chat: chat) ?? "")
+        handleNameAddViewController.handleName = (defaultHandleName(live: live, chat: chat) ?? "")
         handleNameAddViewController.completion = { (cancelled: Bool, handleName: String?) -> Void in
             if !cancelled {
                 HandleNameManager.sharedManager.updateHandleNameWithLive(live, chat: chat, handleName: handleName!)
@@ -624,14 +624,14 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         presentViewControllerAsSheet(handleNameAddViewController)
     }
     
-    private func defaultHandleNameWithLive(_ live: Live, chat: Chat) -> String? {
+    private func defaultHandleName(live: Live, chat: Chat) -> String? {
         var defaultHandleName: String?
         
         if let handleName = HandleNameManager.sharedManager.handleNameForLive(live, chat: chat) {
             defaultHandleName = handleName
         }
         else {
-            if let userName = NicoUtility.sharedInstance.cachedUserNameForChat(chat) {
+            if let userName = NicoUtility.sharedInstance.cachedUserName(forChat: chat) {
                 defaultHandleName = userName
             }
         }
@@ -675,7 +675,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         }
     }
     
-    private func updateHeartbeatInformation(_ heartbeat: Heartbeat) {
+    private func updateLiveStatistics(heartbeat: Heartbeat) {
         if heartbeat.status != .ok {
             return
         }
@@ -706,26 +706,25 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     @IBAction func connectLive(_ sender: AnyObject) {
         initializeHandleNameManager()
         
-        if let liveNumber = MainViewController.extractLiveNumber(liveTextField.stringValue) {
+        if let liveNumber = MainViewController.extractLiveNumber(from: liveTextField.stringValue) {
             clearAllChats()
 
             communityImageView.image = NSImage(named: kCommunityImageDefaultName)
 
             NicoUtility.sharedInstance.delegate = self
             
-            let defaults = UserDefaults.standard
-            let sessionManagementType = SessionManagementType(rawValue: defaults.integer(forKey: Parameters.SessionManagement))!
+            let sessionManagementType = SessionManagementType(rawValue: UserDefaults.standard.integer(forKey: Parameters.SessionManagement))!
             
             switch sessionManagementType {
             case .login:
                 if let account = KeychainUtility.accountInKeychain() {
                     let mailAddress = account.mailAddress
                     let password = account.password
-                    NicoUtility.sharedInstance.connectToLive(liveNumber, mailAddress: mailAddress, password: password)
+                    NicoUtility.sharedInstance.connect(liveNumber: liveNumber, mailAddress: mailAddress, password: password)
                 }
                 
             case .chrome:
-                NicoUtility.sharedInstance.connectToLive(liveNumber, browserType: .chrome)
+                NicoUtility.sharedInstance.connect(liveNumber: liveNumber, browserType: .chrome)
             }
         }
     }
@@ -778,7 +777,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         
         if userWindowController == nil {
             // not exist, so create and cache it
-            userWindowController = UserWindowController.generateInstanceWithDelegate(self, userId: chat.userId!)
+            userWindowController = UserWindowController.generateInstance(delegate: self, userId: chat.userId!)
             positionUserWindow(userWindowController!.window!)
             logger.debug("no existing userwc found, create it:\(userWindowController)")
             userWindowControllers.append(userWindowController!)
@@ -882,25 +881,25 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         tableView.reloadData()
     }
     
-    class func extractLiveNumber(_ url: String) -> Int? {
+    class func extractLiveNumber(from url: String) -> Int? {
         let liveNumberPattern = "\\d{9,}"
         var pattern: String
 
         pattern = "http:\\/\\/live\\.nicovideo\\.jp\\/watch\\/lv(" + liveNumberPattern + ").*"
 
-        if let extracted = url.extractRegexpPattern(pattern) {
+        if let extracted = url.extractRegexp(pattern: pattern) {
             return Int(extracted)
         }
 
         pattern = "lv(" + liveNumberPattern + ")"
 
-        if let extracted = url.extractRegexpPattern(pattern) {
+        if let extracted = url.extractRegexp(pattern: pattern) {
             return Int(extracted)
         }
 
         pattern = "(" + liveNumberPattern + ")"
 
-        if let extracted = url.extractRegexpPattern(pattern) {
+        if let extracted = url.extractRegexp(pattern: pattern) {
             return Int(extracted)
         }
 

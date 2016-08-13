@@ -75,8 +75,8 @@ class GeneralViewController: NSViewController {
         }
         
         let loginSelected = sessionManagementMatrix?.selectedTag() == SessionManagementType.login.rawValue
-        let hasValidMailAddress = (mailAddress as String).hasRegexpPattern(kRegexpMailAddress)
-        let hasValidPassword = (password as String).hasRegexpPattern(kRegexpPassword)
+        let hasValidMailAddress = (mailAddress as String).hasRegexp(pattern: kRegexpMailAddress)
+        let hasValidPassword = (password as String).hasRegexp(pattern: kRegexpPassword)
         
         return (loginSelected && hasValidMailAddress && hasValidPassword)
     }

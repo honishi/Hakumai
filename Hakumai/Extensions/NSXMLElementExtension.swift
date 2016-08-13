@@ -9,7 +9,7 @@
 import Foundation
 
 extension XMLElement {
-    func firstStringValueForXPathNode(_ xpath: String) -> String? {
+    func firstStringValue(forXPath xpath: String) -> String? {
         var err: NSError?
         
         do {
@@ -25,8 +25,8 @@ extension XMLElement {
         return nil
     }
     
-    func firstIntValueForXPathNode(_ xpath: String) -> Int? {
-        let stringValue = firstStringValueForXPathNode(xpath)
+    func firstIntValue(forXPath xpath: String) -> Int? {
+        let stringValue = firstStringValue(forXPath: xpath)
         
         return stringValue == nil ? nil : Int(stringValue!)
     }

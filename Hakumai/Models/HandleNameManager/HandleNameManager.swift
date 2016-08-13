@@ -74,15 +74,15 @@ class HandleNameManager {
     
     // MARK: - Internal Functions
     func extractHandleNameFromComment(_ comment: String) -> String? {
-        if comment.hasRegexpPattern(kRegexpRemainingTime) {
+        if comment.hasRegexp(pattern: kRegexpRemainingTime) {
             return nil
         }
         
-        if comment.hasRegexpPattern(kRegexpMailAddress) {
+        if comment.hasRegexp(pattern: kRegexpMailAddress) {
             return nil
         }
         
-        let handleName = comment.extractRegexpPattern(kRegexpHandleName)
+        let handleName = comment.extractRegexp(pattern: kRegexpHandleName)
         return handleName
     }
     

@@ -135,7 +135,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         guard let live = live, let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat else {
             return
         }
-        MainViewController.sharedInstance.showHandleNameAddViewControllerWithLive(live, chat: chat)
+        MainViewController.sharedInstance.showHandleNameAddViewController(live: live, chat: chat)
     }
     
     @IBAction func removeHandleName(_ sender: AnyObject) {
@@ -166,7 +166,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     
     @IBAction func reportAsNgUser(_ sender: AnyObject) {
         let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat!
-        NicoUtility.sharedInstance.reportAsNgUser(chat) { userId in
+        NicoUtility.sharedInstance.reportAsNgUser(chat: chat) { userId in
             if userId == nil {
                 MainViewController.sharedInstance.logSystemMessageToTableView("Failed to report NG user.")
                 return
@@ -178,7 +178,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     
     @IBAction func openUserPage(_ sender: AnyObject) {
         let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat!
-        let userPageUrlString = NicoUtility.sharedInstance.urlStringForUserId(chat.userId!)
+        let userPageUrlString = NicoUtility.sharedInstance.urlString(forUserId: chat.userId!)
         
         NSWorkspace.shared().open(URL(string: userPageUrlString)!)
     }
@@ -189,7 +189,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
             return nil
         }
         
-        return chat.comment!.extractRegexpPattern("(https?://[\\w/:%#\\$&\\?\\(\\)~\\.=\\+\\-]+)")
+        return chat.comment!.extractRegexp(pattern: "(https?://[\\w/:%#\\$&\\?\\(\\)~\\.=\\+\\-]+)")
     }
     
     func copyStringToPasteBoard(_ string: String) -> Bool {

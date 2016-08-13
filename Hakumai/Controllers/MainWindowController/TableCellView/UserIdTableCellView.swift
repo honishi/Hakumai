@@ -26,19 +26,19 @@ class UserIdTableCellView: NSTableCellView {
                 return
             }
             
-            userIdImageView.image = imageForHandleName(info?.handleName, userId: userId)
-            setUserIdLabelWithUserId(userId, premium: premium, handleName: info?.handleName)
+            userIdImageView.image = image(forHandleName: info?.handleName, userId: userId)
+            setUserIdLabel(userId: userId, premium: premium, handleName: info?.handleName)
         }
     }
     
     var fontSize: CGFloat? {
         didSet {
-            setFontSize(fontSize)
+            set(fontSize: fontSize)
         }
     }
     
     // MARK: - Internal Functions
-    private func imageForHandleName(_ handleName: String?, userId: String) -> NSImage {
+    private func image(forHandleName handleName: String?, userId: String) -> NSImage {
         var imageName: String
         
         if handleName != nil {
@@ -51,17 +51,17 @@ class UserIdTableCellView: NSTableCellView {
         return NSImage(named: imageName)!
     }
     
-    private func setUserIdLabelWithUserId(_ userId: String, premium: Premium, handleName: String?) {
+    private func setUserIdLabel(userId: String, premium: Premium, handleName: String?) {
         // set default name
-        userIdTextField.stringValue = concatUserNameWithUserId(userId, userName: nil, handleName: handleName)
+        userIdTextField.stringValue = concatUserName(userId: userId, userName: nil, handleName: handleName)
         
         // if needed, then resolve userid
         if handleName != nil || !Chat.isRawUserId(userId) || !(Chat.isUserComment(premium) || Chat.isBSPComment(premium)) {
             return
         }
         
-        if let userName = NicoUtility.sharedInstance.cachedUserNameForUserId(userId) {
-            userIdTextField.stringValue = concatUserNameWithUserId(userId, userName: userName, handleName: handleName)
+        if let userName = NicoUtility.sharedInstance.cachedUserName(forUserId: userId) {
+            userIdTextField.stringValue = concatUserName(userId: userId, userName: userName, handleName: handleName)
             return
         }
         
@@ -71,14 +71,14 @@ class UserIdTableCellView: NSTableCellView {
             }
             
             DispatchQueue.main.async {
-                self.userIdTextField.stringValue = self.concatUserNameWithUserId(userId, userName: userName, handleName: handleName)
+                self.userIdTextField.stringValue = self.concatUserName(userId: userId, userName: userName, handleName: handleName)
             }
         }
         
-        NicoUtility.sharedInstance.resolveUsername(userId, completion: completion)
+        NicoUtility.sharedInstance.resolveUsername(forUserId: userId, completion: completion)
     }
     
-    private func concatUserNameWithUserId(_ userId: String, userName: String?, handleName: String?) -> String {
+    private func concatUserName(userId: String, userName: String?, handleName: String?) -> String {
         var concatenated = ""
         
         if handleName != nil {
@@ -94,7 +94,7 @@ class UserIdTableCellView: NSTableCellView {
         return concatenated
     }
     
-    private func setFontSize(_ fontSize: CGFloat?) {
+    private func set(fontSize: CGFloat?) {
         let size = fontSize ?? CGFloat(kDefaultFontSize)
         userIdTextField.font = NSFont.systemFont(ofSize: size)
     }
