@@ -645,9 +645,9 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             roomListeners.append(listener)
             logger.info("created room listener instance:\(listener)")
             
-            DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async(execute: {
+            DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async {
                 listener.openSocket(kDefaultResFrom)
-            })
+            }
         }
         
         objc_sync_exit(self)

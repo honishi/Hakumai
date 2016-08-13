@@ -92,7 +92,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: - Internal Functions
     // MARK: KVO Functions
-    //override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
     override func observeValue(forKeyPath keyPath: String?, of object: AnyObject?, change: [NSKeyValueChangeKey : AnyObject]?, context: UnsafeMutablePointer<Void>?) {
         // logger.debug("detected observing value changed: key[\(keyPath)]")
         guard let keyPath = keyPath, let change = change else {
@@ -197,9 +196,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
         
-        let defaults = UserDefaults.standard
-        defaults.set(fontSize, forKey: Parameters.FontSize)
-        defaults.synchronize()
+        UserDefaults.standard.set(fontSize, forKey: Parameters.FontSize)
+        UserDefaults.standard.synchronize()
     }
 }
 

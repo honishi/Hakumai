@@ -459,9 +459,9 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         }
         openedRoomPosition = chat.roomPosition
         
-        DispatchQueue.main.async(execute: {
+        DispatchQueue.main.async {
             self.notificationLabel.stringValue = "Opened: ~\(chat.roomPosition!.label())"
-        })
+        }
     }
 
     func nicoUtilityDidReceiveChat(_ nicoUtility: NicoUtility, chat: Chat) {
@@ -473,9 +473,9 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         
         for userWindowController in userWindowControllers {
             if chat.userId == userWindowController.userId {
-                DispatchQueue.main.async(execute: {
+                DispatchQueue.main.async {
                     userWindowController.reloadMessages()
-                })
+                }
             }
         }
     }
@@ -697,7 +697,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     
     // MARK: Control Handlers
     @IBAction func grabUrlFromBrowser(_ sender: AnyObject) {
-        if let url = BrowserHelper.urlFromBrowser(.chrome) {
+        if let url = BrowserHelper.extractUrl(fromBrowser: .chrome) {
             liveTextField.stringValue = url
             connectLive(self)
         }

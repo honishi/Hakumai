@@ -70,9 +70,9 @@ class UserIdTableCellView: NSTableCellView {
                 return
             }
             
-            DispatchQueue.main.async(execute: {
+            DispatchQueue.main.async {
                 self.userIdTextField.stringValue = self.concatUserNameWithUserId(userId, userName: userName, handleName: handleName)
-            })
+            }
         }
         
         NicoUtility.sharedInstance.resolveUsername(userId, completion: completion)

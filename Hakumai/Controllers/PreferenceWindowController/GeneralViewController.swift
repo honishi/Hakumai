@@ -104,7 +104,7 @@ class GeneralViewController: NSViewController {
         }
         
         let completion = { (userSessionCookie: String?) -> Void in
-            DispatchQueue.main.async(execute: { 
+            DispatchQueue.main.async {
                 self.progressIndicator.stopAnimation(self)
                 
                 if userSessionCookie == nil {
@@ -116,7 +116,7 @@ class GeneralViewController: NSViewController {
                 
                 KeychainUtility.removeAllAccountsInKeychain()
                 KeychainUtility.setAccountToKeychainWith(self.mailAddress as String, password: self.password as String)
-            })
+            }
         }
 
         progressIndicator.startAnimation(self)
