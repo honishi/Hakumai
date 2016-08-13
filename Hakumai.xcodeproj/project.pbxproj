@@ -653,9 +653,9 @@
 				DB2AE0BB1A0EE2FD00B1CE4D /* Frameworks */,
 				DB2AE0BC1A0EE2FD00B1CE4D /* Resources */,
 				DB0FC12F1A262CF0000FADDD /* Embed Frameworks */,
-				DBD940CF1BF6EA76001BDB47 /* ShellScript */,
 				1720CD095F2EF064B1086037 /* [CP] Embed Pods Frameworks */,
 				A4B3EE183DE55CE827F04026 /* [CP] Copy Pods Resources */,
+				DBD940CF1BF6EA76001BDB47 /* ShellScript */,
 			);
 			buildRules = (
 			);
