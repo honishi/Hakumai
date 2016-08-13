@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "DB2AE0BD1A0EE2FD00B1CE4D"
-               BuildableName = "Hakumai"
+               BuildableName = "Hakumai.app"
                BlueprintName = "Hakumai"
                ReferencedContainer = "container:Hakumai.xcodeproj">
             </BuildableReference>
@@ -80,7 +80,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "DB2AE0BD1A0EE2FD00B1CE4D"
-            BuildableName = "Hakumai"
+            BuildableName = "Hakumai.app"
             BlueprintName = "Hakumai"
             ReferencedContainer = "container:Hakumai.xcodeproj">
          </BuildableReference>
