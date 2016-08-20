@@ -120,7 +120,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         let comment = chat.comment ?? ""
         let liveName = live.title ?? ""
         let communityName = live.community.title ?? ""
-        let liveUrl = live.liveUrlString ?? ""
+        let liveUrl = live.liveUrlString
         let communityId = live.community.community ?? ""
         
         let status = "「\(comment)」/ \(liveName) (\(communityName)) \(liveUrl) #\(communityId)"
