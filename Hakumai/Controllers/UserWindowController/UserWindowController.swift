@@ -43,7 +43,7 @@ class UserWindowController: NSWindowController, NSWindowDelegate {
     
     // MARK: - NSWindowDelegate Functions
     func windowWillClose(_ notification: Notification) {
-        let window: AnyObject? = notification.object
+        let window: Any? = notification.object
         
         if window is UserWindow {
             delegate?.userWindowControllerDidClose(self)

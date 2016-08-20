@@ -16,7 +16,7 @@ class MuteAddViewController: NSViewController {
     // also see more detailed note in HandleNameAddViewController's propery
     dynamic var muteValue: NSString!
     
-    var completion: ((cancelled: Bool, muteValue: String?) -> Void)?
+    var completion: ((_ cancelled: Bool, _ muteValue: String?) -> Void)?
     
     // MARK: - Object Lifecycle
     required init?(coder: NSCoder) {
@@ -33,10 +33,10 @@ class MuteAddViewController: NSViewController {
         guard 0 < muteValue.length else {
             return
         }
-        completion?(cancelled: false, muteValue: muteValue as String)
+        completion?(false, muteValue as String)
     }
     
     @IBAction func cancelAddMute(_ sender: AnyObject) {
-        completion?(cancelled: true, muteValue: nil)
+        completion?(true, nil)
     }
 }

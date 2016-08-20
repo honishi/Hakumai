@@ -16,18 +16,18 @@ private let kUserAgent = kCommonUserAgent
 
 class LoginCookie {
     // MARK: - Public Functions
-    class func requestCookieWithMailAddress(_ mailAddress: String, password: String, completion: (userSessionCookie: String?) -> Void) {
+    class func requestCookie(mailAddress: String, password: String, completion: @escaping (_ userSessionCookie: String?) -> Void) {
         func httpCompletion(_ response: URLResponse?, _ data: Data?, _ connectionError: Error?) {
             if connectionError != nil {
                 logger.error("login failed. connection error:[\(connectionError)]")
-                completion(userSessionCookie: nil)
+                completion(nil)
                 return
             }
             
             let httpResponse = (response as! HTTPURLResponse)
             if httpResponse.statusCode != 200 {
                 logger.error("login failed. got unexpected status code::[\(httpResponse.statusCode)]")
-                completion(userSessionCookie: nil)
+                completion(nil)
                 return
             }
 
@@ -35,11 +35,11 @@ class LoginCookie {
             logger.debug("found session cookie:[\(userSessionCookie)]")
             
             if userSessionCookie == nil {
-                completion(userSessionCookie: nil)
+                completion(nil)
                 return
             }
             
-            completion(userSessionCookie: userSessionCookie!)
+            completion(userSessionCookie!)
         }
         
         LoginCookie.removeAllStoredCookie()

@@ -34,24 +34,24 @@ class ScoreTableCellView: NSTableCellView {
     // MARK: - Internal Functions
     private func color(forChatScore chat: Chat?) -> NSColor {
         // println("\(score)")
-        if chat == nil {
+        guard let chat = chat, let score = chat.score else {
             return UIHelper.systemMessageColorBackground()
         }
         
-        if chat!.isSystemComment {
+        if chat.isSystemComment {
             return UIHelper.systemMessageColorBackground()
         }
         
-        if chat!.score == kScoreThresholdGreen {
+        if score == kScoreThresholdGreen {
             return UIHelper.scoreColorGreen()
         }
-        else if kScoreThresholdLightGreen < chat!.score && chat!.score < kScoreThresholdGreen {
+        else if kScoreThresholdLightGreen < score && score < kScoreThresholdGreen {
             return UIHelper.scoreColorLightGreen()
         }
-        else if kScoreThresholdYellow < chat!.score && chat!.score <= kScoreThresholdLightGreen {
+        else if kScoreThresholdYellow < score && score <= kScoreThresholdLightGreen {
             return UIHelper.scoreColorYellow()
         }
-        else if kScoreThresholdOrange < chat!.score && chat!.score <= kScoreThresholdYellow {
+        else if kScoreThresholdOrange < score && score <= kScoreThresholdYellow {
             return UIHelper.scoreColorOrange()
         }
         

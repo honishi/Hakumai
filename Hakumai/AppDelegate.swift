@@ -58,7 +58,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     private func initializeUserDefaults() {
-        let defaults: [String: AnyObject] = [
+        let defaults: [String: Any] = [
             Parameters.SessionManagement: SessionManagementType.chrome.rawValue,
             Parameters.ShowIfseetnoCommands: false,
             Parameters.FontSize: kDefaultFontSize,
@@ -92,7 +92,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: - Internal Functions
     // MARK: KVO Functions
-    override func observeValue(forKeyPath keyPath: String?, of object: AnyObject?, change: [NSKeyValueChangeKey : AnyObject]?, context: UnsafeMutablePointer<Void>?) {
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         // logger.debug("detected observing value changed: key[\(keyPath)]")
         guard let keyPath = keyPath, let change = change else {
             return

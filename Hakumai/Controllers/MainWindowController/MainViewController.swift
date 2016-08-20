@@ -62,7 +62,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     private var tableViewFontSize: CGFloat = CGFloat(kDefaultFontSize)
     
     private var commentHistory = [String]()
-    private var commentHistoryIndex: Int?
+    private var commentHistoryIndex: Int = 0
     
     private var elapsedTimer: Timer?
     private var activeTimer: Timer?
@@ -91,7 +91,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         // updateStandardUserDefaults()
     }
     
-    override var representedObject: AnyObject? {
+    override var representedObject: Any? {
         didSet {
             // Update the view, if already loaded.
         }
@@ -280,7 +280,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             scoreView.fontSize = nil
         case kCommentColumnIdentifier:
             let (content, attributes) = contentAndAttributes(forMessage: message)
-            let attributed = NSAttributedString(string: content as String, attributes: attributes)
+            let attributed = NSAttributedString(string: content, attributes: attributes)
             view.textField?.attributedStringValue = attributed
         case kUserIdColumnIdentifier:
             let userIdView = view as! UserIdTableCellView
@@ -327,8 +327,8 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
     
     // MARK: Utility
-    private func contentAndAttributes(forMessage message: Message) -> (NSString, [String: AnyObject]) {
-        var content: NSString!
+    private func contentAndAttributes(forMessage message: Message) -> (String, [String: AnyObject]) {
+        var content: String!
         var attributes: [String: AnyObject]!
         
         if message.messageType == .system {
@@ -369,15 +369,15 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     
     private func handleCommentTextFieldKeyUpDown(isMovedUp: Bool, isMovedDown: Bool) {
         if isMovedUp && 0 <= commentHistoryIndex {
-            commentHistoryIndex! -= 1
+            commentHistoryIndex -= 1
         }
         else if isMovedDown && commentHistoryIndex <= (commentHistory.count - 1) {
-            commentHistoryIndex! += 1
+            commentHistoryIndex += 1
         }
         
         let inValidHistoryRange = (0 <= commentHistoryIndex && commentHistoryIndex <= (commentHistory.count - 1))
         
-        commentTextField.stringValue = (inValidHistoryRange ? commentHistory[commentHistoryIndex!] : "")
+        commentTextField.stringValue = (inValidHistoryRange ? commentHistory[commentHistoryIndex] : "")
         
         // selectText() should be called in next run loop, http://stackoverflow.com/a/2196751
         DispatchQueue.main.asyncAfter(deadline: .now()) {
@@ -451,10 +451,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
 
         logSystemMessageToTableView("Opened \(chat.roomPosition!.label()).")
 
-        if openedRoomPosition == nil {
-            // nop
-        }
-        else if chat.roomPosition!.rawValue <= openedRoomPosition?.rawValue {
+        if let openedRoomPosition = openedRoomPosition, chat.roomPosition!.rawValue <= openedRoomPosition.rawValue {
             return
         }
         openedRoomPosition = chat.roomPosition
@@ -502,7 +499,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     
     // MARK: System Message Utility
     func logSystemMessageToTableView(_ message: String) {
-        appendTableView(message)
+        appendTableView(message as AnyObject)
     }
     
     // MARK: Chat Append Utility
@@ -610,7 +607,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         let storyboard = NSStoryboard(name: kStoryboardNameMainWindowController, bundle: nil)
         let handleNameAddViewController = storyboard.instantiateController(withIdentifier: kStoryboardIdHandleNameAddViewController) as! HandleNameAddViewController
         
-        handleNameAddViewController.handleName = (defaultHandleName(live: live, chat: chat) ?? "")
+        handleNameAddViewController.handleName = (defaultHandleName(live: live, chat: chat) ?? "") as NSString
         handleNameAddViewController.completion = { (cancelled: Bool, handleName: String?) -> Void in
             if !cancelled {
                 HandleNameManager.sharedManager.updateHandleNameWithLive(live, chat: chat, handleName: handleName!)

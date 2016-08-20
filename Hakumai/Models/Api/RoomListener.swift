@@ -32,10 +32,10 @@ class RoomListener : NSObject, StreamDelegate {
     private var runLoop: RunLoop!
     
     private var inputStream: InputStream?
-    private var outputStream: NSOutputStream?
+    private var outputStream: OutputStream?
     private var pingTimer: Timer?
     
-    private var parsingString: NSString = ""
+    private var parsingString: String = ""
     
     private var thread: Thread?
     private var startDate: Date?
@@ -75,7 +75,7 @@ class RoomListener : NSObject, StreamDelegate {
         }
         
         var input :InputStream?
-        var output :NSOutputStream?
+        var output :OutputStream?
         
         Stream.getStreamsToHost(withName: server.address, port: server.port, inputStream: &input, outputStream: &output)
         
@@ -150,7 +150,7 @@ class RoomListener : NSObject, StreamDelegate {
     
     private func send(message: String, logging: Bool = true) {
         let data: Data = (message + "\0").data(using: String.Encoding.utf8)!
-        outputStream?.write(UnsafePointer<UInt8>((data as NSData).bytes), maxLength: data.count)
+        outputStream?.write(unsafeBitCast((data as NSData).bytes, to: UnsafePointer<UInt8>.self), maxLength: data.count)
  
         if logging {
             logger.debug(message)
@@ -180,20 +180,20 @@ class RoomListener : NSObject, StreamDelegate {
                 if let readString = NSString(bytes: &readByte, length: actualRead, encoding: String.Encoding.utf8.rawValue) {
                     fileLogger.debug("read: [ \(readString) ]")
                     
-                    parsingString = parsingString as String + streamByRemovingNull(readString as String)
+                    parsingString += streamByRemovingNull(readString as String)
                     
-                    if !hasValidCloseBracket(parsingString as String) {
+                    if !hasValidCloseBracket(parsingString) {
                         fileLogger.warning("detected no-close-bracket stream, continue reading...")
                         continue
                     }
                     
-                    if !hasValidOpenBracket(parsingString as String) {
+                    if !hasValidOpenBracket(parsingString) {
                         fileLogger.warning("detected no-open-bracket stream, clearing buffer and continue reading...")
                         parsingString = ""
                         continue
                     }
                     
-                    parseInputStream(parsingString as String)
+                    parseInputStream(parsingString)
                     parsingString = ""
                 }
             }

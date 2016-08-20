@@ -10,8 +10,8 @@ import Foundation
 
 class CookieUtility {
     // MARK: - Public Functions
-    class func requestLoginCookieWithMailAddress(_ mailAddress: String, password: String, completion: (userSessionCookie: String?) -> Void) {
-        LoginCookie.requestCookieWithMailAddress(mailAddress, password: password, completion: completion)
+    class func requestLoginCookie(mailAddress: String, password: String, completion: @escaping (_ userSessionCookie: String?) -> Void) {
+        LoginCookie.requestCookie(mailAddress: mailAddress, password: password, completion: completion)
     }
     
     class func requestBrowserCookieWithBrowserType(_ browserType: BrowserType) -> String? {

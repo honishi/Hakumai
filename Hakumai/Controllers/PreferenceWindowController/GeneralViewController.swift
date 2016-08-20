@@ -20,8 +20,8 @@ private let kStoryboardIdGeneralViewController = "GeneralViewController"
         return NSNumber.self
     }
     
-    override func transformedValue(_ value: AnyObject!) -> AnyObject? {
-        return value.integerValue == SessionManagementType.login.rawValue ? NSNumber(value: true) : NSNumber(value: false)
+    override func transformedValue(_ value: Any?) -> Any? {
+        return (value as! Int) == SessionManagementType.login.rawValue ? NSNumber(value: true) : NSNumber(value: false)
     }
 }
 
@@ -57,8 +57,8 @@ class GeneralViewController: NSViewController {
         super.viewDidAppear()
         
         if let account = KeychainUtility.accountInKeychain() {
-            mailAddress = account.mailAddress
-            password = account.password
+            mailAddress = account.mailAddress as NSString
+            password = account.password as NSString
         }
         
         validateCheckAccountButton()
@@ -120,6 +120,6 @@ class GeneralViewController: NSViewController {
         }
 
         progressIndicator.startAnimation(self)
-        CookieUtility.requestLoginCookieWithMailAddress(mailAddress as String, password: password as String, completion: completion)
+        CookieUtility.requestLoginCookie(mailAddress: mailAddress as String, password: password as String, completion: completion)
     }
 }

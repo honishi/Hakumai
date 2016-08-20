@@ -12,16 +12,16 @@ DEPENDENCIES:
   - Ono (~> 1.2.2)
   - SAMKeychain (~> 1.5.0)
   - Sparkle (~> 1.14.0)
-  - XCGLogger (from `https://github.com/honishi/XCGLogger.git`, commit `79471fed48c41c906a426f90b2b0419093b876bb`)
+  - XCGLogger (from `https://github.com/honishi/XCGLogger.git`, commit `3c3b03ee07b5846329b05f9b065f16c6d20467fa`)
 
 EXTERNAL SOURCES:
   XCGLogger:
-    :commit: 79471fed48c41c906a426f90b2b0419093b876bb
+    :commit: 3c3b03ee07b5846329b05f9b065f16c6d20467fa
     :git: https://github.com/honishi/XCGLogger.git
 
 CHECKOUT OPTIONS:
   XCGLogger:
-    :commit: 79471fed48c41c906a426f90b2b0419093b876bb
+    :commit: 3c3b03ee07b5846329b05f9b065f16c6d20467fa
     :git: https://github.com/honishi/XCGLogger.git
 
 SPEC CHECKSUMS:
@@ -31,6 +31,6 @@ SPEC CHECKSUMS:
   Sparkle: ccd95233b12a3e3d4eeb55ff01dd4c8bb8188b07
   XCGLogger: d6e196e78940ff6daab17d6917107876f973fa31
 
-PODFILE CHECKSUM: c75f839f001004f7f779c304c3aac0c3ecb261fc
+PODFILE CHECKSUM: 96cc7199ac78ba94639a34a125f0725a94adc84c
 
 COCOAPODS: 1.0.1

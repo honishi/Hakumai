@@ -9,7 +9,7 @@ target 'Hakumai' do
   pod 'Sparkle', '~> 1.14.0'
   pod 'SAMKeychain', '~> 1.5.0'
   # TODO: use latest branch support swift 3.0 at https://github.com/DaveWoodCom/XCGLogger
-  pod 'XCGLogger', :git => 'https://github.com/honishi/XCGLogger.git', :commit => '79471fed48c41c906a426f90b2b0419093b876bb'
+  pod 'XCGLogger', :git => 'https://github.com/honishi/XCGLogger.git', :commit => '3c3b03ee07b5846329b05f9b065f16c6d20467fa'
 
   target 'HakumaiTests' do
     inherit! :search_paths

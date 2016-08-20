@@ -16,11 +16,7 @@ private let kCookiePath = "/"
 
 // Internal Http Utility
 extension NicoUtility {
-    func cookiedAsyncRequest(httpMethod: String, url: URL, parameters: [String: Any]?, completion: (URLResponse?, Data?, Error?) -> Void) {
-        cookiedAsyncRequest(httpMethod: httpMethod, url: url.absoluteString, parameters: parameters, completion: completion)
-    }
-    
-    func cookiedAsyncRequest(httpMethod: String, url: String, parameters: [String: Any]?, completion: (URLResponse?, Data?, Error?) -> Void) {
+    func cookiedAsyncRequest(httpMethod: String, url: String, parameters: [String: Any]?, completion: @escaping (URLResponse?, Data?, Error?) -> Void) {
         var parameteredUrl: String = url
         let constructedParameters = construct(parameters: parameters)
         
@@ -53,10 +49,10 @@ extension NicoUtility {
             return nil
         }
         
-        var constructed: NSString = ""
+        var constructed: String = ""
         
         for (key, value) in parameters! {
-            if 0 < constructed.length {
+            if 0 < constructed.characters.count {
                 constructed = constructed as String + "&"
             }
             

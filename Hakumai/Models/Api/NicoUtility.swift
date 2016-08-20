@@ -136,7 +136,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             let completion = { (userSessionCookie: String?) -> Void in
                 self.connect(liveNumber: liveNumber, userSessionCookie: userSessionCookie)
             }
-            CookieUtility.requestLoginCookieWithMailAddress(mailAddress, password: password, completion: completion)
+            CookieUtility.requestLoginCookie(mailAddress: mailAddress, password: password, completion: completion)
         }
         else {
             connect(liveNumber: liveNumber, userSessionCookie: userSessionCookie)
@@ -164,7 +164,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         stopHeartbeatTimer()
     }
     
-    func comment(_ comment: String, anonymously: Bool = true, completion: (comment: String?) -> Void) {
+    func comment(_ comment: String, anonymously: Bool = true, completion: @escaping (_ comment: String?) -> Void) {
         if live == nil || user == nil {
             logger.debug("no available stream, or user")
             return
@@ -173,35 +173,35 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         let success: (String) -> () = { postKey in
             let roomListener = self.assignedRoomListener()!
             roomListener.comment(live: self.live!, user: self.user!, postKey: postKey, comment: comment, anonymously: anonymously)
-            completion(comment: comment)
+            completion(comment)
         }
         
         let failure: () -> () = {
             logger.error("could not get post key")
-            completion(comment: nil)
+            completion(nil)
         }
         
         requestGetPostKey(success: success, failure: failure)
     }
     
-    func loadThumbnail(completion: (imageData: Data?) -> Void) {
+    func loadThumbnail(completion: @escaping (Data?) -> Void) {
         if live?.community.thumbnailUrl == nil {
             logger.debug("no thumbnail url")
-            completion(imageData: nil)
+            completion(nil)
             return
         }
         
         let httpCompletion: (URLResponse?, Data?, Error?) -> () = { (response, data, connectionError) in
             if connectionError != nil {
                 logger.error("error in loading thumbnail request")
-                completion(imageData: nil)
+                completion(nil)
                 return
             }
             
-            completion(imageData: data)
+            completion(data)
         }
         
-        cookiedAsyncRequest(httpMethod: "GET", url: live!.community.thumbnailUrl!, parameters: nil, completion: httpCompletion)
+        cookiedAsyncRequest(httpMethod: "GET", url: live!.community.thumbnailUrl!.absoluteString, parameters: nil, completion: httpCompletion)
     }
     
     func cachedUserName(forChat chat: Chat) -> String? {
@@ -220,20 +220,20 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         return cachedUserNames[userId]
     }
 
-    func resolveUsername(forUserId userId: String, completion: (userName: String?) -> Void) {
+    func resolveUsername(forUserId userId: String, completion: @escaping (String?) -> Void) {
         if !Chat.isRawUserId(userId) {
-            completion(userName: nil)
+            completion(nil)
             return
         }
         
         if let cachedUsername = cachedUserNames[userId] {
-            completion(userName: cachedUsername)
+            completion(cachedUsername)
             return
         }
 
         if kResolveUserNameOperationQueueOverloadThreshold < resolveUserNameOperationQueue.operationCount {
             logger.debug("detected overload, so skip resolve request")
-            completion(userName: nil)
+            completion(nil)
             return
         }
         
@@ -241,30 +241,30 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             let resolveCompletion = { (response: URLResponse?, data: Data?, connectionError: Error?) in
                 if connectionError != nil {
                     logger.error("error in resolving username")
-                    completion(userName: nil)
+                    completion(nil)
                     return
                 }
                 
                 let username = self.extractUsername(fromHtmlData: data!)
                 self.cachedUserNames[userId] = username
                 
-                completion(userName: username)
+                completion(username)
             }
             
             self.cookiedAsyncRequest(httpMethod: "GET", url: kUserUrl + String(userId), parameters: nil, completion: resolveCompletion)
         }
     }
     
-    func reportAsNgUser(chat: Chat, completion: (userId: String?) -> Void) {
+    func reportAsNgUser(chat: Chat, completion: @escaping (_ userId: String?) -> Void) {
         let httpCompletion: (URLResponse?, Data?, Error?) -> () = { (response, data, connectionError) in
             if connectionError != nil {
                 logger.error("error in requesting ng user")
-                completion(userId: nil)
+                completion(nil)
                 return
             }
             
             logger.debug("completed to request ng user")
-            completion(userId: chat.userId!)
+            completion(chat.userId!)
         }
         
         let parameters: [String: Any] = [
@@ -394,7 +394,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             return false
         }
         
-        if chat.internalNo < kDefaultResFrom {
+        if let internalNo = chat.internalNo, internalNo < kDefaultResFrom {
             // there is a possibility the kickout command is invoked as a result of my connection start. so ignore.
             return false
         }
@@ -497,12 +497,12 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         requestGetPlayerStatus(liveNumber: liveNumber!, success: success, failure: failure)
     }
     
-    private func requestGetPlayerStatus(liveNumber: Int, success: (live: Live, user: User, messageServer: MessageServer) -> Void, failure: (reason: String) -> Void) {
+    private func requestGetPlayerStatus(liveNumber: Int, success: @escaping (Live, User, MessageServer) -> Void, failure: @escaping (_ reason: String) -> Void) {
         let httpCompletion: (URLResponse?, Data?, Error?) -> () = { (response, data, connectionError) in
             if connectionError != nil {
                 let message = "error in cookied async request"
                 logger.error(message)
-                failure(reason: message)
+                failure(message)
                 return
             }
 
@@ -512,7 +512,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             guard let data = data else {
                 let message = "error in unpacking response data"
                 logger.error(message)
-                failure(reason: message)
+                failure(message)
                 return
             }
             
@@ -520,7 +520,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             
             if error {
                 logger.error(code)
-                failure(reason: code)
+                failure(code)
                 return
             }
             
@@ -535,22 +535,22 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             if live == nil || user == nil || messageServer == nil {
                 let message = "error in extracting getplayerstatus response"
                 logger.error(message)
-                failure(reason: message)
+                failure(message)
                 return
             }
             
-            success(live: live!, user: user!, messageServer: messageServer!)
+            success(live!, user!, messageServer!)
         }
         
         cookiedAsyncRequest(httpMethod: "GET", url: kGetPlayerStatusUrl, parameters: ["v": "lv" + String(liveNumber)], completion: httpCompletion)
     }
     
-    private func load(community: Community, success: () -> Void, failure: (reason: String) -> Void) {
+    private func load(community: Community, success: @escaping () -> Void, failure: @escaping (_ reason: String) -> Void) {
         let httpCompletion: (URLResponse?, Data?, Error?) -> () = { (response, data, connectionError) in
             if connectionError != nil {
                 let message = "error in cookied async request"
                 logger.error(message)
-                failure(reason: message)
+                failure(message)
                 return
             }
 
@@ -560,7 +560,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             guard let data = data else {
                 let message = "error in unpacking response data"
                 logger.error(message)
-                failure(reason: message)
+                failure(message)
                 return
             }
 
@@ -654,7 +654,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     // MARK: Comment
-    private func requestGetPostKey(success: (postKey: String) -> Void, failure: () -> Void) {
+    private func requestGetPostKey(success: @escaping (_ postKey: String) -> Void, failure: @escaping () -> Void) {
         if messageServer == nil {
             logger.error("cannot comment without messageServer")
             failure()
@@ -685,7 +685,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
                 return
             }
             
-            success(postKey: postKey!)
+            success(postKey!)
         }
         
         guard let assignedRoomListener = assignedRoomListener() else {

@@ -90,12 +90,10 @@ class ChromeCookie {
         let appSupportDirectory = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)[0] 
         let database = FMDatabase(path: appSupportDirectory + kDatabasePath)
         
-        let query = NSString(format: "SELECT host_key, name, encrypted_value FROM cookies " +
-            "WHERE host_key = '%@' and name = 'user_session'", ".nicovideo.jp")
-        
         database?.open()
         
-        let rows = database?.executeQuery(query as String, withArgumentsIn: [""])
+        let query = "SELECT host_key, name, encrypted_value FROM cookies WHERE host_key = '.nicovideo.jp' and name = 'user_session'"
+        let rows = database?.executeQuery(query, withArgumentsIn: [""])
         
         while (rows != nil && (rows?.next())!) {
             // var name = rows.stringForColumn("name")
@@ -105,7 +103,7 @@ class ChromeCookie {
             // logger.debug(encryptedValue)
             // we could not extract string from binary here
             
-            if (0 < encryptedValue?.count) {
+            if let encryptedValue = encryptedValue, 0 < encryptedValue.count {
                 encryptedCookie = encryptedValue
             }
         }
@@ -133,14 +131,14 @@ class ChromeCookie {
     
     // based on http://stackoverflow.com/a/25702855
     private class func aesKeyForPassword(_ password: Data, salt: Data, roundCount: Int) -> Data? {
-        let passwordPointer = UnsafePointer<Int8>((password as NSData).bytes)
+        let passwordPointer = unsafeBitCast((password as NSData).bytes, to: UnsafePointer<Int8>.self)
         let passwordLength = size_t(password.count)
         
-        let saltPointer = UnsafePointer<UInt8>((salt as NSData).bytes)
+        let saltPointer = unsafeBitCast((salt as NSData).bytes, to: UnsafePointer<UInt8>.self)
         let saltLength = size_t(salt.count)
         
         let derivedKey = NSMutableData(length: kCCKeySizeAES128)!
-        let derivedKeyPointer = UnsafeMutablePointer<UInt8>(derivedKey.mutableBytes)
+        let derivedKeyPointer = unsafeBitCast(derivedKey.mutableBytes, to: UnsafeMutablePointer<UInt8>.self)
         let derivedKeyLength = size_t(derivedKey.length)
         
         let result = CCKeyDerivationPBKDF(
@@ -164,16 +162,16 @@ class ChromeCookie {
     
     // based on http://stackoverflow.com/a/25755864
     private class func decryptCookie(_ encrypted: Data, aesKey: Data) -> Data? {
-        let aesKeyPointer = UnsafePointer<UInt8>((aesKey as NSData).bytes)
+        let aesKeyPointer = unsafeBitCast((aesKey as NSData).bytes, to: UnsafePointer<UInt8>.self)
         let aesKeyLength = size_t(kCCKeySizeAES128)
         // logger.debug("aesKeyPointer = \(aesKeyPointer), aesKeyLength = \(aesKeyData.length)")
         
-        let encryptedPointer = UnsafePointer<UInt8>((encrypted as NSData).bytes)
+        let encryptedPointer = unsafeBitCast((encrypted as NSData).bytes, to: UnsafePointer<UInt8>.self)
         let encryptedLength = size_t(encrypted.count)
         // logger.debug("encryptedPointer = \(encryptedPointer), encryptedDataLength = \(encryptedLength)")
         
         let decryptedData: NSMutableData! = NSMutableData(length: Int(encryptedLength) + kCCBlockSizeAES128)
-        let decryptedPointer = UnsafeMutablePointer<UInt8>(decryptedData.mutableBytes)
+        let decryptedPointer = unsafeBitCast(decryptedData.mutableBytes, to: UnsafeMutablePointer<UInt8>.self)
         let decryptedLength = size_t(decryptedData.length)
         
         var numBytesEncrypted :size_t = 0
@@ -204,7 +202,7 @@ class ChromeCookie {
 
     // http://stackoverflow.com/a/14205319
     private class func decryptedStringByRemovingPadding(_ data: Data) -> String? {
-        let paddingCount = Int(UnsafePointer<UInt8>((data as NSData).bytes)[data.count - 1])
+        let paddingCount = Int(unsafeBitCast((data as NSData).bytes, to: UnsafePointer<UInt8>.self)[data.count - 1])
         fileLogger.debug("padding character count:[\(paddingCount)]")
         
         // NSRange(location: 0, length: data.count - paddingCount)

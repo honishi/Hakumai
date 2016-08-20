@@ -109,16 +109,16 @@ class MessageContainer {
     }
     
     // MARK: - Utility
-    func calculateActive(_ completion: (active: Int?) -> (Void)) {
+    func calculateActive(_ completion: @escaping (_ active: Int?) -> (Void)) {
         if rebuildingFilteredMessages {
             logger.debug("detected rebuilding filtered messages, so skip calculating active.")
-            completion(active: nil)
+            completion(nil)
             return
         }
         
         if calculatingActive {
             logger.debug("detected duplicate calculating, so skip calculating active.")
-            completion(active: nil)
+            completion(nil)
             return
         }
         
@@ -170,7 +170,7 @@ class MessageContainer {
             
             // logger.debug("end counting active")
             
-            completion(active: activeUsers.count)
+            completion(activeUsers.count)
             
             objc_sync_enter(self)
             self.calculatingActive = false
@@ -178,7 +178,7 @@ class MessageContainer {
         }
     }
     
-    func rebuildFilteredMessages(_ completion: () -> Void) {
+    func rebuildFilteredMessages(_ completion: @escaping () -> Void) {
         // 1st pass:
         // copy and filter source messages. this could be long operation so use background thread
         DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async {

@@ -21,7 +21,7 @@ class HandleNameAddViewController: NSViewController {
     // also use NSString instead of String, cause .length property is used in button's enabled binding.
     dynamic var handleName: NSString = ""
     
-    var completion: ((cancelled: Bool, handleName: String?) -> Void)?
+    var completion: ((_ cancelled: Bool, _ handleName: String?) -> Void)?
 
     // MARK: - Object Lifecycle
     deinit {
@@ -33,10 +33,10 @@ class HandleNameAddViewController: NSViewController {
         guard 0 < handleName.length else {
             return
         }
-        completion?(cancelled: false, handleName: handleName as String)
+        completion?(false, handleName as String)
     }
     
     @IBAction func cancelToAdd(_ sender: AnyObject) {
-        completion?(cancelled: true, handleName: nil)
+        completion?(true, nil)
     }
 }
