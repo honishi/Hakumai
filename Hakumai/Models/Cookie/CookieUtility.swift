@@ -14,14 +14,16 @@ class CookieUtility {
         LoginCookie.requestCookie(mailAddress: mailAddress, password: password, completion: completion)
     }
     
-    class func requestBrowserCookieWithBrowserType(_ browserType: BrowserType) -> String? {
+    class func requestBrowserCookie(browserType: BrowserType, completion: @escaping(String?) -> Void) {
         switch (browserType) {
         case .chrome:
-            return ChromeCookie.storedCookie()
+            completion(ChromeCookie.storedCookie())
+        case .safari:
+            SafariCookie.storedCookie(callback: { cookie in
+                completion(cookie)
+            })
         default:
             break
         }
-        
-        return nil
     }
 }

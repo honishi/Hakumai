@@ -17,18 +17,18 @@ class BrowserHelper {
     
     // http://stackoverflow.com/a/6111592
     class func extractUrl(fromBrowser browserType: BrowserType) -> String? {
-        var browserName = ""
+        var source = ""
         
         switch browserType {
         case .chrome:
-            browserName = "Google Chrome"
+            source = "tell application \"Google Chrome\" to get URL of active tab of front window as string"
         case .safari:
-            browserName = "Safari"
+            source = "tell application \"Safari\" to get URL of current tab of front window as string"
         default:
             break
         }
         
-        let script = NSAppleScript(source: "tell application \"\(browserName)\" to get URL of active tab of front window as string")
+        let script = NSAppleScript(source: source)
         var scriptError: NSDictionary?
         let descriptor = script?.executeAndReturnError(&scriptError)
         

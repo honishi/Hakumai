@@ -694,7 +694,9 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     
     // MARK: Control Handlers
     @IBAction func grabUrlFromBrowser(_ sender: AnyObject) {
-        if let url = BrowserHelper.extractUrl(fromBrowser: .chrome) {
+        let session = SessionManagementType(rawValue: UserDefaults.standard.integer(forKey: Parameters.SessionManagement))!
+        let browser: BrowserHelper.BrowserType = session == .safari ? .safari : .chrome
+        if let url = BrowserHelper.extractUrl(fromBrowser: browser) {
             liveTextField.stringValue = url
             connectLive(self)
         }
@@ -719,9 +721,10 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
                     let password = account.password
                     NicoUtility.sharedInstance.connect(liveNumber: liveNumber, mailAddress: mailAddress, password: password)
                 }
-                
             case .chrome:
                 NicoUtility.sharedInstance.connect(liveNumber: liveNumber, browserType: .chrome)
+            case .safari:
+                NicoUtility.sharedInstance.connect(liveNumber: liveNumber, browserType: .safari)
             }
         }
     }

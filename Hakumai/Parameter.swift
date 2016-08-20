@@ -33,7 +33,7 @@ struct Parameters {
 enum SessionManagementType: Int {
     case login = 1000
     case chrome = 1001
-    // case Safari = 1002
+    case safari = 1002
 }
 
 // keychain

@@ -146,11 +146,11 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     func connect(liveNumber: Int, browserType: BrowserType) {
         clearUserSessionCookieIfReserved()
         
-        switch browserType {
-        case .chrome:
-            connect(liveNumber: liveNumber, userSessionCookie: CookieUtility.requestBrowserCookieWithBrowserType(.chrome))
-        default:
-            break
+        CookieUtility.requestBrowserCookie(browserType: browserType) { cookie in
+            guard let cookie = cookie else {
+                return
+            }
+            self.connect(liveNumber: liveNumber, userSessionCookie: cookie)
         }
     }
 
