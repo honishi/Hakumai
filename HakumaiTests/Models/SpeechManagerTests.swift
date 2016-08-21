@@ -26,12 +26,12 @@ class SpeechManagerTests: XCTestCase {
 
         comment = "母親を殴っていた自分が恥ずかしくなりました"
         expected = "母親を殴っていた自分が恥ずかしくなりました"
-        actual = SpeechManager.sharedManager.cleanComment(comment)
+        actual = SpeechManager.sharedManager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
 
         comment = "/press show yellow 母親を殴っていた自分が恥ずかしくなりました @ ラピス"
         expected = "母親を殴っていた自分が恥ずかしくなりました @ ラピス"
-        actual = SpeechManager.sharedManager.cleanComment(comment)
+        actual = SpeechManager.sharedManager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
     }
 }

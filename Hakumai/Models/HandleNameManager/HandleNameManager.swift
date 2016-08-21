@@ -37,43 +37,43 @@ class HandleNameManager {
     }
 
     // MARK: - Public Functions
-    func extractAndUpdateHandleNameWithLive(_ live: Live, chat: Chat) {
+    func extractAndUpdateHandleName(live: Live, chat: Chat) {
         if chat.userId == nil || chat.comment == nil {
             return
         }
         
-        if let handleName = extractHandleNameFromComment(chat.comment!) {
-            updateHandleNameWithLive(live, chat: chat, handleName: handleName)
+        if let handleName = extractHandleName(fromComment: chat.comment!) {
+            updateHandleName(live: live, chat: chat, handleName: handleName)
         }
     }
     
-    func updateHandleNameWithLive(_ live: Live, chat: Chat, handleName: String) {
+    func updateHandleName(live: Live, chat: Chat, handleName: String) {
         guard let communityId = live.community.community, let userId = chat.userId else {
             return
         }
         
         let anonymous = !chat.isRawUserId
-        insertOrReplaceHandleNameWithCommunityId(communityId, userId: userId, anonymous: anonymous, handleName: handleName)
+        insertOrReplaceHandleName(communityId: communityId, userId: userId, anonymous: anonymous, handleName: handleName)
     }
     
-    func removeHandleNameWithLive(_ live: Live, chat: Chat) {
+    func removeHandleName(live: Live, chat: Chat) {
         guard let communityId = live.community.community, let userId = chat.userId else {
             return
         }
 
-        deleteHandleNameWithCommunityId(communityId, userId: userId)
+        deleteHandleName(communityId: communityId, userId: userId)
     }
     
-    func handleNameForLive(_ live: Live, chat: Chat) -> String? {
+    func handleName(forLive live: Live, chat: Chat) -> String? {
         guard let communityId = live.community.community, let userId = chat.userId else {
             return nil
         }
         
-        return selectHandleNameWithCommunityId(communityId, userId: userId)
+        return selectHandleName(communityId: communityId, userId: userId)
     }
     
     // MARK: - Internal Functions
-    func extractHandleNameFromComment(_ comment: String) -> String? {
+    func extractHandleName(fromComment comment: String) -> String? {
         if comment.hasRegexp(pattern: kRegexpRemainingTime) {
             return nil
         }
@@ -124,7 +124,7 @@ class HandleNameManager {
         }
     }
     
-    func insertOrReplaceHandleNameWithCommunityId(_ communityId: String, userId: String, anonymous: Bool, handleName: String) {
+    func insertOrReplaceHandleName(communityId: String, userId: String, anonymous: Bool, handleName: String) {
         guard databaseQueue != nil else {
             logger.warning("database not ready")
             return
@@ -138,7 +138,7 @@ class HandleNameManager {
         }
     }
 
-    func selectHandleNameWithCommunityId(_ communityId: String, userId: String) -> String? {
+    func selectHandleName(communityId: String, userId: String) -> String? {
         guard let database = database else {
             return nil
         }
@@ -158,7 +158,7 @@ class HandleNameManager {
         return handleName
     }
     
-    private func deleteHandleNameWithCommunityId(_ communityId: String, userId: String) {
+    private func deleteHandleName(communityId: String, userId: String) {
         guard let database = database else {
             return
         }

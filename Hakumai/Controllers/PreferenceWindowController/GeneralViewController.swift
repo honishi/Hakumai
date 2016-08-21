@@ -115,7 +115,7 @@ class GeneralViewController: NSViewController {
                 self.checkAccountStatusLabel.stringValue = "Status: Success"
                 
                 KeychainUtility.removeAllAccountsInKeychain()
-                KeychainUtility.setAccountToKeychainWith(self.mailAddress as String, password: self.password as String)
+                KeychainUtility.setAccountToKeychain(mailAddress: self.mailAddress as String, password: self.password as String)
             }
         }
 

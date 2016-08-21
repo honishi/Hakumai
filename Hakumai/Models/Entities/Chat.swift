@@ -59,39 +59,37 @@ class Chat: CustomStringConvertible {
 
     // MARK: - Public Functions
     class func isRawUserId(_ userId: String?) -> Bool {
-        if userId == nil {
+        guard let userId = userId else {
             return false
         }
         
         let regexp = try! NSRegularExpression(pattern: "^\\d+$", options: [])
-        let matched = regexp.firstMatch(in: userId!, options: [], range: NSMakeRange(0, userId!.utf16.count))
+        let matched = regexp.firstMatch(in: userId, options: [], range: NSMakeRange(0, userId.utf16.count))
         
         return matched != nil ? true : false
     }
     
     class func isUserComment(_ premium: Premium?) -> Bool {
-        if premium == nil {
+        guard let premium = premium else {
             return false
         }
         
-        // use explicit unwrapping enum values, instead of implicit unwrapping like "premium == .Ippan"
-        // see details at http://stackoverflow.com/a/26204610
-        return (premium! == .ippan || premium! == .premium)
+        return premium == .ippan || premium == .premium
     }
     
     class func isBSPComment(_ premium: Premium?) -> Bool {
-        if premium == nil {
+        guard let premium = premium else {
             return false
         }
         
-        return (premium! == .bsp)
+        return premium == .bsp
     }
     
     class func isSystemComment(_ premium: Premium?) -> Bool {
-        if premium == nil {
+        guard let premium = premium else {
             return false
         }
         
-        return (premium! == .system || premium! == .caster || premium! == .operator)
+        return premium == .system || premium == .caster || premium == .operator
     }
 }

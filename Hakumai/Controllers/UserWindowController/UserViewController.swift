@@ -35,7 +35,7 @@ class UserViewController: NSViewController {
                     userNameLabelValue = userName
                 }
                 
-                messages = MessageContainer.sharedContainer.messagesWithUserId(userId)
+                messages = MessageContainer.sharedContainer.messages(fromUserId: userId)
             }
             else {
                 messages.removeAll(keepingCapacity: false)

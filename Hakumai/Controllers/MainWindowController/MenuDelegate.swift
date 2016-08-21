@@ -62,7 +62,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
             guard let live = live else {
                 return false
             }
-            let hasHandleName = (HandleNameManager.sharedManager.handleNameForLive(live, chat: chat) != nil)
+            let hasHandleName = (HandleNameManager.sharedManager.handleName(forLive: live, chat: chat) != nil)
             return hasHandleName
         case addToMuteUserMenuItem, reportAsNgUserMenuItem:
             return (chat.isUserComment || chat.isBSPComment)
@@ -142,7 +142,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         guard let live = live, let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat else {
             return
         }
-        HandleNameManager.sharedManager.removeHandleNameWithLive(live, chat: chat)
+        HandleNameManager.sharedManager.removeHandleName(live: live, chat: chat)
         MainViewController.sharedInstance.refreshHandleName()
     }
     

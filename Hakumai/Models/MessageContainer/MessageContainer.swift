@@ -57,7 +57,7 @@ class MessageContainer {
         
         sourceMessages.append(message)
 
-        let appended = appendMessage(message, messages: &filteredMessages)
+        let appended = append(message: message, into: &filteredMessages)
         let count = filteredMessages.count
         
         objc_sync_exit(self)
@@ -81,7 +81,7 @@ class MessageContainer {
         return content
     }
     
-    func messagesWithUserId(_ userId: String) -> [Message] {
+    func messages(fromUserId userId: String) -> [Message] {
         var userMessages = [Message]()
         
         objc_sync_enter(self)
@@ -109,7 +109,7 @@ class MessageContainer {
     }
     
     // MARK: - Utility
-    func calculateActive(_ completion: @escaping (_ active: Int?) -> (Void)) {
+    func calculateActive(completion: @escaping (Int?) -> (Void)) {
         if rebuildingFilteredMessages {
             logger.debug("detected rebuilding filtered messages, so skip calculating active.")
             completion(nil)
@@ -178,7 +178,7 @@ class MessageContainer {
         }
     }
     
-    func rebuildFilteredMessages(_ completion: @escaping () -> Void) {
+    func rebuildFilteredMessages(completion: @escaping () -> Void) {
         // 1st pass:
         // copy and filter source messages. this could be long operation so use background thread
         DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async {
@@ -188,7 +188,7 @@ class MessageContainer {
             let sourceCount = self.sourceMessages.count
             
             for i in 0..<sourceCount {
-                _ = self.appendMessage(self.sourceMessages[i], messages: &workingMessages)
+                _ = self.append(message: self.sourceMessages[i], into: &workingMessages)
             }
             
             // logger.debug("completed 1st pass")
@@ -208,7 +208,7 @@ class MessageContainer {
                 
                 let deltaCount = self.sourceMessages.count
                 for i in sourceCount..<deltaCount {
-                    _ = self.appendMessage(self.sourceMessages[i], messages: &self.filteredMessages)
+                    _ = self.append(message: self.sourceMessages[i], into: &self.filteredMessages)
                 }
                 // logger.debug("copied delta messages \(sourceCount)..<\(deltaCount)")
                 
@@ -225,10 +225,10 @@ class MessageContainer {
     
     // MARK: - Internal Functions
     // MARK: Filtered Message Append Utility
-    private func appendMessage(_ message: Message, messages: inout [Message]) -> Bool {
+    private func append(message: Message, into messages: inout [Message]) -> Bool {
         var appended = false
         
-        if shouldAppendMessage(message) {
+        if shouldAppend(message: message) {
             messages.append(message)
             appended = true
         }
@@ -236,7 +236,7 @@ class MessageContainer {
         return appended
     }
 
-    private func shouldAppendMessage(_ message: Message) -> Bool {
+    private func shouldAppend(message: Message) -> Bool {
         // filter by message type
         if message.messageType == .system {
             return true

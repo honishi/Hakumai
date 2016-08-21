@@ -28,7 +28,7 @@ class KeychainUtility {
         }
     }
     
-    class func setAccountToKeychainWith(_ mailAddress: String, password: String) {
+    class func setAccountToKeychain(mailAddress: String, password: String) {
         let serviceName = KeychainUtility.keychainServiceName()
         
         if SAMKeychain.setPassword(password, forService: serviceName, account: mailAddress) == true {

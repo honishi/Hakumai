@@ -314,7 +314,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             view.textField?.attributedStringValue = attributed
         case kUserIdColumnIdentifier:
             let userIdView = view as! UserIdTableCellView
-            let handleName = HandleNameManager.sharedManager.handleNameForLive(live!, chat: chat)
+            let handleName = HandleNameManager.sharedManager.handleName(forLive: live!, chat: chat)
             userIdView.info = (handleName: handleName, userId: chat.userId, premium: chat.premium, comment: chat.comment)
             userIdView.fontSize = tableViewFontSize
         case kPremiumColumnIdentifier:
@@ -464,7 +464,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     func nicoUtilityDidReceiveChat(_ nicoUtility: NicoUtility, chat: Chat) {
         // logger.debug("\(chat.mail),\(chat.comment)")
         if let live = live {
-            HandleNameManager.sharedManager.extractAndUpdateHandleNameWithLive(live, chat: chat)
+            HandleNameManager.sharedManager.extractAndUpdateHandleName(live: live, chat: chat)
         }
         appendTableView(chat)
         
@@ -610,7 +610,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         handleNameAddViewController.handleName = (defaultHandleName(live: live, chat: chat) ?? "") as NSString
         handleNameAddViewController.completion = { (cancelled: Bool, handleName: String?) -> Void in
             if !cancelled {
-                HandleNameManager.sharedManager.updateHandleNameWithLive(live, chat: chat, handleName: handleName!)
+                HandleNameManager.sharedManager.updateHandleName(live: live, chat: chat, handleName: handleName!)
                 MainViewController.sharedInstance.refreshHandleName()
             }
             
@@ -624,7 +624,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     private func defaultHandleName(live: Live, chat: Chat) -> String? {
         var defaultHandleName: String?
         
-        if let handleName = HandleNameManager.sharedManager.handleNameForLive(live, chat: chat) {
+        if let handleName = HandleNameManager.sharedManager.handleName(forLive: live, chat: chat) {
             defaultHandleName = handleName
         }
         else {
@@ -866,7 +866,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         }
 
         DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async {
-            SpeechManager.sharedManager.enqueueChat(chat)
+            SpeechManager.sharedManager.enqueue(chat: chat)
             
             if SpeechManager.sharedManager.refreshChatQueueIfQueuedTooMuch() {
                 // logSystemMessageToTableView("Refreshed speech queue.")

@@ -34,10 +34,10 @@ class MessageServerTests: XCTestCase {
     func testServerNumber() {
         var serverNumber: Int!
         
-        serverNumber = MessageServer.extractServerNumber("x")
+        serverNumber = MessageServer.extractServerNumber(fromAddress: "x")
         XCTAssert(serverNumber == nil, "")
         
-        serverNumber = MessageServer.extractServerNumber("msg102.live.nicovideo.jp")
+        serverNumber = MessageServer.extractServerNumber(fromAddress: "msg102.live.nicovideo.jp")
         XCTAssert(serverNumber == 102, "")
     }
     

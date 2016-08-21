@@ -46,7 +46,7 @@ class SpeechManager: NSObject {
         // use explicit main queue to ensure that the timer continues to run even when caller thread ends.
         DispatchQueue.main.async {
             self.timer = Timer.scheduledTimer(timeInterval: kDequeuChatTimerInterval, target: self,
-                selector: #selector(SpeechManager.dequeueChat(_:)), userInfo: nil, repeats: true)
+                selector: #selector(SpeechManager.dequeue(_:)), userInfo: nil, repeats: true)
         }
         
         logger.debug("started speech manager.")
@@ -66,7 +66,7 @@ class SpeechManager: NSObject {
         logger.debug("stopped speech manager.")
     }
     
-    func enqueueChat(_ chat: Chat) {
+    func enqueue(chat: Chat) {
         guard YukkuroidClient.isAvailable() else {
             return
         }
@@ -81,7 +81,7 @@ class SpeechManager: NSObject {
         chatQueue.append(chat)
     }
     
-    func dequeueChat(_ timer: Timer?) {
+    func dequeue(_ timer: Timer?) {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
         
@@ -105,9 +105,9 @@ class SpeechManager: NSObject {
             return
         }
         
-        voiceSpeed = adjustedVoiceSpeedWithChatQueueCount(chatQueue.count, currentVoiceSpeed: voiceSpeed)
+        voiceSpeed = adjustedVoiceSpeed(chatQueueCount: chatQueue.count, currentVoiceSpeed: voiceSpeed)
         YukkuroidClient.setVoiceSpeed(Int32(voiceSpeed), setting: 0)
-        YukkuroidClient.setKanjiText(cleanComment(comment))
+        YukkuroidClient.setKanjiText(cleanComment(from: comment))
         YukkuroidClient.pushPlayButton(0)
     }
 
@@ -124,7 +124,7 @@ class SpeechManager: NSObject {
     }
     
     // MARK: - Private Functions
-    private func adjustedVoiceSpeedWithChatQueueCount(_ count: Int, currentVoiceSpeed: Int) -> Int {
+    private func adjustedVoiceSpeed(chatQueueCount count: Int, currentVoiceSpeed: Int) -> Int {
         var candidateSpeed = kVoiceSpeedMap[0].speed
         
         if count == 0 {
@@ -142,7 +142,7 @@ class SpeechManager: NSObject {
     }
     
     // define as 'internal' for test
-    func cleanComment(_ comment: String) -> String {
+    func cleanComment(from comment: String) -> String {
         var clean: String = ""
         
         for pattern in kCleanCommentPatterns {

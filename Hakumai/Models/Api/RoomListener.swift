@@ -180,14 +180,14 @@ class RoomListener : NSObject, StreamDelegate {
                 if let readString = NSString(bytes: &readByte, length: actualRead, encoding: String.Encoding.utf8.rawValue) {
                     fileLogger.debug("read: [ \(readString) ]")
                     
-                    parsingString += streamByRemovingNull(readString as String)
+                    parsingString += streamByRemovingNull(fromStream: readString as String)
                     
-                    if !hasValidCloseBracket(parsingString) {
+                    if !hasValidCloseBracket(inStream: parsingString) {
                         fileLogger.warning("detected no-close-bracket stream, continue reading...")
                         continue
                     }
                     
-                    if !hasValidOpenBracket(parsingString) {
+                    if !hasValidOpenBracket(inStream: parsingString) {
                         fileLogger.warning("detected no-open-bracket stream, clearing buffer and continue reading...")
                         parsingString = ""
                         continue
@@ -215,24 +215,24 @@ class RoomListener : NSObject, StreamDelegate {
     }
 
     // MARK: Read Utility
-    func streamByRemovingNull(_ stream: String) -> String {
+    func streamByRemovingNull(fromStream: String) -> String {
         let regexp = try! NSRegularExpression(pattern: "\0", options: [])
-        let removed = regexp.stringByReplacingMatches(in: stream, options: [], range: NSMakeRange(0, stream.utf16.count), withTemplate: "")
+        let removed = regexp.stringByReplacingMatches(in: fromStream, options: [], range: NSMakeRange(0, fromStream.utf16.count), withTemplate: "")
         
         return removed
     }
     
-    func hasValidOpenBracket(_ stream: String) -> Bool {
-        return hasValidPatternInStream("^<", stream: stream)
+    func hasValidOpenBracket(inStream: String) -> Bool {
+        return hasValid(pattern: "^<", inStream: inStream)
     }
     
-    func hasValidCloseBracket(_ stream: String) -> Bool {
-        return hasValidPatternInStream(">$", stream: stream)
+    func hasValidCloseBracket(inStream: String) -> Bool {
+        return hasValid(pattern: ">$", inStream: inStream)
     }
     
-    private func hasValidPatternInStream(_ pattern: String, stream: String) -> Bool {
+    private func hasValid(pattern: String, inStream: String) -> Bool {
         let regexp = try! NSRegularExpression(pattern: pattern, options: [])
-        let matched = regexp.firstMatch(in: stream, options: [], range: NSMakeRange(0, stream.utf16.count))
+        let matched = regexp.firstMatch(in: inStream, options: [], range: NSMakeRange(0, inStream.utf16.count))
         
         return matched != nil ? true : false
     }
