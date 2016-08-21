@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11191" systemVersion="15G31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11198.2" systemVersion="15G31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11191"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11198.2"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -73,7 +73,7 @@
                                                 <action selector="openUrl:" target="Voe-Tx-rLC" id="22B-I0-jYi"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Grab URL from Chrome" keyEquivalent="u" id="Jqb-00-zb4">
+                                        <menuItem title="Grab URL from Browser" keyEquivalent="u" id="Jqb-00-zb4">
                                             <connections>
                                                 <action selector="grabUrlFromChrome:" target="Voe-Tx-rLC" id="qgK-4S-6R8"/>
                                             </connections>
@@ -410,13 +410,13 @@
                         <rect key="frame" x="0.0" y="0.0" width="479" height="400"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button toolTip="Grab URL from Chrome (⌘U)" translatesAutoresizingMaskIntoConstraints="NO" id="GRS-m4-7KE">
+                            <button toolTip="Grab URL from Browser (⌘U)" translatesAutoresizingMaskIntoConstraints="NO" id="GRS-m4-7KE">
                                 <rect key="frame" x="8" y="369" width="23" height="23"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="23" id="QDB-d2-UO4"/>
                                     <constraint firstAttribute="width" constant="23" id="eGg-Kp-cGi"/>
                                 </constraints>
-                                <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="ImportChrome" imagePosition="overlaps" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="T07-Jf-o94">
+                                <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="ImportLink" imagePosition="overlaps" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="T07-Jf-o94">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="cellTitle"/>
                                 </buttonCell>
@@ -425,7 +425,7 @@
                                 </connections>
                             </button>
                             <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gZN-es-bFO">
-                                <rect key="frame" x="39" y="370" width="432" height="22"/>
+                                <rect key="frame" x="35" y="370" width="436" height="22"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" placeholderString="⌘L (live url, live#)" drawsBackground="YES" usesSingleLineMode="YES" id="iDS-0h-Uje">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -821,7 +821,7 @@
                             <constraint firstItem="gpJ-ll-AbX" firstAttribute="centerY" secondItem="NQm-lE-rVr" secondAttribute="centerY" constant="-2" id="Epq-qe-yga"/>
                             <constraint firstItem="p3A-6s-IKD" firstAttribute="top" secondItem="pml-Sh-s7e" secondAttribute="bottom" constant="3" id="GLh-b4-ceG"/>
                             <constraint firstItem="vmz-z1-HHp" firstAttribute="top" secondItem="8WA-yo-AuZ" secondAttribute="bottom" constant="2" id="J0R-dd-SNv"/>
-                            <constraint firstItem="gZN-es-bFO" firstAttribute="leading" secondItem="GRS-m4-7KE" secondAttribute="trailing" constant="8" id="JVO-c5-pMe"/>
+                            <constraint firstItem="gZN-es-bFO" firstAttribute="leading" secondItem="GRS-m4-7KE" secondAttribute="trailing" constant="4" id="JVO-c5-pMe"/>
                             <constraint firstItem="GRS-m4-7KE" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="8" id="M6U-f2-PFt"/>
                             <constraint firstItem="GRS-m4-7KE" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="8" id="Mh4-sm-GZD"/>
                             <constraint firstItem="09h-Eb-cuW" firstAttribute="centerY" secondItem="p3A-6s-IKD" secondAttribute="centerY" id="Su1-Vs-HIZ"/>
@@ -1015,7 +1015,7 @@ Gw
         </scene>
     </scenes>
     <resources>
-        <image name="ImportChrome" width="46" height="46"/>
+        <image name="ImportLink" width="220" height="220"/>
         <image name="NoImage" width="128" height="128"/>
     </resources>
 </document>
