@@ -208,14 +208,14 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
 
         let commentTableColumn = tableView.tableColumn(withIdentifier: kCommentColumnIdentifier)!
         let commentColumnWidth = commentTableColumn.width
-        rowHeight = commentColumnHeight(message: message, width: commentColumnWidth)
+        rowHeight = commentColumnHeight(forMessage: message, width: commentColumnWidth)
         
         rowHeightCacher[message.messageNo] = rowHeight
         
         return rowHeight
     }
     
-    private func commentColumnHeight(message: Message, width: CGFloat) -> CGFloat {
+    private func commentColumnHeight(forMessage message: Message, width: CGFloat) -> CGFloat {
         let leadingSpace: CGFloat = 2
         let trailingSpace: CGFloat = 2
         let widthPadding = leadingSpace + trailingSpace
@@ -258,16 +258,16 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         let message = MessageContainer.sharedContainer[row]
         
         if message.messageType == .system {
-            configureView(forSystemMessage: message, tableColumn: tableColumn!, view: view!)
+            configure(view: view!, forSystemMessage: message, withTableColumn: tableColumn!)
         }
         else if message.messageType == .chat {
-            configureView(forChat: message, tableColumn: tableColumn!, view: view!)
+            configure(view: view!, forChat: message, withTableColumn: tableColumn!)
         }
         
         return view
     }
     
-    private func configureView(forSystemMessage message: Message, tableColumn: NSTableColumn, view: NSTableCellView) {
+    private func configure(view: NSTableCellView, forSystemMessage message: Message, withTableColumn tableColumn: NSTableColumn) {
         switch tableColumn.identifier {
         case kRoomPositionColumnIdentifier:
             let roomPositionView = (view as! RoomPositionTableCellView)
@@ -295,7 +295,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         }
     }
 
-    private func configureView(forChat message: Message, tableColumn: NSTableColumn, view: NSTableCellView) {
+    private func configure(view: NSTableCellView, forChat message: Message, withTableColumn tableColumn: NSTableColumn) {
         let chat = message.chat!
         
         switch tableColumn.identifier {
@@ -521,7 +521,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
                 }
                 
                 if (message.messageType == .chat) {
-                    self.handleSpeechWithChat(message.chat!)
+                    self.handleSpeech(chat: message.chat!)
                 }
                 
                 self.scrollView.flashScrollers()
@@ -858,7 +858,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         }
     }
     
-    private func handleSpeechWithChat(_ chat: Chat) {
+    private func handleSpeech(chat: Chat) {
         let enabled = UserDefaults.standard.bool(forKey: Parameters.EnableCommentSpeech)
         
         guard enabled else {
@@ -880,27 +880,19 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         rowHeightCacher.removeAll(keepingCapacity: false)
         tableView.reloadData()
     }
-    
+
     class func extractLiveNumber(from url: String) -> Int? {
         let liveNumberPattern = "\\d{9,}"
-        var pattern: String
+        let patterns = [
+                "http:\\/\\/live\\.nicovideo\\.jp\\/watch\\/lv(" + liveNumberPattern + ").*",
+                "lv(" + liveNumberPattern + ")",
+                "(" + liveNumberPattern + ")",
+        ]
 
-        pattern = "http:\\/\\/live\\.nicovideo\\.jp\\/watch\\/lv(" + liveNumberPattern + ").*"
-
-        if let extracted = url.extractRegexp(pattern: pattern) {
-            return Int(extracted)
-        }
-
-        pattern = "lv(" + liveNumberPattern + ")"
-
-        if let extracted = url.extractRegexp(pattern: pattern) {
-            return Int(extracted)
-        }
-
-        pattern = "(" + liveNumberPattern + ")"
-
-        if let extracted = url.extractRegexp(pattern: pattern) {
-            return Int(extracted)
+        for pattern in patterns {
+            if let extracted = url.extractRegexp(pattern: pattern), let number = Int(extracted) {
+                return number
+            }
         }
 
         return nil

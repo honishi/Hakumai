@@ -75,19 +75,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let defaults = UserDefaults.standard
         
         // general
-        defaults.addObserver(self, forKeyPath: Parameters.SessionManagement, options: ([.initial, .new]), context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.ShowIfseetnoCommands, options: ([.initial, .new]), context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.EnableCommentSpeech, options: ([.initial, .new]), context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.SessionManagement, options: [.initial, .new], context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.ShowIfseetnoCommands, options: [.initial, .new], context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.EnableCommentSpeech, options: [.initial, .new], context: nil)
         
         // mute
-        defaults.addObserver(self, forKeyPath: Parameters.EnableMuteUserIds, options: ([.initial, .new]), context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.MuteUserIds, options: ([.initial, .new]), context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.EnableMuteWords, options: ([.initial, .new]), context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.MuteWords, options: ([.initial, .new]), context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.EnableMuteUserIds, options: [.initial, .new], context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.MuteUserIds, options: [.initial, .new], context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.EnableMuteWords, options: [.initial, .new], context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.MuteWords, options: [.initial, .new], context: nil)
         
         // misc
-        defaults.addObserver(self, forKeyPath: Parameters.FontSize, options: ([.initial, .new]), context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.AlwaysOnTop, options: ([.initial, .new]), context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.FontSize, options: [.initial, .new], context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.AlwaysOnTop, options: [.initial, .new], context: nil)
     }
 
     // MARK: - Internal Functions

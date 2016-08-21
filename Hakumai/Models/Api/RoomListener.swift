@@ -215,24 +215,24 @@ class RoomListener : NSObject, StreamDelegate {
     }
 
     // MARK: Read Utility
-    func streamByRemovingNull(fromStream: String) -> String {
+    func streamByRemovingNull(fromStream stream: String) -> String {
         let regexp = try! NSRegularExpression(pattern: "\0", options: [])
-        let removed = regexp.stringByReplacingMatches(in: fromStream, options: [], range: NSMakeRange(0, fromStream.utf16.count), withTemplate: "")
+        let removed = regexp.stringByReplacingMatches(in: stream, options: [], range: NSMakeRange(0, stream.utf16.count), withTemplate: "")
         
         return removed
     }
     
-    func hasValidOpenBracket(inStream: String) -> Bool {
-        return hasValid(pattern: "^<", inStream: inStream)
+    func hasValidOpenBracket(inStream stream: String) -> Bool {
+        return hasValid(pattern: "^<", inStream: stream)
     }
     
-    func hasValidCloseBracket(inStream: String) -> Bool {
-        return hasValid(pattern: ">$", inStream: inStream)
+    func hasValidCloseBracket(inStream stream: String) -> Bool {
+        return hasValid(pattern: ">$", inStream: stream)
     }
     
-    private func hasValid(pattern: String, inStream: String) -> Bool {
+    private func hasValid(pattern: String, inStream stream: String) -> Bool {
         let regexp = try! NSRegularExpression(pattern: pattern, options: [])
-        let matched = regexp.firstMatch(in: inStream, options: [], range: NSMakeRange(0, inStream.utf16.count))
+        let matched = regexp.firstMatch(in: stream, options: [], range: NSMakeRange(0, stream.utf16.count))
         
         return matched != nil ? true : false
     }

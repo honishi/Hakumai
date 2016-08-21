@@ -52,7 +52,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         case copyCommentMenuItem, tweetCommentMenuItem:
             return true
         case openUrlMenuItem:
-            return urlStringInComment(chat) != nil ? true : false
+            return urlString(inComment: chat) != nil ? true : false
         case addHandleNameMenuItem:
             if live == nil {
                 return false
@@ -109,8 +109,8 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     
     @IBAction func openUrl(_ sender: AnyObject) {
         let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat!
-        let urlString = urlStringInComment(chat)!
-        NSWorkspace.shared().open(URL(string: urlString)!)
+        let url = urlString(inComment: chat)!
+        NSWorkspace.shared().open(URL(string: url)!)
     }
     
     @IBAction func tweetComment(_ sender: AnyObject) {
@@ -184,7 +184,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     }
     
     // MARK: - Internal Functions
-    func urlStringInComment(_ chat: Chat) -> String? {
+    func urlString(inComment chat: Chat) -> String? {
         if chat.comment == nil {
             return nil
         }

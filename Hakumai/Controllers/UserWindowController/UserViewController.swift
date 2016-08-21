@@ -91,14 +91,14 @@ class UserViewController: NSViewController {
 
         let commentTableColumn = tableView.tableColumn(withIdentifier: kCommentColumnIdentifier)!
         let commentColumnWidth = commentTableColumn.width
-        rowHeight = commentColumnHeight(message, width: commentColumnWidth)
+        rowHeight = commentColumnHeight(forMessage: message, width: commentColumnWidth)
         
         rowHeightCacher[message.messageNo] = rowHeight
         
         return rowHeight
     }
     
-    private func commentColumnHeight(_ message: Message, width: CGFloat) -> CGFloat {
+    private func commentColumnHeight(forMessage message: Message, width: CGFloat) -> CGFloat {
         let leadingSpace: CGFloat = 2
         let trailingSpace: CGFloat = 2
         let widthPadding = leadingSpace + trailingSpace
@@ -132,13 +132,13 @@ class UserViewController: NSViewController {
         let message = messages[row]
         
         if message.messageType == .chat {
-            configureView(forChat: message, tableColumn: tableColumn!, view: view!)
+            configure(view: view!, forChat: message, withTableColumn: tableColumn!)
         }
         
         return view
     }
     
-    private func configureView(forChat message: Message, tableColumn: NSTableColumn, view: NSTableCellView) {
+    private func configure(view: NSTableCellView, forChat message: Message, withTableColumn tableColumn: NSTableColumn) {
         let chat = message.chat!
         
         var attributed: NSAttributedString?
