@@ -12,6 +12,8 @@ import AppKit
 private let kStoryboardNameMainWindowController = "MainWindowController"
 private let kStoryboardIdHandleNameAddViewController = "HandleNameAddViewController"
 
+private let kConnectButtonImageNameStart = "StartLive"
+private let kConnectButtonImageNameStop = "StopLive"
 private let kCommunityImageDefaultName = "NoImage"
 private let kUserWindowDefautlTopLeftPoint = NSMakePoint(100, 100)
 private let kDelayToShowHbIfseetnoCommands: TimeInterval = 30
@@ -39,6 +41,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     @IBOutlet weak var tableView: NSTableView!
     
     @IBOutlet weak var commentTextField: NSTextField!
+    @IBOutlet weak var connectButton: NSButton!
     @IBOutlet weak var commentAnonymouslyButton: NSButton!
     @IBOutlet weak var elapsedLabel: NSTextField!
     @IBOutlet weak var activeLabel: NSTextField!
@@ -388,6 +391,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     // MARK: - NicoUtilityDelegate Functions
     func nicoUtilityWillPrepareLive(_ nicoUtility: NicoUtility) {
         DispatchQueue.main.async {
+            self.connectButton.isEnabled = false
             self.progressIndicator.startAnimation(self)
         }
     }
@@ -429,6 +433,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtility, reason: String) {
         logSystemMessageToTableView("Failed to prepare live.(\(reason))")
         DispatchQueue.main.async {
+            self.connectButton.isEnabled = true
             self.progressIndicator.stopAnimation(self)
         }
     }
@@ -438,6 +443,8 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             connectedToLive = true
             logSystemMessageToTableView("Connected to live.")
             DispatchQueue.main.async {
+                self.connectButton.isEnabled = true
+                self.connectButton.image = NSImage(named: kConnectButtonImageNameStop)
                 self.progressIndicator.stopAnimation(self)
             }
             updateSpeechManagerState()
@@ -491,6 +498,10 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         connectedToLive = false
         openedRoomPosition = nil
         updateSpeechManagerState()
+        
+        DispatchQueue.main.async {
+            self.connectButton.image = NSImage(named: kConnectButtonImageNameStart)
+        }
     }
     
     func nicoUtilityDidReceiveHeartbeat(_ nicoUtility: NicoUtility, heartbeat: Heartbeat) {
@@ -726,6 +737,14 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             case .safari:
                 NicoUtility.sharedInstance.connect(liveNumber: liveNumber, browserType: .safari)
             }
+        }
+    }
+    
+    @IBAction func connectButtonPressed(_ sender: AnyObject) {
+        if connectedToLive {
+            NicoUtility.sharedInstance.disconnect()
+        } else {
+            connectLive(self)
         }
     }
     

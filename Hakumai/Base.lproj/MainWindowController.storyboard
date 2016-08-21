@@ -425,7 +425,7 @@
                                 </connections>
                             </button>
                             <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gZN-es-bFO">
-                                <rect key="frame" x="35" y="370" width="436" height="22"/>
+                                <rect key="frame" x="35" y="370" width="409" height="22"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" placeholderString="⌘L (live url, live#)" drawsBackground="YES" usesSingleLineMode="YES" id="iDS-0h-Uje">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -806,6 +806,20 @@
                             <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="A3m-ux-Ivm">
                                 <rect key="frame" x="455" y="5" width="16" height="16"/>
                             </progressIndicator>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hii-Mo-bho">
+                                <rect key="frame" x="448" y="369" width="23" height="23"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="23" id="sHU-9D-NQq"/>
+                                    <constraint firstAttribute="height" constant="23" id="tRB-ro-kon"/>
+                                </constraints>
+                                <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="StartLive" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="WjB-ei-g5l">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="cellTitle"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="connectButtonPressed:" target="XfG-lQ-9wD" id="eXA-Cn-O87"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="x2d-KV-3zy" secondAttribute="trailing" constant="10" id="06t-Fh-ICK"/>
@@ -818,6 +832,7 @@
                             <constraint firstItem="3lG-BL-Thc" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="8" id="8ng-pl-uE0"/>
                             <constraint firstItem="NQm-lE-rVr" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="8" id="AOg-FI-Vpr"/>
                             <constraint firstItem="pml-Sh-s7e" firstAttribute="top" secondItem="3lG-BL-Thc" secondAttribute="bottom" constant="8" id="BNn-eE-KLl"/>
+                            <constraint firstItem="hii-Mo-bho" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="8" id="CkD-Gk-GV5"/>
                             <constraint firstItem="gpJ-ll-AbX" firstAttribute="centerY" secondItem="NQm-lE-rVr" secondAttribute="centerY" constant="-2" id="Epq-qe-yga"/>
                             <constraint firstItem="p3A-6s-IKD" firstAttribute="top" secondItem="pml-Sh-s7e" secondAttribute="bottom" constant="3" id="GLh-b4-ceG"/>
                             <constraint firstItem="vmz-z1-HHp" firstAttribute="top" secondItem="8WA-yo-AuZ" secondAttribute="bottom" constant="2" id="J0R-dd-SNv"/>
@@ -828,13 +843,14 @@
                             <constraint firstAttribute="trailing" secondItem="A3m-ux-Ivm" secondAttribute="trailing" constant="8" id="U6e-qq-p1R"/>
                             <constraint firstAttribute="bottom" secondItem="p3A-6s-IKD" secondAttribute="bottom" constant="5" id="W4n-H7-zbU"/>
                             <constraint firstAttribute="trailing" secondItem="vmz-z1-HHp" secondAttribute="trailing" constant="10" id="W9o-q0-DKK"/>
-                            <constraint firstAttribute="trailing" secondItem="gZN-es-bFO" secondAttribute="trailing" constant="8" id="X7M-qF-7Kx"/>
+                            <constraint firstItem="hii-Mo-bho" firstAttribute="leading" secondItem="gZN-es-bFO" secondAttribute="trailing" constant="4" id="Wea-Pp-Ovm"/>
                             <constraint firstItem="8WA-yo-AuZ" firstAttribute="leading" secondItem="65a-aX-RIL" secondAttribute="trailing" constant="10" id="ZKg-0C-pes"/>
                             <constraint firstItem="x2d-KV-3zy" firstAttribute="top" secondItem="vmz-z1-HHp" secondAttribute="bottom" constant="2" id="bDz-aR-Vgk"/>
                             <constraint firstItem="0js-wz-rh5" firstAttribute="leading" secondItem="09h-Eb-cuW" secondAttribute="trailing" constant="15" id="cKm-sj-IvV"/>
                             <constraint firstItem="NQm-lE-rVr" firstAttribute="top" secondItem="GRS-m4-7KE" secondAttribute="bottom" constant="8" id="cPF-1p-eOV"/>
                             <constraint firstItem="gZN-es-bFO" firstAttribute="centerY" secondItem="GRS-m4-7KE" secondAttribute="centerY" id="dWU-SN-ler"/>
                             <constraint firstItem="UtQ-bi-lar" firstAttribute="leading" secondItem="pml-Sh-s7e" secondAttribute="trailing" constant="8" id="dxX-hn-x7N"/>
+                            <constraint firstAttribute="trailing" secondItem="hii-Mo-bho" secondAttribute="trailing" constant="8" id="eoQ-Ki-skI"/>
                             <constraint firstItem="vmz-z1-HHp" firstAttribute="top" secondItem="8WA-yo-AuZ" secondAttribute="bottom" constant="2" id="fCv-li-LKJ"/>
                             <constraint firstItem="3lG-BL-Thc" firstAttribute="top" secondItem="NQm-lE-rVr" secondAttribute="bottom" constant="8" id="gmF-yV-so1"/>
                             <constraint firstItem="gpJ-ll-AbX" firstAttribute="leading" secondItem="NQm-lE-rVr" secondAttribute="trailing" constant="8" id="hOl-O8-4Lf"/>
@@ -858,6 +874,7 @@
                         <outlet property="commentsLabel" destination="vmz-z1-HHp" id="zEw-JV-b7X"/>
                         <outlet property="communityImageView" destination="NQm-lE-rVr" id="Vlq-76-e8s"/>
                         <outlet property="communityTitleLabel" destination="mqT-iT-cC6" id="JMh-Lc-OmS"/>
+                        <outlet property="connectButton" destination="hii-Mo-bho" id="UHG-jK-W7S"/>
                         <outlet property="elapsedLabel" destination="p3A-6s-IKD" id="6T8-le-0s2"/>
                         <outlet property="liveTextField" destination="gZN-es-bFO" id="vZe-3V-txV"/>
                         <outlet property="liveTitleLabel" destination="65a-aX-RIL" id="uvT-R4-GZO"/>
@@ -1017,5 +1034,6 @@ Gw
     <resources>
         <image name="ImportLink" width="220" height="220"/>
         <image name="NoImage" width="128" height="128"/>
+        <image name="StartLive" width="220" height="220"/>
     </resources>
 </document>
