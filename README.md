@@ -2,7 +2,8 @@
 
 [![Build Status](https://travis-ci.org/honishi/Hakumai.svg?branch=develop)](https://travis-ci.org/honishi/Hakumai)
 
-niconama comment viewer alternative for mac os x. download available at [http://honishi.github.io/Hakumai](http://honishi.github.io/Hakumai).
+* niconama comment viewer alternative for mac os x.
+* download available at [http://honishi.github.io/Hakumai](http://honishi.github.io/Hakumai).
 
 <img src="./document/screenshot/main.png" width="600px">
 
