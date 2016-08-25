@@ -1,4 +1,4 @@
-![Hakumai](./document/image/logo.png)
+<img src="./document/image/logo.png" width="500px">
 
 [![Build Status](https://travis-ci.org/honishi/Hakumai.svg?branch=develop)](https://travis-ci.org/honishi/Hakumai)
 
