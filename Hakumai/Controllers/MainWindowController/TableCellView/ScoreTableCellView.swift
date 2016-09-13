@@ -20,45 +20,45 @@ class ScoreTableCellView: NSTableCellView {
 
     var chat: Chat? = nil {
         didSet {
-            coloredView.fillColor = colorForChatScore(chat)
-            scoreLabel.stringValue = stringForChatScore(chat)
+            coloredView.fillColor = color(forChatScore: chat)
+            scoreLabel.stringValue = string(forChatScore: chat)
         }
     }
     
     var fontSize: CGFloat? {
         didSet {
-            setFontSize(fontSize)
+            set(fontSize: fontSize)
         }
     }
     
     // MARK: - Internal Functions
-    private func colorForChatScore(chat: Chat?) -> NSColor {
+    private func color(forChatScore chat: Chat?) -> NSColor {
         // println("\(score)")
-        if chat == nil {
+        guard let chat = chat, let score = chat.score else {
             return UIHelper.systemMessageColorBackground()
         }
         
-        if chat!.isSystemComment {
+        if chat.isSystemComment {
             return UIHelper.systemMessageColorBackground()
         }
         
-        if chat!.score == kScoreThresholdGreen {
+        if score == kScoreThresholdGreen {
             return UIHelper.scoreColorGreen()
         }
-        else if kScoreThresholdLightGreen < chat!.score && chat!.score < kScoreThresholdGreen {
+        else if kScoreThresholdLightGreen < score && score < kScoreThresholdGreen {
             return UIHelper.scoreColorLightGreen()
         }
-        else if kScoreThresholdYellow < chat!.score && chat!.score <= kScoreThresholdLightGreen {
+        else if kScoreThresholdYellow < score && score <= kScoreThresholdLightGreen {
             return UIHelper.scoreColorYellow()
         }
-        else if kScoreThresholdOrange < chat!.score && chat!.score <= kScoreThresholdYellow {
+        else if kScoreThresholdOrange < score && score <= kScoreThresholdYellow {
             return UIHelper.scoreColorOrange()
         }
         
         return UIHelper.scoreColorRed()
     }
     
-    private func stringForChatScore(chat: Chat?) -> String {
+    private func string(forChatScore chat: Chat?) -> String {
         var string = ""
         
         if let unwrapped = chat?.score {
@@ -68,8 +68,8 @@ class ScoreTableCellView: NSTableCellView {
         return string
     }
     
-    private func setFontSize(fontSize: CGFloat?) {
+    private func set(fontSize: CGFloat?) {
         let size = fontSize ?? CGFloat(kDefaultFontSize)
-        scoreLabel.font = NSFont.systemFontOfSize(size)
+        scoreLabel.font = NSFont.systemFont(ofSize: size)
     }
 }

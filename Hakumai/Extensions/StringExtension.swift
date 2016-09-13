@@ -17,8 +17,8 @@ extension String {
         return Array(characters)[i]
     }
     
-    // "立ち見A列".extractRegexpPattern("立ち見(\\w)列") -> Optional("A")
-    func extractRegexpPattern(pattern: String) -> String? {
+    // "立ち見A列".extractRegexp(pattern: "立ち見(\\w)列") -> Optional("A")
+    func extractRegexp(pattern: String) -> String? {
         // convert String to NSString to handle regular expression as expected.
         // with String, we could not handle the pattern like "ﾊﾃﾞだなｗ".extranctRegexpPattern("(ｗ)")
         // see details at http://stackoverflow.com/a/27192734
@@ -29,26 +29,26 @@ extension String {
             return nil
         }
         
-        let matched = regexp.firstMatchInString(nsStringSelf as String, options: [], range: NSMakeRange(0, nsStringSelf.length))
+        let matched = regexp.firstMatch(in: nsStringSelf as String, options: [], range: NSMakeRange(0, nsStringSelf.length))
         if matched == nil {
             return nil
         }
         
-        let nsRange = matched!.rangeAtIndex(1)
-        let nsSubstring = nsStringSelf.substringWithRange(nsRange)
+        let nsRange = matched!.rangeAt(1)
+        let nsSubstring = nsStringSelf.substring(with: nsRange)
 
         return (nsSubstring as String)
     }
     
-    func hasRegexpPattern(pattern: String) -> Bool {
-        return (extractRegexpPattern("(" + pattern + ")") != nil)
+    func hasRegexp(pattern: String) -> Bool {
+        return (extractRegexp(pattern: "(" + pattern + ")") != nil)
     }
     
-    func stringByRemovingPattern(pattern: String) -> String {
+    func stringByRemovingRegexp(pattern: String) -> String {
         let nsStringSelf = (self as NSString)
         
         let regexp = try! NSRegularExpression(pattern: pattern, options: [])
-        let removed = regexp.stringByReplacingMatchesInString(nsStringSelf as String, options: [], range: NSMakeRange(0, nsStringSelf.length), withTemplate: "")
+        let removed = regexp.stringByReplacingMatches(in: nsStringSelf as String, options: [], range: NSMakeRange(0, nsStringSelf.length), withTemplate: "")
         
         return (removed as String)
     }
@@ -60,14 +60,14 @@ extension String {
             return nil
         }
         
-        let number = NSNumber(integer: intValue)
+        let number = NSNumber(value: intValue)
         
-        let formatter = NSNumberFormatter()
-        formatter.numberStyle = .DecimalStyle
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
         formatter.groupingSeparator = ","
         formatter.groupingSize = 3
         
-        return formatter.stringFromNumber(number)
+        return formatter.string(from: number)
     }
 }
 

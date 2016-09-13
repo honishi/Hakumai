@@ -15,7 +15,7 @@ class Chat: CustomStringConvertible {
     var internalNo: Int?
     var roomPosition: RoomPosition?
     var no: Int?
-    var date: NSDate?
+    var date: Date?
     var dateUsec: Int?
     var mail = [String]()
     var userId: String?
@@ -40,7 +40,7 @@ class Chat: CustomStringConvertible {
     }
     
     var kickOutSeatNo: Int? {
-        let seatNo = comment?.extractRegexpPattern(kRegexpSeatNo)
+        let seatNo = comment?.extractRegexp(pattern: kRegexpSeatNo)
         return seatNo == nil ? nil : Int(seatNo!)
     }
     
@@ -58,40 +58,38 @@ class Chat: CustomStringConvertible {
     }
 
     // MARK: - Public Functions
-    class func isRawUserId(userId: String?) -> Bool {
-        if userId == nil {
+    class func isRawUserId(_ userId: String?) -> Bool {
+        guard let userId = userId else {
             return false
         }
         
         let regexp = try! NSRegularExpression(pattern: "^\\d+$", options: [])
-        let matched = regexp.firstMatchInString(userId!, options: [], range: NSMakeRange(0, userId!.utf16.count))
+        let matched = regexp.firstMatch(in: userId, options: [], range: NSMakeRange(0, userId.utf16.count))
         
         return matched != nil ? true : false
     }
     
-    class func isUserComment(premium: Premium?) -> Bool {
-        if premium == nil {
+    class func isUserComment(_ premium: Premium?) -> Bool {
+        guard let premium = premium else {
             return false
         }
         
-        // use explicit unwrapping enum values, instead of implicit unwrapping like "premium == .Ippan"
-        // see details at http://stackoverflow.com/a/26204610
-        return (premium! == .Ippan || premium! == .Premium)
+        return premium == .ippan || premium == .premium
     }
     
-    class func isBSPComment(premium: Premium?) -> Bool {
-        if premium == nil {
+    class func isBSPComment(_ premium: Premium?) -> Bool {
+        guard let premium = premium else {
             return false
         }
         
-        return (premium! == .BSP)
+        return premium == .bsp
     }
     
-    class func isSystemComment(premium: Premium?) -> Bool {
-        if premium == nil {
+    class func isSystemComment(_ premium: Premium?) -> Bool {
+        guard let premium = premium else {
             return false
         }
         
-        return (premium! == .System || premium! == .Caster || premium! == .Operator)
+        return premium == .system || premium == .caster || premium == .operator
     }
 }

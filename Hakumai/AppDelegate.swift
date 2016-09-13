@@ -12,26 +12,23 @@ import AppKit
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: - NSApplicationDelegate Functions
-    func applicationDidFinishLaunching(aNotification: NSNotification) {
+    func applicationDidFinishLaunching(_ notification: Notification) {
         Helper.setupLogger(logger)
         migrateApplicationVersion()
         initializeUserDefaults()
         addObserverForUserDefaults()
     }
 
-    func applicationWillTerminate(aNotification: NSNotification) {
-    }
-    
-    func applicationShouldTerminateAfterLastWindowClosed(sender: NSApplication) -> Bool {
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         return true
     }
     
     // MARK: Application Initialize Utility
     private func migrateApplicationVersion() {
-        let defaults = NSUserDefaults.standardUserDefaults()
+        let defaults = UserDefaults.standard
         
-        let lastVersion = defaults.stringForKey(Parameters.LastLaunchedApplicationVersion)
-        let currentVersion = (NSBundle.mainBundle().infoDictionary!["CFBundleVersion"] as? String)
+        let lastVersion = defaults.string(forKey: Parameters.LastLaunchedApplicationVersion)
+        let currentVersion = (Bundle.main.infoDictionary!["CFBundleVersion"] as? String)
         logger.info("last launched app version:[\(lastVersion)] current app version:[\(currentVersion)]")
 
         if lastVersion == nil {
@@ -56,13 +53,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
         
-        defaults.setObject(currentVersion!, forKey: Parameters.LastLaunchedApplicationVersion)
+        defaults.set(currentVersion!, forKey: Parameters.LastLaunchedApplicationVersion)
         defaults.synchronize()
     }
     
     private func initializeUserDefaults() {
-        let defaults: [String: AnyObject] = [
-            Parameters.SessionManagement: SessionManagementType.Chrome.rawValue,
+        let defaults: [String: Any] = [
+            Parameters.SessionManagement: SessionManagementType.chrome.rawValue,
             Parameters.ShowIfseetnoCommands: false,
             Parameters.FontSize: kDefaultFontSize,
             Parameters.EnableCommentSpeech: false,
@@ -71,31 +68,31 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             Parameters.AlwaysOnTop: false,
             Parameters.CommentAnonymously: true]
 
-        NSUserDefaults.standardUserDefaults().registerDefaults(defaults)
+        UserDefaults.standard.register(defaults: defaults)
     }
     
     private func addObserverForUserDefaults() {
-        let defaults = NSUserDefaults.standardUserDefaults()
+        let defaults = UserDefaults.standard
         
         // general
-        defaults.addObserver(self, forKeyPath: Parameters.SessionManagement, options: ([.Initial, .New]), context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.ShowIfseetnoCommands, options: ([.Initial, .New]), context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.EnableCommentSpeech, options: ([.Initial, .New]), context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.SessionManagement, options: [.initial, .new], context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.ShowIfseetnoCommands, options: [.initial, .new], context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.EnableCommentSpeech, options: [.initial, .new], context: nil)
         
         // mute
-        defaults.addObserver(self, forKeyPath: Parameters.EnableMuteUserIds, options: ([.Initial, .New]), context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.MuteUserIds, options: ([.Initial, .New]), context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.EnableMuteWords, options: ([.Initial, .New]), context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.MuteWords, options: ([.Initial, .New]), context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.EnableMuteUserIds, options: [.initial, .new], context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.MuteUserIds, options: [.initial, .new], context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.EnableMuteWords, options: [.initial, .new], context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.MuteWords, options: [.initial, .new], context: nil)
         
         // misc
-        defaults.addObserver(self, forKeyPath: Parameters.FontSize, options: ([.Initial, .New]), context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.AlwaysOnTop, options: ([.Initial, .New]), context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.FontSize, options: [.initial, .new], context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.AlwaysOnTop, options: [.initial, .new], context: nil)
     }
 
     // MARK: - Internal Functions
     // MARK: KVO Functions
-    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         // logger.debug("detected observing value changed: key[\(keyPath)]")
         guard let keyPath = keyPath, let change = change else {
             return
@@ -106,42 +103,42 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             NicoUtility.sharedInstance.reserveToClearUserSessionCookie()
             
         case Parameters.ShowIfseetnoCommands:
-            if let changed = change["new"] as? Bool {
+            if let changed = change[.newKey] as? Bool {
                 MainViewController.sharedInstance.changeShowHbIfseetnoCommands(changed)
             }
             
         case Parameters.EnableCommentSpeech:
-            if let changed = change["new"] as? Bool {
+            if let changed = change[.newKey] as? Bool {
                 MainViewController.sharedInstance.changeEnableCommentSpeech(changed)
             }
             
         case Parameters.EnableMuteUserIds:
-            if let changed = change["new"] as? Bool {
+            if let changed = change[.newKey] as? Bool {
                 MainViewController.sharedInstance.changeEnableMuteUserIds(changed)
             }
             
         case Parameters.MuteUserIds:
-            if let changed = change["new"] as? [[String: String]] {
+            if let changed = change[.newKey] as? [[String: String]] {
                 MainViewController.sharedInstance.changeMuteUserIds(changed)
             }
             
         case Parameters.EnableMuteWords:
-            if let changed = change["new"] as? Bool {
+            if let changed = change[.newKey] as? Bool {
                 MainViewController.sharedInstance.changeEnableMuteWords(changed)
             }
             
         case Parameters.MuteWords:
-            if let changed = change["new"] as? [[String: String]] {
+            if let changed = change[.newKey] as? [[String: String]] {
                 MainViewController.sharedInstance.changeMuteWords(changed)
             }
 
         case Parameters.FontSize:
-            if let changed = change["new"] as? Float {
+            if let changed = change[.newKey] as? Float {
                 MainViewController.sharedInstance.changeFontSize(CGFloat(changed))
             }
             
         case Parameters.AlwaysOnTop:
-            if let newValue = change["new"] as? Bool {
+            if let newValue = change[.newKey] as? Bool {
                 makeWindowAlwaysOnTop(newValue)
             }
             
@@ -151,31 +148,31 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     // MARK: Menu Handlers
-    @IBAction func openPreferences(sender: AnyObject) {
+    @IBAction func openPreferences(_ sender: AnyObject) {
         PreferenceWindowController.sharedInstance.showWindow(self)
     }
     
-    @IBAction func openUrl(sender: AnyObject) {
+    @IBAction func openUrl(_ sender: AnyObject) {
         MainViewController.sharedInstance.focusLiveTextField()
     }
     
-    @IBAction func grabUrlFromChrome(sender: AnyObject) {
+    @IBAction func grabUrlFromChrome(_ sender: AnyObject) {
         MainViewController.sharedInstance.grabUrlFromBrowser(self)
     }
 
-    @IBAction func newComment(sender: AnyObject) {
+    @IBAction func newComment(_ sender: AnyObject) {
         MainViewController.sharedInstance.focusCommentTextField()
     }
     
-    @IBAction func zoomDefault(sender: AnyObject) {
+    @IBAction func zoomDefault(_ sender: AnyObject) {
         setFontSize(kDefaultFontSize)
     }
     
-    @IBAction func zoomIn(sender: AnyObject) {
+    @IBAction func zoomIn(_ sender: AnyObject) {
         incrementFontSize(1)
     }
     
-    @IBAction func zoomOut(sender: AnyObject) {
+    @IBAction func zoomOut(_ sender: AnyObject) {
         incrementFontSize(-1)
     }
 
@@ -183,25 +180,24 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // see details at http://stackoverflow.com/a/13613507
     
     // MARK: Misc
-    private func makeWindowAlwaysOnTop(alwaysOnTop: Bool) {
-        let window = NSApplication.sharedApplication().windows[0] 
+    private func makeWindowAlwaysOnTop(_ alwaysOnTop: Bool) {
+        let window = NSApplication.shared().windows[0] 
         window.alwaysOnTop = alwaysOnTop
         
         logger.debug("changed always on top: \(alwaysOnTop)")
     }
     
-    private func incrementFontSize(increment: Float) {
-        setFontSize(NSUserDefaults.standardUserDefaults().floatForKey(Parameters.FontSize) + increment)
+    private func incrementFontSize(_ increment: Float) {
+        setFontSize(UserDefaults.standard.float(forKey: Parameters.FontSize) + increment)
     }
     
-    private func setFontSize(fontSize: Float) {
+    private func setFontSize(_ fontSize: Float) {
         guard kMinimumFontSize...kMaximumFontSize ~= fontSize else {
             return
         }
         
-        let defaults = NSUserDefaults.standardUserDefaults()
-        defaults.setFloat(fontSize, forKey: Parameters.FontSize)
-        defaults.synchronize()
+        UserDefaults.standard.set(fontSize, forKey: Parameters.FontSize)
+        UserDefaults.standard.synchronize()
     }
 }
 

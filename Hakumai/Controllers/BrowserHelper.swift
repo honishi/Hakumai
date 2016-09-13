@@ -10,25 +10,25 @@ import Foundation
 
 class BrowserHelper {
     enum BrowserType {
-        case Chrome
-        case Safari
-        case Firefox
+        case chrome
+        case safari
+        case firefox
     }
     
     // http://stackoverflow.com/a/6111592
-    class func urlFromBrowser(browserType: BrowserType) -> String? {
-        var browserName = ""
+    class func extractUrl(fromBrowser browserType: BrowserType) -> String? {
+        var source = ""
         
         switch browserType {
-        case .Chrome:
-            browserName = "Google Chrome"
-        case .Safari:
-            browserName = "Safari"
+        case .chrome:
+            source = "tell application \"Google Chrome\" to get URL of active tab of front window as string"
+        case .safari:
+            source = "tell application \"Safari\" to get URL of current tab of front window as string"
         default:
             break
         }
         
-        let script = NSAppleScript(source: "tell application \"\(browserName)\" to get URL of active tab of front window as string")
+        let script = NSAppleScript(source: source)
         var scriptError: NSDictionary?
         let descriptor = script?.executeAndReturnError(&scriptError)
         
@@ -38,9 +38,9 @@ class BrowserHelper {
         
         var result: String?
         
-        if let unicode = descriptor?.coerceToDescriptorType(UInt32(typeUnicodeText)) {
+        if let unicode = descriptor?.coerce(toDescriptorType: UInt32(typeUnicodeText)) {
             let data = unicode.data
-            result = NSString(characters: UnsafePointer<unichar>(data.bytes), length: (data.length / sizeof(unichar))) as String
+            result = NSString(characters: unsafeBitCast((data as NSData).bytes, to: UnsafePointer<unichar>.self), length: (data.count / MemoryLayout<unichar>.size)) as String
         }
         
         return result

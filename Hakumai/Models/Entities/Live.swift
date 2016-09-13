@@ -15,9 +15,9 @@ class Live: CustomStringConvertible {
     var liveId: String?
     var title: String?
     var community: Community = Community()
-    var baseTime: NSDate?
-    var openTime: NSDate?
-    var startTime: NSDate?
+    var baseTime: Date?
+    var openTime: Date?
+    var startTime: Date?
     
     var liveUrlString: String {
         return kLiveBaseUrl + (liveId ?? "")

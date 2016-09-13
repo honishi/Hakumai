@@ -5,22 +5,32 @@ PODS:
   - Ono (1.2.2)
   - SAMKeychain (1.5.0)
   - Sparkle (1.14.0)
-  - XCGLogger (3.3)
+  - XCGLogger (4.0.0-beta.3)
 
 DEPENDENCIES:
   - FMDB (~> 2.6.2)
   - Ono (~> 1.2.2)
   - SAMKeychain (~> 1.5.0)
   - Sparkle (~> 1.14.0)
-  - XCGLogger (~> 3.3)
+  - XCGLogger (from `https://github.com/DaveWoodCom/XCGLogger.git`, commit `31aa5c1dd068f6550772e34ba01d667a1b5ff2de`)
+
+EXTERNAL SOURCES:
+  XCGLogger:
+    :commit: 31aa5c1dd068f6550772e34ba01d667a1b5ff2de
+    :git: https://github.com/DaveWoodCom/XCGLogger.git
+
+CHECKOUT OPTIONS:
+  XCGLogger:
+    :commit: 31aa5c1dd068f6550772e34ba01d667a1b5ff2de
+    :git: https://github.com/DaveWoodCom/XCGLogger.git
 
 SPEC CHECKSUMS:
   FMDB: 854a0341b4726e53276f2a8996f06f1b80f9259a
   Ono: 80b1c686777d3f6d5d5ce6fcac8a74afef4ca197
   SAMKeychain: 1fc9ae02f576365395758b12888c84704eebc423
   Sparkle: ccd95233b12a3e3d4eeb55ff01dd4c8bb8188b07
-  XCGLogger: d6e196e78940ff6daab17d6917107876f973fa31
+  XCGLogger: 07183e4727cd4dba984456721e949b1663d6dc22
 
-PODFILE CHECKSUM: b28c03b4e14fad13917e114d69c91a0d757e3c5c
+PODFILE CHECKSUM: 73eba3554daf96c0c0ca5f333a87e65c7f8a507b
 
 COCOAPODS: 1.0.1

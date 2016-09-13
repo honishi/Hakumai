@@ -15,13 +15,13 @@ private let kStoryboardIdGeneralViewController = "GeneralViewController"
 
 // - @objc() is required http://stackoverflow.com/a/27178765
 // - sample that returns bool http://stackoverflow.com/a/8327909
-@objc(IsLoginSessionManagementTransformer) class IsLoginSessionManagementTransformer: NSValueTransformer {
+@objc(IsLoginSessionManagementTransformer) class IsLoginSessionManagementTransformer: ValueTransformer {
     override class func transformedValueClass() -> AnyClass {
         return NSNumber.self
     }
     
-    override func transformedValue(value: AnyObject!) -> AnyObject? {
-        return value.integerValue == SessionManagementType.Login.rawValue ? NSNumber(bool: true) : NSNumber(bool: false)
+    override func transformedValue(_ value: Any?) -> Any? {
+        return (value as! Int) == SessionManagementType.login.rawValue ? NSNumber(value: true) : NSNumber(value: false)
     }
 }
 
@@ -49,7 +49,7 @@ class GeneralViewController: NSViewController {
     // MARK: - Object Lifecycle
     class func generateInstance() -> GeneralViewController {
         let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
-        return (storyboard.instantiateControllerWithIdentifier(kStoryboardIdGeneralViewController) as! GeneralViewController)
+        return (storyboard.instantiateController(withIdentifier: kStoryboardIdGeneralViewController) as! GeneralViewController)
     }
     
     // MARK: - NSViewController Overrides
@@ -57,8 +57,8 @@ class GeneralViewController: NSViewController {
         super.viewDidAppear()
         
         if let account = KeychainUtility.accountInKeychain() {
-            mailAddress = account.mailAddress
-            password = account.password
+            mailAddress = account.mailAddress as NSString
+            password = account.password as NSString
         }
         
         validateCheckAccountButton()
@@ -66,7 +66,7 @@ class GeneralViewController: NSViewController {
 
     // MARK: - Internal Functions
     private func validateCheckAccountButton() {
-        checkAccountButton?.enabled = canLogin()
+        checkAccountButton?.isEnabled = canLogin()
     }
     
     private func canLogin() -> Bool {
@@ -74,37 +74,37 @@ class GeneralViewController: NSViewController {
             return false
         }
         
-        let loginSelected = sessionManagementMatrix?.selectedTag() == SessionManagementType.Login.rawValue
-        let hasValidMailAddress = (mailAddress as String).hasRegexpPattern(kRegexpMailAddress)
-        let hasValidPassword = (password as String).hasRegexpPattern(kRegexpPassword)
+        let loginSelected = sessionManagementMatrix?.selectedTag() == SessionManagementType.login.rawValue
+        let hasValidMailAddress = (mailAddress as String).hasRegexp(pattern: kRegexpMailAddress)
+        let hasValidPassword = (password as String).hasRegexp(pattern: kRegexpPassword)
         
         return (loginSelected && hasValidMailAddress && hasValidPassword)
     }
     
-    @IBAction func detectedChangeInSessionManagementMatrix(sender: AnyObject) {
+    @IBAction func detectedChangeInSessionManagementMatrix(_ sender: AnyObject) {
         let matrix = (sender as! NSMatrix)
         // log.debug("\(matrix.selectedTag())")
         
-        if matrix.selectedTag() == SessionManagementType.Login.rawValue {
+        if matrix.selectedTag() == SessionManagementType.login.rawValue {
             mailAddressTextField.becomeFirstResponder()
         }
     }
     
-    @IBAction func detectedEnterInTextField(sender: AnyObject) {
+    @IBAction func detectedEnterInTextField(_ sender: AnyObject) {
         if canLogin() {
             checkAccount(self)
         }
     }
     
-    @IBAction func checkAccount(sender: AnyObject) {
-        logger.debug("login w/ [\(mailAddress)][\(password)]")
+    @IBAction func checkAccount(_ sender: AnyObject) {
+        logger.debug("login w/ [\(self.mailAddress)][\(self.password)]")
         
         if canLogin() == false {
             return
         }
         
         let completion = { (userSessionCookie: String?) -> Void in
-            dispatch_async(dispatch_get_main_queue()) {
+            DispatchQueue.main.async {
                 self.progressIndicator.stopAnimation(self)
                 
                 if userSessionCookie == nil {
@@ -115,11 +115,11 @@ class GeneralViewController: NSViewController {
                 self.checkAccountStatusLabel.stringValue = "Status: Success"
                 
                 KeychainUtility.removeAllAccountsInKeychain()
-                KeychainUtility.setAccountToKeychainWith(self.mailAddress as String, password: self.password as String)
+                KeychainUtility.setAccountToKeychain(mailAddress: self.mailAddress as String, password: self.password as String)
             }
         }
 
         progressIndicator.startAnimation(self)
-        CookieUtility.requestLoginCookieWithMailAddress(mailAddress as String, password: password as String, completion: completion)
+        CookieUtility.requestLoginCookie(mailAddress: mailAddress as String, password: password as String, completion: completion)
     }
 }

@@ -10,8 +10,8 @@ import Foundation
 import AppKit
 import QuartzCore
 
-class ColoredView: NSView {
-    var fillColor: NSColor = NSColor.grayColor() {
+class ColoredView: NSView, CALayerDelegate {
+    var fillColor: NSColor = NSColor.gray {
         didSet {
             layer?.setNeedsDisplay()
         }
@@ -37,18 +37,11 @@ class ColoredView: NSView {
         wantsLayer = true
     }
 
-    override func drawLayer(layer: CALayer, inContext ctx: CGContext) {
-        CGContextSetFillColorWithColor(ctx, fillColor.CGColor)
-        CGContextFillRect(ctx, bounds)
-    }
-    
-    /*
-    override func drawRect(dirtyRect: NSRect) {
+    override func draw(_ dirtyRect: NSRect) {
         // http://stackoverflow.com/a/2962882
         fillColor.setFill()
         NSRectFill(dirtyRect)
         
-        super.drawRect(dirtyRect)
+        super.draw(dirtyRect)
     }
-    */
 }

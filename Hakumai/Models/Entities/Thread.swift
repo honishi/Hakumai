@@ -13,7 +13,7 @@ class Thread: CustomStringConvertible {
     var thread: Int?
     var lastRes: Int? = 0
     var ticket: String?
-    var serverTime: NSDate?
+    var serverTime: Date?
     
     var description: String {
         return (

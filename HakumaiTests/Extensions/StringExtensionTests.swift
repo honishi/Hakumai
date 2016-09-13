@@ -22,39 +22,39 @@ class StringExtensionTests: XCTestCase {
     }
     
     // MARK: String
-    func testExtractRegexpPattern() {
+    func testExtractRegexp() {
         var pattern: String
         var extracted: String?
         
         pattern = "http:\\/\\/live\\.nicovideo\\.jp\\/watch\\/lv(\\d{5,}).*"
-        extracted = "http://live.nicovideo.jp/watch/lv200433812?ref=zero_mynicorepo".extractRegexpPattern(pattern)
+        extracted = "http://live.nicovideo.jp/watch/lv200433812?ref=zero_mynicorepo".extractRegexp(pattern: pattern)
         XCTAssert(extracted == "200433812", "")
         
         /*
         pattern = "(http:\\/\\/live\\.nicovideo\\.jp\\/watch\\/)?(lv)?(\\d+).*"
-        extracted = "http://live.nicovideo.jp/watch/lv200433812?ref=zero_mynicorepo".extractRegexpPattern(pattern, index: 0)
+        extracted = "http://live.nicovideo.jp/watch/lv200433812?ref=zero_mynicorepo".extractRegexp(pattern: pattern, index: 0)
         XCTAssert(extracted == "200433812", "")
          */
     }
     
-    func testHasRegexpPattern() {
-        XCTAssert("abc".hasRegexpPattern("b") == true, "")
-        XCTAssert("abc".hasRegexpPattern("1") == false, "")
+    func testHasRegexp() {
+        XCTAssert("abc".hasRegexp(pattern: "b") == true, "")
+        XCTAssert("abc".hasRegexp(pattern: "1") == false, "")
         
         // half-width character with (han)daku-on case. http://stackoverflow.com/a/27192734
-        XCTAssert("ﾊﾃﾞｗ".hasRegexpPattern("ｗ") == true, "")
+        XCTAssert("ﾊﾃﾞｗ".hasRegexp(pattern: "ｗ") == true, "")
     }
     
-    func testStringByRemovingPattern() {
+    func testStringByRemovingRegexp() {
         var removed: String
         
-        removed = "abcd".stringByRemovingPattern("bc")
+        removed = "abcd".stringByRemovingRegexp(pattern: "bc")
         XCTAssert(removed == "ad", "")
         
-        removed = "abcdabcd".stringByRemovingPattern("bc")
+        removed = "abcdabcd".stringByRemovingRegexp(pattern: "bc")
         XCTAssert(removed == "adad", "")
 
-        removed = "abc\n".stringByRemovingPattern("\n")
+        removed = "abc\n".stringByRemovingRegexp(pattern: "\n")
         XCTAssert(removed == "abc", "")
     }
 }

@@ -9,7 +9,7 @@
 import Foundation
 import XCTest
 
-private let kAsyncTimeout: NSTimeInterval = 3
+private let kAsyncTimeout: TimeInterval = 3
 
 class CookieUtilityTests: XCTestCase {
     

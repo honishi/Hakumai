@@ -27,9 +27,9 @@ class MenuDelegateTests: XCTestCase {
         let chat = Chat()
         
         chat.comment = "aaa"
-        XCTAssert(menuDelegate.urlStringInComment(chat) == nil, "")
+        XCTAssert(menuDelegate.urlString(inComment: chat) == nil, "")
         
         chat.comment = "aaa http://example.com aaa"
-        XCTAssert(menuDelegate.urlStringInComment(chat) == "http://example.com", "")
+        XCTAssert(menuDelegate.urlString(inComment: chat) == "http://example.com", "")
     }
 }

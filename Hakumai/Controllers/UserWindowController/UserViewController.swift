@@ -31,15 +31,15 @@ class UserViewController: NSViewController {
             if let userId = userId {
                 userIdLabelValue = userId
                 
-                if let userName = NicoUtility.sharedInstance.cachedUserNameForUserId(userId) {
+                if let userName = NicoUtility.sharedInstance.cachedUserName(forUserId: userId) {
                     userNameLabelValue = userName
                 }
                 
-                messages = MessageContainer.sharedContainer.messagesWithUserId(userId)
+                messages = MessageContainer.sharedContainer.messages(fromUserId: userId)
             }
             else {
-                messages.removeAll(keepCapacity: false)
-                rowHeightCacher.removeAll(keepCapacity: false)
+                messages.removeAll(keepingCapacity: false)
+                rowHeightCacher.removeAll(keepingCapacity: false)
             }
             
             userIdLabel.stringValue = "UserId: " + (userIdLabelValue ?? "-----")
@@ -70,17 +70,17 @@ class UserViewController: NSViewController {
             (kNibNameScoreTableCellView, kScoreColumnIdentifier)]
         
         for (nibName, identifier) in nibs {
-            let nib = NSNib(nibNamed: nibName, bundle: NSBundle.mainBundle())
-            tableView.registerNib(nib!, forIdentifier: identifier)
+            let nib = NSNib(nibNamed: nibName, bundle: Bundle.main)
+            tableView.register(nib!, forIdentifier: identifier)
         }
     }
     
     // MARK: - NSTableViewDataSource Functions
-    func numberOfRowsInTableView(tableView: NSTableView) -> Int {
+    func numberOfRowsInTableView(_ tableView: NSTableView) -> Int {
         return messages.count
     }
     
-    func tableView(tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
+    func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
         let message = messages[row]
         
         if let cached = rowHeightCacher[message.messageNo] {
@@ -89,56 +89,56 @@ class UserViewController: NSViewController {
         
         var rowHeight: CGFloat = 0
 
-        let commentTableColumn = tableView.tableColumnWithIdentifier(kCommentColumnIdentifier)!
+        let commentTableColumn = tableView.tableColumn(withIdentifier: kCommentColumnIdentifier)!
         let commentColumnWidth = commentTableColumn.width
-        rowHeight = commentColumnHeight(message, width: commentColumnWidth)
+        rowHeight = commentColumnHeight(forMessage: message, width: commentColumnWidth)
         
         rowHeightCacher[message.messageNo] = rowHeight
         
         return rowHeight
     }
     
-    private func commentColumnHeight(message: Message, width: CGFloat) -> CGFloat {
+    private func commentColumnHeight(forMessage message: Message, width: CGFloat) -> CGFloat {
         let leadingSpace: CGFloat = 2
         let trailingSpace: CGFloat = 2
         let widthPadding = leadingSpace + trailingSpace
         
-        let (content, attributes) = contentAndAttributesForMessage(message)
+        let (content, attributes) = contentAndAttributes(forMessage: message)
         
-        let commentRect = content.boundingRectWithSize(CGSizeMake(width - widthPadding, 0),
-            options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: attributes)
+        let commentRect = content.boundingRect(with: CGSize(width: width - widthPadding, height: 0),
+            options: NSStringDrawingOptions.usesLineFragmentOrigin, attributes: attributes)
         // log.debug("\(commentRect.size.width),\(commentRect.size.height)")
         
         return commentRect.size.height
     }
     
-    func tableViewColumnDidResize(aNotification: NSNotification) {
-        let column = aNotification.userInfo?["NSTableColumn"] as! NSTableColumn
+    func tableViewColumnDidResize(_ aNotification: Notification) {
+        let column = (aNotification as NSNotification).userInfo?["NSTableColumn"] as! NSTableColumn
         
         if column.identifier == kCommentColumnIdentifier {
-            rowHeightCacher.removeAll(keepCapacity: false)
+            rowHeightCacher.removeAll(keepingCapacity: false)
             tableView.reloadData()
         }
     }
     
-    func tableView(tableView: NSTableView, viewForTableColumn tableColumn: NSTableColumn?, row: Int) -> NSView? {
+    func tableView(_ tableView: NSTableView, viewForTableColumn tableColumn: NSTableColumn?, row: Int) -> NSView? {
         var view: NSTableCellView?
         
         if let identifier = tableColumn?.identifier {
-            view = tableView.makeViewWithIdentifier(identifier, owner: self) as? NSTableCellView
+            view = tableView.make(withIdentifier: identifier, owner: self) as? NSTableCellView
             view?.textField?.stringValue = ""
         }
         
         let message = messages[row]
         
-        if message.messageType == .Chat {
-            configureViewForChat(message, tableColumn: tableColumn!, view: view!)
+        if message.messageType == .chat {
+            configure(view: view!, forChat: message, withTableColumn: tableColumn!)
         }
         
         return view
     }
     
-    private func configureViewForChat(message: Message, tableColumn: NSTableColumn, view: NSTableCellView) {
+    private func configure(view: NSTableCellView, forChat message: Message, withTableColumn tableColumn: NSTableColumn) {
         let chat = message.chat!
         
         var attributed: NSAttributedString?
@@ -151,8 +151,8 @@ class UserViewController: NSViewController {
         case kScoreColumnIdentifier:
             (view as! ScoreTableCellView).chat = chat
         case kCommentColumnIdentifier:
-            let (content, attributes) = contentAndAttributesForMessage(message)
-            attributed = NSAttributedString(string: content as String, attributes: attributes)
+            let (content, attributes) = contentAndAttributes(forMessage: message)
+            attributed = NSAttributedString(string: content, attributes: attributes)
         default:
             break
         }
@@ -163,15 +163,15 @@ class UserViewController: NSViewController {
     }
     
     // MARK: Utility
-    private func contentAndAttributesForMessage(message: Message) -> (NSString, [String: AnyObject]) {
-        var content: NSString!
+    private func contentAndAttributes(forMessage message: Message) -> (String, [String: AnyObject]) {
+        var content: String!
         var attributes: [String: AnyObject]!
         
-        if message.messageType == .System {
+        if message.messageType == .system {
             content = message.message!
             attributes = UIHelper.normalCommentAttributes()
         }
-        else if message.messageType == .Chat {
+        else if message.messageType == .chat {
             content = message.chat!.comment!
             attributes = (message.firstChat == true ? UIHelper.boldCommentAttributes() : UIHelper.normalCommentAttributes())
         }

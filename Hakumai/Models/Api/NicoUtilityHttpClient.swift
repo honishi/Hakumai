@@ -11,32 +11,28 @@ import Foundation
 // request header
 private let kUserAgent = kCommonUserAgent
 private let kCookieDomain = "nicovideo.jp"
-private let kCookieExpire = NSTimeInterval(7200)
+private let kCookieExpire = TimeInterval(7200)
 private let kCookiePath = "/"
 
 // Internal Http Utility
 extension NicoUtility {
-    func cookiedAsyncRequest(httpMethod: String, url: NSURL, parameters: [String: Any]?, completion: (NSURLResponse?, NSData?, NSError?) -> Void) {
-        cookiedAsyncRequest(httpMethod, url: url.absoluteString, parameters: parameters, completion: completion)
-    }
-    
-    func cookiedAsyncRequest(httpMethod: String, url: String, parameters: [String: Any]?, completion: (NSURLResponse?, NSData?, NSError?) -> Void) {
+    func cookiedAsyncRequest(httpMethod: String, url: String, parameters: [String: Any]?, completion: @escaping (URLResponse?, Data?, Error?) -> Void) {
         var parameteredUrl: String = url
-        let constructedParameters = constructParameters(parameters)
+        let constructedParameters = construct(parameters: parameters)
         
         if httpMethod == "GET" && constructedParameters != nil {
             parameteredUrl += "?" + constructedParameters!
         }
         
-        let request = mutableRequestWithCustomHeaders(parameteredUrl)
-        request.HTTPMethod = httpMethod
+        let request = mutableRequest(customHeaders: parameteredUrl)
+        request.httpMethod = httpMethod
         
         if httpMethod == "POST" && constructedParameters != nil {
-            request.HTTPBody = constructedParameters!.dataUsingEncoding(NSUTF8StringEncoding)
+            request.httpBody = constructedParameters!.data(using: String.Encoding.utf8)
         }
         
         if let cookies = sessionCookies() {
-            let requestHeader = NSHTTPCookie.requestHeaderFieldsWithCookies(cookies)
+            let requestHeader = HTTPCookie.requestHeaderFields(with: cookies)
             request.allHTTPHeaderFields = requestHeader
         }
         else {
@@ -44,19 +40,19 @@ extension NicoUtility {
             completion(nil, nil, NSError(domain:"", code:0, userInfo: nil))
         }
         
-        let queue = NSOperationQueue()
-        NSURLConnection.sendAsynchronousRequest(request, queue: queue, completionHandler: completion)
+        let queue = OperationQueue()
+        NSURLConnection.sendAsynchronousRequest(request as URLRequest, queue: queue, completionHandler: completion)
     }
     
-    func constructParameters(parameters: [String: Any]?) -> String? {
+    func construct(parameters: [String: Any]?) -> String? {
         if parameters == nil {
             return nil
         }
         
-        var constructed: NSString = ""
+        var constructed: String = ""
         
         for (key, value) in parameters! {
-            if 0 < constructed.length {
+            if 0 < constructed.characters.count {
                 constructed = constructed as String + "&"
             }
             
@@ -65,36 +61,36 @@ extension NicoUtility {
         
         // use custom escape character sets instead of NSCharacterSet.URLQueryAllowedCharacterSet()
         // cause we need to escape strings like this: tpos=1416842780%2E802121&comment%5Flocale=ja%2Djp
-        let allowed = NSMutableCharacterSet.alphanumericCharacterSet()
-        allowed.addCharactersInString("?=&")
+        let allowed = NSMutableCharacterSet.alphanumeric()
+        allowed.addCharacters(in: "?=&")
         
-        return constructed.stringByAddingPercentEncodingWithAllowedCharacters(allowed)
+        return constructed.addingPercentEncoding(withAllowedCharacters: allowed as CharacterSet)
     }
     
-    private func mutableRequestWithCustomHeaders(url: String) -> NSMutableURLRequest {
-        let urlObject = NSURL(string: url)!
-        let mutableRequest = NSMutableURLRequest(URL: urlObject)
+    private func mutableRequest(customHeaders url: String) -> NSMutableURLRequest {
+        let urlObject = URL(string: url)!
+        let mutableRequest = NSMutableURLRequest(url: urlObject)
         
         mutableRequest.setValue(kUserAgent, forHTTPHeaderField: "User-Agent")
         
         return mutableRequest
     }
     
-    private func sessionCookies() -> [NSHTTPCookie]? {
+    private func sessionCookies() -> [HTTPCookie]? {
         // logger.debug("userSessionCookie:[\(userSessionCookie)]")
         if userSessionCookie == nil {
             return nil
         }
         
-        var cookies = [NSHTTPCookie]()
+        var cookies = [HTTPCookie]()
         
         for (name, value) in [("user_session", userSessionCookie!), ("area", "JP"), ("lang", "ja-jp")] {
-            if let cookie = NSHTTPCookie(properties: [
-                NSHTTPCookieDomain: kCookieDomain,
-                NSHTTPCookieName: name,
-                NSHTTPCookieValue: value,
-                NSHTTPCookieExpires: NSDate().dateByAddingTimeInterval(kCookieExpire),
-                NSHTTPCookiePath: kCookiePath]) {
+            if let cookie = HTTPCookie(properties: [
+                HTTPCookiePropertyKey.domain: kCookieDomain,
+                HTTPCookiePropertyKey.name: name,
+                HTTPCookiePropertyKey.value: value,
+                HTTPCookiePropertyKey.expires: Date().addingTimeInterval(kCookieExpire),
+                HTTPCookiePropertyKey.path: kCookiePath]) {
                 cookies.append(cookie)
             }
         }

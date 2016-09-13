@@ -15,11 +15,11 @@ private let kPlaceholderSeatNo = -1
 
 extension NicoUtility {
     // MARK: - General
-    func isErrorResponse(xmlData: NSData) -> (error: Bool, code: String) {
+    func isErrorResponse(xmlData: Data) -> (error: Bool, code: String) {
         var error: NSError?
-        let xmlDocument: NSXMLDocument?
+        let xmlDocument: XMLDocument?
         do {
-            xmlDocument = try NSXMLDocument(data: xmlData, options: 0)
+            xmlDocument = try XMLDocument(data: xmlData, options: 0)
         } catch let error1 as NSError {
             error = error1
             logger.error("\(error)")
@@ -27,13 +27,13 @@ extension NicoUtility {
         }
         let rootElement = xmlDocument?.rootElement()
         
-        let status = rootElement?.attributeForName("status")?.stringValue
+        let status = rootElement?.attribute(forName: "status")?.stringValue
         
         if status == "fail" {
             logger.warning("failed to load message server")
             
             var code = ""
-            if let codeInResponse = rootElement?.firstStringValueForXPathNode("/getplayerstatus/error/code") {
+            if let codeInResponse = rootElement?.firstStringValue(forXPath: "/getplayerstatus/error/code") {
                 logger.warning("error code: \(codeInResponse)")
                 code = codeInResponse
             }
@@ -45,11 +45,11 @@ extension NicoUtility {
     }
     
     // MARK: - GetPlayerStatus
-    func extractLive(xmlData: NSData) -> Live? {
+    func extractLive(fromXmlData xmlData: Data) -> Live? {
         var error: NSError?
-        let xmlDocument: NSXMLDocument?
+        let xmlDocument: XMLDocument?
         do {
-            xmlDocument = try NSXMLDocument(data: xmlData, options: 0)
+            xmlDocument = try XMLDocument(data: xmlData, options: 0)
         } catch let error1 as NSError {
             error = error1
             xmlDocument = nil
@@ -60,21 +60,21 @@ extension NicoUtility {
         let live = Live()
         let baseXPath = "/getplayerstatus/stream/"
         
-        live.liveId = rootElement?.firstStringValueForXPathNode(baseXPath + "id")
-        live.title = rootElement?.firstStringValueForXPathNode(baseXPath + "title")
-        live.community.community = rootElement?.firstStringValueForXPathNode(baseXPath + "default_community")
-        live.baseTime = rootElement?.firstIntValueForXPathNode(baseXPath + "base_time")?.toDateAsTimeIntervalSince1970()
-        live.openTime = rootElement?.firstIntValueForXPathNode(baseXPath + "open_time")?.toDateAsTimeIntervalSince1970()
-        live.startTime = rootElement?.firstIntValueForXPathNode(baseXPath + "start_time")?.toDateAsTimeIntervalSince1970()
+        live.liveId = rootElement?.firstStringValue(forXPath: baseXPath + "id")
+        live.title = rootElement?.firstStringValue(forXPath: baseXPath + "title")
+        live.community.community = rootElement?.firstStringValue(forXPath: baseXPath + "default_community")
+        live.baseTime = rootElement?.firstIntValue(forXPath: baseXPath + "base_time")?.toDateAsTimeIntervalSince1970()
+        live.openTime = rootElement?.firstIntValue(forXPath: baseXPath + "open_time")?.toDateAsTimeIntervalSince1970()
+        live.startTime = rootElement?.firstIntValue(forXPath: baseXPath + "start_time")?.toDateAsTimeIntervalSince1970()
         
         return live
     }
     
-    func extractUser(xmlData: NSData) -> User? {
+    func extractUser(fromXmlData xmlData: Data) -> User? {
         var error: NSError?
-        let xmlDocument: NSXMLDocument?
+        let xmlDocument: XMLDocument?
         do {
-            xmlDocument = try NSXMLDocument(data: xmlData, options: 0)
+            xmlDocument = try XMLDocument(data: xmlData, options: 0)
         } catch let error1 as NSError {
             error = error1
             xmlDocument = nil
@@ -85,11 +85,11 @@ extension NicoUtility {
         let user = User()
         let baseXPath = "/getplayerstatus/user/"
         
-        user.userId = rootElement?.firstIntValueForXPathNode(baseXPath + "user_id")
-        user.nickname = rootElement?.firstStringValueForXPathNode(baseXPath + "nickname")
-        user.isPremium = rootElement?.firstIntValueForXPathNode(baseXPath + "is_premium")
-        user.roomLabel = rootElement?.firstStringValueForXPathNode(baseXPath + "room_label")
-        user.seatNo = rootElement?.firstIntValueForXPathNode(baseXPath + "room_seetno")
+        user.userId = rootElement?.firstIntValue(forXPath: baseXPath + "user_id")
+        user.nickname = rootElement?.firstStringValue(forXPath: baseXPath + "nickname")
+        user.isPremium = rootElement?.firstIntValue(forXPath: baseXPath + "is_premium")
+        user.roomLabel = rootElement?.firstStringValue(forXPath: baseXPath + "room_label")
+        user.seatNo = rootElement?.firstIntValue(forXPath: baseXPath + "room_seetno")
 
         // fill seat no if extraction fails, espacially for backstage pass case
         if user.seatNo == nil {
@@ -99,11 +99,11 @@ extension NicoUtility {
         return user
     }
     
-    func extractMessageServer(xmlData: NSData, user: User) -> MessageServer? {
+    func extractMessageServer(fromXmlData xmlData: Data, user: User) -> MessageServer? {
         var error: NSError?
-        let xmlDocument: NSXMLDocument?
+        let xmlDocument: XMLDocument?
         do {
-            xmlDocument = try NSXMLDocument(data: xmlData, options: 0)
+            xmlDocument = try XMLDocument(data: xmlData, options: 0)
         } catch let error1 as NSError {
             error = error1
             xmlDocument = nil
@@ -111,19 +111,19 @@ extension NicoUtility {
         }
         let rootElement = xmlDocument?.rootElement()
         
-        let status = rootElement?.attributeForName("status")?.stringValue
+        let status = rootElement?.attribute(forName: "status")?.stringValue
         
         if status == "fail" {
             logger.warning("failed to load message server")
             
-            if let errorCode = rootElement?.firstStringValueForXPathNode("/getplayerstatus/error/code") {
+            if let errorCode = rootElement?.firstStringValue(forXPath: "/getplayerstatus/error/code") {
                 logger.warning("error code: \(errorCode)")
             }
             
             return nil
         }
         
-        let roomPosition = roomPositionByUser(user)
+        let roomPosition = self.roomPosition(byUser: user)
         
         if roomPosition == nil {
             return nil
@@ -131,9 +131,9 @@ extension NicoUtility {
         
         let baseXPath = "/getplayerstatus/ms/"
         
-        let address = rootElement?.firstStringValueForXPathNode(baseXPath + "addr")
-        let port = rootElement?.firstIntValueForXPathNode(baseXPath + "port")
-        let thread = rootElement?.firstIntValueForXPathNode(baseXPath + "thread")
+        let address = rootElement?.firstStringValue(forXPath: baseXPath + "addr")
+        let port = rootElement?.firstIntValue(forXPath: baseXPath + "port")
+        let thread = rootElement?.firstIntValue(forXPath: baseXPath + "thread")
         // logger.debug("\(address?),\(port),\(thread)")
         
         if address == nil || port == nil || thread == nil {
@@ -145,7 +145,7 @@ extension NicoUtility {
         return server
     }
     
-    func roomPositionByUser(user: User) -> RoomPosition? {
+    func roomPosition(byUser user: User) -> RoomPosition? {
         // logger.debug("roomLabel:\(roomLabel)")
         
         if user.roomLabel == nil {
@@ -165,19 +165,19 @@ extension NicoUtility {
         return nil
     }
 
-    private func extractStandCharacter(roomLabel: String) -> Character? {
-        let matched = roomLabel.extractRegexpPattern("立ち見(\\w)列")
+    private func extractStandCharacter(_ roomLabel: String) -> Character? {
+        let matched = roomLabel.extractRegexp(pattern: "立ち見(\\w)列")
         
         // using subscript String extension defined above
         return matched?[0]
     }
     
     // MARK: - Community
-    func extractUserCommunity(htmlData: NSData, community: Community) {
+    func extractUserCommunity(fromHtmlData htmlData: Data, community: Community) {
         var error: NSError?
         let htmlDocument: ONOXMLDocument!
         do {
-            htmlDocument = try ONOXMLDocument.HTMLDocumentWithData(htmlData)
+            htmlDocument = try ONOXMLDocument.htmlDocument(with: htmlData)
         } catch let error1 as NSError {
             error = error1
             htmlDocument = nil
@@ -191,22 +191,22 @@ extension NicoUtility {
         }
         
         let xpathTitle = "//*[@id=\"community_name\"]"
-        community.title = rootElement?.firstChildWithXPath(xpathTitle)?.stringValue().stringByRemovingPattern("\n")
+        community.title = rootElement?.firstChild(withXPath: xpathTitle)?.stringValue().stringByRemovingRegexp(pattern: "\n")
         
         let xpathLevel = "//*[@id=\"cbox_profile\"]/table/tr/td[1]/table/tr[1]/td[2]/strong[1]"
-        community.level = Int(rootElement?.firstChildWithXPath(xpathLevel)?.stringValue() ?? "1")
+        community.level = Int(rootElement?.firstChild(withXPath: xpathLevel)?.stringValue() ?? "1")
         
         let xpathThumbnailUrl = "//*[@id=\"cbox_profile\"]/table/tr/td[2]/p/img/@src"
-        if let thumbnailUrl = rootElement?.firstChildWithXPath(xpathThumbnailUrl)?.stringValue() {
-            community.thumbnailUrl = NSURL(string: thumbnailUrl)
+        if let thumbnailUrl = rootElement?.firstChild(withXPath: xpathThumbnailUrl)?.stringValue() {
+            community.thumbnailUrl = URL(string: thumbnailUrl)
         }
     }
     
-    func extractChannelCommunity(htmlData: NSData, community: Community) {
+    func extractChannelCommunity(fromHtmlData htmlData: Data, community: Community) {
         var error: NSError?
         let htmlDocument: ONOXMLDocument!
         do {
-            htmlDocument = try ONOXMLDocument.HTMLDocumentWithData(htmlData)
+            htmlDocument = try ONOXMLDocument.htmlDocument(with: htmlData)
         } catch let error1 as NSError {
             error = error1
             logger.error("\(error)")
@@ -220,20 +220,20 @@ extension NicoUtility {
         }
         
         let xpathTitle = "//*[@id=\"head_cp_breadcrumb\"]/h1/a"
-        community.title = rootElement?.firstChildWithXPath(xpathTitle)?.stringValue().stringByRemovingPattern("\n")
+        community.title = rootElement?.firstChild(withXPath: xpathTitle)?.stringValue().stringByRemovingRegexp(pattern: "\n")
         
         let xpathThumbnailUrl = "//*[@id=\"cp_symbol\"]/span/a/img/@data-original"
-        if let thumbnailUrl = rootElement?.firstChildWithXPath(xpathThumbnailUrl)?.stringValue() {
-            community.thumbnailUrl = NSURL(string: thumbnailUrl)
+        if let thumbnailUrl = rootElement?.firstChild(withXPath: xpathThumbnailUrl)?.stringValue() {
+            community.thumbnailUrl = URL(string: thumbnailUrl)
         }
     }
     
     // MARK: - Username
-    func extractUsername(htmlData: NSData) -> String? {
+    func extractUsername(fromHtmlData htmlData: Data) -> String? {
         var error: NSError?
         let htmlDocument: ONOXMLDocument!
         do {
-            htmlDocument = try ONOXMLDocument.HTMLDocumentWithData(htmlData)
+            htmlDocument = try ONOXMLDocument.htmlDocument(with: htmlData)
         } catch let error1 as NSError {
             error = error1
             htmlDocument = nil
@@ -243,18 +243,18 @@ extension NicoUtility {
         
         // /html/body/div[3]/div[2]/h2/text() -> other's userpage
         // /html/body/div[4]/div[2]/h2/text() -> my userpage, contains '他のユーザーから見たあなたのプロフィールです。' box
-        let username = rootElement?.firstChildWithXPath("/html/body/*/div[2]/h2")?.stringValue()
-        let cleansed = username?.stringByRemovingPattern("(?:さん|)\\s*$")
+        let username = rootElement?.firstChild(withXPath: "/html/body/*/div[2]/h2")?.stringValue()
+        let cleansed = username?.stringByRemovingRegexp(pattern: "(?:さん|)\\s*$")
         
         return cleansed
     }
     
     // MARK: - Heartbeat
-    func extractHeartbeat(xmlData: NSData) -> Heartbeat? {
+    func extractHeartbeat(fromXmlData xmlData: Data) -> Heartbeat? {
         var error: NSError?
-        let xmlDocument: NSXMLDocument?
+        let xmlDocument: XMLDocument?
         do {
-            xmlDocument = try NSXMLDocument(data: xmlData, options: 0)
+            xmlDocument = try XMLDocument(data: xmlData, options: 0)
         } catch let error1 as NSError {
             error = error1
             xmlDocument = nil
@@ -265,20 +265,20 @@ extension NicoUtility {
         let heartbeat = Heartbeat()
         let baseXPath = "/heartbeat/"
         
-        if let status = rootElement?.firstStringValueForXPathNode(baseXPath + "@status") {
+        if let status = rootElement?.firstStringValue(forXPath: baseXPath + "@status") {
             heartbeat.status = Heartbeat.statusFromString(status: status)
         }
         
-        if heartbeat.status == Heartbeat.Status.Ok {
-            heartbeat.watchCount = rootElement?.firstIntValueForXPathNode(baseXPath + "watchCount")
-            heartbeat.commentCount = rootElement?.firstIntValueForXPathNode(baseXPath + "commentCount")
-            heartbeat.freeSlotNum = rootElement?.firstIntValueForXPathNode(baseXPath + "freeSlotNum")
-            heartbeat.isRestrict = rootElement?.firstIntValueForXPathNode(baseXPath + "is_restrict")
-            heartbeat.ticket = rootElement?.firstStringValueForXPathNode(baseXPath + "ticket")
-            heartbeat.waitTime = rootElement?.firstIntValueForXPathNode(baseXPath + "waitTime")
+        if heartbeat.status == Heartbeat.Status.ok {
+            heartbeat.watchCount = rootElement?.firstIntValue(forXPath: baseXPath + "watchCount")
+            heartbeat.commentCount = rootElement?.firstIntValue(forXPath: baseXPath + "commentCount")
+            heartbeat.freeSlotNum = rootElement?.firstIntValue(forXPath: baseXPath + "freeSlotNum")
+            heartbeat.isRestrict = rootElement?.firstIntValue(forXPath: baseXPath + "is_restrict")
+            heartbeat.ticket = rootElement?.firstStringValue(forXPath: baseXPath + "ticket")
+            heartbeat.waitTime = rootElement?.firstIntValue(forXPath: baseXPath + "waitTime")
         }
-        else if heartbeat.status == Heartbeat.Status.Fail {
-            if let errorCode = rootElement?.firstStringValueForXPathNode(baseXPath + "error/code") {
+        else if heartbeat.status == Heartbeat.Status.fail {
+            if let errorCode = rootElement?.firstStringValue(forXPath: baseXPath + "error/code") {
                 heartbeat.errorCode = Heartbeat.errorCodeFromString(errorCode: errorCode)
             }
         }

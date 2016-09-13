@@ -19,11 +19,11 @@ class User: CustomStringConvertible {
     var seatNo: Int?
     
     var isArena: Bool? {
-        return roomLabel?.hasRegexpPattern(kRoomLabelForArena)
+        return roomLabel?.hasRegexp(pattern: kRoomLabelForArena)
     }
 
     var isBSP: Bool? {
-        return roomLabel?.hasRegexpPattern(kRoomLabelForBSP)
+        return roomLabel?.hasRegexp(pattern: kRoomLabelForBSP)
     }
 
     var description: String {

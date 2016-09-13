@@ -16,18 +16,18 @@ private let kUserAgent = kCommonUserAgent
 
 class LoginCookie {
     // MARK: - Public Functions
-    class func requestCookieWithMailAddress(mailAddress: String, password: String, completion: (userSessionCookie: String?) -> Void) {
-        func httpCompletion(response: NSURLResponse?, data: NSData?, connectionError: NSError?) {
+    class func requestCookie(mailAddress: String, password: String, completion: @escaping (_ userSessionCookie: String?) -> Void) {
+        func httpCompletion(_ response: URLResponse?, _ data: Data?, _ connectionError: Error?) {
             if connectionError != nil {
                 logger.error("login failed. connection error:[\(connectionError)]")
-                completion(userSessionCookie: nil)
+                completion(nil)
                 return
             }
             
-            let httpResponse = (response as! NSHTTPURLResponse)
+            let httpResponse = response as! HTTPURLResponse
             if httpResponse.statusCode != 200 {
                 logger.error("login failed. got unexpected status code::[\(httpResponse.statusCode)]")
-                completion(userSessionCookie: nil)
+                completion(nil)
                 return
             }
 
@@ -35,30 +35,30 @@ class LoginCookie {
             logger.debug("found session cookie:[\(userSessionCookie)]")
             
             if userSessionCookie == nil {
-                completion(userSessionCookie: nil)
+                completion(nil)
                 return
             }
             
-            completion(userSessionCookie: userSessionCookie!)
+            completion(userSessionCookie!)
         }
         
         LoginCookie.removeAllStoredCookie()
         
         let parameters = "mail=\(mailAddress)&password=\(password)"
         
-        let request = NSMutableURLRequest(URL: NSURL(string: kLoginUrl)!)
+        let request = NSMutableURLRequest(url: URL(string: kLoginUrl)!)
         request.setValue(kUserAgent, forHTTPHeaderField: "User-Agent")
-        request.HTTPMethod = "POST"
-        request.HTTPBody = parameters.dataUsingEncoding(NSUTF8StringEncoding)
+        request.httpMethod = "POST"
+        request.httpBody = parameters.data(using: String.Encoding.utf8)
 
-        let queue = NSOperationQueue()
-        NSURLConnection.sendAsynchronousRequest(request, queue: queue, completionHandler: httpCompletion)
+        let queue = OperationQueue()
+        NSURLConnection.sendAsynchronousRequest(request as URLRequest, queue: queue, completionHandler: httpCompletion)
     }
     
     // MARK: - Internal Functions
     private class func removeAllStoredCookie() {
-        let cookieStorage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
-        let cookies = cookieStorage.cookiesForURL(NSURL(string: kNicoVideoDomain)!)
+        let cookieStorage = HTTPCookieStorage.shared
+        let cookies = cookieStorage.cookies(for: URL(string: kNicoVideoDomain)!)
         
         if cookies == nil {
             return
@@ -70,8 +70,8 @@ class LoginCookie {
     }
     
     private class func findUserSessionCookie() -> String? {
-        let cookieStorage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
-        let cookies = cookieStorage.cookiesForURL(NSURL(string: kNicoVideoDomain)!)
+        let cookieStorage = HTTPCookieStorage.shared
+        let cookies = cookieStorage.cookies(for: URL(string: kNicoVideoDomain)!)
         
         if cookies == nil {
             return nil

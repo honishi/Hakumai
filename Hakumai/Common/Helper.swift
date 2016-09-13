@@ -21,40 +21,40 @@ private let kLogColors: [(fg: (Int, Int, Int)?, bg: (Int, Int, Int)?)] = [  // s
 
 class Helper {
     // MARK: - Public Interface
-    class func setupLogger(logger: XCGLogger) {
+    class func setupLogger(_ logger: XCGLogger) {
         #if DEBUG
             Helper.colorizeLogger(logger)
-            logger.setup(.Debug, showLogLevel: true, showFileNames: true, showThreadName: true, showLineNumbers: true, writeToFile: nil)
+            logger.setup(level: .debug, showThreadName: true, showLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: nil)
         #else
-            logger.setup(.None, showLogLevel: false, showFileNames: false, showThreadName: false, showLineNumbers: false, writeToFile: nil)
+            logger.setup(level: .none, showThreadName: false, showLevel: false, showFileNames: false, showLineNumbers: false, writeToFile: nil)
         #endif
     }
     
-    class func setupFileLogger(logger: XCGLogger, fileName: String) {
+    class func setupFileLogger(_ logger: XCGLogger, fileName: String) {
         #if DEBUG
             Helper.colorizeLogger(logger)
             
             Helper.createApplicationDirectoryIfNotExists()
             let path = Helper.applicationDirectoryPath() + "/" + fileName
-            logger.setup(.Verbose, showLogLevel: true, showFileNames: true, showThreadName: true, showLineNumbers: true, writeToFile: path)
+            logger.setup(level: .verbose, showThreadName: true, showLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: path as AnyObject?)
             
-            if let console = logger.logDestination(XCGLogger.constants.baseConsoleLogDestinationIdentifier) {
-                logger.removeLogDestination(console)
+            if let console = logger.destination(withIdentifier: XCGLogger.Constants.baseConsoleDestinationIdentifier) {
+                logger.remove(destination: console)
             }
         #else
-            logger.setup(.None, showLogLevel: false, showFileNames: false, showThreadName: false, showLineNumbers: false, writeToFile: nil)
+            logger.setup(level: .none, showThreadName: false, showLevel: false, showFileNames: false, showLineNumbers: false, writeToFile: nil)
         #endif
     }
     
     class func createApplicationDirectoryIfNotExists() {
         let path = Helper.applicationDirectoryPath()
         
-        guard !NSFileManager.defaultManager().fileExistsAtPath(path) else {
+        guard !FileManager.default.fileExists(atPath: path) else {
             return
         }
         
         do {
-            try NSFileManager.defaultManager().createDirectoryAtPath(path, withIntermediateDirectories: false, attributes: nil)
+            try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: false, attributes: nil)
             logger.debug("created application directory")
         }
         catch {
@@ -63,10 +63,10 @@ class Helper {
     }
 
     class func applicationDirectoryPath() -> String {
-        let appSupportDirectory = NSSearchPathForDirectoriesInDomains(.ApplicationSupportDirectory, .UserDomainMask, true)[0] 
+        let appSupportDirectory = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)[0] 
         
         var bundleIdentifier = ""
-        if let bi = NSBundle.mainBundle().infoDictionary?["CFBundleIdentifier"] as? String {
+        if let bi = Bundle.main.infoDictionary?["CFBundleIdentifier"] as? String {
             bundleIdentifier = bi
         }
         
@@ -74,20 +74,23 @@ class Helper {
     }
     
     // MARK: - Private Functions
-    private class func colorizeLogger(logger: XCGLogger) {
+    private class func colorizeLogger(_ logger: XCGLogger) {
         guard kEnableColorizedLogger else {
             return
         }
         
         // solarized dark colors
+        // XXX: turn the colors off, temporarily
+        /*
         logger.xcodeColors = [
-            .Verbose:   XCGLogger.XcodeColor(fg: kLogColors[0].fg, bg: kLogColors[0].bg),
-            .Debug:     XCGLogger.XcodeColor(fg: kLogColors[1].fg, bg: kLogColors[1].bg),
-            .Info:      XCGLogger.XcodeColor(fg: kLogColors[2].fg, bg: kLogColors[2].bg),
-            .Warning:   XCGLogger.XcodeColor(fg: kLogColors[3].fg, bg: kLogColors[3].bg),
-            .Error:     XCGLogger.XcodeColor(fg: kLogColors[4].fg, bg: kLogColors[4].bg),
-            .Severe:    XCGLogger.XcodeColor(fg: kLogColors[5].fg, bg: kLogColors[5].bg),
+            .verbose:   XCGLogger.XcodeColor(fg: kLogColors[0].fg, bg: kLogColors[0].bg),
+            .debug:     XCGLogger.XcodeColor(fg: kLogColors[1].fg, bg: kLogColors[1].bg),
+            .info:      XCGLogger.XcodeColor(fg: kLogColors[2].fg, bg: kLogColors[2].bg),
+            .warning:   XCGLogger.XcodeColor(fg: kLogColors[3].fg, bg: kLogColors[3].bg),
+            .error:     XCGLogger.XcodeColor(fg: kLogColors[4].fg, bg: kLogColors[4].bg),
+            .severe:    XCGLogger.XcodeColor(fg: kLogColors[5].fg, bg: kLogColors[5].bg),
         ]
+        */
 
         /*
         logger.verbose("test message.")

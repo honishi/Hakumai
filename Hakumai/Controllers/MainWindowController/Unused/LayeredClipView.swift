@@ -21,6 +21,6 @@ class LayeredClipView: NSClipView {
         layer = CAScrollLayer()
         wantsLayer = true
         // layerContentsRedrawPolicy = .Never
-        layerContentsRedrawPolicy = .OnSetNeedsDisplay
+        layerContentsRedrawPolicy = .onSetNeedsDisplay
     }
 }

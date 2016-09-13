@@ -9,8 +9,8 @@
 import Foundation
 import AppKit
 
-private let kWindowLevelKeyForNormal = CGWindowLevelKey.NormalWindowLevelKey
-private let kWindowLevelKeyForAlwaysOnTop = CGWindowLevelKey.FloatingWindowLevelKey
+private let kWindowLevelKeyForNormal = CGWindowLevelKey.normalWindow
+private let kWindowLevelKeyForAlwaysOnTop = CGWindowLevelKey.floatingWindow
 
 extension NSWindow {
     // http://qiita.com/rryu/items/04af65d772e81d2beb7a
@@ -27,7 +27,7 @@ extension NSWindow {
             level = windowLevel
             
             // .Managed to keep window being within spaces(mission control) even if special window level
-            collectionBehavior = .Managed
+            collectionBehavior = .managed
         }
     }
 }

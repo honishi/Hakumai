@@ -28,10 +28,10 @@ class ChatTests: XCTestCase {
     }
     
     func testIsUserComment() {
-        XCTAssert(Chat.isUserComment(Premium.Ippan) == true, "")
-        XCTAssert(Chat.isUserComment(Premium.Premium) == true, "")
-        XCTAssert(Chat.isUserComment(Premium.BSP) == false, "")
-        XCTAssert(Chat.isUserComment(Premium.System) == false, "")
+        XCTAssert(Chat.isUserComment(Premium.ippan) == true, "")
+        XCTAssert(Chat.isUserComment(Premium.premium) == true, "")
+        XCTAssert(Chat.isUserComment(Premium.bsp) == false, "")
+        XCTAssert(Chat.isUserComment(Premium.system) == false, "")
         XCTAssert(Chat.isUserComment(nil) == false, "")
     }
 }

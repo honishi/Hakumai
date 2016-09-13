@@ -14,7 +14,7 @@ class MessageContainer {
     // MARK: Public
     static let sharedContainer = MessageContainer()
 
-    var beginDateToShowHbIfseetnoCommands: NSDate?
+    var beginDateToShowHbIfseetnoCommands: Date?
     var showHbIfseetnoCommands = false
     var enableMuteUserIds = false
     var muteUserIds = [[String: String]]()
@@ -57,7 +57,7 @@ class MessageContainer {
         
         sourceMessages.append(message)
 
-        let appended = appendMessage(message, messages: &filteredMessages)
+        let appended = append(message: message, into: &filteredMessages)
         let count = filteredMessages.count
         
         objc_sync_exit(self)
@@ -81,12 +81,12 @@ class MessageContainer {
         return content
     }
     
-    func messagesWithUserId(userId: String) -> [Message] {
+    func messages(fromUserId userId: String) -> [Message] {
         var userMessages = [Message]()
         
         objc_sync_enter(self)
         for message in sourceMessages {
-            if message.messageType != .Chat {
+            if message.messageType != .chat {
                 continue
             }
             
@@ -101,24 +101,24 @@ class MessageContainer {
     
     func removeAll() {
         objc_sync_enter(self)
-        sourceMessages.removeAll(keepCapacity: false)
-        filteredMessages.removeAll(keepCapacity: false)
-        firstChat.removeAll(keepCapacity: false)
+        sourceMessages.removeAll(keepingCapacity: false)
+        filteredMessages.removeAll(keepingCapacity: false)
+        firstChat.removeAll(keepingCapacity: false)
         Message.resetMessageNo()
         objc_sync_exit(self)
     }
     
     // MARK: - Utility
-    func calculateActive(completion: (active: Int?) -> (Void)) {
+    func calculateActive(completion: @escaping (Int?) -> (Void)) {
         if rebuildingFilteredMessages {
             logger.debug("detected rebuilding filtered messages, so skip calculating active.")
-            completion(active: nil)
+            completion(nil)
             return
         }
         
         if calculatingActive {
             logger.debug("detected duplicate calculating, so skip calculating active.")
-            completion(active: nil)
+            completion(nil)
             return
         }
         
@@ -129,9 +129,9 @@ class MessageContainer {
         // logger.debug("calcurating active")
         
         // swift way to use background gcd, http://stackoverflow.com/a/25070476
-        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) {
+        DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async {
             var activeUsers = Dictionary<String, Bool>()
-            let tenMinutesAgo = NSDate(timeIntervalSinceNow: (Double)(-10 * 60))
+            let tenMinutesAgo = Date(timeIntervalSinceNow: (Double)(-10 * 60))
             
             // logger.debug("start counting active")
             
@@ -146,7 +146,7 @@ class MessageContainer {
                 objc_sync_exit(self)
                 i -= 1
                 
-                if message.messageType == .System {
+                if message.messageType == .system {
                     continue
                 }
                 
@@ -161,7 +161,7 @@ class MessageContainer {
                 }
                 
                 // is "chat.date < tenMinutesAgo" ?
-                if chat.date!.compare(tenMinutesAgo) == .OrderedAscending {
+                if chat.date!.compare(tenMinutesAgo) == .orderedAscending {
                     break
                 }
                 
@@ -170,7 +170,7 @@ class MessageContainer {
             
             // logger.debug("end counting active")
             
-            completion(active: activeUsers.count)
+            completion(activeUsers.count)
             
             objc_sync_enter(self)
             self.calculatingActive = false
@@ -178,17 +178,17 @@ class MessageContainer {
         }
     }
     
-    func rebuildFilteredMessages(completion: () -> Void) {
+    func rebuildFilteredMessages(completion: @escaping () -> Void) {
         // 1st pass:
         // copy and filter source messages. this could be long operation so use background thread
-        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) {
+        DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async {
             // logger.debug("started 1st pass rebuilding filtered messages (bg section)")
             
             var workingMessages = [Message]()
             let sourceCount = self.sourceMessages.count
             
             for i in 0..<sourceCount {
-                self.appendMessage(self.sourceMessages[i], messages: &workingMessages)
+                _ = self.append(message: self.sourceMessages[i], into: &workingMessages)
             }
             
             // logger.debug("completed 1st pass")
@@ -197,7 +197,7 @@ class MessageContainer {
             // we need to replace old filtered messages with new one with the following conditions;
             // - exclusive to ui updates, so use main thread
             // - atomic to any other operation like append, count, calcurate and so on, so use objc_sync_enter/exit
-            dispatch_async(dispatch_get_main_queue()) {
+            DispatchQueue.main.async {
                 // logger.debug("started 2nd pass rebuilding filtered messages (critical section)")
                 
                 objc_sync_enter(self)
@@ -208,7 +208,7 @@ class MessageContainer {
                 
                 let deltaCount = self.sourceMessages.count
                 for i in sourceCount..<deltaCount {
-                    self.appendMessage(self.sourceMessages[i], messages: &self.filteredMessages)
+                    _ = self.append(message: self.sourceMessages[i], into: &self.filteredMessages)
                 }
                 // logger.debug("copied delta messages \(sourceCount)..<\(deltaCount)")
                 
@@ -225,10 +225,10 @@ class MessageContainer {
     
     // MARK: - Internal Functions
     // MARK: Filtered Message Append Utility
-    private func appendMessage(message: Message, inout messages: [Message]) -> Bool {
+    private func append(message: Message, into messages: inout [Message]) -> Bool {
         var appended = false
         
-        if shouldAppendMessage(message) {
+        if shouldAppend(message: message) {
             messages.append(message)
             appended = true
         }
@@ -236,9 +236,9 @@ class MessageContainer {
         return appended
     }
 
-    private func shouldAppendMessage(message: Message) -> Bool {
+    private func shouldAppend(message: Message) -> Bool {
         // filter by message type
-        if message.messageType == .System {
+        if message.messageType == .system {
             return true
         }
         
@@ -255,7 +255,7 @@ class MessageContainer {
                 // there are tons of kickout commands. and they forces application performance to be slowed down.
                 if chat.date != nil && beginDateToShowHbIfseetnoCommands != nil {
                     // chat.date < beginDateToShowHbIfseetnoCommands
-                    if chat.date!.compare(beginDateToShowHbIfseetnoCommands!) == .OrderedAscending {
+                    if chat.date!.compare(beginDateToShowHbIfseetnoCommands!) == .orderedAscending {
                         return false
                     }
                 }
@@ -264,7 +264,7 @@ class MessageContainer {
             if enableMuteWords {
                 for muteWord in muteWords {
                     if let word = muteWord[MuteUserWordKey.Word] {
-                        if comment.lowercaseString.rangeOfString(word.lowercaseString) != nil {
+                        if comment.lowercased().range(of: word.lowercased()) != nil {
                             return false
                         }
                     }
