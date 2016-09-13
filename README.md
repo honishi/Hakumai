@@ -1,5 +1,6 @@
 <img src="./document/image/logo.png" width="500px">
 
+[![Swift 3.0](https://img.shields.io/badge/Swift-3.0-orange.svg?style=flat)](https://swift.org/)
 [![Build Status](https://travis-ci.org/honishi/Hakumai.svg?branch=develop)](https://travis-ci.org/honishi/Hakumai)
 
 * niconama comment viewer alternative for mac os x.
