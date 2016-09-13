@@ -24,9 +24,9 @@ class Helper {
     class func setupLogger(_ logger: XCGLogger) {
         #if DEBUG
             Helper.colorizeLogger(logger)
-            logger.setup(.debug, showThreadName: true, showLogLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: nil)
+            logger.setup(level: .debug, showThreadName: true, showLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: nil)
         #else
-            logger.setup(.none, showThreadName: false, showLogLevel: false, showFileNames: false, showLineNumbers: false, writeToFile: nil)
+            logger.setup(level: .none, showThreadName: false, showLevel: false, showFileNames: false, showLineNumbers: false, writeToFile: nil)
         #endif
     }
     
@@ -36,13 +36,13 @@ class Helper {
             
             Helper.createApplicationDirectoryIfNotExists()
             let path = Helper.applicationDirectoryPath() + "/" + fileName
-            logger.setup(.verbose, showThreadName: true, showLogLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: path as AnyObject?)
+            logger.setup(level: .verbose, showThreadName: true, showLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: path as AnyObject?)
             
-            if let console = logger.logDestination(XCGLogger.constants.baseConsoleLogDestinationIdentifier) {
-                logger.removeLogDestination(console)
+            if let console = logger.destination(withIdentifier: XCGLogger.Constants.baseConsoleDestinationIdentifier) {
+                logger.remove(destination: console)
             }
         #else
-            logger.setup(.none, showThreadName: false, showLogLevel: false, showFileNames: false, showLineNumbers: false, writeToFile: nil)
+            logger.setup(level: .none, showThreadName: false, showLevel: false, showFileNames: false, showLineNumbers: false, writeToFile: nil)
         #endif
     }
     
@@ -80,6 +80,8 @@ class Helper {
         }
         
         // solarized dark colors
+        // XXX: turn the colors off, temporarily
+        /*
         logger.xcodeColors = [
             .verbose:   XCGLogger.XcodeColor(fg: kLogColors[0].fg, bg: kLogColors[0].bg),
             .debug:     XCGLogger.XcodeColor(fg: kLogColors[1].fg, bg: kLogColors[1].bg),
@@ -88,6 +90,7 @@ class Helper {
             .error:     XCGLogger.XcodeColor(fg: kLogColors[4].fg, bg: kLogColors[4].bg),
             .severe:    XCGLogger.XcodeColor(fg: kLogColors[5].fg, bg: kLogColors[5].bg),
         ]
+        */
 
         /*
         logger.verbose("test message.")
