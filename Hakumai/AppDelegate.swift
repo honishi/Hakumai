@@ -100,41 +100,41 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         switch keyPath {
         case Parameters.SessionManagement:
-            NicoUtility.sharedInstance.reserveToClearUserSessionCookie()
+            NicoUtility.shared.reserveToClearUserSessionCookie()
             
         case Parameters.ShowIfseetnoCommands:
             if let changed = change[.newKey] as? Bool {
-                MainViewController.sharedInstance.changeShowHbIfseetnoCommands(changed)
+                MainViewController.shared.changeShowHbIfseetnoCommands(changed)
             }
             
         case Parameters.EnableCommentSpeech:
             if let changed = change[.newKey] as? Bool {
-                MainViewController.sharedInstance.changeEnableCommentSpeech(changed)
+                MainViewController.shared.changeEnableCommentSpeech(changed)
             }
             
         case Parameters.EnableMuteUserIds:
             if let changed = change[.newKey] as? Bool {
-                MainViewController.sharedInstance.changeEnableMuteUserIds(changed)
+                MainViewController.shared.changeEnableMuteUserIds(changed)
             }
             
         case Parameters.MuteUserIds:
             if let changed = change[.newKey] as? [[String: String]] {
-                MainViewController.sharedInstance.changeMuteUserIds(changed)
+                MainViewController.shared.changeMuteUserIds(changed)
             }
             
         case Parameters.EnableMuteWords:
             if let changed = change[.newKey] as? Bool {
-                MainViewController.sharedInstance.changeEnableMuteWords(changed)
+                MainViewController.shared.changeEnableMuteWords(changed)
             }
             
         case Parameters.MuteWords:
             if let changed = change[.newKey] as? [[String: String]] {
-                MainViewController.sharedInstance.changeMuteWords(changed)
+                MainViewController.shared.changeMuteWords(changed)
             }
 
         case Parameters.FontSize:
             if let changed = change[.newKey] as? Float {
-                MainViewController.sharedInstance.changeFontSize(CGFloat(changed))
+                MainViewController.shared.changeFontSize(CGFloat(changed))
             }
             
         case Parameters.AlwaysOnTop:
@@ -149,19 +149,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: Menu Handlers
     @IBAction func openPreferences(_ sender: AnyObject) {
-        PreferenceWindowController.sharedInstance.showWindow(self)
+        PreferenceWindowController.shared.showWindow(self)
     }
     
     @IBAction func openUrl(_ sender: AnyObject) {
-        MainViewController.sharedInstance.focusLiveTextField()
+        MainViewController.shared.focusLiveTextField()
     }
     
     @IBAction func grabUrlFromChrome(_ sender: AnyObject) {
-        MainViewController.sharedInstance.grabUrlFromBrowser(self)
+        MainViewController.shared.grabUrlFromBrowser(self)
     }
 
     @IBAction func newComment(_ sender: AnyObject) {
-        MainViewController.sharedInstance.focusCommentTextField()
+        MainViewController.shared.focusCommentTextField()
     }
     
     @IBAction func zoomDefault(_ sender: AnyObject) {

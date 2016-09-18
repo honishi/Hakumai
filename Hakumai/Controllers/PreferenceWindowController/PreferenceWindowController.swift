@@ -18,7 +18,7 @@ private let kToolbarItemIdentifierMute = "MuteToolbarItem"
 
 class PreferenceWindowController: NSWindowController {
     // MARK: - Properties
-    static let sharedInstance = PreferenceWindowController.generateInstance()
+    static let shared = PreferenceWindowController.generateInstance()
 
     @IBOutlet weak var toolbar: NSToolbar!
 
@@ -48,7 +48,7 @@ class PreferenceWindowController: NSWindowController {
     
     // MARK: - NSWindowController Overrides
     override func windowDidLoad() {
-        changeContent(viewController: GeneralViewController.sharedInstance, itemIdentifier: kToolbarItemIdentifierGeneral)
+        changeContent(viewController: GeneralViewController.shared, itemIdentifier: kToolbarItemIdentifierGeneral)
         
         window?.center()
         window?.makeKey()
@@ -61,10 +61,10 @@ class PreferenceWindowController: NSWindowController {
         
         switch toolbarItem.itemIdentifier {
         case kToolbarItemIdentifierGeneral:
-            viewController = GeneralViewController.sharedInstance
+            viewController = GeneralViewController.shared
             
         case kToolbarItemIdentifierMute:
-            viewController = MuteViewController.sharedInstance
+            viewController = MuteViewController.shared
             
         default:
             break
