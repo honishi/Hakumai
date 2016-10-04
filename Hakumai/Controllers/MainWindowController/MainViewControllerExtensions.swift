@@ -30,7 +30,7 @@ extension MainViewController {
         DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async {
             for _ in 1...count {
                 let chat = self.randomChat()
-                MainViewController.sharedInstance.nicoUtilityDidReceiveChat(NicoUtility.sharedInstance, chat: chat)
+                MainViewController.shared.nicoUtilityDidReceiveChat(NicoUtility.shared, chat: chat)
                 Foundation.Thread.sleep(forTimeInterval: interval)
             }
         }

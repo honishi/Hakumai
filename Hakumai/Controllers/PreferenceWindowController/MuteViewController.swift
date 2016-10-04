@@ -16,7 +16,7 @@ private let kStoryboardIdMuteAddViewController = "MuteAddViewController"
 
 class MuteViewController: NSViewController {
     // MARK: - Properties
-    static let sharedInstance = MuteViewController.generateInstance()
+    static let shared = MuteViewController.generateInstance()
     
     @IBOutlet var muteUserIdsArrayController: NSArrayController!
     @IBOutlet var muteWordsArrayController: NSArrayController!

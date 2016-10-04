@@ -22,11 +22,11 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     
     // MARK: Computed Properties
     var tableView: NSTableView {
-        return MainViewController.sharedInstance.tableView
+        return MainViewController.shared.tableView
     }
     
     var live: Live? {
-        return MainViewController.sharedInstance.live
+        return MainViewController.shared.live
     }
     
     // MARK: - Object Lifecycle
@@ -115,7 +115,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     
     @IBAction func tweetComment(_ sender: AnyObject) {
         let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat!
-        let live = NicoUtility.sharedInstance.live!
+        let live = NicoUtility.shared.live!
         
         let comment = chat.comment ?? ""
         let liveName = live.title ?? ""
@@ -135,7 +135,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         guard let live = live, let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat else {
             return
         }
-        MainViewController.sharedInstance.showHandleNameAddViewController(live: live, chat: chat)
+        MainViewController.shared.showHandleNameAddViewController(live: live, chat: chat)
     }
     
     @IBAction func removeHandleName(_ sender: AnyObject) {
@@ -143,7 +143,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
             return
         }
         HandleNameManager.sharedManager.removeHandleName(live: live, chat: chat)
-        MainViewController.sharedInstance.refreshHandleName()
+        MainViewController.shared.refreshHandleName()
     }
     
     @IBAction func addToMuteUser(_ sender: AnyObject) {
@@ -166,19 +166,19 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     
     @IBAction func reportAsNgUser(_ sender: AnyObject) {
         let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat!
-        NicoUtility.sharedInstance.reportAsNgUser(chat: chat) { userId in
+        NicoUtility.shared.reportAsNgUser(chat: chat) { userId in
             if userId == nil {
-                MainViewController.sharedInstance.logSystemMessageToTableView("Failed to report NG user.")
+                MainViewController.shared.logSystemMessageToTableView("Failed to report NG user.")
                 return
             }
             
-            MainViewController.sharedInstance.logSystemMessageToTableView("Completed to report NG user.")
+            MainViewController.shared.logSystemMessageToTableView("Completed to report NG user.")
         }
     }
     
     @IBAction func openUserPage(_ sender: AnyObject) {
         let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat!
-        let userPageUrlString = NicoUtility.sharedInstance.urlString(forUserId: chat.userId!)
+        let userPageUrlString = NicoUtility.shared.urlString(forUserId: chat.userId!)
         
         NSWorkspace.shared().open(URL(string: userPageUrlString)!)
     }

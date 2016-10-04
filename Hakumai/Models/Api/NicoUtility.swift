@@ -78,7 +78,7 @@ private let kDebugForceReconnectChatCount = 20
 
 class NicoUtility : NSObject, RoomListenerDelegate {
     // MARK: - Properties
-    static let sharedInstance = NicoUtility()
+    static let shared = NicoUtility()
 
     weak var delegate: NicoUtilityDelegate?
     var lastLiveNumber: Int?

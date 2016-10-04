@@ -27,24 +27,24 @@ class NicoUtilityTests: XCTestCase {
     func testConstructParameters() {
         var parameters: String?
         
-        parameters = NicoUtility.sharedInstance.construct(parameters: nil)
+        parameters = NicoUtility.shared.construct(parameters: nil)
         XCTAssert(parameters == nil, "")
         
-        parameters = NicoUtility.sharedInstance.construct(parameters: ["a": "b"])
+        parameters = NicoUtility.shared.construct(parameters: ["a": "b"])
         XCTAssert(parameters == "a=b", "")
         
-        parameters = NicoUtility.sharedInstance.construct(parameters: ["a": 123])
+        parameters = NicoUtility.shared.construct(parameters: ["a": 123])
         XCTAssert(parameters == "a=123", "")
         
-        parameters = NicoUtility.sharedInstance.construct(parameters: ["a": "b", "c": "d"])
+        parameters = NicoUtility.shared.construct(parameters: ["a": "b", "c": "d"])
         XCTAssert(parameters == "a=b&c=d", "")
         
         // space
-        parameters = NicoUtility.sharedInstance.construct(parameters: ["a": "b c"])
+        parameters = NicoUtility.shared.construct(parameters: ["a": "b c"])
         XCTAssert(parameters == "a=b%20c", "")
         
         // symbol in ngscoring
-        parameters = NicoUtility.sharedInstance.construct(parameters: ["tpos": "1416842780.802121", "comment_locale": "ja-jp"])
+        parameters = NicoUtility.shared.construct(parameters: ["tpos": "1416842780.802121", "comment_locale": "ja-jp"])
         // XCTAssert(parameters == "tpos=1416842780%2E802121&comment%5Flocale=ja%2Djp", "")
         XCTAssert(parameters == "comment%5Flocale=ja%2Djp&tpos=1416842780%2E802121", "")
     }
@@ -54,22 +54,22 @@ class NicoUtilityTests: XCTestCase {
         let user = User()
 
         user.roomLabel = "x"
-        XCTAssert(NicoUtility.sharedInstance.roomPosition(byUser: user) == nil, "")
+        XCTAssert(NicoUtility.shared.roomPosition(byUser: user) == nil, "")
         
         user.roomLabel = "co123"
-        XCTAssert(NicoUtility.sharedInstance.roomPosition(byUser: user) == .arena, "")
+        XCTAssert(NicoUtility.shared.roomPosition(byUser: user) == .arena, "")
 
         user.roomLabel = "ch123"
-        XCTAssert(NicoUtility.sharedInstance.roomPosition(byUser: user) == .arena, "")
+        XCTAssert(NicoUtility.shared.roomPosition(byUser: user) == .arena, "")
 
         user.roomLabel = "バックステージパス"
-        XCTAssert(NicoUtility.sharedInstance.roomPosition(byUser: user) == .arena, "")
+        XCTAssert(NicoUtility.shared.roomPosition(byUser: user) == .arena, "")
 
         user.roomLabel = "立ち見A列"
-        XCTAssert(NicoUtility.sharedInstance.roomPosition(byUser: user) == .standA, "")
+        XCTAssert(NicoUtility.shared.roomPosition(byUser: user) == .standA, "")
 
         user.roomLabel = "立ち見C列"
-        XCTAssert(NicoUtility.sharedInstance.roomPosition(byUser: user) == .standC, "")
+        XCTAssert(NicoUtility.shared.roomPosition(byUser: user) == .standC, "")
     }
     
     func testDeriveMessageServersUser() {
@@ -95,37 +95,37 @@ class NicoUtilityTests: XCTestCase {
         expected = [server0, server1, server2, server3, server4, server5, server6, server7, server8, server9]
         print("expected:\(expected)")
         
-        derived = NicoUtility.sharedInstance.deriveMessageServers(originServer: server0, community: community)
+        derived = NicoUtility.shared.deriveMessageServers(originServer: server0, community: community)
         print("derived:\(derived)")
         XCTAssert(derived == expected, "")
         
-        derived = NicoUtility.sharedInstance.deriveMessageServers(originServer: server1, community: community)
+        derived = NicoUtility.shared.deriveMessageServers(originServer: server1, community: community)
         XCTAssert(derived == expected, "")
         
-        derived = NicoUtility.sharedInstance.deriveMessageServers(originServer: server3, community: community)
+        derived = NicoUtility.shared.deriveMessageServers(originServer: server3, community: community)
         XCTAssert(derived == expected, "")
         
         // level 65
         community.level = 49
         expected = [server0, server1]
         
-        derived = NicoUtility.sharedInstance.deriveMessageServers(originServer: server0, community: community)
+        derived = NicoUtility.shared.deriveMessageServers(originServer: server0, community: community)
         XCTAssert(derived == expected, "")
         
-        derived = NicoUtility.sharedInstance.deriveMessageServers(originServer: server1, community: community)
+        derived = NicoUtility.shared.deriveMessageServers(originServer: server1, community: community)
         XCTAssert(derived == expected, "")
         
         // level 66
         community.level = 50
         expected = [server0, server1, server2]
         
-        derived = NicoUtility.sharedInstance.deriveMessageServers(originServer: server0, community: community)
+        derived = NicoUtility.shared.deriveMessageServers(originServer: server0, community: community)
         XCTAssert(derived == expected, "")
         
-        derived = NicoUtility.sharedInstance.deriveMessageServers(originServer: server1, community: community)
+        derived = NicoUtility.shared.deriveMessageServers(originServer: server1, community: community)
         XCTAssert(derived == expected, "")
         
-        derived = NicoUtility.sharedInstance.deriveMessageServers(originServer: server2, community: community)
+        derived = NicoUtility.shared.deriveMessageServers(originServer: server2, community: community)
         XCTAssert(derived == expected, "")
     }
     
@@ -146,14 +146,14 @@ class NicoUtilityTests: XCTestCase {
         expected = [server0, server1, server2, server3, server4, server5]
         print("expected:\(expected)")
         
-        derived = NicoUtility.sharedInstance.deriveMessageServers(originServer: server0, community: community)
+        derived = NicoUtility.shared.deriveMessageServers(originServer: server0, community: community)
         print("derived:\(derived)")
         XCTAssert(derived == expected, "")
         
-        derived = NicoUtility.sharedInstance.deriveMessageServers(originServer: server1, community: community)
+        derived = NicoUtility.shared.deriveMessageServers(originServer: server1, community: community)
         XCTAssert(derived == expected, "")
         
-        derived = NicoUtility.sharedInstance.deriveMessageServers(originServer: server3, community: community)
+        derived = NicoUtility.shared.deriveMessageServers(originServer: server3, community: community)
         XCTAssert(derived == expected, "")
     }
     
@@ -162,28 +162,28 @@ class NicoUtilityTests: XCTestCase {
         let data = dataForResource("community_user.html")
         let community = Community()
         
-        NicoUtility.sharedInstance.extractUserCommunity(fromHtmlData: data, community: community)
-        XCTAssert(community.title == "野田草履のからし高菜炎上", "")
-        XCTAssert(community.level == 109, "")
-        XCTAssert(community.thumbnailUrl!.absoluteString == "http://icon.nimg.jp/community/135/co1354854.jpg?1412118337", "")
+        NicoUtility.shared.extractUserCommunity(fromHtmlData: data, community: community)
+        XCTAssert(community.title == "深淵の帰還", "")
+        XCTAssert(community.level == 53, "")
+        XCTAssert(community.thumbnailUrl!.absoluteString == "http://icon.nimg.jp/community/335/co3350558.jpg?1474545332", "")
     }
     
     func testLoadCommunityChannel() {
         let data = dataForResource("community_channel.html")
         let community = Community()
         
-        NicoUtility.sharedInstance.extractChannelCommunity(fromHtmlData: data, community: community)
+        NicoUtility.shared.extractChannelCommunity(fromHtmlData: data, community: community)
         XCTAssert(community.title == "暗黒黙示録", "")
         XCTAssert(community.level == nil, "")
         XCTAssert(community.thumbnailUrl!.absoluteString == "http://icon.nimg.jp/channel/ch2590739.jpg?1411539979", "")
     }
     
     func testStandRoomCountForCommunityLevel() {
-        XCTAssert(NicoUtility.sharedInstance.standRoomCount(forCommunityLevel: 49) == 1, "")
-        XCTAssert(NicoUtility.sharedInstance.standRoomCount(forCommunityLevel: 50) == 2, "")
+        XCTAssert(NicoUtility.shared.standRoomCount(forCommunityLevel: 49) == 1, "")
+        XCTAssert(NicoUtility.shared.standRoomCount(forCommunityLevel: 50) == 2, "")
         
-        XCTAssert(NicoUtility.sharedInstance.standRoomCount(forCommunityLevel: 104) == 3, "")
-        XCTAssert(NicoUtility.sharedInstance.standRoomCount(forCommunityLevel: 105) == 4, "")
+        XCTAssert(NicoUtility.shared.standRoomCount(forCommunityLevel: 104) == 3, "")
+        XCTAssert(NicoUtility.shared.standRoomCount(forCommunityLevel: 105) == 4, "")
     }
     
     // MARK: - Username Resolver
@@ -192,16 +192,16 @@ class NicoUtilityTests: XCTestCase {
         var resolved: String?
         
         data = dataForResource("user_1.html")
-        resolved = NicoUtility.sharedInstance.extractUsername(fromHtmlData: data)
+        resolved = NicoUtility.shared.extractUsername(fromHtmlData: data)
         XCTAssert(resolved == "野田草履", "")
         
         // should extract ナオキ兄さん, not ナオキ兄
         data = dataForResource("user_2.html")
-        resolved = NicoUtility.sharedInstance.extractUsername(fromHtmlData: data)
+        resolved = NicoUtility.shared.extractUsername(fromHtmlData: data)
         XCTAssert(resolved == "ナオキ兄さん", "")
         
         data = dataForResource("user_me.html")
-        resolved = NicoUtility.sharedInstance.extractUsername(fromHtmlData: data)
+        resolved = NicoUtility.shared.extractUsername(fromHtmlData: data)
         XCTAssert(resolved == "honishi", "")
     }
     
@@ -239,11 +239,11 @@ class NicoUtilityTests: XCTestCase {
         var hb: Heartbeat?
         
         data = dataForResource("heartbeat_ok.xml")
-        hb = NicoUtility.sharedInstance.extractHeartbeat(fromXmlData: data)
+        hb = NicoUtility.shared.extractHeartbeat(fromXmlData: data)
         XCTAssert(hb?.status == Heartbeat.Status.ok, "")
         
         data = dataForResource("heartbeat_fail.xml")
-        hb = NicoUtility.sharedInstance.extractHeartbeat(fromXmlData: data)
+        hb = NicoUtility.shared.extractHeartbeat(fromXmlData: data)
         XCTAssert(hb?.status == Heartbeat.Status.fail, "")
         XCTAssert(hb?.errorCode == Heartbeat.ErrorCode.notFoundSlot, "")
     }

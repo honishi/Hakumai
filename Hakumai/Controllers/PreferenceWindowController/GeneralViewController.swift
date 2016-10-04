@@ -27,7 +27,7 @@ private let kStoryboardIdGeneralViewController = "GeneralViewController"
 
 class GeneralViewController: NSViewController {
     // MARK: - Properties
-    static let sharedInstance = GeneralViewController.generateInstance()
+    static let shared = GeneralViewController.generateInstance()
 
     @IBOutlet weak var sessionManagementMatrix: NSMatrix!
     @IBOutlet weak var mailAddressTextField: NSTextField!

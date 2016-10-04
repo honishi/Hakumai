@@ -23,7 +23,7 @@ private let kDefaultMinimumRowHeight: CGFloat = 17
 
 class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate, NSControlTextEditingDelegate, NicoUtilityDelegate, UserWindowControllerDelegate {
     // MARK: - Properties
-    static var sharedInstance: MainViewController!
+    static var shared: MainViewController!
 
     // MARK: Main Outlets
     @IBOutlet weak var liveTextField: NSTextField!
@@ -77,7 +77,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     override func awakeFromNib() {
         super.awakeFromNib()
 
-        MainViewController.sharedInstance = self
+        MainViewController.shared = self
     }
 
     // MARK: - NSViewController Functions
@@ -622,7 +622,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         handleNameAddViewController.completion = { (cancelled: Bool, handleName: String?) -> Void in
             if !cancelled {
                 HandleNameManager.sharedManager.updateHandleName(live: live, chat: chat, handleName: handleName!)
-                MainViewController.sharedInstance.refreshHandleName()
+                MainViewController.shared.refreshHandleName()
             }
             
             self.dismissViewController(handleNameAddViewController)
@@ -639,7 +639,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             defaultHandleName = handleName
         }
         else {
-            if let userName = NicoUtility.sharedInstance.cachedUserName(forChat: chat) {
+            if let userName = NicoUtility.shared.cachedUserName(forChat: chat) {
                 defaultHandleName = userName
             }
         }
@@ -673,7 +673,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     
     // MARK: Live Info Updater
     private func loadThumbnail() {
-        NicoUtility.sharedInstance.loadThumbnail { (imageData) -> (Void) in
+        NicoUtility.shared.loadThumbnail { (imageData) -> (Void) in
             DispatchQueue.main.async {
                 if imageData == nil {
                     return
@@ -721,7 +721,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
 
             communityImageView.image = NSImage(named: kCommunityImageDefaultName)
 
-            NicoUtility.sharedInstance.delegate = self
+            NicoUtility.shared.delegate = self
             
             let sessionManagementType = SessionManagementType(rawValue: UserDefaults.standard.integer(forKey: Parameters.SessionManagement))!
             
@@ -730,19 +730,19 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
                 if let account = KeychainUtility.accountInKeychain() {
                     let mailAddress = account.mailAddress
                     let password = account.password
-                    NicoUtility.sharedInstance.connect(liveNumber: liveNumber, mailAddress: mailAddress, password: password)
+                    NicoUtility.shared.connect(liveNumber: liveNumber, mailAddress: mailAddress, password: password)
                 }
             case .chrome:
-                NicoUtility.sharedInstance.connect(liveNumber: liveNumber, browserType: .chrome)
+                NicoUtility.shared.connect(liveNumber: liveNumber, browserType: .chrome)
             case .safari:
-                NicoUtility.sharedInstance.connect(liveNumber: liveNumber, browserType: .safari)
+                NicoUtility.shared.connect(liveNumber: liveNumber, browserType: .safari)
             }
         }
     }
     
     @IBAction func connectButtonPressed(_ sender: AnyObject) {
         if connectedToLive {
-            NicoUtility.sharedInstance.disconnect()
+            NicoUtility.shared.disconnect()
         } else {
             connectLive(self)
         }
@@ -755,7 +755,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         }
         
         let anonymously = UserDefaults.standard.bool(forKey: Parameters.CommentAnonymously)
-        NicoUtility.sharedInstance.comment(comment, anonymously: anonymously) { comment in
+        NicoUtility.shared.comment(comment, anonymously: anonymously) { comment in
             if comment == nil {
                 self.logSystemMessageToTableView("Failed to comment.")
             }
@@ -832,7 +832,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     func displayElapsed(_ timer: Timer) {
         var display = "--:--:--"
         
-        if let startTime = NicoUtility.sharedInstance.live?.startTime {
+        if let startTime = NicoUtility.shared.live?.startTime {
             var prefix = ""
             var elapsed = Date().timeIntervalSince(startTime as Date)
             

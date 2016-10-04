@@ -60,7 +60,7 @@ class UserIdTableCellView: NSTableCellView {
             return
         }
         
-        if let userName = NicoUtility.sharedInstance.cachedUserName(forUserId: userId) {
+        if let userName = NicoUtility.shared.cachedUserName(forUserId: userId) {
             userIdTextField.stringValue = concatUserName(userId: userId, userName: userName, handleName: handleName)
             return
         }
@@ -75,7 +75,7 @@ class UserIdTableCellView: NSTableCellView {
             }
         }
         
-        NicoUtility.sharedInstance.resolveUsername(forUserId: userId, completion: completion)
+        NicoUtility.shared.resolveUsername(forUserId: userId, completion: completion)
     }
     
     private func concatUserName(userId: String, userName: String?, handleName: String?) -> String {

@@ -31,7 +31,7 @@ class UserViewController: NSViewController {
             if let userId = userId {
                 userIdLabelValue = userId
                 
-                if let userName = NicoUtility.sharedInstance.cachedUserName(forUserId: userId) {
+                if let userName = NicoUtility.shared.cachedUserName(forUserId: userId) {
                     userNameLabelValue = userName
                 }
                 
