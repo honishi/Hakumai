@@ -163,9 +163,9 @@ class NicoUtilityTests: XCTestCase {
         let community = Community()
         
         NicoUtility.shared.extractUserCommunity(fromHtmlData: data, community: community)
-        XCTAssert(community.title == "野田草履のからし高菜炎上", "")
-        XCTAssert(community.level == 109, "")
-        XCTAssert(community.thumbnailUrl!.absoluteString == "http://icon.nimg.jp/community/135/co1354854.jpg?1412118337", "")
+        XCTAssert(community.title == "深淵の帰還", "")
+        XCTAssert(community.level == 53, "")
+        XCTAssert(community.thumbnailUrl!.absoluteString == "http://icon.nimg.jp/community/335/co3350558.jpg?1474545332", "")
     }
     
     func testLoadCommunityChannel() {

@@ -190,13 +190,13 @@ extension NicoUtility {
             return
         }
         
-        let xpathTitle = "//*[@id=\"community_name\"]"
-        community.title = rootElement?.firstChild(withXPath: xpathTitle)?.stringValue().stringByRemovingRegexp(pattern: "\n")
+        let xpathTitle = "//*[@class=\"communityData\"]/*[@class=\"title\"]"
+        community.title = rootElement?.firstChild(withXPath: xpathTitle)?.stringValue().stringByRemovingRegexp(pattern: "[\t\n]")
         
-        let xpathLevel = "//*[@id=\"cbox_profile\"]/table/tr/td[1]/table/tr[1]/td[2]/strong[1]"
+        let xpathLevel = "//*[@class=\"communityScale\"]/*[@class=\"content\"]"
         community.level = Int(rootElement?.firstChild(withXPath: xpathLevel)?.stringValue() ?? "1")
         
-        let xpathThumbnailUrl = "//*[@id=\"cbox_profile\"]/table/tr/td[2]/p/img/@src"
+        let xpathThumbnailUrl = "//*[@class=\"communityThumbnail\"]/*/img/@src"
         if let thumbnailUrl = rootElement?.firstChild(withXPath: xpathThumbnailUrl)?.stringValue() {
             community.thumbnailUrl = URL(string: thumbnailUrl)
         }
