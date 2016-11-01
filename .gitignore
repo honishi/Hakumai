@@ -6,6 +6,10 @@
 ### IntelliJ ###
 .idea
 
+### Bundler ###
+vendor/
+.bundle
+
 ### Swift ###
 # Xcode
 #
