@@ -12,7 +12,8 @@
 project setup
 --
 ````
-pod install
+bundle install --path=vendor/bundle
+bundle exec pod install
 open Hakumai.xcworkspace
 ````
 
