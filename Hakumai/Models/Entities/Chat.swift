@@ -58,7 +58,7 @@ class Chat: CustomStringConvertible {
     }
 
     // MARK: - Public Functions
-    class func isRawUserId(_ userId: String?) -> Bool {
+    static func isRawUserId(_ userId: String?) -> Bool {
         guard let userId = userId else {
             return false
         }
@@ -69,7 +69,7 @@ class Chat: CustomStringConvertible {
         return matched != nil ? true : false
     }
     
-    class func isUserComment(_ premium: Premium?) -> Bool {
+    static func isUserComment(_ premium: Premium?) -> Bool {
         guard let premium = premium else {
             return false
         }
@@ -77,7 +77,7 @@ class Chat: CustomStringConvertible {
         return premium == .ippan || premium == .premium
     }
     
-    class func isBSPComment(_ premium: Premium?) -> Bool {
+    static func isBSPComment(_ premium: Premium?) -> Bool {
         guard let premium = premium else {
             return false
         }
@@ -85,7 +85,7 @@ class Chat: CustomStringConvertible {
         return premium == .bsp
     }
     
-    class func isSystemComment(_ premium: Premium?) -> Bool {
+    static func isSystemComment(_ premium: Premium?) -> Bool {
         guard let premium = premium else {
             return false
         }

@@ -34,7 +34,7 @@ class ChromeCookie {
 
     // MARK: - Public Functions
     // based on http://n8henrie.com/2014/05/decrypt-chrome-cookies-with-python/
-    class func storedCookie() -> String? {
+    static func storedCookie() -> String? {
         ChromeCookie.setupFileLogger()
         
         let encryptedCookie = ChromeCookie.queryEncryptedCookie()
@@ -75,7 +75,7 @@ class ChromeCookie {
     }
     
     // MARK: - Internal Functions
-    private class func setupFileLogger() {
+    private static func setupFileLogger() {
         guard fileLogger == nil else {
             return
         }
@@ -84,7 +84,7 @@ class ChromeCookie {
         Helper.setupFileLogger(fileLogger, fileName: kFileLogName)
     }
     
-    private class func queryEncryptedCookie() -> Data? {
+    private static func queryEncryptedCookie() -> Data? {
         var encryptedCookie: Data?
         
         let appSupportDirectory = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)[0] 
@@ -113,7 +113,7 @@ class ChromeCookie {
         return encryptedCookie
     }
     
-    private class func encryptedCookieByRemovingPrefix(_ encrypted: Data) -> Data? {
+    private static func encryptedCookieByRemovingPrefix(_ encrypted: Data) -> Data? {
         let prefixString : NSString = "v10"
         // let rangeForDataWithoutPrefix = NSMakeRange(prefixString.length, encrypted.count - prefixString.length)
         let encryptedByRemovingPrefix = encrypted.subdata(in: prefixString.length..<encrypted.count)
@@ -122,7 +122,7 @@ class ChromeCookie {
         return encryptedByRemovingPrefix
     }
     
-    private class func chromePassword() -> String {
+    private static func chromePassword() -> String {
         let password = SAMKeychain.password(forService: kChromeServiceName, account: kChromeAccount)
         // logger.debug(password)
         
@@ -130,7 +130,7 @@ class ChromeCookie {
     }
     
     // based on http://stackoverflow.com/a/25702855
-    private class func aesKeyForPassword(_ password: Data, salt: Data, roundCount: Int) -> Data? {
+    private static func aesKeyForPassword(_ password: Data, salt: Data, roundCount: Int) -> Data? {
         let passwordPointer = unsafeBitCast((password as NSData).bytes, to: UnsafePointer<Int8>.self)
         let passwordLength = size_t(password.count)
         
@@ -161,7 +161,7 @@ class ChromeCookie {
     }
     
     // based on http://stackoverflow.com/a/25755864
-    private class func decryptCookie(_ encrypted: Data, aesKey: Data) -> Data? {
+    private static func decryptCookie(_ encrypted: Data, aesKey: Data) -> Data? {
         let aesKeyPointer = unsafeBitCast((aesKey as NSData).bytes, to: UnsafePointer<UInt8>.self)
         let aesKeyLength = size_t(kCCKeySizeAES128)
         // logger.debug("aesKeyPointer = \(aesKeyPointer), aesKeyLength = \(aesKeyData.length)")
@@ -201,7 +201,7 @@ class ChromeCookie {
     }
 
     // http://stackoverflow.com/a/14205319
-    private class func decryptedStringByRemovingPadding(_ data: Data) -> String? {
+    private static func decryptedStringByRemovingPadding(_ data: Data) -> String? {
         let paddingCount = Int(unsafeBitCast((data as NSData).bytes, to: UnsafePointer<UInt8>.self)[data.count - 1])
         fileLogger.debug("padding character count:[\(paddingCount)]")
         

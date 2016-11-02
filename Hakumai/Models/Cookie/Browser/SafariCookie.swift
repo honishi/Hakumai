@@ -13,7 +13,7 @@ private let kCookieFilePath = "/Cookies/Cookies.binarycookies"
 // based on https://github.com/icodeforlove/BinaryCookies.swift
 class SafariCookie {
     // MARK: - Public Functions
-    class func storedCookie(callback: @escaping(String?) -> Void) {
+    static func storedCookie(callback: @escaping(String?) -> Void) {
         let libraryDirectory = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)[0]
 
         SafariCookie.parse(cookiePath: libraryDirectory + kCookieFilePath) { (error, cookies) in
@@ -33,21 +33,21 @@ class SafariCookie {
     }
     
     // MARK: - Private Functions
-    private class func parse(cookiePath: String, callback: @escaping(SafariCookieError?, [Cookie]?) -> ()) {
+    private static func parse(cookiePath: String, callback: @escaping(SafariCookieError?, [Cookie]?) -> ()) {
         guard let data = NSData(contentsOf: NSURL(fileURLWithPath: cookiePath) as URL) else {
             return
         }
         SafariCookie.parse(data: data, callback: callback)
     }
     
-    private class func parse(cookieURL: NSURL, callback: @escaping(SafariCookieError?, [Cookie]?) -> ()) {
+    private static func parse(cookieURL: NSURL, callback: @escaping(SafariCookieError?, [Cookie]?) -> ()) {
         guard let data = NSData(contentsOf: cookieURL as URL) else {
             return
         }
         SafariCookie.parse(data: data, callback: callback)
     }
     
-    private class func parse(data: NSData, callback: @escaping(SafariCookieError?, [Cookie]?) -> ()) {
+    private static func parse(data: NSData, callback: @escaping(SafariCookieError?, [Cookie]?) -> ()) {
         let parser = CookieParser()
         DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async {
             do {

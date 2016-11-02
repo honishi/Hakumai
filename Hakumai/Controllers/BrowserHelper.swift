@@ -16,7 +16,7 @@ class BrowserHelper {
     }
     
     // http://stackoverflow.com/a/6111592
-    class func extractUrl(fromBrowser browserType: BrowserType) -> String? {
+    static func extractUrl(fromBrowser browserType: BrowserType) -> String? {
         var source = ""
         
         switch browserType {

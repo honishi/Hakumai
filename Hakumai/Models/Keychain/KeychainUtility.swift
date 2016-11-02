@@ -11,7 +11,7 @@ import SAMKeychain
 
 class KeychainUtility {
     // MARK: - Public Functions
-    class func removeAllAccountsInKeychain() {
+    static func removeAllAccountsInKeychain() {
         let serviceName = KeychainUtility.keychainServiceName()
         
         if let accounts = SAMKeychain.accounts(forService: serviceName) {
@@ -28,7 +28,7 @@ class KeychainUtility {
         }
     }
     
-    class func setAccountToKeychain(mailAddress: String, password: String) {
+    static func setAccountToKeychain(mailAddress: String, password: String) {
         let serviceName = KeychainUtility.keychainServiceName()
         
         if SAMKeychain.setPassword(password, forService: serviceName, account: mailAddress) == true {
@@ -39,7 +39,7 @@ class KeychainUtility {
         }
     }
     
-    class func accountInKeychain() -> (mailAddress: String, password: String)? {
+    static func accountInKeychain() -> (mailAddress: String, password: String)? {
         let serviceName = KeychainUtility.keychainServiceName()
         
         if let accounts = SAMKeychain.accounts(forService: serviceName) {
@@ -61,7 +61,7 @@ class KeychainUtility {
         return nil
     }
     
-    private class func keychainServiceName() -> String {
+    private static func keychainServiceName() -> String {
         var bundleIdentifier = ""
         if let bi = Bundle.main.infoDictionary?["CFBundleIdentifier"] as? String {
             bundleIdentifier = bi

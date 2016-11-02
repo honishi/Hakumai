@@ -22,7 +22,7 @@ class MuteViewController: NSViewController {
     @IBOutlet var muteWordsArrayController: NSArrayController!
     
     // MARK: - Object Lifecycle
-    class func generateInstance() -> MuteViewController {
+    static func generateInstance() -> MuteViewController {
         let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
         return storyboard.instantiateController(withIdentifier: kStoryboardIdMuteViewController) as! MuteViewController
     }

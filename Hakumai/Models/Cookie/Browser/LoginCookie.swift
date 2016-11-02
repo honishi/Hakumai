@@ -16,7 +16,7 @@ private let kUserAgent = kCommonUserAgent
 
 class LoginCookie {
     // MARK: - Public Functions
-    class func requestCookie(mailAddress: String, password: String, completion: @escaping (_ userSessionCookie: String?) -> Void) {
+    static func requestCookie(mailAddress: String, password: String, completion: @escaping (_ userSessionCookie: String?) -> Void) {
         func httpCompletion(_ response: URLResponse?, _ data: Data?, _ connectionError: Error?) {
             if connectionError != nil {
                 logger.error("login failed. connection error:[\(connectionError)]")
@@ -56,7 +56,7 @@ class LoginCookie {
     }
     
     // MARK: - Internal Functions
-    private class func removeAllStoredCookie() {
+    private static func removeAllStoredCookie() {
         let cookieStorage = HTTPCookieStorage.shared
         let cookies = cookieStorage.cookies(for: URL(string: kNicoVideoDomain)!)
         
@@ -69,7 +69,7 @@ class LoginCookie {
         }
     }
     
-    private class func findUserSessionCookie() -> String? {
+    private static func findUserSessionCookie() -> String? {
         let cookieStorage = HTTPCookieStorage.shared
         let cookies = cookieStorage.cookies(for: URL(string: kNicoVideoDomain)!)
         
