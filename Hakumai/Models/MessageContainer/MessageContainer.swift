@@ -31,7 +31,7 @@ class MessageContainer {
     private var calculatingActive = false
     
     // MARK: - Basic Operation to Content Array
-    func append(chatOrSystemMessage object: AnyObject) -> (appended: Bool, count: Int) {
+    func append(chatOrSystemMessage object: Any) -> (appended: Bool, count: Int) {
         objc_sync_enter(self)
  
         var message: Message!

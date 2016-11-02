@@ -330,9 +330,9 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
     
     // MARK: Utility
-    private func contentAndAttributes(forMessage message: Message) -> (String, [String: AnyObject]) {
+    private func contentAndAttributes(forMessage message: Message) -> (String, [String: Any]) {
         var content: String!
-        var attributes: [String: AnyObject]!
+        var attributes = [String: Any]()
         
         if message.messageType == .system {
             content = message.message!
@@ -510,11 +510,11 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     
     // MARK: System Message Utility
     func logSystemMessageToTableView(_ message: String) {
-        appendTableView(message as AnyObject)
+        appendTableView(message)
     }
     
     // MARK: Chat Append Utility
-    private func appendTableView(_ chatOrSystemMessage: AnyObject) {
+    private func appendTableView(_ chatOrSystemMessage: Any) {
         DispatchQueue.main.async {
             let shouldScroll = self.shouldTableViewScrollToBottom()
             

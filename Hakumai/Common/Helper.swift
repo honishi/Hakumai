@@ -36,8 +36,8 @@ class Helper {
             
             Helper.createApplicationDirectoryIfNotExists()
             let path = Helper.applicationDirectoryPath() + "/" + fileName
-            logger.setup(level: .verbose, showThreadName: true, showLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: path as AnyObject?)
-            
+            logger.setup(level: .verbose, showThreadName: true, showLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: path)
+
             if let console = logger.destination(withIdentifier: XCGLogger.Constants.baseConsoleDestinationIdentifier) {
                 logger.remove(destination: console)
             }

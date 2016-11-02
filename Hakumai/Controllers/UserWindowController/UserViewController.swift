@@ -163,9 +163,9 @@ class UserViewController: NSViewController {
     }
     
     // MARK: Utility
-    private func contentAndAttributes(forMessage message: Message) -> (String, [String: AnyObject]) {
+    private func contentAndAttributes(forMessage message: Message) -> (String, [String: Any]) {
         var content: String!
-        var attributes: [String: AnyObject]!
+        var attributes = [String: Any]()
         
         if message.messageType == .system {
             content = message.message!
