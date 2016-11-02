@@ -78,13 +78,13 @@ extension NicoUtility {
     
     private func sessionCookies() -> [HTTPCookie]? {
         // logger.debug("userSessionCookie:[\(userSessionCookie)]")
-        if userSessionCookie == nil {
+        guard let userSessionCookie = userSessionCookie else {
             return nil
         }
         
         var cookies = [HTTPCookie]()
         
-        for (name, value) in [("user_session", userSessionCookie!), ("area", "JP"), ("lang", "ja-jp")] {
+        for (name, value) in [("user_session", userSessionCookie), ("area", "JP"), ("lang", "ja-jp")] {
             if let cookie = HTTPCookie(properties: [
                 HTTPCookiePropertyKey.domain: kCookieDomain,
                 HTTPCookiePropertyKey.name: name,

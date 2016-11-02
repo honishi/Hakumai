@@ -78,10 +78,7 @@ class RoomListenerTests: XCTestCase {
         do {
             // NSXMLDocumentTidyXML
             xmlDocument = try XMLDocument(xmlString: wrapped, options: Int(UInt(XMLDocument.ContentKind.xml.rawValue)))
-        } catch _ as NSError {
-            // err = error
-            xmlDocument = nil
-        }
+        } catch {}
         let rootElement = xmlDocument!.rootElement()
 
         return rootElement!

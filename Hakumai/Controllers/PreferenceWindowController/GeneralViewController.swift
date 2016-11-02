@@ -21,7 +21,7 @@ private let kStoryboardIdGeneralViewController = "GeneralViewController"
     }
     
     override func transformedValue(_ value: Any?) -> Any? {
-        return (value as! Int) == SessionManagementType.login.rawValue ? NSNumber(value: true) : NSNumber(value: false)
+        return (value as? Int) == SessionManagementType.login.rawValue ? NSNumber(value: true) : NSNumber(value: false)
     }
 }
 

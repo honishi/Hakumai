@@ -655,12 +655,12 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     
     // MARK: Comment
     private func requestGetPostKey(success: @escaping (_ postKey: String) -> Void, failure: @escaping () -> Void) {
-        if messageServer == nil {
+        guard let messageServer = messageServer else {
             logger.error("cannot comment without messageServer")
             failure()
             return
         }
-        
+
         let httpCompletion: (URLResponse?, Data?, Error?) -> () = { (response, data, connectionError) in
             if connectionError != nil {
                 logger.error("error in cookied async request")
@@ -677,15 +677,13 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             let responseString = NSString(data: data, encoding: String.Encoding.utf8.rawValue)
             logger.debug("\(responseString)")
             
-            let postKey = (responseString as! String).extractRegexp(pattern: "postkey=(.+)")
-            
-            if postKey == nil {
+            guard let postKey = (responseString as? String)?.extractRegexp(pattern: "postkey=(.+)") else {
                 logger.error("error in extracting postkey")
                 failure()
                 return
             }
             
-            success(postKey!)
+            success(postKey)
         }
         
         guard let assignedRoomListener = assignedRoomListener() else {
@@ -694,7 +692,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             return
         }
         
-        let thread = messageServer!.thread
+        let thread = messageServer.thread
         let blockNo = (assignedRoomListener.lastRes + 1) / 100
         
         cookiedAsyncRequest(httpMethod: "GET", url: kGetPostKeyUrl, parameters: ["thread": thread, "block_no": blockNo], completion: httpCompletion)
@@ -744,17 +742,15 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             let responseString = NSString(data: data, encoding: String.Encoding.utf8.rawValue)
             self.fileLogger.debug("\(responseString)")
             
-            let heartbeat = self.extractHeartbeat(fromXmlData: data)
-            self.fileLogger.debug("\(heartbeat)")
-            
-            if heartbeat == nil {
+            guard let heartbeat = self.extractHeartbeat(fromXmlData: data) else {
                 logger.error("error in extracting heatbeat")
                 return
             }
+            self.fileLogger.debug("\(heartbeat)")
+
+            self.delegate?.nicoUtilityDidReceiveHeartbeat(self, heartbeat: heartbeat)
             
-            self.delegate?.nicoUtilityDidReceiveHeartbeat(self, heartbeat: heartbeat!)
-            
-            if let interval = heartbeat?.waitTime {
+            if let interval = heartbeat.waitTime {
                 self.stopHeartbeatTimer()
                 self.scheduleHeartbeatTimer(immediateFire: false, interval: TimeInterval(interval))
             }

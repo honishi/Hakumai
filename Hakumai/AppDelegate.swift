@@ -28,29 +28,28 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let defaults = UserDefaults.standard
         
         let lastVersion = defaults.string(forKey: Parameters.LastLaunchedApplicationVersion)
-        let currentVersion = (Bundle.main.infoDictionary!["CFBundleVersion"] as? String)
+        let currentVersion = (Bundle.main.infoDictionary?["CFBundleVersion"] as? String)
         logger.info("last launched app version:[\(lastVersion)] current app version:[\(currentVersion)]")
 
-        if lastVersion == nil {
-            logger.info("detected app first launch, no need to migrate application version")
-        }
-        else {
-            let lastVersionNumber = Int(lastVersion!)!
+        if let lastVersion = lastVersion {
+            let lastVersionNumber = Int(lastVersion)!
             let currentVersionNumber = Int(currentVersion!)!
-            
+
             if lastVersionNumber < currentVersionNumber {
                 // do some app version migration here
                 logger.info("detected app version up from:[\(lastVersionNumber)] to:[\(currentVersionNumber)]")
-                
+
                 // version migration sample
                 /*
-                if lastVersionNumber < 3 {
-                    defaults.removeObjectForKey(Parameters.MuteUserIds)
-                    defaults.removeObjectForKey(Parameters.MuteWords)
-                    defaults.synchronize()
-                }
+                 if lastVersionNumber < 3 {
+                 defaults.removeObjectForKey(Parameters.MuteUserIds)
+                 defaults.removeObjectForKey(Parameters.MuteWords)
+                 defaults.synchronize()
+                 }
                  */
             }
+        } else {
+            logger.info("detected app first launch, no need to migrate application version")
         }
         
         defaults.set(currentVersion!, forKey: Parameters.LastLaunchedApplicationVersion)

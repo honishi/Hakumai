@@ -81,11 +81,11 @@ class UserIdTableCellView: NSTableCellView {
     private func concatUserName(userId: String, userName: String?, handleName: String?) -> String {
         var concatenated = ""
         
-        if handleName != nil {
-            concatenated = handleName! + " (" + userId + ")"
+        if let handleName = handleName {
+            concatenated = handleName + " (" + userId + ")"
         }
-        else if userName != nil {
-            concatenated = userName! + " (" + userId + ")"
+        else if let userName = userName {
+            concatenated = userName + " (" + userId + ")"
         }
         else {
             concatenated = userId

@@ -452,13 +452,13 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
 
     func nicoUtilityDidReceiveFirstChat(_ nicoUtility: NicoUtility, chat: Chat) {
-        if chat.roomPosition == nil {
+        guard let roomPosition = chat.roomPosition else {
             return
         }
 
-        logSystemMessageToTableView("Opened \(chat.roomPosition!.label()).")
+        logSystemMessageToTableView("Opened \(roomPosition.label()).")
 
-        if let openedRoomPosition = openedRoomPosition, chat.roomPosition!.rawValue <= openedRoomPosition.rawValue {
+        if let openedRoomPosition = openedRoomPosition, roomPosition.rawValue <= openedRoomPosition.rawValue {
             return
         }
         openedRoomPosition = chat.roomPosition
@@ -675,10 +675,10 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     private func loadThumbnail() {
         NicoUtility.shared.loadThumbnail { (imageData) -> (Void) in
             DispatchQueue.main.async {
-                if imageData == nil {
+                guard let data = imageData as? Data else {
                     return
                 }
-                self.communityImageView.image = NSImage(data: imageData! as Data)
+                self.communityImageView.image = NSImage(data: data)
             }
         }
     }
@@ -855,12 +855,12 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     
     func calculateActive(_ timer: Timer) {
         MessageContainer.sharedContainer.calculateActive { (active: Int?) -> (Void) in
-            if active == nil {
+            guard let activeCount = active else {
                 return
             }
             
             DispatchQueue.main.async {
-                self.activeLabel.stringValue = "Active: \(active!)"
+                self.activeLabel.stringValue = "Active: \(activeCount)"
             }
         }
     }

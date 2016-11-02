@@ -69,9 +69,9 @@ class PreferenceWindowController: NSWindowController {
         default:
             break
         }
-        
-        if viewController != nil {
-            changeContent(viewController: viewController!, itemIdentifier: toolbarItem.itemIdentifier)
+
+        if let controller = viewController {
+            changeContent(viewController: controller, itemIdentifier: toolbarItem.itemIdentifier)
         }
     }
 
