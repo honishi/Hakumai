@@ -192,11 +192,11 @@ class HandleNameManager {
     }
     
     // MARK: Database Instance Utility
-    private class func fullPathForHandleNamesDatabase() -> String {
+    private static func fullPathForHandleNamesDatabase() -> String {
         return Helper.applicationDirectoryPath() + "/" + kHandleNamesDatabase
     }
     
-    private class func databaseForHandleNames() -> FMDatabase? {
+    private static func databaseForHandleNames() -> FMDatabase? {
         let database = FMDatabase(path: HandleNameManager.fullPathForHandleNamesDatabase())
         
         if !(database?.open())! {
@@ -207,7 +207,7 @@ class HandleNameManager {
         return database
     }
     
-    private class func databaseQueueForHandleNames() -> FMDatabaseQueue? {
+    private static func databaseQueueForHandleNames() -> FMDatabaseQueue? {
         return FMDatabaseQueue(path: HandleNameManager.fullPathForHandleNamesDatabase())
     }
 }

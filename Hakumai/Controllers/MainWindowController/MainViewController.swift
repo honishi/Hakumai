@@ -900,7 +900,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         tableView.reloadData()
     }
 
-    class func extractLiveNumber(from url: String) -> Int? {
+    static func extractLiveNumber(from url: String) -> Int? {
         let liveNumberPattern = "\\d{9,}"
         let patterns = [
                 "http:\\/\\/live\\.nicovideo\\.jp\\/watch\\/lv(" + liveNumberPattern + ").*",

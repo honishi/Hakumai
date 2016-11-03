@@ -23,7 +23,7 @@ class PreferenceWindowController: NSWindowController {
     @IBOutlet weak var toolbar: NSToolbar!
 
     // MARK: Properties for Singleton
-    class func generateInstance() -> PreferenceWindowController {
+    static func generateInstance() -> PreferenceWindowController {
         let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
         let preferenceWindowController = storyboard.instantiateController(withIdentifier: kStoryboardIdPreferenceWindowController) as! PreferenceWindowController
         

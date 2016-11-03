@@ -51,7 +51,7 @@ class Message {
     }
     
     // MARK: - Public Functions
-    class func resetMessageNo() {
+    static func resetMessageNo() {
         Static.messageNo = 0
     }
 }

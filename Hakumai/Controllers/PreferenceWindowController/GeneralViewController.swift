@@ -16,7 +16,7 @@ private let kStoryboardIdGeneralViewController = "GeneralViewController"
 // - @objc() is required http://stackoverflow.com/a/27178765
 // - sample that returns bool http://stackoverflow.com/a/8327909
 @objc(IsLoginSessionManagementTransformer) class IsLoginSessionManagementTransformer: ValueTransformer {
-    override class func transformedValueClass() -> AnyClass {
+    override static func transformedValueClass() -> AnyClass {
         return NSNumber.self
     }
     
@@ -47,7 +47,7 @@ class GeneralViewController: NSViewController {
     }
     
     // MARK: - Object Lifecycle
-    class func generateInstance() -> GeneralViewController {
+    static func generateInstance() -> GeneralViewController {
         let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
         return (storyboard.instantiateController(withIdentifier: kStoryboardIdGeneralViewController) as! GeneralViewController)
     }

@@ -104,14 +104,14 @@ class MessageServer: CustomStringConvertible {
     }
     
     // MARK: - Private Functions
-    class func extractServerNumber(fromAddress: String) -> Int? {
+    static func extractServerNumber(fromAddress: String) -> Int? {
         let regexp = "\\D+(\\d+).+"
         let serverNumber = fromAddress.extractRegexp(pattern: regexp)
         
         return serverNumber == nil ? nil : Int(serverNumber!)
     }
     
-    class func serverIndex(isChannel: Bool, serverNumber: Int, port: Int) -> Int? {
+    static func serverIndex(isChannel: Bool, serverNumber: Int, port: Int) -> Int? {
         var index = 0
         
         for (n, p) in isChannel ? kMessageServersChannel : kMessageServersUser {
@@ -125,29 +125,29 @@ class MessageServer: CustomStringConvertible {
         return nil
     }
     
-    class func isFirstServer(isChannel: Bool, serverNumber: Int, port: Int) -> Bool {
+    static func isFirstServer(isChannel: Bool, serverNumber: Int, port: Int) -> Bool {
         let firstServer = MessageServer.firstMessageServer(isChannel: isChannel)
         let isFirst = (firstServer.serverNumber == serverNumber && firstServer.port == port)
         return isFirst
     }
     
-    class func isLastServer(isChannel: Bool, serverNumber: Int, port: Int) -> Bool {
+    static func isLastServer(isChannel: Bool, serverNumber: Int, port: Int) -> Bool {
         let lastServer = MessageServer.lastMessageServer(isChannel: isChannel)
         let isLast = (lastServer.serverNumber == serverNumber && lastServer.port == port)
         return isLast
     }
     
-    class func firstMessageServer(isChannel: Bool) -> (serverNumber: Int, port: Int) {
+    static func firstMessageServer(isChannel: Bool) -> (serverNumber: Int, port: Int) {
         let messageServers = isChannel ? kMessageServersChannel : kMessageServersUser
         return messageServers[0]
     }
 
-    class func lastMessageServer(isChannel: Bool) -> (serverNumber: Int, port: Int) {
+    static func lastMessageServer(isChannel: Bool) -> (serverNumber: Int, port: Int) {
         let messageServers = isChannel ? kMessageServersChannel : kMessageServersUser
         return messageServers[messageServers.count - 1]
     }
     
-    class func reconstructServerAddress(baseAddress: String, serverNumber: Int) -> String {
+    static func reconstructServerAddress(baseAddress: String, serverNumber: Int) -> String {
         // split server address like followings, and reconstruct using given server number
         // - msg102.live.nicovideo.jp (user)
         // - omsg103.live.nicovideo.jp (channel)
@@ -160,7 +160,7 @@ class MessageServer: CustomStringConvertible {
         return hostPrefix + String(serverNumber) + domain
     }
     
-    class func substring(fromBaseString base: String, nsRange: NSRange) -> String {
+    static func substring(fromBaseString base: String, nsRange: NSRange) -> String {
         let start = base.characters.index(base.startIndex, offsetBy: nsRange.location)
         let end = base.characters.index(base.startIndex, offsetBy: nsRange.location + nsRange.length)
         let range = start ..< end
