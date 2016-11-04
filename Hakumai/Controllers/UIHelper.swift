@@ -118,21 +118,21 @@ class UIHelper {
     }
     
     // MARK: - Font Attributes
-    static func normalCommentAttributes() -> [String: AnyObject] {
+    static func normalCommentAttributes() -> [String: Any] {
         return normalCommentAttributes(fontSize: CGFloat(kDefaultFontSize))
     }
     
-    static func normalCommentAttributes(fontSize: CGFloat) -> [String: AnyObject] {
+    static func normalCommentAttributes(fontSize: CGFloat) -> [String: Any] {
         let attributes = [NSFontAttributeName: NSFont.systemFont(ofSize: fontSize),
                           NSParagraphStyleAttributeName: NSParagraphStyle.default()]
         return attributes
     }
 
-    static func boldCommentAttributes() -> [String: AnyObject] {
+    static func boldCommentAttributes() -> [String: Any] {
         return boldCommentAttributes(fontSize: CGFloat(kDefaultFontSize))
     }
 
-    static func boldCommentAttributes(fontSize: CGFloat) -> [String: AnyObject] {
+    static func boldCommentAttributes(fontSize: CGFloat) -> [String: Any] {
         let attributes = [NSFontAttributeName: NSFont.boldSystemFont(ofSize: fontSize),
                           NSParagraphStyleAttributeName: NSParagraphStyle.default()]
         return attributes
