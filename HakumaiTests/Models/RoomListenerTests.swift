@@ -24,7 +24,7 @@ class RoomListenerTests: XCTestCase {
     func testStreamByRemovingNull() {
         let listener = RoomListener(delegate: nil, server: nil)
         
-        XCTAssert(listener.streamByRemovingNull(fromStream: "aaa\0") == "aaa", "")
+        XCTAssert(listener.streamByRemovingNull(fromStream: "aaa\0") == "aaaa", "")
         XCTAssert(listener.streamByRemovingNull(fromStream: "aaa\nbbb\0") == "aaa\nbbb", "")
         XCTAssert(listener.streamByRemovingNull(fromStream: "aaa\0bbb\0") == "aaabbb", "")
         XCTAssert(listener.streamByRemovingNull(fromStream: "aaa") == "aaa", "")
