@@ -8,7 +8,7 @@ install:
 before_script:
   - ./script/disable_sparkle.sh
 script:
-  - xcodebuild -workspace Hakumai.xcworkspace -scheme Hakumai -configuration Debug -destination 'platform=OS X' CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO test | bundle exec xcpretty -c
+  - set -o pipefail && xcodebuild -workspace Hakumai.xcworkspace -scheme Hakumai -configuration Debug -destination 'platform=OS X' CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO test | bundle exec xcpretty -c
 cache:		 
   - bundler 
   - cocoapods
