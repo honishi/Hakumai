@@ -74,7 +74,7 @@ class RoomListenerTests: XCTestCase {
         let wrapped = "<items>" + xmlString + "</items>"
 
         // var err: NSError?
-        let xmlDocument: XMLDocument?
+        var xmlDocument: XMLDocument?
         do {
             // NSXMLDocumentTidyXML
             xmlDocument = try XMLDocument(xmlString: wrapped, options: Int(UInt(XMLDocument.ContentKind.xml.rawValue)))

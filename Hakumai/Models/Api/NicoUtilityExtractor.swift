@@ -133,10 +133,10 @@ extension NicoUtility {
             return nil
         }
         guard let port = rootElement?.firstIntValue(forXPath: baseXPath + "port") else {
-            return
+            return nil
         }
         guard let thread = rootElement?.firstIntValue(forXPath: baseXPath + "thread") else {
-            return
+            return nil
         }
         // logger.debug("\(address?),\(port),\(thread)")
         

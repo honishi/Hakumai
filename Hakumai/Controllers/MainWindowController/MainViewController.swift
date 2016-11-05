@@ -675,7 +675,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     private func loadThumbnail() {
         NicoUtility.shared.loadThumbnail { (imageData) -> (Void) in
             DispatchQueue.main.async {
-                guard let data = imageData as? Data else {
+                guard let data = imageData else {
                     return
                 }
                 self.communityImageView.image = NSImage(data: data)
