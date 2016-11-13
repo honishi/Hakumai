@@ -29,61 +29,46 @@ private let kChromeServiceName = "Chrome Safe Storage"
 private let kChromeAccount = "Chrome"
 
 class ChromeCookie {
+
     // MARK: - Properties
-    private static var fileLogger: XCGLogger!
+    private static let fileLogger: XCGLogger = {
+        let logger = XCGLogger()
+        Helper.setupFileLogger(logger, fileName: kFileLogName)
+        return logger
+    }()
 
     // MARK: - Public Functions
     // based on http://n8henrie.com/2014/05/decrypt-chrome-cookies-with-python/
     static func storedCookie() -> String? {
-        ChromeCookie.setupFileLogger()
-        
-        let encryptedCookie = ChromeCookie.queryEncryptedCookie()
+        guard let encryptedCookie = ChromeCookie.queryEncryptedCookie() else { return nil }
+
         fileLogger.debug("encryptedCookie:[\(encryptedCookie)]")
-        
-        if encryptedCookie == nil {
+
+        guard let encryptedCookieByRemovingPrefix = ChromeCookie.encryptedCookieByRemovingPrefix(encryptedCookie) else {
             return nil
         }
-        
-        let encryptedCookieByRemovingPrefix = ChromeCookie.encryptedCookieByRemovingPrefix(encryptedCookie!)
         fileLogger.debug("encryptedCookieByRemovingPrefix:[\(encryptedCookieByRemovingPrefix)]")
-        
-        if encryptedCookieByRemovingPrefix == nil {
-            return nil
-        }
-        
+
         let password = ChromeCookie.chromePassword().data(using: String.Encoding.utf8, allowLossyConversion: false)!
         let salt = kSalt.data(using: String.Encoding.utf8, allowLossyConversion: false)!
 
-        let aesKey = ChromeCookie.aesKeyForPassword(password, salt: salt, roundCount: kRoundCount)
+        guard let aesKey = ChromeCookie.aesKeyForPassword(password, salt: salt, roundCount: kRoundCount) else {
+            return nil
+        }
         fileLogger.debug("aesKey:[\(aesKey)]")
-        
-        if aesKey == nil {
+
+        guard let decrypted = ChromeCookie.decryptCookie(encryptedCookieByRemovingPrefix, aesKey: aesKey) else {
             return nil
         }
-        
-        let decrypted = ChromeCookie.decryptCookie(encryptedCookieByRemovingPrefix!, aesKey: aesKey!)
         fileLogger.debug("decrypted:[\(decrypted)]")
-        
-        if decrypted == nil {
-            return nil
-        }
-        
-        let decryptedString = ChromeCookie.decryptedStringByRemovingPadding(decrypted!)
+
+        let decryptedString = ChromeCookie.decryptedStringByRemovingPadding(decrypted)
         fileLogger.debug("decryptedString:[\(decryptedString)]")
         
         return decryptedString
     }
-    
+
     // MARK: - Internal Functions
-    private static func setupFileLogger() {
-        guard fileLogger == nil else {
-            return
-        }
-        
-        fileLogger = XCGLogger()
-        Helper.setupFileLogger(fileLogger, fileName: kFileLogName)
-    }
-    
     private static func queryEncryptedCookie() -> Data? {
         var encryptedCookie: Data?
         

@@ -26,8 +26,9 @@ extension XMLElement {
     }
     
     func firstIntValue(forXPath xpath: String) -> Int? {
-        let stringValue = firstStringValue(forXPath: xpath)
-        
-        return stringValue == nil ? nil : Int(stringValue!)
+        guard let stringValue = firstStringValue(forXPath: xpath) else {
+            return nil
+        }
+        return Int(stringValue)
     }
 }

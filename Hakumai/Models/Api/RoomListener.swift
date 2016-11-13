@@ -234,7 +234,7 @@ class RoomListener : NSObject, StreamDelegate {
         let regexp = try! NSRegularExpression(pattern: pattern, options: [])
         let matched = regexp.firstMatch(in: stream, options: [], range: NSMakeRange(0, stream.utf16.count))
         
-        return matched != nil ? true : false
+        return matched != nil
     }
     
     // MARK: - Parse Utility

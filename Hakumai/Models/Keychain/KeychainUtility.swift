@@ -43,18 +43,16 @@ class KeychainUtility {
         let serviceName = KeychainUtility.keychainServiceName()
         
         if let accounts = SAMKeychain.accounts(forService: serviceName) {
-            let accountName = accounts.last?[kSAMKeychainAccountKey] as? NSString
-            if accountName == nil {
+            guard let accountName = accounts.last?[kSAMKeychainAccountKey] as? String else {
                 return nil
             }
             
-            let password = SAMKeychain.password(forService: serviceName, account: accountName as! String)
-            if password == nil {
+            guard let password = SAMKeychain.password(forService: serviceName, account: accountName) else {
                 return nil
             }
-            
-            logger.debug("found account in keychain:[\(accountName!)]")
-            return (accountName! as String, password!)
+
+            logger.debug("found account in keychain:[\(accountName)]")
+            return (accountName, password)
         }
         
         logger.debug("found no account in keychain")

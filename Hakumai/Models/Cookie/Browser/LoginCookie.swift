@@ -31,15 +31,13 @@ class LoginCookie {
                 return
             }
 
-            let userSessionCookie = LoginCookie.findUserSessionCookie()
-            logger.debug("found session cookie:[\(userSessionCookie)]")
-            
-            if userSessionCookie == nil {
+            guard let userSessionCookie = LoginCookie.findUserSessionCookie() else {
                 completion(nil)
                 return
             }
-            
-            completion(userSessionCookie!)
+            logger.debug("found session cookie:[\(userSessionCookie)]")
+
+            completion(userSessionCookie)
         }
         
         LoginCookie.removeAllStoredCookie()
@@ -58,29 +56,24 @@ class LoginCookie {
     // MARK: - Internal Functions
     private static func removeAllStoredCookie() {
         let cookieStorage = HTTPCookieStorage.shared
-        let cookies = cookieStorage.cookies(for: URL(string: kNicoVideoDomain)!)
-        
-        if cookies == nil {
+        guard let cookies = cookieStorage.cookies(for: URL(string: kNicoVideoDomain)!) else {
             return
         }
-        
-        for cookie in cookies! {
+
+        for cookie in cookies {
             cookieStorage.deleteCookie((cookie ))
         }
     }
     
     private static func findUserSessionCookie() -> String? {
         let cookieStorage = HTTPCookieStorage.shared
-        let cookies = cookieStorage.cookies(for: URL(string: kNicoVideoDomain)!)
-        
-        if cookies == nil {
+        guard let cookies = cookieStorage.cookies(for: URL(string: kNicoVideoDomain)!) else {
             return nil
         }
-        
-        for cookie in cookies! {
-            let castedCookie = (cookie )
-            if castedCookie.name == "user_session" {
-                return castedCookie.value
+
+        for cookie in cookies {
+            if cookie.name == "user_session" {
+                return cookie.value
             }
         }
         

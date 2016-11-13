@@ -38,11 +38,11 @@ class HandleNameManager {
 
     // MARK: - Public Functions
     func extractAndUpdateHandleName(live: Live, chat: Chat) {
-        if chat.userId == nil || chat.comment == nil {
+        guard let _ = chat.userId, let comment = chat.comment else {
             return
         }
         
-        if let handleName = extractHandleName(fromComment: chat.comment!) {
+        if let handleName = extractHandleName(fromComment: comment) {
             updateHandleName(live: live, chat: chat, handleName: handleName)
         }
     }
