@@ -15,7 +15,8 @@ import XCGLogger
 private let kFileLogName = "Hakumai_Chrome.log"
 
 // sqlite
-private let kDatabasePath = "/Google/Chrome/Default/Cookies"
+private let kChromePath = "/Google/Chrome/"
+private let kDefaultPath = "Default/Cookies"
 
 // aes key
 private let kSalt = "saltysalt"
@@ -72,8 +73,14 @@ class ChromeCookie {
     private static func queryEncryptedCookie() -> Data? {
         var encryptedCookie: Data?
         
-        let appSupportDirectory = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)[0] 
-        let database = FMDatabase(path: appSupportDirectory + kDatabasePath)
+        var database: FMDatabase?
+        let appSupportDirectory = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)[0]
+        if FileManager.default.fileExists(atPath: appSupportDirectory + kChromePath + kDefaultPath) {
+            database = FMDatabase(path: appSupportDirectory + kChromePath + kDefaultPath)
+        } else {
+            let cookiePath = searchCookiesInProfileDir(atPath: appSupportDirectory + kChromePath)
+            database = FMDatabase(path: cookiePath)
+        }
         
         database?.open()
         
@@ -194,5 +201,22 @@ class ChromeCookie {
         let trimmedData = data.subdata(in: 0..<(data.count - paddingCount))
         
         return NSString(data: trimmedData, encoding: String.Encoding.utf8.rawValue) as? String
+    }
+    
+    private static func searchCookiesInProfileDir(atPath filePath: String) -> String? {
+        let defaultFileManager = FileManager.default
+        do {
+            let contents = try defaultFileManager.contentsOfDirectory(atPath: filePath)
+            for content in contents {
+                if content.hasPrefix("Profile") {
+                    return filePath + content + "/Cookies"
+                }
+            }
+        } catch {
+            logger.debug("No such file or directory")
+            return ""
+        }
+        
+        return ""
     }
 }
