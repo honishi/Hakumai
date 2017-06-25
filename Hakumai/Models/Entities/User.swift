@@ -9,6 +9,7 @@
 import Foundation
 
 private let kRoomLabelForArena = "c[oh]\\d+"
+private let kRoomLabelForArenaOffical = "アリーナ"
 private let kRoomLabelForBSP = "バックステージパス"
 
 class User: CustomStringConvertible {
@@ -19,7 +20,7 @@ class User: CustomStringConvertible {
     var seatNo: Int?
     
     var isArena: Bool? {
-        return roomLabel?.hasRegexp(pattern: kRoomLabelForArena)
+        return roomLabel?.hasRegexp(pattern: kRoomLabelForArena) == true ? true : roomLabel?.hasRegexp(pattern: kRoomLabelForArenaOffical)
     }
 
     var isBSP: Bool? {
