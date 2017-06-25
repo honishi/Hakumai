@@ -157,7 +157,7 @@ extension NicoUtility {
         }
 
         guard let standCharacter = extractStandCharacter(roomLabel) else {
-            return nil
+            return RoomPosition(rawValue: RoomPosition.arena.rawValue)
         }
 
         logger.debug("extracted standCharacter:\(standCharacter)")
