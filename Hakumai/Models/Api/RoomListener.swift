@@ -348,6 +348,9 @@ class RoomListener : NSObject, StreamDelegate {
             if let no = chatElement.attribute(forName: "no")?.stringValue, let intno = Int(no) {
                 chat.no = intno
             }
+            if chat.no == nil {
+                chat.no = 0
+            }
 
             if let dt = chatElement.attribute(forName: "date")?.stringValue, let intdt = Int(dt) {
                 chat.date = intdt.toDateAsTimeIntervalSince1970()
