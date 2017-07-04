@@ -150,7 +150,7 @@ class RoomListener : NSObject, StreamDelegate {
     
     private func send(message: String, logging: Bool = true) {
         let data: Data = (message + "\0").data(using: String.Encoding.utf8)!
-        outputStream?.write(unsafeBitCast((data as NSData).bytes, to: UnsafePointer<UInt8>.self), maxLength: data.count)
+        outputStream?.write((data as NSData).bytes.assumingMemoryBound(to: UInt8.self), maxLength: data.count)
  
         if logging {
             logger.debug(message)

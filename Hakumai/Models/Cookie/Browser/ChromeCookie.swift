@@ -123,14 +123,14 @@ class ChromeCookie {
     
     // based on http://stackoverflow.com/a/25702855
     private static func aesKeyForPassword(_ password: Data, salt: Data, roundCount: Int) -> Data? {
-        let passwordPointer = unsafeBitCast((password as NSData).bytes, to: UnsafePointer<Int8>.self)
+        let passwordPointer = (password as NSData).bytes.assumingMemoryBound(to: Int8.self)
         let passwordLength = size_t(password.count)
         
-        let saltPointer = unsafeBitCast((salt as NSData).bytes, to: UnsafePointer<UInt8>.self)
+        let saltPointer = (salt as NSData).bytes.assumingMemoryBound(to: UInt8.self)
         let saltLength = size_t(salt.count)
         
         let derivedKey = NSMutableData(length: kCCKeySizeAES128)!
-        let derivedKeyPointer = unsafeBitCast(derivedKey.mutableBytes, to: UnsafeMutablePointer<UInt8>.self)
+        let derivedKeyPointer = derivedKey.mutableBytes.assumingMemoryBound(to: UInt8.self)
         let derivedKeyLength = size_t(derivedKey.length)
         
         let result = CCKeyDerivationPBKDF(
@@ -154,16 +154,16 @@ class ChromeCookie {
     
     // based on http://stackoverflow.com/a/25755864
     private static func decryptCookie(_ encrypted: Data, aesKey: Data) -> Data? {
-        let aesKeyPointer = unsafeBitCast((aesKey as NSData).bytes, to: UnsafePointer<UInt8>.self)
+        let aesKeyPointer = (aesKey as NSData).bytes.assumingMemoryBound(to: UInt8.self)
         let aesKeyLength = size_t(kCCKeySizeAES128)
         // logger.debug("aesKeyPointer = \(aesKeyPointer), aesKeyLength = \(aesKeyData.length)")
         
-        let encryptedPointer = unsafeBitCast((encrypted as NSData).bytes, to: UnsafePointer<UInt8>.self)
+        let encryptedPointer = (encrypted as NSData).bytes.assumingMemoryBound(to: UInt8.self)
         let encryptedLength = size_t(encrypted.count)
         // logger.debug("encryptedPointer = \(encryptedPointer), encryptedDataLength = \(encryptedLength)")
         
         let decryptedData: NSMutableData! = NSMutableData(length: Int(encryptedLength) + kCCBlockSizeAES128)
-        let decryptedPointer = unsafeBitCast(decryptedData.mutableBytes, to: UnsafeMutablePointer<UInt8>.self)
+        let decryptedPointer = decryptedData.mutableBytes.assumingMemoryBound(to: UInt8.self)
         let decryptedLength = size_t(decryptedData.length)
         
         var numBytesEncrypted :size_t = 0
@@ -194,7 +194,7 @@ class ChromeCookie {
 
     // http://stackoverflow.com/a/14205319
     private static func decryptedStringByRemovingPadding(_ data: Data) -> String? {
-        let paddingCount = Int(unsafeBitCast((data as NSData).bytes, to: UnsafePointer<UInt8>.self)[data.count - 1])
+        let paddingCount = Int((data as NSData).bytes.assumingMemoryBound(to: UInt8.self)[data.count - 1])
         fileLogger.debug("padding character count:[\(paddingCount)]")
         
         // NSRange(location: 0, length: data.count - paddingCount)
