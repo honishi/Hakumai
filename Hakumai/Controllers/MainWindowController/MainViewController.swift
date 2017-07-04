@@ -789,7 +789,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         for existing in userWindowControllers {
             if chat.userId == existing.userId {
                 userWindowController = existing
-                logger.debug("existing userwc found, use it:\(userWindowController)")
+                logger.debug("existing userwc found, use it:\(userWindowController?.description ?? "")")
                 break
             }
         }
@@ -798,7 +798,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             // not exist, so create and cache it
             userWindowController = UserWindowController.generateInstance(delegate: self, userId: chat.userId!)
             positionUserWindow(userWindowController!.window!)
-            logger.debug("no existing userwc found, create it:\(userWindowController)")
+            logger.debug("no existing userwc found, create it:\(userWindowController?.description ?? "")")
             userWindowControllers.append(userWindowController!)
         }
         

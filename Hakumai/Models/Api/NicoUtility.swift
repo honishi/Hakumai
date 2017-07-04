@@ -675,7 +675,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             }
 
             let responseString = NSString(data: data, encoding: String.Encoding.utf8.rawValue)
-            logger.debug("\(responseString)")
+            logger.debug("\(responseString ?? "")")
             
             guard let postKey = (responseString as? String)?.extractRegexp(pattern: "postkey=(.+)") else {
                 logger.error("error in extracting postkey")
@@ -740,7 +740,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             }
 
             let responseString = NSString(data: data, encoding: String.Encoding.utf8.rawValue)
-            self.fileLogger.debug("\(responseString)")
+            self.fileLogger.debug("\(responseString ?? "")")
             
             guard let heartbeat = self.extractHeartbeat(fromXmlData: data) else {
                 logger.error("error in extracting heatbeat")

@@ -64,7 +64,7 @@ class ChromeCookie {
         fileLogger.debug("decrypted:[\(decrypted)]")
 
         let decryptedString = ChromeCookie.decryptedStringByRemovingPadding(decrypted)
-        fileLogger.debug("decryptedString:[\(decryptedString)]")
+        fileLogger.debug("decryptedString:[\(decryptedString ?? "")]")
         
         return decryptedString
     }

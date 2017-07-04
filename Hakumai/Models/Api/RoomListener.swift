@@ -51,7 +51,7 @@ class RoomListener : NSObject, StreamDelegate {
         super.init()
         
         initializeFileLogger()
-        logger.info("listener initialized for message server:\(self.server)")
+        logger.info("listener initialized for message server:\(self.server?.description ?? "")")
     }
     
     deinit {
@@ -249,7 +249,7 @@ class RoomListener : NSObject, StreamDelegate {
             xmlDocument = try XMLDocument(xmlString: wrappedStream, options: Int(UInt(XMLDocument.ContentKind.xml.rawValue)))
         } catch let error as NSError {
             err = error
-            logger.error("\(err)")
+            logger.error("\(err?.debugDescription ?? "")")
             xmlDocument = nil
         }
         

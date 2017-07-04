@@ -48,9 +48,9 @@ class Chat: CustomStringConvertible {
     
     var description: String {
         return (
-            "Chat: internalNo[\(internalNo)] roomPosition[\(roomPosition)] no[\(no)] " +
-            "date[\(date)] dateUsec[\(dateUsec)] mail[\(mail)] userId[\(userId)] " +
-            "premium[\(premium)] comment[\(comment)] score[\(score)]"
+            "Chat: internalNo[\(internalNo ?? 0)] roomPosition[\(roomPosition?.description ?? "")] no[\(no ?? 0)] " +
+            "date[\(date?.description ?? "")] dateUsec[\(dateUsec ?? 0)] mail[\(mail)] userId[\(userId ?? "")] " +
+            "premium[\(premium?.description ?? "")] comment[\(comment ?? "")] score[\(score ?? 0)]"
         )
     }
     

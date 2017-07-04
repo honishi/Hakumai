@@ -29,7 +29,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         let lastVersion = defaults.string(forKey: Parameters.LastLaunchedApplicationVersion)
         let currentVersion = (Bundle.main.infoDictionary?["CFBundleVersion"] as? String)
-        logger.info("last launched app version:[\(lastVersion)] current app version:[\(currentVersion)]")
+        logger.info("last launched app version:[\(lastVersion ?? "")] current app version:[\(currentVersion ?? "")]")
 
         if let lastVersion = lastVersion {
             let lastVersionNumber = Int(lastVersion)!

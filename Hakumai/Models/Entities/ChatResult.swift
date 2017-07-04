@@ -49,7 +49,7 @@ class ChatResult {
     
     var description: String {
         return (
-            "ChatResult: status[\(status)]"
+            "ChatResult: status[\(status?.description ?? "")]"
         )
     }
 

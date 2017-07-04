@@ -25,8 +25,8 @@ class Live: CustomStringConvertible {
     
     var description: String {
         return (
-            "Live: liveId[\(liveId)] title[\(title)] community[\(community)] " +
-            "baseTime[\(baseTime)] openTime[\(openTime)] startTime[\(startTime)]"
+            "Live: liveId[\(liveId ?? "")] title[\(title ?? "")] community[\(community)] " +
+            "baseTime[\(baseTime?.description ?? "")] openTime[\(openTime?.description ?? "")] startTime[\(startTime?.description ?? "")]"
         )
     }
     

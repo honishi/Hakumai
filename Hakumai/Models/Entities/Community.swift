@@ -28,8 +28,8 @@ class Community: CustomStringConvertible {
     
     var description: String {
         return (
-            "Community: community[\(community)] title[\(title)] level[\(level)] " +
-            "thumbnailUrl[\(thumbnailUrl)]"
+            "Community: community[\(community ?? "")] title[\(title ?? "")] level[\(level ?? 0)] " +
+            "thumbnailUrl[\(thumbnailUrl?.description ?? "")]"
         )
     }
 

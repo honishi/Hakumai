@@ -49,9 +49,9 @@ class Heartbeat: CustomStringConvertible {
     
     var description: String {
         return (
-            "Heartbeat: status[\(status)] errorCode[\(errorCode)] watchCount[\(watchCount)] " +
-            "commentCount[\(commentCount)] freeSlotNum[\(freeSlotNum)] " +
-            "isRestrict[\(isRestrict)] ticket[\(ticket)] waitTime[\(waitTime)]"
+            "Heartbeat: status[\(status?.description ?? "")] errorCode[\(errorCode?.description ?? "")] watchCount[\(watchCount ?? 0)] " +
+            "commentCount[\(commentCount ?? 0)] freeSlotNum[\(freeSlotNum ?? 0)] " +
+            "isRestrict[\(isRestrict ?? 0)] ticket[\(ticket ?? "")] waitTime[\(waitTime ?? 0)]"
         )
     }
     

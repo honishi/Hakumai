@@ -19,7 +19,7 @@ class LoginCookie {
     static func requestCookie(mailAddress: String, password: String, completion: @escaping (_ userSessionCookie: String?) -> Void) {
         func httpCompletion(_ response: URLResponse?, _ data: Data?, _ connectionError: Error?) {
             if connectionError != nil {
-                logger.error("login failed. connection error:[\(connectionError)]")
+                logger.error("login failed. connection error:[\(connectionError!)]")
                 completion(nil)
                 return
             }

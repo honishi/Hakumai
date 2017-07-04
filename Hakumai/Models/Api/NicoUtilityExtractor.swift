@@ -22,7 +22,7 @@ extension NicoUtility {
             xmlDocument = try XMLDocument(data: xmlData, options: 0)
         } catch let error1 as NSError {
             error = error1
-            logger.error("\(error)")
+            logger.error("\(error?.debugDescription ?? "")")
             xmlDocument = nil
         }
         let rootElement = xmlDocument?.rootElement()
@@ -53,7 +53,7 @@ extension NicoUtility {
         } catch let error1 as NSError {
             error = error1
             xmlDocument = nil
-            logger.error("\(error)")
+            logger.error("\(error?.debugDescription ?? "")")
         }
         let rootElement = xmlDocument?.rootElement()
         
@@ -78,7 +78,7 @@ extension NicoUtility {
         } catch let error1 as NSError {
             error = error1
             xmlDocument = nil
-            logger.error("\(error)")
+            logger.error("\(error?.debugDescription ?? "")")
         }
         let rootElement = xmlDocument?.rootElement()
         
@@ -107,7 +107,7 @@ extension NicoUtility {
         } catch let error1 as NSError {
             error = error1
             xmlDocument = nil
-            logger.error("\(error)")
+            logger.error("\(error?.debugDescription ?? "")")
         }
         let rootElement = xmlDocument?.rootElement()
         
@@ -181,7 +181,7 @@ extension NicoUtility {
         } catch let error1 as NSError {
             error = error1
             htmlDocument = nil
-            logger.error("\(error)")
+            logger.error("\(error?.debugDescription ?? "")")
         }
         let rootElement = htmlDocument?.rootElement
         
@@ -209,7 +209,7 @@ extension NicoUtility {
             htmlDocument = try ONOXMLDocument.htmlDocument(with: htmlData)
         } catch let error1 as NSError {
             error = error1
-            logger.error("\(error)")
+            logger.error("\(error?.debugDescription ?? "")")
             htmlDocument = nil
         }
         let rootElement = htmlDocument?.rootElement
@@ -237,7 +237,7 @@ extension NicoUtility {
         } catch let error1 as NSError {
             error = error1
             htmlDocument = nil
-            logger.error("\(error)")
+            logger.error("\(error?.debugDescription ?? "")")
         }
         let rootElement = htmlDocument?.rootElement
         
@@ -258,7 +258,7 @@ extension NicoUtility {
         } catch let error1 as NSError {
             error = error1
             xmlDocument = nil
-            logger.error("\(error)")
+            logger.error("\(error?.debugDescription ?? "")")
         }
         let rootElement = xmlDocument?.rootElement()
         

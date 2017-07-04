@@ -29,8 +29,8 @@ class User: CustomStringConvertible {
 
     var description: String {
         return (
-            "User: userId[\(userId)] nickname[\(nickname)] isPremium[\(isPremium)] " +
-            "roomLabel[\(roomLabel)] seatNo[\(seatNo)] isArena[\(isArena)] isBSP[\(isBSP)]"
+            "User: userId[\(userId ?? 0)] nickname[\(nickname ?? "")] isPremium[\(isPremium ?? 0)] " +
+            "roomLabel[\(roomLabel ?? "")] seatNo[\(seatNo ?? 0)] isArena[\(isArena ?? false)] isBSP[\(isBSP ?? false)]"
         )
     }
     

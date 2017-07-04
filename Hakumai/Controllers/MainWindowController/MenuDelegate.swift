@@ -154,7 +154,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         
         for muteUserId in muteUserIds {
             if chat.userId == muteUserId[MuteUserIdKey.UserId] {
-                logger.debug("mute userid [\(chat.userId)] already registered, so skip")
+                logger.debug("mute userid [\(chat.userId ?? "")] already registered, so skip")
                 return
             }
         }
