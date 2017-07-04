@@ -348,7 +348,7 @@ class RoomListener : NSObject, StreamDelegate {
             if let no = chatElement.attribute(forName: "no")?.stringValue, let intno = Int(no) {
                 chat.no = intno
             }
-            if chat.no == nil {
+            else {
                 chat.no = 0
             }
 
