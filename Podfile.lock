@@ -2,35 +2,32 @@ PODS:
   - FMDB (2.6.2):
     - FMDB/standard (= 2.6.2)
   - FMDB/standard (2.6.2)
+  - ObjcExceptionBridging (1.0.1):
+    - ObjcExceptionBridging/ObjcExceptionBridging (= 1.0.1)
+  - ObjcExceptionBridging/ObjcExceptionBridging (1.0.1)
   - Ono (1.2.2)
   - SAMKeychain (1.5.0)
   - Sparkle (1.14.0)
-  - XCGLogger (4.0.0-beta.3)
+  - XCGLogger (5.0.1):
+    - XCGLogger/Core (= 5.0.1)
+  - XCGLogger/Core (5.0.1):
+    - ObjcExceptionBridging
 
 DEPENDENCIES:
   - FMDB (~> 2.6.2)
   - Ono (~> 1.2.2)
   - SAMKeychain (~> 1.5.0)
   - Sparkle (~> 1.14.0)
-  - XCGLogger (from `https://github.com/DaveWoodCom/XCGLogger.git`, commit `31aa5c1dd068f6550772e34ba01d667a1b5ff2de`)
-
-EXTERNAL SOURCES:
-  XCGLogger:
-    :commit: 31aa5c1dd068f6550772e34ba01d667a1b5ff2de
-    :git: https://github.com/DaveWoodCom/XCGLogger.git
-
-CHECKOUT OPTIONS:
-  XCGLogger:
-    :commit: 31aa5c1dd068f6550772e34ba01d667a1b5ff2de
-    :git: https://github.com/DaveWoodCom/XCGLogger.git
+  - XCGLogger (~> 5.0.1)
 
 SPEC CHECKSUMS:
   FMDB: 854a0341b4726e53276f2a8996f06f1b80f9259a
+  ObjcExceptionBridging: c30e00eb3700467e695faeea30e26e18bd445001
   Ono: 80b1c686777d3f6d5d5ce6fcac8a74afef4ca197
   SAMKeychain: 1fc9ae02f576365395758b12888c84704eebc423
   Sparkle: ccd95233b12a3e3d4eeb55ff01dd4c8bb8188b07
-  XCGLogger: 07183e4727cd4dba984456721e949b1663d6dc22
+  XCGLogger: 0b43697155d41e4a1b15fc776f319c2141646b09
 
-PODFILE CHECKSUM: 73eba3554daf96c0c0ca5f333a87e65c7f8a507b
+PODFILE CHECKSUM: 967580342a95cdd02f4c487f66ef6651d5960114
 
 COCOAPODS: 1.0.1
