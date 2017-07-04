@@ -316,6 +316,6 @@ private class BinaryReader {
 // MARK: - Extension
 extension NSData {
     func toString(encoding: UInt) -> String {
-        return NSString(data: self as Data, encoding: encoding) as! String
+        return NSString(data: self as Data, encoding: encoding)! as String
     }
 }

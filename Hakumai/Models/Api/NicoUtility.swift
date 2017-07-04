@@ -677,7 +677,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             let responseString = NSString(data: data, encoding: String.Encoding.utf8.rawValue)
             logger.debug("\(responseString ?? "")")
             
-            guard let postKey = (responseString as? String)?.extractRegexp(pattern: "postkey=(.+)") else {
+            guard let postKey = (responseString as String?)?.extractRegexp(pattern: "postkey=(.+)") else {
                 logger.error("error in extracting postkey")
                 failure()
                 return

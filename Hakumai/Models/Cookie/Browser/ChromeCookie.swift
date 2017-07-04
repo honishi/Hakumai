@@ -200,7 +200,7 @@ class ChromeCookie {
         // NSRange(location: 0, length: data.count - paddingCount)
         let trimmedData = data.subdata(in: 0..<(data.count - paddingCount))
         
-        return NSString(data: trimmedData, encoding: String.Encoding.utf8.rawValue) as? String
+        return NSString(data: trimmedData, encoding: String.Encoding.utf8.rawValue) as String?
     }
     
     private static func searchCookiesInProfileDir(atPath filePath: String) -> String? {
