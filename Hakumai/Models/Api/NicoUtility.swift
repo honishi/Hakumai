@@ -99,6 +99,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     private var heartbeatTimer: Timer?
     private var reservedToReconnect = false
     private var chatCount = 0
+    private var resFrom = kDefaultResFrom
     
     // session cookie
     private var shouldClearUserSessionCookie = true
@@ -130,6 +131,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     func connect(liveNumber: Int, mailAddress: String, password: String) {
+        resFrom = kDefaultResFrom
         clearUserSessionCookieIfReserved()
         
         if userSessionCookie == nil {
@@ -144,6 +146,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
     }
     
     func connect(liveNumber: Int, browserType: BrowserType) {
+        resFrom = kDefaultResFrom
         clearUserSessionCookieIfReserved()
         
         CookieUtility.requestBrowserCookie(browserType: browserType) { cookie in
@@ -314,6 +317,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
 
         if isKickedOut(roomListener: roomListener, chat: chat) {
             delegate?.nicoUtilityDidGetKickedOut(self)
+            resFrom = 0
             reconnectToLastLive()
         }
         
@@ -646,7 +650,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
             logger.info("created room listener instance:\(listener)")
             
             DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async {
-                listener.openSocket(resFrom: kDefaultResFrom)
+                listener.openSocket(resFrom: self.resFrom)
             }
         }
         
