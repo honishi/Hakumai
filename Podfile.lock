@@ -20,6 +20,15 @@ DEPENDENCIES:
   - Sparkle (~> 1.14.0)
   - XCGLogger (~> 5.0.1)
 
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - FMDB
+    - ObjcExceptionBridging
+    - Ono
+    - SAMKeychain
+    - Sparkle
+    - XCGLogger
+
 SPEC CHECKSUMS:
   FMDB: 854a0341b4726e53276f2a8996f06f1b80f9259a
   ObjcExceptionBridging: c30e00eb3700467e695faeea30e26e18bd445001
@@ -30,4 +39,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 967580342a95cdd02f4c487f66ef6651d5960114
 
-COCOAPODS: 1.0.1
+COCOAPODS: 1.5.3
