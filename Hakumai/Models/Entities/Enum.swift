@@ -47,25 +47,25 @@ enum RoomPosition: Int, CustomStringConvertible {
         case .arena:
             return "アリーナ"
         case .standA:
-            return "立ち見A"
+            return "立ち見1"
         case .standB:
-            return "立ち見B"
+            return "立ち見2"
         case .standC:
-            return "立ち見C"
+            return "立ち見3"
         case .standD:
-            return "立ち見D"
+            return "立ち見4"
         case .standE:
-            return "立ち見E"
+            return "立ち見5"
         case .standF:
-            return "立ち見F"
+            return "立ち見6"
         case .standG:
-            return "立ち見G"
+            return "立ち見7"
         case .standH:
-            return "立ち見H"
+            return "立ち見8"
         case .standI:
-            return "立ち見I"
+            return "立ち見9"
         case .standJ:
-            return "立ち見J"
+            return "立ち見10"
         }
     }
     
@@ -77,34 +77,34 @@ enum RoomPosition: Int, CustomStringConvertible {
             return "ア"
         }
         else if self == .standA {
-            return "A"
+            return "1"
         }
         else if self == .standB {
-            return "B"
+            return "2"
         }
         else if self == .standC {
-            return "C"
+            return "3"
         }
         else if self == .standD {
-            return "D"
+            return "4"
         }
         else if self == .standE {
-            return "E"
+            return "5"
         }
         else if self == .standF {
-            return "F"
+            return "6"
         }
         else if self == .standG {
-            return "G"
+            return "7"
         }
         else if self == .standH {
-            return "H"
+            return "8"
         }
         else if self == .standI {
-            return "I"
+            return "9"
         }
         else if self == .standJ {
-            return "J"
+            return "10"
         }
         
         return "?"

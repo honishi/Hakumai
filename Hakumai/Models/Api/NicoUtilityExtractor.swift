@@ -161,12 +161,12 @@ extension NicoUtility {
         }
 
         logger.debug("extracted standCharacter:\(standCharacter)")
-        let raw = (standCharacter - ("A" as Character)) + 1
+        let raw = (standCharacter - ("1" as Character)) + 1
         return RoomPosition(rawValue: raw)
     }
 
     private func extractStandCharacter(_ roomLabel: String) -> Character? {
-        let matched = roomLabel.extractRegexp(pattern: "立ち見(\\w)列")
+        let matched = roomLabel.extractRegexp(pattern: "^立ち見(\\d+)$")
         
         // using subscript String extension defined above
         return matched?[0]
