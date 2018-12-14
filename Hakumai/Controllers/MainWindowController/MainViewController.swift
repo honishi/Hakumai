@@ -750,9 +750,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     
     @IBAction func comment(_ sender: AnyObject) {
         let comment = commentTextField.stringValue
-        if comment.characters.count == 0 {
-            return
-        }
+        guard 0 < comment.count else { return }
         
         let anonymously = UserDefaults.standard.bool(forKey: Parameters.CommentAnonymously)
         NicoUtility.shared.comment(comment, anonymously: anonymously) { comment in

@@ -161,12 +161,11 @@ class MessageServer: CustomStringConvertible {
     }
     
     static func substring(fromBaseString base: String, nsRange: NSRange) -> String {
-        let start = base.characters.index(base.startIndex, offsetBy: nsRange.location)
-        let end = base.characters.index(base.startIndex, offsetBy: nsRange.location + nsRange.length)
+        let start = base.index(base.startIndex, offsetBy: nsRange.location)
+        let end = base.index(base.startIndex, offsetBy: nsRange.location + nsRange.length)
         let range = start ..< end
-        let substring = base.substring(with: range)
-        
-        return substring
+        let substring = base[range]
+        return String(substring)
     }
 }
 

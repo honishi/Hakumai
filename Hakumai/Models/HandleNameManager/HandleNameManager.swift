@@ -100,7 +100,7 @@ class HandleNameManager {
         objc_sync_exit(self)
         
         if !success {
-            logger.error("failed to drop table: \(database.lastErrorMessage())")
+            logger.error("failed to drop table: \(String(describing: database.lastErrorMessage()))")
         }
     }
     
@@ -120,7 +120,7 @@ class HandleNameManager {
         objc_sync_exit(self)
         
         if !success {
-            logger.error("failed to create table: \(database.lastErrorMessage())")
+            logger.error("failed to create table: \(String(describing: database.lastErrorMessage()))")
         }
     }
     
@@ -170,7 +170,7 @@ class HandleNameManager {
         objc_sync_exit(self)
         
         if !success {
-            logger.error("failed to delete table: \(database.lastErrorMessage())")
+            logger.error("failed to delete table: \(String(describing: database.lastErrorMessage()))")
         }
     }
     
@@ -187,7 +187,7 @@ class HandleNameManager {
         objc_sync_exit(self)
         
         if !success {
-            logger.error("failed to delete table: \(database.lastErrorMessage())")
+            logger.error("failed to delete table: \(String(describing: database.lastErrorMessage()))")
         }
     }
     

@@ -52,7 +52,7 @@ extension NicoUtility {
         var constructed: String = ""
         
         for (key, value) in parameters! {
-            if 0 < constructed.characters.count {
+            if 0 < constructed.count {
                 constructed = constructed as String + "&"
             }
             

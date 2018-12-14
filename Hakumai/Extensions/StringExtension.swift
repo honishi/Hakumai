@@ -14,9 +14,8 @@ import Foundation
 // based on http://stackoverflow.com/a/24144365
 extension String {
     subscript (i: Int) -> Character {
-        return Array(characters)[i]
+        return self[index(startIndex, offsetBy: i)]
     }
-    
     // "立ち見A列".extractRegexp(pattern: "立ち見(\\w)列") -> Optional("A")
     func extractRegexp(pattern: String) -> String? {
         // convert String to NSString to handle regular expression as expected.
