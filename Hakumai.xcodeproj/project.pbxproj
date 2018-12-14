@@ -638,14 +638,15 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = DB2AE0DA1A0EE2FD00B1CE4D /* Build configuration list for PBXNativeTarget "Hakumai" */;
 			buildPhases = (
-				DBAC3D2C21C4100C00B09673 /* Sort Project Script */,
 				9B05742C4603611DD9579258 /* [CP] Check Pods Manifest.lock */,
+				DBAC3D2C21C4100C00B09673 /* Sort Project Script */,
 				DB2AE0BA1A0EE2FD00B1CE4D /* Sources */,
 				DB2AE0BB1A0EE2FD00B1CE4D /* Frameworks */,
 				DB2AE0BC1A0EE2FD00B1CE4D /* Resources */,
 				DB0FC12F1A262CF0000FADDD /* Embed Frameworks */,
 				1720CD095F2EF064B1086037 /* [CP] Embed Pods Frameworks */,
 				DBD940CF1BF6EA76001BDB47 /* Sparkle Script */,
+				DBAC3D2F21C414AB00B09673 /* SwiftLint Script */,
 			);
 			buildRules = (
 			);
@@ -818,6 +819,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "perl \"${PROJECT_DIR}/script/sort-Xcode-project-file\" \"${PROJECT_FILE_PATH}/project.pbxproj\"\n";
+		};
+		DBAC3D2F21C414AB00B09673 /* SwiftLint Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "SwiftLint Script";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which \"${PODS_ROOT}/SwiftLint/swiftlint\" >/dev/null; then\n\"${PODS_ROOT}/SwiftLint/swiftlint\"\nelse\necho \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
 		};
 		DBD940CF1BF6EA76001BDB47 /* Sparkle Script */ = {
 			isa = PBXShellScriptBuildPhase;

@@ -8,6 +8,7 @@ PODS:
   - Ono (1.2.2)
   - SAMKeychain (1.5.0)
   - Sparkle (1.14.0)
+  - SwiftLint (0.29.1)
   - XCGLogger (6.1.0):
     - XCGLogger/Core (= 6.1.0)
   - XCGLogger/Core (6.1.0):
@@ -18,6 +19,7 @@ DEPENDENCIES:
   - Ono (~> 1.2.2)
   - SAMKeychain (~> 1.5.0)
   - Sparkle (~> 1.14.0)
+  - SwiftLint (= 0.29.1)
   - XCGLogger (~> 6.1.0)
 
 SPEC REPOS:
@@ -27,6 +29,7 @@ SPEC REPOS:
     - Ono
     - SAMKeychain
     - Sparkle
+    - SwiftLint
     - XCGLogger
 
 SPEC CHECKSUMS:
@@ -35,8 +38,9 @@ SPEC CHECKSUMS:
   Ono: 80b1c686777d3f6d5d5ce6fcac8a74afef4ca197
   SAMKeychain: 1fc9ae02f576365395758b12888c84704eebc423
   Sparkle: ccd95233b12a3e3d4eeb55ff01dd4c8bb8188b07
+  SwiftLint: 6772320e40b52049053a518c17db9b0634a0b45a
   XCGLogger: 7f7f43f15dfe3a305fa1342b7dc29af656289abd
 
-PODFILE CHECKSUM: 9af8353de7594e1723c4ec64bd1bbac57af96af5
+PODFILE CHECKSUM: 07c73b57dfda030bcb0286c118177d0f37380b21
 
 COCOAPODS: 1.5.3
