@@ -8,6 +8,9 @@ install:
 before_script:
   - ./script/disable_sparkle.sh
 script:
+  # TODO: remove this work around for cocoapods bug
+  # https://github.com/CocoaPods/CocoaPods/issues/7708#issuecomment-423668677
+  - export EXPANDED_CODE_SIGN_IDENTITY=""
   - set -o pipefail && xcodebuild -workspace Hakumai.xcworkspace -scheme Hakumai -configuration Debug -destination 'platform=OS X' CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO test | bundle exec xcpretty -c
 cache:		 
   - bundler 
