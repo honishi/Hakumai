@@ -65,10 +65,10 @@ class NicoUtilityTests: XCTestCase {
         user.roomLabel = "バックステージパス"
         XCTAssert(NicoUtility.shared.roomPosition(byUser: user) == .arena, "")
 
-        user.roomLabel = "立ち見A列"
+        user.roomLabel = "立ち見1"
         XCTAssert(NicoUtility.shared.roomPosition(byUser: user) == .standA, "")
 
-        user.roomLabel = "立ち見C列"
+        user.roomLabel = "立ち見3"
         XCTAssert(NicoUtility.shared.roomPosition(byUser: user) == .standC, "")
     }
     

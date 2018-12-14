@@ -45,13 +45,11 @@ extension NicoUtility {
     }
     
     func construct(parameters: [String: Any]?) -> String? {
-        if parameters == nil {
-            return nil
-        }
+        guard let parameters = parameters else { return nil }
         
         var constructed: String = ""
         
-        for (key, value) in parameters! {
+        for (key, value) in parameters {
             if 0 < constructed.count {
                 constructed = constructed as String + "&"
             }

@@ -91,8 +91,6 @@
 		DBA541EA1A4838F4005FF218 /* PreferenceWindowController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DBA541E91A4838F4005FF218 /* PreferenceWindowController.storyboard */; };
 		DBAAA7321A0F43BB00981004 /* CookieUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7311A0F43BB00981004 /* CookieUtility.swift */; };
 		DBAAA7331A0F43BB00981004 /* CookieUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7311A0F43BB00981004 /* CookieUtility.swift */; };
-		DBAAA73E1A0F594700981004 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBAAA73D1A0F594700981004 /* Security.framework */; };
-		DBAAA7421A0F5FEF00981004 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBAAA7411A0F5FEF00981004 /* SystemConfiguration.framework */; };
 		DBAAA7511A0FDA4500981004 /* NicoUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7501A0FDA4500981004 /* NicoUtility.swift */; };
 		DBAAA7521A0FDA4500981004 /* NicoUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7501A0FDA4500981004 /* NicoUtility.swift */; };
 		DBAB695C1A5B70A5002FCD95 /* LoginCookie.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAB695B1A5B70A5002FCD95 /* LoginCookie.swift */; };
@@ -171,7 +169,6 @@
 		20EE9521898A5BBE307B4918 /* Pods-Hakumai.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Hakumai.release.xcconfig"; path = "Pods/Target Support Files/Pods-Hakumai/Pods-Hakumai.release.xcconfig"; sourceTree = "<group>"; };
 		624C843B0BCD6D9BBCFABC5C /* Pods_HakumaiTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_HakumaiTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		84A41989D935D7A03EBFCB87 /* Pods_Hakumai.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Hakumai.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		997BE9FD16AC2C4CF6E1D3A8 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C64D90E7D7263B8BAA24E4EB /* Pods-HakumaiTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HakumaiTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-HakumaiTests/Pods-HakumaiTests.release.xcconfig"; sourceTree = "<group>"; };
 		DB080B841A17CA0100896228 /* CookieUtilityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CookieUtilityTests.swift; sourceTree = "<group>"; };
 		DB0E10631A39B6C200A10E00 /* GeneralViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralViewController.swift; sourceTree = "<group>"; };
@@ -233,11 +230,11 @@
 		DBA541E71A483710005FF218 /* UserWindowController.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = UserWindowController.storyboard; sourceTree = "<group>"; };
 		DBA541E91A4838F4005FF218 /* PreferenceWindowController.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = PreferenceWindowController.storyboard; sourceTree = "<group>"; };
 		DBAAA7311A0F43BB00981004 /* CookieUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CookieUtility.swift; sourceTree = "<group>"; };
-		DBAAA73D1A0F594700981004 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
-		DBAAA7411A0F5FEF00981004 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		DBAAA7501A0FDA4500981004 /* NicoUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicoUtility.swift; sourceTree = "<group>"; };
 		DBAB695B1A5B70A5002FCD95 /* LoginCookie.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginCookie.swift; sourceTree = "<group>"; };
 		DBAB69611A5C1A70002FCD95 /* KeychainUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = KeychainUtility.swift; path = Hakumai/Models/Keychain/KeychainUtility.swift; sourceTree = SOURCE_ROOT; };
+		DBAC3D2D21C411E900B09673 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		DBAC3D2E21C411E900B09673 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		DBADF3301A5EFA4D00A3A037 /* MainWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainWindowController.swift; sourceTree = "<group>"; };
 		DBB472FF1A358FFC002C797E /* CharacterExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacterExtension.swift; sourceTree = "<group>"; };
 		DBB473031A359082002C797E /* IntExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntExtension.swift; sourceTree = "<group>"; };
@@ -273,8 +270,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9A3A22960489C07A1AB8A317 /* Pods_Hakumai.framework in Frameworks */,
-				DBAAA73E1A0F594700981004 /* Security.framework in Frameworks */,
-				DBAAA7421A0F5FEF00981004 /* SystemConfiguration.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -292,9 +287,10 @@
 		4A163BC4A3936157E6B4E259 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				997BE9FD16AC2C4CF6E1D3A8 /* Pods.framework */,
 				84A41989D935D7A03EBFCB87 /* Pods_Hakumai.framework */,
 				624C843B0BCD6D9BBCFABC5C /* Pods_HakumaiTests.framework */,
+				DBAC3D2E21C411E900B09673 /* Security.framework */,
+				DBAC3D2D21C411E900B09673 /* SystemConfiguration.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -331,7 +327,6 @@
 		DB2AE0B51A0EE2FD00B1CE4D = {
 			isa = PBXGroup;
 			children = (
-				DB2AE1011A0F29BA00B1CE4D /* frameworks */,
 				4A163BC4A3936157E6B4E259 /* Frameworks */,
 				DB2AE0C01A0EE2FD00B1CE4D /* Hakumai */,
 				DB2AE0D31A0EE2FD00B1CE4D /* HakumaiTests */,
@@ -397,15 +392,6 @@
 				DB2AE0D51A0EE2FD00B1CE4D /* Info.plist */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		DB2AE1011A0F29BA00B1CE4D /* frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				DBAAA73D1A0F594700981004 /* Security.framework */,
-				DBAAA7411A0F5FEF00981004 /* SystemConfiguration.framework */,
-			);
-			name = frameworks;
 			sourceTree = "<group>";
 		};
 		DB414C031A48106B008D2F40 /* UserWindowController */ = {
