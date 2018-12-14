@@ -45,22 +45,21 @@ extension String {
 
     func stringByRemovingRegexp(pattern: String) -> String {
         let nsStringSelf = (self as NSString)
-
-        let regexp = try! NSRegularExpression(pattern: pattern, options: [])
-        let removed = regexp.stringByReplacingMatches(in: nsStringSelf as String, options: [], range: NSRange(location: 0, length: nsStringSelf.length), withTemplate: "")
-
+        guard let regexp = try? NSRegularExpression(pattern: pattern, options: []) else {
+            return self
+        }
+        let removed = regexp.stringByReplacingMatches(
+            in: nsStringSelf as String,
+            options: [],
+            range: NSRange(location: 0, length: nsStringSelf.length),
+            withTemplate: "")
         return (removed as String)
     }
 
     func numberStringWithSeparatorComma() -> String? {
-        let intValue: Int! = Int(self)
-
-        if intValue == nil {
-            return nil
-        }
+        guard let intValue = Int(self) else { return nil }
 
         let number = NSNumber(value: intValue)
-
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         formatter.groupingSeparator = ","

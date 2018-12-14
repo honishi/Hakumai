@@ -25,16 +25,12 @@ class UserIdTableCellView: NSTableCellView {
                 userIdTextField.stringValue = ""
                 return
             }
-
             userIdImageView.image = image(forHandleName: info?.handleName, userId: userId)
             setUserIdLabel(userId: userId, premium: premium, handleName: info?.handleName)
         }
     }
 
-    var fontSize: CGFloat? {
-        didSet {
-            set(fontSize: fontSize)
-        }
+    var fontSize: CGFloat? { didSet { set(fontSize: fontSize) }
     }
 
     // MARK: - Internal Functions

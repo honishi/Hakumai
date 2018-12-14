@@ -47,9 +47,9 @@ class GeneralViewController: NSViewController {
     }
 
     // MARK: - Object Lifecycle
-    static func generateInstance() -> GeneralViewController {
+    static func generateInstance() -> GeneralViewController? {
         let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
-        return (storyboard.instantiateController(withIdentifier: kStoryboardIdGeneralViewController) as! GeneralViewController)
+        return storyboard.instantiateController(withIdentifier: kStoryboardIdGeneralViewController) as? GeneralViewController
     }
 
     // MARK: - NSViewController Overrides
@@ -82,7 +82,7 @@ class GeneralViewController: NSViewController {
     }
 
     @IBAction func detectedChangeInSessionManagementMatrix(_ sender: AnyObject) {
-        let matrix = (sender as! NSMatrix)
+        guard let matrix = sender as? NSMatrix else { return }
         // log.debug("\(matrix.selectedTag())")
 
         if matrix.selectedTag() == SessionManagementType.login.rawValue {

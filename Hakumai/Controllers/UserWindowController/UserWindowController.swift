@@ -31,9 +31,11 @@ class UserWindowController: NSWindowController, NSWindowDelegate {
         logger.debug("")
     }
 
-    static func generateInstance(delegate: UserWindowControllerDelegate?, userId: String) -> UserWindowController {
+    static func generateInstance(delegate: UserWindowControllerDelegate?, userId: String) -> UserWindowController? {
         let storyboard = NSStoryboard(name: kStoryboardNameUserWindowController, bundle: nil)
-        let userWindowController = storyboard.instantiateController(withIdentifier: kStoryboardIdUserWindowController) as! UserWindowController
+        guard let userWindowController = storyboard.instantiateController(withIdentifier: kStoryboardIdUserWindowController) as? UserWindowController else {
+            return nil
+        }
 
         userWindowController.delegate = delegate
         userWindowController.userId = userId
@@ -52,7 +54,7 @@ class UserWindowController: NSWindowController, NSWindowDelegate {
 
     // MARK: - Public Functions
     func reloadMessages() {
-        let userViewController = contentViewController as! UserViewController
+        guard let userViewController = contentViewController as? UserViewController else { return }
         userViewController.userId = userId
     }
 

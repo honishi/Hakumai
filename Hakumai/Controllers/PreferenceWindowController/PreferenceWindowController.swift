@@ -23,12 +23,12 @@ class PreferenceWindowController: NSWindowController {
     @IBOutlet weak var toolbar: NSToolbar!
 
     // MARK: Properties for Singleton
-    static func generateInstance() -> PreferenceWindowController {
+    static func generateInstance() -> PreferenceWindowController? {
         let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
-        let preferenceWindowController = storyboard.instantiateController(withIdentifier: kStoryboardIdPreferenceWindowController) as! PreferenceWindowController
-
+        guard let preferenceWindowController = storyboard.instantiateController(withIdentifier: kStoryboardIdPreferenceWindowController) as? PreferenceWindowController else {
+            return nil
+        }
         preferenceWindowController.window?.center()
-
         return preferenceWindowController
     }
 
@@ -48,24 +48,23 @@ class PreferenceWindowController: NSWindowController {
 
     // MARK: - NSWindowController Overrides
     override func windowDidLoad() {
-        changeContent(viewController: GeneralViewController.shared, itemIdentifier: kToolbarItemIdentifierGeneral)
-
+        if let vc = GeneralViewController.shared {
+            changeContent(viewController: vc, itemIdentifier: kToolbarItemIdentifierGeneral)
+        }
         window?.center()
         window?.makeKey()
     }
 
     // MARK: - NSToolbar Handlers
     @IBAction func changeViewController(_ sender: AnyObject) {
-        let toolbarItem = (sender as! NSToolbarItem)
+        guard let toolbarItem = sender as? NSToolbarItem else { return }
         var viewController: NSViewController?
 
         switch convertFromNSToolbarItemIdentifier(toolbarItem.itemIdentifier) {
         case kToolbarItemIdentifierGeneral:
             viewController = GeneralViewController.shared
-
         case kToolbarItemIdentifierMute:
             viewController = MuteViewController.shared
-
         default:
             break
         }

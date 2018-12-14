@@ -115,7 +115,9 @@ class NicoUtility: NSObject, RoomListenerDelegate {
         initializeFileLogger()
         initializeInstance()
     }
+}
 
+extension NicoUtility {
     private func initializeFileLogger() {
         Helper.setupFileLogger(fileLogger, fileName: kFileLogName)
     }

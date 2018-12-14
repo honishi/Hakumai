@@ -72,7 +72,9 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
 
     private var userWindowControllers = [UserWindowController]()
     private var nextUserWindowTopLeftPoint: NSPoint = NSPoint.zero
+}
 
+extension MainViewController {
     // MARK: - Object Lifecycle
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -242,8 +244,9 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
 
     func tableViewColumnDidResize(_ aNotification: Notification) {
-        let column = (aNotification as NSNotification).userInfo?["NSTableColumn"] as! NSTableColumn
-
+        guard let column = (aNotification as NSNotification).userInfo?["NSTableColumn"] as? NSTableColumn else {
+            return
+        }
         if convertFromNSUserInterfaceItemIdentifier(column.identifier) == kCommentColumnIdentifier {
             rowHeightCacher.removeAll(keepingCapacity: false)
             tableView.reloadData()
@@ -272,26 +275,26 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     private func configure(view: NSTableCellView, forSystemMessage message: Message, withTableColumn tableColumn: NSTableColumn) {
         switch convertFromNSUserInterfaceItemIdentifier(tableColumn.identifier) {
         case kRoomPositionColumnIdentifier:
-            let roomPositionView = (view as! RoomPositionTableCellView)
-            roomPositionView.roomPosition = nil
-            roomPositionView.commentNo = nil
-            roomPositionView.fontSize = nil
+            let roomPositionView = view as? RoomPositionTableCellView
+            roomPositionView?.roomPosition = nil
+            roomPositionView?.commentNo = nil
+            roomPositionView?.fontSize = nil
         case kScoreColumnIdentifier:
-            let scoreView = view as! ScoreTableCellView
-            scoreView.chat = nil
-            scoreView.fontSize = nil
+            let scoreView = view as? ScoreTableCellView
+            scoreView?.chat = nil
+            scoreView?.fontSize = nil
         case kCommentColumnIdentifier:
             let (content, attributes) = contentAndAttributes(forMessage: message)
             let attributed = NSAttributedString(string: content, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
             view.textField?.attributedStringValue = attributed
         case kUserIdColumnIdentifier:
-            let userIdView = view as! UserIdTableCellView
-            userIdView.info = nil
-            userIdView.fontSize = nil
+            let userIdView = view as? UserIdTableCellView
+            userIdView?.info = nil
+            userIdView?.fontSize = nil
         case kPremiumColumnIdentifier:
-            let premiumView = view as! PremiumTableCellView
-            premiumView.premium = nil
-            premiumView.fontSize = nil
+            let premiumView = view as? PremiumTableCellView
+            premiumView?.premium = nil
+            premiumView?.fontSize = nil
         default:
             break
         }
@@ -302,27 +305,27 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
 
         switch convertFromNSUserInterfaceItemIdentifier(tableColumn.identifier) {
         case kRoomPositionColumnIdentifier:
-            let roomPositionView = view as! RoomPositionTableCellView
-            roomPositionView.roomPosition = chat.roomPosition!
-            roomPositionView.commentNo = chat.no!
-            roomPositionView.fontSize = min(tableViewFontSize, kMaximumFontSizeForNonMainColumn)
+            let roomPositionView = view as? RoomPositionTableCellView
+            roomPositionView?.roomPosition = chat.roomPosition!
+            roomPositionView?.commentNo = chat.no!
+            roomPositionView?.fontSize = min(tableViewFontSize, kMaximumFontSizeForNonMainColumn)
         case kScoreColumnIdentifier:
-            let scoreView = view as! ScoreTableCellView
-            scoreView.chat = chat
-            scoreView.fontSize = min(tableViewFontSize, kMaximumFontSizeForNonMainColumn)
+            let scoreView = view as? ScoreTableCellView
+            scoreView?.chat = chat
+            scoreView?.fontSize = min(tableViewFontSize, kMaximumFontSizeForNonMainColumn)
         case kCommentColumnIdentifier:
             let (content, attributes) = contentAndAttributes(forMessage: message)
             let attributed = NSAttributedString(string: content as String, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
             view.textField?.attributedStringValue = attributed
         case kUserIdColumnIdentifier:
-            let userIdView = view as! UserIdTableCellView
+            let userIdView = view as? UserIdTableCellView
             let handleName = HandleNameManager.sharedManager.handleName(forLive: live!, chat: chat)
-            userIdView.info = (handleName: handleName, userId: chat.userId, premium: chat.premium, comment: chat.comment)
-            userIdView.fontSize = tableViewFontSize
+            userIdView?.info = (handleName: handleName, userId: chat.userId, premium: chat.premium, comment: chat.comment)
+            userIdView?.fontSize = tableViewFontSize
         case kPremiumColumnIdentifier:
-            let premiumView = view as! PremiumTableCellView
-            premiumView.premium = chat.premium
-            premiumView.fontSize = min(tableViewFontSize, kMaximumFontSizeForNonMainColumn)
+            let premiumView = view as? PremiumTableCellView
+            premiumView?.premium = chat.premium
+            premiumView?.fontSize = min(tableViewFontSize, kMaximumFontSizeForNonMainColumn)
         default:
             break
         }
@@ -609,7 +612,9 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     // MARK: - Public Functions
     func showHandleNameAddViewController(live: Live, chat: Chat) {
         let storyboard = NSStoryboard(name: kStoryboardNameMainWindowController, bundle: nil)
-        let handleNameAddViewController = storyboard.instantiateController(withIdentifier: kStoryboardIdHandleNameAddViewController) as! HandleNameAddViewController
+        guard let handleNameAddViewController = storyboard.instantiateController(withIdentifier: kStoryboardIdHandleNameAddViewController) as? HandleNameAddViewController else {
+            return
+        }
 
         handleNameAddViewController.handleName = (defaultHandleName(live: live, chat: chat) ?? "") as NSString
         handleNameAddViewController.completion = { (cancelled: Bool, handleName: String?) -> Void in

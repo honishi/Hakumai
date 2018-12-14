@@ -149,7 +149,9 @@ class MessageServer: CustomStringConvertible {
         // split server address like followings, and reconstruct using given server number
         // - msg102.live.nicovideo.jp (user)
         // - omsg103.live.nicovideo.jp (channel)
-        let regexp = try! NSRegularExpression(pattern: "(\\D+)\\d+(.+)", options: [])
+        guard let regexp = try? NSRegularExpression(pattern: "(\\D+)\\d+(.+)", options: []) else {
+            return ""
+        }
         let matched = regexp.matches(in: baseAddress, options: [], range: NSRange(location: 0, length: baseAddress.utf16.count))
 
         let hostPrefix = MessageServer.substring(fromBaseString: baseAddress, nsRange: matched[0].range(at: 1))

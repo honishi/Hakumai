@@ -215,10 +215,12 @@ class RoomListener: NSObject, StreamDelegate {
 
     // MARK: Read Utility
     func streamByRemovingNull(fromStream stream: String) -> String {
-        let regexp = try! NSRegularExpression(pattern: "\0", options: [])
-        let removed = regexp.stringByReplacingMatches(in: stream, options: [], range: NSRange(location: 0, length: stream.utf16.count), withTemplate: "")
-
-        return removed
+        guard let regexp = try? NSRegularExpression(pattern: "\0", options: []) else { return stream }
+        return regexp.stringByReplacingMatches(
+            in: stream,
+            options: [],
+            range: NSRange(location: 0, length: stream.utf16.count),
+            withTemplate: "")
     }
 
     func hasValidOpenBracket(inStream stream: String) -> Bool {
@@ -230,9 +232,11 @@ class RoomListener: NSObject, StreamDelegate {
     }
 
     private func hasValid(pattern: String, inStream stream: String) -> Bool {
-        let regexp = try! NSRegularExpression(pattern: pattern, options: [])
-        let matched = regexp.firstMatch(in: stream, options: [], range: NSRange(location: 0, length: stream.utf16.count))
-
+        guard let regexp = try? NSRegularExpression(pattern: pattern, options: []) else { return false }
+        let matched = regexp.firstMatch(
+            in: stream,
+            options: [],
+            range: NSRange(location: 0, length: stream.utf16.count))
         return matched != nil
     }
 

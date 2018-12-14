@@ -148,7 +148,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: Menu Handlers
     @IBAction func openPreferences(_ sender: AnyObject) {
-        PreferenceWindowController.shared.showWindow(self)
+        PreferenceWindowController.shared?.showWindow(self)
     }
 
     @IBAction func openUrl(_ sender: AnyObject) {

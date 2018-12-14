@@ -24,7 +24,8 @@ class LoginCookie {
                 return
             }
 
-            let httpResponse = response as! HTTPURLResponse
+            guard let httpResponse = response as? HTTPURLResponse else { return }
+
             if httpResponse.statusCode != 200 {
                 logger.error("login failed. got unexpected status code::[\(httpResponse.statusCode)]")
                 completion(nil)

@@ -22,9 +22,9 @@ class MuteViewController: NSViewController {
     @IBOutlet var muteWordsArrayController: NSArrayController!
 
     // MARK: - Object Lifecycle
-    static func generateInstance() -> MuteViewController {
+    static func generateInstance() -> MuteViewController? {
         let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
-        return storyboard.instantiateController(withIdentifier: kStoryboardIdMuteViewController) as! MuteViewController
+        return storyboard.instantiateController(withIdentifier: kStoryboardIdMuteViewController) as? MuteViewController
     }
 
     // MARK: - Button Handlers
@@ -42,7 +42,9 @@ class MuteViewController: NSViewController {
 
     private func addMute(completion: @escaping (String) -> Void) {
         let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
-        let muteAddViewController = storyboard.instantiateController(withIdentifier: kStoryboardIdMuteAddViewController) as! MuteAddViewController
+        guard let muteAddViewController = storyboard.instantiateController(withIdentifier: kStoryboardIdMuteAddViewController) as? MuteAddViewController else {
+            return
+        }
 
         muteAddViewController.completion = { (cancelled, muteStringValue) in
             if !cancelled {
