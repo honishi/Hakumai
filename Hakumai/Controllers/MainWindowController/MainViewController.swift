@@ -123,7 +123,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         
         for (nibName, identifier) in nibs {
             let nib = NSNib(nibNamed: nibName, bundle: Bundle.main)
-            tableView.register(nib!, forIdentifier: identifier)
+            tableView.register(nib!, forIdentifier: convertToNSUserInterfaceItemIdentifier(identifier))
         }
     }
     
@@ -209,7 +209,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         
         var rowHeight: CGFloat = 0
 
-        let commentTableColumn = tableView.tableColumn(withIdentifier: kCommentColumnIdentifier)!
+        let commentTableColumn = tableView.tableColumn(withIdentifier: convertToNSUserInterfaceItemIdentifier(kCommentColumnIdentifier))!
         let commentColumnWidth = commentTableColumn.width
         rowHeight = commentColumnHeight(forMessage: message, width: commentColumnWidth)
         
@@ -226,8 +226,8 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         let (content, attributes) = contentAndAttributes(forMessage: message)
         
         let commentRect = content.boundingRect(
-            with: CGSize(width: width - widthPadding, height: 0), options: NSStringDrawingOptions.usesLineFragmentOrigin,
-            attributes: attributes)
+            with: CGSize(width: width - widthPadding, height: 0), options: NSString.DrawingOptions.usesLineFragmentOrigin,
+            attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
         // logger.debug("\(commentRect.size.width),\(commentRect.size.height)")
         
         return max(commentRect.size.height, minimumRowHeight)
@@ -237,14 +237,14 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         let placeholderContent = "." as NSString
         let placeholderAttributes = UIHelper.normalCommentAttributes(fontSize: fontSize)
         let rect = placeholderContent.boundingRect(
-            with: CGSize(width: 1, height: 0), options: NSStringDrawingOptions.usesLineFragmentOrigin, attributes: placeholderAttributes)
+            with: CGSize(width: 1, height: 0), options: NSString.DrawingOptions.usesLineFragmentOrigin, attributes: convertToOptionalNSAttributedStringKeyDictionary(placeholderAttributes))
         return rect.size.height
     }
     
     func tableViewColumnDidResize(_ aNotification: Notification) {
         let column = (aNotification as NSNotification).userInfo?["NSTableColumn"] as! NSTableColumn
         
-        if column.identifier == kCommentColumnIdentifier {
+        if convertFromNSUserInterfaceItemIdentifier(column.identifier) == kCommentColumnIdentifier {
             rowHeightCacher.removeAll(keepingCapacity: false)
             tableView.reloadData()
         }
@@ -254,7 +254,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         var view: NSTableCellView?
         
         if let identifier = tableColumn?.identifier {
-            view = tableView.make(withIdentifier: identifier, owner: self) as? NSTableCellView
+            view = tableView.makeView(withIdentifier: identifier, owner: self) as? NSTableCellView
             view?.textField?.stringValue = ""
         }
 
@@ -271,7 +271,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     }
     
     private func configure(view: NSTableCellView, forSystemMessage message: Message, withTableColumn tableColumn: NSTableColumn) {
-        switch tableColumn.identifier {
+        switch convertFromNSUserInterfaceItemIdentifier(tableColumn.identifier) {
         case kRoomPositionColumnIdentifier:
             let roomPositionView = (view as! RoomPositionTableCellView)
             roomPositionView.roomPosition = nil
@@ -283,7 +283,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             scoreView.fontSize = nil
         case kCommentColumnIdentifier:
             let (content, attributes) = contentAndAttributes(forMessage: message)
-            let attributed = NSAttributedString(string: content, attributes: attributes)
+            let attributed = NSAttributedString(string: content, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
             view.textField?.attributedStringValue = attributed
         case kUserIdColumnIdentifier:
             let userIdView = view as! UserIdTableCellView
@@ -301,7 +301,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     private func configure(view: NSTableCellView, forChat message: Message, withTableColumn tableColumn: NSTableColumn) {
         let chat = message.chat!
         
-        switch tableColumn.identifier {
+        switch convertFromNSUserInterfaceItemIdentifier(tableColumn.identifier) {
         case kRoomPositionColumnIdentifier:
             let roomPositionView = view as! RoomPositionTableCellView
             roomPositionView.roomPosition = chat.roomPosition!
@@ -313,7 +313,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             scoreView.fontSize = min(tableViewFontSize, kMaximumFontSizeForNonMainColumn)
         case kCommentColumnIdentifier:
             let (content, attributes) = contentAndAttributes(forMessage: message)
-            let attributed = NSAttributedString(string: content as String, attributes: attributes)
+            let attributed = NSAttributedString(string: content as String, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
             view.textField?.attributedStringValue = attributed
         case kUserIdColumnIdentifier:
             let userIdView = view as! UserIdTableCellView
@@ -524,7 +524,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
                 let rowIndex = count - 1
                 let message = MessageContainer.sharedContainer[rowIndex]
 
-                self.tableView.insertRows(at: IndexSet(integer: rowIndex), withAnimation: NSTableViewAnimationOptions())
+                self.tableView.insertRows(at: IndexSet(integer: rowIndex), withAnimation: NSTableView.AnimationOptions())
                 // self.logChat(chatOrSystemMessage)
                 
                 if shouldScroll {
@@ -590,9 +590,9 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             // logger.debug("start scroll animation:\(currentScrollAnimationCount)")
             
             NSAnimationContext.beginGrouping()
-            NSAnimationContext.current().duration = 0.5
+            NSAnimationContext.current.duration = 0.5
             
-            NSAnimationContext.current().completionHandler = { () -> Void in
+            NSAnimationContext.current.completionHandler = { () -> Void in
                 self.currentScrollAnimationCount -= 1
                 // logger.debug("  end scroll animation:\(self.currentScrollAnimationCount)")
             }
@@ -625,11 +625,11 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
                 MainViewController.shared.refreshHandleName()
             }
             
-            self.dismissViewController(handleNameAddViewController)
+            self.dismiss(handleNameAddViewController)
             // TODO: deinit in handleNameViewController is not called after this completion
         }
         
-        presentViewControllerAsSheet(handleNameAddViewController)
+        presentAsSheet(handleNameAddViewController)
     }
     
     private func defaultHandleName(live: Live, chat: Chat) -> String? {
@@ -768,7 +768,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         }
     }
     
-    func openUserWindow(_ sender: AnyObject?) {
+    @objc func openUserWindow(_ sender: AnyObject?) {
         let clickedRow = tableView.clickedRow
         
         if clickedRow == -1 {
@@ -829,7 +829,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         activeTimer = nil
     }
     
-    func displayElapsed(_ timer: Timer) {
+    @objc func displayElapsed(_ timer: Timer) {
         var display = "--:--:--"
         
         if let startTime = NicoUtility.shared.live?.startTime {
@@ -853,7 +853,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
         }
     }
     
-    func calculateActive(_ timer: Timer) {
+    @objc func calculateActive(_ timer: Timer) {
         MessageContainer.sharedContainer.calculateActive { (active: Int?) -> (Void) in
             guard let activeCount = active else {
                 return
@@ -916,4 +916,20 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
 
         return nil
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToNSUserInterfaceItemIdentifier(_ input: String) -> NSUserInterfaceItemIdentifier {
+	return NSUserInterfaceItemIdentifier(rawValue: input)
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromNSUserInterfaceItemIdentifier(_ input: NSUserInterfaceItemIdentifier) -> String {
+	return input.rawValue
 }

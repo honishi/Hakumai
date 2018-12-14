@@ -77,10 +77,15 @@ class RoomListenerTests: XCTestCase {
         var xmlDocument: XMLDocument?
         do {
             // NSXMLDocumentTidyXML
-            xmlDocument = try XMLDocument(xmlString: wrapped, options: Int(UInt(XMLDocument.ContentKind.xml.rawValue)))
+            xmlDocument = try XMLDocument(xmlString: wrapped, options: convertToXMLNodeOptions(Int(UInt(XMLDocument.ContentKind.xml.rawValue))))
         } catch {}
         let rootElement = xmlDocument!.rootElement()
 
         return rootElement!
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToXMLNodeOptions(_ input: Int) -> XMLNode.Options {
+	return XMLNode.Options(rawValue: UInt(input))
 }

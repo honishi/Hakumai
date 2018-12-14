@@ -154,8 +154,8 @@ class MessageServer: CustomStringConvertible {
         let regexp = try! NSRegularExpression(pattern: "(\\D+)\\d+(.+)", options: [])
         let matched = regexp.matches(in: baseAddress, options: [], range: NSMakeRange(0, baseAddress.utf16.count))
         
-        let hostPrefix = MessageServer.substring(fromBaseString: baseAddress, nsRange: matched[0].rangeAt(1))
-        let domain = MessageServer.substring(fromBaseString: baseAddress, nsRange: matched[0].rangeAt(2))
+        let hostPrefix = MessageServer.substring(fromBaseString: baseAddress, nsRange: matched[0].range(at: 1))
+        let domain = MessageServer.substring(fromBaseString: baseAddress, nsRange: matched[0].range(at: 2))
 
         return hostPrefix + String(serverNumber) + domain
     }

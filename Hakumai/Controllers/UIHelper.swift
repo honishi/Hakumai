@@ -123,8 +123,8 @@ class UIHelper {
     }
     
     static func normalCommentAttributes(fontSize: CGFloat) -> [String: Any] {
-        let attributes = [NSFontAttributeName: NSFont.systemFont(ofSize: fontSize),
-                          NSParagraphStyleAttributeName: NSParagraphStyle.default()]
+        let attributes = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): NSFont.systemFont(ofSize: fontSize),
+                          convertFromNSAttributedStringKey(NSAttributedString.Key.paragraphStyle): NSParagraphStyle.default]
         return attributes
     }
 
@@ -133,8 +133,8 @@ class UIHelper {
     }
 
     static func boldCommentAttributes(fontSize: CGFloat) -> [String: Any] {
-        let attributes = [NSFontAttributeName: NSFont.boldSystemFont(ofSize: fontSize),
-                          NSParagraphStyleAttributeName: NSParagraphStyle.default()]
+        let attributes = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): NSFont.boldSystemFont(ofSize: fontSize),
+                          convertFromNSAttributedStringKey(NSAttributedString.Key.paragraphStyle): NSParagraphStyle.default]
         return attributes
     }
     
@@ -143,4 +143,9 @@ class UIHelper {
         style.maximumLineHeight = fontSize * 1.2
         return style
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
+	return input.rawValue
 }

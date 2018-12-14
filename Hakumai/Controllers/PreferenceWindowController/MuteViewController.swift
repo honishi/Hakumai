@@ -48,10 +48,10 @@ class MuteViewController: NSViewController {
             if !cancelled {
                 completion(muteStringValue!)
             }
-            self.dismissViewController(muteAddViewController)
+            self.dismiss(muteAddViewController)
             // TODO: deinit in muteAddViewController is not called after this completion
         }
         
-        presentViewControllerAsSheet(muteAddViewController)
+        presentAsSheet(muteAddViewController)
     }
 }

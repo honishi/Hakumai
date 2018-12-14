@@ -732,7 +732,7 @@ class NicoUtility : NSObject, RoomListenerDelegate {
         heartbeatTimer = nil
     }
     
-    func checkHeartbeat(_ timer: Timer) {
+    @objc func checkHeartbeat(_ timer: Timer) {
         let httpCompletion: (URLResponse?, Data?, Error?) -> () = { (response, data, connectionError) in
             if connectionError != nil {
                 logger.error("error in checking heartbeat")

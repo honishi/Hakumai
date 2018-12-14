@@ -81,7 +81,7 @@ class SpeechManager: NSObject {
         chatQueue.append(chat)
     }
     
-    func dequeue(_ timer: Timer?) {
+    @objc func dequeue(_ timer: Timer?) {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
         

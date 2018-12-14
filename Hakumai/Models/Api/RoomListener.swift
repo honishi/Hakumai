@@ -92,8 +92,8 @@ class RoomListener : NSObject, StreamDelegate {
         
         runLoop = RunLoop.current
         
-        inputStream?.schedule(in: runLoop, forMode: RunLoopMode.defaultRunLoopMode)
-        outputStream?.schedule(in: runLoop, forMode: RunLoopMode.defaultRunLoopMode)
+        inputStream?.schedule(in: runLoop, forMode: RunLoop.Mode.default)
+        outputStream?.schedule(in: runLoop, forMode: RunLoop.Mode.default)
         
         inputStream?.open()
         outputStream?.open()
@@ -121,8 +121,8 @@ class RoomListener : NSObject, StreamDelegate {
         inputStream?.close()
         outputStream?.close()
         
-        inputStream?.remove(from: runLoop, forMode: RunLoopMode.defaultRunLoopMode)
-        outputStream?.remove(from: runLoop, forMode: RunLoopMode.defaultRunLoopMode)
+        inputStream?.remove(from: runLoop, forMode: RunLoop.Mode.default)
+        outputStream?.remove(from: runLoop, forMode: RunLoop.Mode.default)
         
         inputStream = nil
         outputStream = nil
@@ -246,7 +246,7 @@ class RoomListener : NSObject, StreamDelegate {
         let xmlDocument: XMLDocument?
         do {
             // NSXMLDocumentTidyXML
-            xmlDocument = try XMLDocument(xmlString: wrappedStream, options: Int(UInt(XMLDocument.ContentKind.xml.rawValue)))
+            xmlDocument = try XMLDocument(xmlString: wrappedStream, options: convertToXMLNodeOptions(Int(UInt(XMLDocument.ContentKind.xml.rawValue))))
         } catch let error as NSError {
             err = error
             logger.error("\(err?.debugDescription ?? "")")
@@ -406,7 +406,12 @@ class RoomListener : NSObject, StreamDelegate {
         pingTimer = nil
     }
 
-    func sendPing(_ timer: Timer) {
+    @objc func sendPing(_ timer: Timer) {
         send(message: "<ping>PING</ping>", logging: false)
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToXMLNodeOptions(_ input: Int) -> XMLNode.Options {
+	return XMLNode.Options(rawValue: UInt(input))
 }

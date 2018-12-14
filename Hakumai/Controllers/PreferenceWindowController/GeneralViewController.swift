@@ -35,12 +35,12 @@ class GeneralViewController: NSViewController {
     @IBOutlet weak var progressIndicator: NSProgressIndicator!
     @IBOutlet weak var checkAccountStatusLabel: NSTextField!
     
-    dynamic var mailAddress: NSString! {
+    @objc dynamic var mailAddress: NSString! {
         didSet {
             validateCheckAccountButton()
         }
     }
-    dynamic var password: NSString! {
+    @objc dynamic var password: NSString! {
         didSet {
             validateCheckAccountButton()
         }

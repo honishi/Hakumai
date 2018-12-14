@@ -40,7 +40,8 @@ class ColoredView: NSView, CALayerDelegate {
     override func draw(_ dirtyRect: NSRect) {
         // http://stackoverflow.com/a/2962882
         fillColor.setFill()
-        NSRectFill(dirtyRect)
+        // NSRectFill(dirtyRect)
+        dirtyRect.fill()
         
         super.draw(dirtyRect)
     }

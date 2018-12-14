@@ -19,7 +19,7 @@ extension NicoUtility {
         var error: NSError?
         let xmlDocument: XMLDocument?
         do {
-            xmlDocument = try XMLDocument(data: xmlData, options: 0)
+            xmlDocument = try XMLDocument(data: xmlData, options: convertToXMLNodeOptions(0))
         } catch let error1 as NSError {
             error = error1
             logger.error("\(error?.debugDescription ?? "")")
@@ -49,7 +49,7 @@ extension NicoUtility {
         var error: NSError?
         let xmlDocument: XMLDocument?
         do {
-            xmlDocument = try XMLDocument(data: xmlData, options: 0)
+            xmlDocument = try XMLDocument(data: xmlData, options: convertToXMLNodeOptions(0))
         } catch let error1 as NSError {
             error = error1
             xmlDocument = nil
@@ -74,7 +74,7 @@ extension NicoUtility {
         var error: NSError?
         let xmlDocument: XMLDocument?
         do {
-            xmlDocument = try XMLDocument(data: xmlData, options: 0)
+            xmlDocument = try XMLDocument(data: xmlData, options: convertToXMLNodeOptions(0))
         } catch let error1 as NSError {
             error = error1
             xmlDocument = nil
@@ -103,7 +103,7 @@ extension NicoUtility {
         var error: NSError?
         let xmlDocument: XMLDocument?
         do {
-            xmlDocument = try XMLDocument(data: xmlData, options: 0)
+            xmlDocument = try XMLDocument(data: xmlData, options: convertToXMLNodeOptions(0))
         } catch let error1 as NSError {
             error = error1
             xmlDocument = nil
@@ -254,7 +254,7 @@ extension NicoUtility {
         var error: NSError?
         let xmlDocument: XMLDocument?
         do {
-            xmlDocument = try XMLDocument(data: xmlData, options: 0)
+            xmlDocument = try XMLDocument(data: xmlData, options: convertToXMLNodeOptions(0))
         } catch let error1 as NSError {
             error = error1
             xmlDocument = nil
@@ -285,4 +285,9 @@ extension NicoUtility {
         
         return heartbeat
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToXMLNodeOptions(_ input: Int) -> XMLNode.Options {
+	return XMLNode.Options(rawValue: UInt(input))
 }

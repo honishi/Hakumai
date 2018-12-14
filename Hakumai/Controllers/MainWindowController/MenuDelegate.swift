@@ -35,7 +35,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     }
     
     // MARK: - NSMenu Overrides
-    override func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+    func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         let clickedRow = tableView.clickedRow
         if clickedRow == -1 {
             return false
@@ -110,7 +110,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     @IBAction func openUrl(_ sender: AnyObject) {
         let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat!
         let url = urlString(inComment: chat)!
-        NSWorkspace.shared().open(URL(string: url)!)
+        NSWorkspace.shared.open(URL(string: url)!)
     }
     
     @IBAction func tweetComment(_ sender: AnyObject) {
@@ -125,7 +125,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         
         let status = "「\(comment)」/ \(liveName) (\(communityName)) \(liveUrl) #\(communityId)"
         
-        let service = NSSharingService(named: NSSharingServiceNamePostOnTwitter)
+        let service = NSSharingService(named: NSSharingService.Name.postOnTwitter)
         service?.delegate = self
         
         service?.perform(withItems: [status])
@@ -180,7 +180,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat!
         let userPageUrlString = NicoUtility.shared.urlString(forUserId: chat.userId!)
         
-        NSWorkspace.shared().open(URL(string: userPageUrlString)!)
+        NSWorkspace.shared.open(URL(string: userPageUrlString)!)
     }
     
     // MARK: - Internal Functions
@@ -193,11 +193,25 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     }
     
     func copyStringToPasteBoard(_ string: String) -> Bool {
-        let pasteBoard = NSPasteboard.general()
-        pasteBoard.declareTypes([NSStringPboardType], owner: nil)
-        let result = pasteBoard.setString(string, forType: NSStringPboardType)
+        return true
+        // TODO: update for swift 4
+        /*
+        let pasteBoard = NSPasteboard.general
+        pasteBoard.declareTypes(convertToNSPasteboardPasteboardTypeArray([NSStringPboardType.rawValue]), owner: nil)
+        let result = pasteBoard.setString(string, forType: convertToNSPasteboardPasteboardType(NSStringPboardType.rawValue))
         logger.debug("copied \(string) w/ result \(result)")
         
         return result
+        */
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToNSPasteboardPasteboardTypeArray(_ input: [String]) -> [NSPasteboard.PasteboardType] {
+	return input.map { key in NSPasteboard.PasteboardType(key) }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToNSPasteboardPasteboardType(_ input: String) -> NSPasteboard.PasteboardType {
+	return NSPasteboard.PasteboardType(rawValue: input)
 }

@@ -71,7 +71,7 @@ class UserViewController: NSViewController {
         
         for (nibName, identifier) in nibs {
             let nib = NSNib(nibNamed: nibName, bundle: Bundle.main)
-            tableView.register(nib!, forIdentifier: identifier)
+            tableView.register(nib!, forIdentifier: convertToNSUserInterfaceItemIdentifier(identifier))
         }
     }
     
@@ -89,7 +89,7 @@ class UserViewController: NSViewController {
         
         var rowHeight: CGFloat = 0
 
-        let commentTableColumn = tableView.tableColumn(withIdentifier: kCommentColumnIdentifier)!
+        let commentTableColumn = tableView.tableColumn(withIdentifier: convertToNSUserInterfaceItemIdentifier(kCommentColumnIdentifier))!
         let commentColumnWidth = commentTableColumn.width
         rowHeight = commentColumnHeight(forMessage: message, width: commentColumnWidth)
         
@@ -106,7 +106,7 @@ class UserViewController: NSViewController {
         let (content, attributes) = contentAndAttributes(forMessage: message)
         
         let commentRect = content.boundingRect(with: CGSize(width: width - widthPadding, height: 0),
-            options: NSStringDrawingOptions.usesLineFragmentOrigin, attributes: attributes)
+            options: NSString.DrawingOptions.usesLineFragmentOrigin, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
         // log.debug("\(commentRect.size.width),\(commentRect.size.height)")
         
         return commentRect.size.height
@@ -115,7 +115,7 @@ class UserViewController: NSViewController {
     func tableViewColumnDidResize(_ aNotification: Notification) {
         let column = (aNotification as NSNotification).userInfo?["NSTableColumn"] as! NSTableColumn
         
-        if column.identifier == kCommentColumnIdentifier {
+        if convertFromNSUserInterfaceItemIdentifier(column.identifier) == kCommentColumnIdentifier {
             rowHeightCacher.removeAll(keepingCapacity: false)
             tableView.reloadData()
         }
@@ -125,7 +125,7 @@ class UserViewController: NSViewController {
         var view: NSTableCellView?
         
         if let identifier = tableColumn?.identifier {
-            view = tableView.make(withIdentifier: identifier, owner: self) as? NSTableCellView
+            view = tableView.makeView(withIdentifier: identifier, owner: self) as? NSTableCellView
             view?.textField?.stringValue = ""
         }
         
@@ -143,7 +143,7 @@ class UserViewController: NSViewController {
         
         var attributed: NSAttributedString?
         
-        switch tableColumn.identifier {
+        switch convertFromNSUserInterfaceItemIdentifier(tableColumn.identifier) {
         case kRoomPositionColumnIdentifier:
             let roomPositionView = (view as! RoomPositionTableCellView)
             roomPositionView.roomPosition = chat.roomPosition!
@@ -152,7 +152,7 @@ class UserViewController: NSViewController {
             (view as! ScoreTableCellView).chat = chat
         case kCommentColumnIdentifier:
             let (content, attributes) = contentAndAttributes(forMessage: message)
-            attributed = NSAttributedString(string: content, attributes: attributes)
+            attributed = NSAttributedString(string: content, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
         default:
             break
         }
@@ -216,4 +216,20 @@ class UserViewController: NSViewController {
         
         scrollView.flashScrollers()
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToNSUserInterfaceItemIdentifier(_ input: String) -> NSUserInterfaceItemIdentifier {
+	return NSUserInterfaceItemIdentifier(rawValue: input)
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromNSUserInterfaceItemIdentifier(_ input: NSUserInterfaceItemIdentifier) -> String {
+	return input.rawValue
 }
