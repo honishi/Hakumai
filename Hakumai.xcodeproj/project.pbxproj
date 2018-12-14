@@ -638,14 +638,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = DB2AE0DA1A0EE2FD00B1CE4D /* Build configuration list for PBXNativeTarget "Hakumai" */;
 			buildPhases = (
+				DBAC3D2C21C4100C00B09673 /* Sort Project Script */,
 				9B05742C4603611DD9579258 /* [CP] Check Pods Manifest.lock */,
 				DB2AE0BA1A0EE2FD00B1CE4D /* Sources */,
 				DB2AE0BB1A0EE2FD00B1CE4D /* Frameworks */,
 				DB2AE0BC1A0EE2FD00B1CE4D /* Resources */,
 				DB0FC12F1A262CF0000FADDD /* Embed Frameworks */,
 				1720CD095F2EF064B1086037 /* [CP] Embed Pods Frameworks */,
-				DBD940CF1BF6EA76001BDB47 /* ShellScript */,
-				DBAC3D2C21C4100C00B09673 /* ShellScript */,
+				DBD940CF1BF6EA76001BDB47 /* Sparkle Script */,
 			);
 			buildRules = (
 			);
@@ -801,7 +801,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		DBAC3D2C21C4100C00B09673 /* ShellScript */ = {
+		DBAC3D2C21C4100C00B09673 /* Sort Project Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -810,6 +810,7 @@
 			);
 			inputPaths = (
 			);
+			name = "Sort Project Script";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -818,13 +819,14 @@
 			shellPath = /bin/sh;
 			shellScript = "perl \"${PROJECT_DIR}/script/sort-Xcode-project-file\" \"${PROJECT_FILE_PATH}/project.pbxproj\"\n";
 		};
-		DBD940CF1BF6EA76001BDB47 /* ShellScript */ = {
+		DBD940CF1BF6EA76001BDB47 /* Sparkle Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = "Sparkle Script";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
