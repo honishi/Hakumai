@@ -111,7 +111,9 @@ class PreferenceWindowController: NSWindowController {
 
         if toolbar != nil && toolbar.isVisible {
             let windowFrame = NSWindow.contentRect(forFrameRect: window!.frame, styleMask: window!.styleMask)
+            // swiftlint:disable legacy_nsgeometry_functions
             toolbarHeight = windowFrame.height - NSHeight(window!.contentView!.frame)
+            // swiftlint:enable legacy_nsgeometry_functions
         }
 
         return toolbarHeight

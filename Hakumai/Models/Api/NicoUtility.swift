@@ -434,6 +434,7 @@ extension NicoUtility {
         disconnect(reserveToReconnect: true)
     }
 
+    // swiftlint:disable function_body_length
     private func connect(liveNumber: Int?, userSessionCookie: String?) {
         if liveNumber == nil {
             let reason = "no valid live number"
@@ -501,6 +502,7 @@ extension NicoUtility {
         delegate?.nicoUtilityWillPrepareLive(self)
         requestGetPlayerStatus(liveNumber: liveNumber!, success: success, failure: failure)
     }
+    // swiftlint:enable function_body_length
 
     private func requestGetPlayerStatus(liveNumber: Int, success: @escaping (Live, User, MessageServer) -> Void, failure: @escaping (_ reason: String) -> Void) {
         let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (response, data, connectionError) in
@@ -700,11 +702,9 @@ extension NicoUtility {
     private func assignedRoomListener() -> RoomListener? {
         var assigned: RoomListener?
 
-        for roomListener in roomListeners {
-            if roomListener.server! == messageServer! {
-                assigned = roomListener
-                break
-            }
+        for roomListener in roomListeners where roomListener.server! == messageServer! {
+            assigned = roomListener
+            break
         }
 
         return assigned

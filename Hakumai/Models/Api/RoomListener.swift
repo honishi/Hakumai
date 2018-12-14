@@ -57,7 +57,9 @@ class RoomListener: NSObject, StreamDelegate {
     deinit {
         logger.debug("")
     }
+}
 
+extension RoomListener {
     private func initializeFileLogger() {
         var logNumber = 0
         if let server = server {
@@ -158,6 +160,7 @@ class RoomListener: NSObject, StreamDelegate {
     }
 
     // MARK: - NSStreamDelegate Functions
+    // swiftlint:disable cyclomatic_complexity
     func stream(_ aStream: Stream, handle eventCode: Stream.Event) {
         switch eventCode {
         case Stream.Event():
@@ -212,6 +215,7 @@ class RoomListener: NSObject, StreamDelegate {
             fileLogger.warning("unexpected stream event")
         }
     }
+    // swiftlint:enable cyclomatic_complexity
 
     // MARK: Read Utility
     func streamByRemovingNull(fromStream stream: String) -> String {

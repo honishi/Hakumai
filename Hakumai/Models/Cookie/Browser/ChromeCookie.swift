@@ -87,7 +87,7 @@ class ChromeCookie {
         let query = "SELECT host_key, name, encrypted_value FROM cookies WHERE host_key = '.nicovideo.jp' and name = 'user_session'"
         let rows = database?.executeQuery(query, withArgumentsIn: [""])
 
-        while (rows != nil && (rows?.next())!) {
+        while rows != nil && (rows?.next())! {
             // var name = rows.stringForColumn("name")
             // logger.debug(name)
 

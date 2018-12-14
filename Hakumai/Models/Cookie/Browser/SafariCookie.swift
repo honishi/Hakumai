@@ -97,17 +97,17 @@ private class CookieParser {
 
         let header = reader!.readSlice(length: 4).toString(encoding: String.Encoding.utf8.rawValue)
 
-        if (header == "cook") {
+        if header == "cook" {
             getNumPages()
             getPageSizes()
             getPages()
 
-            for (index, _) in pages.enumerated() {
+            for index in pages.indices {
                 try getNumCookies(index: index)
                 getCookieOffsets(index: index)
                 getCookieData(index: index)
 
-                for (cookieIndex, _) in cookieData[index].enumerated() {
+                for cookieIndex in cookieData[index].indices {
                     try parseCookieData(cookie: cookieData[index][cookieIndex])
                 }
             }
@@ -119,6 +119,7 @@ private class CookieParser {
     }
 
     // MARK: - Private Functions
+    // swiftlint:disable cyclomatic_complexity function_body_length
     private func parseCookieData(cookie: BinaryReader) throws {
         let macEpochOffset: Int64 = 978307199
         var offsets: [UInt32] = [UInt32]()
@@ -156,16 +157,11 @@ private class CookieParser {
             let string = nsCookieString.substring(with: NSRange(location: Int(offset), length: Int(endOffset) - Int(offset)))
 
             switch index {
-            case 0:
-                domain = string
-            case 1:
-                name = string
-            case 2:
-                path = string
-            case 3:
-                value = string
-            default:
-                break
+            case 0:     domain = string
+            case 1:     name = string
+            case 2:     path = string
+            case 3:     value = string
+            default:    break
             }
         }
 
@@ -183,6 +179,7 @@ private class CookieParser {
 
         cookies.append(Cookie(expiration: expiration, creation: creation, domain: domain, name: name, path: path, value: value, secure: secure, http: http))
     }
+    // swiftlint:enable cyclomatic_complexity function_body_length
 
     private func getNumPages() {
         numPages = reader!.readIntBE()
@@ -204,7 +201,7 @@ private class CookieParser {
         let page = pages[index]
         let header = page.readIntBE()
 
-        if (header != 256) {
+        if header != 256 {
             throw SafariCookieError.unexpectedCookieHeaderValue
         }
 
@@ -216,7 +213,7 @@ private class CookieParser {
         let cookieOffsets = pageCookieOffsets[index]
         var pageCookies: [BinaryReader] = [BinaryReader]()
 
-        for (_, cookieOffset) in cookieOffsets.enumerated() {
+        for cookieOffset in cookieOffsets {
             let cookieSize = page.readIntLE(offset: Int(cookieOffset))
 
             pageCookies.append(BinaryReader(data: page.slice(loc: Int(cookieOffset), len: Int(cookieSize))))
@@ -232,7 +229,7 @@ private class CookieParser {
     }
 
     private func getPages() {
-        for (_, pageSize) in pageSizes.enumerated() {
+        for pageSize in pageSizes {
             pages.append(BinaryReader(data: reader!.readSlice(length: Int(pageSize))))
         }
     }

@@ -24,7 +24,7 @@ class ChatResult {
         }
 
         func label() -> String {
-            switch (self) {
+            switch self {
             case .success:
                 return "Success"
             case .failure:

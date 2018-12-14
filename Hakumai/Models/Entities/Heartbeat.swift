@@ -56,19 +56,15 @@ class Heartbeat: CustomStringConvertible {
     }
 
     // MARK: - Object Lifecycle
-    init() {
-        // nop
-    }
+    init() {}
 
     // MARK: - Public Function
     static func statusFromString(status statusString: String) -> Heartbeat.Status? {
         var statusEnum: Heartbeat.Status?
 
-        for index in 0 ..< kHeartbeatStatuses.count {
-            if statusString == kHeartbeatStatuses[index] {
-                statusEnum = Heartbeat.Status(rawValue: index)
-                break
-            }
+        for index in 0 ..< kHeartbeatStatuses.count where statusString == kHeartbeatStatuses[index] {
+            statusEnum = Heartbeat.Status(rawValue: index)
+            break
         }
 
         return statusEnum
@@ -77,11 +73,9 @@ class Heartbeat: CustomStringConvertible {
     static func errorCodeFromString(errorCode errorCodeString: String) -> Heartbeat.ErrorCode? {
         var errorCodeEnum: Heartbeat.ErrorCode?
 
-        for index in 0 ..< kHeartbeatErrorCodes.count {
-            if errorCodeString == kHeartbeatErrorCodes[index] {
-                errorCodeEnum = Heartbeat.ErrorCode(rawValue: index)
-                break
-            }
+        for index in 0 ..< kHeartbeatErrorCodes.count where errorCodeString == kHeartbeatErrorCodes[index] {
+            errorCodeEnum = Heartbeat.ErrorCode(rawValue: index)
+            break
         }
 
         return errorCodeEnum

@@ -30,8 +30,7 @@ class UserIdTableCellView: NSTableCellView {
         }
     }
 
-    var fontSize: CGFloat? { didSet { set(fontSize: fontSize) }
-    }
+    var fontSize: CGFloat? { didSet { set(fontSize: fontSize) } }
 
     // MARK: - Internal Functions
     private func image(forHandleName handleName: String?, userId: String) -> NSImage {

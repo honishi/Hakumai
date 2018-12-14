@@ -21,6 +21,7 @@ private let kCalculateActiveInterval: TimeInterval = 5
 private let kMaximumFontSizeForNonMainColumn: CGFloat = 16
 private let kDefaultMinimumRowHeight: CGFloat = 17
 
+// swiftlint:disable file_length
 class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate, NSControlTextEditingDelegate, NicoUtilityDelegate, UserWindowControllerDelegate {
     // MARK: - Properties
     static var shared: MainViewController!
@@ -49,7 +50,9 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
     @IBOutlet weak var progressIndicator: NSProgressIndicator!
 
     // MARK: Menu Delegate
+    // swiftlint:disable weak_delegate
     @IBOutlet var menuDelegate: MenuDelegate!
+    // swiftlint:enable weak_delegate
 
     // MARK: General Properties
     private(set) var live: Live?
@@ -473,11 +476,9 @@ extension MainViewController {
         }
         appendTableView(chat)
 
-        for userWindowController in userWindowControllers {
-            if chat.userId == userWindowController.userId {
-                DispatchQueue.main.async {
-                    userWindowController.reloadMessages()
-                }
+        for userWindowController in userWindowControllers where chat.userId == userWindowController.userId {
+            DispatchQueue.main.async {
+                userWindowController.reloadMessages()
             }
         }
     }
@@ -529,7 +530,7 @@ extension MainViewController {
                     self.scrollTableViewToBottom()
                 }
 
-                if (message.messageType == .chat) {
+                if message.messageType == .chat {
                     self.handleSpeech(chat: message.chat!)
                 }
 
@@ -781,12 +782,10 @@ extension MainViewController {
         var userWindowController: UserWindowController?
 
         // check if user window exists?
-        for existing in userWindowControllers {
-            if chat.userId == existing.userId {
-                userWindowController = existing
-                logger.debug("existing userwc found, use it:\(userWindowController?.description ?? "")")
-                break
-            }
+        for existing in userWindowControllers where chat.userId == existing.userId {
+            userWindowController = existing
+            logger.debug("existing userwc found, use it:\(userWindowController?.description ?? "")")
+            break
         }
 
         if userWindowController == nil {
@@ -927,3 +926,4 @@ private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: 
 private func convertFromNSUserInterfaceItemIdentifier(_ input: NSUserInterfaceItemIdentifier) -> String {
     return input.rawValue
 }
+// swiftlint:enable file_length

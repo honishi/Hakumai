@@ -128,7 +128,7 @@ class MessageContainer {
 
         // swift way to use background gcd, http://stackoverflow.com/a/25070476
         DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async {
-            var activeUsers = Dictionary<String, Bool>()
+            var activeUsers = [String: Bool]()
             let tenMinutesAgo = Date(timeIntervalSinceNow: (Double)(-10 * 60))
 
             // logger.debug("start counting active")
@@ -234,6 +234,7 @@ class MessageContainer {
         return appended
     }
 
+    // swiftlint:disable cyclomatic_complexity
     private func shouldAppend(message: Message) -> Bool {
         // filter by message type
         if message.messageType == .system {
@@ -271,16 +272,13 @@ class MessageContainer {
         }
 
         // filter by userid
-        if let userId = chat.userId {
-            if enableMuteUserIds {
-                for muteUserId in muteUserIds {
-                    if muteUserId[MuteUserIdKey.UserId] == userId {
-                        return false
-                    }
-                }
+        if let userId = chat.userId, enableMuteUserIds {
+            for muteUserId in muteUserIds where muteUserId[MuteUserIdKey.UserId] == userId {
+                return false
             }
         }
 
         return true
     }
+    // swiftlint:enable cyclomatic_complexity
 }

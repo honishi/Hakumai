@@ -17,17 +17,8 @@ class PremiumTableCellView: NSTableCellView {
     @IBOutlet weak var premiumImageView: NSImageView!
     @IBOutlet weak var premiumTextField: NSTextField!
 
-    var premium: Premium? = nil {
-        didSet {
-            set(premium: premium)
-        }
-    }
-
-    var fontSize: CGFloat? {
-        didSet {
-            set(fontSize: fontSize)
-        }
-    }
+    var premium: Premium? = nil { didSet { set(premium: premium) } }
+    var fontSize: CGFloat? { didSet { set(fontSize: fontSize) } }
 
     // MARK: - Internal Functions
     private func set(premium: Premium?) {
@@ -36,7 +27,6 @@ class PremiumTableCellView: NSTableCellView {
             premiumTextField.stringValue = ""
             return
         }
-
         premiumImageView.image = image(forPremium: premium)
         premiumTextField.stringValue = premium.label()
     }

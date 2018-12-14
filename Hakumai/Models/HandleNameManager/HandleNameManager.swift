@@ -38,37 +38,24 @@ class HandleNameManager {
 
     // MARK: - Public Functions
     func extractAndUpdateHandleName(live: Live, chat: Chat) {
-        guard let _ = chat.userId, let comment = chat.comment else {
-            return
-        }
-
-        if let handleName = extractHandleName(fromComment: comment) {
-            updateHandleName(live: live, chat: chat, handleName: handleName)
-        }
+        guard chat.userId != nil, let comment = chat.comment,
+            let handleName = extractHandleName(fromComment: comment) else { return }
+        updateHandleName(live: live, chat: chat, handleName: handleName)
     }
 
     func updateHandleName(live: Live, chat: Chat, handleName: String) {
-        guard let communityId = live.community.community, let userId = chat.userId else {
-            return
-        }
-
+        guard let communityId = live.community.community, let userId = chat.userId else { return }
         let anonymous = !chat.isRawUserId
         insertOrReplaceHandleName(communityId: communityId, userId: userId, anonymous: anonymous, handleName: handleName)
     }
 
     func removeHandleName(live: Live, chat: Chat) {
-        guard let communityId = live.community.community, let userId = chat.userId else {
-            return
-        }
-
+        guard let communityId = live.community.community, let userId = chat.userId else { return }
         deleteHandleName(communityId: communityId, userId: userId)
     }
 
     func handleName(forLive live: Live, chat: Chat) -> String? {
-        guard let communityId = live.community.community, let userId = chat.userId else {
-            return nil
-        }
-
+        guard let communityId = live.community.community, let userId = chat.userId else { return nil }
         return selectHandleName(communityId: communityId, userId: userId)
     }
 
@@ -89,9 +76,7 @@ class HandleNameManager {
     // MARK: Database Functions
     // for test
     private func dropHandleNamesTableIfExists() {
-        guard let database = database else {
-            return
-        }
+        guard let database = database else { return }
 
         let dropTableSql = "drop table if exists " + kHandleNamesTable
 
@@ -105,9 +90,7 @@ class HandleNameManager {
     }
 
     private func createHandleNamesTableIfNotExists() {
-        guard let database = database else {
-            return
-        }
+        guard let database = database else { return }
 
         // currently not used but reserved columns; color, reserved1, reserved2, reserved3
         let createTableSql = "create table if not exists " + kHandleNamesTable + " " +
@@ -139,9 +122,7 @@ class HandleNameManager {
     }
 
     func selectHandleName(communityId: String, userId: String) -> String? {
-        guard let database = database else {
-            return nil
-        }
+        guard let database = database else { return nil }
 
         let selectSql = "select handle_name from " + kHandleNamesTable + " where community_id = ? and user_id = ?"
         var handleName: String?
@@ -159,9 +140,7 @@ class HandleNameManager {
     }
 
     private func deleteHandleName(communityId: String, userId: String) {
-        guard let database = database else {
-            return
-        }
+        guard let database = database else { return }
 
         let deleteSql = "delete from " + kHandleNamesTable + " where community_id = ? and user_id = ?"
 
@@ -175,9 +154,7 @@ class HandleNameManager {
     }
 
     private func deleteObsoletedHandleNames() {
-        guard let database = database else {
-            return
-        }
+        guard let database = database else { return }
 
         let deleteSql = "delete from " + kHandleNamesTable + " where updated < ? and anonymous = 1"
         let threshold = Date().timeIntervalSince1970 - kHandleNameObsoleteThreshold

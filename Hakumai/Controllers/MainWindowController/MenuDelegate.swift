@@ -35,6 +35,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     }
 
     // MARK: - NSMenu Overrides
+    // swiftlint:disable cyclomatic_complexity
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         let clickedRow = tableView.clickedRow
         if clickedRow == -1 {
@@ -59,9 +60,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
             }
             return (chat.isUserComment || chat.isBSPComment)
         case removeHandleNameMenuItem:
-            guard let live = live else {
-                return false
-            }
+            guard let live = live else { return false }
             let hasHandleName = (HandleNameManager.sharedManager.handleName(forLive: live, chat: chat) != nil)
             return hasHandleName
         case addToMuteUserMenuItem, reportAsNgUserMenuItem:
@@ -74,6 +73,7 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
 
         return false
     }
+    // swiftlint:enable cyclomatic_complexity
 
     // MARK: - NSMenuDelegate Functions
     func menuWillOpen(_ menu: NSMenu) {
@@ -152,11 +152,9 @@ class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         let defaults = UserDefaults.standard
         var muteUserIds = defaults.object(forKey: Parameters.MuteUserIds) as? [[String: String]] ?? [[String: String]]()
 
-        for muteUserId in muteUserIds {
-            if chat.userId == muteUserId[MuteUserIdKey.UserId] {
-                logger.debug("mute userid [\(chat.userId ?? "")] already registered, so skip")
-                return
-            }
+        for muteUserId in muteUserIds where chat.userId == muteUserId[MuteUserIdKey.UserId] {
+            logger.debug("mute userid [\(chat.userId ?? "")] already registered, so skip")
+            return
         }
 
         muteUserIds.append([MuteUserIdKey.UserId: chat.userId!])

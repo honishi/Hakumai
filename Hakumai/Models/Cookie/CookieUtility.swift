@@ -15,7 +15,7 @@ class CookieUtility {
     }
 
     static func requestBrowserCookie(browserType: BrowserType, completion: @escaping(String?) -> Void) {
-        switch (browserType) {
+        switch browserType {
         case .chrome:
             completion(ChromeCookie.storedCookie())
         case .safari:

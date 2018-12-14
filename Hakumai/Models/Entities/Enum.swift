@@ -10,16 +10,7 @@ import Foundation
 
 enum RoomPosition: Int, CustomStringConvertible {
     case arena = 0
-    case standA
-    case standB
-    case standC
-    case standD
-    case standE
-    case standF
-    case standG
-    case standH
-    case standI
-    case standJ
+    case standA, standB, standC, standD, standE, standF, standG, standH, standI, standJ
 
     var description: String {
         return "\(rawValue)(\(label()))"
@@ -30,7 +21,6 @@ enum RoomPosition: Int, CustomStringConvertible {
         if self == .arena {
             return nil
         }
-
         return RoomPosition(rawValue: rawValue - 1)
     }
 
@@ -38,94 +28,44 @@ enum RoomPosition: Int, CustomStringConvertible {
         if self == .standJ {
             return nil
         }
-
         return RoomPosition(rawValue: rawValue + 1)
     }
 
+    // swiftlint:disable cyclomatic_complexity
     func label() -> String {
         switch self {
-        case .arena:
-            return "アリーナ"
-        case .standA:
-            return "立ち見1"
-        case .standB:
-            return "立ち見2"
-        case .standC:
-            return "立ち見3"
-        case .standD:
-            return "立ち見4"
-        case .standE:
-            return "立ち見5"
-        case .standF:
-            return "立ち見6"
-        case .standG:
-            return "立ち見7"
-        case .standH:
-            return "立ち見8"
-        case .standI:
-            return "立ち見9"
-        case .standJ:
-            return "立ち見10"
+        case .arena:    return "アリーナ"
+        case .standA:   return "立ち見1"
+        case .standB:   return "立ち見2"
+        case .standC:   return "立ち見3"
+        case .standD:   return "立ち見4"
+        case .standE:   return "立ち見5"
+        case .standF:   return "立ち見6"
+        case .standG:   return "立ち見7"
+        case .standH:   return "立ち見8"
+        case .standI:   return "立ち見9"
+        case .standJ:   return "立ち見10"
         }
     }
+    // swiftlint:enable cyclomatic_complexity
 
+    // swiftlint:disable cyclomatic_complexity
     func shortLabel() -> String {
-        // TODO: should replace this if-else clause with switch-clause below.
-        // this is damned workaround for complile-time 'segmentation fault 11' issue.
-        // http://stackoverflow.com/questions/28696248/segmentation-fault-11-when-building-for-profiling-in-a-swift-enum
-        if self == .arena {
-            return "ア"
-        } else if self == .standA {
-            return "1"
-        } else if self == .standB {
-            return "2"
-        } else if self == .standC {
-            return "3"
-        } else if self == .standD {
-            return "4"
-        } else if self == .standE {
-            return "5"
-        } else if self == .standF {
-            return "6"
-        } else if self == .standG {
-            return "7"
-        } else if self == .standH {
-            return "8"
-        } else if self == .standI {
-            return "9"
-        } else if self == .standJ {
-            return "10"
+        switch self {
+        case .arena:   return "ア"
+        case .standA:  return "1"
+        case .standB:  return "2"
+        case .standC:  return "3"
+        case .standD:  return "4"
+        case .standE:  return "5"
+        case .standF:  return "6"
+        case .standG:  return "7"
+        case .standH:  return "8"
+        case .standI:  return "9"
+        case .standJ:  return "10"
         }
-
-        return "?"
-
-        /*
-         switch self {
-         case .Arena:
-         return "ア"
-         case .StandA:
-         return "A"
-         case .StandB:
-         return "B"
-         case .StandC:
-         return "C"
-         case .StandD:
-         return "D"
-         case .StandE:
-         return "E"
-         case .StandF:
-         return "F"
-         case .StandG:
-         return "G"
-         case .StandH:
-         return "H"
-         case .StandI:
-         return "I"
-         case .StandJ:
-         return "J"
-         }
-         */
     }
+    // swiftlint:enable cyclomatic_complexity
 }
 
 enum Premium: Int, CustomStringConvertible {
@@ -142,18 +82,12 @@ enum Premium: Int, CustomStringConvertible {
 
     func label() -> String {
         switch self {
-        case .ippan:
-            return "一般"
-        case .premium:
-            return "プレミアム"
-        case .system:
-            return "システム"
-        case .caster:
-            return "放送主"
-        case .operator:
-            return "運営"
-        case .bsp:
-            return "BSP"
+        case .ippan:    return "一般"
+        case .premium:  return "プレミアム"
+        case .system:   return "システム"
+        case .caster:   return "放送主"
+        case .operator: return "運営"
+        case .bsp:      return "BSP"
         }
     }
 }

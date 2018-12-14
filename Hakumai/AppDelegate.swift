@@ -91,6 +91,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: - Internal Functions
     // MARK: KVO Functions
+    // swiftlint:disable cyclomatic_complexity block_based_kvo
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
         // logger.debug("detected observing value changed: key[\(keyPath)]")
         guard let keyPath = keyPath, let change = change else {
@@ -145,6 +146,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             break
         }
     }
+    // swiftlint:enable cyclomatic_complexity block_based_kvo
 
     // MARK: Menu Handlers
     @IBAction func openPreferences(_ sender: AnyObject) {

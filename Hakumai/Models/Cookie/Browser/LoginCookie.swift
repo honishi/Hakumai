@@ -72,10 +72,8 @@ class LoginCookie {
             return nil
         }
 
-        for cookie in cookies {
-            if cookie.name == "user_session" {
-                return cookie.value
-            }
+        for cookie in cookies where cookie.name == "user_session" {
+            return cookie.value
         }
 
         return nil

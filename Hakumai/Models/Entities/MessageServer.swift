@@ -186,10 +186,8 @@ func == (left: [MessageServer], right: [MessageServer]) -> Bool {
         return false
     }
 
-    for i in 0..<left.count {
-        if left[i] != right[i] {
-            return false
-        }
+    for i in 0..<left.count where left[i] != right[i] {
+        return false
     }
 
     return true

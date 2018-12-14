@@ -25,11 +25,7 @@ class ScoreTableCellView: NSTableCellView {
         }
     }
 
-    var fontSize: CGFloat? {
-        didSet {
-            set(fontSize: fontSize)
-        }
-    }
+    var fontSize: CGFloat? { didSet { set(fontSize: fontSize) } }
 
     // MARK: - Internal Functions
     private func color(forChatScore chat: Chat?) -> NSColor {
