@@ -1,0 +1,37 @@
+disabled_rules:
+  # - cyclomatic_complexity
+  # - function_body_length
+  # - function_parameter_count
+  # - large_tuple
+  # - nesting
+  - type_name
+  - todo
+  # - trailing_comma
+  # - trailing_newline
+  # - trailing_whitespace
+  - identifier_name
+
+excluded:
+  - fastlane
+  - script
+  - vendor
+  - Pods
+  - Hakumai.xcodeproj
+  - Hakumai.xcworkspace
+  - Hakumai/Generated
+
+line_length: 
+  warning: 400
+  error: 500
+# type_body_length:
+#   warning: 300
+#   error: 400
+file_length:
+  warning: 600
+  error: 800
+# function_body_length: 
+#   warning: 300
+#   error: 400
+# variable_name_max_length:
+#   warning: 40
+#   error: 60

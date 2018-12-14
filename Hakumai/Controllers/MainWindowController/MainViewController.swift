@@ -895,7 +895,7 @@ class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDe
             "http:\\/\\/live\\.nicovideo\\.jp\\/watch\\/lv(" + liveNumberPattern + ").*",
             "lv(" + liveNumberPattern + ")",
             "(" + liveNumberPattern + ")"
-            ]
+        ]
 
         for pattern in patterns {
             if let extracted = url.extractRegexp(pattern: pattern), let number = Int(extracted) {
