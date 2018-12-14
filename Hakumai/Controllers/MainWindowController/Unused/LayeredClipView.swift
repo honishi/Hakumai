@@ -13,7 +13,7 @@ class LayeredClipView: NSClipView {
     // MARK: - Object Lifecycle
     override func awakeFromNib() {
         super.awakeFromNib()
-        
+
         enableScrollLayer()
     }
 

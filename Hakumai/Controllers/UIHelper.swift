@@ -12,11 +12,11 @@ import AppKit
 // based on https://github.com/yeahdongcn/UIColor-Hex-Swift
 extension NSColor {
     convenience init(rgba: String) {
-        var red:   CGFloat = 0.0
+        var red: CGFloat = 0.0
         var green: CGFloat = 0.0
-        var blue:  CGFloat = 0.0
+        var blue: CGFloat = 0.0
         var alpha: CGFloat = 1.0
-        
+
         if rgba.hasPrefix("#") {
             let index   = rgba.index(rgba.startIndex, offsetBy: 1)
             let hex     = String(rgba[index...])
@@ -41,7 +41,7 @@ extension NSColor {
         } else {
             print("invalid rgb string, missing '#' as prefix", terminator: "")
         }
-        self.init(red:red, green:green, blue:blue, alpha:alpha)
+        self.init(red: red, green: green, blue: blue, alpha: alpha)
     }
 }
 
@@ -50,12 +50,12 @@ class UIHelper {
     static func systemMessageColorBackground() -> NSColor {
         return NSColor.lightGray
     }
-    
+
     // MARK: - Score Colors
     static func scoreColorGreen() -> NSColor {
         return NSColor(rgba: "#24cf20")
     }
-    
+
     static func scoreColorLightGreen() -> NSColor {
         return NSColor(rgba: "#abff00")
     }
@@ -71,28 +71,28 @@ class UIHelper {
     static func scoreColorRed() -> NSColor {
         return NSColor(rgba: "#ff0000")
     }
-    
+
     // MARK: - Room Colors
     static func roomColorArena() -> NSColor {
         return NSColor(rgba: "#3c49ff")
     }
-    
+
     static func roomColorStandA() -> NSColor {
         return NSColor(rgba: "#ff3c37")
     }
-    
+
     static func roomColorStandB() -> NSColor {
         return NSColor(rgba: "#b2ae00")
     }
-    
+
     static func roomColorStandC() -> NSColor {
         return NSColor(rgba: "#24c10e")
     }
-    
+
     static func roomColorStandD() -> NSColor {
         return NSColor(rgba: "#f577cd")
     }
-    
+
     static func roomColorStandE() -> NSColor {
         return NSColor(rgba: "#2eb9c8")
     }
@@ -100,28 +100,28 @@ class UIHelper {
     static func roomColorStandF() -> NSColor {
         return NSColor(rgba: "#f97900")
     }
-    
+
     static func roomColorStandG() -> NSColor {
         return NSColor(rgba: "#8600d8")
     }
-    
+
     static func roomColorStandH() -> NSColor {
         return NSColor(rgba: "#006b42")
     }
-    
+
     static func roomColorStandI() -> NSColor {
         return NSColor(rgba: "#ac1200")
     }
-    
+
     static func roomColorStandJ() -> NSColor {
         return NSColor(rgba: "#ababab")
     }
-    
+
     // MARK: - Font Attributes
     static func normalCommentAttributes() -> [String: Any] {
         return normalCommentAttributes(fontSize: CGFloat(kDefaultFontSize))
     }
-    
+
     static func normalCommentAttributes(fontSize: CGFloat) -> [String: Any] {
         let attributes = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): NSFont.systemFont(ofSize: fontSize),
                           convertFromNSAttributedStringKey(NSAttributedString.Key.paragraphStyle): NSParagraphStyle.default]
@@ -137,7 +137,7 @@ class UIHelper {
                           convertFromNSAttributedStringKey(NSAttributedString.Key.paragraphStyle): NSParagraphStyle.default]
         return attributes
     }
-    
+
     private static func commonCommentParagraphStyle(fontSize: CGFloat) -> NSParagraphStyle {
         let style = NSMutableParagraphStyle()
         style.maximumLineHeight = fontSize * 1.2
@@ -146,6 +146,6 @@ class UIHelper {
 }
 
 // Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
+private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
+    return input.rawValue
 }

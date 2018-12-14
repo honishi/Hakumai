@@ -19,7 +19,7 @@ private let kStoryboardIdGeneralViewController = "GeneralViewController"
     override static func transformedValueClass() -> AnyClass {
         return NSNumber.self
     }
-    
+
     override func transformedValue(_ value: Any?) -> Any? {
         return (value as? Int) == SessionManagementType.login.rawValue ? NSNumber(value: true) : NSNumber(value: false)
     }
@@ -34,7 +34,7 @@ class GeneralViewController: NSViewController {
     @IBOutlet weak var checkAccountButton: NSButton!
     @IBOutlet weak var progressIndicator: NSProgressIndicator!
     @IBOutlet weak var checkAccountStatusLabel: NSTextField!
-    
+
     @objc dynamic var mailAddress: NSString! {
         didSet {
             validateCheckAccountButton()
@@ -45,22 +45,22 @@ class GeneralViewController: NSViewController {
             validateCheckAccountButton()
         }
     }
-    
+
     // MARK: - Object Lifecycle
     static func generateInstance() -> GeneralViewController {
         let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
         return (storyboard.instantiateController(withIdentifier: kStoryboardIdGeneralViewController) as! GeneralViewController)
     }
-    
+
     // MARK: - NSViewController Overrides
     override func viewDidAppear() {
         super.viewDidAppear()
-        
+
         if let account = KeychainUtility.accountInKeychain() {
             mailAddress = account.mailAddress as NSString
             password = account.password as NSString
         }
-        
+
         validateCheckAccountButton()
     }
 
@@ -68,52 +68,52 @@ class GeneralViewController: NSViewController {
     private func validateCheckAccountButton() {
         checkAccountButton?.isEnabled = canLogin()
     }
-    
+
     private func canLogin() -> Bool {
         if mailAddress == nil || password == nil {
             return false
         }
-        
+
         let loginSelected = sessionManagementMatrix?.selectedTag() == SessionManagementType.login.rawValue
         let hasValidMailAddress = (mailAddress as String).hasRegexp(pattern: kRegexpMailAddress)
         let hasValidPassword = (password as String).hasRegexp(pattern: kRegexpPassword)
-        
+
         return (loginSelected && hasValidMailAddress && hasValidPassword)
     }
-    
+
     @IBAction func detectedChangeInSessionManagementMatrix(_ sender: AnyObject) {
         let matrix = (sender as! NSMatrix)
         // log.debug("\(matrix.selectedTag())")
-        
+
         if matrix.selectedTag() == SessionManagementType.login.rawValue {
             mailAddressTextField.becomeFirstResponder()
         }
     }
-    
+
     @IBAction func detectedEnterInTextField(_ sender: AnyObject) {
         if canLogin() {
             checkAccount(self)
         }
     }
-    
+
     @IBAction func checkAccount(_ sender: AnyObject) {
         logger.debug("login w/ [\(String(describing: self.mailAddress))][\(String(describing: self.password))]")
-        
+
         if canLogin() == false {
             return
         }
-        
+
         let completion = { (userSessionCookie: String?) -> Void in
             DispatchQueue.main.async {
                 self.progressIndicator.stopAnimation(self)
-                
+
                 if userSessionCookie == nil {
                     self.checkAccountStatusLabel.stringValue = "Status: Failed"
                     return
                 }
-                
+
                 self.checkAccountStatusLabel.stringValue = "Status: Success"
-                
+
                 KeychainUtility.removeAllAccountsInKeychain()
                 KeychainUtility.setAccountToKeychain(mailAddress: self.mailAddress as String, password: self.password as String)
             }

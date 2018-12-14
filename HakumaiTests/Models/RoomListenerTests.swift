@@ -10,12 +10,12 @@ import Foundation
 import XCTest
 
 class RoomListenerTests: XCTestCase {
-    
+
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
-    
+
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
@@ -23,34 +23,34 @@ class RoomListenerTests: XCTestCase {
 
     func testStreamByRemovingNull() {
         let listener = RoomListener(delegate: nil, server: nil)
-        
+
         XCTAssert(listener.streamByRemovingNull(fromStream: "aaa\0") == "aaa", "")
         XCTAssert(listener.streamByRemovingNull(fromStream: "aaa\nbbb\0") == "aaa\nbbb", "")
         XCTAssert(listener.streamByRemovingNull(fromStream: "aaa\0bbb\0") == "aaabbb", "")
         XCTAssert(listener.streamByRemovingNull(fromStream: "aaa") == "aaa", "")
     }
-    
+
     func testHasValidBracket() {
         let listener = RoomListener(delegate: nil, server: nil)
-        
+
         XCTAssert(listener.hasValidOpenBracket(inStream: "<aaa") == true, "")
         XCTAssert(listener.hasValidOpenBracket(inStream: "aaa") == false, "")
-        
+
         XCTAssert(listener.hasValidCloseBracket(inStream: "aaa>") == true, "")
         XCTAssert(listener.hasValidCloseBracket(inStream: "aaa") == false, "")
     }
-    
+
     // 1. <thread resultcode="0" thread="1394699813" ticket="0x2e8e4000" revision="1" server_time="1416296072"/>
     func testParseThreadElement() {
         let listener = RoomListener(delegate: nil, server: nil)
         var thread: String
         var parsed: [Thread]
-        
+
         thread = "<thread resultcode=\"0\" thread=\"1394699813\" ticket=\"0x2e8e4000\" revision=\"1\" server_time=\"1416296072\"/>"
         parsed = listener.parseThreadElement(xmlRootElementFromXMLString(thread))
         XCTAssert(parsed.count == 1, "")
     }
-    
+
     // 1. raw id, non-premium, non-scored
     // <chat thread="1394672025" no="22" vpos="28382" date="1416276381" date_usec="870596" user_id="24809412" locale="ja-jp">xxx</chat>
     // 2. 184, premium, scored
@@ -59,12 +59,12 @@ class RoomListenerTests: XCTestCase {
         let listener = RoomListener(delegate: nil, server: nil)
         var chat: String
         var parsed: [Chat]
-        
+
         chat = "<chat thread=\"1394262335\" no=\"5978\" vpos=\"78500\" date=\"1416127205\" date_usec=\"581876\" "
         chat += "mail=\"184\" user_id=\"HSZnsQy73fvuRsoFo1C4N3-Ixyw\" premium=\"3\" anonymity=\"1\">/hb ifseetno 152</chat>"
         parsed = listener.parseChatElement(xmlRootElementFromXMLString(chat))
         XCTAssert(parsed.count == 1, "")
-        
+
         chat += chat
         parsed = listener.parseChatElement(xmlRootElementFromXMLString(chat))
         XCTAssert(parsed.count == 2, "")
@@ -86,6 +86,6 @@ class RoomListenerTests: XCTestCase {
 }
 
 // Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertToXMLNodeOptions(_ input: Int) -> XMLNode.Options {
-	return XMLNode.Options(rawValue: UInt(input))
+private func convertToXMLNodeOptions(_ input: Int) -> XMLNode.Options {
+    return XMLNode.Options(rawValue: UInt(input))
 }

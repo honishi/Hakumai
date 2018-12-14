@@ -14,11 +14,11 @@ class BrowserHelper {
         case safari
         case firefox
     }
-    
+
     // http://stackoverflow.com/a/6111592
     static func extractUrl(fromBrowser browserType: BrowserType) -> String? {
         var source = ""
-        
+
         switch browserType {
         case .chrome:
             source = "tell application \"Google Chrome\" to get URL of active tab of front window as string"
@@ -27,22 +27,22 @@ class BrowserHelper {
         default:
             break
         }
-        
+
         let script = NSAppleScript(source: source)
         var scriptError: NSDictionary?
         let descriptor = script?.executeAndReturnError(&scriptError)
-        
+
         if scriptError != nil {
             return nil
         }
-        
+
         var result: String?
-        
+
         if let unicode = descriptor?.coerce(toDescriptorType: UInt32(typeUnicodeText)) {
             let data = unicode.data
             result = NSString(characters: (data as NSData).bytes.assumingMemoryBound(to: unichar.self), length: (data.count / MemoryLayout<unichar>.size)) as String
         }
-        
+
         return result
     }
 }

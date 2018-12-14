@@ -13,32 +13,32 @@ class RoomPositionTableCellView: NSTableCellView {
     @IBOutlet weak var coloredView: ColoredView!
     @IBOutlet weak var roomPositionLabel: NSTextField!
     @IBOutlet weak var commentNoLabel: NSTextField!
-    
+
     var roomPosition: RoomPosition? {
         didSet {
             roomPositionLabel.stringValue = string(forRoomPosition: roomPosition)
             coloredView.fillColor = color(forRoomPosition: roomPosition)
         }
     }
-    
+
     var commentNo: Int? {
         didSet {
             commentNoLabel.stringValue = string(ofCommentNo: commentNo)
         }
     }
-    
+
     var fontSize: CGFloat? {
         didSet {
             set(fontSize: fontSize)
         }
     }
-    
+
     // MARK: - Internal Functions
     private func color(forRoomPosition roomPosition: RoomPosition?) -> NSColor {
         if roomPosition == nil {
             return UIHelper.systemMessageColorBackground()
         }
-        
+
         switch (roomPosition!) {
         case .arena:
             return UIHelper.roomColorArena()
@@ -64,7 +64,7 @@ class RoomPositionTableCellView: NSTableCellView {
             return UIHelper.roomColorStandJ()
         }
     }
-    
+
     private func string(forRoomPosition roomPosition: RoomPosition?) -> String {
         guard let roomPosition = roomPosition else {
             return ""
@@ -72,7 +72,7 @@ class RoomPositionTableCellView: NSTableCellView {
 
         return roomPosition.shortLabel() + ":"
     }
-    
+
     private func string(ofCommentNo commentNo: Int?) -> String {
         guard let commentNo = commentNo else {
             return ""
@@ -80,7 +80,7 @@ class RoomPositionTableCellView: NSTableCellView {
 
         return String(commentNo).numberStringWithSeparatorComma()!
     }
-    
+
     private func set(fontSize: CGFloat?) {
         let size = fontSize ?? CGFloat(kDefaultFontSize)
         roomPositionLabel.font = NSFont.systemFont(ofSize: size)

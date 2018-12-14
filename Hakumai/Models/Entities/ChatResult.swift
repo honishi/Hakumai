@@ -18,11 +18,11 @@ class ChatResult {
         case locked
         case readOnly
         case tooLong
-        
+
         var description: String {
             return "ChatResult.Status: \(rawValue)(\(label()))"
         }
-        
+
         func label() -> String {
             switch (self) {
             case .success:
@@ -44,9 +44,9 @@ class ChatResult {
             }
         }
     }
-    
+
     var status: Status?
-    
+
     var description: String {
         return (
             "ChatResult: status[\(status?.description ?? "")]"

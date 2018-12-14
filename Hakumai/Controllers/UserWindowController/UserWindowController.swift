@@ -25,36 +25,36 @@ class UserWindowController: NSWindowController, NSWindowDelegate {
             reloadMessages()
         }
     }
-    
+
     // MARK: - Object Lifecycle
     deinit {
         logger.debug("")
     }
-    
+
     static func generateInstance(delegate: UserWindowControllerDelegate?, userId: String) -> UserWindowController {
         let storyboard = NSStoryboard(name: kStoryboardNameUserWindowController, bundle: nil)
         let userWindowController = storyboard.instantiateController(withIdentifier: kStoryboardIdUserWindowController) as! UserWindowController
-        
+
         userWindowController.delegate = delegate
         userWindowController.userId = userId
-        
+
         return userWindowController
     }
-    
+
     // MARK: - NSWindowDelegate Functions
     func windowWillClose(_ notification: Notification) {
         let window: Any? = notification.object
-        
+
         if window is UserWindow {
             delegate?.userWindowControllerDidClose(self)
         }
     }
-    
+
     // MARK: - Public Functions
     func reloadMessages() {
         let userViewController = contentViewController as! UserViewController
         userViewController.userId = userId
     }
-    
+
     // MARK: - Internal Functions
 }

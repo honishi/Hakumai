@@ -19,13 +19,13 @@ extension NSWindow {
             let windowLevel = Int(CGWindowLevelForKey(kWindowLevelKeyForAlwaysOnTop))
             return level.rawValue == windowLevel
         }
-        
+
         set(newAlwaysOnTop) {
             let windowLevelKey = newAlwaysOnTop ? kWindowLevelKeyForAlwaysOnTop : kWindowLevelKeyForNormal
             let windowLevel = Int(CGWindowLevelForKey(windowLevelKey))
-            
+
             level = convertToNSWindowLevel(windowLevel)
-            
+
             // .Managed to keep window being within spaces(mission control) even if special window level
             collectionBehavior = .managed
         }
@@ -33,6 +33,6 @@ extension NSWindow {
 }
 
 // Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertToNSWindowLevel(_ input: Int) -> NSWindow.Level {
-	return NSWindow.Level(rawValue: input)
+private func convertToNSWindowLevel(_ input: Int) -> NSWindow.Level {
+    return NSWindow.Level(rawValue: input)
 }

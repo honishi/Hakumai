@@ -17,7 +17,7 @@ extension Character {
     func unicodeScalarCodePoint() -> UInt32 {
         let characterString = String(self)
         let scalars = characterString.unicodeScalars
-        
+
         return scalars[scalars.startIndex].value
     }
 }

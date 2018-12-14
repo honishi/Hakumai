@@ -24,50 +24,47 @@ class ScoreTableCellView: NSTableCellView {
             scoreLabel.stringValue = string(forChatScore: chat)
         }
     }
-    
+
     var fontSize: CGFloat? {
         didSet {
             set(fontSize: fontSize)
         }
     }
-    
+
     // MARK: - Internal Functions
     private func color(forChatScore chat: Chat?) -> NSColor {
         // println("\(score)")
         guard let chat = chat, let score = chat.score else {
             return UIHelper.systemMessageColorBackground()
         }
-        
+
         if chat.isSystemComment {
             return UIHelper.systemMessageColorBackground()
         }
-        
+
         if score == kScoreThresholdGreen {
             return UIHelper.scoreColorGreen()
-        }
-        else if kScoreThresholdLightGreen < score && score < kScoreThresholdGreen {
+        } else if kScoreThresholdLightGreen < score && score < kScoreThresholdGreen {
             return UIHelper.scoreColorLightGreen()
-        }
-        else if kScoreThresholdYellow < score && score <= kScoreThresholdLightGreen {
+        } else if kScoreThresholdYellow < score && score <= kScoreThresholdLightGreen {
             return UIHelper.scoreColorYellow()
-        }
-        else if kScoreThresholdOrange < score && score <= kScoreThresholdYellow {
+        } else if kScoreThresholdOrange < score && score <= kScoreThresholdYellow {
             return UIHelper.scoreColorOrange()
         }
-        
+
         return UIHelper.scoreColorRed()
     }
-    
+
     private func string(forChatScore chat: Chat?) -> String {
         var string = ""
-        
+
         if let unwrapped = chat?.score {
             string = String(unwrapped).numberStringWithSeparatorComma()!
         }
-        
+
         return string
     }
-    
+
     private func set(fontSize: CGFloat?) {
         let size = fontSize ?? CGFloat(kDefaultFontSize)
         scoreLabel.font = NSFont.systemFont(ofSize: size)

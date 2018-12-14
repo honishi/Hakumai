@@ -23,7 +23,7 @@ class LoginCookie {
                 completion(nil)
                 return
             }
-            
+
             let httpResponse = response as! HTTPURLResponse
             if httpResponse.statusCode != 200 {
                 logger.error("login failed. got unexpected status code::[\(httpResponse.statusCode)]")
@@ -39,11 +39,11 @@ class LoginCookie {
 
             completion(userSessionCookie)
         }
-        
+
         LoginCookie.removeAllStoredCookie()
-        
+
         let parameters = "mail=\(mailAddress)&password=\(password)"
-        
+
         let request = NSMutableURLRequest(url: URL(string: kLoginUrl)!)
         request.setValue(kUserAgent, forHTTPHeaderField: "User-Agent")
         request.httpMethod = "POST"
@@ -52,7 +52,7 @@ class LoginCookie {
         let queue = OperationQueue()
         NSURLConnection.sendAsynchronousRequest(request as URLRequest, queue: queue, completionHandler: httpCompletion)
     }
-    
+
     // MARK: - Internal Functions
     private static func removeAllStoredCookie() {
         let cookieStorage = HTTPCookieStorage.shared
@@ -64,7 +64,7 @@ class LoginCookie {
             cookieStorage.deleteCookie((cookie ))
         }
     }
-    
+
     private static func findUserSessionCookie() -> String? {
         let cookieStorage = HTTPCookieStorage.shared
         guard let cookies = cookieStorage.cookies(for: URL(string: kNicoVideoDomain)!) else {
@@ -76,7 +76,7 @@ class LoginCookie {
                 return cookie.value
             }
         }
-        
+
         return nil
     }
 }

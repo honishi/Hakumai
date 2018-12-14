@@ -18,7 +18,7 @@ class User: CustomStringConvertible {
     var isPremium: Int?
     var roomLabel: String?
     var seatNo: Int?
-    
+
     var isArena: Bool? {
         return roomLabel?.hasRegexp(pattern: kRoomLabelForArena) == true ? true : roomLabel?.hasRegexp(pattern: kRoomLabelForArenaOffical)
     }
@@ -33,7 +33,7 @@ class User: CustomStringConvertible {
             "roomLabel[\(roomLabel ?? "")] seatNo[\(seatNo ?? 0)] isArena[\(isArena ?? false)] isBSP[\(isBSP ?? false)]"
         )
     }
-    
+
     // MARK: - Object Lifecycle
     init() {
         // nop

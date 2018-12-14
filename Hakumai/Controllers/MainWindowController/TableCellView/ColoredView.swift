@@ -16,15 +16,15 @@ class ColoredView: NSView, CALayerDelegate {
             layer?.setNeedsDisplay()
         }
     }
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
-    
+
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
-    
+
     override func awakeFromNib() {
         // calyer implementation based on http://rway.tumblr.com/post/4525503228
         let layer = CALayer()
@@ -32,7 +32,7 @@ class ColoredView: NSView, CALayerDelegate {
         layer.bounds = bounds
         layer.needsDisplayOnBoundsChange = true
         layer.setNeedsDisplay()
-        
+
         self.layer = layer
         wantsLayer = true
     }
@@ -42,7 +42,7 @@ class ColoredView: NSView, CALayerDelegate {
         fillColor.setFill()
         // NSRectFill(dirtyRect)
         dirtyRect.fill()
-        
+
         super.draw(dirtyRect)
     }
 }

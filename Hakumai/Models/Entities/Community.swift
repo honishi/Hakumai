@@ -21,11 +21,11 @@ class Community: CustomStringConvertible {
     var isUser: Bool? {
         return community?.hasRegexp(pattern: kCommunityPrefixUser)
     }
-    
+
     var isChannel: Bool? {
         return community?.hasRegexp(pattern: kCommunityPrefixChannel)
     }
-    
+
     var description: String {
         return (
             "Community: community[\(community ?? "")] title[\(title ?? "")] level[\(level ?? 0)] " +

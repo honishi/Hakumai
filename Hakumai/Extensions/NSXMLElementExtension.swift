@@ -11,7 +11,7 @@ import Foundation
 extension XMLElement {
     func firstStringValue(forXPath xpath: String) -> String? {
         var err: NSError?
-        
+
         do {
             let nodes = try self.nodes(forXPath: xpath)
             if 0 < nodes.count {
@@ -21,10 +21,10 @@ extension XMLElement {
             err = error
             logger.debug("\(err?.debugDescription ?? "")")
         }
-        
+
         return nil
     }
-    
+
     func firstIntValue(forXPath xpath: String) -> Int? {
         guard let stringValue = firstStringValue(forXPath: xpath) else {
             return nil

@@ -20,7 +20,7 @@ enum RoomPosition: Int, CustomStringConvertible {
     case standH
     case standI
     case standJ
-    
+
     var description: String {
         return "\(rawValue)(\(label()))"
     }
@@ -30,18 +30,18 @@ enum RoomPosition: Int, CustomStringConvertible {
         if self == .arena {
             return nil
         }
-        
+
         return RoomPosition(rawValue: rawValue - 1)
     }
-    
+
     func next() -> RoomPosition? {
         if self == .standJ {
             return nil
         }
-        
+
         return RoomPosition(rawValue: rawValue + 1)
     }
-    
+
     func label() -> String {
         switch self {
         case .arena:
@@ -68,72 +68,62 @@ enum RoomPosition: Int, CustomStringConvertible {
             return "立ち見10"
         }
     }
-    
+
     func shortLabel() -> String {
         // TODO: should replace this if-else clause with switch-clause below.
         // this is damned workaround for complile-time 'segmentation fault 11' issue.
         // http://stackoverflow.com/questions/28696248/segmentation-fault-11-when-building-for-profiling-in-a-swift-enum
         if self == .arena {
             return "ア"
-        }
-        else if self == .standA {
+        } else if self == .standA {
             return "1"
-        }
-        else if self == .standB {
+        } else if self == .standB {
             return "2"
-        }
-        else if self == .standC {
+        } else if self == .standC {
             return "3"
-        }
-        else if self == .standD {
+        } else if self == .standD {
             return "4"
-        }
-        else if self == .standE {
+        } else if self == .standE {
             return "5"
-        }
-        else if self == .standF {
+        } else if self == .standF {
             return "6"
-        }
-        else if self == .standG {
+        } else if self == .standG {
             return "7"
-        }
-        else if self == .standH {
+        } else if self == .standH {
             return "8"
-        }
-        else if self == .standI {
+        } else if self == .standI {
             return "9"
-        }
-        else if self == .standJ {
+        } else if self == .standJ {
             return "10"
         }
-        
+
         return "?"
 
         /*
-        switch self {
-        case .Arena:
-            return "ア"
-        case .StandA:
-            return "A"
-        case .StandB:
-            return "B"
-        case .StandC:
-            return "C"
-        case .StandD:
-            return "D"
-        case .StandE:
-            return "E"
-        case .StandF:
-            return "F"
-        case .StandG:
-            return "G"
-        case .StandH:
-            return "H"
-        case .StandI:
-            return "I"
-        case .StandJ:
-            return "J"
-        }
+         switch self {
+         case .Arena:
+         return "ア"
+         case .StandA:
+         return "A"
+         case .StandB:
+         return "B"
+         case .StandC:
+         return "C"
+         case .StandD:
+         return "D"
+         case .StandE:
+         return "E"
+         case .StandF:
+         return "F"
+         case .StandG:
+         return "G"
+         case .StandH:
+         return "H"
+         case .StandI:
+         return "I"
+         case .StandJ:
+         return "J"
+         }
          */
     }
 }
@@ -145,11 +135,11 @@ enum Premium: Int, CustomStringConvertible {
     case caster = 3
     case `operator` = 6
     case bsp = 7
-    
+
     var description: String {
         return "\(rawValue)(\(label()))"
     }
-    
+
     func label() -> String {
         switch self {
         case .ippan:

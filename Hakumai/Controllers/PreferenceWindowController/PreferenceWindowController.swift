@@ -26,9 +26,9 @@ class PreferenceWindowController: NSWindowController {
     static func generateInstance() -> PreferenceWindowController {
         let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
         let preferenceWindowController = storyboard.instantiateController(withIdentifier: kStoryboardIdPreferenceWindowController) as! PreferenceWindowController
-        
+
         preferenceWindowController.window?.center()
-        
+
         return preferenceWindowController
     }
 
@@ -36,36 +36,36 @@ class PreferenceWindowController: NSWindowController {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
-    
+
     deinit {
         logger.debug("")
     }
-    
+
     // MARK: - NSObject Overrides
     override func awakeFromNib() {
         super.awakeFromNib()
     }
-    
+
     // MARK: - NSWindowController Overrides
     override func windowDidLoad() {
         changeContent(viewController: GeneralViewController.shared, itemIdentifier: kToolbarItemIdentifierGeneral)
-        
+
         window?.center()
         window?.makeKey()
     }
-    
+
     // MARK: - NSToolbar Handlers
     @IBAction func changeViewController(_ sender: AnyObject) {
         let toolbarItem = (sender as! NSToolbarItem)
         var viewController: NSViewController?
-        
+
         switch convertFromNSToolbarItemIdentifier(toolbarItem.itemIdentifier) {
         case kToolbarItemIdentifierGeneral:
             viewController = GeneralViewController.shared
-            
+
         case kToolbarItemIdentifierMute:
             viewController = MuteViewController.shared
-            
+
         default:
             break
         }
@@ -76,7 +76,7 @@ class PreferenceWindowController: NSWindowController {
     }
 
     // MARK: - Internal Functions
-    
+
     // MARK: Content View Utility
     // based on this implementation;
     // https://github.com/sequelpro/sequelpro/blob/fd3ff51dc624be5ce645ce25eb72d03e5a359416/Source/SPPreferenceController.m#L248
@@ -86,46 +86,46 @@ class PreferenceWindowController: NSWindowController {
                 subView.removeFromSuperview()
             }
         }
-        
+
         window?.contentView?.addSubview(viewController.view)
         resizeWindowForContentView(view: viewController.view)
-        
+
         toolbar.selectedItemIdentifier = convertToOptionalNSToolbarItemIdentifier(itemIdentifier)
     }
-    
+
     private func resizeWindowForContentView(view: NSView) {
         let viewSize = view.frame.size
         var frame = window!.frame
 
         let titleHeight: CGFloat = 22
         let resizedHeight = viewSize.height + titleHeight + toolbarHeight()
-        
+
         frame.origin.y += frame.size.height - resizedHeight
         frame.size.height = resizedHeight
         frame.size.width = viewSize.width
-        
+
         window?.setFrame(frame, display: true, animate: true)
     }
 
     private func toolbarHeight() -> CGFloat {
         var toolbarHeight: CGFloat = 0
-        
+
         if toolbar != nil && toolbar.isVisible {
             let windowFrame = NSWindow.contentRect(forFrameRect: window!.frame, styleMask: window!.styleMask)
-            toolbarHeight = NSHeight(windowFrame) - NSHeight(window!.contentView!.frame)
+            toolbarHeight = windowFrame.height - NSHeight(window!.contentView!.frame)
         }
-        
+
         return toolbarHeight
     }
 }
 
 // Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertFromNSToolbarItemIdentifier(_ input: NSToolbarItem.Identifier) -> String {
-	return input.rawValue
+private func convertFromNSToolbarItemIdentifier(_ input: NSToolbarItem.Identifier) -> String {
+    return input.rawValue
 }
 
 // Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertToOptionalNSToolbarItemIdentifier(_ input: String?) -> NSToolbarItem.Identifier? {
-	guard let input = input else { return nil }
-	return NSToolbarItem.Identifier(rawValue: input)
+private func convertToOptionalNSToolbarItemIdentifier(_ input: String?) -> NSToolbarItem.Identifier? {
+    guard let input = input else { return nil }
+    return NSToolbarItem.Identifier(rawValue: input)
 }

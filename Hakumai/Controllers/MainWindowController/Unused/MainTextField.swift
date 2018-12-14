@@ -13,12 +13,12 @@ import AppKit
 class MainTextField: NSTextField {
     override func becomeFirstResponder() -> Bool {
         let result = super.becomeFirstResponder()
-        
+
         // need some delay here to wait for completion of focus animation
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4, execute: {
             self.selectText(self)
         })
-        
+
         return result
     }
 }

@@ -22,50 +22,50 @@ extension String {
         // with String, we could not handle the pattern like "ﾊﾃﾞだなｗ".extranctRegexpPattern("(ｗ)")
         // see details at http://stackoverflow.com/a/27192734
         let nsStringSelf = (self as NSString)
-        
+
         let regexp: NSRegularExpression! = try? NSRegularExpression(pattern: pattern, options: [])
         if regexp == nil {
             return nil
         }
-        
-        let matched = regexp.firstMatch(in: nsStringSelf as String, options: [], range: NSMakeRange(0, nsStringSelf.length))
+
+        let matched = regexp.firstMatch(in: nsStringSelf as String, options: [], range: NSRange(location: 0, length: nsStringSelf.length))
         if matched == nil {
             return nil
         }
-        
+
         let nsRange = matched!.range(at: 1)
         let nsSubstring = nsStringSelf.substring(with: nsRange)
 
         return (nsSubstring as String)
     }
-    
+
     func hasRegexp(pattern: String) -> Bool {
         return (extractRegexp(pattern: "(" + pattern + ")") != nil)
     }
-    
+
     func stringByRemovingRegexp(pattern: String) -> String {
         let nsStringSelf = (self as NSString)
-        
+
         let regexp = try! NSRegularExpression(pattern: pattern, options: [])
-        let removed = regexp.stringByReplacingMatches(in: nsStringSelf as String, options: [], range: NSMakeRange(0, nsStringSelf.length), withTemplate: "")
-        
+        let removed = regexp.stringByReplacingMatches(in: nsStringSelf as String, options: [], range: NSRange(location: 0, length: nsStringSelf.length), withTemplate: "")
+
         return (removed as String)
     }
-    
+
     func numberStringWithSeparatorComma() -> String? {
         let intValue: Int! = Int(self)
-        
+
         if intValue == nil {
             return nil
         }
-        
+
         let number = NSNumber(value: intValue)
-        
+
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         formatter.groupingSeparator = ","
         formatter.groupingSize = 3
-        
+
         return formatter.string(from: number)
     }
 }
@@ -74,12 +74,12 @@ func * (left: String, right: Int) -> String {
     if right == 0 {
         return ""
     }
-    
+
     var multiplied = ""
-    
+
     for _ in 1...right {
         multiplied += left
     }
-    
+
     return multiplied
 }

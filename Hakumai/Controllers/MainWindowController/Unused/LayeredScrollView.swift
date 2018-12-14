@@ -13,10 +13,10 @@ class LayeredScrollView: NSScrollView {
     // MARK: - Object Lifecycle
     override func awakeFromNib() {
         super.awakeFromNib()
-        
+
         enableLayer()
     }
-    
+
     func enableLayer() {
         wantsLayer = true
     }

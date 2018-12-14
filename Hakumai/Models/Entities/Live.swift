@@ -18,18 +18,18 @@ class Live: CustomStringConvertible {
     var baseTime: Date?
     var openTime: Date?
     var startTime: Date?
-    
+
     var liveUrlString: String {
         return kLiveBaseUrl + (liveId ?? "")
     }
-    
+
     var description: String {
         return (
             "Live: liveId[\(liveId ?? "")] title[\(title ?? "")] community[\(community)] " +
             "baseTime[\(baseTime?.description ?? "")] openTime[\(openTime?.description ?? "")] startTime[\(startTime?.description ?? "")]"
         )
     }
-    
+
     // MARK: - Object Lifecycle
     init() {
         // nop

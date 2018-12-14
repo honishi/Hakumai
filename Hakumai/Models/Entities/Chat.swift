@@ -22,38 +22,38 @@ class Chat: CustomStringConvertible {
     var premium: Premium?
     var comment: String?
     var score: Int?
-    
+
     var isRawUserId: Bool {
         return Chat.isRawUserId(userId)
     }
-    
+
     var isUserComment: Bool {
         return Chat.isUserComment(premium)
     }
-    
+
     var isBSPComment: Bool {
         return Chat.isBSPComment(premium)
     }
-    
+
     var isSystemComment: Bool {
         return Chat.isSystemComment(premium)
     }
-    
+
     var kickOutSeatNo: Int? {
         guard let seatNo = comment?.extractRegexp(pattern: kRegexpSeatNo) else {
             return nil
         }
         return Int(seatNo)
     }
-    
+
     var description: String {
         return (
             "Chat: internalNo[\(internalNo ?? 0)] roomPosition[\(roomPosition?.description ?? "")] no[\(no ?? 0)] " +
-            "date[\(date?.description ?? "")] dateUsec[\(dateUsec ?? 0)] mail[\(mail)] userId[\(userId ?? "")] " +
+                "date[\(date?.description ?? "")] dateUsec[\(dateUsec ?? 0)] mail[\(mail)] userId[\(userId ?? "")] " +
             "premium[\(premium?.description ?? "")] comment[\(comment ?? "")] score[\(score ?? 0)]"
         )
     }
-    
+
     // MARK: - Object Lifecycle
     init() {
         // nop
@@ -64,34 +64,34 @@ class Chat: CustomStringConvertible {
         guard let userId = userId else {
             return false
         }
-        
+
         let regexp = try! NSRegularExpression(pattern: "^\\d+$", options: [])
-        let matched = regexp.firstMatch(in: userId, options: [], range: NSMakeRange(0, userId.utf16.count))
-        
+        let matched = regexp.firstMatch(in: userId, options: [], range: NSRange(location: 0, length: userId.utf16.count))
+
         return matched != nil ? true : false
     }
-    
+
     static func isUserComment(_ premium: Premium?) -> Bool {
         guard let premium = premium else {
             return false
         }
-        
+
         return premium == .ippan || premium == .premium
     }
-    
+
     static func isBSPComment(_ premium: Premium?) -> Bool {
         guard let premium = premium else {
             return false
         }
-        
+
         return premium == .bsp
     }
-    
+
     static func isSystemComment(_ premium: Premium?) -> Bool {
         guard let premium = premium else {
             return false
         }
-        
+
         return premium == .system || premium == .caster || premium == .operator
     }
 }

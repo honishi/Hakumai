@@ -15,13 +15,13 @@ struct Parameters {
     static let SessionManagement = "SessionManagement"
     static let ShowIfseetnoCommands = "ShowHbIfseetnoCommands"
     static let EnableCommentSpeech = "EnableCommentSpeech"
-    
+
     // mute
     static let EnableMuteUserIds = "EnableMuteUserIds"
     static let EnableMuteWords = "EnableMuteWords"
     static let MuteUserIds = "MuteUserIds"
     static let MuteWords = "MuteWords"
-    
+
     // misc
     static let LastLaunchedApplicationVersion = "LastLaunchedApplicationVersion"
     static let AlwaysOnTop = "AlwaysOnTop"

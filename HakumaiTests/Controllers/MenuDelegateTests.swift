@@ -10,25 +10,25 @@ import Foundation
 import XCTest
 
 class MenuDelegateTests: XCTestCase {
-    
+
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
-    
+
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
     }
-    
-    // MARK:
+
+    // MARK: 
     func testUrlStringInComment() {
         let menuDelegate = MenuDelegate()
         let chat = Chat()
-        
+
         chat.comment = "aaa"
         XCTAssert(menuDelegate.urlString(inComment: chat) == nil, "")
-        
+
         chat.comment = "aaa http://example.com aaa"
         XCTAssert(menuDelegate.urlString(inComment: chat) == "http://example.com", "")
     }
