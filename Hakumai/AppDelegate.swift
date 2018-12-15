@@ -105,32 +105,42 @@ private extension AppDelegate {
     func migrateApplicationVersion() {
         let defaults = UserDefaults.standard
 
-        let lastVersion = defaults.string(forKey: Parameters.lastLaunchedApplicationVersion)
-        let currentVersion = (Bundle.main.infoDictionary?["CFBundleVersion"] as? String)
-        logger.info("last launched app version:[\(lastVersion ?? "")] current app version:[\(currentVersion ?? "")]")
+        let lastVerInDefaults = defaults.string(forKey: Parameters.lastLaunchedApplicationVersion)
+        guard let currentVer = Bundle.main.infoDictionary?["CFBundleVersion"] as? String else {
+            logger.error("fatal: cannot retieve application version..")
+            return
+        }
+        logger.info("last launched app version:[\(lastVerInDefaults ?? "")] current app version:[\(currentVer)]")
 
-        if let lastVersion = lastVersion {
-            let lastVersionNumber = Int(lastVersion)!
-            let currentVersionNumber = Int(currentVersion!)!
-
-            if lastVersionNumber < currentVersionNumber {
-                // do some app version migration here
-                logger.info("detected app version up from:[\(lastVersionNumber)] to:[\(currentVersionNumber)]")
-
-                // version migration sample
-                /*
-                 if lastVersionNumber < 3 {
-                 defaults.removeObjectForKey(Parameters.MuteUserIds)
-                 defaults.removeObjectForKey(Parameters.MuteWords)
-                 defaults.synchronize()
-                 }
-                 */
-            }
-        } else {
+        guard let lastVer = lastVerInDefaults else {
             logger.info("detected app first launch, no need to migrate application version")
+            saveLastLauncheApplicationVersion(currentVer)
+            return
         }
 
-        defaults.set(currentVersion!, forKey: Parameters.lastLaunchedApplicationVersion)
+        guard let lastVerInt = Int(lastVer), let currentVerInt = Int(currentVer) else {
+            logger.error("fatal: cannot convert version string into int..")
+            return
+        }
+
+        if lastVerInt < currentVerInt {
+            // do some app version migration here
+            logger.info("detected app version up from:[\(lastVerInt)] to:[\(currentVerInt)]")
+
+            // version migration sample
+            /* if lastVersionNumber < 3 {
+             defaults.removeObjectForKey(Parameters.MuteUserIds)
+             defaults.removeObjectForKey(Parameters.MuteWords)
+             defaults.synchronize()
+             } */
+        }
+
+        saveLastLauncheApplicationVersion(currentVer)
+    }
+
+    func saveLastLauncheApplicationVersion(_ version: String) {
+        let defaults = UserDefaults.standard
+        defaults.set(version, forKey: Parameters.lastLaunchedApplicationVersion)
         defaults.synchronize()
     }
 
@@ -148,22 +158,20 @@ private extension AppDelegate {
     }
 
     func addObserverForUserDefaults() {
-        let defaults = UserDefaults.standard
-
-        // general
-        defaults.addObserver(self, forKeyPath: Parameters.sessionManagement, options: [.initial, .new], context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.showIfseetnoCommands, options: [.initial, .new], context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.enableCommentSpeech, options: [.initial, .new], context: nil)
-
-        // mute
-        defaults.addObserver(self, forKeyPath: Parameters.enableMuteUserIds, options: [.initial, .new], context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.muteUserIds, options: [.initial, .new], context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.enableMuteWords, options: [.initial, .new], context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.muteWords, options: [.initial, .new], context: nil)
-
-        // misc
-        defaults.addObserver(self, forKeyPath: Parameters.fontSize, options: [.initial, .new], context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.alwaysOnTop, options: [.initial, .new], context: nil)
+        let keyPaths = [
+            // general
+            Parameters.sessionManagement, Parameters.showIfseetnoCommands,
+            Parameters.enableCommentSpeech,
+            // mute
+            Parameters.enableMuteUserIds, Parameters.muteUserIds,
+            Parameters.enableMuteWords, Parameters.muteWords,
+            // misc
+            Parameters.fontSize, Parameters.alwaysOnTop
+        ]
+        for keyPath in keyPaths {
+            UserDefaults.standard.addObserver(
+                self, forKeyPath: keyPath, options: [.initial, .new], context: nil)
+        }
     }
 }
 
