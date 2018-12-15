@@ -11,11 +11,7 @@ import AppKit
 import QuartzCore
 
 final class ColoredView: NSView, CALayerDelegate {
-    var fillColor: NSColor = NSColor.gray {
-        didSet {
-            layer?.setNeedsDisplay()
-        }
-    }
+    var fillColor: NSColor = NSColor.gray { didSet { layer?.setNeedsDisplay() } }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -24,7 +20,9 @@ final class ColoredView: NSView, CALayerDelegate {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
+}
 
+extension ColoredView {
     override func awakeFromNib() {
         // calyer implementation based on http://rway.tumblr.com/post/4525503228
         let layer = CALayer()
@@ -36,13 +34,13 @@ final class ColoredView: NSView, CALayerDelegate {
         self.layer = layer
         wantsLayer = true
     }
+}
 
+extension ColoredView {
     override func draw(_ dirtyRect: NSRect) {
         // http://stackoverflow.com/a/2962882
         fillColor.setFill()
-        // NSRectFill(dirtyRect)
         dirtyRect.fill()
-
         super.draw(dirtyRect)
     }
 }

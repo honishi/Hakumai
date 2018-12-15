@@ -26,42 +26,40 @@ final class ScoreTableCellView: NSTableCellView {
     }
 
     var fontSize: CGFloat? { didSet { set(fontSize: fontSize) } }
+}
 
-    // MARK: - Internal Functions
-    private func color(forChatScore chat: Chat?) -> NSColor {
+extension ScoreTableCellView {
+    func color(forChatScore chat: Chat?) -> NSColor {
         // println("\(score)")
-        guard let chat = chat, let score = chat.score else {
-            return UIHelper.systemMessageColorBackground()
-        }
+        guard let chat = chat, let score = chat.score else { return UIHelper.systemMessageColorBackground() }
 
         if chat.isSystemComment {
             return UIHelper.systemMessageColorBackground()
         }
 
-        if score == kScoreThresholdGreen {
+        switch score {
+        case kScoreThresholdGreen:
             return UIHelper.scoreColorGreen()
-        } else if kScoreThresholdLightGreen < score && score < kScoreThresholdGreen {
+        case kScoreThresholdLightGreen + 1 ... kScoreThresholdGreen:
             return UIHelper.scoreColorLightGreen()
-        } else if kScoreThresholdYellow < score && score <= kScoreThresholdLightGreen {
+        case kScoreThresholdYellow + 1 ... kScoreThresholdLightGreen:
             return UIHelper.scoreColorYellow()
-        } else if kScoreThresholdOrange < score && score <= kScoreThresholdYellow {
+        case kScoreThresholdOrange + 1 ... kScoreThresholdYellow:
             return UIHelper.scoreColorOrange()
+        default:
+            return UIHelper.scoreColorRed()
         }
-
-        return UIHelper.scoreColorRed()
     }
 
-    private func string(forChatScore chat: Chat?) -> String {
-        var string = ""
-
-        if let unwrapped = chat?.score {
-            string = String(unwrapped).numberStringWithSeparatorComma()!
+    func string(forChatScore chat: Chat?) -> String {
+        guard let score = chat?.score,
+            let withComma = String(score).numberStringWithSeparatorComma() else {
+                return ""
         }
-
-        return string
+        return withComma
     }
 
-    private func set(fontSize: CGFloat?) {
+    func set(fontSize: CGFloat?) {
         let size = fontSize ?? CGFloat(kDefaultFontSize)
         scoreLabel.font = NSFont.systemFont(ofSize: size)
     }

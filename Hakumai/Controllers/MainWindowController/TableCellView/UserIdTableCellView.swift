@@ -31,21 +31,24 @@ final class UserIdTableCellView: NSTableCellView {
     }
 
     var fontSize: CGFloat? { didSet { set(fontSize: fontSize) } }
+}
 
-    // MARK: - Internal Functions
-    private func image(forHandleName handleName: String?, userId: String) -> NSImage {
-        var imageName: String
-
+private extension UserIdTableCellView {
+    func image(forHandleName handleName: String?, userId: String) -> NSImage {
+        let imageName: String
         if handleName != nil {
             imageName = Chat.isRawUserId(userId) ? kImageNameHandleNameOverRawId : kImageNameHandleNameOver184Id
         } else {
             imageName = Chat.isRawUserId(userId) ? kImageNameUserIdRawId : kImageNameUserId184Id
         }
-
-        return NSImage(named: imageName)!
+        guard let image = NSImage(named: imageName) else {
+            log.error("fatal: this should never be happened..")
+            return NSImage()
+        }
+        return image
     }
 
-    private func setUserIdLabel(userId: String, premium: Premium, handleName: String?) {
+    func setUserIdLabel(userId: String, premium: Premium, handleName: String?) {
         // set default name
         userIdTextField.stringValue = concatUserName(userId: userId, userName: nil, handleName: handleName)
 
@@ -59,22 +62,17 @@ final class UserIdTableCellView: NSTableCellView {
             return
         }
 
-        func completion(_ userName: String?) {
-            if userName == nil {
-                return
-            }
-
+        NicoUtility.shared.resolveUsername(forUserId: userId) {
+            guard let userName = $0 else { return }
             DispatchQueue.main.async {
-                self.userIdTextField.stringValue = self.concatUserName(userId: userId, userName: userName, handleName: handleName)
+                self.userIdTextField.stringValue =
+                    self.concatUserName(userId: userId, userName: userName, handleName: handleName)
             }
         }
-
-        NicoUtility.shared.resolveUsername(forUserId: userId, completion: completion)
     }
 
-    private func concatUserName(userId: String, userName: String?, handleName: String?) -> String {
-        var concatenated = ""
-
+    func concatUserName(userId: String, userName: String?, handleName: String?) -> String {
+        let concatenated: String
         if let handleName = handleName {
             concatenated = handleName + " (" + userId + ")"
         } else if let userName = userName {
@@ -82,11 +80,10 @@ final class UserIdTableCellView: NSTableCellView {
         } else {
             concatenated = userId
         }
-
         return concatenated
     }
 
-    private func set(fontSize: CGFloat?) {
+    func set(fontSize: CGFloat?) {
         let size = fontSize ?? CGFloat(kDefaultFontSize)
         userIdTextField.font = NSFont.systemFont(ofSize: size)
     }

@@ -22,10 +22,11 @@ final class RoomPositionTableCellView: NSTableCellView {
     }
     var commentNo: Int? { didSet { commentNoLabel.stringValue = string(ofCommentNo: commentNo) } }
     var fontSize: CGFloat? { didSet { set(fontSize: fontSize) } }
+}
 
-    // MARK: - Internal Functions
+private extension RoomPositionTableCellView {
     // swiftlint:disable cyclomatic_complexity
-    private func color(forRoomPosition roomPosition: RoomPosition?) -> NSColor {
+    func color(forRoomPosition roomPosition: RoomPosition?) -> NSColor {
         guard let roomPosition = roomPosition else {
             return UIHelper.systemMessageColorBackground()
         }
@@ -45,17 +46,17 @@ final class RoomPositionTableCellView: NSTableCellView {
     }
     // swiftlint:enable cyclomatic_complexity
 
-    private func string(forRoomPosition roomPosition: RoomPosition?) -> String {
+    func string(forRoomPosition roomPosition: RoomPosition?) -> String {
         guard let roomPosition = roomPosition else { return "" }
         return roomPosition.shortLabel() + ":"
     }
 
-    private func string(ofCommentNo commentNo: Int?) -> String {
+    func string(ofCommentNo commentNo: Int?) -> String {
         guard let commentNo = commentNo else { return "" }
         return String(commentNo).numberStringWithSeparatorComma()!
     }
 
-    private func set(fontSize: CGFloat?) {
+    func set(fontSize: CGFloat?) {
         let size = fontSize ?? CGFloat(kDefaultFontSize)
         roomPositionLabel.font = NSFont.systemFont(ofSize: size)
         commentNoLabel.font = NSFont.systemFont(ofSize: size)
