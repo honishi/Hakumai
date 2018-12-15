@@ -18,9 +18,9 @@ final class KeychainUtility {
             for account in accounts {
                 if let accountName = account[kSAMKeychainAccountKey] as? NSString {
                     if SAMKeychain.deletePassword(forService: serviceName, account: accountName as String) == true {
-                        logger.debug("completed to delete account from keychain:[\(accountName)]")
+                        log.debug("completed to delete account from keychain:[\(accountName)]")
                     } else {
-                        logger.error("failed to delete account from keychain:[\(accountName)]")
+                        log.error("failed to delete account from keychain:[\(accountName)]")
                     }
                 }
             }
@@ -31,9 +31,9 @@ final class KeychainUtility {
         let serviceName = KeychainUtility.keychainServiceName()
 
         if SAMKeychain.setPassword(password, forService: serviceName, account: mailAddress) == true {
-            logger.debug("completed to set account into keychain:[\(mailAddress)]")
+            log.debug("completed to set account into keychain:[\(mailAddress)]")
         } else {
-            logger.error("failed to set account into keychain:[\(mailAddress)]")
+            log.error("failed to set account into keychain:[\(mailAddress)]")
         }
     }
 
@@ -49,11 +49,11 @@ final class KeychainUtility {
                 return nil
             }
 
-            logger.debug("found account in keychain:[\(accountName)]")
+            log.debug("found account in keychain:[\(accountName)]")
             return (accountName, password)
         }
 
-        logger.debug("found no account in keychain")
+        log.debug("found no account in keychain")
         return nil
     }
 

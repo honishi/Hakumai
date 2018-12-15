@@ -51,11 +51,11 @@ final class RoomListener: NSObject, StreamDelegate {
         super.init()
 
         initializeFileLogger()
-        logger.info("listener initialized for message server:\(self.server?.description ?? "")")
+        log.info("listener initialized for message server:\(self.server?.description ?? "")")
     }
 
     deinit {
-        logger.debug("")
+        log.debug("")
     }
 }
 
@@ -132,7 +132,7 @@ extension RoomListener {
 
     func comment(live: Live, user: User, postKey: String, comment: String, anonymously: Bool) {
         guard let thread = thread else {
-            logger.debug("could not get thread information")
+            log.debug("could not get thread information")
             return
         }
 
@@ -155,7 +155,7 @@ extension RoomListener {
         outputStream?.write((data as NSData).bytes.assumingMemoryBound(to: UInt8.self), maxLength: data.count)
 
         if logging {
-            logger.debug(message)
+            log.debug(message)
         }
     }
 
@@ -256,7 +256,7 @@ extension RoomListener {
             xmlDocument = try XMLDocument(xmlString: wrappedStream, options: convertToXMLNodeOptions(Int(UInt(XMLDocument.ContentKind.xml.rawValue))))
         } catch let error as NSError {
             err = error
-            logger.error("\(err?.debugDescription ?? "")")
+            log.error("\(err?.debugDescription ?? "")")
             xmlDocument = nil
         }
 
@@ -287,7 +287,7 @@ extension RoomListener {
 
             let chatResults = parseChatResultElement(rootElement)
             for chatResult in chatResults {
-                logger.debug("\(chatResult.description)")
+                log.debug("\(chatResult.description)")
             }
         }
     }
@@ -371,7 +371,7 @@ extension RoomListener {
             chat.comment = chatElement.stringValue
 
             if chat.no == nil || chat.userId == nil || chat.comment == nil {
-                logger.warning("skipped invalid chat:[\(chat)]")
+                log.warning("skipped invalid chat:[\(chat)]")
                 continue
             }
 

@@ -60,7 +60,7 @@ extension MainViewController {
             let v = d.bool(forKey: Parameters.showIfseetnoCommands)
             d.set(!v, forKey: Parameters.showIfseetnoCommands)
             d.synchronize()
-            logger.debug("")
+            log.debug("")
         }
     }
 }

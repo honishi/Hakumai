@@ -23,8 +23,8 @@ final class Helper {
     // MARK: - Public Interface
     static func setupLogger(_ logger: XCGLogger) {
         #if DEBUG
-        Helper.colorizeLogger(logger)
-        logger.setup(level: .debug, showThreadName: true, showLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: nil)
+        Helper.colorizeLogger(log)
+        log.setup(level: .debug, showThreadName: true, showLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: nil)
         #else
         logger.setup(level: .none, showThreadName: false, showLevel: false, showFileNames: false, showLineNumbers: false, writeToFile: nil)
         #endif
@@ -32,14 +32,14 @@ final class Helper {
 
     static func setupFileLogger(_ logger: XCGLogger, fileName: String) {
         #if DEBUG
-        Helper.colorizeLogger(logger)
+        Helper.colorizeLogger(log)
 
         Helper.createApplicationDirectoryIfNotExists()
         let path = Helper.applicationDirectoryPath() + "/" + fileName
-        logger.setup(level: .verbose, showThreadName: true, showLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: path)
+        log.setup(level: .verbose, showThreadName: true, showLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: path)
 
-        if let console = logger.destination(withIdentifier: XCGLogger.Constants.baseConsoleDestinationIdentifier) {
-            logger.remove(destination: console)
+        if let console = log.destination(withIdentifier: XCGLogger.Constants.baseConsoleDestinationIdentifier) {
+            log.remove(destination: console)
         }
         #else
         logger.setup(level: .none, showThreadName: false, showLevel: false, showFileNames: false, showLineNumbers: false, writeToFile: nil)
@@ -55,9 +55,9 @@ final class Helper {
 
         do {
             try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: false, attributes: nil)
-            logger.debug("created application directory")
+            log.debug("created application directory")
         } catch {
-            logger.error("failed to create application directory")
+            log.error("failed to create application directory")
         }
     }
 

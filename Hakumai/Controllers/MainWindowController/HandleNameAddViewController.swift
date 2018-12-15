@@ -25,7 +25,7 @@ final class HandleNameAddViewController: NSViewController {
 
     // MARK: - Object Lifecycle
     deinit {
-        logger.debug("")
+        log.debug("")
     }
 
     // MARK: - Internal Functions

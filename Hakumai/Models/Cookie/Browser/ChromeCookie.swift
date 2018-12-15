@@ -145,7 +145,7 @@ final class ChromeCookie {
             derivedKeyLength)
 
         if result != 0 {
-            logger.error("CCKeyDerivationPBKDF failed with error: '\(result)'")
+            log.error("CCKeyDerivationPBKDF failed with error: '\(result)'")
             return nil
         }
 
@@ -185,7 +185,7 @@ final class ChromeCookie {
             decryptedData.length = Int(numBytesEncrypted)
             // logger.debug("decryptedData = \(decryptedData), decryptedLength = \(numBytesEncrypted)")
         } else {
-            logger.error("Error: \(cryptStatus)")
+            log.error("Error: \(cryptStatus)")
         }
 
         return decryptedData as Data?
@@ -212,7 +212,7 @@ final class ChromeCookie {
                 }
             }
         } catch {
-            logger.debug("No such file or directory")
+            log.debug("No such file or directory")
             return ""
         }
 

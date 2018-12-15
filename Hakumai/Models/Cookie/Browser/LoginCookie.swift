@@ -19,7 +19,7 @@ final class LoginCookie {
     static func requestCookie(mailAddress: String, password: String, completion: @escaping (_ userSessionCookie: String?) -> Void) {
         func httpCompletion(_ response: URLResponse?, _ data: Data?, _ connectionError: Error?) {
             if connectionError != nil {
-                logger.error("login failed. connection error:[\(connectionError!)]")
+                log.error("login failed. connection error:[\(connectionError!)]")
                 completion(nil)
                 return
             }
@@ -27,7 +27,7 @@ final class LoginCookie {
             guard let httpResponse = response as? HTTPURLResponse else { return }
 
             if httpResponse.statusCode != 200 {
-                logger.error("login failed. got unexpected status code::[\(httpResponse.statusCode)]")
+                log.error("login failed. got unexpected status code::[\(httpResponse.statusCode)]")
                 completion(nil)
                 return
             }
@@ -36,7 +36,7 @@ final class LoginCookie {
                 completion(nil)
                 return
             }
-            logger.debug("found session cookie:[\(userSessionCookie)]")
+            log.debug("found session cookie:[\(userSessionCookie)]")
 
             completion(userSessionCookie)
         }

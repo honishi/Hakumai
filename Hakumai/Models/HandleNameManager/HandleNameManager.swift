@@ -85,7 +85,7 @@ final class HandleNameManager {
         objc_sync_exit(self)
 
         if !success {
-            logger.error("failed to drop table: \(String(describing: database.lastErrorMessage()))")
+            log.error("failed to drop table: \(String(describing: database.lastErrorMessage()))")
         }
     }
 
@@ -103,13 +103,13 @@ final class HandleNameManager {
         objc_sync_exit(self)
 
         if !success {
-            logger.error("failed to create table: \(String(describing: database.lastErrorMessage()))")
+            log.error("failed to create table: \(String(describing: database.lastErrorMessage()))")
         }
     }
 
     func insertOrReplaceHandleName(communityId: String, userId: String, anonymous: Bool, handleName: String) {
         guard databaseQueue != nil else {
-            logger.warning("database not ready")
+            log.warning("database not ready")
             return
         }
 
@@ -149,7 +149,7 @@ final class HandleNameManager {
         objc_sync_exit(self)
 
         if !success {
-            logger.error("failed to delete table: \(String(describing: database.lastErrorMessage()))")
+            log.error("failed to delete table: \(String(describing: database.lastErrorMessage()))")
         }
     }
 
@@ -164,7 +164,7 @@ final class HandleNameManager {
         objc_sync_exit(self)
 
         if !success {
-            logger.error("failed to delete table: \(String(describing: database.lastErrorMessage()))")
+            log.error("failed to delete table: \(String(describing: database.lastErrorMessage()))")
         }
     }
 
@@ -177,7 +177,7 @@ final class HandleNameManager {
         let database = FMDatabase(path: HandleNameManager.fullPathForHandleNamesDatabase())
 
         if !(database?.open())! {
-            logger.error("unable to open database")
+            log.error("unable to open database")
             return nil
         }
 

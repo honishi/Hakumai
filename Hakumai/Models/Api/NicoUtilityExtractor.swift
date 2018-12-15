@@ -22,7 +22,7 @@ extension NicoUtility {
             xmlDocument = try XMLDocument(data: xmlData, options: convertToXMLNodeOptions(0))
         } catch let error1 as NSError {
             error = error1
-            logger.error("\(error?.debugDescription ?? "")")
+            log.error("\(error?.debugDescription ?? "")")
             xmlDocument = nil
         }
         let rootElement = xmlDocument?.rootElement()
@@ -30,11 +30,11 @@ extension NicoUtility {
         let status = rootElement?.attribute(forName: "status")?.stringValue
 
         if status == "fail" {
-            logger.warning("failed to load message server")
+            log.warning("failed to load message server")
 
             var code = ""
             if let codeInResponse = rootElement?.firstStringValue(forXPath: "/getplayerstatus/error/code") {
-                logger.warning("error code: \(codeInResponse)")
+                log.warning("error code: \(codeInResponse)")
                 code = codeInResponse
             }
 
@@ -53,7 +53,7 @@ extension NicoUtility {
         } catch let error1 as NSError {
             error = error1
             xmlDocument = nil
-            logger.error("\(error?.debugDescription ?? "")")
+            log.error("\(error?.debugDescription ?? "")")
         }
         let rootElement = xmlDocument?.rootElement()
 
@@ -78,7 +78,7 @@ extension NicoUtility {
         } catch let error1 as NSError {
             error = error1
             xmlDocument = nil
-            logger.error("\(error?.debugDescription ?? "")")
+            log.error("\(error?.debugDescription ?? "")")
         }
         let rootElement = xmlDocument?.rootElement()
 
@@ -107,17 +107,17 @@ extension NicoUtility {
         } catch let error1 as NSError {
             error = error1
             xmlDocument = nil
-            logger.error("\(error?.debugDescription ?? "")")
+            log.error("\(error?.debugDescription ?? "")")
         }
         let rootElement = xmlDocument?.rootElement()
 
         let status = rootElement?.attribute(forName: "status")?.stringValue
 
         if status == "fail" {
-            logger.warning("failed to load message server")
+            log.warning("failed to load message server")
 
             if let errorCode = rootElement?.firstStringValue(forXPath: "/getplayerstatus/error/code") {
-                logger.warning("error code: \(errorCode)")
+                log.warning("error code: \(errorCode)")
             }
 
             return nil
@@ -160,7 +160,7 @@ extension NicoUtility {
             return nil
         }
 
-        logger.debug("extracted standCharacter:\(standCharacter)")
+        log.debug("extracted standCharacter:\(standCharacter)")
         let raw = (standCharacter - ("1" as Character)) + 1
         return RoomPosition(rawValue: raw)
     }
@@ -181,12 +181,12 @@ extension NicoUtility {
         } catch let error1 as NSError {
             error = error1
             htmlDocument = nil
-            logger.error("\(error?.debugDescription ?? "")")
+            log.error("\(error?.debugDescription ?? "")")
         }
         let rootElement = htmlDocument?.rootElement
 
         if rootElement == nil {
-            logger.error("rootElement is nil")
+            log.error("rootElement is nil")
             return
         }
 
@@ -209,13 +209,13 @@ extension NicoUtility {
             htmlDocument = try ONOXMLDocument.htmlDocument(with: htmlData)
         } catch let error1 as NSError {
             error = error1
-            logger.error("\(error?.debugDescription ?? "")")
+            log.error("\(error?.debugDescription ?? "")")
             htmlDocument = nil
         }
         let rootElement = htmlDocument?.rootElement
 
         if rootElement == nil {
-            logger.error("rootElement is nil")
+            log.error("rootElement is nil")
             return
         }
 
@@ -237,7 +237,7 @@ extension NicoUtility {
         } catch let error1 as NSError {
             error = error1
             htmlDocument = nil
-            logger.error("\(error?.debugDescription ?? "")")
+            log.error("\(error?.debugDescription ?? "")")
         }
         let rootElement = htmlDocument?.rootElement
 
@@ -258,7 +258,7 @@ extension NicoUtility {
         } catch let error1 as NSError {
             error = error1
             xmlDocument = nil
-            logger.error("\(error?.debugDescription ?? "")")
+            log.error("\(error?.debugDescription ?? "")")
         }
         let rootElement = xmlDocument?.rootElement()
 

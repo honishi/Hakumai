@@ -28,7 +28,7 @@ final class UserWindowController: NSWindowController, NSWindowDelegate {
 
     // MARK: - Object Lifecycle
     deinit {
-        logger.debug("")
+        log.debug("")
     }
 
     static func generateInstance(delegate: UserWindowControllerDelegate?, userId: String) -> UserWindowController? {

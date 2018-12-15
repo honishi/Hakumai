@@ -153,7 +153,7 @@ final class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         var muteUserIds = defaults.object(forKey: Parameters.muteUserIds) as? [[String: String]] ?? [[String: String]]()
 
         for muteUserId in muteUserIds where chat.userId == muteUserId[MuteUserIdKey.userId] {
-            logger.debug("mute userid [\(chat.userId ?? "")] already registered, so skip")
+            log.debug("mute userid [\(chat.userId ?? "")] already registered, so skip")
             return
         }
 

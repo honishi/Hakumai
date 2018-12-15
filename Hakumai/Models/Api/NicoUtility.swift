@@ -129,7 +129,7 @@ extension NicoUtility {
     // MARK: - Public Interface
     func reserveToClearUserSessionCookie() {
         shouldClearUserSessionCookie = true
-        logger.debug("reserved to clear user session cookie")
+        log.debug("reserved to clear user session cookie")
     }
 
     func connect(liveNumber: Int, mailAddress: String, password: String) {
@@ -170,7 +170,7 @@ extension NicoUtility {
 
     func comment(_ comment: String, anonymously: Bool = true, completion: @escaping (_ comment: String?) -> Void) {
         if live == nil || user == nil {
-            logger.debug("no available stream, or user")
+            log.debug("no available stream, or user")
             return
         }
 
@@ -181,7 +181,7 @@ extension NicoUtility {
         }
 
         let failure: () -> Void = {
-            logger.error("could not get post key")
+            log.error("could not get post key")
             completion(nil)
         }
 
@@ -190,14 +190,14 @@ extension NicoUtility {
 
     func loadThumbnail(completion: @escaping (Data?) -> Void) {
         if live?.community.thumbnailUrl == nil {
-            logger.debug("no thumbnail url")
+            log.debug("no thumbnail url")
             completion(nil)
             return
         }
 
         let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (response, data, connectionError) in
             if connectionError != nil {
-                logger.error("error in loading thumbnail request")
+                log.error("error in loading thumbnail request")
                 completion(nil)
                 return
             }
@@ -236,7 +236,7 @@ extension NicoUtility {
         }
 
         if kResolveUserNameOperationQueueOverloadThreshold < resolveUserNameOperationQueue.operationCount {
-            logger.debug("detected overload, so skip resolve request")
+            log.debug("detected overload, so skip resolve request")
             completion(nil)
             return
         }
@@ -244,7 +244,7 @@ extension NicoUtility {
         resolveUserNameOperationQueue.addOperation {
             let resolveCompletion = { (response: URLResponse?, data: Data?, connectionError: Error?) in
                 if connectionError != nil {
-                    logger.error("error in resolving username")
+                    log.error("error in resolving username")
                     completion(nil)
                     return
                 }
@@ -262,12 +262,12 @@ extension NicoUtility {
     func reportAsNgUser(chat: Chat, completion: @escaping (_ userId: String?) -> Void) {
         let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (response, data, connectionError) in
             if connectionError != nil {
-                logger.error("error in requesting ng user")
+                log.error("error in requesting ng user")
                 completion(nil)
                 return
             }
 
-            logger.debug("completed to request ng user")
+            log.debug("completed to request ng user")
             completion(chat.userId!)
         }
 
@@ -294,7 +294,7 @@ extension NicoUtility {
 
     // MARK: - RoomListenerDelegate Functions
     func roomListenerDidReceiveThread(_ roomListener: RoomListener, thread: Thread) {
-        logger.debug("\(thread)")
+        log.debug("\(thread)")
         delegate?.nicoUtilityDidConnectToLive(self, roomPosition: roomListener.server!.roomPosition)
     }
 
@@ -307,7 +307,7 @@ extension NicoUtility {
             // open next room, if needed
             let isCurrentLastRoomChat = (chat.roomPosition?.rawValue == roomListeners.count - 1)
             if isCurrentLastRoomChat {
-                logger.debug("found user comment in current last room, so try to open new message server.")
+                log.debug("found user comment in current last room, so try to open new message server.")
                 openNewMessageServer()
             }
         }
@@ -425,7 +425,7 @@ extension NicoUtility {
         if shouldClearUserSessionCookie {
             shouldClearUserSessionCookie = false
             userSessionCookie = nil
-            logger.debug("cleared user session cookie")
+            log.debug("cleared user session cookie")
         }
     }
 
@@ -438,14 +438,14 @@ extension NicoUtility {
     private func connect(liveNumber: Int?, userSessionCookie: String?) {
         if liveNumber == nil {
             let reason = "no valid live number"
-            logger.error(reason)
+            log.error(reason)
             delegate?.nicoUtilityDidFailToPrepareLive(self, reason: reason)
             return
         }
 
         if userSessionCookie == nil {
             let reason = "no available cookie"
-            logger.error(reason)
+            log.error(reason)
             delegate?.nicoUtilityDidFailToPrepareLive(self, reason: reason)
             return
         }
@@ -454,28 +454,28 @@ extension NicoUtility {
         self.lastLiveNumber = liveNumber!
 
         if 0 < roomListeners.count {
-            logger.debug("already has established connection, so disconnect and sleep ...")
+            log.debug("already has established connection, so disconnect and sleep ...")
             disconnect(reserveToReconnect: true)
             return
         }
 
         let success: (Live, User, MessageServer) -> Void = { (live, user, server) in
-            logger.debug("extracted live: \(live)")
-            logger.debug("extracted server: \(server)")
+            log.debug("extracted live: \(live)")
+            log.debug("extracted server: \(server)")
 
             self.live = live
             self.user = user
             self.messageServer = server
 
             let communitySuccess: () -> Void = {
-                logger.debug("loaded community:\(self.live!.community)")
+                log.debug("loaded community:\(self.live!.community)")
 
                 self.delegate?.nicoUtilityDidPrepareLive(self, user: self.user!, live: self.live!)
 
                 self.messageServers = self.deriveMessageServers(originServer: server, community: self.live!.community)
-                logger.debug("derived message servers:")
+                log.debug("derived message servers:")
                 for server in self.messageServers {
-                    logger.debug("\(server)")
+                    log.debug("\(server)")
                 }
 
                 for _ in 0...self.messageServer!.roomPosition.rawValue {
@@ -486,7 +486,7 @@ extension NicoUtility {
 
             let communityFailure: (String) -> Void = { reason in
                 let reason = "failed to load community"
-                logger.error(reason)
+                log.error(reason)
                 self.delegate?.nicoUtilityDidFailToPrepareLive(self, reason: reason)
                 return
             }
@@ -495,7 +495,7 @@ extension NicoUtility {
         }
 
         let failure: (String) -> Void = { reason in
-            logger.error(reason)
+            log.error(reason)
             self.delegate?.nicoUtilityDidFailToPrepareLive(self, reason: reason)
         }
 
@@ -508,7 +508,7 @@ extension NicoUtility {
         let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (response, data, connectionError) in
             if connectionError != nil {
                 let message = "error in cookied async request"
-                logger.error(message)
+                log.error(message)
                 failure(message)
                 return
             }
@@ -518,7 +518,7 @@ extension NicoUtility {
 
             guard let data = data else {
                 let message = "error in unpacking response data"
-                logger.error(message)
+                log.error(message)
                 failure(message)
                 return
             }
@@ -526,7 +526,7 @@ extension NicoUtility {
             let (error, code) = self.isErrorResponse(xmlData: data)
 
             if error {
-                logger.error(code)
+                log.error(code)
                 failure(code)
                 return
             }
@@ -541,7 +541,7 @@ extension NicoUtility {
 
             if live == nil || user == nil || messageServer == nil {
                 let message = "error in extracting getplayerstatus response"
-                logger.error(message)
+                log.error(message)
                 failure(message)
                 return
             }
@@ -556,7 +556,7 @@ extension NicoUtility {
         let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (response, data, connectionError) in
             if connectionError != nil {
                 let message = "error in cookied async request"
-                logger.error(message)
+                log.error(message)
                 failure(message)
                 return
             }
@@ -566,7 +566,7 @@ extension NicoUtility {
 
             guard let data = data else {
                 let message = "error in unpacking response data"
-                logger.error(message)
+                log.error(message)
                 failure(message)
                 return
             }
@@ -638,13 +638,13 @@ extension NicoUtility {
         objc_sync_enter(self)
 
         if roomListeners.count == messageServers.count {
-            logger.info("already opened max servers.")
+            log.info("already opened max servers.")
         } else {
             let targetServerIndex = roomListeners.count
             let targetServer = messageServers[targetServerIndex]
             let listener = RoomListener(delegate: self, server: targetServer)
             roomListeners.append(listener)
-            logger.info("created room listener instance:\(listener)")
+            log.info("created room listener instance:\(listener)")
 
             DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async {
                 listener.openSocket(resFrom: self.resFrom)
@@ -657,29 +657,29 @@ extension NicoUtility {
     // MARK: Comment
     private func requestGetPostKey(success: @escaping (_ postKey: String) -> Void, failure: @escaping () -> Void) {
         guard let messageServer = messageServer else {
-            logger.error("cannot comment without messageServer")
+            log.error("cannot comment without messageServer")
             failure()
             return
         }
 
         let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (response, data, connectionError) in
             if connectionError != nil {
-                logger.error("error in cookied async request")
+                log.error("error in cookied async request")
                 failure()
                 return
             }
 
             guard let data = data else {
-                logger.error("error in unpacking response data")
+                log.error("error in unpacking response data")
                 failure()
                 return
             }
 
             let responseString = NSString(data: data, encoding: String.Encoding.utf8.rawValue)
-            logger.debug("\(responseString ?? "")")
+            log.debug("\(responseString ?? "")")
 
             guard let postKey = (responseString as String?)?.extractRegexp(pattern: "postkey=(.+)") else {
-                logger.error("error in extracting postkey")
+                log.error("error in extracting postkey")
                 failure()
                 return
             }
@@ -688,7 +688,7 @@ extension NicoUtility {
         }
 
         guard let assignedRoomListener = assignedRoomListener() else {
-            logger.error("could not find assigned room listener")
+            log.error("could not find assigned room listener")
             failure()
             return
         }
@@ -730,7 +730,7 @@ extension NicoUtility {
     @objc func checkHeartbeat(_ timer: Timer) {
         let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (response, data, connectionError) in
             if connectionError != nil {
-                logger.error("error in checking heartbeat")
+                log.error("error in checking heartbeat")
                 return
             }
 
@@ -742,7 +742,7 @@ extension NicoUtility {
             self.fileLogger.debug("\(responseString ?? "")")
 
             guard let heartbeat = self.extractHeartbeat(fromXmlData: data) else {
-                logger.error("error in extracting heatbeat")
+                log.error("error in extracting heatbeat")
                 return
             }
             self.fileLogger.debug("\(heartbeat)")

@@ -19,7 +19,7 @@ extension XMLElement {
             }
         } catch let error as NSError {
             err = error
-            logger.debug("\(err?.debugDescription ?? "")")
+            log.debug("\(err?.debugDescription ?? "")")
         }
 
         return nil

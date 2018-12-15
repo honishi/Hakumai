@@ -49,7 +49,7 @@ final class SpeechManager: NSObject {
                                               selector: #selector(SpeechManager.dequeue(_:)), userInfo: nil, repeats: true)
         }
 
-        logger.debug("started speech manager.")
+        log.debug("started speech manager.")
     }
 
     func stopManager() {
@@ -63,7 +63,7 @@ final class SpeechManager: NSObject {
 
         chatQueue.removeAll()
 
-        logger.debug("stopped speech manager.")
+        log.debug("stopped speech manager.")
     }
 
     func enqueue(chat: Chat) {

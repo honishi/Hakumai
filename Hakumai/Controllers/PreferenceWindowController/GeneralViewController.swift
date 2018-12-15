@@ -97,7 +97,7 @@ final class GeneralViewController: NSViewController {
     }
 
     @IBAction func checkAccount(_ sender: AnyObject) {
-        logger.debug("login w/ [\(String(describing: self.mailAddress))][\(String(describing: self.password))]")
+        log.debug("login w/ [\(String(describing: self.mailAddress))][\(String(describing: self.password))]")
 
         if canLogin() == false {
             return

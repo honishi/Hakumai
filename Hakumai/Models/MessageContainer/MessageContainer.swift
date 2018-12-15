@@ -109,13 +109,13 @@ final class MessageContainer {
     // MARK: - Utility
     func calculateActive(completion: @escaping (Int?) -> Void) {
         if rebuildingFilteredMessages {
-            logger.debug("detected rebuilding filtered messages, so skip calculating active.")
+            log.debug("detected rebuilding filtered messages, so skip calculating active.")
             completion(nil)
             return
         }
 
         if calculatingActive {
-            logger.debug("detected duplicate calculating, so skip calculating active.")
+            log.debug("detected duplicate calculating, so skip calculating active.")
             completion(nil)
             return
         }
@@ -214,7 +214,7 @@ final class MessageContainer {
                 objc_sync_exit(self)
 
                 // logger.debug("completed 2nd pass")
-                logger.debug("completed to rebuild filtered messages")
+                log.debug("completed to rebuild filtered messages")
 
                 completion()
             }

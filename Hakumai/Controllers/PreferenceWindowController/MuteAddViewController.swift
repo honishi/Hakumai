@@ -24,7 +24,7 @@ final class MuteAddViewController: NSViewController {
     }
 
     deinit {
-        logger.debug("")
+        log.debug("")
     }
 
     // MARK: - Internal Functions

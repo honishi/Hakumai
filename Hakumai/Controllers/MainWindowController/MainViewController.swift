@@ -135,7 +135,7 @@ extension MainViewController {
     // MARK: Utility
     func changeShowHbIfseetnoCommands(_ show: Bool) {
         MessageContainer.sharedContainer.showHbIfseetnoCommands = show
-        logger.debug("changed show 'hbifseetno' commands: \(show)")
+        log.debug("changed show 'hbifseetno' commands: \(show)")
 
         rebuildFilteredMessages()
     }
@@ -156,28 +156,28 @@ extension MainViewController {
 
     func changeEnableMuteUserIds(_ enabled: Bool) {
         MessageContainer.sharedContainer.enableMuteUserIds = enabled
-        logger.debug("changed enable mute userids: \(enabled)")
+        log.debug("changed enable mute userids: \(enabled)")
 
         rebuildFilteredMessages()
     }
 
     func changeMuteUserIds(_ muteUserIds: [[String: String]]) {
         MessageContainer.sharedContainer.muteUserIds = muteUserIds
-        logger.debug("changed mute userids: \(muteUserIds)")
+        log.debug("changed mute userids: \(muteUserIds)")
 
         rebuildFilteredMessages()
     }
 
     func changeEnableMuteWords(_ enabled: Bool) {
         MessageContainer.sharedContainer.enableMuteWords = enabled
-        logger.debug("changed enable mute words: \(enabled)")
+        log.debug("changed enable mute words: \(enabled)")
 
         rebuildFilteredMessages()
     }
 
     func changeMuteWords(_ muteWords: [[String: String]]) {
         MessageContainer.sharedContainer.muteWords = muteWords
-        logger.debug("changed mute words: \(muteWords)")
+        log.debug("changed mute words: \(muteWords)")
 
         rebuildFilteredMessages()
     }
@@ -548,7 +548,7 @@ extension MainViewController {
             content = message.chat!.comment
         }
 
-        logger.debug("[ \(content!) ]")
+        log.debug("[ \(content!) ]")
     }
 
     private func shouldTableViewScrollToBottom() -> Bool {
@@ -603,7 +603,7 @@ extension MainViewController {
 
     // MARK: - UserWindowControllerDelegate Functions
     func userWindowControllerDidClose(_ userWindowController: UserWindowController) {
-        logger.debug("")
+        log.debug("")
 
         if let index = userWindowControllers.index(of: userWindowController) {
             userWindowControllers.remove(at: index)
@@ -784,7 +784,7 @@ extension MainViewController {
         // check if user window exists?
         for existing in userWindowControllers where chat.userId == existing.userId {
             userWindowController = existing
-            logger.debug("existing userwc found, use it:\(userWindowController?.description ?? "")")
+            log.debug("existing userwc found, use it:\(userWindowController?.description ?? "")")
             break
         }
 
@@ -792,7 +792,7 @@ extension MainViewController {
             // not exist, so create and cache it
             userWindowController = UserWindowController.generateInstance(delegate: self, userId: chat.userId!)
             positionUserWindow(userWindowController!.window!)
-            logger.debug("no existing userwc found, create it:\(userWindowController?.description ?? "")")
+            log.debug("no existing userwc found, create it:\(userWindowController?.description ?? "")")
             userWindowControllers.append(userWindowController!)
         }
 

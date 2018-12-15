@@ -38,7 +38,7 @@ final class PreferenceWindowController: NSWindowController {
     }
 
     deinit {
-        logger.debug("")
+        log.debug("")
     }
 
     // MARK: - NSObject Overrides

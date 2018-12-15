@@ -13,7 +13,7 @@ import AppKit
 final class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: - NSApplicationDelegate Functions
     func applicationDidFinishLaunching(_ notification: Notification) {
-        Helper.setupLogger(logger)
+        Helper.setupLogger(log)
         migrateApplicationVersion()
         initializeUserDefaults()
         addObserverForUserDefaults()
@@ -107,25 +107,25 @@ private extension AppDelegate {
 
         let lastVerInDefaults = defaults.string(forKey: Parameters.lastLaunchedApplicationVersion)
         guard let currentVer = Bundle.main.infoDictionary?["CFBundleVersion"] as? String else {
-            logger.error("fatal: cannot retieve application version..")
+            log.error("fatal: cannot retieve application version..")
             return
         }
-        logger.info("last launched app version:[\(lastVerInDefaults ?? "")] current app version:[\(currentVer)]")
+        log.info("last launched app version:[\(lastVerInDefaults ?? "")] current app version:[\(currentVer)]")
 
         guard let lastVer = lastVerInDefaults else {
-            logger.info("detected app first launch, no need to migrate application version")
+            log.info("detected app first launch, no need to migrate application version")
             saveLastLauncheApplicationVersion(currentVer)
             return
         }
 
         guard let lastVerInt = Int(lastVer), let currentVerInt = Int(currentVer) else {
-            logger.error("fatal: cannot convert version string into int..")
+            log.error("fatal: cannot convert version string into int..")
             return
         }
 
         if lastVerInt < currentVerInt {
             // do some app version migration here
-            logger.info("detected app version up from:[\(lastVerInt)] to:[\(currentVerInt)]")
+            log.info("detected app version up from:[\(lastVerInt)] to:[\(currentVerInt)]")
 
             // version migration sample
             /* if lastVersionNumber < 3 {
@@ -180,7 +180,7 @@ private extension AppDelegate {
     func makeWindowAlwaysOnTop(_ alwaysOnTop: Bool) {
         let window = NSApplication.shared.windows[0]
         window.alwaysOnTop = alwaysOnTop
-        logger.debug("changed always on top: \(alwaysOnTop)")
+        log.debug("changed always on top: \(alwaysOnTop)")
     }
 
     func incrementFontSize(_ increment: Float) {

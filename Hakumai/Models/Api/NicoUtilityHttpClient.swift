@@ -35,7 +35,7 @@ extension NicoUtility {
             let requestHeader = HTTPCookie.requestHeaderFields(with: cookies)
             request.allHTTPHeaderFields = requestHeader
         } else {
-            logger.error("could not get cookie")
+            log.error("could not get cookie")
             completion(nil, nil, NSError(domain: "", code: 0, userInfo: nil))
         }
 
