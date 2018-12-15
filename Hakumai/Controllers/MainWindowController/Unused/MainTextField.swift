@@ -10,7 +10,7 @@ import Foundation
 import AppKit
 
 // based on codes http://stackoverflow.com/a/2196751
-class MainTextField: NSTextField {
+final class MainTextField: NSTextField {
     override func becomeFirstResponder() -> Bool {
         let result = super.becomeFirstResponder()
 

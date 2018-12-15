@@ -19,7 +19,7 @@ private let kLogColors: [(fg: (Int, Int, Int)?, bg: (Int, Int, Int)?)] = [  // s
     ((238, 232, 213), (220, 50, 47)) // severe (white on red)
 ]
 
-class Helper {
+final class Helper {
     // MARK: - Public Interface
     static func setupLogger(_ logger: XCGLogger) {
         #if DEBUG

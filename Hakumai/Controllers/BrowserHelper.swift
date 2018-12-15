@@ -8,7 +8,7 @@
 
 import Foundation
 
-class BrowserHelper {
+final class BrowserHelper {
     enum BrowserType {
         case chrome
         case safari

@@ -13,7 +13,7 @@ private let kImageNamePremium = "PremiumPremium"
 private let kImageNameIppan = "PremiumIppan"
 private let kImageNameMisc = "PremiumMisc"
 
-class PremiumTableCellView: NSTableCellView {
+final class PremiumTableCellView: NSTableCellView {
     @IBOutlet weak var premiumImageView: NSImageView!
     @IBOutlet weak var premiumTextField: NSTextField!
 

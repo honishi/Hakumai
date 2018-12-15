@@ -8,7 +8,7 @@
 
 import Foundation
 
-class CookieUtility {
+final class CookieUtility {
     // MARK: - Public Functions
     static func requestLoginCookie(mailAddress: String, password: String, completion: @escaping (_ userSessionCookie: String?) -> Void) {
         LoginCookie.requestCookie(mailAddress: mailAddress, password: password, completion: completion)

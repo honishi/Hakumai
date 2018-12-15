@@ -11,7 +11,7 @@ import Foundation
 private let kCookieFilePath = "/Cookies/Cookies.binarycookies"
 
 // based on https://github.com/icodeforlove/BinaryCookies.swift
-class SafariCookie {
+final class SafariCookie {
     // MARK: - Public Functions
     static func storedCookie(callback: @escaping(String?) -> Void) {
         let libraryDirectory = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)[0]

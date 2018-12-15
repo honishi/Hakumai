@@ -29,7 +29,7 @@ private let kInitializationVector = " " * 16
 private let kChromeServiceName = "Chrome Safe Storage"
 private let kChromeAccount = "Chrome"
 
-class ChromeCookie {
+final class ChromeCookie {
 
     // MARK: - Properties
     private static let fileLogger: XCGLogger = {

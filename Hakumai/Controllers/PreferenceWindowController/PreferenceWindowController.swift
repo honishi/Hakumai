@@ -16,7 +16,7 @@ private let kStoryboardIdPreferenceWindowController = "PreferenceWindowControlle
 private let kToolbarItemIdentifierGeneral = "GeneralToolbarItem"
 private let kToolbarItemIdentifierMute = "MuteToolbarItem"
 
-class PreferenceWindowController: NSWindowController {
+final class PreferenceWindowController: NSWindowController {
     // MARK: - Properties
     static let shared = PreferenceWindowController.generateInstance()
 

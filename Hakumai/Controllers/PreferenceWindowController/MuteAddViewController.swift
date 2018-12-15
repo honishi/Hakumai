@@ -9,7 +9,7 @@
 import Foundation
 import AppKit
 
-class MuteAddViewController: NSViewController {
+final class MuteAddViewController: NSViewController {
     // MARK: - Properties
     // this property contains mute target value, and is also used binding between text filed and add button.
     // http://stackoverflow.com/a/24017991

@@ -9,7 +9,7 @@
 import Foundation
 
 // thread safe chat container
-class MessageContainer {
+final class MessageContainer {
     // MARK: - Properties
     // MARK: Public
     static let sharedContainer = MessageContainer()

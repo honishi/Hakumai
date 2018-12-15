@@ -11,7 +11,7 @@ import XCTest
 
 private let kAsyncTimeout: TimeInterval = 3
 
-class NicoUtilityTests: XCTestCase {
+final class NicoUtilityTests: XCTestCase {
 
     override func setUp() {
         super.setUp()

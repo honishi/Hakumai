@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ChatResult {
+final class ChatResult {
     enum Status: Int, CustomStringConvertible {
         case success = 0
         case failure

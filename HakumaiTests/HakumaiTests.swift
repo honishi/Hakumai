@@ -9,7 +9,7 @@
 import Foundation
 import XCTest
 
-class HakumaiTests: XCTestCase {
+final class HakumaiTests: XCTestCase {
 
     override func setUp() {
         super.setUp()

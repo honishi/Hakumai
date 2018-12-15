@@ -14,7 +14,7 @@ private let kStoryboardNamePreferenceWindowController = "PreferenceWindowControl
 private let kStoryboardIdMuteViewController = "MuteViewController"
 private let kStoryboardIdMuteAddViewController = "MuteAddViewController"
 
-class MuteViewController: NSViewController {
+final class MuteViewController: NSViewController {
     // MARK: - Properties
     static let shared = MuteViewController.generateInstance()
 

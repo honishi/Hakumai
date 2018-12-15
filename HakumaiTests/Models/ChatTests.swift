@@ -9,7 +9,7 @@
 import Foundation
 import XCTest
 
-class ChatTests: XCTestCase {
+final class ChatTests: XCTestCase {
 
     override func setUp() {
         super.setUp()

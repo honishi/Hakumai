@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Message {
+final class Message {
     // workaround for non-supported class variable
     struct Static {
         static var messageNo: Int = 0

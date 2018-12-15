@@ -9,7 +9,7 @@
 import Foundation
 import XCTest
 
-class RoomListenerTests: XCTestCase {
+final class RoomListenerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()

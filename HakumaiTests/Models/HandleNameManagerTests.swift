@@ -9,7 +9,7 @@
 import Foundation
 import XCTest
 
-class HandleNameManagerTests: XCTestCase {
+final class HandleNameManagerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()

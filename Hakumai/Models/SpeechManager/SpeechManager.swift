@@ -23,7 +23,7 @@ private let kCleanCommentPatterns = [
     "^/\\w+ \\w+ \\w+ "
 ]
 
-class SpeechManager: NSObject {
+final class SpeechManager: NSObject {
     // MARK: - Properties
     static let sharedManager = SpeechManager()
 

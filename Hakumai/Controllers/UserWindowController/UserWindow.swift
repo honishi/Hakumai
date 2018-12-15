@@ -9,7 +9,7 @@
 import Foundation
 import AppKit
 
-class UserWindow: NSWindow {
+final class UserWindow: NSWindow {
     /*
      // MARK: - Properties
      // MARK: - Object Lifecycle

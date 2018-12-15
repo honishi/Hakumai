@@ -11,7 +11,7 @@ import XCTest
 
 private let kAsyncTimeout: TimeInterval = 3
 
-class CookieUtilityTests: XCTestCase {
+final class CookieUtilityTests: XCTestCase {
 
     override func setUp() {
         super.setUp()

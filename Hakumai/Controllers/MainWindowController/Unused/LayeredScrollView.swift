@@ -9,7 +9,7 @@
 import Foundation
 import AppKit
 
-class LayeredScrollView: NSScrollView {
+final class LayeredScrollView: NSScrollView {
     // MARK: - Object Lifecycle
     override func awakeFromNib() {
         super.awakeFromNib()

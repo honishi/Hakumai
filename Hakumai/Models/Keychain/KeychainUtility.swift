@@ -9,7 +9,7 @@
 import Foundation
 import SAMKeychain
 
-class KeychainUtility {
+final class KeychainUtility {
     // MARK: - Public Functions
     static func removeAllAccountsInKeychain() {
         let serviceName = KeychainUtility.keychainServiceName()

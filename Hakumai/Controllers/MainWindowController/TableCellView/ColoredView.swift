@@ -10,7 +10,7 @@ import Foundation
 import AppKit
 import QuartzCore
 
-class ColoredView: NSView, CALayerDelegate {
+final class ColoredView: NSView, CALayerDelegate {
     var fillColor: NSColor = NSColor.gray {
         didSet {
             layer?.setNeedsDisplay()

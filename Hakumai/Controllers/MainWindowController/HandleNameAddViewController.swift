@@ -9,7 +9,7 @@
 import Foundation
 import AppKit
 
-class HandleNameAddViewController: NSViewController {
+final class HandleNameAddViewController: NSViewController {
     // MARK: - Properties
     // this property contains handle name value, and is also used binding between text filed and add button.
     // http://stackoverflow.com/a/24017991

@@ -9,7 +9,7 @@
 import Foundation
 import AppKit
 
-class LayeredClipView: NSClipView {
+final class LayeredClipView: NSClipView {
     // MARK: - Object Lifecycle
     override func awakeFromNib() {
         super.awakeFromNib()

@@ -12,7 +12,7 @@ import Foundation
 private let kCommunityPrefixUser = "^co\\d+"
 private let kCommunityPrefixChannel = "^ch\\d+"
 
-class Community: CustomStringConvertible {
+final class Community: CustomStringConvertible {
     var community: String?
     var title: String? = ""
     var level: Int?

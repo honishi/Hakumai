@@ -76,7 +76,7 @@ private let kDebugForceReconnectChatCount = 20
 
 // MARK: - class
 
-class NicoUtility: NSObject, RoomListenerDelegate {
+final class NicoUtility: NSObject, RoomListenerDelegate {
     // MARK: - Properties
     static let shared = NicoUtility()
 

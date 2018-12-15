@@ -25,7 +25,7 @@ private let kStoryboardIdGeneralViewController = "GeneralViewController"
     }
 }
 
-class GeneralViewController: NSViewController {
+final class GeneralViewController: NSViewController {
     // MARK: - Properties
     static let shared = GeneralViewController.generateInstance()
 

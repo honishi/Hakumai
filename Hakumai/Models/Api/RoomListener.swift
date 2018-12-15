@@ -25,7 +25,7 @@ protocol RoomListenerDelegate: class {
 
 // MARK: main
 
-class RoomListener: NSObject, StreamDelegate {
+final class RoomListener: NSObject, StreamDelegate {
     weak var delegate: RoomListenerDelegate?
     let server: MessageServer?
 

@@ -45,7 +45,7 @@ extension NSColor {
     }
 }
 
-class UIHelper {
+final class UIHelper {
     // MARK: - System Message Colors
     static func systemMessageColorBackground() -> NSColor {
         return NSColor.lightGray

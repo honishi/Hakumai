@@ -9,7 +9,7 @@
 import Foundation
 import AppKit
 
-class RoomPositionTableCellView: NSTableCellView {
+final class RoomPositionTableCellView: NSTableCellView {
     @IBOutlet weak var coloredView: ColoredView!
     @IBOutlet weak var roomPositionLabel: NSTextField!
     @IBOutlet weak var commentNoLabel: NSTextField!

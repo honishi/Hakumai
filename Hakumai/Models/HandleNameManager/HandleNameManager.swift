@@ -18,7 +18,7 @@ private let kRegexpRemainingTime = "[@＠][0-9０-９]{1,2}$"
 private let kRegexpHandleName = ".*[@＠]\\s*(\\S{2,})\\s*"
 
 // handle name manager
-class HandleNameManager {
+final class HandleNameManager {
     // MARK: - Properties
     static let sharedManager = HandleNameManager()
 

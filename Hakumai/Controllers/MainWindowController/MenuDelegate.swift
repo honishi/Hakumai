@@ -9,7 +9,7 @@
 import Foundation
 import AppKit
 
-class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
+final class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     // MARK: Menu Outlets
     @IBOutlet weak var copyCommentMenuItem: NSMenuItem!
     @IBOutlet weak var openUrlMenuItem: NSMenuItem!

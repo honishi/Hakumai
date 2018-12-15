@@ -14,7 +14,7 @@ private let kImageNameUserId184Id = "UserId184Id"
 private let kImageNameHandleNameOver184Id = "HandleNameOver184Id"
 private let kImageNameHandleNameOverRawId = "HandleNameOverRawId"
 
-class UserIdTableCellView: NSTableCellView {
+final class UserIdTableCellView: NSTableCellView {
     @IBOutlet weak var userIdTextField: NSTextField!
     @IBOutlet weak var userIdImageView: NSImageView!
 

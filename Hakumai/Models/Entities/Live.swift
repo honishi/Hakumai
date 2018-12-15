@@ -10,7 +10,7 @@ import Foundation
 
 private let kLiveBaseUrl = "http://live.nicovideo.jp/watch/"
 
-class Live: CustomStringConvertible {
+final class Live: CustomStringConvertible {
     // "lv" prefix is included in live id like "lv12345"
     var liveId: String?
     var title: String?

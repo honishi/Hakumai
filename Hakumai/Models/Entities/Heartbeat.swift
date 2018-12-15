@@ -16,7 +16,7 @@ private let kHeartbeatErrorCodes = [
     "NOTFOUND_SLOT",
     "NOTFOUND_USERLIVESLOT"]
 
-class Heartbeat: CustomStringConvertible {
+final class Heartbeat: CustomStringConvertible {
     // MARK: - Enums
     enum Status: Int, CustomStringConvertible {
         case ok = 0

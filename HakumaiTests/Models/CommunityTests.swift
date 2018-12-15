@@ -9,7 +9,7 @@
 import Foundation
 import XCTest
 
-class CommunityTests: XCTestCase {
+final class CommunityTests: XCTestCase {
 
     override func setUp() {
         super.setUp()

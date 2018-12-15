@@ -12,7 +12,7 @@ private let kRoomLabelForArena = "c[oh]\\d+"
 private let kRoomLabelForArenaOffical = "アリーナ"
 private let kRoomLabelForBSP = "バックステージパス"
 
-class User: CustomStringConvertible {
+final class User: CustomStringConvertible {
     var userId: Int?
     var nickname: String?
     var isPremium: Int?

@@ -30,7 +30,7 @@ private let kMessageServersChannel: [(serverNumber: Int, port: Int)] = [
     (101, 2817), (102, 2830), (103, 2843), (104, 2856), (105, 2869), (106, 2882)
 ]
 
-class MessageServer: CustomStringConvertible {
+final class MessageServer: CustomStringConvertible {
     let roomPosition: RoomPosition
     let address: String
     let port: Int

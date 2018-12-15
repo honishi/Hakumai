@@ -14,7 +14,7 @@ private let kScoreThresholdLightGreen = -1000
 private let kScoreThresholdYellow = -4800
 private let kScoreThresholdOrange = -10000
 
-class ScoreTableCellView: NSTableCellView {
+final class ScoreTableCellView: NSTableCellView {
     @IBOutlet weak var coloredView: ColoredView!
     @IBOutlet weak var scoreLabel: NSTextField!
 

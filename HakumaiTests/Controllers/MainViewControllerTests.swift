@@ -9,7 +9,7 @@
 import Foundation
 import XCTest
 
-class MainViewControllerTests: XCTestCase {
+final class MainViewControllerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()

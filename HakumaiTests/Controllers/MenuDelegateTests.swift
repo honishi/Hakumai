@@ -9,7 +9,7 @@
 import Foundation
 import XCTest
 
-class MenuDelegateTests: XCTestCase {
+final class MenuDelegateTests: XCTestCase {
 
     override func setUp() {
         super.setUp()

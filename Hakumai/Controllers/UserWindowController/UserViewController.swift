@@ -14,7 +14,7 @@ import AppKit
  private let kStoryboardIdGeneralViewController = "GeneralViewController"
  */
 
-class UserViewController: NSViewController {
+final class UserViewController: NSViewController {
     // MARK: - Properties
     // MARK: Outlets
     @IBOutlet weak var userIdLabel: NSTextField!

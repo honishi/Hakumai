@@ -9,7 +9,7 @@
 import Foundation
 import XCTest
 
-class StringExtensionTests: XCTestCase {
+final class StringExtensionTests: XCTestCase {
 
     override func setUp() {
         super.setUp()

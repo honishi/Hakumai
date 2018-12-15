@@ -11,7 +11,7 @@ import Foundation
 // regular expression
 private let kRegexpSeatNo = "/hb ifseetno (\\d+)"
 
-class Chat: CustomStringConvertible {
+final class Chat: CustomStringConvertible {
     var internalNo: Int?
     var roomPosition: RoomPosition?
     var no: Int?

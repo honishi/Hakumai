@@ -14,7 +14,7 @@ private let kLoginUrl = "https://secure.nicovideo.jp/secure/login?site=niconico"
 // request header
 private let kUserAgent = kCommonUserAgent
 
-class LoginCookie {
+final class LoginCookie {
     // MARK: - Public Functions
     static func requestCookie(mailAddress: String, password: String, completion: @escaping (_ userSessionCookie: String?) -> Void) {
         func httpCompletion(_ response: URLResponse?, _ data: Data?, _ connectionError: Error?) {

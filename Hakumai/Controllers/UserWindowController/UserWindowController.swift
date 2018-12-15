@@ -17,7 +17,7 @@ protocol UserWindowControllerDelegate: class {
     func userWindowControllerDidClose(_ userWindowController: UserWindowController)
 }
 
-class UserWindowController: NSWindowController, NSWindowDelegate {
+final class UserWindowController: NSWindowController, NSWindowDelegate {
     // MARK: - Properties
     weak var delegate: UserWindowControllerDelegate?
     var userId: String? {
