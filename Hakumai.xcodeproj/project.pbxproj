@@ -356,6 +356,7 @@
 				DBA414CE1A1A16FB00E0CAD3 /* Extensions */,
 				DB82B3991C071FF500EFE3D9 /* Libraries */,
 				DBA414CA1A1A13FC00E0CAD3 /* Models */,
+				DBAC3D3421C55EFB00B09673 /* Storyboards */,
 				DB2AE0C11A0EE2FD00B1CE4D /* Supporting Files */,
 				DB2AE0C31A0EE2FD00B1CE4D /* AppDelegate.swift */,
 				DB414C0A1A4811C4008D2F40 /* Global.swift */,
@@ -399,7 +400,6 @@
 			children = (
 				DB414C061A4810A5008D2F40 /* UserViewController.swift */,
 				DBA541E21A4821D4005FF218 /* UserWindow.swift */,
-				DBA541E71A483710005FF218 /* UserWindowController.storyboard */,
 				DB414C081A481138008D2F40 /* UserWindowController.swift */,
 			);
 			path = UserWindowController;
@@ -504,6 +504,16 @@
 			path = HandleNameManager;
 			sourceTree = "<group>";
 		};
+		DBAC3D3421C55EFB00B09673 /* Storyboards */ = {
+			isa = PBXGroup;
+			children = (
+				DBAC3D3221C55E4C00B09673 /* MainWindowController.storyboard */,
+				DBA541E91A4838F4005FF218 /* PreferenceWindowController.storyboard */,
+				DBA541E71A483710005FF218 /* UserWindowController.storyboard */,
+			);
+			path = Storyboards;
+			sourceTree = "<group>";
+		};
 		DBC94B901C0911FE00100886 /* Common */ = {
 			isa = PBXGroup;
 			children = (
@@ -520,7 +530,6 @@
 				DB7BA0711A58C021000778CF /* HandleNameAddViewController.swift */,
 				DB2AE0C51A0EE2FD00B1CE4D /* MainViewController.swift */,
 				DB80CA861A2575A0002636E0 /* MainViewControllerExtensions.swift */,
-				DBAC3D3221C55E4C00B09673 /* MainWindowController.storyboard */,
 				DBADF3301A5EFA4D00A3A037 /* MainWindowController.swift */,
 				DBCA40D31A30AD48006299A9 /* MenuDelegate.swift */,
 			);
@@ -614,7 +623,6 @@
 				DB73A38B1A4F43F6008423D0 /* MuteAddViewController.swift */,
 				DB0E10671A39B6DD00A10E00 /* MuteViewController.swift */,
 				DB9EFC771A3E9EB10087D302 /* PreferenceWindow.swift */,
-				DBA541E91A4838F4005FF218 /* PreferenceWindowController.storyboard */,
 				DBFB81501A36B52E00294934 /* PreferenceWindowController.swift */,
 			);
 			path = PreferenceWindowController;

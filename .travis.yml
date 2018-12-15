@@ -6,7 +6,7 @@ install:
   - travis_wait 30 bundle exec pod repo update --silent
   - travis_wait 30 bundle exec pod install
 before_script:
-  - ./script/disable_sparkle.sh
+  # - ./script/disable_sparkle.sh
 script:
   # TODO: remove this work around for cocoapods bug
   # https://github.com/CocoaPods/CocoaPods/issues/7708#issuecomment-423668677
