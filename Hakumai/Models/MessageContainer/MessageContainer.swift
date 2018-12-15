@@ -262,7 +262,7 @@ final class MessageContainer {
 
             if enableMuteWords {
                 for muteWord in muteWords {
-                    if let word = muteWord[MuteUserWordKey.Word] {
+                    if let word = muteWord[MuteUserWordKey.word] {
                         if comment.lowercased().range(of: word.lowercased()) != nil {
                             return false
                         }
@@ -273,7 +273,7 @@ final class MessageContainer {
 
         // filter by userid
         if let userId = chat.userId, enableMuteUserIds {
-            for muteUserId in muteUserIds where muteUserId[MuteUserIdKey.UserId] == userId {
+            for muteUserId in muteUserIds where muteUserId[MuteUserIdKey.userId] == userId {
                 return false
             }
         }

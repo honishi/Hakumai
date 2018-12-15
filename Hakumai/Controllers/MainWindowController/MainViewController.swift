@@ -703,7 +703,7 @@ extension MainViewController {
 
     // MARK: Control Handlers
     @IBAction func grabUrlFromBrowser(_ sender: AnyObject) {
-        let session = SessionManagementType(rawValue: UserDefaults.standard.integer(forKey: Parameters.SessionManagement))!
+        let session = SessionManagementType(rawValue: UserDefaults.standard.integer(forKey: Parameters.sessionManagement))!
         let browser: BrowserHelper.BrowserType = session == .safari ? .safari : .chrome
         if let url = BrowserHelper.extractUrl(fromBrowser: browser) {
             liveTextField.stringValue = url
@@ -721,7 +721,7 @@ extension MainViewController {
 
             NicoUtility.shared.delegate = self
 
-            let sessionManagementType = SessionManagementType(rawValue: UserDefaults.standard.integer(forKey: Parameters.SessionManagement))!
+            let sessionManagementType = SessionManagementType(rawValue: UserDefaults.standard.integer(forKey: Parameters.sessionManagement))!
 
             switch sessionManagementType {
             case .login:
@@ -750,7 +750,7 @@ extension MainViewController {
         let comment = commentTextField.stringValue
         guard 0 < comment.count else { return }
 
-        let anonymously = UserDefaults.standard.bool(forKey: Parameters.CommentAnonymously)
+        let anonymously = UserDefaults.standard.bool(forKey: Parameters.commentAnonymously)
         NicoUtility.shared.comment(comment, anonymously: anonymously) { comment in
             if comment == nil {
                 self.logSystemMessageToTableView("Failed to comment.")
@@ -861,7 +861,7 @@ extension MainViewController {
 
     // MARK: Speech Handlers
     private func updateSpeechManagerState() {
-        let enabled = UserDefaults.standard.bool(forKey: Parameters.EnableCommentSpeech)
+        let enabled = UserDefaults.standard.bool(forKey: Parameters.enableCommentSpeech)
 
         if enabled && connectedToLive {
             SpeechManager.sharedManager.startManager()
@@ -871,7 +871,7 @@ extension MainViewController {
     }
 
     private func handleSpeech(chat: Chat) {
-        let enabled = UserDefaults.standard.bool(forKey: Parameters.EnableCommentSpeech)
+        let enabled = UserDefaults.standard.bool(forKey: Parameters.enableCommentSpeech)
 
         guard enabled else {
             return

@@ -150,15 +150,15 @@ final class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat!
 
         let defaults = UserDefaults.standard
-        var muteUserIds = defaults.object(forKey: Parameters.MuteUserIds) as? [[String: String]] ?? [[String: String]]()
+        var muteUserIds = defaults.object(forKey: Parameters.muteUserIds) as? [[String: String]] ?? [[String: String]]()
 
-        for muteUserId in muteUserIds where chat.userId == muteUserId[MuteUserIdKey.UserId] {
+        for muteUserId in muteUserIds where chat.userId == muteUserId[MuteUserIdKey.userId] {
             logger.debug("mute userid [\(chat.userId ?? "")] already registered, so skip")
             return
         }
 
-        muteUserIds.append([MuteUserIdKey.UserId: chat.userId!])
-        defaults.set(muteUserIds, forKey: Parameters.MuteUserIds)
+        muteUserIds.append([MuteUserIdKey.userId: chat.userId!])
+        defaults.set(muteUserIds, forKey: Parameters.muteUserIds)
         defaults.synchronize()
     }
 

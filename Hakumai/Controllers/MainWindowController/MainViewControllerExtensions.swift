@@ -57,8 +57,8 @@ extension MainViewController {
     private func updateStandardUserDefaults() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             let d = UserDefaults.standard
-            let v = d.bool(forKey: Parameters.ShowIfseetnoCommands)
-            d.set(!v, forKey: Parameters.ShowIfseetnoCommands)
+            let v = d.bool(forKey: Parameters.showIfseetnoCommands)
+            d.set(!v, forKey: Parameters.showIfseetnoCommands)
             d.synchronize()
             logger.debug("")
         }

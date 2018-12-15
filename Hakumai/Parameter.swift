@@ -12,21 +12,21 @@ import Foundation
 // http://stackoverflow.com/a/26252377
 struct Parameters {
     // general
-    static let SessionManagement = "SessionManagement"
-    static let ShowIfseetnoCommands = "ShowHbIfseetnoCommands"
-    static let EnableCommentSpeech = "EnableCommentSpeech"
+    static let sessionManagement = "SessionManagement"
+    static let showIfseetnoCommands = "ShowHbIfseetnoCommands"
+    static let enableCommentSpeech = "EnableCommentSpeech"
 
     // mute
-    static let EnableMuteUserIds = "EnableMuteUserIds"
-    static let EnableMuteWords = "EnableMuteWords"
-    static let MuteUserIds = "MuteUserIds"
-    static let MuteWords = "MuteWords"
+    static let enableMuteUserIds = "EnableMuteUserIds"
+    static let enableMuteWords = "EnableMuteWords"
+    static let muteUserIds = "MuteUserIds"
+    static let muteWords = "MuteWords"
 
     // misc
-    static let LastLaunchedApplicationVersion = "LastLaunchedApplicationVersion"
-    static let AlwaysOnTop = "AlwaysOnTop"
-    static let CommentAnonymously = "CommentAnonymously"
-    static let FontSize = "FontSize"
+    static let lastLaunchedApplicationVersion = "LastLaunchedApplicationVersion"
+    static let alwaysOnTop = "AlwaysOnTop"
+    static let commentAnonymously = "CommentAnonymously"
+    static let fontSize = "FontSize"
 }
 
 // session management
@@ -38,17 +38,17 @@ enum SessionManagementType: Int {
 
 // keychain
 struct KeyChainLoginName {
-    static let MailAddress = "MailAddress"
-    static let Password = "Password"
+    static let mailAddress = "MailAddress"
+    static let password = "Password"
 }
 
 // dictionary keys in MuteUserIds array objects
 struct MuteUserIdKey {
-    static let UserId = "UserId"
+    static let userId = "UserId"
 }
 
 // dictionary keys in MuteUserWords array objects
 struct MuteUserWordKey {
-    static let Word = "Word"
+    static let word = "Word"
     // static let EnableRegexp = "EnableRegexp"
 }

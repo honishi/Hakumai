@@ -66,31 +66,31 @@ extension AppDelegate {
         guard let keyPath = keyPath, let change = change else { return }
 
         switch (keyPath, change[.newKey]) {
-        case (Parameters.SessionManagement, _):
+        case (Parameters.sessionManagement, _):
             NicoUtility.shared.reserveToClearUserSessionCookie()
 
-        case (Parameters.ShowIfseetnoCommands, let changed as Bool):
+        case (Parameters.showIfseetnoCommands, let changed as Bool):
             MainViewController.shared.changeShowHbIfseetnoCommands(changed)
 
-        case (Parameters.EnableCommentSpeech, let changed as Bool):
+        case (Parameters.enableCommentSpeech, let changed as Bool):
             MainViewController.shared.changeEnableCommentSpeech(changed)
 
-        case (Parameters.EnableMuteUserIds, let changed as Bool):
+        case (Parameters.enableMuteUserIds, let changed as Bool):
             MainViewController.shared.changeEnableMuteUserIds(changed)
 
-        case (Parameters.MuteUserIds, let changed as [[String: String]]):
+        case (Parameters.muteUserIds, let changed as [[String: String]]):
             MainViewController.shared.changeMuteUserIds(changed)
 
-        case (Parameters.EnableMuteWords, let changed as Bool):
+        case (Parameters.enableMuteWords, let changed as Bool):
             MainViewController.shared.changeEnableMuteWords(changed)
 
-        case (Parameters.MuteWords, let changed as [[String: String]]):
+        case (Parameters.muteWords, let changed as [[String: String]]):
             MainViewController.shared.changeMuteWords(changed)
 
-        case (Parameters.FontSize, let changed as Float):
+        case (Parameters.fontSize, let changed as Float):
             MainViewController.shared.changeFontSize(CGFloat(changed))
 
-        case (Parameters.AlwaysOnTop, let newValue as Bool):
+        case (Parameters.alwaysOnTop, let newValue as Bool):
             makeWindowAlwaysOnTop(newValue)
 
         default:
@@ -105,7 +105,7 @@ private extension AppDelegate {
     func migrateApplicationVersion() {
         let defaults = UserDefaults.standard
 
-        let lastVersion = defaults.string(forKey: Parameters.LastLaunchedApplicationVersion)
+        let lastVersion = defaults.string(forKey: Parameters.lastLaunchedApplicationVersion)
         let currentVersion = (Bundle.main.infoDictionary?["CFBundleVersion"] as? String)
         logger.info("last launched app version:[\(lastVersion ?? "")] current app version:[\(currentVersion ?? "")]")
 
@@ -130,20 +130,20 @@ private extension AppDelegate {
             logger.info("detected app first launch, no need to migrate application version")
         }
 
-        defaults.set(currentVersion!, forKey: Parameters.LastLaunchedApplicationVersion)
+        defaults.set(currentVersion!, forKey: Parameters.lastLaunchedApplicationVersion)
         defaults.synchronize()
     }
 
     func initializeUserDefaults() {
         let defaults: [String: Any] = [
-            Parameters.SessionManagement: SessionManagementType.chrome.rawValue,
-            Parameters.ShowIfseetnoCommands: false,
-            Parameters.FontSize: kDefaultFontSize,
-            Parameters.EnableCommentSpeech: false,
-            Parameters.EnableMuteUserIds: false,
-            Parameters.EnableMuteWords: false,
-            Parameters.AlwaysOnTop: false,
-            Parameters.CommentAnonymously: true]
+            Parameters.sessionManagement: SessionManagementType.chrome.rawValue,
+            Parameters.showIfseetnoCommands: false,
+            Parameters.fontSize: kDefaultFontSize,
+            Parameters.enableCommentSpeech: false,
+            Parameters.enableMuteUserIds: false,
+            Parameters.enableMuteWords: false,
+            Parameters.alwaysOnTop: false,
+            Parameters.commentAnonymously: true]
         UserDefaults.standard.register(defaults: defaults)
     }
 
@@ -151,19 +151,19 @@ private extension AppDelegate {
         let defaults = UserDefaults.standard
 
         // general
-        defaults.addObserver(self, forKeyPath: Parameters.SessionManagement, options: [.initial, .new], context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.ShowIfseetnoCommands, options: [.initial, .new], context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.EnableCommentSpeech, options: [.initial, .new], context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.sessionManagement, options: [.initial, .new], context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.showIfseetnoCommands, options: [.initial, .new], context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.enableCommentSpeech, options: [.initial, .new], context: nil)
 
         // mute
-        defaults.addObserver(self, forKeyPath: Parameters.EnableMuteUserIds, options: [.initial, .new], context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.MuteUserIds, options: [.initial, .new], context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.EnableMuteWords, options: [.initial, .new], context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.MuteWords, options: [.initial, .new], context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.enableMuteUserIds, options: [.initial, .new], context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.muteUserIds, options: [.initial, .new], context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.enableMuteWords, options: [.initial, .new], context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.muteWords, options: [.initial, .new], context: nil)
 
         // misc
-        defaults.addObserver(self, forKeyPath: Parameters.FontSize, options: [.initial, .new], context: nil)
-        defaults.addObserver(self, forKeyPath: Parameters.AlwaysOnTop, options: [.initial, .new], context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.fontSize, options: [.initial, .new], context: nil)
+        defaults.addObserver(self, forKeyPath: Parameters.alwaysOnTop, options: [.initial, .new], context: nil)
     }
 }
 
@@ -176,12 +176,12 @@ private extension AppDelegate {
     }
 
     func incrementFontSize(_ increment: Float) {
-        setFontSize(UserDefaults.standard.float(forKey: Parameters.FontSize) + increment)
+        setFontSize(UserDefaults.standard.float(forKey: Parameters.fontSize) + increment)
     }
 
     func setFontSize(_ fontSize: Float) {
         guard kMinimumFontSize...kMaximumFontSize ~= fontSize else { return }
-        UserDefaults.standard.set(fontSize, forKey: Parameters.FontSize)
+        UserDefaults.standard.set(fontSize, forKey: Parameters.fontSize)
         UserDefaults.standard.synchronize()
     }
 }
