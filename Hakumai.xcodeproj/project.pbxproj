@@ -97,6 +97,8 @@
 		DBAB69621A5C1A70002FCD95 /* KeychainUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAB69611A5C1A70002FCD95 /* KeychainUtility.swift */; };
 		DBAB69631A5C1A70002FCD95 /* KeychainUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAB69611A5C1A70002FCD95 /* KeychainUtility.swift */; };
 		DBAC3D3321C55E4C00B09673 /* MainWindowController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DBAC3D3221C55E4C00B09673 /* MainWindowController.storyboard */; };
+		DBAC3D3921C568B500B09673 /* Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAC3D3821C568B500B09673 /* Images.swift */; };
+		DBAC3D3B21C569A900B09673 /* StoryBoards.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAC3D3A21C569A900B09673 /* StoryBoards.swift */; };
 		DBADF3311A5EFA4D00A3A037 /* MainWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBADF3301A5EFA4D00A3A037 /* MainWindowController.swift */; };
 		DBADF3321A5EFA4D00A3A037 /* MainWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBADF3301A5EFA4D00A3A037 /* MainWindowController.swift */; };
 		DBB473001A358FFC002C797E /* CharacterExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB472FF1A358FFC002C797E /* CharacterExtension.swift */; };
@@ -235,6 +237,8 @@
 		DBAC3D2D21C411E900B09673 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		DBAC3D2E21C411E900B09673 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		DBAC3D3221C55E4C00B09673 /* MainWindowController.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MainWindowController.storyboard; sourceTree = "<group>"; };
+		DBAC3D3821C568B500B09673 /* Images.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Images.swift; sourceTree = "<group>"; };
+		DBAC3D3A21C569A900B09673 /* StoryBoards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryBoards.swift; sourceTree = "<group>"; };
 		DBADF3301A5EFA4D00A3A037 /* MainWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainWindowController.swift; sourceTree = "<group>"; };
 		DBB472FF1A358FFC002C797E /* CharacterExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacterExtension.swift; sourceTree = "<group>"; };
 		DBB473031A359082002C797E /* IntExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntExtension.swift; sourceTree = "<group>"; };
@@ -354,14 +358,15 @@
 				DBC94B901C0911FE00100886 /* Common */,
 				DBE73ECC1A1A1B9600A8BCA9 /* Controllers */,
 				DBA414CE1A1A16FB00E0CAD3 /* Extensions */,
+				DBAC3D3721C564DD00B09673 /* Generated */,
 				DB82B3991C071FF500EFE3D9 /* Libraries */,
 				DBA414CA1A1A13FC00E0CAD3 /* Models */,
+				DBAC3D3621C5649300B09673 /* Resources */,
 				DBAC3D3421C55EFB00B09673 /* Storyboards */,
 				DB2AE0C11A0EE2FD00B1CE4D /* Supporting Files */,
 				DB2AE0C31A0EE2FD00B1CE4D /* AppDelegate.swift */,
 				DB414C0A1A4811C4008D2F40 /* Global.swift */,
 				DB2AE1031A0F2BAA00B1CE4D /* Hakumai-Bridging-Header.h */,
-				DB2AE0C71A0EE2FD00B1CE4D /* Images.xcassets */,
 				DB682D411A36E6AE00499C72 /* Parameter.swift */,
 			);
 			path = Hakumai;
@@ -514,6 +519,23 @@
 			path = Storyboards;
 			sourceTree = "<group>";
 		};
+		DBAC3D3621C5649300B09673 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				DB2AE0C71A0EE2FD00B1CE4D /* Images.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		DBAC3D3721C564DD00B09673 /* Generated */ = {
+			isa = PBXGroup;
+			children = (
+				DBAC3D3821C568B500B09673 /* Images.swift */,
+				DBAC3D3A21C569A900B09673 /* StoryBoards.swift */,
+			);
+			path = Generated;
+			sourceTree = "<group>";
+		};
 		DBC94B901C0911FE00100886 /* Common */ = {
 			isa = PBXGroup;
 			children = (
@@ -647,6 +669,7 @@
 			buildConfigurationList = DB2AE0DA1A0EE2FD00B1CE4D /* Build configuration list for PBXNativeTarget "Hakumai" */;
 			buildPhases = (
 				9B05742C4603611DD9579258 /* [CP] Check Pods Manifest.lock */,
+				DBAC3D3521C563DF00B09673 /* SwiftGen Script */,
 				DBAC3D2C21C4100C00B09673 /* Sort Project Script */,
 				DB2AE0BA1A0EE2FD00B1CE4D /* Sources */,
 				DB2AE0BB1A0EE2FD00B1CE4D /* Frameworks */,
@@ -846,6 +869,24 @@
 			shellPath = /bin/sh;
 			shellScript = "if which \"${PODS_ROOT}/SwiftLint/swiftlint\" >/dev/null; then\n\"${PODS_ROOT}/SwiftLint/swiftlint\" autocorrect --format\n\"${PODS_ROOT}/SwiftLint/swiftlint\"\nelse\necho \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
 		};
+		DBAC3D3521C563DF00B09673 /* SwiftGen Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "SwiftGen Script";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which \"$PODS_ROOT/SwiftGen/bin/swiftgen\" >/dev/null; then\n\"$PODS_ROOT/SwiftGen/bin/swiftgen\"\nelse\necho \"warning: SwiftGen not installed, download it from https://github.com/SwiftGen/SwiftGen\"\nfi\n";
+		};
 		DBD940CF1BF6EA76001BDB47 /* Sparkle Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -901,6 +942,7 @@
 				DBE094021A586FFC004554FD /* HandleNameManager.swift in Sources */,
 				DBB4730B1A35951C002C797E /* Heartbeat.swift in Sources */,
 				DBB952161A8655AB0059850A /* Helper.swift in Sources */,
+				DBAC3D3921C568B500B09673 /* Images.swift in Sources */,
 				DBB473041A359082002C797E /* IntExtension.swift in Sources */,
 				DBAB69621A5C1A70002FCD95 /* KeychainUtility.swift in Sources */,
 				DBD65C1B1A2E0C6600B84C97 /* LayeredClipView.swift in Sources */,
@@ -931,6 +973,7 @@
 				DBF88AEB1D68AEB00047B412 /* SafariCookie.swift in Sources */,
 				DB7B3DE51A2434FB00205470 /* ScoreTableCellView.swift in Sources */,
 				DB82B3A11C0724C000EFE3D9 /* SpeechManager.swift in Sources */,
+				DBAC3D3B21C569A900B09673 /* StoryBoards.swift in Sources */,
 				DBA414CC1A1A16F300E0CAD3 /* StringExtension.swift in Sources */,
 				DBFA887F1A1BC7FF005349AD /* Thread.swift in Sources */,
 				DB7B3DE81A246EE200205470 /* UIHelper.swift in Sources */,

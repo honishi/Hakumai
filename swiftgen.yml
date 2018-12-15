@@ -1,0 +1,14 @@
+input_dir: Hakumai/
+output_dir: Hakumai/Generated/
+ib:
+  inputs:
+    - Storyboards
+  outputs:
+    templateName: scenes-swift4
+    output: StoryBoards.swift
+xcassets:
+  inputs:
+    - Resources/Images.xcassets
+  outputs:
+    templateName: swift4
+    output: Images.swift
