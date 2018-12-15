@@ -17,14 +17,11 @@ extension Character {
     func unicodeScalarCodePoint() -> UInt32 {
         let characterString = String(self)
         let scalars = characterString.unicodeScalars
-
         return scalars[scalars.startIndex].value
     }
 }
 
 // MARK: operator overload
-
 func - (left: Character, right: Character) -> Int {
-    // TODO: remove this redundant Int(), but we need this to build w/ xcode 6.3 beta
     return Int(left.unicodeScalarCodePoint()) - Int(right.unicodeScalarCodePoint())
 }
