@@ -62,7 +62,7 @@ extension AppDelegate {
 extension AppDelegate {
     // swiftlint:disable cyclomatic_complexity block_based_kvo
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
-        // logger.debug("detected observing value changed: key[\(keyPath)]")
+        // log.debug("detected observing value changed: key[\(keyPath)]")
         guard let keyPath = keyPath, let change = change else { return }
 
         switch (keyPath, change[.newKey]) {

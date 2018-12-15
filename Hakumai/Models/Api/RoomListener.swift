@@ -42,7 +42,7 @@ final class RoomListener: NSObject, StreamDelegate {
     private(set) var lastRes: Int = 0
     private var internalNo: Int = 0
 
-    private let fileLogger = XCGLogger()
+    private let fileLog = XCGLogger()
 
     init(delegate: RoomListenerDelegate?, server: MessageServer?) {
         self.delegate = delegate
@@ -67,7 +67,7 @@ extension RoomListener {
         }
 
         let fileName = kFileLogNamePrefix + String(logNumber) + kFileLogNameSuffix
-        Helper.setupFileLogger(fileLogger, fileName: fileName)
+        Helper.setupFileLogger(fileLog, fileName: fileName)
     }
 
     // MARK: - Public Functions
@@ -82,7 +82,7 @@ extension RoomListener {
         Stream.getStreamsToHost(withName: server.address, port: server.port, inputStream: &input, outputStream: &output)
 
         if input == nil || output == nil {
-            fileLogger.error("failed to open socket.")
+            fileLog.error("failed to open socket.")
             return
         }
 
@@ -113,7 +113,7 @@ extension RoomListener {
     }
 
     func closeSocket() {
-        fileLogger.debug("closed streams.")
+        fileLog.debug("closed streams.")
 
         stopPingTimer()
 
@@ -164,13 +164,13 @@ extension RoomListener {
     func stream(_ aStream: Stream, handle eventCode: Stream.Event) {
         switch eventCode {
         case Stream.Event():
-            fileLogger.debug("stream event none")
+            fileLog.debug("stream event none")
 
         case Stream.Event.openCompleted:
-            fileLogger.debug("stream event open completed")
+            fileLog.debug("stream event open completed")
 
         case Stream.Event.hasBytesAvailable:
-            // fileLogger.debug("stream event has bytes available")
+            // fileLog.debug("stream event has bytes available")
 
             // http://stackoverflow.com/q/26360962
             var readByte = [UInt8](repeating: 0, count: kReadBufferSize)
@@ -178,20 +178,20 @@ extension RoomListener {
             var actualRead = 0
             while inputStream?.hasBytesAvailable == true {
                 actualRead = inputStream!.read(&readByte, maxLength: kReadBufferSize)
-                //fileLogger.debug(readByte)
+                //fileLog.debug(readByte)
 
                 if let readString = NSString(bytes: &readByte, length: actualRead, encoding: String.Encoding.utf8.rawValue) {
-                    fileLogger.debug("read: [ \(readString) ]")
+                    fileLog.debug("read: [ \(readString) ]")
 
                     parsingString += streamByRemovingNull(fromStream: readString as String)
 
                     if !hasValidCloseBracket(inStream: parsingString) {
-                        fileLogger.warning("detected no-close-bracket stream, continue reading...")
+                        fileLog.warning("detected no-close-bracket stream, continue reading...")
                         continue
                     }
 
                     if !hasValidOpenBracket(inStream: parsingString) {
-                        fileLogger.warning("detected no-open-bracket stream, clearing buffer and continue reading...")
+                        fileLog.warning("detected no-open-bracket stream, clearing buffer and continue reading...")
                         parsingString = ""
                         continue
                     }
@@ -202,17 +202,17 @@ extension RoomListener {
             }
 
         case Stream.Event.hasSpaceAvailable:
-            fileLogger.debug("stream event has space available")
+            fileLog.debug("stream event has space available")
 
         case Stream.Event.errorOccurred:
-            fileLogger.error("stream event error occurred")
+            fileLog.error("stream event error occurred")
             closeSocket()
 
         case Stream.Event.endEncountered:
-            fileLogger.debug("stream event end encountered")
+            fileLog.debug("stream event end encountered")
 
         default:
-            fileLogger.warning("unexpected stream event")
+            fileLog.warning("unexpected stream event")
         }
     }
     // swiftlint:enable cyclomatic_complexity
@@ -247,7 +247,7 @@ extension RoomListener {
     // MARK: - Parse Utility
     private func parseInputStream(_ stream: String) {
         let wrappedStream = "<items>" + stream + "</items>"
-        fileLogger.verbose("parsing: [ \(wrappedStream) ]")
+        fileLog.verbose("parsing: [ \(wrappedStream) ]")
 
         var err: NSError?
         let xmlDocument: XMLDocument?
@@ -261,7 +261,7 @@ extension RoomListener {
         }
 
         if xmlDocument == nil {
-            fileLogger.error("could not parse input stream:\(stream)")
+            fileLog.error("could not parse input stream:\(stream)")
             return
         }
 

@@ -106,7 +106,7 @@ final class NicoUtility: NSObject, RoomListenerDelegate {
     var userSessionCookie: String?
 
     // logger
-    private let fileLogger = XCGLogger()
+    private let fileLog = XCGLogger()
 
     // MARK: - Object Lifecycle
     private override init() {
@@ -119,7 +119,7 @@ final class NicoUtility: NSObject, RoomListenerDelegate {
 
 extension NicoUtility {
     private func initializeFileLogger() {
-        Helper.setupFileLogger(fileLogger, fileName: kFileLogName)
+        Helper.setupFileLogger(fileLog, fileName: kFileLogName)
     }
 
     private func initializeInstance() {
@@ -299,7 +299,7 @@ extension NicoUtility {
     }
 
     func roomListenerDidReceiveChat(_ roomListener: RoomListener, chat: Chat) {
-        // logger.debug("\(chat)")
+        // log.debug("\(chat)")
 
         if isFirstChat(roomListener: roomListener, chat: chat) {
             delegate?.nicoUtilityDidReceiveFirstChat(self, chat: chat)
@@ -514,7 +514,7 @@ extension NicoUtility {
             }
 
             // let responseString = NSString(data: data, encoding: NSUTF8StringEncoding)
-            // fileLogger.debug("\(responseString)")
+            // fileLog.debug("\(responseString)")
 
             guard let data = data else {
                 let message = "error in unpacking response data"
@@ -562,7 +562,7 @@ extension NicoUtility {
             }
 
             // let responseString = NSString(data: data, encoding: NSUTF8StringEncoding)
-            // logger.debug("\(responseString)")
+            // log.debug("\(responseString)")
 
             guard let data = data else {
                 let message = "error in unpacking response data"
@@ -739,13 +739,13 @@ extension NicoUtility {
             }
 
             let responseString = NSString(data: data, encoding: String.Encoding.utf8.rawValue)
-            self.fileLogger.debug("\(responseString ?? "")")
+            self.fileLog.debug("\(responseString ?? "")")
 
             guard let heartbeat = self.extractHeartbeat(fromXmlData: data) else {
                 log.error("error in extracting heatbeat")
                 return
             }
-            self.fileLogger.debug("\(heartbeat)")
+            self.fileLog.debug("\(heartbeat)")
 
             self.delegate?.nicoUtilityDidReceiveHeartbeat(self, heartbeat: heartbeat)
 

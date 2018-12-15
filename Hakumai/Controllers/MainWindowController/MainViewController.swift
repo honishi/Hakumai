@@ -141,7 +141,7 @@ extension MainViewController {
     }
 
     func changeEnableCommentSpeech(_ enabled: Bool) {
-        // logger.debug("\(enabled)")
+        // log.debug("\(enabled)")
         updateSpeechManagerState()
     }
 
@@ -233,7 +233,7 @@ extension MainViewController {
         let commentRect = content.boundingRect(
             with: CGSize(width: width - widthPadding, height: 0), options: NSString.DrawingOptions.usesLineFragmentOrigin,
             attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
-        // logger.debug("\(commentRect.size.width),\(commentRect.size.height)")
+        // log.debug("\(commentRect.size.width),\(commentRect.size.height)")
 
         return max(commentRect.size.height, minimumRowHeight)
     }
@@ -470,7 +470,7 @@ extension MainViewController {
     }
 
     func nicoUtilityDidReceiveChat(_ nicoUtility: NicoUtility, chat: Chat) {
-        // logger.debug("\(chat.mail),\(chat.comment)")
+        // log.debug("\(chat.mail),\(chat.comment)")
         if let live = live {
             HandleNameManager.sharedManager.extractAndUpdateHandleName(live: live, chat: chat)
         }
@@ -558,7 +558,7 @@ extension MainViewController {
 
         let viewRect = scrollView.contentView.documentRect
         let visibleRect = scrollView.contentView.documentVisibleRect
-        // logger.debug("\(viewRect)-\(visibleRect)")
+        // log.debug("\(viewRect)-\(visibleRect)")
 
         let bottomY = viewRect.size.height
         let offsetBottomY = visibleRect.origin.y + visibleRect.size.height
@@ -584,14 +584,14 @@ extension MainViewController {
         } else {
             // http://stackoverflow.com/questions/19399242/soft-scroll-animation-nsscrollview-scrolltopoint
             currentScrollAnimationCount += 1
-            // logger.debug("start scroll animation:\(currentScrollAnimationCount)")
+            // log.debug("start scroll animation:\(currentScrollAnimationCount)")
 
             NSAnimationContext.beginGrouping()
             NSAnimationContext.current.duration = 0.5
 
             NSAnimationContext.current.completionHandler = { () -> Void in
                 self.currentScrollAnimationCount -= 1
-                // logger.debug("  end scroll animation:\(self.currentScrollAnimationCount)")
+                // log.debug("  end scroll animation:\(self.currentScrollAnimationCount)")
             }
 
             clipView.animator().setBoundsOrigin(origin)

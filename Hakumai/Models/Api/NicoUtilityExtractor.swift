@@ -138,7 +138,7 @@ extension NicoUtility {
         guard let thread = rootElement?.firstIntValue(forXPath: baseXPath + "thread") else {
             return nil
         }
-        // logger.debug("\(address?),\(port),\(thread)")
+        // log.debug("\(address?),\(port),\(thread)")
 
         let server = MessageServer(roomPosition: roomPosition, address: address, port: port, thread: thread)
 
@@ -146,7 +146,7 @@ extension NicoUtility {
     }
 
     func roomPosition(byUser user: User) -> RoomPosition? {
-        // logger.debug("roomLabel:\(roomLabel)")
+        // log.debug("roomLabel:\(roomLabel)")
 
         guard let roomLabel = user.roomLabel else {
             return nil

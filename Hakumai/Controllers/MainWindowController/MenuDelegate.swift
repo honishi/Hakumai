@@ -197,7 +197,7 @@ final class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
          let pasteBoard = NSPasteboard.general
          pasteBoard.declareTypes(convertToNSPasteboardPasteboardTypeArray([NSStringPboardType.rawValue]), owner: nil)
          let result = pasteBoard.setString(string, forType: convertToNSPasteboardPasteboardType(NSStringPboardType.rawValue))
-         logger.debug("copied \(string) w/ result \(result)")
+         log.debug("copied \(string) w/ result \(result)")
 
          return result
          */

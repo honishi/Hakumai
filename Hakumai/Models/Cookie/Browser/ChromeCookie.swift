@@ -32,7 +32,7 @@ private let kChromeAccount = "Chrome"
 final class ChromeCookie {
 
     // MARK: - Properties
-    private static let fileLogger: XCGLogger = {
+    private static let fileLog: XCGLogger = {
         let logger = XCGLogger()
         Helper.setupFileLogger(logger, fileName: kFileLogName)
         return logger
@@ -43,12 +43,12 @@ final class ChromeCookie {
     static func storedCookie() -> String? {
         guard let encryptedCookie = ChromeCookie.queryEncryptedCookie() else { return nil }
 
-        fileLogger.debug("encryptedCookie:[\(encryptedCookie)]")
+        fileLog.debug("encryptedCookie:[\(encryptedCookie)]")
 
         guard let encryptedCookieByRemovingPrefix = ChromeCookie.encryptedCookieByRemovingPrefix(encryptedCookie) else {
             return nil
         }
-        fileLogger.debug("encryptedCookieByRemovingPrefix:[\(encryptedCookieByRemovingPrefix)]")
+        fileLog.debug("encryptedCookieByRemovingPrefix:[\(encryptedCookieByRemovingPrefix)]")
 
         let password = ChromeCookie.chromePassword().data(using: String.Encoding.utf8, allowLossyConversion: false)!
         let salt = kSalt.data(using: String.Encoding.utf8, allowLossyConversion: false)!
@@ -56,15 +56,15 @@ final class ChromeCookie {
         guard let aesKey = ChromeCookie.aesKeyForPassword(password, salt: salt, roundCount: kRoundCount) else {
             return nil
         }
-        fileLogger.debug("aesKey:[\(aesKey)]")
+        fileLog.debug("aesKey:[\(aesKey)]")
 
         guard let decrypted = ChromeCookie.decryptCookie(encryptedCookieByRemovingPrefix, aesKey: aesKey) else {
             return nil
         }
-        fileLogger.debug("decrypted:[\(decrypted)]")
+        fileLog.debug("decrypted:[\(decrypted)]")
 
         let decryptedString = ChromeCookie.decryptedStringByRemovingPadding(decrypted)
-        fileLogger.debug("decryptedString:[\(decryptedString ?? "")]")
+        fileLog.debug("decryptedString:[\(decryptedString ?? "")]")
 
         return decryptedString
     }
@@ -89,10 +89,10 @@ final class ChromeCookie {
 
         while rows != nil && (rows?.next())! {
             // var name = rows.stringForColumn("name")
-            // logger.debug(name)
+            // log.debug(name)
 
             let encryptedValue = rows?.data(forColumn: "encrypted_value")
-            // logger.debug(encryptedValue)
+            // log.debug(encryptedValue)
             // we could not extract string from binary here
 
             if let encryptedValue = encryptedValue, 0 < encryptedValue.count {
@@ -109,14 +109,14 @@ final class ChromeCookie {
         let prefixString: NSString = "v10"
         // let rangeForDataWithoutPrefix = NSMakeRange(prefixString.length, encrypted.count - prefixString.length)
         let encryptedByRemovingPrefix = encrypted.subdata(in: prefixString.length..<encrypted.count)
-        // logger.debug(encryptedByRemovingPrefix)
+        // log.debug(encryptedByRemovingPrefix)
 
         return encryptedByRemovingPrefix
     }
 
     private static func chromePassword() -> String {
         let password = SAMKeychain.password(forService: kChromeServiceName, account: kChromeAccount)
-        // logger.debug(password)
+        // log.debug(password)
 
         return password!
     }
@@ -156,11 +156,11 @@ final class ChromeCookie {
     private static func decryptCookie(_ encrypted: Data, aesKey: Data) -> Data? {
         let aesKeyPointer = (aesKey as NSData).bytes.assumingMemoryBound(to: UInt8.self)
         let aesKeyLength = size_t(kCCKeySizeAES128)
-        // logger.debug("aesKeyPointer = \(aesKeyPointer), aesKeyLength = \(aesKeyData.length)")
+        // log.debug("aesKeyPointer = \(aesKeyPointer), aesKeyLength = \(aesKeyData.length)")
 
         let encryptedPointer = (encrypted as NSData).bytes.assumingMemoryBound(to: UInt8.self)
         let encryptedLength = size_t(encrypted.count)
-        // logger.debug("encryptedPointer = \(encryptedPointer), encryptedDataLength = \(encryptedLength)")
+        // log.debug("encryptedPointer = \(encryptedPointer), encryptedDataLength = \(encryptedLength)")
 
         let decryptedData: NSMutableData! = NSMutableData(length: Int(encryptedLength) + kCCBlockSizeAES128)
         let decryptedPointer = decryptedData.mutableBytes.assumingMemoryBound(to: UInt8.self)
@@ -183,7 +183,7 @@ final class ChromeCookie {
 
         if UInt32(cryptStatus) == UInt32(kCCSuccess) {
             decryptedData.length = Int(numBytesEncrypted)
-            // logger.debug("decryptedData = \(decryptedData), decryptedLength = \(numBytesEncrypted)")
+            // log.debug("decryptedData = \(decryptedData), decryptedLength = \(numBytesEncrypted)")
         } else {
             log.error("Error: \(cryptStatus)")
         }
@@ -194,7 +194,7 @@ final class ChromeCookie {
     // http://stackoverflow.com/a/14205319
     private static func decryptedStringByRemovingPadding(_ data: Data) -> String? {
         let paddingCount = Int((data as NSData).bytes.assumingMemoryBound(to: UInt8.self)[data.count - 1])
-        fileLogger.debug("padding character count:[\(paddingCount)]")
+        fileLog.debug("padding character count:[\(paddingCount)]")
 
         // NSRange(location: 0, length: data.count - paddingCount)
         let trimmedData = data.subdata(in: 0..<(data.count - paddingCount))
