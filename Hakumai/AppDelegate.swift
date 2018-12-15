@@ -22,9 +22,87 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         return true
     }
+}
 
-    // MARK: Application Initialize Utility
-    private func migrateApplicationVersion() {
+// MARK: Menu Handlers
+extension AppDelegate {
+    @IBAction func openPreferences(_ sender: AnyObject) {
+        PreferenceWindowController.shared?.showWindow(self)
+    }
+
+    @IBAction func openUrl(_ sender: AnyObject) {
+        MainViewController.shared.focusLiveTextField()
+    }
+
+    @IBAction func grabUrlFromChrome(_ sender: AnyObject) {
+        MainViewController.shared.grabUrlFromBrowser(self)
+    }
+
+    @IBAction func newComment(_ sender: AnyObject) {
+        MainViewController.shared.focusCommentTextField()
+    }
+
+    @IBAction func zoomDefault(_ sender: AnyObject) {
+        setFontSize(kDefaultFontSize)
+    }
+
+    @IBAction func zoomIn(_ sender: AnyObject) {
+        incrementFontSize(1)
+    }
+
+    @IBAction func zoomOut(_ sender: AnyObject) {
+        incrementFontSize(-1)
+    }
+
+    // here no handlers for 'Always On Top' menu item. it should be implemented using KVO.
+    // see details at http://stackoverflow.com/a/13613507
+}
+
+// MARK: KVO Functions
+extension AppDelegate {
+    // swiftlint:disable cyclomatic_complexity block_based_kvo
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
+        // logger.debug("detected observing value changed: key[\(keyPath)]")
+        guard let keyPath = keyPath, let change = change else { return }
+
+        switch (keyPath, change[.newKey]) {
+        case (Parameters.SessionManagement, _):
+            NicoUtility.shared.reserveToClearUserSessionCookie()
+
+        case (Parameters.ShowIfseetnoCommands, let changed as Bool):
+            MainViewController.shared.changeShowHbIfseetnoCommands(changed)
+
+        case (Parameters.EnableCommentSpeech, let changed as Bool):
+            MainViewController.shared.changeEnableCommentSpeech(changed)
+
+        case (Parameters.EnableMuteUserIds, let changed as Bool):
+            MainViewController.shared.changeEnableMuteUserIds(changed)
+
+        case (Parameters.MuteUserIds, let changed as [[String: String]]):
+            MainViewController.shared.changeMuteUserIds(changed)
+
+        case (Parameters.EnableMuteWords, let changed as Bool):
+            MainViewController.shared.changeEnableMuteWords(changed)
+
+        case (Parameters.MuteWords, let changed as [[String: String]]):
+            MainViewController.shared.changeMuteWords(changed)
+
+        case (Parameters.FontSize, let changed as Float):
+            MainViewController.shared.changeFontSize(CGFloat(changed))
+
+        case (Parameters.AlwaysOnTop, let newValue as Bool):
+            makeWindowAlwaysOnTop(newValue)
+
+        default:
+            break
+        }
+    }
+    // swiftlint:enable cyclomatic_complexity block_based_kvo
+}
+
+// MARK: Application Initialize Utility
+private extension AppDelegate {
+    func migrateApplicationVersion() {
         let defaults = UserDefaults.standard
 
         let lastVersion = defaults.string(forKey: Parameters.LastLaunchedApplicationVersion)
@@ -56,7 +134,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         defaults.synchronize()
     }
 
-    private func initializeUserDefaults() {
+    func initializeUserDefaults() {
         let defaults: [String: Any] = [
             Parameters.SessionManagement: SessionManagementType.chrome.rawValue,
             Parameters.ShowIfseetnoCommands: false,
@@ -66,11 +144,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             Parameters.EnableMuteWords: false,
             Parameters.AlwaysOnTop: false,
             Parameters.CommentAnonymously: true]
-
         UserDefaults.standard.register(defaults: defaults)
     }
 
-    private func addObserverForUserDefaults() {
+    func addObserverForUserDefaults() {
         let defaults = UserDefaults.standard
 
         // general
@@ -88,115 +165,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         defaults.addObserver(self, forKeyPath: Parameters.FontSize, options: [.initial, .new], context: nil)
         defaults.addObserver(self, forKeyPath: Parameters.AlwaysOnTop, options: [.initial, .new], context: nil)
     }
+}
 
-    // MARK: - Internal Functions
-    // MARK: KVO Functions
-    // swiftlint:disable cyclomatic_complexity block_based_kvo
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
-        // logger.debug("detected observing value changed: key[\(keyPath)]")
-        guard let keyPath = keyPath, let change = change else {
-            return
-        }
-
-        switch keyPath {
-        case Parameters.SessionManagement:
-            NicoUtility.shared.reserveToClearUserSessionCookie()
-
-        case Parameters.ShowIfseetnoCommands:
-            if let changed = change[.newKey] as? Bool {
-                MainViewController.shared.changeShowHbIfseetnoCommands(changed)
-            }
-
-        case Parameters.EnableCommentSpeech:
-            if let changed = change[.newKey] as? Bool {
-                MainViewController.shared.changeEnableCommentSpeech(changed)
-            }
-
-        case Parameters.EnableMuteUserIds:
-            if let changed = change[.newKey] as? Bool {
-                MainViewController.shared.changeEnableMuteUserIds(changed)
-            }
-
-        case Parameters.MuteUserIds:
-            if let changed = change[.newKey] as? [[String: String]] {
-                MainViewController.shared.changeMuteUserIds(changed)
-            }
-
-        case Parameters.EnableMuteWords:
-            if let changed = change[.newKey] as? Bool {
-                MainViewController.shared.changeEnableMuteWords(changed)
-            }
-
-        case Parameters.MuteWords:
-            if let changed = change[.newKey] as? [[String: String]] {
-                MainViewController.shared.changeMuteWords(changed)
-            }
-
-        case Parameters.FontSize:
-            if let changed = change[.newKey] as? Float {
-                MainViewController.shared.changeFontSize(CGFloat(changed))
-            }
-
-        case Parameters.AlwaysOnTop:
-            if let newValue = change[.newKey] as? Bool {
-                makeWindowAlwaysOnTop(newValue)
-            }
-
-        default:
-            break
-        }
-    }
-    // swiftlint:enable cyclomatic_complexity block_based_kvo
-
-    // MARK: Menu Handlers
-    @IBAction func openPreferences(_ sender: AnyObject) {
-        PreferenceWindowController.shared?.showWindow(self)
-    }
-
-    @IBAction func openUrl(_ sender: AnyObject) {
-        MainViewController.shared.focusLiveTextField()
-    }
-
-    @IBAction func grabUrlFromChrome(_ sender: AnyObject) {
-        MainViewController.shared.grabUrlFromBrowser(self)
-    }
-
-    @IBAction func newComment(_ sender: AnyObject) {
-        MainViewController.shared.focusCommentTextField()
-    }
-
-    @IBAction func zoomDefault(_ sender: AnyObject) {
-        setFontSize(kDefaultFontSize)
-    }
-
-    @IBAction func zoomIn(_ sender: AnyObject) {
-        incrementFontSize(1)
-    }
-
-    @IBAction func zoomOut(_ sender: AnyObject) {
-        incrementFontSize(-1)
-    }
-
-    // here no handlers for 'Always On Top' menu item. it should be implemented using KVO.
-    // see details at http://stackoverflow.com/a/13613507
-
-    // MARK: Misc
-    private func makeWindowAlwaysOnTop(_ alwaysOnTop: Bool) {
+// MARK: Misc
+private extension AppDelegate {
+    func makeWindowAlwaysOnTop(_ alwaysOnTop: Bool) {
         let window = NSApplication.shared.windows[0]
         window.alwaysOnTop = alwaysOnTop
-
         logger.debug("changed always on top: \(alwaysOnTop)")
     }
 
-    private func incrementFontSize(_ increment: Float) {
+    func incrementFontSize(_ increment: Float) {
         setFontSize(UserDefaults.standard.float(forKey: Parameters.FontSize) + increment)
     }
 
-    private func setFontSize(_ fontSize: Float) {
-        guard kMinimumFontSize...kMaximumFontSize ~= fontSize else {
-            return
-        }
-
+    func setFontSize(_ fontSize: Float) {
+        guard kMinimumFontSize...kMaximumFontSize ~= fontSize else { return }
         UserDefaults.standard.set(fontSize, forKey: Parameters.FontSize)
         UserDefaults.standard.synchronize()
     }
