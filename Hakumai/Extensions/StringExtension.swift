@@ -69,6 +69,27 @@ extension String {
     }
 }
 
+extension String {
+    func extractLiveNumber() -> Int? {
+        let liveNumberPattern = "\\d{9,}"
+        let patterns = [
+            "http:\\/\\/live\\.nicovideo\\.jp\\/watch\\/lv(" + liveNumberPattern + ").*",
+            "lv(" + liveNumberPattern + ")",
+            "(" + liveNumberPattern + ")"
+        ]
+        for pattern in patterns {
+            if let extracted = extractRegexp(pattern: pattern), let number = Int(extracted) {
+                return number
+            }
+        }
+        return nil
+    }
+
+    func extractUrlString() -> String? {
+        return extractRegexp(pattern: "(https?://[\\w/:%#\\$&\\?\\(\\)~\\.=\\+\\-]+)")
+    }
+}
+
 func * (left: String, right: Int) -> String {
     if right == 0 {
         return ""

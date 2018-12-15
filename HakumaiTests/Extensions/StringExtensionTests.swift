@@ -10,18 +10,12 @@ import Foundation
 import XCTest
 
 final class StringExtensionTests: XCTestCase {
+    override func setUp() {}
+    override func tearDown() {}
+}
 
-    override func setUp() {
-        super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
-    }
-
-    // MARK: String
+// MARK: String
+extension StringExtensionTests {
     func testExtractRegexp() {
         var pattern: String
         var extracted: String?
@@ -56,5 +50,34 @@ final class StringExtensionTests: XCTestCase {
 
         removed = "abc\n".stringByRemovingRegexp(pattern: "\n")
         XCTAssert(removed == "abc", "")
+    }
+}
+
+extension StringExtensionTests {
+    func testExtractLiveNumber() {
+        var extracted: Int?
+        let expected = 200433812
+
+        extracted = "http://live.nicovideo.jp/watch/lv200433812?ref=zero_mynicorepo".extractLiveNumber()
+        XCTAssert(extracted == expected, "")
+
+        extracted = "http://live.nicovideo.jp/watch/lv200433812".extractLiveNumber()
+        XCTAssert(extracted == expected, "")
+
+        extracted = "lv200433812".extractLiveNumber()
+        XCTAssert(extracted == expected, "")
+
+        extracted = "200433812".extractLiveNumber()
+        XCTAssert(extracted == expected, "")
+    }
+
+    func testUrlStringInComment() {
+        var comment = ""
+
+        comment = "aaa"
+        XCTAssert(comment.extractUrlString() == nil, "")
+
+        comment = "aaa http://example.com aaa"
+        XCTAssert(comment.extractUrlString() == "http://example.com", "")
     }
 }

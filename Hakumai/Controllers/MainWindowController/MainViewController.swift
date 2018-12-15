@@ -714,7 +714,7 @@ extension MainViewController {
     @IBAction func connectLive(_ sender: AnyObject) {
         initializeHandleNameManager()
 
-        if let liveNumber = MainViewController.extractLiveNumber(from: liveTextField.stringValue) {
+        if let liveNumber = liveTextField.stringValue.extractLiveNumber() {
             clearAllChats()
 
             communityImageView.image = NSImage(named: kCommunityImageDefaultName)
@@ -891,23 +891,6 @@ extension MainViewController {
         MessageContainer.sharedContainer.removeAll()
         rowHeightCacher.removeAll(keepingCapacity: false)
         tableView.reloadData()
-    }
-
-    static func extractLiveNumber(from url: String) -> Int? {
-        let liveNumberPattern = "\\d{9,}"
-        let patterns = [
-            "http:\\/\\/live\\.nicovideo\\.jp\\/watch\\/lv(" + liveNumberPattern + ").*",
-            "lv(" + liveNumberPattern + ")",
-            "(" + liveNumberPattern + ")"
-        ]
-
-        for pattern in patterns {
-            if let extracted = url.extractRegexp(pattern: pattern), let number = Int(extracted) {
-                return number
-            }
-        }
-
-        return nil
     }
 }
 

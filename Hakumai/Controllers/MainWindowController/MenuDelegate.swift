@@ -53,7 +53,7 @@ final class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         case copyCommentMenuItem, tweetCommentMenuItem:
             return true
         case openUrlMenuItem:
-            return urlString(inComment: chat) != nil ? true : false
+            return chat.comment?.extractUrlString() != nil ? true : false
         case addHandleNameMenuItem:
             if live == nil {
                 return false
@@ -109,7 +109,7 @@ final class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
 
     @IBAction func openUrl(_ sender: AnyObject) {
         let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat!
-        let url = urlString(inComment: chat)!
+        let url = chat.comment!.extractUrlString()!
         NSWorkspace.shared.open(URL(string: url)!)
     }
 
@@ -182,14 +182,6 @@ final class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     }
 
     // MARK: - Internal Functions
-    func urlString(inComment chat: Chat) -> String? {
-        if chat.comment == nil {
-            return nil
-        }
-
-        return chat.comment!.extractRegexp(pattern: "(https?://[\\w/:%#\\$&\\?\\(\\)~\\.=\\+\\-]+)")
-    }
-
     func copyStringToPasteBoard(_ string: String) -> Bool {
         return true
         // TODO: update for swift 4
