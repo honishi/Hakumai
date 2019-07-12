@@ -75,7 +75,6 @@ private let kDebugEnableForceReconnect = false
 private let kDebugForceReconnectChatCount = 20
 
 // MARK: - class
-
 final class NicoUtility: NSObject, RoomListenerDelegate {
     // MARK: - Properties
     static let shared = NicoUtility()
@@ -111,21 +110,12 @@ final class NicoUtility: NSObject, RoomListenerDelegate {
     // MARK: - Object Lifecycle
     private override init() {
         super.init()
-
         initializeFileLogger()
         initializeInstance()
     }
 }
 
 extension NicoUtility {
-    private func initializeFileLogger() {
-        Helper.setupFileLogger(fileLog, fileName: kFileLogName)
-    }
-
-    private func initializeInstance() {
-        resolveUserNameOperationQueue.maxConcurrentOperationCount = 1
-    }
-
     // MARK: - Public Interface
     func reserveToClearUserSessionCookie() {
         shouldClearUserSessionCookie = true
@@ -158,131 +148,112 @@ extension NicoUtility {
 
     func disconnect(reserveToReconnect: Bool = false) {
         reservedToReconnect = reserveToReconnect
-
         for listener in roomListeners {
             listener.closeSocket()
         }
-
         stopHeartbeatTimer()
     }
 
     func comment(_ comment: String, anonymously: Bool = true, completion: @escaping (_ comment: String?) -> Void) {
-        if live == nil || user == nil {
+        guard let live = live, let user = user else {
             log.debug("no available stream, or user")
             return
         }
-
         let success: (String) -> Void = { postKey in
-            let roomListener = self.assignedRoomListener()!
-            roomListener.comment(live: self.live!, user: self.user!, postKey: postKey, comment: comment, anonymously: anonymously)
+            guard let roomListener = self.assignedRoomListener() else { return }
+            roomListener.comment(live: live, user: user, postKey: postKey, comment: comment, anonymously: anonymously)
             completion(comment)
         }
-
         let failure: () -> Void = {
             log.error("could not get post key")
             completion(nil)
         }
-
         requestGetPostKey(success: success, failure: failure)
     }
 
     func loadThumbnail(completion: @escaping (Data?) -> Void) {
-        if live?.community.thumbnailUrl == nil {
+        guard let thumbnailUrl = live?.community.thumbnailUrl else {
             log.debug("no thumbnail url")
             completion(nil)
             return
         }
-
         let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (response, data, connectionError) in
             if connectionError != nil {
                 log.error("error in loading thumbnail request")
                 completion(nil)
                 return
             }
-
             completion(data)
         }
-
-        cookiedAsyncRequest(httpMethod: "GET", url: live!.community.thumbnailUrl!.absoluteString, parameters: nil, completion: httpCompletion)
+        cookiedAsyncRequest(httpMethod: "GET", url: thumbnailUrl.absoluteString, parameters: nil, completion: httpCompletion)
     }
 
     func cachedUserName(forChat chat: Chat) -> String? {
-        if chat.userId == nil {
-            return nil
-        }
-
-        return cachedUserName(forUserId: chat.userId!)
+        guard let userId = chat.userId else { return nil }
+        return cachedUserName(forUserId: userId)
     }
 
     func cachedUserName(forUserId userId: String) -> String? {
-        if !Chat.isRawUserId(userId) {
-            return nil
-        }
-
+        guard Chat.isRawUserId(userId) else { return nil }
         return cachedUserNames[userId]
     }
 
     func resolveUsername(forUserId userId: String, completion: @escaping (String?) -> Void) {
-        if !Chat.isRawUserId(userId) {
+        guard Chat.isRawUserId(userId) else {
             completion(nil)
             return
         }
-
         if let cachedUsername = cachedUserNames[userId] {
             completion(cachedUsername)
             return
         }
-
         if kResolveUserNameOperationQueueOverloadThreshold < resolveUserNameOperationQueue.operationCount {
             log.debug("detected overload, so skip resolve request")
             completion(nil)
             return
         }
-
         resolveUserNameOperationQueue.addOperation {
             let resolveCompletion = { (response: URLResponse?, data: Data?, connectionError: Error?) in
-                if connectionError != nil {
+                guard connectionError == nil else {
                     log.error("error in resolving username")
                     completion(nil)
                     return
                 }
-
                 let username = self.extractUsername(fromHtmlData: data!)
                 self.cachedUserNames[userId] = username
-
                 completion(username)
             }
-
             self.cookiedAsyncRequest(httpMethod: "GET", url: kUserUrl + String(userId), parameters: nil, completion: resolveCompletion)
         }
     }
 
     func reportAsNgUser(chat: Chat, completion: @escaping (_ userId: String?) -> Void) {
+        guard let liveId = live?.liveId, let userId = chat.userId,
+            let date = chat.date, let dateUsec = chat.dateUsec, let no = chat.no else { return }
+
         let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (response, data, connectionError) in
-            if connectionError != nil {
+            guard connectionError == nil else {
                 log.error("error in requesting ng user")
                 completion(nil)
                 return
             }
-
             log.debug("completed to request ng user")
             completion(chat.userId!)
         }
 
         let parameters: [String: Any] = [
-            "vid": live!.liveId!,
+            "vid": liveId,
             "lang": "ja-jp",
             "type": "ID",
             "locale": "GLOBAL",
-            "value": chat.userId!,
+            "value": userId,
             "player": "v4",
-            "uid": chat.userId!,
-            "tpos": String(Int(chat.date!.timeIntervalSince1970)) + "." + String(chat.dateUsec!),
-            "comment": String(chat.no!),
+            "uid": userId,
+            "tpos": String(Int(date.timeIntervalSince1970)) + "." + String(dateUsec),
+            "comment": String(no),
             "thread": String(messageServers[chat.roomPosition!.rawValue].thread),
             "comment_locale": "ja-jp"
         ]
-
         cookiedAsyncRequest(httpMethod: "POST", url: kNgScoringUrl, parameters: parameters, completion: httpCompletion)
     }
 
@@ -298,7 +269,6 @@ extension NicoUtility {
 
     func roomListenerDidReceiveChat(_ roomListener: RoomListener, chat: Chat) {
         // log.debug("\(chat)")
-
         if isFirstChat(roomListener: roomListener, chat: chat) {
             delegate?.nicoUtilityDidReceiveFirstChat(self, chat: chat)
 
@@ -334,12 +304,6 @@ extension NicoUtility {
         #endif
     }
 
-    private func debugForceReconnect() {
-        if (chatCount % kDebugForceReconnectChatCount) == (kDebugForceReconnectChatCount - 1) {
-            reconnectToLastLive()
-        }
-    }
-
     func roomListenerDidFinishListening(_ roomListener: RoomListener) {
         objc_sync_enter(self)
         if let index = roomListeners.index(of: roomListener) {
@@ -350,7 +314,6 @@ extension NicoUtility {
         if roomListeners.count == 0 {
             delegate?.nicoUtilityDidDisconnect(self)
             reset()
-
             if reservedToReconnect {
                 reservedToReconnect = false
                 connect(liveNumber: lastLiveNumber, userSessionCookie: userSessionCookie)
@@ -358,8 +321,105 @@ extension NicoUtility {
         }
     }
 
+    // MARK: Message Server Functions
+    func deriveMessageServers(originServer: MessageServer, community: Community) -> [MessageServer] {
+        var arenaServer = originServer
+
+        if 0 < originServer.roomPosition.rawValue {
+            for _ in 1...(originServer.roomPosition.rawValue) {
+                if let previous = arenaServer.previous() {
+                    arenaServer = previous
+                } else {
+                    return [originServer]
+                }
+            }
+        }
+
+        var servers = [arenaServer]
+        var roomCount = 0
+
+        if community.isUser == true {
+            if let level = community.level {
+                roomCount = standRoomCount(forCommunityLevel: level)
+            } else {
+                // possible ban case. stand a, or up to assigned room
+                roomCount = max(1, originServer.roomPosition.rawValue)
+            }
+        } else {
+            // stand a, b, c, d, e
+            roomCount = 5
+        }
+
+        for _ in 1...roomCount {
+            if let next = servers.last!.next() {
+                servers.append(next)
+            } else {
+                return [originServer]
+            }
+        }
+
+        return servers
+    }
+
+    func standRoomCount(forCommunityLevel level: Int) -> Int {
+        for (levelRange, standCount) in kCommunityLevelStandRoomTable {
+            if levelRange.contains(level) {
+                return standCount
+            }
+        }
+        return 0
+    }
+
+    @objc func checkHeartbeat(_ timer: Timer) {
+        let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (response, data, connectionError) in
+            if connectionError != nil {
+                log.error("error in checking heartbeat")
+                return
+            }
+
+            guard let data = data else { return }
+
+            let responseString = NSString(data: data, encoding: String.Encoding.utf8.rawValue)
+            self.fileLog.debug("\(responseString ?? "")")
+
+            guard let heartbeat = self.extractHeartbeat(fromXmlData: data) else {
+                log.error("error in extracting heatbeat")
+                return
+            }
+            self.fileLog.debug("\(heartbeat)")
+
+            self.delegate?.nicoUtilityDidReceiveHeartbeat(self, heartbeat: heartbeat)
+
+            if let interval = heartbeat.waitTime {
+                self.stopHeartbeatTimer()
+                self.scheduleHeartbeatTimer(immediateFire: false, interval: TimeInterval(interval))
+            }
+        }
+
+        // self.live may be nil if live is time-shifted. so use optional binding.
+        if let liveId = live?.liveId {
+            cookiedAsyncRequest(httpMethod: "GET", url: kHeartbeatUrl, parameters: ["v": liveId], completion: httpCompletion)
+        }
+    }
+}
+
+private extension NicoUtility {
+    func initializeFileLogger() {
+        Helper.setupFileLogger(fileLog, fileName: kFileLogName)
+    }
+
+    func initializeInstance() {
+        resolveUserNameOperationQueue.maxConcurrentOperationCount = 1
+    }
+
+    func debugForceReconnect() {
+        if (chatCount % kDebugForceReconnectChatCount) == (kDebugForceReconnectChatCount - 1) {
+            reconnectToLastLive()
+        }
+    }
+
     // MARK: Chat Checkers
-    private func isFirstChat(roomListener: RoomListener, chat: Chat) -> Bool {
+    func isFirstChat(roomListener: RoomListener, chat: Chat) -> Bool {
         if chat.isUserComment {
             if let room = roomListener.server?.roomPosition {
                 if receivedFirstChat[room] == nil || receivedFirstChat[room] == false {
@@ -368,72 +428,64 @@ extension NicoUtility {
                 }
             }
         }
-
         return false
     }
 
-    private func shouldNotifyChatToDelegate(chat: Chat) -> Bool {
+    func shouldNotifyChatToDelegate(chat: Chat) -> Bool {
         // premium == 0, 1
         if chat.isUserComment {
             return true
         }
-
         // comment == '/hb ifseetno xx'
         if chat.kickOutSeatNo != nil {
             return true
         }
-
         // others. is chat my assigned room's one?
         if isAssignedMessageServerChat(chat: chat) {
             return true
         }
-
         return false
     }
 
-    private func isKickedOut(roomListener: RoomListener, chat: Chat) -> Bool {
+    func isKickedOut(roomListener: RoomListener, chat: Chat) -> Bool {
         // XXX: should use isAssignedMessageServerChat()
         if roomListener.server?.roomPosition != messageServer?.roomPosition {
             return false
         }
-
         if let internalNo = chat.internalNo, internalNo < kDefaultResFrom {
             // there is a possibility the kickout command is invoked as a result of my connection start. so ignore.
             return false
         }
-
         if chat.kickOutSeatNo == user?.seatNo {
             return true
         }
-
         return false
     }
 
-    private func isDisconnected(chat: Chat) -> Bool {
+    func isDisconnected(chat: Chat) -> Bool {
         return (chat.comment == "/disconnect" && chat.isSystemComment && isAssignedMessageServerChat(chat: chat))
     }
 
-    private func isAssignedMessageServerChat(chat: Chat) -> Bool {
+    func isAssignedMessageServerChat(chat: Chat) -> Bool {
         return chat.roomPosition == messageServer?.roomPosition
     }
 
     // MARK: - Internal Functions
     // MARK: Connect
-    private func clearUserSessionCookieIfReserved() {
-        if shouldClearUserSessionCookie {
-            shouldClearUserSessionCookie = false
-            userSessionCookie = nil
-            log.debug("cleared user session cookie")
-        }
+    func clearUserSessionCookieIfReserved() {
+        guard shouldClearUserSessionCookie else { return }
+        shouldClearUserSessionCookie = false
+        userSessionCookie = nil
+        log.debug("cleared user session cookie")
     }
 
-    private func reconnectToLastLive() {
+    func reconnectToLastLive() {
         delegate?.nicoUtilityWillReconnectToLive(self)
         disconnect(reserveToReconnect: true)
     }
 
     // swiftlint:disable function_body_length
-    private func connect(liveNumber: Int?, userSessionCookie: String?) {
+    func connect(liveNumber: Int?, userSessionCookie: String?) {
         if liveNumber == nil {
             let reason = "no valid live number"
             log.error(reason)
@@ -502,7 +554,7 @@ extension NicoUtility {
     }
     // swiftlint:enable function_body_length
 
-    private func requestGetPlayerStatus(liveNumber: Int, success: @escaping (Live, User, MessageServer) -> Void, failure: @escaping (_ reason: String) -> Void) {
+    func requestGetPlayerStatus(liveNumber: Int, success: @escaping (Live, User, MessageServer) -> Void, failure: @escaping (_ reason: String) -> Void) {
         let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (response, data, connectionError) in
             if connectionError != nil {
                 let message = "error in cookied async request"
@@ -510,47 +562,39 @@ extension NicoUtility {
                 failure(message)
                 return
             }
-
             // let responseString = NSString(data: data, encoding: NSUTF8StringEncoding)
             // fileLog.debug("\(responseString)")
-
             guard let data = data else {
                 let message = "error in unpacking response data"
                 log.error(message)
                 failure(message)
                 return
             }
-
             let (error, code) = self.isErrorResponse(xmlData: data)
-
             if error {
                 log.error(code)
                 failure(code)
                 return
             }
-
             let live = self.extractLive(fromXmlData: data)
             let user = self.extractUser(fromXmlData: data)
-
             var messageServer: MessageServer?
             if user != nil {
                 messageServer = self.extractMessageServer(fromXmlData: data, user: user!)
             }
-
             if live == nil || user == nil || messageServer == nil {
                 let message = "error in extracting getplayerstatus response"
                 log.error(message)
                 failure(message)
                 return
             }
-
             success(live!, user!, messageServer!)
         }
 
         cookiedAsyncRequest(httpMethod: "GET", url: kGetPlayerStatusUrl, parameters: ["v": "lv" + String(liveNumber)], completion: httpCompletion)
     }
 
-    private func load(community: Community, success: @escaping () -> Void, failure: @escaping (_ reason: String) -> Void) {
+    func load(community: Community, success: @escaping () -> Void, failure: @escaping (_ reason: String) -> Void) {
         let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (response, data, connectionError) in
             if connectionError != nil {
                 let message = "error in cookied async request"
@@ -558,23 +602,19 @@ extension NicoUtility {
                 failure(message)
                 return
             }
-
             // let responseString = NSString(data: data, encoding: NSUTF8StringEncoding)
             // log.debug("\(responseString)")
-
             guard let data = data else {
                 let message = "error in unpacking response data"
                 log.error(message)
                 failure(message)
                 return
             }
-
             if community.isChannel == true {
                 self.extractChannelCommunity(fromHtmlData: data, community: community)
             } else {
                 self.extractUserCommunity(fromHtmlData: data, community: community)
             }
-
             success()
         }
 
@@ -582,57 +622,7 @@ extension NicoUtility {
         cookiedAsyncRequest(httpMethod: "GET", url: url, parameters: nil, completion: httpCompletion)
     }
 
-    // MARK: Message Server Functions
-    func deriveMessageServers(originServer: MessageServer, community: Community) -> [MessageServer] {
-        var arenaServer = originServer
-
-        if 0 < originServer.roomPosition.rawValue {
-            for _ in 1...(originServer.roomPosition.rawValue) {
-                if let previous = arenaServer.previous() {
-                    arenaServer = previous
-                } else {
-                    return [originServer]
-                }
-            }
-        }
-
-        var servers = [arenaServer]
-        var roomCount = 0
-
-        if community.isUser == true {
-            if let level = community.level {
-                roomCount = standRoomCount(forCommunityLevel: level)
-            } else {
-                // possible ban case. stand a, or up to assigned room
-                roomCount = max(1, originServer.roomPosition.rawValue)
-            }
-        } else {
-            // stand a, b, c, d, e
-            roomCount = 5
-        }
-
-        for _ in 1...roomCount {
-            if let next = servers.last!.next() {
-                servers.append(next)
-            } else {
-                return [originServer]
-            }
-        }
-
-        return servers
-    }
-
-    func standRoomCount(forCommunityLevel level: Int) -> Int {
-        for (levelRange, standCount) in kCommunityLevelStandRoomTable {
-            if levelRange.contains(level) {
-                return standCount
-            }
-        }
-
-        return 0
-    }
-
-    private func openNewMessageServer() {
+    func openNewMessageServer() {
         objc_sync_enter(self)
 
         if roomListeners.count == messageServers.count {
@@ -653,7 +643,7 @@ extension NicoUtility {
     }
 
     // MARK: Comment
-    private func requestGetPostKey(success: @escaping (_ postKey: String) -> Void, failure: @escaping () -> Void) {
+    func requestGetPostKey(success: @escaping (_ postKey: String) -> Void, failure: @escaping () -> Void) {
         guard let messageServer = messageServer else {
             log.error("cannot comment without messageServer")
             failure()
@@ -666,22 +656,18 @@ extension NicoUtility {
                 failure()
                 return
             }
-
             guard let data = data else {
                 log.error("error in unpacking response data")
                 failure()
                 return
             }
-
             let responseString = NSString(data: data, encoding: String.Encoding.utf8.rawValue)
             log.debug("\(responseString ?? "")")
-
             guard let postKey = (responseString as String?)?.extractRegexp(pattern: "postkey=(.+)") else {
                 log.error("error in extracting postkey")
                 failure()
                 return
             }
-
             success(postKey)
         }
 
@@ -697,21 +683,18 @@ extension NicoUtility {
         cookiedAsyncRequest(httpMethod: "GET", url: kGetPostKeyUrl, parameters: ["thread": thread, "block_no": blockNo], completion: httpCompletion)
     }
 
-    private func assignedRoomListener() -> RoomListener? {
+    func assignedRoomListener() -> RoomListener? {
         var assigned: RoomListener?
-
         for roomListener in roomListeners where roomListener.server! == messageServer! {
             assigned = roomListener
             break
         }
-
         return assigned
     }
 
     // MARK: Heartbeat
-    private func scheduleHeartbeatTimer(immediateFire: Bool = false, interval: TimeInterval = kHeartbeatDefaultInterval) {
+    func scheduleHeartbeatTimer(immediateFire: Bool = false, interval: TimeInterval = kHeartbeatDefaultInterval) {
         stopHeartbeatTimer()
-
         DispatchQueue.main.async {
             self.heartbeatTimer = Timer.scheduledTimer(timeInterval: interval, target: self, selector: #selector(NicoUtility.checkHeartbeat(_:)), userInfo: nil, repeats: true)
             if immediateFire {
@@ -720,53 +703,19 @@ extension NicoUtility {
         }
     }
 
-    private func stopHeartbeatTimer() {
+    func stopHeartbeatTimer() {
         heartbeatTimer?.invalidate()
         heartbeatTimer = nil
     }
 
-    @objc func checkHeartbeat(_ timer: Timer) {
-        let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (response, data, connectionError) in
-            if connectionError != nil {
-                log.error("error in checking heartbeat")
-                return
-            }
-
-            guard let data = data else { return }
-
-            let responseString = NSString(data: data, encoding: String.Encoding.utf8.rawValue)
-            self.fileLog.debug("\(responseString ?? "")")
-
-            guard let heartbeat = self.extractHeartbeat(fromXmlData: data) else {
-                log.error("error in extracting heatbeat")
-                return
-            }
-            self.fileLog.debug("\(heartbeat)")
-
-            self.delegate?.nicoUtilityDidReceiveHeartbeat(self, heartbeat: heartbeat)
-
-            if let interval = heartbeat.waitTime {
-                self.stopHeartbeatTimer()
-                self.scheduleHeartbeatTimer(immediateFire: false, interval: TimeInterval(interval))
-            }
-        }
-
-        // self.live may be nil if live is time-shifted. so use optional binding.
-        if let liveId = live?.liveId {
-            cookiedAsyncRequest(httpMethod: "GET", url: kHeartbeatUrl, parameters: ["v": liveId], completion: httpCompletion)
-        }
-    }
-
     // MARK: Misc Utility
-    private func reset() {
+    func reset() {
         live = nil
         user = nil
         messageServer = nil
-
         messageServers.removeAll(keepingCapacity: false)
         roomListeners.removeAll(keepingCapacity: false)
         receivedFirstChat.removeAll(keepingCapacity: false)
-
         chatCount = 0
     }
 }

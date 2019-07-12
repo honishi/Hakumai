@@ -26,7 +26,9 @@ final class MuteViewController: NSViewController {
         let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
         return storyboard.instantiateController(withIdentifier: kStoryboardIdMuteViewController) as? MuteViewController
     }
+}
 
+extension MuteViewController {
     // MARK: - Button Handlers
     @IBAction func addMuteUserId(_ sender: AnyObject) {
         addMute { muteStringValue in
@@ -39,13 +41,14 @@ final class MuteViewController: NSViewController {
             self.muteWordsArrayController.addObject(["Word": muteStringValue])
         }
     }
+}
 
-    private func addMute(completion: @escaping (String) -> Void) {
+private extension MuteViewController {
+    func addMute(completion: @escaping (String) -> Void) {
         let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
         guard let muteAddViewController = storyboard.instantiateController(withIdentifier: kStoryboardIdMuteAddViewController) as? MuteAddViewController else {
             return
         }
-
         muteAddViewController.completion = { (cancelled, muteStringValue) in
             if !cancelled {
                 completion(muteStringValue!)
@@ -53,7 +56,6 @@ final class MuteViewController: NSViewController {
             self.dismiss(muteAddViewController)
             // TODO: deinit in muteAddViewController is not called after this completion
         }
-
         presentAsSheet(muteAddViewController)
     }
 }

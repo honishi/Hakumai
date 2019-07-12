@@ -12,22 +12,16 @@ enum RoomPosition: Int, CustomStringConvertible {
     case arena = 0
     case standA, standB, standC, standD, standE, standF, standG, standH, standI, standJ
 
-    var description: String {
-        return "\(rawValue)(\(label()))"
-    }
+    var description: String { return "\(rawValue)(\(label()))" }
 
     // MARK: - Functions
     func previous() -> RoomPosition? {
-        if self == .arena {
-            return nil
-        }
+        guard self != .arena else { return nil }
         return RoomPosition(rawValue: rawValue - 1)
     }
 
     func next() -> RoomPosition? {
-        if self == .standJ {
-            return nil
-        }
+        guard self != .standJ else { return nil }
         return RoomPosition(rawValue: rawValue + 1)
     }
 
@@ -76,9 +70,7 @@ enum Premium: Int, CustomStringConvertible {
     case `operator` = 6
     case bsp = 7
 
-    var description: String {
-        return "\(rawValue)(\(label()))"
-    }
+    var description: String { return "\(rawValue)(\(label()))" }
 
     func label() -> String {
         switch self {

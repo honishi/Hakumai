@@ -31,19 +31,21 @@ final class SafariCookie {
             callback(nil)
         }
     }
+}
 
-    // MARK: - Private Functions
-    private static func parse(cookiePath: String, callback: @escaping(SafariCookieError?, [Cookie]?) -> Void) {
+// MARK: - Private Functions
+private extension SafariCookie {
+    static func parse(cookiePath: String, callback: @escaping(SafariCookieError?, [Cookie]?) -> Void) {
         guard let data = NSData(contentsOf: NSURL(fileURLWithPath: cookiePath) as URL) else { return }
         SafariCookie.parse(data: data, callback: callback)
     }
 
-    private static func parse(cookieURL: NSURL, callback: @escaping(SafariCookieError?, [Cookie]?) -> Void) {
+    static func parse(cookieURL: NSURL, callback: @escaping(SafariCookieError?, [Cookie]?) -> Void) {
         guard let data = NSData(contentsOf: cookieURL as URL) else { return }
         SafariCookie.parse(data: data, callback: callback)
     }
 
-    private static func parse(data: NSData, callback: @escaping(SafariCookieError?, [Cookie]?) -> Void) {
+    static func parse(data: NSData, callback: @escaping(SafariCookieError?, [Cookie]?) -> Void) {
         let parser = CookieParser()
         DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async {
             do {
@@ -113,10 +115,12 @@ private class CookieParser {
 
         return cookies
     }
+}
 
+private extension CookieParser {
     // MARK: - Private Functions
     // swiftlint:disable cyclomatic_complexity function_body_length
-    private func parseCookieData(cookie: BinaryReader) throws {
+    func parseCookieData(cookie: BinaryReader) throws {
         let macEpochOffset: Int64 = 978307199
         var offsets: [UInt32] = [UInt32]()
 
@@ -177,11 +181,11 @@ private class CookieParser {
     }
     // swiftlint:enable cyclomatic_complexity function_body_length
 
-    private func getNumPages() {
+    func getNumPages() {
         numPages = reader!.readIntBE()
     }
 
-    private func getCookieOffsets(index: Int) {
+    func getCookieOffsets(index: Int) {
         let page = pages[index]
         var offsets: [UInt32] = [UInt32]()
         let numCookies = pageNumCookies[index]
@@ -193,7 +197,7 @@ private class CookieParser {
         pageCookieOffsets.append(offsets)
     }
 
-    private func getNumCookies(index: Int) throws {
+    func getNumCookies(index: Int) throws {
         let page = pages[index]
         let header = page.readIntBE()
 
@@ -204,7 +208,7 @@ private class CookieParser {
         pageNumCookies.append(page.readIntLE())
     }
 
-    private func getCookieData(index: Int) {
+    func getCookieData(index: Int) {
         let page = pages[index]
         let cookieOffsets = pageCookieOffsets[index]
         var pageCookies: [BinaryReader] = [BinaryReader]()
@@ -218,13 +222,13 @@ private class CookieParser {
         cookieData.append(pageCookies)
     }
 
-    private func getPageSizes() {
+    func getPageSizes() {
         for _ in 0 ..< Int(numPages) {
             pageSizes.append(reader!.readIntBE())
         }
     }
 
-    private func getPages() {
+    func getPages() {
         for pageSize in pageSizes {
             pages.append(BinaryReader(data: reader!.readSlice(length: Int(pageSize))))
         }
@@ -307,7 +311,7 @@ private class BinaryReader {
 }
 
 // MARK: - Extension
-extension NSData {
+private extension NSData {
     func toString(encoding: UInt) -> String {
         return NSString(data: self as Data, encoding: encoding)! as String
     }

@@ -22,18 +22,14 @@ final class Heartbeat: CustomStringConvertible {
         case ok = 0
         case fail
 
-        var description: String {
-            return kHeartbeatStatuses[rawValue]
-        }
+        var description: String { return kHeartbeatStatuses[rawValue] }
     }
 
     enum ErrorCode: Int, CustomStringConvertible {
         case notFoundSlot = 0
         case notFoundUserLiveSlot
 
-        var description: String {
-            return kHeartbeatErrorCodes[rawValue]
-        }
+        var description: String { return kHeartbeatErrorCodes[rawValue] }
     }
 
     // MARK: - Properties
@@ -61,23 +57,19 @@ final class Heartbeat: CustomStringConvertible {
     // MARK: - Public Function
     static func statusFromString(status statusString: String) -> Heartbeat.Status? {
         var statusEnum: Heartbeat.Status?
-
         for index in 0 ..< kHeartbeatStatuses.count where statusString == kHeartbeatStatuses[index] {
             statusEnum = Heartbeat.Status(rawValue: index)
             break
         }
-
         return statusEnum
     }
 
     static func errorCodeFromString(errorCode errorCodeString: String) -> Heartbeat.ErrorCode? {
         var errorCodeEnum: Heartbeat.ErrorCode?
-
         for index in 0 ..< kHeartbeatErrorCodes.count where errorCodeString == kHeartbeatErrorCodes[index] {
             errorCodeEnum = Heartbeat.ErrorCode(rawValue: index)
             break
         }
-
         return errorCodeEnum
     }
 }

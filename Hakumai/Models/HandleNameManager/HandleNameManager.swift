@@ -35,8 +35,10 @@ final class HandleNameManager {
         deleteObsoletedHandleNames()
         objc_sync_exit(self)
     }
+}
 
-    // MARK: - Public Functions
+// MARK: - Public Functions
+extension HandleNameManager {
     func extractAndUpdateHandleName(live: Live, chat: Chat) {
         guard chat.userId != nil, let comment = chat.comment,
             let handleName = extractHandleName(fromComment: comment) else { return }
@@ -64,47 +66,11 @@ final class HandleNameManager {
         if comment.hasRegexp(pattern: kRegexpRemainingTime) {
             return nil
         }
-
         if comment.hasRegexp(pattern: kRegexpMailAddress) {
             return nil
         }
-
         let handleName = comment.extractRegexp(pattern: kRegexpHandleName)
         return handleName
-    }
-
-    // MARK: Database Functions
-    // for test
-    private func dropHandleNamesTableIfExists() {
-        guard let database = database else { return }
-
-        let dropTableSql = "drop table if exists " + kHandleNamesTable
-
-        objc_sync_enter(self)
-        let success = database.executeUpdate(dropTableSql, withArgumentsIn: nil)
-        objc_sync_exit(self)
-
-        if !success {
-            log.error("failed to drop table: \(String(describing: database.lastErrorMessage()))")
-        }
-    }
-
-    private func createHandleNamesTableIfNotExists() {
-        guard let database = database else { return }
-
-        // currently not used but reserved columns; color, reserved1, reserved2, reserved3
-        let createTableSql = "create table if not exists " + kHandleNamesTable + " " +
-            "(community_id text, user_id text, handle_name text, anonymous integer, color text, updated integer, " +
-            "reserved1 text, reserved2 text, reserved3 text, " +
-        "primary key (community_id, user_id))"
-
-        objc_sync_enter(self)
-        let success = database.executeUpdate(createTableSql, withArgumentsIn: nil)
-        objc_sync_exit(self)
-
-        if !success {
-            log.error("failed to create table: \(String(describing: database.lastErrorMessage()))")
-        }
     }
 
     func insertOrReplaceHandleName(communityId: String, userId: String, anonymous: Bool, handleName: String) {
@@ -138,8 +104,44 @@ final class HandleNameManager {
 
         return handleName
     }
+}
 
-    private func deleteHandleName(communityId: String, userId: String) {
+private extension HandleNameManager {
+    // MARK: Database Functions
+    // for test
+    func dropHandleNamesTableIfExists() {
+        guard let database = database else { return }
+
+        let dropTableSql = "drop table if exists " + kHandleNamesTable
+
+        objc_sync_enter(self)
+        let success = database.executeUpdate(dropTableSql, withArgumentsIn: nil)
+        objc_sync_exit(self)
+
+        if !success {
+            log.error("failed to drop table: \(String(describing: database.lastErrorMessage()))")
+        }
+    }
+
+    func createHandleNamesTableIfNotExists() {
+        guard let database = database else { return }
+
+        // currently not used but reserved columns; color, reserved1, reserved2, reserved3
+        let createTableSql = "create table if not exists " + kHandleNamesTable + " " +
+            "(community_id text, user_id text, handle_name text, anonymous integer, color text, updated integer, " +
+            "reserved1 text, reserved2 text, reserved3 text, " +
+        "primary key (community_id, user_id))"
+
+        objc_sync_enter(self)
+        let success = database.executeUpdate(createTableSql, withArgumentsIn: nil)
+        objc_sync_exit(self)
+
+        if !success {
+            log.error("failed to create table: \(String(describing: database.lastErrorMessage()))")
+        }
+    }
+
+    func deleteHandleName(communityId: String, userId: String) {
         guard let database = database else { return }
 
         let deleteSql = "delete from " + kHandleNamesTable + " where community_id = ? and user_id = ?"
@@ -153,7 +155,7 @@ final class HandleNameManager {
         }
     }
 
-    private func deleteObsoletedHandleNames() {
+    func deleteObsoletedHandleNames() {
         guard let database = database else { return }
 
         let deleteSql = "delete from " + kHandleNamesTable + " where updated < ? and anonymous = 1"
@@ -169,22 +171,20 @@ final class HandleNameManager {
     }
 
     // MARK: Database Instance Utility
-    private static func fullPathForHandleNamesDatabase() -> String {
+    static func fullPathForHandleNamesDatabase() -> String {
         return Helper.applicationDirectoryPath() + "/" + kHandleNamesDatabase
     }
 
-    private static func databaseForHandleNames() -> FMDatabase? {
+    static func databaseForHandleNames() -> FMDatabase? {
         let database = FMDatabase(path: HandleNameManager.fullPathForHandleNamesDatabase())
-
         if !(database?.open())! {
             log.error("unable to open database")
             return nil
         }
-
         return database
     }
 
-    private static func databaseQueueForHandleNames() -> FMDatabaseQueue? {
+    static func databaseQueueForHandleNames() -> FMDatabaseQueue? {
         return FMDatabaseQueue(path: HandleNameManager.fullPathForHandleNamesDatabase())
     }
 }

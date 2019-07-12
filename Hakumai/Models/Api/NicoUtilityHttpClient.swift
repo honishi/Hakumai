@@ -52,7 +52,6 @@ extension NicoUtility {
             if 0 < constructed.count {
                 constructed = constructed as String + "&"
             }
-
             constructed = constructed as String + "\(key)=\(value)"
         }
 

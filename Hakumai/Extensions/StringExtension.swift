@@ -16,6 +16,7 @@ extension String {
     subscript (i: Int) -> Character {
         return self[index(startIndex, offsetBy: i)]
     }
+
     // "立ち見A列".extractRegexp(pattern: "立ち見(\\w)列") -> Optional("A")
     func extractRegexp(pattern: String) -> String? {
         // convert String to NSString to handle regular expression as expected.
@@ -23,10 +24,7 @@ extension String {
         // see details at http://stackoverflow.com/a/27192734
         let nsStringSelf = (self as NSString)
 
-        let regexp: NSRegularExpression! = try? NSRegularExpression(pattern: pattern, options: [])
-        if regexp == nil {
-            return nil
-        }
+        guard let regexp = try? NSRegularExpression(pattern: pattern, options: []) else { return nil }
 
         let matched = regexp.firstMatch(in: nsStringSelf as String, options: [], range: NSRange(location: 0, length: nsStringSelf.length))
         if matched == nil {

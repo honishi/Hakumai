@@ -19,9 +19,7 @@ final class Live: CustomStringConvertible {
     var openTime: Date?
     var startTime: Date?
 
-    var liveUrlString: String {
-        return kLiveBaseUrl + (liveId ?? "")
-    }
+    var liveUrlString: String { return kLiveBaseUrl + (liveId ?? "") }
 
     var description: String {
         return (
@@ -31,7 +29,5 @@ final class Live: CustomStringConvertible {
     }
 
     // MARK: - Object Lifecycle
-    init() {
-        // nop
-    }
+    init() {}
 }

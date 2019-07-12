@@ -32,17 +32,13 @@ final class BrowserHelper {
         var scriptError: NSDictionary?
         let descriptor = script?.executeAndReturnError(&scriptError)
 
-        if scriptError != nil {
-            return nil
-        }
+        guard scriptError == nil else { return nil }
 
         var result: String?
-
         if let unicode = descriptor?.coerce(toDescriptorType: UInt32(typeUnicodeText)) {
             let data = unicode.data
             result = NSString(characters: (data as NSData).bytes.assumingMemoryBound(to: unichar.self), length: (data.count / MemoryLayout<unichar>.size)) as String
         }
-
         return result
     }
 }

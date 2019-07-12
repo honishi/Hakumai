@@ -52,8 +52,10 @@ final class KeychainUtility {
         log.debug("found no account in keychain")
         return nil
     }
+}
 
-    private static func keychainServiceName() -> String {
+private extension KeychainUtility {
+    static func keychainServiceName() -> String {
         var bundleIdentifier = ""
         if let bi = Bundle.main.infoDictionary?["CFBundleIdentifier"] as? String {
             bundleIdentifier = bi

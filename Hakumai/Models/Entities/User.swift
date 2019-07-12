@@ -35,7 +35,5 @@ final class User: CustomStringConvertible {
     }
 
     // MARK: - Object Lifecycle
-    init() {
-        // nop
-    }
+    init() {}
 }

@@ -45,7 +45,9 @@ final class PreferenceWindowController: NSWindowController {
     override func awakeFromNib() {
         super.awakeFromNib()
     }
+}
 
+extension PreferenceWindowController {
     // MARK: - NSWindowController Overrides
     override func windowDidLoad() {
         if let vc = GeneralViewController.shared {
@@ -73,26 +75,25 @@ final class PreferenceWindowController: NSWindowController {
             changeContent(viewController: controller, itemIdentifier: convertFromNSToolbarItemIdentifier(toolbarItem.itemIdentifier))
         }
     }
+}
 
-    // MARK: - Internal Functions
-
+// MARK: - Internal Functions
+private extension PreferenceWindowController {
     // MARK: Content View Utility
     // based on this implementation;
     // https://github.com/sequelpro/sequelpro/blob/fd3ff51dc624be5ce645ce25eb72d03e5a359416/Source/SPPreferenceController.m#L248
-    private func changeContent(viewController: NSViewController, itemIdentifier: String) {
+    func changeContent(viewController: NSViewController, itemIdentifier: String) {
         if let subViews = window?.contentView?.subviews {
             for subView in subViews {
                 subView.removeFromSuperview()
             }
         }
-
         window?.contentView?.addSubview(viewController.view)
         resizeWindowForContentView(view: viewController.view)
-
         toolbar.selectedItemIdentifier = convertToOptionalNSToolbarItemIdentifier(itemIdentifier)
     }
 
-    private func resizeWindowForContentView(view: NSView) {
+    func resizeWindowForContentView(view: NSView) {
         let viewSize = view.frame.size
         var frame = window!.frame
 
@@ -106,16 +107,14 @@ final class PreferenceWindowController: NSWindowController {
         window?.setFrame(frame, display: true, animate: true)
     }
 
-    private func toolbarHeight() -> CGFloat {
+    func toolbarHeight() -> CGFloat {
         var toolbarHeight: CGFloat = 0
-
         if toolbar != nil && toolbar.isVisible {
             let windowFrame = NSWindow.contentRect(forFrameRect: window!.frame, styleMask: window!.styleMask)
             // swiftlint:disable legacy_nsgeometry_functions
             toolbarHeight = windowFrame.height - NSHeight(window!.contentView!.frame)
             // swiftlint:enable legacy_nsgeometry_functions
         }
-
         return toolbarHeight
     }
 }

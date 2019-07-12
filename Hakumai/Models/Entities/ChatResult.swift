@@ -19,9 +19,7 @@ final class ChatResult {
         case readOnly
         case tooLong
 
-        var description: String {
-            return "ChatResult.Status: \(rawValue)(\(label()))"
-        }
+        var description: String { return "ChatResult.Status: \(rawValue)(\(label()))" }
 
         func label() -> String {
             switch self {
@@ -46,15 +44,8 @@ final class ChatResult {
     }
 
     var status: Status?
-
-    var description: String {
-        return (
-            "ChatResult: status[\(status?.description ?? "")]"
-        )
-    }
+    var description: String { return "ChatResult: status[\(status?.description ?? "")]" }
 
     // MARK: - Object Lifecycle
-    init() {
-        // nop
-    }
+    init() {}
 }

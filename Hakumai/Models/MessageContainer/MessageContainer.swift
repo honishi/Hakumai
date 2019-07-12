@@ -29,7 +29,9 @@ final class MessageContainer {
 
     private var rebuildingFilteredMessages = false
     private var calculatingActive = false
+}
 
+extension MessageContainer {
     // MARK: - Basic Operation to Content Array
     func append(chatOrSystemMessage object: Any) -> (appended: Bool, count: Int) {
         objc_sync_enter(self)
@@ -40,14 +42,12 @@ final class MessageContainer {
             message = Message(message: systemMessage)
         } else if let chat = object as? Chat {
             var isFirstChat = false
-
             if chat.isUserComment {
                 isFirstChat = firstChat[chat.userId!] == nil ? true : false
                 if isFirstChat {
                     firstChat[chat.userId!] = true
                 }
             }
-
             message = Message(chat: chat, firstChat: isFirstChat)
         } else {
             assert(false, "appending unexpected object")
@@ -67,7 +67,6 @@ final class MessageContainer {
         objc_sync_enter(self)
         let count = filteredMessages.count
         objc_sync_exit(self)
-
         return count
     }
 
@@ -75,7 +74,6 @@ final class MessageContainer {
         objc_sync_enter(self)
         let content = filteredMessages[index]
         objc_sync_exit(self)
-
         return content
     }
 
@@ -87,7 +85,6 @@ final class MessageContainer {
             if message.messageType != .chat {
                 continue
             }
-
             if message.chat?.userId == userId {
                 userMessages.append(message)
             }
@@ -143,26 +140,20 @@ final class MessageContainer {
                 let message = self.sourceMessages[i - 1]
                 objc_sync_exit(self)
                 i -= 1
-
                 if message.messageType == .system {
                     continue
                 }
-
                 let chat = message.chat!
-
                 if chat.date == nil || chat.userId == nil {
                     continue
                 }
-
                 if !chat.isUserComment {
                     continue
                 }
-
                 // is "chat.date < tenMinutesAgo" ?
                 if chat.date!.compare(tenMinutesAgo) == .orderedAscending {
                     break
                 }
-
                 activeUsers[chat.userId!] = true
             }
 
@@ -220,22 +211,22 @@ final class MessageContainer {
             }
         }
     }
+}
 
-    // MARK: - Internal Functions
+// MARK: - Internal Functions
+private extension MessageContainer {
     // MARK: Filtered Message Append Utility
-    private func append(message: Message, into messages: inout [Message]) -> Bool {
+    func append(message: Message, into messages: inout [Message]) -> Bool {
         var appended = false
-
         if shouldAppend(message: message) {
             messages.append(message)
             appended = true
         }
-
         return appended
     }
 
     // swiftlint:disable cyclomatic_complexity
-    private func shouldAppend(message: Message) -> Bool {
+    func shouldAppend(message: Message) -> Bool {
         // filter by message type
         if message.messageType == .system {
             return true

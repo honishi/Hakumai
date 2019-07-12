@@ -51,8 +51,10 @@ final class GeneralViewController: NSViewController {
         let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
         return storyboard.instantiateController(withIdentifier: kStoryboardIdGeneralViewController) as? GeneralViewController
     }
+}
 
-    // MARK: - NSViewController Overrides
+// MARK: - NSViewController Overrides
+extension GeneralViewController {
     override func viewDidAppear() {
         super.viewDidAppear()
 
@@ -60,66 +62,55 @@ final class GeneralViewController: NSViewController {
             mailAddress = account.mailAddress as NSString
             password = account.password as NSString
         }
-
         validateCheckAccountButton()
     }
+}
 
-    // MARK: - Internal Functions
-    private func validateCheckAccountButton() {
-        checkAccountButton?.isEnabled = canLogin()
-    }
-
-    private func canLogin() -> Bool {
-        if mailAddress == nil || password == nil {
-            return false
-        }
-
-        let loginSelected = sessionManagementMatrix?.selectedTag() == SessionManagementType.login.rawValue
-        let hasValidMailAddress = (mailAddress as String).hasRegexp(pattern: kRegexpMailAddress)
-        let hasValidPassword = (password as String).hasRegexp(pattern: kRegexpPassword)
-
-        return (loginSelected && hasValidMailAddress && hasValidPassword)
-    }
-
+extension GeneralViewController {
     @IBAction func detectedChangeInSessionManagementMatrix(_ sender: AnyObject) {
         guard let matrix = sender as? NSMatrix else { return }
         // log.debug("\(matrix.selectedTag())")
-
         if matrix.selectedTag() == SessionManagementType.login.rawValue {
             mailAddressTextField.becomeFirstResponder()
         }
     }
 
     @IBAction func detectedEnterInTextField(_ sender: AnyObject) {
-        if canLogin() {
-            checkAccount(self)
-        }
+        guard canLogin() else { return }
+        checkAccount(self)
     }
 
     @IBAction func checkAccount(_ sender: AnyObject) {
         log.debug("login w/ [\(String(describing: self.mailAddress))][\(String(describing: self.password))]")
-
-        if canLogin() == false {
-            return
-        }
-
+        guard canLogin() else { return }
         let completion = { (userSessionCookie: String?) -> Void in
             DispatchQueue.main.async {
                 self.progressIndicator.stopAnimation(self)
-
                 if userSessionCookie == nil {
                     self.checkAccountStatusLabel.stringValue = "Status: Failed"
                     return
                 }
-
                 self.checkAccountStatusLabel.stringValue = "Status: Success"
-
                 KeychainUtility.removeAllAccountsInKeychain()
                 KeychainUtility.setAccountToKeychain(mailAddress: self.mailAddress as String, password: self.password as String)
             }
         }
-
         progressIndicator.startAnimation(self)
         CookieUtility.requestLoginCookie(mailAddress: mailAddress as String, password: password as String, completion: completion)
+    }
+}
+
+// MARK: - Internal Functions
+private extension GeneralViewController {
+    func validateCheckAccountButton() {
+        checkAccountButton?.isEnabled = canLogin()
+    }
+
+    func canLogin() -> Bool {
+        guard mailAddress != nil, password != nil else { return false }
+        let loginSelected = sessionManagementMatrix?.selectedTag() == SessionManagementType.login.rawValue
+        let hasValidMailAddress = (mailAddress as String).hasRegexp(pattern: kRegexpMailAddress)
+        let hasValidPassword = (password as String).hasRegexp(pattern: kRegexpPassword)
+        return loginSelected && hasValidMailAddress && hasValidPassword
     }
 }

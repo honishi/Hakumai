@@ -53,9 +53,11 @@ final class LoginCookie {
         let queue = OperationQueue()
         NSURLConnection.sendAsynchronousRequest(request as URLRequest, queue: queue, completionHandler: httpCompletion)
     }
+}
 
-    // MARK: - Internal Functions
-    private static func removeAllStoredCookie() {
+// MARK: - Internal Functions
+private extension LoginCookie {
+    static func removeAllStoredCookie() {
         let cookieStorage = HTTPCookieStorage.shared
         guard let cookies = cookieStorage.cookies(for: URL(string: kNicoVideoDomain)!) else { return }
         for cookie in cookies {
@@ -63,7 +65,7 @@ final class LoginCookie {
         }
     }
 
-    private static func findUserSessionCookie() -> String? {
+    static func findUserSessionCookie() -> String? {
         let cookieStorage = HTTPCookieStorage.shared
         guard let cookies = cookieStorage.cookies(for: URL(string: kNicoVideoDomain)!) else { return nil }
         for cookie in cookies where cookie.name == "user_session" {

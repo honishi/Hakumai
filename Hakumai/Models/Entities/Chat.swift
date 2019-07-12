@@ -43,8 +43,10 @@ final class Chat: CustomStringConvertible {
 
     // MARK: - Object Lifecycle
     init() {}
+}
 
-    // MARK: - Public Functions
+// MARK: - Public Functions
+extension Chat {
     static func isRawUserId(_ userId: String?) -> Bool {
         guard let regexp = try? NSRegularExpression(pattern: "^\\d+$", options: []),
             let userId = userId else { return false }

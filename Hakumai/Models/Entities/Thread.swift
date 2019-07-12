@@ -23,7 +23,5 @@ final class Thread: CustomStringConvertible {
     }
 
     // MARK: - Object Lifecycle
-    init() {
-        // nop
-    }
+    init() {}
 }

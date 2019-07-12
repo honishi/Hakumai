@@ -40,7 +40,6 @@ final class MessageServer: CustomStringConvertible {
         if address.hasRegexp(pattern: kRegExpPatternHostChannel) {
             return true
         }
-
         // skip to examine kRegExpPatternHostUser, default live type is 'user'
         return false
     }
@@ -107,15 +106,12 @@ final class MessageServer: CustomStringConvertible {
 
     static func serverIndex(isChannel: Bool, serverNumber: Int, port: Int) -> Int? {
         var index = 0
-
         for (n, p) in isChannel ? kMessageServersChannel : kMessageServersUser {
             if serverNumber == n && port == p {
                 return index
             }
-
             index += 1
         }
-
         return nil
     }
 
@@ -179,10 +175,8 @@ func == (left: [MessageServer], right: [MessageServer]) -> Bool {
     if left.count != right.count {
         return false
     }
-
     for i in 0..<left.count where left[i] != right[i] {
         return false
     }
-
     return true
 }
