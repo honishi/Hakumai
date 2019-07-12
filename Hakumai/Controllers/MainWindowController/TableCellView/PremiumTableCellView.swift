@@ -34,7 +34,6 @@ private extension PremiumTableCellView {
 
     func image(forPremium premium: Premium) -> NSImage? {
         var image: NSImage?
-
         switch premium {
         case .premium:
             image = NSImage(named: kImageNamePremium)
@@ -43,7 +42,6 @@ private extension PremiumTableCellView {
         case .system, .caster, .operator, .bsp:
             image = NSImage(named: kImageNameMisc)
         }
-
         return image
     }
 

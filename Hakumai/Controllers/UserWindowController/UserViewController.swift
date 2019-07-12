@@ -27,39 +27,34 @@ final class UserViewController: NSViewController {
         didSet {
             var userIdLabelValue: String?
             var userNameLabelValue: String?
-
             if let userId = userId {
                 userIdLabelValue = userId
-
                 if let userName = NicoUtility.shared.cachedUserName(forUserId: userId) {
                     userNameLabelValue = userName
                 }
-
                 messages = MessageContainer.sharedContainer.messages(fromUserId: userId)
             } else {
                 messages.removeAll(keepingCapacity: false)
                 rowHeightCacher.removeAll(keepingCapacity: false)
             }
-
             userIdLabel.stringValue = "UserId: " + (userIdLabelValue ?? "-----")
             userNameLabel.stringValue = "UserName: " + (userNameLabelValue ?? "-----")
-
             reloadMessages()
         }
     }
     var messages = [Message]()
-
     var rowHeightCacher = [Int: CGFloat]()
 
     // MARK: - Object Lifecycle
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
+}
 
-    // MARK: - NSViewController Functions
+// MARK: - NSViewController Functions
+extension UserViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
-
         registerNibs()
     }
 
@@ -67,15 +62,16 @@ final class UserViewController: NSViewController {
         let nibs = [
             (kNibNameRoomPositionTableCellView, kRoomPositionColumnIdentifier),
             (kNibNameScoreTableCellView, kScoreColumnIdentifier)]
-
         for (nibName, identifier) in nibs {
             let nib = NSNib(nibNamed: nibName, bundle: Bundle.main)
             tableView.register(nib!, forIdentifier: convertToNSUserInterfaceItemIdentifier(identifier))
         }
     }
+}
 
-    // MARK: - NSTableViewDataSource Functions
-    func numberOfRowsInTableView(_ tableView: NSTableView) -> Int {
+// MARK: - NSTableViewDataSource Functions
+extension UserViewController: NSTableViewDataSource, NSTableViewDelegate {
+    func numberOfRows(in tableView: NSTableView) -> Int {
         return messages.count
     }
 
@@ -119,24 +115,22 @@ final class UserViewController: NSViewController {
         }
     }
 
-    func tableView(_ tableView: NSTableView, viewForTableColumn tableColumn: NSTableColumn?, row: Int) -> NSView? {
+    func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         var view: NSTableCellView?
-
         if let identifier = tableColumn?.identifier {
             view = tableView.makeView(withIdentifier: identifier, owner: self) as? NSTableCellView
             view?.textField?.stringValue = ""
         }
-
         let message = messages[row]
-
         if message.messageType == .chat {
             configure(view: view!, forChat: message, withTableColumn: tableColumn!)
         }
-
         return view
     }
+}
 
-    private func configure(view: NSTableCellView, forChat message: Message, withTableColumn tableColumn: NSTableColumn) {
+private extension UserViewController {
+    func configure(view: NSTableCellView, forChat message: Message, withTableColumn tableColumn: NSTableColumn) {
         let chat = message.chat!
 
         var attributed: NSAttributedString?
@@ -161,7 +155,7 @@ final class UserViewController: NSViewController {
     }
 
     // MARK: Utility
-    private func contentAndAttributes(forMessage message: Message) -> (String, [String: Any]) {
+    func contentAndAttributes(forMessage message: Message) -> (String, [String: Any]) {
         var content: String!
         var attributes = [String: Any]()
 
@@ -176,7 +170,7 @@ final class UserViewController: NSViewController {
         return (content, attributes)
     }
 
-    private func shouldTableViewScrollToBottom() -> Bool {
+    func shouldTableViewScrollToBottom() -> Bool {
         let viewRect = scrollView.contentView.documentRect
         let visibleRect = scrollView.contentView.documentVisibleRect
         // log.debug("\(viewRect)-\(visibleRect)")
@@ -190,7 +184,7 @@ final class UserViewController: NSViewController {
         return shouldScroll
     }
 
-    private func scrollTableViewToBottom() {
+    func scrollTableViewToBottom() {
         let clipView = scrollView.contentView
         let x = clipView.documentVisibleRect.origin.x
         let y = clipView.documentRect.size.height - clipView.documentVisibleRect.size.height
@@ -199,18 +193,12 @@ final class UserViewController: NSViewController {
         clipView.setBoundsOrigin(origin)
     }
 
-    // MARK: - Public Functions
-
-    // MARK: - Internal Functions
-    private func reloadMessages() {
+    func reloadMessages() {
         let shouldScroll = shouldTableViewScrollToBottom()
-
         tableView.reloadData()
-
         if shouldScroll {
             scrollTableViewToBottom()
         }
-
         scrollView.flashScrollers()
     }
 }

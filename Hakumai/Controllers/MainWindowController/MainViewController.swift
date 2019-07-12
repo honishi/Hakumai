@@ -358,17 +358,14 @@ extension MainViewController {
     func control(_ control: NSControl, textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
         let isMovedUp = commandSelector == #selector(NSResponder.moveUp(_:))
         let isMovedDown = commandSelector == #selector(NSResponder.moveDown(_:))
-
         if isMovedUp || isMovedDown {
             if commentHistory.count == 0 {
                 // nop
             } else {
                 handleCommentTextFieldKeyUpDown(isMovedUp: isMovedUp, isMovedDown: isMovedDown)
             }
-
             return true
         }
-
         return false
     }
 
@@ -440,16 +437,15 @@ extension MainViewController {
     }
 
     func nicoUtilityDidConnectToLive(_ nicoUtility: NicoUtility, roomPosition: RoomPosition) {
-        if connectedToLive == false {
-            connectedToLive = true
-            logSystemMessageToTableView("Connected to live.")
-            DispatchQueue.main.async {
-                self.connectButton.isEnabled = true
-                self.connectButton.image = NSImage(named: kConnectButtonImageNameStop)
-                self.progressIndicator.stopAnimation(self)
-            }
-            updateSpeechManagerState()
+        guard connectedToLive == false else { return }
+        connectedToLive = true
+        logSystemMessageToTableView("Connected to live.")
+        DispatchQueue.main.async {
+            self.connectButton.isEnabled = true
+            self.connectButton.image = NSImage(named: kConnectButtonImageNameStop)
+            self.progressIndicator.stopAnimation(self)
         }
+        updateSpeechManagerState()
     }
 
     func nicoUtilityDidReceiveFirstChat(_ nicoUtility: NicoUtility, chat: Chat) {
@@ -514,38 +510,29 @@ extension MainViewController {
     private func appendTableView(_ chatOrSystemMessage: Any) {
         DispatchQueue.main.async {
             let shouldScroll = self.shouldTableViewScrollToBottom()
-
             let (appended, count) = MessageContainer.sharedContainer.append(chatOrSystemMessage: chatOrSystemMessage)
-
-            if appended {
-                let rowIndex = count - 1
-                let message = MessageContainer.sharedContainer[rowIndex]
-
-                self.tableView.insertRows(at: IndexSet(integer: rowIndex), withAnimation: NSTableView.AnimationOptions())
-                // self.logChat(chatOrSystemMessage)
-
-                if shouldScroll {
-                    self.scrollTableViewToBottom()
-                }
-
-                if message.messageType == .chat {
-                    self.handleSpeech(chat: message.chat!)
-                }
-
-                self.scrollView.flashScrollers()
+            guard appended else { return }
+            let rowIndex = count - 1
+            let message = MessageContainer.sharedContainer[rowIndex]
+            self.tableView.insertRows(at: IndexSet(integer: rowIndex), withAnimation: NSTableView.AnimationOptions())
+            // self.logChat(chatOrSystemMessage)
+            if shouldScroll {
+                self.scrollTableViewToBottom()
             }
+            if message.messageType == .chat {
+                self.handleSpeech(chat: message.chat!)
+            }
+            self.scrollView.flashScrollers()
         }
     }
 
     private func logMessage(_ message: Message) {
         var content: String?
-
         if message.messageType == .system {
             content = message.message
         } else if message.messageType == .chat {
             content = message.chat!.comment
         }
-
         log.debug("[ \(content!) ]")
     }
 
@@ -602,7 +589,6 @@ extension MainViewController {
     // MARK: - UserWindowControllerDelegate Functions
     func userWindowControllerDidClose(_ userWindowController: UserWindowController) {
         log.debug("")
-
         if let index = userWindowControllers.index(of: userWindowController) {
             userWindowControllers.remove(at: index)
         }
@@ -631,15 +617,11 @@ extension MainViewController {
 
     private func defaultHandleName(live: Live, chat: Chat) -> String? {
         var defaultHandleName: String?
-
         if let handleName = HandleNameManager.sharedManager.handleName(forLive: live, chat: chat) {
             defaultHandleName = handleName
-        } else {
-            if let userName = NicoUtility.shared.cachedUserName(forChat: chat) {
-                defaultHandleName = userName
-            }
+        } else if let userName = NicoUtility.shared.cachedUserName(forChat: chat) {
+            defaultHandleName = userName
         }
-
         return defaultHandleName
     }
 
@@ -660,10 +642,8 @@ extension MainViewController {
     // MARK: - Internal Functions
     private func initializeHandleNameManager() {
         progressIndicator.startAnimation(self)
-
         // force to invoke setup methods in HandleNameManager()
         _ = HandleNameManager.sharedManager
-
         progressIndicator.stopAnimation(self)
     }
 
@@ -709,28 +689,24 @@ extension MainViewController {
 
     @IBAction func connectLive(_ sender: AnyObject) {
         initializeHandleNameManager()
+        guard let liveNumber = liveTextField.stringValue.extractLiveNumber() else { return }
 
-        if let liveNumber = liveTextField.stringValue.extractLiveNumber() {
-            clearAllChats()
+        clearAllChats()
+        communityImageView.image = NSImage(named: kCommunityImageDefaultName)
+        NicoUtility.shared.delegate = self
 
-            communityImageView.image = NSImage(named: kCommunityImageDefaultName)
+        let sessionManagementType = SessionManagementType(rawValue: UserDefaults.standard.integer(forKey: Parameters.sessionManagement))!
 
-            NicoUtility.shared.delegate = self
-
-            let sessionManagementType = SessionManagementType(rawValue: UserDefaults.standard.integer(forKey: Parameters.sessionManagement))!
-
-            switch sessionManagementType {
-            case .login:
-                if let account = KeychainUtility.accountInKeychain() {
-                    let mailAddress = account.mailAddress
-                    let password = account.password
-                    NicoUtility.shared.connect(liveNumber: liveNumber, mailAddress: mailAddress, password: password)
-                }
-            case .chrome:
-                NicoUtility.shared.connect(liveNumber: liveNumber, browserType: .chrome)
-            case .safari:
-                NicoUtility.shared.connect(liveNumber: liveNumber, browserType: .safari)
-            }
+        switch sessionManagementType {
+        case .login:
+            guard let account = KeychainUtility.accountInKeychain() else { return }
+            let mailAddress = account.mailAddress
+            let password = account.password
+            NicoUtility.shared.connect(liveNumber: liveNumber, mailAddress: mailAddress, password: password)
+        case .chrome:
+            NicoUtility.shared.connect(liveNumber: liveNumber, browserType: .chrome)
+        case .safari:
+            NicoUtility.shared.connect(liveNumber: liveNumber, browserType: .safari)
         }
     }
 
@@ -762,23 +738,16 @@ extension MainViewController {
 
     @objc func openUserWindow(_ sender: AnyObject?) {
         let clickedRow = tableView.clickedRow
-
         if clickedRow == -1 {
             return
         }
 
         let message = MessageContainer.sharedContainer[clickedRow]
-
-        if message.messageType != .chat || message.chat?.userId == nil {
-            return
-        }
-
-        let chat = message.chat!
-
+        guard message.messageType == .chat, let chat = message.chat, let userId = chat.userId else { return }
         var userWindowController: UserWindowController?
 
         // check if user window exists?
-        for existing in userWindowControllers where chat.userId == existing.userId {
+        for existing in userWindowControllers where userId == existing.userId {
             userWindowController = existing
             log.debug("existing userwc found, use it:\(userWindowController?.description ?? "")")
             break
@@ -786,22 +755,22 @@ extension MainViewController {
 
         if userWindowController == nil {
             // not exist, so create and cache it
-            userWindowController = UserWindowController.generateInstance(delegate: self, userId: chat.userId!)
-            positionUserWindow(userWindowController!.window!)
-            log.debug("no existing userwc found, create it:\(userWindowController?.description ?? "")")
-            userWindowControllers.append(userWindowController!)
+            userWindowController = UserWindowController.generateInstance(delegate: self, userId: userId)
+            if let uwc = userWindowController {
+                positionUserWindow(uwc.window)
+                log.debug("no existing userwc found, create it:\(uwc.description)")
+                userWindowControllers.append(uwc)
+            }
         }
-
-        userWindowController!.showWindow(self)
+        userWindowController?.showWindow(self)
     }
 
-    private func positionUserWindow(_ userWindow: NSWindow) {
+    private func positionUserWindow(_ userWindow: NSWindow?) {
+        guard let userWindow = userWindow else { return }
         var topLeftPoint: NSPoint = nextUserWindowTopLeftPoint
-
         if userWindowControllers.count == 0 {
             topLeftPoint = kUserWindowDefautlTopLeftPoint
         }
-
         nextUserWindowTopLeftPoint = userWindow.cascadeTopLeft(from: topLeftPoint)
     }
 
@@ -814,7 +783,6 @@ extension MainViewController {
     private func stopTimers() {
         elapsedTimer?.invalidate()
         elapsedTimer = nil
-
         activeTimer?.invalidate()
         activeTimer = nil
     }
@@ -825,16 +793,13 @@ extension MainViewController {
         if let startTime = NicoUtility.shared.live?.startTime {
             var prefix = ""
             var elapsed = Date().timeIntervalSince(startTime as Date)
-
             if elapsed < 0 {
                 prefix = "-"
                 elapsed = abs(elapsed)
             }
-
             let hour = String(format: "%02d", Int(elapsed / 3600))
             let minute = String(format: "%02d", Int((elapsed / 60).truncatingRemainder(dividingBy: 60)))
             let second = String(format: "%02d", Int(elapsed.truncatingRemainder(dividingBy: 60)))
-
             display = "\(prefix)\(hour):\(minute):\(second)"
         }
 
@@ -868,7 +833,6 @@ extension MainViewController {
         guard enabled else { return }
         DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async {
             SpeechManager.sharedManager.enqueue(chat: chat)
-
             if SpeechManager.sharedManager.refreshChatQueueIfQueuedTooMuch() {
                 // logSystemMessageToTableView("Refreshed speech queue.")
             }
