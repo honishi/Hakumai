@@ -14,9 +14,9 @@ private let kLogColors: [(fg: (Int, Int, Int)?, bg: (Int, Int, Int)?)] = [  // s
     ((147, 161, 161), nil),             // verbose (light grey)
     ((147, 161, 161), nil),             // debug (dark grey)
     (( 38, 139, 210), nil),             // info (blue)
-    ((181, 137, 0), nil),             // warning (orange)
-    ((220, 50, 47), nil),             // error (red)
-    ((238, 232, 213), (220, 50, 47)) // severe (white on red)
+    ((181, 137, 0), nil),               // warning (orange)
+    ((220, 50, 47), nil),               // error (red)
+    ((238, 232, 213), (220, 50, 47))    // severe (white on red)
 ]
 
 final class Helper {
@@ -24,9 +24,21 @@ final class Helper {
     static func setupLogger(_ logger: XCGLogger) {
         #if DEBUG
         Helper.colorizeLogger(log)
-        log.setup(level: .debug, showThreadName: true, showLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: nil)
+        log.setup(
+            level: .debug,
+            showThreadName: true,
+            showLevel: true,
+            showFileNames: true,
+            showLineNumbers: true,
+            writeToFile: nil)
         #else
-        logger.setup(level: .none, showThreadName: false, showLevel: false, showFileNames: false, showLineNumbers: false, writeToFile: nil)
+        logger.setup(
+            level: .none,
+            showThreadName: false,
+            showLevel: false,
+            showFileNames: false,
+            showLineNumbers: false,
+            writeToFile: nil)
         #endif
     }
 
@@ -36,13 +48,25 @@ final class Helper {
 
         Helper.createApplicationDirectoryIfNotExists()
         let path = Helper.applicationDirectoryPath() + "/" + fileName
-        log.setup(level: .verbose, showThreadName: true, showLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: path)
+        log.setup(
+            level: .verbose,
+            showThreadName: true,
+            showLevel: true,
+            showFileNames: true,
+            showLineNumbers: true,
+            writeToFile: path)
 
         if let console = log.destination(withIdentifier: XCGLogger.Constants.baseConsoleDestinationIdentifier) {
             log.remove(destination: console)
         }
         #else
-        logger.setup(level: .none, showThreadName: false, showLevel: false, showFileNames: false, showLineNumbers: false, writeToFile: nil)
+        logger.setup(
+            level: .none,
+            showThreadName: false,
+            showLevel: false,
+            showFileNames: false,
+            showLineNumbers: false,
+            writeToFile: nil)
         #endif
     }
 
@@ -59,12 +83,10 @@ final class Helper {
 
     static func applicationDirectoryPath() -> String {
         let appSupportDirectory = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)[0]
-
         var bundleIdentifier = ""
         if let bi = Bundle.main.infoDictionary?["CFBundleIdentifier"] as? String {
             bundleIdentifier = bi
         }
-
         return appSupportDirectory + "/" + bundleIdentifier
     }
 
