@@ -20,15 +20,15 @@ extension NicoUtility {
         var parameteredUrl: String = url
         let constructedParameters = construct(parameters: parameters)
 
-        if httpMethod == "GET" && constructedParameters != nil {
-            parameteredUrl += "?" + constructedParameters!
+        if httpMethod == "GET", let constructedParameters = constructedParameters {
+            parameteredUrl += "?" + constructedParameters
         }
 
         let request = mutableRequest(customHeaders: parameteredUrl)
         request.httpMethod = httpMethod
 
-        if httpMethod == "POST" && constructedParameters != nil {
-            request.httpBody = constructedParameters!.data(using: String.Encoding.utf8)
+        if httpMethod == "POST", let constructedParameters = constructedParameters {
+            request.httpBody = constructedParameters.data(using: String.Encoding.utf8)
         }
 
         if let cookies = sessionCookies() {
@@ -64,11 +64,9 @@ extension NicoUtility {
     }
 
     private func mutableRequest(customHeaders url: String) -> NSMutableURLRequest {
-        let urlObject = URL(string: url)!
+        guard let urlObject = URL(string: url) else { return NSMutableURLRequest() }
         let mutableRequest = NSMutableURLRequest(url: urlObject)
-
         mutableRequest.setValue(kUserAgent, forHTTPHeaderField: "User-Agent")
-
         return mutableRequest
     }
 

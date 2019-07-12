@@ -31,7 +31,7 @@ extension String {
             return nil
         }
 
-        let nsRange = matched!.range(at: 1)
+        guard let nsRange = matched?.range(at: 1) else { return nil }
         let nsSubstring = nsStringSelf.substring(with: nsRange)
 
         return (nsSubstring as String)

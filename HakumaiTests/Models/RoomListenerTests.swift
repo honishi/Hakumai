@@ -70,6 +70,7 @@ final class RoomListenerTests: XCTestCase {
         XCTAssert(parsed.count == 2, "")
     }
 
+    // swiftlint:disable force_unwrapping
     func xmlRootElementFromXMLString(_ xmlString: String) -> XMLElement {
         let wrapped = "<items>" + xmlString + "</items>"
 
@@ -83,6 +84,7 @@ final class RoomListenerTests: XCTestCase {
 
         return rootElement!
     }
+    // swiftlint:enable force_unwrapping
 }
 
 // Helper function inserted by Swift 4.2 migrator.

@@ -219,7 +219,8 @@ extension NicoUtility {
                     completion(nil)
                     return
                 }
-                let username = self.extractUsername(fromHtmlData: data!)
+                guard let data = data else { return }
+                let username = self.extractUsername(fromHtmlData: data)
                 self.cachedUserNames[userId] = username
                 completion(username)
             }
@@ -228,8 +229,8 @@ extension NicoUtility {
     }
 
     func reportAsNgUser(chat: Chat, completion: @escaping (_ userId: String?) -> Void) {
-        guard let liveId = live?.liveId, let userId = chat.userId,
-            let date = chat.date, let dateUsec = chat.dateUsec, let no = chat.no else { return }
+        guard let liveId = live?.liveId, let userId = chat.userId, let date = chat.date,
+            let dateUsec = chat.dateUsec, let no = chat.no, let roomPosition = chat.roomPosition else { return }
 
         let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (response, data, connectionError) in
             guard connectionError == nil else {
@@ -238,7 +239,7 @@ extension NicoUtility {
                 return
             }
             log.debug("completed to request ng user")
-            completion(chat.userId!)
+            completion(userId)
         }
 
         let parameters: [String: Any] = [
@@ -251,7 +252,7 @@ extension NicoUtility {
             "uid": userId,
             "tpos": String(Int(date.timeIntervalSince1970)) + "." + String(dateUsec),
             "comment": String(no),
-            "thread": String(messageServers[chat.roomPosition!.rawValue].thread),
+            "thread": String(messageServers[roomPosition.rawValue].thread),
             "comment_locale": "ja-jp"
         ]
         cookiedAsyncRequest(httpMethod: "POST", url: kNgScoringUrl, parameters: parameters, completion: httpCompletion)
@@ -264,7 +265,8 @@ extension NicoUtility {
     // MARK: - RoomListenerDelegate Functions
     func roomListenerDidReceiveThread(_ roomListener: RoomListener, thread: Thread) {
         log.debug("\(thread)")
-        delegate?.nicoUtilityDidConnectToLive(self, roomPosition: roomListener.server!.roomPosition)
+        guard let roomPosition = roomListener.server?.roomPosition else { return }
+        delegate?.nicoUtilityDidConnectToLive(self, roomPosition: roomPosition)
     }
 
     func roomListenerDidReceiveChat(_ roomListener: RoomListener, chat: Chat) {
@@ -351,7 +353,7 @@ extension NicoUtility {
         }
 
         for _ in 1...roomCount {
-            if let next = servers.last!.next() {
+            if let next = servers.last?.next() {
                 servers.append(next)
             } else {
                 return [originServer]
@@ -486,22 +488,21 @@ private extension NicoUtility {
 
     // swiftlint:disable function_body_length
     func connect(liveNumber: Int?, userSessionCookie: String?) {
-        if liveNumber == nil {
+        guard let liveNumber = liveNumber else {
             let reason = "no valid live number"
             log.error(reason)
             delegate?.nicoUtilityDidFailToPrepareLive(self, reason: reason)
             return
         }
-
-        if userSessionCookie == nil {
+        guard let  userSessionCookie = userSessionCookie else {
             let reason = "no available cookie"
             log.error(reason)
             delegate?.nicoUtilityDidFailToPrepareLive(self, reason: reason)
             return
         }
 
-        self.userSessionCookie = userSessionCookie!
-        self.lastLiveNumber = liveNumber!
+        self.userSessionCookie = userSessionCookie
+        self.lastLiveNumber = liveNumber
 
         if 0 < roomListeners.count {
             log.debug("already has established connection, so disconnect and sleep ...")
@@ -518,17 +519,19 @@ private extension NicoUtility {
             self.messageServer = server
 
             let communitySuccess: () -> Void = {
-                log.debug("loaded community:\(self.live!.community)")
+                guard let community = self.live?.community, let user = self.user,
+                    let live = self.live, let messageServer = self.messageServer else { return }
+                log.debug("loaded community:\(community)")
 
-                self.delegate?.nicoUtilityDidPrepareLive(self, user: self.user!, live: self.live!)
+                self.delegate?.nicoUtilityDidPrepareLive(self, user: user, live: live)
 
-                self.messageServers = self.deriveMessageServers(originServer: server, community: self.live!.community)
+                self.messageServers = self.deriveMessageServers(originServer: server, community: community)
                 log.debug("derived message servers:")
                 for server in self.messageServers {
                     log.debug("\(server)")
                 }
 
-                for _ in 0...self.messageServer!.roomPosition.rawValue {
+                for _ in 0...messageServer.roomPosition.rawValue {
                     self.openNewMessageServer()
                 }
                 self.scheduleHeartbeatTimer(immediateFire: true)
@@ -541,7 +544,8 @@ private extension NicoUtility {
                 return
             }
 
-            self.load(community: self.live!.community, success: communitySuccess, failure: communityFailure)
+            guard let community = self.live?.community else { return }
+            self.load(community: community, success: communitySuccess, failure: communityFailure)
         }
 
         let failure: (String) -> Void = { reason in
@@ -550,7 +554,7 @@ private extension NicoUtility {
         }
 
         delegate?.nicoUtilityWillPrepareLive(self)
-        requestGetPlayerStatus(liveNumber: liveNumber!, success: success, failure: failure)
+        requestGetPlayerStatus(liveNumber: liveNumber, success: success, failure: failure)
     }
     // swiftlint:enable function_body_length
 
@@ -579,16 +583,16 @@ private extension NicoUtility {
             let live = self.extractLive(fromXmlData: data)
             let user = self.extractUser(fromXmlData: data)
             var messageServer: MessageServer?
-            if user != nil {
-                messageServer = self.extractMessageServer(fromXmlData: data, user: user!)
+            if let user = user {
+                messageServer = self.extractMessageServer(fromXmlData: data, user: user)
             }
-            if live == nil || user == nil || messageServer == nil {
+            if let live = live, let user = user, let messageServer = messageServer {
+                success(live, user, messageServer)
+            } else {
                 let message = "error in extracting getplayerstatus response"
                 log.error(message)
                 failure(message)
-                return
             }
-            success(live!, user!, messageServer!)
         }
 
         cookiedAsyncRequest(httpMethod: "GET", url: kGetPlayerStatusUrl, parameters: ["v": "lv" + String(liveNumber)], completion: httpCompletion)

@@ -71,7 +71,8 @@ final class MessageServer: CustomStringConvertible {
     func neighbor(direction: Int) -> MessageServer? {
         assert(direction == -1 || direction == 1)
 
-        let roomPosition = RoomPosition(rawValue: self.roomPosition.rawValue + direction)
+        guard let roomPosition = RoomPosition(rawValue: self.roomPosition.rawValue + direction) else { return nil }
+
         var address = self.address
         let port = self.port
         let thread = self.thread + direction
@@ -93,15 +94,14 @@ final class MessageServer: CustomStringConvertible {
 
         address = MessageServer.reconstructServerAddress(baseAddress: address, serverNumber: derived.serverNumber)
 
-        return MessageServer(roomPosition: roomPosition!, address: address, port: derived.port, thread: thread)
+        return MessageServer(roomPosition: roomPosition, address: address, port: derived.port, thread: thread)
     }
 
     // MARK: - Private Functions
     static func extractServerNumber(fromAddress: String) -> Int? {
         let regexp = "\\D+(\\d+).+"
-        let serverNumber = fromAddress.extractRegexp(pattern: regexp)
-
-        return serverNumber == nil ? nil : Int(serverNumber!)
+        guard let serverNumber = fromAddress.extractRegexp(pattern: regexp) else { return nil }
+        return Int(serverNumber)
     }
 
     static func serverIndex(isChannel: Bool, serverNumber: Int, port: Int) -> Int? {

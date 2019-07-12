@@ -35,6 +35,7 @@ extension MessageContainer {
     // MARK: - Basic Operation to Content Array
     func append(chatOrSystemMessage object: Any) -> (appended: Bool, count: Int) {
         objc_sync_enter(self)
+        defer { objc_sync_exit(self) }
 
         var message: Message!
 
@@ -42,10 +43,10 @@ extension MessageContainer {
             message = Message(message: systemMessage)
         } else if let chat = object as? Chat {
             var isFirstChat = false
-            if chat.isUserComment {
-                isFirstChat = firstChat[chat.userId!] == nil ? true : false
+            if chat.isUserComment, let userId = chat.userId {
+                isFirstChat = firstChat[userId] == nil ? true : false
                 if isFirstChat {
-                    firstChat[chat.userId!] = true
+                    firstChat[userId] = true
                 }
             }
             message = Message(chat: chat, firstChat: isFirstChat)
@@ -57,8 +58,6 @@ extension MessageContainer {
 
         let appended = append(message: message, into: &filteredMessages)
         let count = filteredMessages.count
-
-        objc_sync_exit(self)
 
         return (appended, count)
     }
@@ -143,18 +142,15 @@ extension MessageContainer {
                 if message.messageType == .system {
                     continue
                 }
-                let chat = message.chat!
-                if chat.date == nil || chat.userId == nil {
-                    continue
-                }
+                guard let chat = message.chat, let date = chat.date, let userId = chat.userId else { continue }
                 if !chat.isUserComment {
                     continue
                 }
                 // is "chat.date < tenMinutesAgo" ?
-                if chat.date!.compare(tenMinutesAgo) == .orderedAscending {
+                if date.compare(tenMinutesAgo) == .orderedAscending {
                     break
                 }
-                activeUsers[chat.userId!] = true
+                activeUsers[userId] = true
             }
 
             // log.debug("end counting active")
@@ -232,7 +228,7 @@ private extension MessageContainer {
             return true
         }
 
-        let chat = message.chat!
+        guard let chat = message.chat else { return false }
 
         // filter by comment
         if let comment = chat.comment {
@@ -243,9 +239,9 @@ private extension MessageContainer {
 
                 // kickout commands should be ignored before live starts. espacially in channel live,
                 // there are tons of kickout commands. and they forces application performance to be slowed down.
-                if chat.date != nil && beginDateToShowHbIfseetnoCommands != nil {
+                if chat.date != nil, let beginDate = beginDateToShowHbIfseetnoCommands {
                     // chat.date < beginDateToShowHbIfseetnoCommands
-                    if chat.date!.compare(beginDateToShowHbIfseetnoCommands!) == .orderedAscending {
+                    if chat.date?.compare(beginDate) == .orderedAscending {
                         return false
                     }
                 }

@@ -94,13 +94,14 @@ extension HandleNameManager {
         var handleName: String?
 
         objc_sync_enter(self)
+        defer { objc_sync_exit(self) }
+
         let resultSet = database.executeQuery(selectSql, withArgumentsIn: [communityId, userId])
-        while (resultSet?.next())! {
+        while (resultSet?.next())! {    // swiftlint:disable:this force_unwrapping
             handleName = resultSet?.string(forColumn: "handle_name")
             break
         }
         resultSet?.close()
-        objc_sync_exit(self)
 
         return handleName
     }
@@ -177,7 +178,7 @@ private extension HandleNameManager {
 
     static func databaseForHandleNames() -> FMDatabase? {
         let database = FMDatabase(path: HandleNameManager.fullPathForHandleNamesDatabase())
-        if !(database?.open())! {
+        guard database?.open() == true else {
             log.error("unable to open database")
             return nil
         }

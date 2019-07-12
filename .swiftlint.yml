@@ -4,6 +4,9 @@ disabled_rules:
   - todo
   - identifier_name
 
+opt_in_rules:
+  - force_unwrapping
+
 excluded:
   - fastlane
   - script

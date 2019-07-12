@@ -93,7 +93,7 @@ private class CookieParser {
     func processCookieData(data: NSData) throws -> [Cookie] {
         reader = BinaryReader(data: data)
 
-        let header = reader!.readSlice(length: 4).toString(encoding: String.Encoding.utf8.rawValue)
+        let header = reader?.readSlice(length: 4).toString(encoding: String.Encoding.utf8.rawValue)
 
         if header == "cook" {
             getNumPages()
@@ -182,7 +182,7 @@ private extension CookieParser {
     // swiftlint:enable cyclomatic_complexity function_body_length
 
     func getNumPages() {
-        numPages = reader!.readIntBE()
+        numPages = reader?.readIntBE() ?? 0
     }
 
     func getCookieOffsets(index: Int) {
@@ -223,14 +223,16 @@ private extension CookieParser {
     }
 
     func getPageSizes() {
+        guard let reader = reader else { return }
         for _ in 0 ..< Int(numPages) {
-            pageSizes.append(reader!.readIntBE())
+            pageSizes.append(reader.readIntBE())
         }
     }
 
     func getPages() {
+        guard let reader = reader else { return }
         for pageSize in pageSizes {
-            pages.append(BinaryReader(data: reader!.readSlice(length: Int(pageSize))))
+            pages.append(BinaryReader(data: reader.readSlice(length: Int(pageSize))))
         }
     }
 }
@@ -313,6 +315,7 @@ private class BinaryReader {
 // MARK: - Extension
 private extension NSData {
     func toString(encoding: UInt) -> String {
-        return NSString(data: self as Data, encoding: encoding)! as String
+        guard let str = NSString(data: self as Data, encoding: encoding) else { return "" }
+        return str as String
     }
 }

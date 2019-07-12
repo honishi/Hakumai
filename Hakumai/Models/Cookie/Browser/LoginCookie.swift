@@ -18,8 +18,8 @@ final class LoginCookie {
     // MARK: - Public Functions
     static func requestCookie(mailAddress: String, password: String, completion: @escaping (_ userSessionCookie: String?) -> Void) {
         func httpCompletion(_ response: URLResponse?, _ data: Data?, _ connectionError: Error?) {
-            if connectionError != nil {
-                log.error("login failed. connection error:[\(connectionError!)]")
+            if let connectionError = connectionError {
+                log.error("login failed. connection error:[\(connectionError)]")
                 completion(nil)
                 return
             }
@@ -45,7 +45,8 @@ final class LoginCookie {
 
         let parameters = "mail=\(mailAddress)&password=\(password)"
 
-        let request = NSMutableURLRequest(url: URL(string: kLoginUrl)!)
+        guard let url = URL(string: kLoginUrl) else { return }
+        let request = NSMutableURLRequest(url: url)
         request.setValue(kUserAgent, forHTTPHeaderField: "User-Agent")
         request.httpMethod = "POST"
         request.httpBody = parameters.data(using: String.Encoding.utf8)
@@ -59,7 +60,8 @@ final class LoginCookie {
 private extension LoginCookie {
     static func removeAllStoredCookie() {
         let cookieStorage = HTTPCookieStorage.shared
-        guard let cookies = cookieStorage.cookies(for: URL(string: kNicoVideoDomain)!) else { return }
+        guard let url = URL(string: kNicoVideoDomain),
+            let cookies = cookieStorage.cookies(for: url) else { return }
         for cookie in cookies {
             cookieStorage.deleteCookie((cookie ))
         }
@@ -67,7 +69,8 @@ private extension LoginCookie {
 
     static func findUserSessionCookie() -> String? {
         let cookieStorage = HTTPCookieStorage.shared
-        guard let cookies = cookieStorage.cookies(for: URL(string: kNicoVideoDomain)!) else { return nil }
+        guard let url = URL(string: kNicoVideoDomain),
+            let cookies = cookieStorage.cookies(for: url) else { return nil }
         for cookie in cookies where cookie.name == "user_session" {
             return cookie.value
         }

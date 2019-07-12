@@ -84,20 +84,21 @@ final class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
 
     // MARK: - Context Menu Handlers
     @IBAction func copyComment(_ sender: AnyObject) {
-        let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat!
-        let toBeCopied = chat.comment!
-        _ = copyStringToPasteBoard(toBeCopied)
+        guard let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat,
+            let comment = chat.comment else { return }
+        _ = copyStringToPasteBoard(comment)
     }
 
     @IBAction func openUrl(_ sender: AnyObject) {
-        let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat!
-        let url = chat.comment!.extractUrlString()!
-        NSWorkspace.shared.open(URL(string: url)!)
+        guard let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat,
+            let urlString = chat.comment?.extractUrlString(),
+            let urlObject = URL(string: urlString) else { return }
+        NSWorkspace.shared.open(urlObject)
     }
 
     @IBAction func tweetComment(_ sender: AnyObject) {
-        let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat!
-        let live = NicoUtility.shared.live!
+        guard let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat,
+            let live = NicoUtility.shared.live else { return }
 
         let comment = chat.comment ?? ""
         let liveName = live.title ?? ""
@@ -143,7 +144,7 @@ final class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     }
 
     @IBAction func reportAsNgUser(_ sender: AnyObject) {
-        let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat!
+        guard let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat else { return }
         NicoUtility.shared.reportAsNgUser(chat: chat) { userId in
             if userId == nil {
                 MainViewController.shared.logSystemMessageToTableView("Failed to report NG user.")
@@ -154,9 +155,10 @@ final class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     }
 
     @IBAction func openUserPage(_ sender: AnyObject) {
-        let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat!
-        let userPageUrlString = NicoUtility.shared.urlString(forUserId: chat.userId!)
-        NSWorkspace.shared.open(URL(string: userPageUrlString)!)
+        guard let userId = MessageContainer.sharedContainer[tableView.clickedRow].chat?.userId else { return }
+        let userPageUrlString = NicoUtility.shared.urlString(forUserId: userId)
+        guard let url = URL(string: userPageUrlString) else { return }
+        NSWorkspace.shared.open(url)
     }
 
     // MARK: - Internal Functions

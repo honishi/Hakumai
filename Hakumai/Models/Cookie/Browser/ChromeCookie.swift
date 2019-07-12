@@ -50,11 +50,10 @@ final class ChromeCookie {
         }
         fileLog.debug("encryptedCookieByRemovingPrefix:[\(encryptedCookieByRemovingPrefix)]")
 
-        let password = ChromeCookie.chromePassword().data(using: String.Encoding.utf8, allowLossyConversion: false)!
-        let salt = kSalt.data(using: String.Encoding.utf8, allowLossyConversion: false)!
-
-        guard let aesKey = ChromeCookie.aesKeyForPassword(password, salt: salt, roundCount: kRoundCount) else {
-            return nil
+        guard let password = ChromeCookie.chromePassword().data(using: String.Encoding.utf8, allowLossyConversion: false),
+            let salt = kSalt.data(using: String.Encoding.utf8, allowLossyConversion: false),
+            let aesKey = ChromeCookie.aesKeyForPassword(password, salt: salt, roundCount: kRoundCount) else {
+                return nil
         }
         fileLog.debug("aesKey:[\(aesKey)]")
 
@@ -89,7 +88,7 @@ private extension ChromeCookie {
         let query = "SELECT host_key, name, encrypted_value FROM cookies WHERE host_key = '.nicovideo.jp' and name = 'user_session'"
         let rows = database?.executeQuery(query, withArgumentsIn: [""])
 
-        while rows != nil && (rows?.next())! {
+        while rows?.next() == true {
             // var name = rows.stringForColumn("name")
             // log.debug(name)
 
@@ -112,15 +111,15 @@ private extension ChromeCookie {
         // let rangeForDataWithoutPrefix = NSMakeRange(prefixString.length, encrypted.count - prefixString.length)
         let encryptedByRemovingPrefix = encrypted.subdata(in: prefixString.length..<encrypted.count)
         // log.debug(encryptedByRemovingPrefix)
-
         return encryptedByRemovingPrefix
     }
 
     static func chromePassword() -> String {
-        let password = SAMKeychain.password(forService: kChromeServiceName, account: kChromeAccount)
+        guard let password = SAMKeychain.password(forService: kChromeServiceName, account: kChromeAccount) else {
+            return ""
+        }
         // log.debug(password)
-
-        return password!
+        return password
     }
 
     // based on http://stackoverflow.com/a/25702855
@@ -131,7 +130,7 @@ private extension ChromeCookie {
         let saltPointer = (salt as NSData).bytes.assumingMemoryBound(to: UInt8.self)
         let saltLength = size_t(salt.count)
 
-        let derivedKey = NSMutableData(length: kCCKeySizeAES128)!
+        guard let derivedKey = NSMutableData(length: kCCKeySizeAES128) else { return nil }
         let derivedKeyPointer = derivedKey.mutableBytes.assumingMemoryBound(to: UInt8.self)
         let derivedKeyLength = size_t(derivedKey.length)
 

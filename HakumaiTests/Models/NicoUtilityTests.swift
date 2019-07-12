@@ -165,7 +165,7 @@ final class NicoUtilityTests: XCTestCase {
         NicoUtility.shared.extractUserCommunity(fromHtmlData: data, community: community)
         XCTAssert(community.title == "深淵の帰還", "")
         XCTAssert(community.level == 53, "")
-        XCTAssert(community.thumbnailUrl!.absoluteString == "http://icon.nimg.jp/community/335/co3350558.jpg?1474545332", "")
+        XCTAssert(community.thumbnailUrl?.absoluteString == "http://icon.nimg.jp/community/335/co3350558.jpg?1474545332", "")
     }
 
     func testLoadCommunityChannel() {
@@ -175,7 +175,7 @@ final class NicoUtilityTests: XCTestCase {
         NicoUtility.shared.extractChannelCommunity(fromHtmlData: data, community: community)
         XCTAssert(community.title == "暗黒黙示録", "")
         XCTAssert(community.level == nil, "")
-        XCTAssert(community.thumbnailUrl!.absoluteString == "http://icon.nimg.jp/channel/ch2590739.jpg?1411539979", "")
+        XCTAssert(community.thumbnailUrl?.absoluteString == "http://icon.nimg.jp/channel/ch2590739.jpg?1411539979", "")
     }
 
     func testStandRoomCountForCommunityLevel() {
@@ -249,12 +249,13 @@ final class NicoUtilityTests: XCTestCase {
     }
 
     // MARK: - Test Utility
+    // swiftlint:disable force_unwrapping
     func dataForResource(_ fileName: String) -> Data {
         let bundle = Bundle(for: NicoUtilityTests.self)
         let path = bundle.path(forResource: fileName, ofType: nil)
         let fileHandle = FileHandle(forReadingAtPath: path!)
         let data = fileHandle?.readDataToEndOfFile()
-
         return data!
     }
+    // swiftlint:enable force_unwrapping
 }

@@ -129,29 +129,23 @@ extension RoomListener {
     }
 
     func comment(live: Live, user: User, postKey: String, comment: String, anonymously: Bool) {
-        guard let thread = thread else {
-            log.debug("could not get thread information")
-            return
+        guard let thread = thread, let threadNumber = thread.thread, let ticket = thread.ticket,
+            let serverTime = thread.serverTime, let baseTime = live.baseTime, let startDate = startDate,
+            let userId = user.userId, let premium = user.isPremium else {
+                log.debug("could not get thread information")
+                return
         }
-
-        let threadNumber = thread.thread!
-        let ticket = thread.ticket!
-        let originTime = Int(thread.serverTime!.timeIntervalSince1970) - Int(live.baseTime!.timeIntervalSince1970)
-        let elapsedTime = Int(Date().timeIntervalSince1970) - Int(startDate!.timeIntervalSince1970)
+        let originTime = Int(serverTime.timeIntervalSince1970) - Int(baseTime.timeIntervalSince1970)
+        let elapsedTime = Int(Date().timeIntervalSince1970) - Int(startDate.timeIntervalSince1970)
         let vpos = (originTime + elapsedTime) * 100
         let mail = anonymously ? "184" : ""
-        let userId = user.userId!
-        let premium = user.isPremium!
-
         let message = "<chat thread=\"\(threadNumber)\" ticket=\"\(ticket)\" vpos=\"\(vpos)\" postkey=\"\(postKey)\" mail=\"\(mail)\" user_id=\"\(userId)\" premium=\"\(premium)\">\(comment)</chat>"
-
         send(message: message)
     }
 
     private func send(message: String, logging: Bool = true) {
-        let data: Data = (message + "\0").data(using: String.Encoding.utf8)!
+        guard let data = (message + "\0").data(using: String.Encoding.utf8) else { return }
         outputStream?.write((data as NSData).bytes.assumingMemoryBound(to: UInt8.self), maxLength: data.count)
-
         if logging {
             log.debug(message)
         }
@@ -169,31 +163,25 @@ extension RoomListener {
 
         case Stream.Event.hasBytesAvailable:
             // fileLog.debug("stream event has bytes available")
-
+            guard let inputStream = inputStream else { return }
             // http://stackoverflow.com/q/26360962
             var readByte = [UInt8](repeating: 0, count: kReadBufferSize)
-
             var actualRead = 0
-            while inputStream?.hasBytesAvailable == true {
-                actualRead = inputStream!.read(&readByte, maxLength: kReadBufferSize)
+            while inputStream.hasBytesAvailable == true {
+                actualRead = inputStream.read(&readByte, maxLength: kReadBufferSize)
                 //fileLog.debug(readByte)
-
                 if let readString = NSString(bytes: &readByte, length: actualRead, encoding: String.Encoding.utf8.rawValue) {
                     fileLog.debug("read: [ \(readString) ]")
-
                     parsingString += streamByRemovingNull(fromStream: readString as String)
-
                     if !hasValidCloseBracket(inStream: parsingString) {
                         fileLog.warning("detected no-close-bracket stream, continue reading...")
                         continue
                     }
-
                     if !hasValidOpenBracket(inStream: parsingString) {
                         fileLog.warning("detected no-open-bracket stream, clearing buffer and continue reading...")
                         parsingString = ""
                         continue
                     }
-
                     parseInputStream(parsingString)
                     parsingString = ""
                 }
@@ -269,7 +257,7 @@ extension RoomListener {
             let threads = parseThreadElement(rootElement)
             for _thread in threads {
                 thread = _thread
-                lastRes = _thread.lastRes!
+                lastRes = _thread.lastRes ?? 0
                 startDate = Date()
                 delegate?.roomListenerDidReceiveThread(self, thread: _thread)
             }
@@ -279,7 +267,6 @@ extension RoomListener {
                 if let chatNo = chat.no {
                     lastRes = chatNo
                 }
-
                 delegate?.roomListenerDidReceiveChat(self, chat: chat)
             }
 
