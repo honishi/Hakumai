@@ -45,9 +45,7 @@ extension String {
 
     func stringByRemovingRegexp(pattern: String) -> String {
         let nsStringSelf = (self as NSString)
-        guard let regexp = try? NSRegularExpression(pattern: pattern, options: []) else {
-            return self
-        }
+        guard let regexp = try? NSRegularExpression(pattern: pattern, options: []) else { return self }
         let removed = regexp.stringByReplacingMatches(
             in: nsStringSelf as String,
             options: [],

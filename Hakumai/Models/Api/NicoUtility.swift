@@ -151,9 +151,7 @@ extension NicoUtility {
         clearUserSessionCookieIfReserved()
 
         CookieUtility.requestBrowserCookie(browserType: browserType) { cookie in
-            guard let cookie = cookie else {
-                return
-            }
+            guard let cookie = cookie else { return }
             self.connect(liveNumber: liveNumber, userSessionCookie: cookie)
         }
     }
@@ -734,9 +732,7 @@ extension NicoUtility {
                 return
             }
 
-            guard let data = data else {
-                return
-            }
+            guard let data = data else { return }
 
             let responseString = NSString(data: data, encoding: String.Encoding.utf8.rawValue)
             self.fileLog.debug("\(responseString ?? "")")

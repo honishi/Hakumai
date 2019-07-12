@@ -39,16 +39,12 @@ final class SpeechManager: NSObject {
 
     // MARK: - Public Functions
     func startManager() {
-        guard timer == nil else {
-            return
-        }
-
+        guard timer == nil else { return }
         // use explicit main queue to ensure that the timer continues to run even when caller thread ends.
         DispatchQueue.main.async {
             self.timer = Timer.scheduledTimer(timeInterval: kDequeuChatTimerInterval, target: self,
                                               selector: #selector(SpeechManager.dequeue(_:)), userInfo: nil, repeats: true)
         }
-
         log.debug("started speech manager.")
     }
 
@@ -62,18 +58,12 @@ final class SpeechManager: NSObject {
         defer { objc_sync_exit(self) }
 
         chatQueue.removeAll()
-
         log.debug("stopped speech manager.")
     }
 
     func enqueue(chat: Chat) {
-        guard YukkuroidClient.isAvailable() else {
-            return
-        }
-
-        guard chat.premium == .ippan || chat.premium == .premium || chat.premium == .bsp else {
-            return
-        }
+        guard YukkuroidClient.isAvailable() else { return }
+        guard chat.premium == .ippan || chat.premium == .premium || chat.premium == .bsp else { return }
 
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
@@ -96,14 +86,9 @@ final class SpeechManager: NSObject {
             return
         }
 
-        guard let chat = chatQueue.first else {
-            return
-        }
+        guard let chat = chatQueue.first else { return }
         chatQueue.removeFirst()
-
-        guard let comment = chat.comment else {
-            return
-        }
+        guard let comment = chat.comment else { return }
 
         voiceSpeed = adjustedVoiceSpeed(chatQueueCount: chatQueue.count, currentVoiceSpeed: voiceSpeed)
         YukkuroidClient.setVoiceSpeed(Int32(voiceSpeed), setting: 0)

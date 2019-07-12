@@ -30,9 +30,7 @@ final class MuteAddViewController: NSViewController {
     // MARK: - Internal Functions
     // MARK: Button Handlers
     @IBAction func addMute(_ sender: AnyObject) {
-        guard 0 < muteValue.length else {
-            return
-        }
+        guard 0 < muteValue.length else { return }
         completion?(false, muteValue as String)
     }
 

@@ -453,9 +453,7 @@ extension MainViewController {
     }
 
     func nicoUtilityDidReceiveFirstChat(_ nicoUtility: NicoUtility, chat: Chat) {
-        guard let roomPosition = chat.roomPosition else {
-            return
-        }
+        guard let roomPosition = chat.roomPosition else { return }
 
         logSystemMessageToTableView("Opened \(roomPosition.label()).")
 
@@ -673,9 +671,7 @@ extension MainViewController {
     private func loadThumbnail() {
         NicoUtility.shared.loadThumbnail { (imageData) -> Void in
             DispatchQueue.main.async {
-                guard let data = imageData else {
-                    return
-                }
+                guard let data = imageData else { return }
                 self.communityImageView.image = NSImage(data: data)
             }
         }
@@ -849,10 +845,7 @@ extension MainViewController {
 
     @objc func calculateActive(_ timer: Timer) {
         MessageContainer.sharedContainer.calculateActive { (active: Int?) -> Void in
-            guard let activeCount = active else {
-                return
-            }
-
+            guard let activeCount = active else { return }
             DispatchQueue.main.async {
                 self.activeLabel.stringValue = "Active: \(activeCount)"
             }
@@ -872,11 +865,7 @@ extension MainViewController {
 
     private func handleSpeech(chat: Chat) {
         let enabled = UserDefaults.standard.bool(forKey: Parameters.enableCommentSpeech)
-
-        guard enabled else {
-            return
-        }
-
+        guard enabled else { return }
         DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async {
             SpeechManager.sharedManager.enqueue(chat: chat)
 

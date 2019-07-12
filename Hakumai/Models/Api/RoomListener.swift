@@ -72,9 +72,7 @@ extension RoomListener {
 
     // MARK: - Public Functions
     func openSocket(resFrom: Int = 0) {
-        guard let server = server else {
-            return
-        }
+        guard let server = server else { return }
 
         var input: InputStream?
         var output: OutputStream?

@@ -75,9 +75,7 @@ extension NicoUtility {
 
     private func sessionCookies() -> [HTTPCookie]? {
         // log.debug("userSessionCookie:[\(userSessionCookie)]")
-        guard let userSessionCookie = userSessionCookie else {
-            return nil
-        }
+        guard let userSessionCookie = userSessionCookie else { return nil }
 
         var cookies = [HTTPCookie]()
 

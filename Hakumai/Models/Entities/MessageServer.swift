@@ -77,13 +77,9 @@ final class MessageServer: CustomStringConvertible {
         let port = self.port
         let thread = self.thread + direction
 
-        guard let serverNumber = MessageServer.extractServerNumber(fromAddress: address) else {
-            return nil
-        }
-
-        guard let serverIndex = MessageServer.serverIndex(isChannel: isChannel, serverNumber: serverNumber, port: port) else {
-            return nil
-        }
+        guard let serverNumber = MessageServer.extractServerNumber(fromAddress: address),
+            let serverIndex = MessageServer.serverIndex(
+                isChannel: isChannel, serverNumber: serverNumber, port: port) else { return nil }
 
         var derived: (serverNumber: Int, port: Int)
 
@@ -149,9 +145,7 @@ final class MessageServer: CustomStringConvertible {
         // split server address like followings, and reconstruct using given server number
         // - msg102.live.nicovideo.jp (user)
         // - omsg103.live.nicovideo.jp (channel)
-        guard let regexp = try? NSRegularExpression(pattern: "(\\D+)\\d+(.+)", options: []) else {
-            return ""
-        }
+        guard let regexp = try? NSRegularExpression(pattern: "(\\D+)\\d+(.+)", options: []) else { return "" }
         let matched = regexp.matches(in: baseAddress, options: [], range: NSRange(location: 0, length: baseAddress.utf16.count))
 
         let hostPrefix = MessageServer.substring(fromBaseString: baseAddress, nsRange: matched[0].range(at: 1))

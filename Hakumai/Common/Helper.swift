@@ -48,11 +48,7 @@ final class Helper {
 
     static func createApplicationDirectoryIfNotExists() {
         let path = Helper.applicationDirectoryPath()
-
-        guard !FileManager.default.fileExists(atPath: path) else {
-            return
-        }
-
+        guard !FileManager.default.fileExists(atPath: path) else { return }
         do {
             try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: false, attributes: nil)
             log.debug("created application directory")
@@ -74,10 +70,7 @@ final class Helper {
 
     // MARK: - Private Functions
     private static func colorizeLogger(_ logger: XCGLogger) {
-        guard kEnableColorizedLogger else {
-            return
-        }
-
+        guard kEnableColorizedLogger else { return }
         // solarized dark colors
         // XXX: turn the colors off, temporarily
         /*

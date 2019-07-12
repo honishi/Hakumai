@@ -110,55 +110,36 @@ extension NicoUtility {
             log.error("\(error?.debugDescription ?? "")")
         }
         let rootElement = xmlDocument?.rootElement()
-
         let status = rootElement?.attribute(forName: "status")?.stringValue
 
         if status == "fail" {
             log.warning("failed to load message server")
-
             if let errorCode = rootElement?.firstStringValue(forXPath: "/getplayerstatus/error/code") {
                 log.warning("error code: \(errorCode)")
             }
-
             return nil
         }
 
-        guard let roomPosition = self.roomPosition(byUser: user) else {
-            return nil
-        }
+        guard let roomPosition = self.roomPosition(byUser: user) else { return nil }
 
         let baseXPath = "/getplayerstatus/ms/"
-
-        guard let address = rootElement?.firstStringValue(forXPath: baseXPath + "addr") else {
-            return nil
-        }
-        guard let port = rootElement?.firstIntValue(forXPath: baseXPath + "port") else {
-            return nil
-        }
-        guard let thread = rootElement?.firstIntValue(forXPath: baseXPath + "thread") else {
-            return nil
-        }
+        guard let address = rootElement?.firstStringValue(forXPath: baseXPath + "addr"),
+            let port = rootElement?.firstIntValue(forXPath: baseXPath + "port"),
+            let thread = rootElement?.firstIntValue(forXPath: baseXPath + "thread") else { return nil }
         // log.debug("\(address?),\(port),\(thread)")
 
-        let server = MessageServer(roomPosition: roomPosition, address: address, port: port, thread: thread)
-
-        return server
+        return MessageServer(roomPosition: roomPosition, address: address, port: port, thread: thread)
     }
 
     func roomPosition(byUser user: User) -> RoomPosition? {
         // log.debug("roomLabel:\(roomLabel)")
-
-        guard let roomLabel = user.roomLabel else {
-            return nil
-        }
+        guard let roomLabel = user.roomLabel else { return nil }
 
         if user.isArena == true || user.isBSP == true {
             return RoomPosition(rawValue: 0)
         }
 
-        guard let standCharacter = extractStandCharacter(roomLabel) else {
-            return nil
-        }
+        guard let standCharacter = extractStandCharacter(roomLabel) else { return nil }
 
         log.debug("extracted standCharacter:\(standCharacter)")
         let raw = (standCharacter - ("1" as Character)) + 1

@@ -30,9 +30,7 @@ final class HandleNameAddViewController: NSViewController {
 
     // MARK: - Internal Functions
     @IBAction func addHandleName(_ sender: AnyObject) {
-        guard 0 < handleName.length else {
-            return
-        }
+        guard 0 < handleName.length else { return }
         completion?(false, handleName as String)
     }
 
