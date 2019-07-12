@@ -9,33 +9,33 @@
 import Foundation
 import AppKit
 
-class MuteAddViewController: NSViewController {
+final class MuteAddViewController: NSViewController {
     // MARK: - Properties
     // this property contains mute target value, and is also used binding between text filed and add button.
     // http://stackoverflow.com/a/24017991
     // also see more detailed note in HandleNameAddViewController's propery
-    dynamic var muteValue: NSString!
-    
+    @objc dynamic var muteValue: NSString!
+
     var completion: ((_ cancelled: Bool, _ muteValue: String?) -> Void)?
-    
+
     // MARK: - Object Lifecycle
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
-    
+
     deinit {
-        logger.debug("")
+        log.debug("")
     }
-    
-    // MARK: - Internal Functions
+}
+
+// MARK: - Internal Functions
+extension MuteAddViewController {
     // MARK: Button Handlers
     @IBAction func addMute(_ sender: AnyObject) {
-        guard 0 < muteValue.length else {
-            return
-        }
+        guard 0 < muteValue.length else { return }
         completion?(false, muteValue as String)
     }
-    
+
     @IBAction func cancelAddMute(_ sender: AnyObject) {
         completion?(true, nil)
     }

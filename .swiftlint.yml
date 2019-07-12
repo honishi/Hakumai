@@ -1,0 +1,21 @@
+disabled_rules:
+  - large_tuple
+  - type_name
+  - todo
+  - identifier_name
+
+excluded:
+  - fastlane
+  - script
+  - vendor
+  - Pods
+  - Hakumai.xcodeproj
+  - Hakumai.xcworkspace
+  - Hakumai/Generated
+
+line_length: 
+  warning: 400
+  error: 500
+file_length:
+  warning: 800
+  error: 1000

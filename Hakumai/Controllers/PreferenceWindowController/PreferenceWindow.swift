@@ -9,7 +9,7 @@
 import Foundation
 import AppKit
 
-class PreferenceWindow: NSWindow {
+final class PreferenceWindow: NSWindow {
     // MARK: - NSObject Overrides
     override func awakeFromNib() {
         super.awakeFromNib()

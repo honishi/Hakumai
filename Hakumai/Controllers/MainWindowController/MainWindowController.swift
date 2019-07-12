@@ -9,7 +9,7 @@
 import Foundation
 import AppKit
 
-class MainWindowController: NSWindowController {
+final class MainWindowController: NSWindowController {
     // MARK: - NSWindowController Overrides
     override func windowDidLoad() {
         super.windowDidLoad()

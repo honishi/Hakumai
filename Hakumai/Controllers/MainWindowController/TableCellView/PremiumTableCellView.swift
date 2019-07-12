@@ -13,50 +13,39 @@ private let kImageNamePremium = "PremiumPremium"
 private let kImageNameIppan = "PremiumIppan"
 private let kImageNameMisc = "PremiumMisc"
 
-class PremiumTableCellView: NSTableCellView {
+final class PremiumTableCellView: NSTableCellView {
     @IBOutlet weak var premiumImageView: NSImageView!
     @IBOutlet weak var premiumTextField: NSTextField!
-    
-    var premium: Premium? = nil {
-        didSet {
-            set(premium: premium)
-        }
-    }
-    
-    var fontSize: CGFloat? {
-        didSet {
-            set(fontSize: fontSize)
-        }
-    }
-    
-    // MARK: - Internal Functions
-    private func set(premium: Premium?) {
+
+    var premium: Premium? = nil { didSet { set(premium: premium) } }
+    var fontSize: CGFloat? { didSet { set(fontSize: fontSize) } }
+}
+
+private extension PremiumTableCellView {
+    func set(premium: Premium?) {
         guard let premium = premium else {
             premiumImageView.image = nil
             premiumTextField.stringValue = ""
             return
         }
-        
         premiumImageView.image = image(forPremium: premium)
         premiumTextField.stringValue = premium.label()
     }
-    
-    private func image(forPremium premium: Premium) -> NSImage? {
-        var image: NSImage!
-        
+
+    func image(forPremium premium: Premium) -> NSImage? {
+        var image: NSImage?
         switch premium {
         case .premium:
-            image = NSImage(named: kImageNamePremium)!
+            image = NSImage(named: kImageNamePremium)
         case .ippan:
-            image = NSImage(named: kImageNameIppan)!
+            image = NSImage(named: kImageNameIppan)
         case .system, .caster, .operator, .bsp:
-            image = NSImage(named: kImageNameMisc)!
+            image = NSImage(named: kImageNameMisc)
         }
-        
         return image
     }
-    
-    private func set(fontSize: CGFloat?) {
+
+    func set(fontSize: CGFloat?) {
         let size = fontSize ?? CGFloat(kDefaultFontSize)
         premiumTextField.font = NSFont.systemFont(ofSize: size)
     }

@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ChatResult {
+final class ChatResult {
     enum Status: Int, CustomStringConvertible {
         case success = 0
         case failure
@@ -18,13 +18,11 @@ class ChatResult {
         case locked
         case readOnly
         case tooLong
-        
-        var description: String {
-            return "ChatResult.Status: \(rawValue)(\(label()))"
-        }
-        
+
+        var description: String { return "ChatResult.Status: \(rawValue)(\(label()))" }
+
         func label() -> String {
-            switch (self) {
+            switch self {
             case .success:
                 return "Success"
             case .failure:
@@ -44,17 +42,10 @@ class ChatResult {
             }
         }
     }
-    
+
     var status: Status?
-    
-    var description: String {
-        return (
-            "ChatResult: status[\(status?.description ?? "")]"
-        )
-    }
+    var description: String { return "ChatResult: status[\(status?.description ?? "")]" }
 
     // MARK: - Object Lifecycle
-    init() {
-        // nop
-    }
+    init() {}
 }

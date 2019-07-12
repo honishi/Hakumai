@@ -11,45 +11,45 @@ import XCTest
 
 private let kAsyncTimeout: TimeInterval = 3
 
-class CookieUtilityTests: XCTestCase {
-    
+final class CookieUtilityTests: XCTestCase {
+
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
-    
+
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
     }
-    
+
     // MARK: cookie utility
     /*
-    func testLoginCookie() {
-        var asyncExpectation: XCTestExpectation
+     func testLoginCookie() {
+     var asyncExpectation: XCTestExpectation
 
-        // test 1
-        asyncExpectation = expectationWithDescription("asyncExpectation")
-        
-        let mailAddress = "test1234@example.com"
-        let password = "password"
-        
-        CookieUtility.requestLoginCookieWithMailAddress(mailAddress, password: password) { (userSessionCookie) -> Void in
-            XCTAssert(userSessionCookie != nil, "")
-            asyncExpectation.fulfill()
-        }
-        
-        waitForExpectationsWithTimeout(kAsyncTimeout, handler: nil)
-        
-        // test 2
-        // ...
-    }
+     // test 1
+     asyncExpectation = expectationWithDescription("asyncExpectation")
+
+     let mailAddress = "test1234@example.com"
+     let password = "password"
+
+     CookieUtility.requestLoginCookieWithMailAddress(mailAddress, password: password) { (userSessionCookie) -> Void in
+     XCTAssert(userSessionCookie != nil, "")
+     asyncExpectation.fulfill()
+     }
+
+     waitForExpectationsWithTimeout(kAsyncTimeout, handler: nil)
+
+     // test 2
+     // ...
+     }
      */
 
     /*
-    func testChromeCookie() {
-        let userSessionCookie = CookieUtility.requestBrowserCookieWithBrowserType(.Chrome)
-        XCTAssert(0 < count(userSessionCookie!.utf16), "")
-    }
+     func testChromeCookie() {
+     let userSessionCookie = CookieUtility.requestBrowserCookieWithBrowserType(.Chrome)
+     XCTAssert(0 < count(userSessionCookie!.utf16), "")
+     }
      */
 }

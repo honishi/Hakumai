@@ -20,12 +20,12 @@ extension MainViewController {
     private func kickParallelTableViewStressTest(_ parallelism: Int, interval: TimeInterval, count: Int) {
         for _ in 1...parallelism {
             kickTableViewStressTest(interval, count: count)
-            
+
             let randomWait = Float(arc4random() % 10) * 0.1
             Foundation.Thread.sleep(forTimeInterval: TimeInterval(randomWait))
         }
     }
-    
+
     private func kickTableViewStressTest(_ interval: TimeInterval, count: Int) {
         DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async {
             for _ in 1...count {
@@ -34,13 +34,13 @@ extension MainViewController {
                 Foundation.Thread.sleep(forTimeInterval: interval)
             }
         }
-        
+
         // NSRunLoop.currentRunLoop().run()
     }
-    
+
     private func randomChat() -> Chat {
         let chat = Chat()
-        
+
         chat.roomPosition = RoomPosition.arena
         chat.userId = "xxx" + String(arc4random() % 1000)
         chat.no = (Int(arc4random()) % 1000)
@@ -49,18 +49,18 @@ extension MainViewController {
         chat.date = Date()
         chat.mail = ["184"]
         chat.premium = Premium.premium
-        
+
         return chat
     }
-    
+
     // MARK: - Standard User Defaults
     private func updateStandardUserDefaults() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             let d = UserDefaults.standard
-            let v = d.bool(forKey: Parameters.ShowIfseetnoCommands)
-            d.set(!v, forKey: Parameters.ShowIfseetnoCommands)
+            let v = d.bool(forKey: Parameters.showIfseetnoCommands)
+            d.set(!v, forKey: Parameters.showIfseetnoCommands)
             d.synchronize()
-            logger.debug("")
+            log.debug("")
         }
     }
 }

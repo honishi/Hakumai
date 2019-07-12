@@ -1,6 +1,6 @@
 <img src="./document/image/logo.png" width="500px">
 
-[![Swift 3.0](https://img.shields.io/badge/Swift-3.0-orange.svg?style=flat)](https://swift.org/)
+[![Swift 4.2](https://img.shields.io/badge/Swift-4.2-orange.svg?style=flat)](https://swift.org/)
 [![License MIT](https://img.shields.io/badge/License-MIT-lightgrey.svg?style=flat)](http://www.opensource.org/licenses/mit-license.php)
 [![Build Status](https://travis-ci.org/honishi/Hakumai.svg?branch=develop)](https://travis-ci.org/honishi/Hakumai)
 
@@ -40,5 +40,4 @@ license
 --
 copyright &copy; 2015- honishi, hiroyuki onishi.
 
-distributed under the [MIT license][mit].
-[mit]: http://www.opensource.org/licenses/mit-license.php
+distributed under the [MIT license](http://www.opensource.org/licenses/mit-license.php).

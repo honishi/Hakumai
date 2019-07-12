@@ -8,12 +8,12 @@
 
 import Foundation
 
-class Message {
+final class Message {
     // workaround for non-supported class variable
     struct Static {
         static var messageNo: Int = 0
     }
-    
+
     enum MessageType: Int {
         case system = 0
         case chat
@@ -26,7 +26,7 @@ class Message {
 
     // property for system message
     let message: String?
-    
+
     // property for chat message
     let chat: Chat?
     let firstChat: Bool?
@@ -41,15 +41,15 @@ class Message {
         self.firstChat = firstChat
         self.date = Date()
     }
-    
+
     convenience init(message: String) {
         self.init(messageType: .system, message: message, chat: nil, firstChat: nil)
     }
-    
+
     convenience init(chat: Chat, firstChat: Bool = false) {
         self.init(messageType: .chat, message: nil, chat: chat, firstChat: firstChat)
     }
-    
+
     // MARK: - Public Functions
     static func resetMessageNo() {
         Static.messageNo = 0

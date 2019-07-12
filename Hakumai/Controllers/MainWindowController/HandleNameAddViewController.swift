@@ -9,7 +9,7 @@
 import Foundation
 import AppKit
 
-class HandleNameAddViewController: NSViewController {
+final class HandleNameAddViewController: NSViewController {
     // MARK: - Properties
     // this property contains handle name value, and is also used binding between text filed and add button.
     // http://stackoverflow.com/a/24017991
@@ -19,23 +19,21 @@ class HandleNameAddViewController: NSViewController {
     //     - Changing the value of a model property programmatically is not reflected in the user interface
     // - http://stackoverflow.com/a/26564912
     // also use NSString instead of String, cause .length property is used in button's enabled binding.
-    dynamic var handleName: NSString = ""
-    
+    @objc dynamic var handleName: NSString = ""
+
     var completion: ((_ cancelled: Bool, _ handleName: String?) -> Void)?
 
     // MARK: - Object Lifecycle
     deinit {
-        logger.debug("")
+        log.debug("")
     }
 
     // MARK: - Internal Functions
     @IBAction func addHandleName(_ sender: AnyObject) {
-        guard 0 < handleName.length else {
-            return
-        }
+        guard 0 < handleName.length else { return }
         completion?(false, handleName as String)
     }
-    
+
     @IBAction func cancelToAdd(_ sender: AnyObject) {
         completion?(true, nil)
     }

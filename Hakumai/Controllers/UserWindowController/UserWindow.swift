@@ -9,19 +9,19 @@
 import Foundation
 import AppKit
 
-class UserWindow: NSWindow {
+final class UserWindow: NSWindow {
     /*
-    // MARK: - Properties
-    // MARK: - Object Lifecycle
-    
-    // MARK: - NSResponder Overrides
-    // http://genjiapp.com/blog/2012/10/25/how-to-develop-a-preferences-window-for-os-x-app.html
-    override func cancelOperation(sender: AnyObject?) {
-        close()
-    }
+     // MARK: - Properties
+     // MARK: - Object Lifecycle
 
-    // MARK: - [Protocol] Functions
-    // MARK: - Public Functions
-    // MARK: - Internal Functions
-    */
+     // MARK: - NSResponder Overrides
+     // http://genjiapp.com/blog/2012/10/25/how-to-develop-a-preferences-window-for-os-x-app.html
+     override func cancelOperation(sender: AnyObject?) {
+     close()
+     }
+
+     // MARK: - [Protocol] Functions
+     // MARK: - Public Functions
+     // MARK: - Internal Functions
+     */
 }

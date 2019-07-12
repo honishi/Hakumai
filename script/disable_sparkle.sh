@@ -9,7 +9,7 @@ set -x
 set -e
 
 base_dir="$(cd $(dirname $0);pwd)"
-storyboard_file="${base_dir}/../Hakumai/Base.lproj/MainWindowController.storyboard"
+storyboard_file="${base_dir}/../Hakumai/Storyboards/MainWindowController.storyboard"
 sparkle_object="SUUpdater"
 
 # http://stackoverflow.com/questions/5410757/delete-a-line-containing-a-specific-string-using-sed#comment28307642_5410784

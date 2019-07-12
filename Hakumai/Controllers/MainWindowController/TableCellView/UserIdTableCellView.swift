@@ -14,10 +14,10 @@ private let kImageNameUserId184Id = "UserId184Id"
 private let kImageNameHandleNameOver184Id = "HandleNameOver184Id"
 private let kImageNameHandleNameOverRawId = "HandleNameOverRawId"
 
-class UserIdTableCellView: NSTableCellView {
+final class UserIdTableCellView: NSTableCellView {
     @IBOutlet weak var userIdTextField: NSTextField!
     @IBOutlet weak var userIdImageView: NSImageView!
-    
+
     var info: (handleName: String?, userId: String?, premium: Premium?, comment: String?)? = nil {
         didSet {
             guard let userId = info?.userId, let premium = info?.premium else {
@@ -25,76 +25,65 @@ class UserIdTableCellView: NSTableCellView {
                 userIdTextField.stringValue = ""
                 return
             }
-            
             userIdImageView.image = image(forHandleName: info?.handleName, userId: userId)
             setUserIdLabel(userId: userId, premium: premium, handleName: info?.handleName)
         }
     }
-    
-    var fontSize: CGFloat? {
-        didSet {
-            set(fontSize: fontSize)
-        }
-    }
-    
-    // MARK: - Internal Functions
-    private func image(forHandleName handleName: String?, userId: String) -> NSImage {
-        var imageName: String
-        
+
+    var fontSize: CGFloat? { didSet { set(fontSize: fontSize) } }
+}
+
+private extension UserIdTableCellView {
+    func image(forHandleName handleName: String?, userId: String) -> NSImage {
+        let imageName: String
         if handleName != nil {
             imageName = Chat.isRawUserId(userId) ? kImageNameHandleNameOverRawId : kImageNameHandleNameOver184Id
-        }
-        else {
+        } else {
             imageName = Chat.isRawUserId(userId) ? kImageNameUserIdRawId : kImageNameUserId184Id
         }
-        
-        return NSImage(named: imageName)!
+        guard let image = NSImage(named: imageName) else {
+            log.error("fatal: this should never be happened..")
+            return NSImage()
+        }
+        return image
     }
-    
-    private func setUserIdLabel(userId: String, premium: Premium, handleName: String?) {
+
+    func setUserIdLabel(userId: String, premium: Premium, handleName: String?) {
         // set default name
         userIdTextField.stringValue = concatUserName(userId: userId, userName: nil, handleName: handleName)
-        
+
         // if needed, then resolve userid
         if handleName != nil || !Chat.isRawUserId(userId) || !(Chat.isUserComment(premium) || Chat.isBSPComment(premium)) {
             return
         }
-        
+
         if let userName = NicoUtility.shared.cachedUserName(forUserId: userId) {
             userIdTextField.stringValue = concatUserName(userId: userId, userName: userName, handleName: handleName)
             return
         }
-        
-        func completion(_ userName: String?) {
-            if userName == nil {
-                return
-            }
-            
+
+        NicoUtility.shared.resolveUsername(forUserId: userId) {
+            guard let userName = $0 else { return }
             DispatchQueue.main.async {
-                self.userIdTextField.stringValue = self.concatUserName(userId: userId, userName: userName, handleName: handleName)
+                self.userIdTextField.stringValue =
+                    self.concatUserName(userId: userId, userName: userName, handleName: handleName)
             }
         }
-        
-        NicoUtility.shared.resolveUsername(forUserId: userId, completion: completion)
     }
-    
-    private func concatUserName(userId: String, userName: String?, handleName: String?) -> String {
-        var concatenated = ""
-        
+
+    func concatUserName(userId: String, userName: String?, handleName: String?) -> String {
+        let concatenated: String
         if let handleName = handleName {
             concatenated = handleName + " (" + userId + ")"
-        }
-        else if let userName = userName {
+        } else if let userName = userName {
             concatenated = userName + " (" + userId + ")"
-        }
-        else {
+        } else {
             concatenated = userId
         }
-        
         return concatenated
     }
-    
-    private func set(fontSize: CGFloat?) {
+
+    func set(fontSize: CGFloat?) {
         let size = fontSize ?? CGFloat(kDefaultFontSize)
         userIdTextField.font = NSFont.systemFont(ofSize: size)
     }

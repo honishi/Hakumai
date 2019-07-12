@@ -12,20 +12,15 @@ import Foundation
 private let kCommunityPrefixUser = "^co\\d+"
 private let kCommunityPrefixChannel = "^ch\\d+"
 
-class Community: CustomStringConvertible {
+final class Community: CustomStringConvertible {
     var community: String?
     var title: String? = ""
     var level: Int?
     var thumbnailUrl: URL?
 
-    var isUser: Bool? {
-        return community?.hasRegexp(pattern: kCommunityPrefixUser)
-    }
-    
-    var isChannel: Bool? {
-        return community?.hasRegexp(pattern: kCommunityPrefixChannel)
-    }
-    
+    var isUser: Bool? { return community?.hasRegexp(pattern: kCommunityPrefixUser) }
+    var isChannel: Bool? { return community?.hasRegexp(pattern: kCommunityPrefixChannel) }
+
     var description: String {
         return (
             "Community: community[\(community ?? "")] title[\(title ?? "")] level[\(level ?? 0)] " +
@@ -34,7 +29,5 @@ class Community: CustomStringConvertible {
     }
 
     // MARK: Object Lifecycle
-    init() {
-        // nop
-    }
+    init() {}
 }
