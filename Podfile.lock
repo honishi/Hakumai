@@ -10,9 +10,9 @@ PODS:
   - Sparkle (1.14.0)
   - SwiftGen (6.0.2)
   - SwiftLint (0.29.1)
-  - XCGLogger (6.1.0):
-    - XCGLogger/Core (= 6.1.0)
-  - XCGLogger/Core (6.1.0):
+  - XCGLogger (7.0.0):
+    - XCGLogger/Core (= 7.0.0)
+  - XCGLogger/Core (7.0.0):
     - ObjcExceptionBridging
 
 DEPENDENCIES:
@@ -22,7 +22,7 @@ DEPENDENCIES:
   - Sparkle (~> 1.14.0)
   - SwiftGen (~> 6.0.2)
   - SwiftLint (~> 0.29.1)
-  - XCGLogger (~> 6.1.0)
+  - XCGLogger (~> 7.0.0)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -43,8 +43,8 @@ SPEC CHECKSUMS:
   Sparkle: ccd95233b12a3e3d4eeb55ff01dd4c8bb8188b07
   SwiftGen: e5b047067aa84082826a0c4f1c4c2ddc95bcf74c
   SwiftLint: 6772320e40b52049053a518c17db9b0634a0b45a
-  XCGLogger: 7f7f43f15dfe3a305fa1342b7dc29af656289abd
+  XCGLogger: 0434f15e3909cdc450bb63faf638b8792ab782ab
 
-PODFILE CHECKSUM: 07196197031c594406c4f22081e1335c890d6fa9
+PODFILE CHECKSUM: c0eba325f4e673a387d17bc3d1a67b85458b0921
 
 COCOAPODS: 1.5.3
