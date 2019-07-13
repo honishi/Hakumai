@@ -9,7 +9,7 @@
 import Foundation
 import AppKit
 
-final class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
+final class MenuDelegate: NSObject {
     // MARK: Menu Outlets
     @IBOutlet weak var copyCommentMenuItem: NSMenuItem!
     @IBOutlet weak var openUrlMenuItem: NSMenuItem!
@@ -21,26 +21,20 @@ final class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
     @IBOutlet weak var openUserPageMenuItem: NSMenuItem!
 
     // MARK: Computed Properties
-    var tableView: NSTableView {
-        return MainViewController.shared.tableView
-    }
-
-    var live: Live? {
-        return MainViewController.shared.live
-    }
+    var tableView: NSTableView { return MainViewController.shared.tableView }
+    var live: Live? { return MainViewController.shared.live }
 
     // MARK: - Object Lifecycle
     override func awakeFromNib() {
         super.awakeFromNib()
     }
+}
 
-    // MARK: - NSMenu Overrides
+extension MenuDelegate: NSMenuItemValidation {
     // swiftlint:disable cyclomatic_complexity
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         let clickedRow = tableView.clickedRow
-        if clickedRow == -1 {
-            return false
-        }
+        guard clickedRow != -1 else { return false }
 
         let message = MessageContainer.sharedContainer[clickedRow]
         guard message.messageType == .chat, let chat = message.chat else { return false }
@@ -68,8 +62,9 @@ final class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         return false
     }
     // swiftlint:enable cyclomatic_complexity
+}
 
-    // MARK: - NSMenuDelegate Functions
+extension MenuDelegate: NSMenuDelegate {
     func menuWillOpen(_ menu: NSMenu) {
         resetMenu()
         guard tableView.clickedRow != -1 else { return }
@@ -77,11 +72,11 @@ final class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         guard message.messageType == .chat, let chat = message.chat else { return }
         configureMenu(chat)
     }
+}
 
-    // MARK: Utility
-    private func resetMenu() {}
-    private func configureMenu(_ chat: Chat) {}
+extension MenuDelegate: NSSharingServiceDelegate {}
 
+extension MenuDelegate {
     // MARK: - Context Menu Handlers
     @IBAction func copyComment(_ sender: AnyObject) {
         guard let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat,
@@ -108,9 +103,8 @@ final class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
 
         let status = "「\(comment)」/ \(liveName) (\(communityName)) \(liveUrl) #\(communityId)"
 
-        let service = NSSharingService(named: NSSharingService.Name.postOnTwitter)
+        let service = NSSharingService(named: .postOnTwitter)
         service?.delegate = self
-
         service?.perform(withItems: [status])
     }
 
@@ -160,28 +154,17 @@ final class MenuDelegate: NSObject, NSMenuDelegate, NSSharingServiceDelegate {
         guard let url = URL(string: userPageUrlString) else { return }
         NSWorkspace.shared.open(url)
     }
+}
 
-    // MARK: - Internal Functions
+private extension MenuDelegate {
+    func resetMenu() {}
+    func configureMenu(_ chat: Chat) {}
+
     func copyStringToPasteBoard(_ string: String) -> Bool {
-        return true
-        // TODO: update for swift 4
-        /*
-         let pasteBoard = NSPasteboard.general
-         pasteBoard.declareTypes(convertToNSPasteboardPasteboardTypeArray([NSStringPboardType.rawValue]), owner: nil)
-         let result = pasteBoard.setString(string, forType: convertToNSPasteboardPasteboardType(NSStringPboardType.rawValue))
-         log.debug("copied \(string) w/ result \(result)")
-
-         return result
-         */
+        let pasteBoard = NSPasteboard.general
+        pasteBoard.clearContents()
+        let result = pasteBoard.setString(string, forType: .string)
+        log.debug("copied \(string) w/ result \(result)")
+        return result
     }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToNSPasteboardPasteboardTypeArray(_ input: [String]) -> [NSPasteboard.PasteboardType] {
-    return input.map { key in NSPasteboard.PasteboardType(key) }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToNSPasteboardPasteboardType(_ input: String) -> NSPasteboard.PasteboardType {
-    return NSPasteboard.PasteboardType(rawValue: input)
 }
