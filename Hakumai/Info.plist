@@ -51,6 +51,8 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSAppleEventsUsageDescription</key>
+	<string>Please permit the access right to grab URL from browser.</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © honishi, Hiroyuki Onishi.
 All rights reserved.</string>
