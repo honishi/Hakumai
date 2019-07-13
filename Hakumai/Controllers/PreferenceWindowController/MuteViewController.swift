@@ -50,8 +50,8 @@ private extension MuteViewController {
             return
         }
         muteAddViewController.completion = { (cancelled, muteStringValue) in
-            if !cancelled {
-                completion(muteStringValue!)
+            if !cancelled, let muteStringValue = muteStringValue {
+                completion(muteStringValue)
             }
             self.dismiss(muteAddViewController)
             // TODO: deinit in muteAddViewController is not called after this completion

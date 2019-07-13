@@ -94,8 +94,10 @@ private extension PreferenceWindowController {
     }
 
     func resizeWindowForContentView(view: NSView) {
+        guard let window = window else { return }
+
         let viewSize = view.frame.size
-        var frame = window!.frame
+        var frame = window.frame
 
         let titleHeight: CGFloat = 22
         let resizedHeight = viewSize.height + titleHeight + toolbarHeight()
@@ -104,15 +106,16 @@ private extension PreferenceWindowController {
         frame.size.height = resizedHeight
         frame.size.width = viewSize.width
 
-        window?.setFrame(frame, display: true, animate: true)
+        window.setFrame(frame, display: true, animate: true)
     }
 
     func toolbarHeight() -> CGFloat {
         var toolbarHeight: CGFloat = 0
+        guard let window = window, let contentView = window.contentView else { return toolbarHeight }
         if toolbar != nil && toolbar.isVisible {
-            let windowFrame = NSWindow.contentRect(forFrameRect: window!.frame, styleMask: window!.styleMask)
+            let windowFrame = NSWindow.contentRect(forFrameRect: window.frame, styleMask: window.styleMask)
             // swiftlint:disable legacy_nsgeometry_functions
-            toolbarHeight = windowFrame.height - NSHeight(window!.contentView!.frame)
+            toolbarHeight = windowFrame.height - NSHeight(contentView.frame)
             // swiftlint:enable legacy_nsgeometry_functions
         }
         return toolbarHeight

@@ -53,7 +53,7 @@ private extension RoomPositionTableCellView {
 
     func string(ofCommentNo commentNo: Int?) -> String {
         guard let commentNo = commentNo else { return "" }
-        return String(commentNo).numberStringWithSeparatorComma()!
+        return String(commentNo).numberStringWithSeparatorComma()
     }
 
     func set(fontSize: CGFloat?) {

@@ -52,8 +52,8 @@ extension String {
         return (removed as String)
     }
 
-    func numberStringWithSeparatorComma() -> String? {
-        guard let intValue = Int(self) else { return nil }
+    func numberStringWithSeparatorComma() -> String {
+        guard let intValue = Int(self) else { return "" }
 
         let number = NSNumber(value: intValue)
         let formatter = NumberFormatter()
@@ -61,7 +61,7 @@ extension String {
         formatter.groupingSeparator = ","
         formatter.groupingSize = 3
 
-        return formatter.string(from: number)
+        return formatter.string(from: number) ?? ""
     }
 }
 

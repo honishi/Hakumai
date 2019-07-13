@@ -52,11 +52,8 @@ extension ScoreTableCellView {
     }
 
     func string(forChatScore chat: Chat?) -> String {
-        guard let score = chat?.score,
-            let withComma = String(score).numberStringWithSeparatorComma() else {
-                return ""
-        }
-        return withComma
+        guard let score = chat?.score else { return "" }
+        return String(score).numberStringWithSeparatorComma()
     }
 
     func set(fontSize: CGFloat?) {

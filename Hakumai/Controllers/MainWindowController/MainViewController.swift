@@ -127,8 +127,8 @@ extension MainViewController {
             (kNibNamePremiumTableCellView, kPremiumColumnIdentifier)]
 
         for (nibName, identifier) in nibs {
-            let nib = NSNib(nibNamed: nibName, bundle: Bundle.main)
-            tableView.register(nib!, forIdentifier: convertToNSUserInterfaceItemIdentifier(identifier))
+            guard let nib = NSNib(nibNamed: nibName, bundle: Bundle.main) else { continue }
+            tableView.register(nib, forIdentifier: convertToNSUserInterfaceItemIdentifier(identifier))
         }
     }
 
@@ -214,7 +214,7 @@ extension MainViewController {
 
         var rowHeight: CGFloat = 0
 
-        let commentTableColumn = tableView.tableColumn(withIdentifier: convertToNSUserInterfaceItemIdentifier(kCommentColumnIdentifier))!
+        guard let commentTableColumn = tableView.tableColumn(withIdentifier: convertToNSUserInterfaceItemIdentifier(kCommentColumnIdentifier)) else { return rowHeight }
         let commentColumnWidth = commentTableColumn.width
         rowHeight = commentColumnHeight(forMessage: message, width: commentColumnWidth)
 
@@ -266,10 +266,12 @@ extension MainViewController {
 
         let message = MessageContainer.sharedContainer[row]
 
+        guard let _view = view, let tableColumn = tableColumn else { return nil }
+
         if message.messageType == .system {
-            configure(view: view!, forSystemMessage: message, withTableColumn: tableColumn!)
+            configure(view: _view, forSystemMessage: message, withTableColumn: tableColumn)
         } else if message.messageType == .chat {
-            configure(view: view!, forChat: message, withTableColumn: tableColumn!)
+            configure(view: _view, forChat: message, withTableColumn: tableColumn)
         }
 
         return view
@@ -304,13 +306,14 @@ extension MainViewController {
     }
 
     private func configure(view: NSTableCellView, forChat message: Message, withTableColumn tableColumn: NSTableColumn) {
-        let chat = message.chat!
+        guard let chat = message.chat else { return }
 
         switch convertFromNSUserInterfaceItemIdentifier(tableColumn.identifier) {
         case kRoomPositionColumnIdentifier:
+            guard let roomPosition = chat.roomPosition, let no = chat.no else { return }
             let roomPositionView = view as? RoomPositionTableCellView
-            roomPositionView?.roomPosition = chat.roomPosition!
-            roomPositionView?.commentNo = chat.no!
+            roomPositionView?.roomPosition = roomPosition
+            roomPositionView?.commentNo = no
             roomPositionView?.fontSize = min(tableViewFontSize, kMaximumFontSizeForNonMainColumn)
         case kScoreColumnIdentifier:
             let scoreView = view as? ScoreTableCellView
@@ -321,8 +324,9 @@ extension MainViewController {
             let attributed = NSAttributedString(string: content as String, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
             view.textField?.attributedStringValue = attributed
         case kUserIdColumnIdentifier:
+            guard let live = live else { return }
             let userIdView = view as? UserIdTableCellView
-            let handleName = HandleNameManager.sharedManager.handleName(forLive: live!, chat: chat)
+            let handleName = HandleNameManager.sharedManager.handleName(forLive: live, chat: chat)
             userIdView?.info = (handleName: handleName, userId: chat.userId, premium: chat.premium, comment: chat.comment)
             userIdView?.fontSize = tableViewFontSize
         case kPremiumColumnIdentifier:
@@ -339,11 +343,11 @@ extension MainViewController {
         var content: String!
         var attributes = [String: Any]()
 
-        if message.messageType == .system {
-            content = message.message!
+        if message.messageType == .system, let _message = message.message {
+            content = _message
             attributes = UIHelper.normalCommentAttributes(fontSize: tableViewFontSize)
-        } else if message.messageType == .chat {
-            content = message.chat!.comment!
+        } else if message.messageType == .chat, let _message = message.chat?.comment {
+            content = _message
             if message.firstChat == true {
                 attributes = UIHelper.boldCommentAttributes(fontSize: tableViewFontSize)
             } else {
@@ -403,12 +407,12 @@ extension MainViewController {
         }
 
         DispatchQueue.main.async {
-            self.liveTitleLabel.stringValue = live.title!
+            self.liveTitleLabel.stringValue = live.title ?? ""
 
             let communityTitle = live.community.title ?? "-"
-            let level = live.community.level != nil ? String(live.community.level!) : "-"
+            let level = live.community.level != nil ? String(live.community.level ?? 0) : "-"
             self.communityTitleLabel.stringValue = communityTitle + " (Lv." + level + ")"
-            self.roomPositionLabel.stringValue = user.roomLabel! + " - " + String(user.seatNo!)
+            self.roomPositionLabel.stringValue = (user.roomLabel ?? "") + " - " + String(user.seatNo ?? 0)
 
             let commentPlaceholder = (user.isBSP == true) ?
                 "BSP Comment is not yet implemented. :P" : "⌘N (enter to comment)"
@@ -425,7 +429,7 @@ extension MainViewController {
             self.focusCommentTextField()
         }
 
-        logSystemMessageToTableView("Prepared live as user \(user.nickname!).")
+        logSystemMessageToTableView("Prepared live as user \(user.nickname ?? "").")
     }
 
     func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtility, reason: String) {
@@ -459,7 +463,7 @@ extension MainViewController {
         openedRoomPosition = chat.roomPosition
 
         DispatchQueue.main.async {
-            self.notificationLabel.stringValue = "Opened: ~\(chat.roomPosition!.label())"
+            self.notificationLabel.stringValue = "Opened: ~\(chat.roomPosition?.label() ?? "")"
         }
     }
 
@@ -519,8 +523,8 @@ extension MainViewController {
             if shouldScroll {
                 self.scrollTableViewToBottom()
             }
-            if message.messageType == .chat {
-                self.handleSpeech(chat: message.chat!)
+            if message.messageType == .chat, let chat = message.chat {
+                self.handleSpeech(chat: chat)
             }
             self.scrollView.flashScrollers()
         }
@@ -531,9 +535,9 @@ extension MainViewController {
         if message.messageType == .system {
             content = message.message
         } else if message.messageType == .chat {
-            content = message.chat!.comment
+            content = message.chat?.comment
         }
-        log.debug("[ \(content!) ]")
+        log.debug("[ \(content ?? "-") ]")
     }
 
     private func shouldTableViewScrollToBottom() -> Bool {
@@ -603,8 +607,8 @@ extension MainViewController {
 
         handleNameAddViewController.handleName = (defaultHandleName(live: live, chat: chat) ?? "") as NSString
         handleNameAddViewController.completion = { (cancelled: Bool, handleName: String?) -> Void in
-            if !cancelled {
-                HandleNameManager.sharedManager.updateHandleName(live: live, chat: chat, handleName: handleName!)
+            if !cancelled, let handleName = handleName {
+                HandleNameManager.sharedManager.updateHandleName(live: live, chat: chat, handleName: handleName)
                 MainViewController.shared.refreshHandleName()
             }
 
@@ -658,16 +662,16 @@ extension MainViewController {
     }
 
     private func updateLiveStatistics(heartbeat: Heartbeat) {
-        if heartbeat.status != .ok {
-            return
-        }
+        guard heartbeat.status == .ok,
+            let watchCount = heartbeat.watchCount,
+            let commentCount = heartbeat.commentCount else { return }
 
-        let visitors = String(heartbeat.watchCount!).numberStringWithSeparatorComma()!
-        let comments = String(heartbeat.commentCount!).numberStringWithSeparatorComma()!
+        let visitors = String(watchCount).numberStringWithSeparatorComma()
+        let comments = String(commentCount).numberStringWithSeparatorComma()
 
         var remaining = "-"
         if let free = heartbeat.freeSlotNum {
-            remaining = free == 0 ? "満員" : String(free).numberStringWithSeparatorComma()!
+            remaining = free == 0 ? "満員" : String(free).numberStringWithSeparatorComma()
         }
 
         DispatchQueue.main.async {
@@ -679,7 +683,8 @@ extension MainViewController {
 
     // MARK: Control Handlers
     @IBAction func grabUrlFromBrowser(_ sender: AnyObject) {
-        let session = SessionManagementType(rawValue: UserDefaults.standard.integer(forKey: Parameters.sessionManagement))!
+        guard let session = SessionManagementType(rawValue:
+            UserDefaults.standard.integer(forKey: Parameters.sessionManagement)) else { return }
         let browser: BrowserHelper.BrowserType = session == .safari ? .safari : .chrome
         if let url = BrowserHelper.extractUrl(fromBrowser: browser) {
             liveTextField.stringValue = url
@@ -695,7 +700,8 @@ extension MainViewController {
         communityImageView.image = NSImage(named: kCommunityImageDefaultName)
         NicoUtility.shared.delegate = self
 
-        let sessionManagementType = SessionManagementType(rawValue: UserDefaults.standard.integer(forKey: Parameters.sessionManagement))!
+        guard let sessionManagementType = SessionManagementType(
+            rawValue: UserDefaults.standard.integer(forKey: Parameters.sessionManagement)) else { return }
 
         switch sessionManagementType {
         case .login:

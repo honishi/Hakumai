@@ -63,8 +63,8 @@ extension UserViewController {
             (kNibNameRoomPositionTableCellView, kRoomPositionColumnIdentifier),
             (kNibNameScoreTableCellView, kScoreColumnIdentifier)]
         for (nibName, identifier) in nibs {
-            let nib = NSNib(nibNamed: nibName, bundle: Bundle.main)
-            tableView.register(nib!, forIdentifier: convertToNSUserInterfaceItemIdentifier(identifier))
+            guard let nib = NSNib(nibNamed: nibName, bundle: Bundle.main) else { continue }
+            tableView.register(nib, forIdentifier: convertToNSUserInterfaceItemIdentifier(identifier))
         }
     }
 }
@@ -84,7 +84,7 @@ extension UserViewController: NSTableViewDataSource, NSTableViewDelegate {
 
         var rowHeight: CGFloat = 0
 
-        let commentTableColumn = tableView.tableColumn(withIdentifier: convertToNSUserInterfaceItemIdentifier(kCommentColumnIdentifier))!
+        guard let commentTableColumn = tableView.tableColumn(withIdentifier: convertToNSUserInterfaceItemIdentifier(kCommentColumnIdentifier)) else { return rowHeight }
         let commentColumnWidth = commentTableColumn.width
         rowHeight = commentColumnHeight(forMessage: message, width: commentColumnWidth)
 
@@ -122,8 +122,8 @@ extension UserViewController: NSTableViewDataSource, NSTableViewDelegate {
             view?.textField?.stringValue = ""
         }
         let message = messages[row]
-        if message.messageType == .chat {
-            configure(view: view!, forChat: message, withTableColumn: tableColumn!)
+        if message.messageType == .chat, let _view = view, let tableColumn = tableColumn {
+            configure(view: _view, forChat: message, withTableColumn: tableColumn)
         }
         return view
     }
@@ -131,15 +131,16 @@ extension UserViewController: NSTableViewDataSource, NSTableViewDelegate {
 
 private extension UserViewController {
     func configure(view: NSTableCellView, forChat message: Message, withTableColumn tableColumn: NSTableColumn) {
-        let chat = message.chat!
+        guard let chat = message.chat else { return }
 
         var attributed: NSAttributedString?
 
         switch convertFromNSUserInterfaceItemIdentifier(tableColumn.identifier) {
         case kRoomPositionColumnIdentifier:
+            guard let roomPosition = chat.roomPosition, let no = chat.no else { return }
             let roomPositionView = view as? RoomPositionTableCellView
-            roomPositionView?.roomPosition = chat.roomPosition!
-            roomPositionView?.commentNo = chat.no!
+            roomPositionView?.roomPosition = roomPosition
+            roomPositionView?.commentNo = no
         case kScoreColumnIdentifier:
             (view as? ScoreTableCellView)?.chat = chat
         case kCommentColumnIdentifier:
@@ -149,8 +150,8 @@ private extension UserViewController {
             break
         }
 
-        if attributed != nil {
-            view.textField?.attributedStringValue = attributed!
+        if let attributed = attributed {
+            view.textField?.attributedStringValue = attributed
         }
     }
 
@@ -159,11 +160,11 @@ private extension UserViewController {
         var content: String!
         var attributes = [String: Any]()
 
-        if message.messageType == .system {
-            content = message.message!
+        if message.messageType == .system, let _message = message.message {
+            content = _message
             attributes = UIHelper.normalCommentAttributes()
-        } else if message.messageType == .chat {
-            content = message.chat!.comment!
+        } else if message.messageType == .chat, let _message = message.chat?.comment {
+            content = _message
             attributes = (message.firstChat == true ? UIHelper.boldCommentAttributes() : UIHelper.normalCommentAttributes())
         }
 

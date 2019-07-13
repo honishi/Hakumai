@@ -622,7 +622,8 @@ private extension NicoUtility {
             success()
         }
 
-        let url = (community.isChannel == true ? kCommunityUrlChannel : kCommunityUrlUser) + community.community!
+        guard let _community = community.community else { return }
+        let url = (community.isChannel == true ? kCommunityUrlChannel : kCommunityUrlUser) + _community
         cookiedAsyncRequest(httpMethod: "GET", url: url, parameters: nil, completion: httpCompletion)
     }
 
@@ -688,8 +689,10 @@ private extension NicoUtility {
     }
 
     func assignedRoomListener() -> RoomListener? {
+        guard let messageServer = messageServer else { return nil }
         var assigned: RoomListener?
-        for roomListener in roomListeners where roomListener.server! == messageServer! {
+        for roomListener in roomListeners {
+            guard let server = roomListener.server, server == messageServer else { continue }
             assigned = roomListener
             break
         }
