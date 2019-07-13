@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14490.70"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -384,7 +384,7 @@
                 <userDefaultsController id="Qbm-2t-1Py"/>
                 <customObject id="zCO-sh-zt2" customClass="SUUpdater"/>
             </objects>
-            <point key="canvasLocation" x="-5.5" y="-302"/>
+            <point key="canvasLocation" x="18" y="-89"/>
         </scene>
         <!--Window Controller-->
         <scene sceneID="R2V-B0-nI4">
@@ -718,7 +718,7 @@
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ouh-Ua-Wgc">
-                                                                    <rect key="frame" x="6" y="0.0" width="100" height="17"/>
+                                                                    <rect key="frame" x="9" y="0.0" width="100" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="00w-xs-nuZ">
                                                                         <font key="font" metaFont="system"/>
@@ -909,7 +909,7 @@
                                 <action selector="openUrl:" target="Riw-FG-ugq" id="jeg-gC-zQl"/>
                             </connections>
                         </menuItem>
-                        <menuItem title="Tweet Comment" id="LCT-WR-Xfy">
+                        <menuItem title="Tweet Comment" hidden="YES" id="LCT-WR-Xfy">
                             <modifierMask key="keyEquivalentModifierMask"/>
                             <connections>
                                 <action selector="tweetComment:" target="Riw-FG-ugq" id="sZD-OS-6en"/>
@@ -966,7 +966,7 @@
                     </connections>
                 </customObject>
             </objects>
-            <point key="canvasLocation" x="75.5" y="683"/>
+            <point key="canvasLocation" x="75" y="918"/>
         </scene>
         <!--Handle Name Add View Controller-->
         <scene sceneID="tSQ-kR-qZi">
@@ -1033,12 +1033,12 @@ Gw
                 </viewController>
                 <customObject id="Jz0-En-dM8" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="75" y="1038.5"/>
+            <point key="canvasLocation" x="74" y="1291"/>
         </scene>
     </scenes>
     <resources>
-        <image name="ImportLink" width="220" height="220"/>
+        <image name="ImportLink" width="110" height="110"/>
         <image name="NoImage" width="128" height="128"/>
-        <image name="StartLive" width="220" height="220"/>
+        <image name="StartLive" width="110" height="110"/>
     </resources>
 </document>
