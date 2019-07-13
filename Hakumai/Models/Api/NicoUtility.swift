@@ -308,7 +308,7 @@ extension NicoUtility {
 
     func roomListenerDidFinishListening(_ roomListener: RoomListener) {
         objc_sync_enter(self)
-        if let index = roomListeners.index(of: roomListener) {
+        if let index = roomListeners.firstIndex(of: roomListener) {
             roomListeners.remove(at: index)
         }
         objc_sync_exit(self)

@@ -1,6 +1,6 @@
 <img src="./document/image/logo.png" width="500px">
 
-[![Swift 4.2](https://img.shields.io/badge/Swift-4.2-orange.svg?style=flat)](https://swift.org/)
+[![Swift 5.0](https://img.shields.io/badge/Swift-5.0-orange.svg?style=flat)](https://swift.org/)
 [![License MIT](https://img.shields.io/badge/License-MIT-lightgrey.svg?style=flat)](http://www.opensource.org/licenses/mit-license.php)
 [![Build Status](https://travis-ci.org/honishi/Hakumai.svg?branch=develop)](https://travis-ci.org/honishi/Hakumai)
 

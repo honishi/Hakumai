@@ -593,7 +593,7 @@ extension MainViewController {
     // MARK: - UserWindowControllerDelegate Functions
     func userWindowControllerDidClose(_ userWindowController: UserWindowController) {
         log.debug("")
-        if let index = userWindowControllers.index(of: userWindowController) {
+        if let index = userWindowControllers.firstIndex(of: userWindowController) {
             userWindowControllers.remove(at: index)
         }
     }
