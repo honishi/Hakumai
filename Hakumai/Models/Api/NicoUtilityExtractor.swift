@@ -222,12 +222,7 @@ extension NicoUtility {
         }
         let rootElement = htmlDocument?.rootElement
 
-        // /html/body/div[3]/div[2]/h2/text() -> other's userpage
-        // /html/body/div[4]/div[2]/h2/text() -> my userpage, contains '他のユーザーから見たあなたのプロフィールです。' box
-        let username = rootElement?.firstChild(withXPath: "/html/body/*/div[2]/h2")?.stringValue()
-        let cleansed = username?.stringByRemovingRegexp(pattern: "(?:さん|)\\s*$")
-
-        return cleansed
+        return rootElement?.firstChild(withXPath: "//meta[@property=\"profile:username\"]/@content")?.stringValue()
     }
 
     // MARK: - Heartbeat
