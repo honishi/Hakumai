@@ -80,20 +80,20 @@ extension MenuDelegate {
     // MARK: - Context Menu Handlers
     @IBAction func copyComment(_ sender: AnyObject) {
         guard let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat,
-            let comment = chat.comment else { return }
+              let comment = chat.comment else { return }
         _ = copyStringToPasteBoard(comment)
     }
 
     @IBAction func openUrl(_ sender: AnyObject) {
         guard let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat,
-            let urlString = chat.comment?.extractUrlString(),
-            let urlObject = URL(string: urlString) else { return }
+              let urlString = chat.comment?.extractUrlString(),
+              let urlObject = URL(string: urlString) else { return }
         NSWorkspace.shared.open(urlObject)
     }
 
     @IBAction func tweetComment(_ sender: AnyObject) {
         guard let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat,
-            let live = NicoUtility.shared.live else { return }
+              let live = NicoUtility.shared.live else { return }
 
         let comment = chat.comment ?? ""
         let liveName = live.title ?? ""
@@ -125,7 +125,7 @@ extension MenuDelegate {
 
     @IBAction func addToMuteUser(_ sender: AnyObject) {
         guard let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat,
-            let userId = chat.userId else { return }
+              let userId = chat.userId else { return }
         let defaults = UserDefaults.standard
         var muteUserIds = defaults.object(forKey: Parameters.muteUserIds) as? [[String: String]] ?? [[String: String]]()
         for muteUserId in muteUserIds where chat.userId == muteUserId[MuteUserIdKey.userId] {

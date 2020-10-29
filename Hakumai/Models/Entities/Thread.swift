@@ -18,7 +18,7 @@ final class Thread: CustomStringConvertible {
     var description: String {
         return (
             "Thread: resultCode[\(resultCode ?? 0)] thread[\(thread ?? 0)] lastRes[\(lastRes ?? 0)] " +
-            "ticket[\(ticket ?? "")] serverTime[\(serverTime?.description ?? "")]"
+                "ticket[\(ticket ?? "")] serverTime[\(serverTime?.description ?? "")]"
         )
     }
 

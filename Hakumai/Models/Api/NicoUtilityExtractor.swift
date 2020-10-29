@@ -124,8 +124,8 @@ extension NicoUtility {
 
         let baseXPath = "/getplayerstatus/ms/"
         guard let address = rootElement?.firstStringValue(forXPath: baseXPath + "addr"),
-            let port = rootElement?.firstIntValue(forXPath: baseXPath + "port"),
-            let thread = rootElement?.firstIntValue(forXPath: baseXPath + "thread") else { return nil }
+              let port = rootElement?.firstIntValue(forXPath: baseXPath + "port"),
+              let thread = rootElement?.firstIntValue(forXPath: baseXPath + "thread") else { return nil }
         // log.debug("\(address?),\(port),\(thread)")
 
         return MessageServer(roomPosition: roomPosition, address: address, port: port, thread: thread)

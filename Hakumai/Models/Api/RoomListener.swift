@@ -130,10 +130,10 @@ extension RoomListener {
 
     func comment(live: Live, user: User, postKey: String, comment: String, anonymously: Bool) {
         guard let thread = thread, let threadNumber = thread.thread, let ticket = thread.ticket,
-            let serverTime = thread.serverTime, let baseTime = live.baseTime, let startDate = startDate,
-            let userId = user.userId, let premium = user.isPremium else {
-                log.debug("could not get thread information")
-                return
+              let serverTime = thread.serverTime, let baseTime = live.baseTime, let startDate = startDate,
+              let userId = user.userId, let premium = user.isPremium else {
+            log.debug("could not get thread information")
+            return
         }
         let originTime = Int(serverTime.timeIntervalSince1970) - Int(baseTime.timeIntervalSince1970)
         let elapsedTime = Int(Date().timeIntervalSince1970) - Int(startDate.timeIntervalSince1970)

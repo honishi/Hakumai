@@ -51,9 +51,9 @@ final class ChromeCookie {
         fileLog.debug("encryptedCookieByRemovingPrefix:[\(encryptedCookieByRemovingPrefix)]")
 
         guard let password = ChromeCookie.chromePassword().data(using: String.Encoding.utf8, allowLossyConversion: false),
-            let salt = kSalt.data(using: String.Encoding.utf8, allowLossyConversion: false),
-            let aesKey = ChromeCookie.aesKeyForPassword(password, salt: salt, roundCount: kRoundCount) else {
-                return nil
+              let salt = kSalt.data(using: String.Encoding.utf8, allowLossyConversion: false),
+              let aesKey = ChromeCookie.aesKeyForPassword(password, salt: salt, roundCount: kRoundCount) else {
+            return nil
         }
         fileLog.debug("aesKey:[\(aesKey)]")
 

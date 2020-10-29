@@ -78,11 +78,11 @@ extension NicoUtility {
 
         for (name, value) in [("user_session", userSessionCookie), ("area", "JP"), ("lang", "ja-jp")] {
             if let cookie = HTTPCookie(properties: [
-                HTTPCookiePropertyKey.domain: kCookieDomain,
-                HTTPCookiePropertyKey.name: name,
-                HTTPCookiePropertyKey.value: value,
-                HTTPCookiePropertyKey.expires: Date().addingTimeInterval(kCookieExpire),
-                HTTPCookiePropertyKey.path: kCookiePath]) {
+                                        HTTPCookiePropertyKey.domain: kCookieDomain,
+                                        HTTPCookiePropertyKey.name: name,
+                                        HTTPCookiePropertyKey.value: value,
+                                        HTTPCookiePropertyKey.expires: Date().addingTimeInterval(kCookieExpire),
+                                        HTTPCookiePropertyKey.path: kCookiePath]) {
                 cookies.append(cookie)
             }
         }

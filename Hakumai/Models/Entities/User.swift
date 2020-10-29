@@ -30,7 +30,7 @@ final class User: CustomStringConvertible {
     var description: String {
         return (
             "User: userId[\(userId ?? 0)] nickname[\(nickname ?? "")] isPremium[\(isPremium ?? 0)] " +
-            "roomLabel[\(roomLabel ?? "")] seatNo[\(seatNo ?? 0)] isArena[\(isArena ?? false)] isBSP[\(isBSP ?? false)]"
+                "roomLabel[\(roomLabel ?? "")] seatNo[\(seatNo ?? 0)] isArena[\(isArena ?? false)] isBSP[\(isBSP ?? false)]"
         )
     }
 

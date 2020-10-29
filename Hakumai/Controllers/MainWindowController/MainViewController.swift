@@ -663,8 +663,8 @@ extension MainViewController {
 
     private func updateLiveStatistics(heartbeat: Heartbeat) {
         guard heartbeat.status == .ok,
-            let watchCount = heartbeat.watchCount,
-            let commentCount = heartbeat.commentCount else { return }
+              let watchCount = heartbeat.watchCount,
+              let commentCount = heartbeat.commentCount else { return }
 
         let visitors = String(watchCount).numberStringWithSeparatorComma()
         let comments = String(commentCount).numberStringWithSeparatorComma()
@@ -684,7 +684,7 @@ extension MainViewController {
     // MARK: Control Handlers
     @IBAction func grabUrlFromBrowser(_ sender: AnyObject) {
         guard let session = SessionManagementType(rawValue:
-            UserDefaults.standard.integer(forKey: Parameters.sessionManagement)) else { return }
+                                                    UserDefaults.standard.integer(forKey: Parameters.sessionManagement)) else { return }
         let browser: BrowserHelper.BrowserType = session == .safari ? .safari : .chrome
         if let url = BrowserHelper.extractUrl(fromBrowser: browser) {
             liveTextField.stringValue = url
@@ -701,7 +701,7 @@ extension MainViewController {
         NicoUtility.shared.delegate = self
 
         guard let sessionManagementType = SessionManagementType(
-            rawValue: UserDefaults.standard.integer(forKey: Parameters.sessionManagement)) else { return }
+                rawValue: UserDefaults.standard.integer(forKey: Parameters.sessionManagement)) else { return }
 
         switch sessionManagementType {
         case .login:

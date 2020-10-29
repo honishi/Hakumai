@@ -230,7 +230,7 @@ extension NicoUtility {
 
     func reportAsNgUser(chat: Chat, completion: @escaping (_ userId: String?) -> Void) {
         guard let liveId = live?.liveId, let userId = chat.userId, let date = chat.date,
-            let dateUsec = chat.dateUsec, let no = chat.no, let roomPosition = chat.roomPosition else { return }
+              let dateUsec = chat.dateUsec, let no = chat.no, let roomPosition = chat.roomPosition else { return }
 
         let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (response, data, connectionError) in
             guard connectionError == nil else {
@@ -520,7 +520,7 @@ private extension NicoUtility {
 
             let communitySuccess: () -> Void = {
                 guard let community = self.live?.community, let user = self.user,
-                    let live = self.live, let messageServer = self.messageServer else { return }
+                      let live = self.live, let messageServer = self.messageServer else { return }
                 log.debug("loaded community:\(community)")
 
                 self.delegate?.nicoUtilityDidPrepareLive(self, user: user, live: live)
