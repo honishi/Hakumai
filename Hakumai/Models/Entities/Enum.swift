@@ -69,6 +69,7 @@ enum Premium: Int, CustomStringConvertible {
     case caster = 3
     case `operator` = 6
     case bsp = 7
+    case ippanTransparent = 24
 
     var description: String { return "\(rawValue)(\(label()))" }
 
@@ -80,6 +81,7 @@ enum Premium: Int, CustomStringConvertible {
         case .caster:   return "放送主"
         case .operator: return "運営"
         case .bsp:      return "BSP"
+        case .ippanTransparent: return "一般 (透明)"
         }
     }
 }
