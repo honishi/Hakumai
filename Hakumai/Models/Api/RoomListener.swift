@@ -128,21 +128,6 @@ extension RoomListener {
         outputStream = nil
     }
 
-    func comment(live: Live, user: User, postKey: String, comment: String, anonymously: Bool) {
-        guard let thread = thread, let threadNumber = thread.thread, let ticket = thread.ticket,
-              let serverTime = thread.serverTime, let baseTime = live.baseTime, let startDate = startDate,
-              let userId = user.userId, let premium = user.isPremium else {
-            log.debug("could not get thread information")
-            return
-        }
-        let originTime = Int(serverTime.timeIntervalSince1970) - Int(baseTime.timeIntervalSince1970)
-        let elapsedTime = Int(Date().timeIntervalSince1970) - Int(startDate.timeIntervalSince1970)
-        let vpos = (originTime + elapsedTime) * 100
-        let mail = anonymously ? "184" : ""
-        let message = "<chat thread=\"\(threadNumber)\" ticket=\"\(ticket)\" vpos=\"\(vpos)\" postkey=\"\(postKey)\" mail=\"\(mail)\" user_id=\"\(userId)\" premium=\"\(premium)\">\(comment)</chat>"
-        send(message: message)
-    }
-
     private func send(message: String, logging: Bool = true) {
         guard let data = (message + "\0").data(using: String.Encoding.utf8) else { return }
         outputStream?.write((data as NSData).bytes.assumingMemoryBound(to: UInt8.self), maxLength: data.count)
@@ -402,4 +387,23 @@ extension RoomListener {
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToXMLNodeOptions(_ input: Int) -> XMLNode.Options {
     return XMLNode.Options(rawValue: UInt(input))
+}
+
+extension RoomListener {
+    func commentJson(live: Live, user: User, comment: String, anonymously: Bool) -> [String: Any]? {
+        guard let thread = thread, let serverTime = thread.serverTime,
+              let baseTime = live.baseTime, let startDate = startDate else {
+            log.debug("could not get thread information")
+            return nil
+        }
+        let originTime = Int(serverTime.timeIntervalSince1970) - Int(baseTime.timeIntervalSince1970)
+        let elapsedTime = Int(Date().timeIntervalSince1970) - Int(startDate.timeIntervalSince1970)
+        let vpos = (originTime + elapsedTime) * 100
+        let mail = anonymously ? "184" : ""
+        return [
+            "message": comment,
+            "command": mail,
+            "vpos": "\(vpos)"
+        ]
+    }
 }
