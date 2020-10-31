@@ -1,6 +1,6 @@
 language: objective-c
 osx_image: xcode12
-rvm: 2.3.0
+rvm: 2.5.1
 install:
   - bundle install
   - travis_wait 30 bundle exec pod repo update --silent
