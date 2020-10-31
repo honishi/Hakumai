@@ -155,20 +155,21 @@ extension NicoUtility {
     }
 
     func comment(_ comment: String, anonymously: Bool = true, completion: @escaping (_ comment: String?) -> Void) {
-        guard let live = live, let user = user else {
+        guard let live = live, let user = user, let lv = live.liveId else {
             log.debug("no available stream, or user")
             return
         }
-        let success: (String) -> Void = { postKey in
-            guard let roomListener = self.assignedRoomListener() else { return }
-            roomListener.comment(live: live, user: user, postKey: postKey, comment: comment, anonymously: anonymously)
-            completion(comment)
+        guard let assignedRoomListener = assignedRoomListener() else {
+            log.error("could not find assigned room listener")
+            return
         }
-        let failure: () -> Void = {
-            log.error("could not get post key")
-            completion(nil)
+        guard let json = assignedRoomListener.commentJson(live: live, user: user, comment: comment, anonymously: anonymously) else {
+            log.error("could not create comment json")
+            return
         }
-        requestGetPostKey(success: success, failure: failure)
+        postCommentRequest(lv: lv, json: json) { (_, _, _) in
+            // TODO: handle errors...
+        }
     }
 
     func loadThumbnail(completion: @escaping (Data?) -> Void) {
@@ -230,7 +231,7 @@ extension NicoUtility {
 
     func reportAsNgUser(chat: Chat, completion: @escaping (_ userId: String?) -> Void) {
         guard let liveId = live?.liveId, let userId = chat.userId, let date = chat.date,
-            let dateUsec = chat.dateUsec, let no = chat.no, let roomPosition = chat.roomPosition else { return }
+              let dateUsec = chat.dateUsec, let no = chat.no, let roomPosition = chat.roomPosition else { return }
 
         let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (response, data, connectionError) in
             guard connectionError == nil else {
@@ -520,7 +521,7 @@ private extension NicoUtility {
 
             let communitySuccess: () -> Void = {
                 guard let community = self.live?.community, let user = self.user,
-                    let live = self.live, let messageServer = self.messageServer else { return }
+                      let live = self.live, let messageServer = self.messageServer else { return }
                 log.debug("loaded community:\(community)")
 
                 self.delegate?.nicoUtilityDidPrepareLive(self, user: user, live: live)
@@ -648,46 +649,6 @@ private extension NicoUtility {
     }
 
     // MARK: Comment
-    func requestGetPostKey(success: @escaping (_ postKey: String) -> Void, failure: @escaping () -> Void) {
-        guard let messageServer = messageServer else {
-            log.error("cannot comment without messageServer")
-            failure()
-            return
-        }
-
-        let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (response, data, connectionError) in
-            if connectionError != nil {
-                log.error("error in cookied async request")
-                failure()
-                return
-            }
-            guard let data = data else {
-                log.error("error in unpacking response data")
-                failure()
-                return
-            }
-            let responseString = NSString(data: data, encoding: String.Encoding.utf8.rawValue)
-            log.debug("\(responseString ?? "")")
-            guard let postKey = (responseString as String?)?.extractRegexp(pattern: "postkey=(.+)") else {
-                log.error("error in extracting postkey")
-                failure()
-                return
-            }
-            success(postKey)
-        }
-
-        guard let assignedRoomListener = assignedRoomListener() else {
-            log.error("could not find assigned room listener")
-            failure()
-            return
-        }
-
-        let thread = messageServer.thread
-        let blockNo = (assignedRoomListener.lastRes + 1) / 100
-
-        cookiedAsyncRequest(httpMethod: "GET", url: kGetPostKeyUrl, parameters: ["thread": thread, "block_no": blockNo], completion: httpCompletion)
-    }
-
     func assignedRoomListener() -> RoomListener? {
         guard let messageServer = messageServer else { return nil }
         var assigned: RoomListener?

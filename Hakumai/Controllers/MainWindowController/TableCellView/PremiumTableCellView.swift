@@ -37,7 +37,7 @@ private extension PremiumTableCellView {
         switch premium {
         case .premium:
             image = NSImage(named: kImageNamePremium)
-        case .ippan:
+        case .ippan, .ippanTransparent:
             image = NSImage(named: kImageNameIppan)
         case .system, .caster, .operator, .bsp:
             image = NSImage(named: kImageNameMisc)

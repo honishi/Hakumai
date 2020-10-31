@@ -47,7 +47,7 @@ final class Heartbeat: CustomStringConvertible {
         return (
             "Heartbeat: status[\(status?.description ?? "")] errorCode[\(errorCode?.description ?? "")] watchCount[\(watchCount ?? 0)] " +
                 "commentCount[\(commentCount ?? 0)] freeSlotNum[\(freeSlotNum ?? 0)] " +
-            "isRestrict[\(isRestrict ?? 0)] ticket[\(ticket ?? "")] waitTime[\(waitTime ?? 0)]"
+                "isRestrict[\(isRestrict ?? 0)] ticket[\(ticket ?? "")] waitTime[\(waitTime ?? 0)]"
         )
     }
 

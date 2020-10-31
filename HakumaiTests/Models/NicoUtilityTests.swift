@@ -193,12 +193,7 @@ final class NicoUtilityTests: XCTestCase {
 
         data = dataForResource("user_1.html")
         resolved = NicoUtility.shared.extractUsername(fromHtmlData: data)
-        XCTAssert(resolved == "野田草履", "")
-
-        // should extract ナオキ兄さん, not ナオキ兄
-        data = dataForResource("user_2.html")
-        resolved = NicoUtility.shared.extractUsername(fromHtmlData: data)
-        XCTAssert(resolved == "ナオキ兄さん", "")
+        XCTAssert(resolved == "しみっちゃん", "")
 
         data = dataForResource("user_me.html")
         resolved = NicoUtility.shared.extractUsername(fromHtmlData: data)

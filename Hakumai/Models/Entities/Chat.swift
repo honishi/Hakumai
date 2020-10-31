@@ -37,7 +37,7 @@ final class Chat: CustomStringConvertible {
         return (
             "Chat: internalNo[\(internalNo ?? 0)] roomPosition[\(roomPosition?.description ?? "")] no[\(no ?? 0)] " +
                 "date[\(date?.description ?? "")] dateUsec[\(dateUsec ?? 0)] mail[\(mail)] userId[\(userId ?? "")] " +
-            "premium[\(premium?.description ?? "")] comment[\(comment ?? "")] score[\(score ?? 0)]"
+                "premium[\(premium?.description ?? "")] comment[\(comment ?? "")] score[\(score ?? 0)]"
         )
     }
 
@@ -49,7 +49,7 @@ final class Chat: CustomStringConvertible {
 extension Chat {
     static func isRawUserId(_ userId: String?) -> Bool {
         guard let regexp = try? NSRegularExpression(pattern: "^\\d+$", options: []),
-            let userId = userId else { return false }
+              let userId = userId else { return false }
         let matched = regexp.firstMatch(
             in: userId,
             options: [],

@@ -61,7 +61,7 @@ private extension LoginCookie {
     static func removeAllStoredCookie() {
         let cookieStorage = HTTPCookieStorage.shared
         guard let url = URL(string: kNicoVideoDomain),
-            let cookies = cookieStorage.cookies(for: url) else { return }
+              let cookies = cookieStorage.cookies(for: url) else { return }
         for cookie in cookies {
             cookieStorage.deleteCookie((cookie ))
         }
@@ -70,7 +70,7 @@ private extension LoginCookie {
     static func findUserSessionCookie() -> String? {
         let cookieStorage = HTTPCookieStorage.shared
         guard let url = URL(string: kNicoVideoDomain),
-            let cookies = cookieStorage.cookies(for: url) else { return nil }
+              let cookies = cookieStorage.cookies(for: url) else { return nil }
         for cookie in cookies where cookie.name == "user_session" {
             return cookie.value
         }

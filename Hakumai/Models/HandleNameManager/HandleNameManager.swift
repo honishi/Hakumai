@@ -41,7 +41,7 @@ final class HandleNameManager {
 extension HandleNameManager {
     func extractAndUpdateHandleName(live: Live, chat: Chat) {
         guard chat.userId != nil, let comment = chat.comment,
-            let handleName = extractHandleName(fromComment: comment) else { return }
+              let handleName = extractHandleName(fromComment: comment) else { return }
         updateHandleName(live: live, chat: chat, handleName: handleName)
     }
 
@@ -80,7 +80,7 @@ extension HandleNameManager {
         }
 
         let insertSql = "insert or replace into " + kHandleNamesTable + " " +
-        "values (?, ?, ?, ?, null, strftime('%s', 'now'), null, null, null)"
+            "values (?, ?, ?, ?, null, strftime('%s', 'now'), null, null, null)"
 
         databaseQueue.inDatabase { database in
             database?.executeUpdate(insertSql, withArgumentsIn: [communityId, userId, handleName, anonymous])
@@ -131,7 +131,7 @@ private extension HandleNameManager {
         let createTableSql = "create table if not exists " + kHandleNamesTable + " " +
             "(community_id text, user_id text, handle_name text, anonymous integer, color text, updated integer, " +
             "reserved1 text, reserved2 text, reserved3 text, " +
-        "primary key (community_id, user_id))"
+            "primary key (community_id, user_id))"
 
         objc_sync_enter(self)
         let success = database.executeUpdate(createTableSql, withArgumentsIn: nil)

@@ -124,8 +124,8 @@ extension NicoUtility {
 
         let baseXPath = "/getplayerstatus/ms/"
         guard let address = rootElement?.firstStringValue(forXPath: baseXPath + "addr"),
-            let port = rootElement?.firstIntValue(forXPath: baseXPath + "port"),
-            let thread = rootElement?.firstIntValue(forXPath: baseXPath + "thread") else { return nil }
+              let port = rootElement?.firstIntValue(forXPath: baseXPath + "port"),
+              let thread = rootElement?.firstIntValue(forXPath: baseXPath + "thread") else { return nil }
         // log.debug("\(address?),\(port),\(thread)")
 
         return MessageServer(roomPosition: roomPosition, address: address, port: port, thread: thread)
@@ -222,12 +222,7 @@ extension NicoUtility {
         }
         let rootElement = htmlDocument?.rootElement
 
-        // /html/body/div[3]/div[2]/h2/text() -> other's userpage
-        // /html/body/div[4]/div[2]/h2/text() -> my userpage, contains '他のユーザーから見たあなたのプロフィールです。' box
-        let username = rootElement?.firstChild(withXPath: "/html/body/*/div[2]/h2")?.stringValue()
-        let cleansed = username?.stringByRemovingRegexp(pattern: "(?:さん|)\\s*$")
-
-        return cleansed
+        return rootElement?.firstChild(withXPath: "//meta[@property=\"profile:username\"]/@content")?.stringValue()
     }
 
     // MARK: - Heartbeat

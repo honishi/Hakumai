@@ -47,7 +47,7 @@ final class MessageServer: CustomStringConvertible {
     var description: String {
         return (
             "MessageServer: roomPosition[\(roomPosition)] " +
-            "address[\(address)] port[\(port)] thread[\(thread)]"
+                "address[\(address)] port[\(port)] thread[\(thread)]"
         )
     }
 
@@ -78,7 +78,7 @@ final class MessageServer: CustomStringConvertible {
         let thread = self.thread + direction
 
         guard let serverNumber = MessageServer.extractServerNumber(fromAddress: address),
-            let serverIndex = MessageServer.serverIndex(
+              let serverIndex = MessageServer.serverIndex(
                 isChannel: isChannel, serverNumber: serverNumber, port: port) else { return nil }
 
         var derived: (serverNumber: Int, port: Int)
@@ -162,9 +162,9 @@ final class MessageServer: CustomStringConvertible {
 // this overload is used in test methods
 func == (left: MessageServer, right: MessageServer) -> Bool {
     return (left.roomPosition == right.roomPosition &&
-        left.address == right.address &&
-        left.port == right.port &&
-        left.thread == right.thread)
+                left.address == right.address &&
+                left.port == right.port &&
+                left.thread == right.thread)
 }
 
 func != (left: MessageServer, right: MessageServer) -> Bool {

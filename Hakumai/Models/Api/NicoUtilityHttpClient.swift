@@ -78,15 +78,39 @@ extension NicoUtility {
 
         for (name, value) in [("user_session", userSessionCookie), ("area", "JP"), ("lang", "ja-jp")] {
             if let cookie = HTTPCookie(properties: [
-                HTTPCookiePropertyKey.domain: kCookieDomain,
-                HTTPCookiePropertyKey.name: name,
-                HTTPCookiePropertyKey.value: value,
-                HTTPCookiePropertyKey.expires: Date().addingTimeInterval(kCookieExpire),
-                HTTPCookiePropertyKey.path: kCookiePath]) {
+                                        HTTPCookiePropertyKey.domain: kCookieDomain,
+                                        HTTPCookiePropertyKey.name: name,
+                                        HTTPCookiePropertyKey.value: value,
+                                        HTTPCookiePropertyKey.expires: Date().addingTimeInterval(kCookieExpire),
+                                        HTTPCookiePropertyKey.path: kCookiePath]) {
                 cookies.append(cookie)
             }
         }
 
         return cookies
+    }
+}
+
+private let kPostCommentUrl = "https://api.cas.nicovideo.jp/v1/services/live/programs/%@/comments"
+
+extension NicoUtility {
+    func postCommentRequest(lv: String, json: [String: Any], completion: @escaping (URLResponse?, Data?, Error?) -> Void) {
+        let url = String(format: kPostCommentUrl, lv)
+        let request = mutableRequest(customHeaders: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let data = try? JSONSerialization.data(withJSONObject: json, options: []) {
+            request.httpBody = data
+        }
+        if let cookies = sessionCookies() {
+            let requestHeader = HTTPCookie.requestHeaderFields(with: cookies)
+            request.allHTTPHeaderFields = requestHeader
+        } else {
+            log.error("could not get cookie")
+            completion(nil, nil, NSError(domain: "", code: 0, userInfo: nil))
+        }
+
+        let queue = OperationQueue()
+        NSURLConnection.sendAsynchronousRequest(request as URLRequest, queue: queue, completionHandler: completion)
     }
 }
