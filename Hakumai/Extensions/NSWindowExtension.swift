@@ -15,10 +15,12 @@ private let kWindowLevelKeyForAlwaysOnTop = CGWindowLevelKey.floatingWindow
 extension NSWindow {
     // http://qiita.com/rryu/items/04af65d772e81d2beb7a
     var alwaysOnTop: Bool {
+        // swiftlint:disable implicit_getter
         get {
             let windowLevel = Int(CGWindowLevelForKey(kWindowLevelKeyForAlwaysOnTop))
             return level.rawValue == windowLevel
         }
+        // swiftlint:enable implicit_getter
 
         set(newAlwaysOnTop) {
             let windowLevelKey = newAlwaysOnTop ? kWindowLevelKeyForAlwaysOnTop : kWindowLevelKeyForNormal
