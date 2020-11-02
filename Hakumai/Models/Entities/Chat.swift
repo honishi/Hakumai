@@ -59,7 +59,7 @@ extension Chat {
 
     static func isUserComment(_ premium: Premium?) -> Bool {
         guard let premium = premium else { return false }
-        return premium == .ippan || premium == .premium
+        return premium == .ippan || premium == .premium || premium == .ippanTransparent
     }
 
     static func isBSPComment(_ premium: Premium?) -> Bool {
