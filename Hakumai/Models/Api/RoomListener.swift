@@ -154,7 +154,12 @@ extension RoomListener {
             var actualRead = 0
             while inputStream.hasBytesAvailable == true {
                 actualRead = inputStream.read(&readByte, maxLength: kReadBufferSize)
-                //fileLog.debug(readByte)
+                // fileLog.debug(actualRead)
+                // fileLog.debug(readByte)
+                if actualRead == -1 {
+                    fileLog.warning("actualRead == -1")
+                    continue
+                }
                 if let readString = NSString(bytes: &readByte, length: actualRead, encoding: String.Encoding.utf8.rawValue) {
                     fileLog.debug("read: [ \(readString) ]")
                     parsingString += streamByRemovingNull(fromStream: readString as String)
