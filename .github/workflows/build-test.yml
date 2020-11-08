@@ -21,6 +21,15 @@ jobs:
           ruby-version: "2.5"
       - name: Check Ruby version
         run: ruby -v
+
+      # setup bundle
+      - name: Setup cache for bundle
+        uses: actions/cache@v1
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gem-
       - name: Install bundler
         run: |
           gem install bundler -v 1.17.1
