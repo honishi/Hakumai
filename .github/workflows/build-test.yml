@@ -22,7 +22,9 @@ jobs:
     - name: Check Ruby version
       run: ruby -v
     - name: Install bundler
-      run: gem install bundler
+      run: |
+        gem install bundler -v 1.17.1
+        bundle --version
     - name: Install dependencies
       run: |
         bundle config path vendor/bundle
