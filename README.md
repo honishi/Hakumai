@@ -2,8 +2,7 @@
 
 [![Swift 5.0](https://img.shields.io/badge/Swift-5.0-orange.svg?style=flat)](https://swift.org/)
 [![License MIT](https://img.shields.io/badge/License-MIT-lightgrey.svg?style=flat)](http://www.opensource.org/licenses/mit-license.php)
-[![Build Status](https://travis-ci.org/honishi/Hakumai.svg?branch=develop)](https://travis-ci.org/honishi/Hakumai)
-[![Build Status](https://github.com/honishi/Hakumai/workflows/Build%20and%20Run%20Tests/badge.svg?branch=feature/github-actions)](https://github.com/honishi/Hakumai/actions)
+[![Build Status](https://github.com/honishi/Hakumai/workflows/Build%20and%20Run%20Tests/badge.svg?branch=develop)](https://github.com/honishi/Hakumai/actions)
 
 * niconama comment viewer alternative for mac os x.
 * download available at [http://honishi.github.io/Hakumai](http://honishi.github.io/Hakumai).
