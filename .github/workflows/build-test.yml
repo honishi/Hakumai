@@ -21,6 +21,8 @@ jobs:
         ruby-version: '2.5'
     - name: Check Ruby version
       run: ruby -v
+    - name: Install bundler
+      run: gem install bundler
     - name: Install dependencies
       run: |
         bundle config path vendor/bundle
