@@ -1,4 +1,4 @@
-name: Build and Run tests
+name: Build and Run Tests
 
 on:
   push:
@@ -8,12 +8,38 @@ on:
 
 jobs:
   build:
-
     runs-on: macos-latest
 
+    # checkout
     steps:
     - uses: actions/checkout@v2
-    - name: Build
-      run: swift build -v
-    - name: Run tests
-      run: swift test -v
+
+    # setup ruby
+    - name: Setup Ruby 2.5.1
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: 2.5.1
+    - name: Check Ruby version
+      run: ruby -v
+    - name: Install dependencies
+      run: |
+        bundle config path vendor/bundle
+        bundle install --jobs 4 --retry 3
+
+    # setup xcode project
+    - name: Pod install
+      run: |
+        bundle exec pod repo update --silent
+        bundle exec pod install
+    
+    # before test
+    - name: Disable Sparkle
+      run: ./script/disable_sparkle.sh
+
+    # build and run tests
+    # XXX: remove the work around for cocoapods bug (EXPANDED_CODE_SIGN_IDENTITY)
+    # https://github.com/CocoaPods/CocoaPods/issues/7708#issuecomment-423668677
+    - name: Build and Run Tests
+      run: |
+        export EXPANDED_CODE_SIGN_IDENTITY=""
+        set -o pipefail && xcodebuild -workspace Hakumai.xcworkspace -scheme Hakumai -configuration Debug -destination 'platform=OS X' CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO test | bundle exec xcpretty -c
