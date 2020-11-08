@@ -24,7 +24,7 @@ jobs:
 
       # setup bundle
       - name: Setup cache for bundle
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           path: vendor/bundle
           key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
@@ -40,6 +40,13 @@ jobs:
           bundle install --jobs 4 --retry 3
 
       # setup xcode project
+      - name: Setup cache for Pods
+        uses: actions/cache@v2
+        with:
+          path: Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
       - name: Pod install
         run: |
           bundle exec pod repo update --silent
