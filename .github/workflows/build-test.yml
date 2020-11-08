@@ -49,7 +49,7 @@ jobs:
             ${{ runner.os }}-pods-
       - name: Pod install
         run: |
-          bundle exec pod repo update --silent
+          # bundle exec pod repo update --silent
           bundle exec pod install
 
       # before test
