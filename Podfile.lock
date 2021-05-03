@@ -25,7 +25,7 @@ DEPENDENCIES:
   - XCGLogger (~> 7.0.0)
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  trunk:
     - FMDB
     - ObjcExceptionBridging
     - Ono
@@ -47,4 +47,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: c0eba325f4e673a387d17bc3d1a67b85458b0921
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.10.1
