@@ -8,7 +8,7 @@
 
 import Foundation
 
-private let kCookieFilePath = "/Cookies/Cookies.binarycookies"
+private let kCookieFilePath = "/Containers/com.apple.Safari/Data/Library/Cookies/Cookies.binarycookies"
 
 // based on https://github.com/icodeforlove/BinaryCookies.swift
 final class SafariCookie {
