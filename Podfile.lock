@@ -9,7 +9,7 @@ PODS:
   - SAMKeychain (1.5.0)
   - Sparkle (1.14.0)
   - SwiftGen (6.0.2)
-  - SwiftLint (0.29.1)
+  - SwiftLint (0.43.1)
   - XCGLogger (7.0.0):
     - XCGLogger/Core (= 7.0.0)
   - XCGLogger/Core (7.0.0):
@@ -21,7 +21,7 @@ DEPENDENCIES:
   - SAMKeychain (~> 1.5.0)
   - Sparkle (~> 1.14.0)
   - SwiftGen (~> 6.0.2)
-  - SwiftLint (~> 0.29.1)
+  - SwiftLint (~> 0.43.1)
   - XCGLogger (~> 7.0.0)
 
 SPEC REPOS:
@@ -42,9 +42,9 @@ SPEC CHECKSUMS:
   SAMKeychain: 1fc9ae02f576365395758b12888c84704eebc423
   Sparkle: ccd95233b12a3e3d4eeb55ff01dd4c8bb8188b07
   SwiftGen: e5b047067aa84082826a0c4f1c4c2ddc95bcf74c
-  SwiftLint: 6772320e40b52049053a518c17db9b0634a0b45a
+  SwiftLint: 99f82d07b837b942dd563c668de129a03fc3fb52
   XCGLogger: 0434f15e3909cdc450bb63faf638b8792ab782ab
 
-PODFILE CHECKSUM: c0eba325f4e673a387d17bc3d1a67b85458b0921
+PODFILE CHECKSUM: bc50c880e0fa53d19ccf0e63b04a277746792747
 
 COCOAPODS: 1.10.1

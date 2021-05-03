@@ -178,7 +178,7 @@ extension NicoUtility {
             completion(nil)
             return
         }
-        let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (response, data, connectionError) in
+        let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (_, data, connectionError) in
             if connectionError != nil {
                 log.error("error in loading thumbnail request")
                 completion(nil)
@@ -214,7 +214,7 @@ extension NicoUtility {
             return
         }
         resolveUserNameOperationQueue.addOperation {
-            let resolveCompletion = { (response: URLResponse?, data: Data?, connectionError: Error?) in
+            let resolveCompletion = { (_: URLResponse?, data: Data?, connectionError: Error?) in
                 guard connectionError == nil else {
                     log.error("error in resolving username")
                     completion(nil)
@@ -233,7 +233,7 @@ extension NicoUtility {
         guard let liveId = live?.liveId, let userId = chat.userId, let date = chat.date,
               let dateUsec = chat.dateUsec, let no = chat.no, let roomPosition = chat.roomPosition else { return }
 
-        let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (response, data, connectionError) in
+        let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (_, _, connectionError) in
             guard connectionError == nil else {
                 log.error("error in requesting ng user")
                 completion(nil)
@@ -374,7 +374,7 @@ extension NicoUtility {
     }
 
     @objc func checkHeartbeat(_ timer: Timer) {
-        let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (response, data, connectionError) in
+        let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (_, data, connectionError) in
             if connectionError != nil {
                 log.error("error in checking heartbeat")
                 return
@@ -560,7 +560,7 @@ private extension NicoUtility {
     // swiftlint:enable function_body_length
 
     func requestGetPlayerStatus(liveNumber: Int, success: @escaping (Live, User, MessageServer) -> Void, failure: @escaping (_ reason: String) -> Void) {
-        let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (response, data, connectionError) in
+        let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (_, data, connectionError) in
             if connectionError != nil {
                 let message = "error in cookied async request"
                 log.error(message)
@@ -600,7 +600,7 @@ private extension NicoUtility {
     }
 
     func load(community: Community, success: @escaping () -> Void, failure: @escaping (_ reason: String) -> Void) {
-        let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (response, data, connectionError) in
+        let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (_, data, connectionError) in
             if connectionError != nil {
                 let message = "error in cookied async request"
                 log.error(message)
