@@ -1,12 +1,12 @@
 // swiftlint:disable all
-// Generated using SwiftGen, by O.Halligon — https://github.com/SwiftGen/SwiftGen
+// Generated using SwiftGen — https://github.com/SwiftGen/SwiftGen
 
 // swiftlint:disable sorted_imports
 import Foundation
 import AppKit
 
 // swiftlint:disable superfluous_disable_command
-// swiftlint:disable file_length
+// swiftlint:disable file_length implicit_return
 
 // MARK: - Storyboard Scenes
 
@@ -51,7 +51,7 @@ internal protocol StoryboardType {
 internal extension StoryboardType {
   static var storyboard: NSStoryboard {
     let name = NSStoryboard.Name(self.storyboardName)
-    return NSStoryboard(name: name, bundle: Bundle(for: BundleToken.self))
+    return NSStoryboard(name: name, bundle: BundleToken.bundle)
   }
 }
 
@@ -66,6 +66,16 @@ internal struct SceneType<T> {
     }
     return controller
   }
+
+  @available(macOS 10.15, *)
+  internal func instantiate(creator block: @escaping (NSCoder) -> T?) -> T where T: NSViewController {
+    return storyboard.storyboard.instantiateController(identifier: identifier, creator: block)
+  }
+
+  @available(macOS 10.15, *)
+  internal func instantiate(creator block: @escaping (NSCoder) -> T?) -> T where T: NSWindowController {
+    return storyboard.storyboard.instantiateController(identifier: identifier, creator: block)
+  }
 }
 
 internal struct InitialSceneType<T> {
@@ -77,6 +87,32 @@ internal struct InitialSceneType<T> {
     }
     return controller
   }
+
+  @available(macOS 10.15, *)
+  internal func instantiate(creator block: @escaping (NSCoder) -> T?) -> T where T: NSViewController {
+    guard let controller = storyboard.storyboard.instantiateInitialController(creator: block) else {
+      fatalError("Storyboard \(storyboard.storyboardName) does not have an initial scene.")
+    }
+    return controller
+  }
+
+  @available(macOS 10.15, *)
+  internal func instantiate(creator block: @escaping (NSCoder) -> T?) -> T where T: NSWindowController {
+    guard let controller = storyboard.storyboard.instantiateInitialController(creator: block) else {
+      fatalError("Storyboard \(storyboard.storyboardName) does not have an initial scene.")
+    }
+    return controller
+  }
 }
 
-private final class BundleToken {}
+// swiftlint:disable convenience_type
+private final class BundleToken {
+  static let bundle: Bundle = {
+    #if SWIFT_PACKAGE
+    return Bundle.module
+    #else
+    return Bundle(for: BundleToken.self)
+    #endif
+  }()
+}
+// swiftlint:enable convenience_type
