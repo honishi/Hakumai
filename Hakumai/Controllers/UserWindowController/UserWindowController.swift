@@ -13,7 +13,7 @@ import AppKit
 private let kStoryboardNameUserWindowController = "UserWindowController"
 private let kStoryboardIdUserWindowController = "UserWindowController"
 
-protocol UserWindowControllerDelegate: class {
+protocol UserWindowControllerDelegate: AnyObject {
     func userWindowControllerDidClose(_ userWindowController: UserWindowController)
 }
 

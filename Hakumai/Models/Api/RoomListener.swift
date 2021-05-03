@@ -17,7 +17,7 @@ private let kPingInterval: TimeInterval = 60
 
 // MARK: protocol
 
-protocol RoomListenerDelegate: class {
+protocol RoomListenerDelegate: AnyObject {
     func roomListenerDidReceiveThread(_ roomListener: RoomListener, thread: Thread)
     func roomListenerDidReceiveChat(_ roomListener: RoomListener, chat: Chat)
     func roomListenerDidFinishListening(_ roomListener: RoomListener)

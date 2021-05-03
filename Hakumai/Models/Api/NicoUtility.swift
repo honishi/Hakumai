@@ -23,7 +23,7 @@ enum BrowserType {
 
 // note these functions are called in background thread, not main thread.
 // so use explicit main thread for updating ui in these callbacks.
-protocol NicoUtilityDelegate: class {
+protocol NicoUtilityDelegate: AnyObject {
     func nicoUtilityWillPrepareLive(_ nicoUtility: NicoUtility)
     func nicoUtilityDidPrepareLive(_ nicoUtility: NicoUtility, user: User, live: Live)
     func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtility, reason: String)
