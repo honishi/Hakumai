@@ -11,20 +11,20 @@ PODS:
   - Sparkle (1.14.0)
   - SwiftGen (6.4.0)
   - SwiftLint (0.43.1)
-  - XCGLogger (7.0.0):
-    - XCGLogger/Core (= 7.0.0)
-  - XCGLogger/Core (7.0.0):
+  - XCGLogger (7.0.1):
+    - XCGLogger/Core (= 7.0.1)
+  - XCGLogger/Core (7.0.1):
     - ObjcExceptionBridging
 
 DEPENDENCIES:
-  - Alamofire (~> 5.2)
+  - Alamofire (~> 5.4.3)
   - FMDB (~> 2.6.2)
   - Ono (~> 1.2.2)
   - SAMKeychain (~> 1.5.0)
   - Sparkle (~> 1.14.0)
   - SwiftGen (~> 6.4.0)
   - SwiftLint (~> 0.43.1)
-  - XCGLogger (~> 7.0.0)
+  - XCGLogger (~> 7.0.1)
 
 SPEC REPOS:
   trunk:
@@ -47,8 +47,8 @@ SPEC CHECKSUMS:
   Sparkle: ccd95233b12a3e3d4eeb55ff01dd4c8bb8188b07
   SwiftGen: 67860cc7c3cfc2ed25b9b74cfd55495fc89f9108
   SwiftLint: 99f82d07b837b942dd563c668de129a03fc3fb52
-  XCGLogger: 0434f15e3909cdc450bb63faf638b8792ab782ab
+  XCGLogger: 1943831ef907df55108b0b18657953f868de973b
 
-PODFILE CHECKSUM: e4df1c1e96ba5948773d6813f0565f9a4c32af94
+PODFILE CHECKSUM: ad564a73372fa44a1f05630a7d7b38514546c82c
 
 COCOAPODS: 1.10.1

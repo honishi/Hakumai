@@ -6,7 +6,7 @@ target 'Hakumai' do
 
   pod 'SwiftLint', '~> 0.43.1'
   pod 'SwiftGen', '~> 6.4.0'
-  pod 'XCGLogger', '~> 7.0.0'
+  pod 'XCGLogger', '~> 7.0.1'
 
   pod 'Sparkle', '~> 1.14.0'
   pod 'FMDB', '~> 2.6.2'
