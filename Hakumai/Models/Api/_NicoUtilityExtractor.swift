@@ -172,13 +172,13 @@ extension _NicoUtility {
         }
 
         let xpathTitle = "//*[@class=\"communityData\"]/*[@class=\"title\"]"
-        community.title = rootElement?.firstChild(withXPath: xpathTitle)?.stringValue().stringByRemovingRegexp(pattern: "[\t\n]")
+        community.title = rootElement?.firstChild(withXPath: xpathTitle)?.stringValue?.stringByRemovingRegexp(pattern: "[\t\n]")
 
         let xpathLevel = "//*[@class=\"communityScale\"]/*[@class=\"content\"]"
-        community.level = Int(rootElement?.firstChild(withXPath: xpathLevel)?.stringValue() ?? "1")
+        community.level = Int(rootElement?.firstChild(withXPath: xpathLevel)?.stringValue ?? "1")
 
         let xpathThumbnailUrl = "//*[@class=\"communityThumbnail\"]/*/img/@src"
-        if let thumbnailUrl = rootElement?.firstChild(withXPath: xpathThumbnailUrl)?.stringValue() {
+        if let thumbnailUrl = rootElement?.firstChild(withXPath: xpathThumbnailUrl)?.stringValue {
             community.thumbnailUrl = URL(string: thumbnailUrl)
         }
     }
@@ -201,10 +201,10 @@ extension _NicoUtility {
         }
 
         let xpathTitle = "//*[@id=\"head_cp_breadcrumb\"]/h1/a"
-        community.title = rootElement?.firstChild(withXPath: xpathTitle)?.stringValue().stringByRemovingRegexp(pattern: "\n")
+        community.title = rootElement?.firstChild(withXPath: xpathTitle)?.stringValue?.stringByRemovingRegexp(pattern: "\n")
 
         let xpathThumbnailUrl = "//*[@id=\"cp_symbol\"]/span/a/img/@data-original"
-        if let thumbnailUrl = rootElement?.firstChild(withXPath: xpathThumbnailUrl)?.stringValue() {
+        if let thumbnailUrl = rootElement?.firstChild(withXPath: xpathThumbnailUrl)?.stringValue {
             community.thumbnailUrl = URL(string: thumbnailUrl)
         }
     }
@@ -222,7 +222,7 @@ extension _NicoUtility {
         }
         let rootElement = htmlDocument?.rootElement
 
-        return rootElement?.firstChild(withXPath: "//meta[@property=\"profile:username\"]/@content")?.stringValue()
+        return rootElement?.firstChild(withXPath: "//meta[@property=\"profile:username\"]/@content")?.stringValue
     }
 
     // MARK: - Heartbeat

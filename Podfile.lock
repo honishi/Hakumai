@@ -6,7 +6,7 @@ PODS:
   - ObjcExceptionBridging (1.0.1):
     - ObjcExceptionBridging/ObjcExceptionBridging (= 1.0.1)
   - ObjcExceptionBridging/ObjcExceptionBridging (1.0.1)
-  - Ono (1.2.2)
+  - Ono (2.1.2)
   - SAMKeychain (1.5.0)
   - Sparkle (1.26.0)
   - SwiftGen (6.4.0)
@@ -19,7 +19,7 @@ PODS:
 DEPENDENCIES:
   - Alamofire (~> 5.4.3)
   - FMDB (~> 2.7.5)
-  - Ono (~> 1.2.2)
+  - Ono (~> 2.1.2)
   - SAMKeychain (~> 1.5.0)
   - Sparkle (~> 1.26.0)
   - SwiftGen (~> 6.4.0)
@@ -42,13 +42,13 @@ SPEC CHECKSUMS:
   Alamofire: e447a2774a40c996748296fa2c55112fdbbc42f9
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   ObjcExceptionBridging: c30e00eb3700467e695faeea30e26e18bd445001
-  Ono: 80b1c686777d3f6d5d5ce6fcac8a74afef4ca197
+  Ono: 26a7c1fc4df13ece7747560a1d80655807a8a000
   SAMKeychain: 1fc9ae02f576365395758b12888c84704eebc423
   Sparkle: d56d028f4b0c123577825f5d1004f6140d77f90e
   SwiftGen: 67860cc7c3cfc2ed25b9b74cfd55495fc89f9108
   SwiftLint: 99f82d07b837b942dd563c668de129a03fc3fb52
   XCGLogger: 1943831ef907df55108b0b18657953f868de973b
 
-PODFILE CHECKSUM: 19955153ae67fc58d31a5021ba59258695ab4b97
+PODFILE CHECKSUM: 1b1f945fb8b6124f2246376ade90c9f88a5069b5
 
 COCOAPODS: 1.10.1
