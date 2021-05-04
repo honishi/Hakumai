@@ -391,14 +391,14 @@ extension MainViewController {
     }
 
     // MARK: - NicoUtilityDelegate Functions
-    func nicoUtilityWillPrepareLive(_ nicoUtility: NicoUtility) {
+    func nicoUtilityWillPrepareLive(_ nicoUtility: NicoUtilityType) {
         DispatchQueue.main.async {
             self.connectButton.isEnabled = false
             self.progressIndicator.startAnimation(self)
         }
     }
 
-    func nicoUtilityDidPrepareLive(_ nicoUtility: NicoUtility, user: User, live: Live) {
+    func nicoUtilityDidPrepareLive(_ nicoUtility: NicoUtilityType, user: User, live: Live) {
         self.live = live
 
         if let startTime = live.startTime {
@@ -432,7 +432,7 @@ extension MainViewController {
         logSystemMessageToTableView("Prepared live as user \(user.nickname ?? "").")
     }
 
-    func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtility, reason: String) {
+    func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, reason: String) {
         logSystemMessageToTableView("Failed to prepare live.(\(reason))")
         DispatchQueue.main.async {
             self.connectButton.isEnabled = true
@@ -440,7 +440,7 @@ extension MainViewController {
         }
     }
 
-    func nicoUtilityDidConnectToLive(_ nicoUtility: NicoUtility, roomPosition: RoomPosition) {
+    func nicoUtilityDidConnectToLive(_ nicoUtility: NicoUtilityType, roomPosition: RoomPosition) {
         guard connectedToLive == false else { return }
         connectedToLive = true
         logSystemMessageToTableView("Connected to live.")
@@ -452,7 +452,7 @@ extension MainViewController {
         updateSpeechManagerState()
     }
 
-    func nicoUtilityDidReceiveFirstChat(_ nicoUtility: NicoUtility, chat: Chat) {
+    func nicoUtilityDidReceiveFirstChat(_ nicoUtility: NicoUtilityType, chat: Chat) {
         guard let roomPosition = chat.roomPosition else { return }
 
         logSystemMessageToTableView("Opened \(roomPosition.label()).")
@@ -467,7 +467,7 @@ extension MainViewController {
         }
     }
 
-    func nicoUtilityDidReceiveChat(_ nicoUtility: NicoUtility, chat: Chat) {
+    func nicoUtilityDidReceiveChat(_ nicoUtility: NicoUtilityType, chat: Chat) {
         // log.debug("\(chat.mail),\(chat.comment)")
         if let live = live {
             HandleNameManager.sharedManager.extractAndUpdateHandleName(live: live, chat: chat)
@@ -481,15 +481,15 @@ extension MainViewController {
         }
     }
 
-    func nicoUtilityDidGetKickedOut(_ nicoUtility: NicoUtility) {
+    func nicoUtilityDidGetKickedOut(_ nicoUtility: NicoUtilityType) {
         logSystemMessageToTableView("Got kicked out...")
     }
 
-    func nicoUtilityWillReconnectToLive(_ nicoUtility: NicoUtility) {
+    func nicoUtilityWillReconnectToLive(_ nicoUtility: NicoUtilityType) {
         logSystemMessageToTableView("Reconnecting...")
     }
 
-    func nicoUtilityDidDisconnect(_ nicoUtility: NicoUtility) {
+    func nicoUtilityDidDisconnect(_ nicoUtility: NicoUtilityType) {
         logSystemMessageToTableView("Live closed.")
         stopTimers()
         connectedToLive = false
@@ -501,7 +501,7 @@ extension MainViewController {
         }
     }
 
-    func nicoUtilityDidReceiveHeartbeat(_ nicoUtility: NicoUtility, heartbeat: Heartbeat) {
+    func nicoUtilityDidReceiveHeartbeat(_ nicoUtility: NicoUtilityType, heartbeat: Heartbeat) {
         updateLiveStatistics(heartbeat: heartbeat)
     }
 

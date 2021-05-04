@@ -15,7 +15,7 @@ private let kCookieExpire = TimeInterval(7200)
 private let kCookiePath = "/"
 
 // Internal Http Utility
-extension NicoUtility {
+extension _NicoUtility {
     func cookiedAsyncRequest(httpMethod: String, url: String, parameters: [String: Any]?, completion: @escaping (URLResponse?, Data?, Error?) -> Void) {
         var parameteredUrl: String = url
         let constructedParameters = construct(parameters: parameters)
@@ -93,7 +93,7 @@ extension NicoUtility {
 
 private let kPostCommentUrl = "https://api.cas.nicovideo.jp/v1/services/live/programs/%@/comments"
 
-extension NicoUtility {
+extension _NicoUtility {
     func postCommentRequest(lv: String, json: [String: Any], completion: @escaping (URLResponse?, Data?, Error?) -> Void) {
         let url = String(format: kPostCommentUrl, lv)
         let request = mutableRequest(customHeaders: url)

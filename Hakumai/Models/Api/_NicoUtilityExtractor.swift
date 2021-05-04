@@ -13,7 +13,7 @@ import Ono
 
 private let kPlaceholderSeatNo = -1
 
-extension NicoUtility {
+extension _NicoUtility {
     // MARK: - General
     func isErrorResponse(xmlData: Data) -> (error: Bool, code: String) {
         var error: NSError?
