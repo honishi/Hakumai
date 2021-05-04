@@ -1,4 +1,5 @@
 PODS:
+  - Alamofire (5.4.3)
   - FMDB (2.6.2):
     - FMDB/standard (= 2.6.2)
   - FMDB/standard (2.6.2)
@@ -16,6 +17,7 @@ PODS:
     - ObjcExceptionBridging
 
 DEPENDENCIES:
+  - Alamofire (~> 5.2)
   - FMDB (~> 2.6.2)
   - Ono (~> 1.2.2)
   - SAMKeychain (~> 1.5.0)
@@ -26,6 +28,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - Alamofire
     - FMDB
     - ObjcExceptionBridging
     - Ono
@@ -36,6 +39,7 @@ SPEC REPOS:
     - XCGLogger
 
 SPEC CHECKSUMS:
+  Alamofire: e447a2774a40c996748296fa2c55112fdbbc42f9
   FMDB: 854a0341b4726e53276f2a8996f06f1b80f9259a
   ObjcExceptionBridging: c30e00eb3700467e695faeea30e26e18bd445001
   Ono: 80b1c686777d3f6d5d5ce6fcac8a74afef4ca197
@@ -45,6 +49,6 @@ SPEC CHECKSUMS:
   SwiftLint: 99f82d07b837b942dd563c668de129a03fc3fb52
   XCGLogger: 0434f15e3909cdc450bb63faf638b8792ab782ab
 
-PODFILE CHECKSUM: c2c246ee4dd6947d0a8aa81aa0cc68f01a6d464f
+PODFILE CHECKSUM: e4df1c1e96ba5948773d6813f0565f9a4c32af94
 
 COCOAPODS: 1.10.1
