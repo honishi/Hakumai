@@ -4,7 +4,10 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: macos-11.3
+    # TODO: Activate this `macos-11.0` image.
+    # So far, seems the `macos-11.0` image is not available for everyone.
+    # See details at: https://github.com/actions/virtual-environments/issues/2486
+    runs-on: macos-11.0
 
     # checkout
     steps:
