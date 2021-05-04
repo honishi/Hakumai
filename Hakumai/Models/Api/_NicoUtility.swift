@@ -97,6 +97,8 @@ extension _NicoUtility {
         log.debug("reserved to clear user session cookie")
     }
 
+    func connect(liveNumber: Int, connectType: NicoConnectType) {}
+
     func connect(liveNumber: Int, mailAddress: String, password: String) {
         resFrom = kDefaultResFrom
         clearUserSessionCookieIfReserved()

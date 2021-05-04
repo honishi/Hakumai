@@ -32,8 +32,7 @@ protocol NicoUtilityType {
     var live: Live? { get }
 
     // Main Methods
-    func connect(liveNumber: Int, browserType: BrowserType)
-    func connect(liveNumber: Int, mailAddress: String, password: String)
+    func connect(liveNumber: Int, connectType: NicoConnectType)
     func disconnect(reserveToReconnect: Bool)
     func comment(_ comment: String, anonymously: Bool, completion: @escaping (_ comment: String?) -> Void)
     func checkHeartbeat(_ timer: Timer)
@@ -54,25 +53,37 @@ protocol NicoUtilityType {
 }
 
 // MARK: - Types
-enum BrowserType {
+enum NicoConnectType {
     case chrome
     case safari
-    case firefox
+    case login(mail: String, password: String)
 }
 
 // MARK: - Class
 final class NicoUtility: NicoUtilityType {
+    // Public Properties
     static var shared: NicoUtility = NicoUtility()
     weak var delegate: NicoUtilityDelegate?
-
     private(set) var live: Live?
 
-    func connect(liveNumber: Int, browserType: BrowserType) {
-        //
-    }
+    // Private Properties
+    private var lastLiveNumber: Int?
+    private var userSessionCookie: String?
+}
 
-    func connect(liveNumber: Int, mailAddress: String, password: String) {
-        //
+extension NicoUtility {
+    func connect(liveNumber: Int, connectType: NicoConnectType) {
+        let completion = { (userSessionCookie: String?) -> Void in
+            self.connect(liveNumber: liveNumber, userSessionCookie: userSessionCookie)
+        }
+        switch connectType {
+        case .chrome:
+            CookieUtility.requestBrowserCookie(browserType: .chrome, completion: completion)
+        case .safari:
+            CookieUtility.requestBrowserCookie(browserType: .safari, completion: completion)
+        case .login(let mail, let password):
+            CookieUtility.requestLoginCookie(mailAddress: mail, password: password, completion: completion)
+        }
     }
 
     func disconnect(reserveToReconnect: Bool = false) {
@@ -117,5 +128,26 @@ final class NicoUtility: NicoUtilityType {
 
     func reportAsNgUser(chat: Chat, completion: @escaping (String?) -> Void) {
         //
+    }
+}
+
+private extension NicoUtility {
+    func connect(liveNumber: Int, userSessionCookie: String?) {
+        guard let userSessionCookie = userSessionCookie else {
+            let reason = "No available cookie"
+            log.error(reason)
+            delegate?.nicoUtilityDidFailToPrepareLive(self, reason: reason)
+            return
+        }
+
+        self.userSessionCookie = userSessionCookie
+        self.lastLiveNumber = liveNumber
+
+        delegate?.nicoUtilityWillPrepareLive(self)
+
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
+            self.delegate?.nicoUtilityDidConnectToLive(self, roomPosition: RoomPosition.arena)
+        }
+        // TODO: get live page
     }
 }

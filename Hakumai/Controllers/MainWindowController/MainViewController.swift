@@ -703,17 +703,20 @@ extension MainViewController {
         guard let sessionManagementType = SessionManagementType(
                 rawValue: UserDefaults.standard.integer(forKey: Parameters.sessionManagement)) else { return }
 
-        switch sessionManagementType {
-        case .login:
-            guard let account = KeychainUtility.accountInKeychain() else { return }
-            let mailAddress = account.mailAddress
-            let password = account.password
-            NicoUtility.shared.connect(liveNumber: liveNumber, mailAddress: mailAddress, password: password)
-        case .chrome:
-            NicoUtility.shared.connect(liveNumber: liveNumber, browserType: .chrome)
-        case .safari:
-            NicoUtility.shared.connect(liveNumber: liveNumber, browserType: .safari)
-        }
+        let connectType = { () -> NicoConnectType? in
+            switch sessionManagementType {
+            case .login:
+                guard let account = KeychainUtility.accountInKeychain() else { return nil }
+                return .login(mail: account.mailAddress, password: account.password)
+            case .chrome:
+                return .chrome
+            case .safari:
+                return .safari
+            }
+        }()
+
+        guard let connectType = connectType else { return }
+        NicoUtility.shared.connect(liveNumber: liveNumber, connectType: connectType)
     }
 
     @IBAction func connectButtonPressed(_ sender: AnyObject) {
