@@ -63,5 +63,6 @@ jobs:
       # https://github.com/CocoaPods/CocoaPods/issues/7708#issuecomment-423668677
       - name: Build and Run Tests
         run: |
+          xcodebuild -version
           export EXPANDED_CODE_SIGN_IDENTITY=""
           set -o pipefail && xcodebuild -workspace Hakumai.xcworkspace -scheme Hakumai -configuration Debug -destination 'platform=OS X' CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO test | bundle exec xcpretty -c
