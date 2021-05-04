@@ -59,6 +59,11 @@ enum NicoConnectType {
     case login(mail: String, password: String)
 }
 
+enum NicoUtilityError: Error {
+    case network
+    case unknown
+}
+
 // MARK: - Class
 final class NicoUtility: NicoUtilityType {
     // Public Properties
@@ -134,7 +139,7 @@ extension NicoUtility {
 private extension NicoUtility {
     func connect(liveNumber: Int, userSessionCookie: String?) {
         guard let userSessionCookie = userSessionCookie else {
-            let reason = "No available cookie"
+            let reason = "No available cookie."
             log.error(reason)
             delegate?.nicoUtilityDidFailToPrepareLive(self, reason: reason)
             return
@@ -145,9 +150,22 @@ private extension NicoUtility {
 
         delegate?.nicoUtilityWillPrepareLive(self)
 
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
-            self.delegate?.nicoUtilityDidConnectToLive(self, roomPosition: RoomPosition.arena)
+        reqeustLivePage(lv: liveNumber) { [weak self] in
+            guard let me = self else { return }
+            switch $0 {
+            case .success(_):
+                // TODO
+                me.delegate?.nicoUtilityDidConnectToLive(me, roomPosition: RoomPosition.arena)
+            case .failure(_):
+                let reason = "Failed to load live page."
+                me.delegate?.nicoUtilityDidFailToPrepareLive(me, reason: reason)
+            }
         }
-        // TODO: get live page
+    }
+
+    func reqeustLivePage(lv: Int, completion: @escaping (Result<String, NicoUtilityError>) -> Void) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
+            completion(Result.failure(NicoUtilityError.unknown))
+        }
     }
 }
