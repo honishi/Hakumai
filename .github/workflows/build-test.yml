@@ -12,13 +12,15 @@ jobs:
 
       # debug prints
       - name: Show Xcode versions
-        run: ls /Applications | grep 'Xcode'
+        run: |
+          /usr/bin/xcodebuild -version
+          ls /Applications | grep 'Xcode'
 
       # setup ruby
-      - name: Setup Ruby 2.5
+      - name: Setup Ruby
         uses: actions/setup-ruby@v1
         with:
-          ruby-version: "2.5"
+          ruby-version: "2.7"
       - name: Check Ruby version
         run: ruby -v
 
