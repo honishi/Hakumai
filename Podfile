@@ -9,7 +9,7 @@ target 'Hakumai' do
   pod 'XCGLogger', '~> 7.0.1'
 
   pod 'Sparkle', '~> 1.26.0'
-  pod 'FMDB', '~> 2.6.2'
+  pod 'FMDB', '~> 2.7.5'
   pod 'Ono', '~> 1.2.2'
   pod 'SAMKeychain', '~> 1.5.0'
   pod 'Alamofire', '~> 5.4.3'

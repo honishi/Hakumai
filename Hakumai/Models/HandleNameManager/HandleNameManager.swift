@@ -83,7 +83,7 @@ extension HandleNameManager {
             "values (?, ?, ?, ?, null, strftime('%s', 'now'), null, null, null)"
 
         databaseQueue.inDatabase { database in
-            database?.executeUpdate(insertSql, withArgumentsIn: [communityId, userId, handleName, anonymous])
+            database.executeUpdate(insertSql, withArgumentsIn: [communityId, userId, handleName, anonymous])
         }
     }
 
@@ -116,7 +116,7 @@ private extension HandleNameManager {
         let dropTableSql = "drop table if exists " + kHandleNamesTable
 
         objc_sync_enter(self)
-        let success = database.executeUpdate(dropTableSql, withArgumentsIn: nil)
+        let success = database.executeUpdate(dropTableSql, withArgumentsIn: [])
         objc_sync_exit(self)
 
         if !success {
@@ -134,7 +134,7 @@ private extension HandleNameManager {
             "primary key (community_id, user_id))"
 
         objc_sync_enter(self)
-        let success = database.executeUpdate(createTableSql, withArgumentsIn: nil)
+        let success = database.executeUpdate(createTableSql, withArgumentsIn: [])
         objc_sync_exit(self)
 
         if !success {
@@ -178,7 +178,7 @@ private extension HandleNameManager {
 
     static func databaseForHandleNames() -> FMDatabase? {
         let database = FMDatabase(path: HandleNameManager.fullPathForHandleNamesDatabase())
-        guard database?.open() == true else {
+        guard database.open() == true else {
             log.error("unable to open database")
             return nil
         }
