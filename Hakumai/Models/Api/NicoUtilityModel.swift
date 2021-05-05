@@ -21,7 +21,7 @@ struct EmbeddedDataProperties: Codable {
     let site: Site
 }
 
-// MARK: - WebSocket (Generic Model)
+// MARK: - WebSocket (Managing, Generic Model)
 enum WebSocketDataType: String, Codable {
     case ping, room
 }
@@ -30,7 +30,7 @@ struct WebSocketData: Codable {
     let type: WebSocketDataType
 }
 
-// MARK: - WebSocket (Specific Model)
+// MARK: - WebSocket (Managing, Specific Model)
 struct WebSocketPingData: Codable {
     let type: WebSocketDataType
 }
@@ -52,4 +52,22 @@ struct WebSocketRoomData: Codable {
 
     let type: WebSocketDataType
     let data: Data
+}
+
+// MARK: - WebSocket (Message)
+struct WebSocketChatData: Codable {
+    struct WebSocketChat: Codable {
+        let thread: String
+        let no: Int
+        let vpos: Int
+        let date: Int
+        let dateUsec: Int
+        let mail: String
+        let userId: String
+        let premium: Int?
+        let anonymity: Int
+        let content: String
+    }
+
+    let chat: WebSocketChat
 }

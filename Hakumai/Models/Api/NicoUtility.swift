@@ -95,6 +95,7 @@ final class NicoUtility: NicoUtilityType {
     private let session: Session
     private var managingSocket: WebSocket?
     private var messageSocket: WebSocket?
+    private var isFirstChatReceived = false
 
     init() {
         let configuration = URLSessionConfiguration.af.default
@@ -185,6 +186,10 @@ private extension NicoUtility {
             guard let me = self else { return }
             switch $0 {
             case .success(let webSocketUrl):
+                // TODO:
+                let user = User()
+                let live = Live()
+                me.delegate?.nicoUtilityDidPrepareLive(me, user: user, live: live)
                 me.openManagingSocket(webSocketUrl: webSocketUrl)
             case .failure(_):
                 let reason = "Failed to load live info."
@@ -347,6 +352,7 @@ private extension NicoUtility {
             log.debug("disconnected")
         case .text(let text):
             log.debug("text: \(text)")
+            decodeChat(text: text)
         case .binary(_):
             log.debug("binary")
         case .pong(_):
@@ -368,6 +374,20 @@ private extension NicoUtility {
         let message = String.init(format: startThreadMessage, room.data.threadId)
         socket.write(string: message)
     }
+
+    func decodeChat(text: String) {
+        guard let data = text.data(using: .utf8) else { return }
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        guard let chat = try? decoder.decode(WebSocketChatData.self, from: data) else { return }
+        log.debug(chat)
+        if isFirstChatReceived {
+            delegate?.nicoUtilityDidReceiveChat(self, chat: chat.toChat())
+        } else {
+            delegate?.nicoUtilityDidReceiveFirstChat(self, chat: chat.toChat())
+            isFirstChatReceived = true
+        }
+    }
 }
 
 // MARK: - Private Utility Methods
@@ -383,5 +403,28 @@ private extension NicoUtility {
         log.debug(response.request?.debugDescription)
         log.debug(response.request?.headers)
         log.debug(response)
+    }
+}
+
+// MARK: - Private Extensions
+private extension WebSocketChatData {
+    func toChat() -> Chat {
+        let chat = Chat()
+        chat.internalNo = self.chat.no
+        // TODO: ?
+        chat.roomPosition = .arena
+        chat.no = self.chat.no
+        // chat.date = self.chat.date
+        chat.dateUsec = self.chat.dateUsec
+        chat.mail = [self.chat.mail]
+        chat.userId = self.chat.userId
+        if let premium = self.chat.premium {
+            chat.premium = Premium(rawValue: premium)
+        } else {
+            chat.premium = .ippan
+        }
+        chat.comment = self.chat.content
+        chat.score = 0
+        return chat
     }
 }
