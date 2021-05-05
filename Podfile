@@ -13,6 +13,7 @@ target 'Hakumai' do
   pod 'Ono', '~> 2.1.2'
   pod 'SAMKeychain', '~> 1.5.3'
   pod 'Alamofire', '~> 5.4.3'
+  pod 'Starscream', '~> 4.0.4'
 
   target 'HakumaiTests' do
     inherit! :search_paths
