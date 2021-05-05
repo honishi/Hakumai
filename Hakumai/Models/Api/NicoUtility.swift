@@ -70,6 +70,7 @@ enum NicoUtilityError: Error {
 // MARK: - Constants
 private let userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36"
 private let livePageUrl = "https://live.nicovideo.jp/watch/lv"
+private let userPageUrl = "https://www.nicovideo.jp/user/"
 
 // MARK: - WebSocket Messages
 private let startWatchingMessage = """
@@ -133,7 +134,7 @@ extension NicoUtility {
     }
 
     func urlString(forUserId userId: String) -> String {
-        return ""
+        return userPageUrl + userId
     }
 
     func reserveToClearUserSessionCookie() {
