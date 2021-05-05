@@ -78,6 +78,9 @@ private let startWatchingMessage = """
 private let pongMessage = """
 {"type":"pong"}
 """
+private let startThreadMessage = """
+[{"ping":{"content":"rs:0"}},{"ping":{"content":"ps:0"}},{"thread":{"thread":"%@","version":"20061206","user_id":"guest","res_from":-150,"with_global":1,"scores":1,"nicoru":0}},{"ping":{"content":"pf:0"}},{"ping":{"content":"rf:0"}}]
+"""
 
 // MARK: - Class
 final class NicoUtility: NicoUtilityType {
@@ -177,31 +180,14 @@ private extension NicoUtility {
         // TODO: use cookie
 
         delegate?.nicoUtilityWillPrepareLive(self)
-        _requestLiveInfo(lv: liveNumber)
-    }
 
-    func _requestLiveInfo(lv: Int) {
-        reqeustLiveInfo(lv: lv) { [weak self] in
+        reqeustLiveInfo(lv: liveNumber) { [weak self] in
             guard let me = self else { return }
             switch $0 {
             case .success(let webSocketUrl):
-                me._reqeustMessageServerInfo(webSocketUrl: webSocketUrl)
+                me.openManagingSocket(webSocketUrl: webSocketUrl)
             case .failure(_):
                 let reason = "Failed to load live info."
-                me.delegate?.nicoUtilityDidFailToPrepareLive(me, reason: reason)
-            }
-        }
-    }
-
-    func _reqeustMessageServerInfo(webSocketUrl: String) {
-        requestMessageServerInfo(webSocketUrl: webSocketUrl) { [weak self] in
-            guard let me = self else { return }
-            switch $0 {
-            case .success():
-                // TODO: Start to connect to message server..
-                me.delegate?.nicoUtilityDidConnectToLive(me, roomPosition: RoomPosition.arena)
-            case .failure(_):
-                let reason = "Failed to load message server info."
                 me.delegate?.nicoUtilityDidFailToPrepareLive(me, reason: reason)
             }
         }
@@ -224,7 +210,36 @@ private extension NicoUtility {
         }
     }
 
-    func requestMessageServerInfo(webSocketUrl: String, completion: (Result<Void, NicoUtilityError>) -> Void) {
+    func openManagingSocket(webSocketUrl: String) {
+        openManagingSocket(webSocketUrl: webSocketUrl) { [weak self] in
+            guard let me = self else { return }
+            switch $0 {
+            case .success(let room):
+                me.openMessageSocket(room: room)
+            case .failure(_):
+                let reason = "Failed to load message server info."
+                me.delegate?.nicoUtilityDidFailToPrepareLive(me, reason: reason)
+            }
+        }
+    }
+
+    func openMessageSocket(room: WebSocketRoomData) {
+        openMessageSocket(room: room) { [weak self] in
+            guard let me = self else { return }
+            switch $0 {
+            case .success():
+                me.delegate?.nicoUtilityDidConnectToLive(me, roomPosition: RoomPosition.arena)
+            case .failure(_):
+                let reason = "Failed to open message server."
+                me.delegate?.nicoUtilityDidFailToPrepareLive(me, reason: reason)
+            }
+        }
+    }
+}
+
+// MARK: Private Methods (Managing Socket)
+private extension NicoUtility {
+    func openManagingSocket(webSocketUrl: String, completion: @escaping (Result<WebSocketRoomData, NicoUtilityError>) -> Void) {
         guard let url = URL(string: webSocketUrl) else {
             completion(Result.failure(NicoUtilityError.internal))
             return
@@ -234,14 +249,16 @@ private extension NicoUtility {
         request.timeoutInterval = 10
         let socket = WebSocket(request: request)
         socket.onEvent = { [weak self] in
-            self?.handleManagingSocketEvent(socket: socket, event: $0)
+            self?.handleManagingSocketEvent(
+                socket: socket,
+                event: $0,
+                completion: completion)
         }
         socket.connect()
         managingSocket = socket
     }
 
-    // swiftlint:disable cyclomatic_complexity
-    func handleManagingSocketEvent(socket: WebSocket, event: WebSocketEvent) {
+    func handleManagingSocketEvent(socket: WebSocket, event: WebSocketEvent, completion: (Result<WebSocketRoomData, NicoUtilityError>) -> Void) {
         switch event {
         case .connected(_):
             log.debug("connected")
@@ -250,10 +267,7 @@ private extension NicoUtility {
             log.debug("disconnected")
         case .text(let text):
             log.debug("text: \(text)")
-            guard let obj = decodeWebSocketData(text: text) else { return }
-            if let data = obj as? WebSocketData, data.type == .ping {
-                socket.write(string: pongMessage)
-            }
+            processWebSocketData(text: text, socket: socket, completion: completion)
         case .binary(_):
             log.debug("binary")
         case .pong(_):
@@ -270,17 +284,92 @@ private extension NicoUtility {
             log.debug("cancelled")
         }
     }
-    // swiftlint:enable cyclomatic_complexity_violation
+
+    func processWebSocketData(text: String, socket: WebSocket, completion: (Result<WebSocketRoomData, NicoUtilityError>) -> Void) {
+        guard let decoded = decodeWebSocketData(text: text) else { return }
+        switch decoded {
+        case let room as WebSocketRoomData:
+            log.debug(room)
+            completion(Result.success(room))
+        case is WebSocketPingData:
+            socket.write(string: pongMessage)
+        default:
+            break
+        }
+    }
 
     func decodeWebSocketData(text: String) -> Any? {
         guard let data = text.data(using: .utf8) else { return nil }
         let decoder = JSONDecoder()
-        return try? decoder.decode(WebSocketData.self, from: data)
+        guard let wsData = try? decoder.decode(WebSocketData.self, from: data) else { return nil }
+        switch wsData.type {
+        case .ping:
+            return try? decoder.decode(WebSocketPingData.self, from: data)
+        case .room:
+            return try? decoder.decode(WebSocketRoomData.self, from: data)
+        }
     }
 }
 
+// MARK: - Private Methods (Message Socket)
 private extension NicoUtility {
+    func openMessageSocket(room: WebSocketRoomData, completion: @escaping (Result<Void, NicoUtilityError>) -> Void) {
+        guard let url = URL(string: room.data.messageServer.uri) else {
+            completion(Result.failure(NicoUtilityError.internal))
+            return
+        }
+        var request = URLRequest(url: url)
+        request.headers = [
+            "User-Agent": userAgent,
+            "Sec-WebSocket-Extensions": "permessage-deflate; client_max_window_bits",
+            "Sec-WebSocket-Protocol": "msg.nicovideo.jp#json"
+        ]
+        request.timeoutInterval = 10
+        let socket = WebSocket(request: request)
+        socket.onEvent = { [weak self] in
+            self?.handleMessageSocketEvent(
+                socket: socket,
+                event: $0,
+                room: room,
+                completion: completion)
+        }
+        socket.connect()
+        messageSocket = socket
+    }
+
+    func handleMessageSocketEvent(socket: WebSocket, event: WebSocketEvent, room: WebSocketRoomData, completion: (Result<Void, NicoUtilityError>) -> Void) {
+        switch event {
+        case .connected(_):
+            log.debug("connected")
+            completion(Result.success(()))
+            sendStartThreadMessage(socket: socket, room: room)
+        case .disconnected(_, _):
+            log.debug("disconnected")
+        case .text(let text):
+            log.debug("text: \(text)")
+        case .binary(_):
+            log.debug("binary")
+        case .pong(_):
+            log.debug("pong")
+        case .ping(_):
+            log.debug("ping")
+        case .error(_):
+            log.debug("error")
+        case .viabilityChanged(_):
+            log.debug("viabilityChanged")
+        case .reconnectSuggested(_):
+            log.debug("reconnectSuggested")
+        case .cancelled:
+            log.debug("cancelled")
+        }
+    }
+
+    func sendStartThreadMessage(socket: WebSocket, room: WebSocketRoomData) {
+        let message = String.init(format: startThreadMessage, room.data.threadId)
+        socket.write(string: message)
+    }
 }
+
 // MARK: - Private Utility Methods
 private extension NicoUtility {
     func customHeaders() -> [String: String] {

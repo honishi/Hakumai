@@ -8,6 +8,7 @@
 
 import Foundation
 
+// MARK: - Live Page
 struct EmbeddedDataProperties: Codable {
     struct Site: Codable {
         let relive: Relive
@@ -20,9 +21,35 @@ struct EmbeddedDataProperties: Codable {
     let site: Site
 }
 
+// MARK: - WebSocket (Generic Model)
+enum WebSocketDataType: String, Codable {
+    case ping, room
+}
+
 struct WebSocketData: Codable {
-    enum DataType: String, Codable {
-        case ping
+    let type: WebSocketDataType
+}
+
+// MARK: - WebSocket (Specific Model)
+struct WebSocketPingData: Codable {
+    let type: WebSocketDataType
+}
+
+struct WebSocketRoomData: Codable {
+    struct Data: Codable {
+        let name: String
+        let messageServer: MessageServer
+        let threadId: String
+        let yourPostKey: String
+        let isFirst: Bool
+        let waybackkey: String
     }
-    let type: DataType
+
+    struct MessageServer: Codable {
+        let uri: String
+        let type: String
+    }
+
+    let type: WebSocketDataType
+    let data: Data
 }
