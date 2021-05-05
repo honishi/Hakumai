@@ -416,7 +416,9 @@ private extension WebSocketChatData {
         chat.no = self.chat.no
         // chat.date = self.chat.date
         chat.dateUsec = self.chat.dateUsec
-        chat.mail = [self.chat.mail]
+        if let mail = self.chat.mail {
+            chat.mail = [mail]
+        }
         chat.userId = self.chat.userId
         if let premium = self.chat.premium {
             chat.premium = Premium(rawValue: premium)

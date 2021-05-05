@@ -62,10 +62,10 @@ struct WebSocketChatData: Codable {
         let vpos: Int
         let date: Int
         let dateUsec: Int
-        let mail: String
+        let mail: String?
         let userId: String
         let premium: Int?
-        let anonymity: Int
+        let anonymity: Int?
         let content: String
     }
 
