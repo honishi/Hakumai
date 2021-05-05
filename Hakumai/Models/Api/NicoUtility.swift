@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Alamofire
 import XCGLogger
 
 // MARK: - Protocol
@@ -61,8 +62,13 @@ enum NicoConnectType {
 
 enum NicoUtilityError: Error {
     case network
+    case `internal`
     case unknown
 }
+
+// MARK: - Constants
+private let userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36"
+private let livePageUrl = "https://live.nicovideo.jp/watch/lv"
 
 // MARK: - Class
 final class NicoUtility: NicoUtilityType {
@@ -74,8 +80,16 @@ final class NicoUtility: NicoUtilityType {
     // Private Properties
     private var lastLiveNumber: Int?
     private var userSessionCookie: String?
+    private let session: Session
+
+    init() {
+        let configuration = URLSessionConfiguration.af.default
+        configuration.headers.add(.userAgent(userAgent))
+        self.session = Session(configuration: configuration)
+    }
 }
 
+// MARK: - Public Methods
 extension NicoUtility {
     func connect(liveNumber: Int, connectType: NicoConnectType) {
         let completion = { (userSessionCookie: String?) -> Void in
@@ -136,6 +150,7 @@ extension NicoUtility {
     }
 }
 
+// MARK: - Private Methods
 private extension NicoUtility {
     func connect(liveNumber: Int, userSessionCookie: String?) {
         guard let userSessionCookie = userSessionCookie else {
@@ -148,24 +163,73 @@ private extension NicoUtility {
         self.userSessionCookie = userSessionCookie
         self.lastLiveNumber = liveNumber
 
-        delegate?.nicoUtilityWillPrepareLive(self)
+        // TODO: use cookie
 
-        reqeustLivePage(lv: liveNumber) { [weak self] in
+        delegate?.nicoUtilityWillPrepareLive(self)
+        _requestLiveInfo(lv: liveNumber)
+    }
+
+    func _requestLiveInfo(lv: Int) {
+        reqeustLiveInfo(lv: lv) { [weak self] in
             guard let me = self else { return }
             switch $0 {
-            case .success(_):
-                // TODO
-                me.delegate?.nicoUtilityDidConnectToLive(me, roomPosition: RoomPosition.arena)
+            case .success(let webSocketUrl):
+                me._reqeustMessageServerInfo(webSocketUrl: webSocketUrl)
             case .failure(_):
-                let reason = "Failed to load live page."
+                let reason = "Failed to load live info."
                 me.delegate?.nicoUtilityDidFailToPrepareLive(me, reason: reason)
             }
         }
     }
 
-    func reqeustLivePage(lv: Int, completion: @escaping (Result<String, NicoUtilityError>) -> Void) {
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
-            completion(Result.failure(NicoUtilityError.unknown))
+    func _reqeustMessageServerInfo(webSocketUrl: String) {
+        requestMessageServerInfo(webSocketUrl: webSocketUrl) { [weak self] in
+            guard let me = self else { return }
+            switch $0 {
+            case .success():
+                // TODO: Start to connect to message server..
+                me.delegate?.nicoUtilityDidConnectToLive(me, roomPosition: RoomPosition.arena)
+            case .failure(_):
+                let reason = "Failed to load message server info."
+                me.delegate?.nicoUtilityDidFailToPrepareLive(me, reason: reason)
+            }
         }
+    }
+
+    func reqeustLiveInfo(lv: Int, completion: @escaping (Result<String, NicoUtilityError>) -> Void) {
+        let url = livePageUrl + "\(lv)"
+        session.request(url).responseData { [weak self] in
+            self?._logAfResponse($0)
+            switch $0.result {
+            case .success(let data):
+                guard let webSocketUrl = NicoUtility.extractWebSocketUrlFromLivePage(html: data) else {
+                    completion(Result.failure(NicoUtilityError.internal))
+                    return
+                }
+                completion(Result.success(webSocketUrl))
+            case .failure(_):
+                completion(Result.failure(NicoUtilityError.internal))
+            }
+        }
+    }
+
+    func requestMessageServerInfo(webSocketUrl: String, completion: (Result<Void, NicoUtilityError>) -> Void) {
+        // TODO: websockets
+    }
+}
+
+// MARK: - Private Utility Methods
+private extension NicoUtility {
+    func customHeaders() -> [String: String] {
+        return [:]
+    }
+}
+
+private extension NicoUtility {
+    func _logAfResponse(_ response: AFDataResponse<Data>) {
+        log.debug(response.debugDescription)
+        log.debug(response.request?.debugDescription)
+        log.debug(response.request?.headers)
+        log.debug(response)
     }
 }

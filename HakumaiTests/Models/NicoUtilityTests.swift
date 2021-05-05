@@ -23,6 +23,13 @@ final class NicoUtilityTests: XCTestCase {
         super.tearDown()
     }
 
+    // MARK: - Comment Server Info
+    func testExtractCommentServerInfo() {
+        let html = dataForResource("live_page.html")
+        let extracted = NicoUtility.extractWebSocketUrlFromLivePage(html: html)
+        XCTAssert(extracted == "wss://a.live2.nicovideo.jp/unama/wsapi/v2/watch/12345?audience_token=12345_12345_12345_abcde")
+    }
+
     // MARK: - Community
     /* func testLoadCommunityUser() {
      let data = dataForResource("community_user.html")
@@ -68,4 +75,9 @@ final class NicoUtilityTests: XCTestCase {
         return data!
     }
     // swiftlint:enable force_unwrapping
+
+    /* func stringForResource(_ fileName: String) -> String {
+     let data = dataForResource(fileName)
+     return String(data: data, encoding: .utf8)!
+     } */
 }

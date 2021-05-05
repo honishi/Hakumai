@@ -111,6 +111,8 @@
 		DBB473121A35CE86002C797E /* heartbeat_fail.xml in Resources */ = {isa = PBXBuildFile; fileRef = DBB473111A35CE86002C797E /* heartbeat_fail.xml */; };
 		DBB952161A8655AB0059850A /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB952151A8655AB0059850A /* Helper.swift */; };
 		DBB952171A8655AB0059850A /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB952151A8655AB0059850A /* Helper.swift */; };
+		DBCA2D242642BCF500B6147C /* NicoUtilityModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA2D232642BCF500B6147C /* NicoUtilityModel.swift */; };
+		DBCA2D252642BE8500B6147C /* NicoUtilityModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA2D232642BCF500B6147C /* NicoUtilityModel.swift */; };
 		DBCA40D41A30AD48006299A9 /* MenuDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA40D31A30AD48006299A9 /* MenuDelegate.swift */; };
 		DBD65C121A2CD1AD00B84C97 /* UserIdTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1E32C81A2CC85C00CD874A /* UserIdTableCellView.swift */; };
 		DBD65C201A2EB08D00B84C97 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD65C1F1A2EB08D00B84C97 /* Message.swift */; };
@@ -131,6 +133,10 @@
 		DBFA888B1A1C9A56005349AD /* Live.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA888A1A1C9A56005349AD /* Live.swift */; };
 		DBFA888C1A1C9A56005349AD /* Live.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA888A1A1C9A56005349AD /* Live.swift */; };
 		DBFA88911A1CAE85005349AD /* community_user.html in Resources */ = {isa = PBXBuildFile; fileRef = DBFA88901A1CAE85005349AD /* community_user.html */; };
+		DBFB26D3264290A600B1FDEB /* NicoUtility+Extractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB26D2264290A600B1FDEB /* NicoUtility+Extractor.swift */; };
+		DBFB26D52642921900B1FDEB /* live_page.html in Resources */ = {isa = PBXBuildFile; fileRef = DBFB26D42642921900B1FDEB /* live_page.html */; };
+		DBFB26D7264295D500B1FDEB /* NicoUtility+Extractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB26D2264290A600B1FDEB /* NicoUtility+Extractor.swift */; };
+		DBFB26D92642A32300B1FDEB /* embedded-data.json in Resources */ = {isa = PBXBuildFile; fileRef = DBFB26D82642A32300B1FDEB /* embedded-data.json */; };
 		DBFB81511A36B52E00294934 /* PreferenceWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB81501A36B52E00294934 /* PreferenceWindowController.swift */; };
 /* End PBXBuildFile section */
 
@@ -238,6 +244,7 @@
 		DBB4730F1A35CE72002C797E /* heartbeat_ok.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = heartbeat_ok.xml; sourceTree = "<group>"; };
 		DBB473111A35CE86002C797E /* heartbeat_fail.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = heartbeat_fail.xml; sourceTree = "<group>"; };
 		DBB952151A8655AB0059850A /* Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
+		DBCA2D232642BCF500B6147C /* NicoUtilityModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoUtilityModel.swift; sourceTree = "<group>"; };
 		DBCA40D31A30AD48006299A9 /* MenuDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuDelegate.swift; sourceTree = "<group>"; };
 		DBD65C1F1A2EB08D00B84C97 /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		DBE093FE1A5869A2004554FD /* HandleNameManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HandleNameManagerTests.swift; sourceTree = "<group>"; };
@@ -250,6 +257,9 @@
 		DBFA88871A1BCF77005349AD /* MessageServerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageServerTests.swift; sourceTree = "<group>"; };
 		DBFA888A1A1C9A56005349AD /* Live.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Live.swift; sourceTree = "<group>"; };
 		DBFA88901A1CAE85005349AD /* community_user.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = community_user.html; sourceTree = "<group>"; };
+		DBFB26D2264290A600B1FDEB /* NicoUtility+Extractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NicoUtility+Extractor.swift"; sourceTree = "<group>"; };
+		DBFB26D42642921900B1FDEB /* live_page.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = live_page.html; sourceTree = "<group>"; };
+		DBFB26D82642A32300B1FDEB /* embedded-data.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "embedded-data.json"; sourceTree = "<group>"; };
 		DBFB81501A36B52E00294934 /* PreferenceWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferenceWindowController.swift; sourceTree = "<group>"; };
 		E7BB54305BC1250CD75E68A4 /* Pods-HakumaiTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HakumaiTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-HakumaiTests/Pods-HakumaiTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -549,7 +559,9 @@
 				DB8E71B41A544A5E00C6E696 /* _NicoUtilityExtractor.swift */,
 				DB8E71B91A544D7B00C6E696 /* _NicoUtilityHttpClient.swift */,
 				DBA414C51A188A7400E0CAD3 /* _RoomListener.swift */,
+				DBFB26D2264290A600B1FDEB /* NicoUtility+Extractor.swift */,
 				DBAAA7501A0FDA4500981004 /* NicoUtility.swift */,
+				DBCA2D232642BCF500B6147C /* NicoUtilityModel.swift */,
 			);
 			path = Api;
 			sourceTree = "<group>";
@@ -595,8 +607,10 @@
 			children = (
 				DB346B991A54648100137639 /* community_channel.html */,
 				DBFA88901A1CAE85005349AD /* community_user.html */,
+				DBFB26D82642A32300B1FDEB /* embedded-data.json */,
 				DBB473111A35CE86002C797E /* heartbeat_fail.xml */,
 				DBB4730F1A35CE72002C797E /* heartbeat_ok.xml */,
+				DBFB26D42642921900B1FDEB /* live_page.html */,
 				DB1E32BE1A2B95C600CD874A /* user_1.html */,
 				DB1E32C21A2BA53700CD874A /* user_me.html */,
 			);
@@ -738,8 +752,10 @@
 			files = (
 				DB346B9A1A54648100137639 /* community_channel.html in Resources */,
 				DBFA88911A1CAE85005349AD /* community_user.html in Resources */,
+				DBFB26D92642A32300B1FDEB /* embedded-data.json in Resources */,
 				DBB473121A35CE86002C797E /* heartbeat_fail.xml in Resources */,
 				DBB473101A35CE72002C797E /* heartbeat_ok.xml in Resources */,
+				DBFB26D52642921900B1FDEB /* live_page.html in Resources */,
 				DB7EB89D1A24AA3700C3BFB5 /* RoomPositionTableCellView.xib in Resources */,
 				DB7B3DE31A242D7B00205470 /* ScoreTableCellView.xib in Resources */,
 				DB1E32BF1A2B95C600CD874A /* user_1.html in Resources */,
@@ -925,7 +941,9 @@
 				DBFA88851A1BC925005349AD /* MessageServer.swift in Sources */,
 				DB73A38C1A4F43F6008423D0 /* MuteAddViewController.swift in Sources */,
 				DB0E10681A39B6DD00A10E00 /* MuteViewController.swift in Sources */,
+				DBFB26D3264290A600B1FDEB /* NicoUtility+Extractor.swift in Sources */,
 				DBAAA7511A0FDA4500981004 /* NicoUtility.swift in Sources */,
+				DBCA2D242642BCF500B6147C /* NicoUtilityModel.swift in Sources */,
 				DB9EFC741A3E974A0087D302 /* NSWindowExtension.swift in Sources */,
 				DBB473061A35909F002C797E /* NSXMLElementExtension.swift in Sources */,
 				DB682D421A36E6AE00499C72 /* Parameter.swift in Sources */,
@@ -984,7 +1002,9 @@
 				DBFA88861A1BC925005349AD /* MessageServer.swift in Sources */,
 				DBFA88891A1BCF77005349AD /* MessageServerTests.swift in Sources */,
 				DB73A38D1A4F43F6008423D0 /* MuteAddViewController.swift in Sources */,
+				DBFB26D7264295D500B1FDEB /* NicoUtility+Extractor.swift in Sources */,
 				DBAAA7521A0FDA4500981004 /* NicoUtility.swift in Sources */,
+				DBCA2D252642BE8500B6147C /* NicoUtilityModel.swift in Sources */,
 				DB0F0ECD1A16441D00F8BDC5 /* NicoUtilityTests.swift in Sources */,
 				DBB473091A3590C5002C797E /* NSXMLElementExtension.swift in Sources */,
 				DB682D451A36E73D00499C72 /* Parameter.swift in Sources */,
