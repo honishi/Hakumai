@@ -19,3 +19,10 @@ struct EmbeddedDataProperties: Codable {
 
     let site: Site
 }
+
+struct WebSocketData: Codable {
+    enum DataType: String, Codable {
+        case ping
+    }
+    let type: DataType
+}

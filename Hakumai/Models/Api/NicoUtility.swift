@@ -8,6 +8,7 @@
 
 import Foundation
 import Alamofire
+import Starscream
 import XCGLogger
 
 // MARK: - Protocol
@@ -70,6 +71,14 @@ enum NicoUtilityError: Error {
 private let userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36"
 private let livePageUrl = "https://live.nicovideo.jp/watch/lv"
 
+// MARK: - WebSocket Messages
+private let startWatchingMessage = """
+{"type":"startWatching","data":{"stream":{"quality":"high","protocol":"hls","latency":"low","chasePlay":false},"room":{"protocol":"webSocket","commentable":true},"reconnect":false}}")
+"""
+private let pongMessage = """
+{"type":"pong"}
+"""
+
 // MARK: - Class
 final class NicoUtility: NicoUtilityType {
     // Public Properties
@@ -81,6 +90,8 @@ final class NicoUtility: NicoUtilityType {
     private var lastLiveNumber: Int?
     private var userSessionCookie: String?
     private let session: Session
+    private var managingSocket: WebSocket?
+    private var messageSocket: WebSocket?
 
     init() {
         let configuration = URLSessionConfiguration.af.default
@@ -214,10 +225,62 @@ private extension NicoUtility {
     }
 
     func requestMessageServerInfo(webSocketUrl: String, completion: (Result<Void, NicoUtilityError>) -> Void) {
-        // TODO: websockets
+        guard let url = URL(string: webSocketUrl) else {
+            completion(Result.failure(NicoUtilityError.internal))
+            return
+        }
+        var request = URLRequest(url: url)
+        request.headers = ["User-Agent": userAgent]
+        request.timeoutInterval = 10
+        let socket = WebSocket(request: request)
+        socket.onEvent = { [weak self] in
+            self?.handleManagingSocketEvent(socket: socket, event: $0)
+        }
+        socket.connect()
+        managingSocket = socket
+    }
+
+    // swiftlint:disable cyclomatic_complexity
+    func handleManagingSocketEvent(socket: WebSocket, event: WebSocketEvent) {
+        switch event {
+        case .connected(_):
+            log.debug("connected")
+            socket.write(string: startWatchingMessage)
+        case .disconnected(_, _):
+            log.debug("disconnected")
+        case .text(let text):
+            log.debug("text: \(text)")
+            guard let obj = decodeWebSocketData(text: text) else { return }
+            if let data = obj as? WebSocketData, data.type == .ping {
+                socket.write(string: pongMessage)
+            }
+        case .binary(_):
+            log.debug("binary")
+        case .pong(_):
+            log.debug("pong")
+        case .ping(_):
+            log.debug("ping")
+        case .error(_):
+            log.debug("error")
+        case .viabilityChanged(_):
+            log.debug("viabilityChanged")
+        case .reconnectSuggested(_):
+            log.debug("reconnectSuggested")
+        case .cancelled:
+            log.debug("cancelled")
+        }
+    }
+    // swiftlint:enable cyclomatic_complexity_violation
+
+    func decodeWebSocketData(text: String) -> Any? {
+        guard let data = text.data(using: .utf8) else { return nil }
+        let decoder = JSONDecoder()
+        return try? decoder.decode(WebSocketData.self, from: data)
     }
 }
 
+private extension NicoUtility {
+}
 // MARK: - Private Utility Methods
 private extension NicoUtility {
     func customHeaders() -> [String: String] {
