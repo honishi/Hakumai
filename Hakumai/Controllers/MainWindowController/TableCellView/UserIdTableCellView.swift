@@ -20,6 +20,7 @@ final class UserIdTableCellView: NSTableCellView {
 
     var info: (handleName: String?, userId: String?, premium: Premium?, comment: String?)? = nil {
         didSet {
+            self.currentUserId = info?.userId
             guard let userId = info?.userId, let premium = info?.premium else {
                 userIdImageView.image = nil
                 userIdTextField.stringValue = ""
@@ -31,6 +32,8 @@ final class UserIdTableCellView: NSTableCellView {
     }
 
     var fontSize: CGFloat? { didSet { set(fontSize: fontSize) } }
+
+    private var currentUserId: String?
 }
 
 private extension UserIdTableCellView {
@@ -66,11 +69,18 @@ private extension UserIdTableCellView {
             return
         }
 
-        NicoUtility.shared.resolveUsername(forUserId: userId) {
+        NicoUtility.shared.resolveUsername(forUserId: userId) { [weak self] in
+            guard let me = self else { return }
+            guard me.currentUserId == userId else {
+                // Seems the view is reused before the previous async username
+                // resolving operation from this view is finished. So skip...
+                log.debug("Skip updating cell user name.")
+                return
+            }
             guard let userName = $0 else { return }
             DispatchQueue.main.async {
-                self.userIdTextField.stringValue =
-                    self.concatUserName(userId: userId, userName: userName, handleName: handleName)
+                me.userIdTextField.stringValue =
+                    me.concatUserName(userId: userId, userName: userName, handleName: handleName)
             }
         }
     }
