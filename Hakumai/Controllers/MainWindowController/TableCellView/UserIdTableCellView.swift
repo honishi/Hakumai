@@ -50,7 +50,11 @@ private extension UserIdTableCellView {
 
     func setUserIdLabel(userId: String, premium: Premium, handleName: String?) {
         // set default name
-        userIdTextField.stringValue = concatUserName(userId: userId, userName: nil, handleName: handleName)
+        if [.system, .caster, .operator].contains(premium) {
+            userIdTextField.stringValue = "----------"
+        } else {
+            userIdTextField.stringValue = concatUserName(userId: userId, userName: nil, handleName: handleName)
+        }
 
         // if needed, then resolve userid
         if handleName != nil || !Chat.isRawUserId(userId) || !(Chat.isUserComment(premium) || Chat.isBSPComment(premium)) {
