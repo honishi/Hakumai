@@ -10,15 +10,14 @@ import Foundation
 import Ono
 
 extension NicoUtility {
-    static func extractWebSocketUrlFromLivePage(html: Data) -> String? {
+    static func extractEmbeddedDataPropertiesFromLivePage(html: Data) -> EmbeddedDataProperties? {
         guard let document = try? ONOXMLDocument.htmlDocument(with: html) else { return nil }
         let xpathDataProps = "//script[@id=\"embedded-data\"]/@data-props"
         let dataPropsElement = document.rootElement.firstChild(withXPath: xpathDataProps)
         guard let _dataPropsElement = dataPropsElement,
               !_dataPropsElement.isBlank,
-              let data = _dataPropsElement.stringValue?.data(using: .utf8),
-              let decoded = try? JSONDecoder().decode(EmbeddedDataProperties.self, from: data) else { return nil }
-        return decoded.site.relive.webSocketUrl
+              let data = _dataPropsElement.stringValue?.data(using: .utf8) else { return nil }
+        return try? JSONDecoder().decode(EmbeddedDataProperties.self, from: data)
     }
 
     func extractUsername(fromHtmlData htmlData: Data) -> String? {

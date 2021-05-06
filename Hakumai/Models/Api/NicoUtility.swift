@@ -212,12 +212,13 @@ private extension NicoUtility {
         reqeustLiveInfo(lv: liveNumber) { [weak self] in
             guard let me = self else { return }
             switch $0 {
-            case .success(let webSocketUrl):
-                // TODO:
+            case .success(let embeddedData):
+                let live = embeddedData.toLive()
+                self?.live = live
+                // TODO: user
                 let user = User()
-                let live = Live()
                 me.delegate?.nicoUtilityDidPrepareLive(me, user: user, live: live)
-                me.openManagingSocket(webSocketUrl: webSocketUrl)
+                me.openManagingSocket(webSocketUrl: embeddedData.site.relive.webSocketUrl)
             case .failure(_):
                 let reason = "Failed to load live info."
                 me.delegate?.nicoUtilityDidFailToPrepareLive(me, reason: reason)
@@ -225,7 +226,7 @@ private extension NicoUtility {
         }
     }
 
-    func reqeustLiveInfo(lv: Int, completion: @escaping (Result<String, NicoUtilityError>) -> Void) {
+    func reqeustLiveInfo(lv: Int, completion: @escaping (Result<EmbeddedDataProperties, NicoUtilityError>) -> Void) {
         let url = livePageUrl + "\(lv)"
         let request = session.request(url)
         request.cURLDescription(calling: { log.debug($0) })
@@ -233,11 +234,11 @@ private extension NicoUtility {
             log.debug($0.debugDescription)
             switch $0.result {
             case .success(let data):
-                guard let webSocketUrl = NicoUtility.extractWebSocketUrlFromLivePage(html: data) else {
+                guard let embedded = NicoUtility.extractEmbeddedDataPropertiesFromLivePage(html: data) else {
                     completion(Result.failure(NicoUtilityError.internal))
                     return
                 }
-                completion(Result.success(webSocketUrl))
+                completion(Result.success(embedded))
             case .failure(_):
                 completion(Result.failure(NicoUtilityError.internal))
             }
@@ -427,6 +428,23 @@ private extension NicoUtility {
 }
 
 // MARK: - Private Extensions
+private extension EmbeddedDataProperties {
+    func toLive() -> Live {
+        let live = Live()
+        live.liveId = program.nicoliveProgramId
+        live.title = program.title
+        live.baseTime = program.vposBaseTime.toDateAsTimeIntervalSince1970()
+        live.openTime = program.openTime.toDateAsTimeIntervalSince1970()
+        live.startTime = program.beginTime.toDateAsTimeIntervalSince1970()
+        let community = Community()
+        community.community = socialGroup.id
+        community.title = socialGroup.name
+        community.thumbnailUrl = URL(string: socialGroup.thumbnailImageUrl)
+        live.community = community
+        return live
+    }
+}
+
 private extension WebSocketChatData {
     func toChat() -> Chat {
         let chat = Chat()
@@ -434,7 +452,7 @@ private extension WebSocketChatData {
         // TODO: ?
         chat.roomPosition = .arena
         chat.no = self.chat.no
-        // chat.date = self.chat.date
+        chat.date = self.chat.date.toDateAsTimeIntervalSince1970()
         chat.dateUsec = self.chat.dateUsec
         if let mail = self.chat.mail {
             chat.mail = [mail]

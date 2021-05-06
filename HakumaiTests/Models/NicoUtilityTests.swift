@@ -26,8 +26,8 @@ final class NicoUtilityTests: XCTestCase {
     // MARK: - Comment Server Info
     func testExtractCommentServerInfo() {
         let html = dataForResource("live_page.html")
-        let extracted = NicoUtility.extractWebSocketUrlFromLivePage(html: html)
-        XCTAssert(extracted == "wss://a.live2.nicovideo.jp/unama/wsapi/v2/watch/12345?audience_token=12345_12345_12345_abcde")
+        let extracted = NicoUtility.extractEmbeddedDataPropertiesFromLivePage(html: html)
+        XCTAssert(extracted?.site.relive.webSocketUrl == "wss://a.live2.nicovideo.jp/unama/wsapi/v2/watch/12345?audience_token=12345_12345_12345_abcde")
     }
 
     // MARK: - Community
