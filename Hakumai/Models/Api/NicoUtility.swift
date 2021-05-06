@@ -145,7 +145,18 @@ extension NicoUtility {
     }
 
     func loadThumbnail(completion: @escaping (Data?) -> Void) {
-        //
+        guard let url = live?.community.thumbnailUrl else {
+            completion(nil)
+            return
+        }
+        session.request(url).responseData {
+            switch $0.result {
+            case .success(let data):
+                completion(data)
+            case .failure(_):
+                completion(nil)
+            }
+        }
     }
 
     func reportAsNgUser(chat: Chat, completion: @escaping (String?) -> Void) {
@@ -439,6 +450,7 @@ private extension EmbeddedDataProperties {
         let community = Community()
         community.community = socialGroup.id
         community.title = socialGroup.name
+        community.level = socialGroup.level
         community.thumbnailUrl = URL(string: socialGroup.thumbnailImageUrl)
         live.community = community
         return live
