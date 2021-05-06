@@ -113,6 +113,9 @@ final class NicoUtility: NicoUtilityType {
 // MARK: - Public Methods (Main)
 extension NicoUtility {
     func connect(liveNumber: Int, connectType: NicoConnectType) {
+        if live != nil {
+            disconnect()
+        }
         let completion = { (userSessionCookie: String?) -> Void in
             self.connect(liveNumber: liveNumber, userSessionCookie: userSessionCookie)
         }
@@ -289,13 +292,12 @@ private extension NicoUtility {
     }
 
     func disconnectSocketsAndResetState() {
-        managingSocket?.disconnect()
-        messageSocket?.disconnect()
+        [managingSocket, messageSocket].forEach { $0?.disconnect() }
+        managingSocket = nil
+        messageSocket = nil
 
         live = nil
         // user = nil
-        managingSocket = nil
-        messageSocket = nil
         isFirstChatReceived = false
     }
 }
