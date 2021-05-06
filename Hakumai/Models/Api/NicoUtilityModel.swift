@@ -58,7 +58,7 @@ struct EmbeddedDataProperties: Codable {
 
 // MARK: - WebSocket (Managing, Generic Model)
 enum WebSocketDataType: String, Codable {
-    case ping, room
+    case ping, room, statistics
 }
 
 struct WebSocketData: Codable {
@@ -83,6 +83,18 @@ struct WebSocketRoomData: Codable {
     struct MessageServer: Codable {
         let uri: String
         let type: String
+    }
+
+    let type: WebSocketDataType
+    let data: Data
+}
+
+struct WebSocketStatisticsData: Codable {
+    struct Data: Codable {
+        let viewers: Int
+        let comments: Int
+        let adPoints: Int
+        let giftPoints: Int
     }
 
     let type: WebSocketDataType

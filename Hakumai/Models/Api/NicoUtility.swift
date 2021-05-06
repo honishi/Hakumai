@@ -350,6 +350,8 @@ private extension NicoUtility {
             completion(Result.success(room))
         case is WebSocketPingData:
             socket.write(string: pongMessage)
+        case let stat as WebSocketStatisticsData:
+            delegate?.nicoUtilityDidReceiveHeartbeat(self, heartbeat: stat.toHeartbeat())
         default:
             break
         }
@@ -364,6 +366,8 @@ private extension NicoUtility {
             return try? decoder.decode(WebSocketPingData.self, from: data)
         case .room:
             return try? decoder.decode(WebSocketRoomData.self, from: data)
+        case .statistics:
+            return try? decoder.decode(WebSocketStatisticsData.self, from: data)
         }
     }
 }
@@ -489,5 +493,15 @@ private extension WebSocketChatData {
         chat.comment = self.chat.content
         chat.score = 0
         return chat
+    }
+}
+
+private extension WebSocketStatisticsData {
+    func toHeartbeat() -> Heartbeat {
+        let hb = Heartbeat()
+        hb.status = .ok
+        hb.watchCount = data.viewers
+        hb.commentCount = data.comments
+        return hb
     }
 }
