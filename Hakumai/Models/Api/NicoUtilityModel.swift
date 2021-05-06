@@ -11,6 +11,7 @@ import Foundation
 // MARK: - Live Page
 struct EmbeddedDataProperties: Codable {
     struct Site: Codable {
+        let serverTime: Int
         let relive: Relive
     }
 
@@ -93,8 +94,8 @@ struct WebSocketStatisticsData: Codable {
     struct Data: Codable {
         let viewers: Int
         let comments: Int
-        let adPoints: Int
-        let giftPoints: Int
+        let adPoints: Int?
+        let giftPoints: Int?
     }
 
     let type: WebSocketDataType

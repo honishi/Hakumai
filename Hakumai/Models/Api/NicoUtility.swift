@@ -37,7 +37,6 @@ protocol NicoUtilityType {
     func connect(liveNumber: Int, connectType: NicoConnectType)
     func disconnect(reserveToReconnect: Bool)
     func comment(_ comment: String, anonymously: Bool, completion: @escaping (_ comment: String?) -> Void)
-    func checkHeartbeat(_ timer: Timer)
 
     // Methods for Community and Usernames
     func loadThumbnail(completion: @escaping (Data?) -> Void)
@@ -81,6 +80,9 @@ private let pongMessage = """
 """
 private let startThreadMessage = """
 [{"ping":{"content":"rs:0"}},{"ping":{"content":"ps:0"}},{"thread":{"thread":"%@","version":"20061206","user_id":"guest","res_from":-150,"with_global":1,"scores":1,"nicoru":0}},{"ping":{"content":"pf:0"}},{"ping":{"content":"rf:0"}}]
+"""
+private let postCommentMessage = """
+{"type":"postComment","data":{"text":"%@","vpos":%d,"isAnonymous":%@}}
 """
 
 // MARK: - Class
@@ -132,11 +134,14 @@ extension NicoUtility {
     }
 
     func comment(_ comment: String, anonymously: Bool, completion: @escaping (String?) -> Void) {
-        //
-    }
-
-    @objc func checkHeartbeat(_ timer: Timer) {
-        //
+        guard let baseTime = live?.baseTime else { return }
+        let elapsed = Int(Date().timeIntervalSince1970) - Int(baseTime.timeIntervalSince1970)
+        let vpos = elapsed * 100
+        let message = String.init(
+            format: postCommentMessage,
+            comment, vpos, anonymously ? "true" : "false")
+        log.debug(message)
+        managingSocket?.write(string: message)
     }
 
     func urlString(forUserId userId: String) -> String {

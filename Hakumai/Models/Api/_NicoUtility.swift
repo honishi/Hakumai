@@ -641,7 +641,7 @@ private extension _NicoUtility {
     func scheduleHeartbeatTimer(immediateFire: Bool = false, interval: TimeInterval = kHeartbeatDefaultInterval) {
         stopHeartbeatTimer()
         DispatchQueue.main.async {
-            self.heartbeatTimer = Timer.scheduledTimer(timeInterval: interval, target: self, selector: #selector(NicoUtility.checkHeartbeat(_:)), userInfo: nil, repeats: true)
+            self.heartbeatTimer = Timer.scheduledTimer(timeInterval: interval, target: self, selector: #selector(_NicoUtility.checkHeartbeat(_:)), userInfo: nil, repeats: true)
             if immediateFire {
                 self.heartbeatTimer?.fire()
             }
