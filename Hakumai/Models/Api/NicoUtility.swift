@@ -125,7 +125,10 @@ extension NicoUtility {
     }
 
     func disconnect(reserveToReconnect: Bool = false) {
-        //
+        managingSocket?.disconnect()
+        messageSocket?.disconnect()
+        reset()
+        delegate?.nicoUtilityDidDisconnect(self)
     }
 
     func comment(_ comment: String, anonymously: Bool, completion: @escaping (String?) -> Void) {
@@ -280,6 +283,14 @@ private extension NicoUtility {
                 me.delegate?.nicoUtilityDidFailToPrepareLive(me, reason: reason)
             }
         }
+    }
+
+    func reset() {
+        live = nil
+        // user = nil
+        managingSocket = nil
+        messageSocket = nil
+        isFirstChatReceived = false
     }
 }
 
