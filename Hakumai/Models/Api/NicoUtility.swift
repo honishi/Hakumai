@@ -127,9 +127,7 @@ extension NicoUtility {
     }
 
     func disconnect(reserveToReconnect: Bool = false) {
-        managingSocket?.disconnect()
-        messageSocket?.disconnect()
-        reset()
+        disconnectSocketsAndResetState()
         delegate?.nicoUtilityDidDisconnect(self)
     }
 
@@ -290,7 +288,10 @@ private extension NicoUtility {
         }
     }
 
-    func reset() {
+    func disconnectSocketsAndResetState() {
+        managingSocket?.disconnect()
+        messageSocket?.disconnect()
+
         live = nil
         // user = nil
         managingSocket = nil
