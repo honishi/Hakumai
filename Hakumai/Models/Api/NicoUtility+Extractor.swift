@@ -20,4 +20,10 @@ extension NicoUtility {
               let decoded = try? JSONDecoder().decode(EmbeddedDataProperties.self, from: data) else { return nil }
         return decoded.site.relive.webSocketUrl
     }
+
+    func extractUsername(fromHtmlData htmlData: Data) -> String? {
+        guard let document = try? ONOXMLDocument.htmlDocument(with: htmlData) else { return nil }
+        let xpath = "//meta[@property=\"profile:username\"]/@content"
+        return document.rootElement.firstChild(withXPath: xpath)?.stringValue
+    }
 }

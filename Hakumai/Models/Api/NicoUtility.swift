@@ -98,6 +98,9 @@ final class NicoUtility: NicoUtilityType {
     private var messageSocket: WebSocket?
     private var isFirstChatReceived = false
 
+    // Usernames
+    private var cachedUserNames = [String: String]()
+
     init() {
         let configuration = URLSessionConfiguration.af.default
         configuration.headers.add(.userAgent(userAgent))
@@ -105,7 +108,7 @@ final class NicoUtility: NicoUtilityType {
     }
 }
 
-// MARK: - Public Methods
+// MARK: - Public Methods (Main)
 extension NicoUtility {
     func connect(liveNumber: Int, connectType: NicoConnectType) {
         let completion = { (userSessionCookie: String?) -> Void in
@@ -145,24 +148,47 @@ extension NicoUtility {
         //
     }
 
+    func reportAsNgUser(chat: Chat, completion: @escaping (String?) -> Void) {
+        //
+    }
+}
+
+// MARK: - Public Methods (Username)
+extension NicoUtility {
     func cachedUserName(forChat chat: Chat) -> String? {
-        return nil
+        guard let userId = chat.userId else { return nil }
+        return cachedUserName(forUserId: userId)
     }
 
     func cachedUserName(forUserId userId: String) -> String? {
-        return nil
+        guard Chat.isRawUserId(userId) else { return nil }
+        return cachedUserNames[userId]
     }
 
     func resolveUsername(forUserId userId: String, completion: @escaping (String?) -> Void) {
-        //
-    }
+        guard Chat.isRawUserId(userId) else {
+            completion(nil)
+            return
+        }
+        if let cachedUsername = cachedUserNames[userId] {
+            completion(cachedUsername)
+            return
+        }
 
-    func extractUsername(fromHtmlData htmlData: Data) -> String? {
-        return nil
-    }
+        // XXX: Should we detect username resolving flood?
 
-    func reportAsNgUser(chat: Chat, completion: @escaping (String?) -> Void) {
-        //
+        let url = userPageUrl + String(userId)
+        session.request(url).responseData { [weak self] in
+            switch $0.result {
+            case .success(let data):
+                let username = self?.extractUsername(fromHtmlData: data)
+                self?.cachedUserNames[userId] = username
+                completion(username)
+            case .failure(_):
+                log.error("error in resolving username")
+                completion(nil)
+            }
+        }
     }
 }
 
@@ -201,8 +227,10 @@ private extension NicoUtility {
 
     func reqeustLiveInfo(lv: Int, completion: @escaping (Result<String, NicoUtilityError>) -> Void) {
         let url = livePageUrl + "\(lv)"
-        session.request(url).responseData { [weak self] in
-            self?._logAfResponse($0)
+        let request = session.request(url)
+        request.cURLDescription(calling: { log.debug($0) })
+        request.responseData {
+            log.debug($0.debugDescription)
             switch $0.result {
             case .success(let data):
                 guard let webSocketUrl = NicoUtility.extractWebSocketUrlFromLivePage(html: data) else {
@@ -395,15 +423,6 @@ private extension NicoUtility {
 private extension NicoUtility {
     func customHeaders() -> [String: String] {
         return [:]
-    }
-}
-
-private extension NicoUtility {
-    func _logAfResponse(_ response: AFDataResponse<Data>) {
-        log.debug(response.debugDescription)
-        log.debug(response.request?.debugDescription)
-        log.debug(response.request?.headers)
-        log.debug(response)
     }
 }
 

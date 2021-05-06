@@ -52,18 +52,18 @@ final class NicoUtilityTests: XCTestCase {
      } */
 
     // MARK: - Username Resolver
-    /* func testExtractUsername() {
-     var data: Data!
-     var resolved: String?
+    func testExtractUsername() {
+        var data: Data!
+        var resolved: String?
 
-     data = dataForResource("user_1.html")
-     resolved = NicoUtility.shared.extractUsername(fromHtmlData: data)
-     XCTAssert(resolved == "しみっちゃん", "")
+        data = dataForResource("user_1.html")
+        resolved = NicoUtility.shared.extractUsername(fromHtmlData: data)
+        XCTAssert(resolved == "しみっちゃん", "")
 
-     data = dataForResource("user_me.html")
-     resolved = NicoUtility.shared.extractUsername(fromHtmlData: data)
-     XCTAssert(resolved == "honishi", "")
-     } */
+        data = dataForResource("user_me.html")
+        resolved = NicoUtility.shared.extractUsername(fromHtmlData: data)
+        XCTAssert(resolved == "honishi", "")
+    }
 
     // MARK: - Test Utility
     // swiftlint:disable force_unwrapping
