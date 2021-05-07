@@ -52,15 +52,4 @@ extension MainViewController {
 
         return chat
     }
-
-    // MARK: - Standard User Defaults
-    private func updateStandardUserDefaults() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            let d = UserDefaults.standard
-            let v = d.bool(forKey: Parameters.showIfseetnoCommands)
-            d.set(!v, forKey: Parameters.showIfseetnoCommands)
-            d.synchronize()
-            log.debug("")
-        }
-    }
 }

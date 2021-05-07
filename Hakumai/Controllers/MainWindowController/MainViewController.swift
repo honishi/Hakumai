@@ -16,7 +16,6 @@ private let kConnectButtonImageNameStart = "StartLive"
 private let kConnectButtonImageNameStop = "StopLive"
 private let kCommunityImageDefaultName = "NoImage"
 private let kUserWindowDefautlTopLeftPoint = NSPoint(x: 100, y: 100)
-private let kDelayToShowHbIfseetnoCommands: TimeInterval = 30
 private let kCalculateActiveInterval: TimeInterval = 5
 private let kMaximumFontSizeForNonMainColumn: CGFloat = 16
 private let kDefaultMinimumRowHeight: CGFloat = 17
@@ -137,13 +136,6 @@ extension MainViewController {
     }
 
     // MARK: Utility
-    func changeShowHbIfseetnoCommands(_ show: Bool) {
-        MessageContainer.sharedContainer.showHbIfseetnoCommands = show
-        log.debug("changed show 'hbifseetno' commands: \(show)")
-
-        rebuildFilteredMessages()
-    }
-
     func changeEnableCommentSpeech(_ enabled: Bool) {
         // log.debug("\(enabled)")
         updateSpeechManagerState()
@@ -404,11 +396,6 @@ extension MainViewController {
 
     func nicoUtilityDidPrepareLive(_ nicoUtility: NicoUtilityType, user: User, live: Live) {
         self.live = live
-
-        if let startTime = live.startTime {
-            let beginDate = Date(timeInterval: kDelayToShowHbIfseetnoCommands, since: startTime as Date)
-            MessageContainer.sharedContainer.beginDateToShowHbIfseetnoCommands = beginDate
-        }
 
         DispatchQueue.main.async {
             self.liveTitleLabel.stringValue = live.title ?? ""

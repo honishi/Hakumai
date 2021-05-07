@@ -69,9 +69,6 @@ extension AppDelegate {
         case (Parameters.sessionManagement, _):
             NicoUtility.shared.reserveToClearUserSessionCookie()
 
-        case (Parameters.showIfseetnoCommands, let changed as Bool):
-            MainViewController.shared.changeShowHbIfseetnoCommands(changed)
-
         case (Parameters.enableCommentSpeech, let changed as Bool):
             MainViewController.shared.changeEnableCommentSpeech(changed)
 
@@ -147,7 +144,6 @@ private extension AppDelegate {
     func initializeUserDefaults() {
         let defaults: [String: Any] = [
             Parameters.sessionManagement: SessionManagementType.chrome.rawValue,
-            Parameters.showIfseetnoCommands: false,
             Parameters.fontSize: kDefaultFontSize,
             Parameters.enableCommentSpeech: false,
             Parameters.enableMuteUserIds: false,
@@ -160,7 +156,7 @@ private extension AppDelegate {
     func addObserverForUserDefaults() {
         let keyPaths = [
             // general
-            Parameters.sessionManagement, Parameters.showIfseetnoCommands,
+            Parameters.sessionManagement,
             Parameters.enableCommentSpeech,
             // mute
             Parameters.enableMuteUserIds, Parameters.muteUserIds,

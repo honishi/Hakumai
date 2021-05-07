@@ -67,11 +67,11 @@
             <objects>
                 <viewController storyboardIdentifier="GeneralViewController" id="wCA-UG-k48" customClass="GeneralViewController" customModule="Hakumai" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="yCS-uV-ZpM">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="350"/>
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="400"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <box autoresizesSubviews="NO" fixedFrame="YES" borderType="line" title="Session Management" translatesAutoresizingMaskIntoConstraints="NO" id="MWm-if-ayO">
-                                <rect key="frame" x="17" y="165" width="416" height="165"/>
+                                <rect key="frame" x="17" y="215" width="416" height="165"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <view key="contentView" id="rtk-61-lXP">
                                     <rect key="frame" x="3" y="3" width="410" height="147"/>
@@ -208,23 +208,12 @@
                                 </view>
                             </box>
                             <box autoresizesSubviews="NO" fixedFrame="YES" borderType="line" title="Main Window" translatesAutoresizingMaskIntoConstraints="NO" id="Akz-9o-558">
-                                <rect key="frame" x="17" y="16" width="416" height="141"/>
+                                <rect key="frame" x="17" y="66" width="416" height="141"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <view key="contentView" id="Ruu-FF-sCU">
                                     <rect key="frame" x="3" y="3" width="410" height="123"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nQJ-eL-GpJ">
-                                            <rect key="frame" x="16" y="97" width="214" height="18"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <buttonCell key="cell" type="check" title="Show '/hb ifseetno' commands" bezelStyle="regularSquare" imagePosition="left" inset="2" id="QXO-5t-5Af">
-                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                <font key="font" metaFont="system"/>
-                                            </buttonCell>
-                                            <connections>
-                                                <binding destination="Ex8-3g-KNv" name="value" keyPath="values.ShowHbIfseetnoCommands" id="GhX-q1-pDV"/>
-                                            </connections>
-                                        </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0Hr-Qy-rNC">
                                             <rect key="frame" x="16" y="74" width="140" height="18"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>

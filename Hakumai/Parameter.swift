@@ -13,7 +13,6 @@ import Foundation
 struct Parameters {
     // general
     static let sessionManagement = "SessionManagement"
-    static let showIfseetnoCommands = "ShowHbIfseetnoCommands"
     static let enableCommentSpeech = "EnableCommentSpeech"
 
     // mute
