@@ -387,6 +387,8 @@ private extension NicoUtility {
             socket.write(string: pongMessage)
         case let stat as WebSocketStatisticsData:
             delegate?.nicoUtilityDidReceiveHeartbeat(self, heartbeat: stat.toHeartbeat())
+        case is WebSocketDisconnectData:
+            disconnect()
         default:
             break
         }
@@ -403,6 +405,8 @@ private extension NicoUtility {
             return try? decoder.decode(WebSocketRoomData.self, from: data)
         case .statistics:
             return try? decoder.decode(WebSocketStatisticsData.self, from: data)
+        case .disconnect:
+            return try? decoder.decode(WebSocketDisconnectData.self, from: data)
         }
     }
 }
