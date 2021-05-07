@@ -16,32 +16,7 @@ private let kCookiePath = "/"
 
 // Internal Http Utility
 extension _NicoUtility {
-    func cookiedAsyncRequest(httpMethod: String, url: String, parameters: [String: Any]?, completion: @escaping (URLResponse?, Data?, Error?) -> Void) {
-        var parameteredUrl: String = url
-        let constructedParameters = construct(parameters: parameters)
-
-        if httpMethod == "GET", let constructedParameters = constructedParameters {
-            parameteredUrl += "?" + constructedParameters
-        }
-
-        let request = mutableRequest(customHeaders: parameteredUrl)
-        request.httpMethod = httpMethod
-
-        if httpMethod == "POST", let constructedParameters = constructedParameters {
-            request.httpBody = constructedParameters.data(using: String.Encoding.utf8)
-        }
-
-        if let cookies = sessionCookies() {
-            let requestHeader = HTTPCookie.requestHeaderFields(with: cookies)
-            request.allHTTPHeaderFields = requestHeader
-        } else {
-            log.error("could not get cookie")
-            completion(nil, nil, NSError(domain: "", code: 0, userInfo: nil))
-        }
-
-        let queue = OperationQueue()
-        NSURLConnection.sendAsynchronousRequest(request as URLRequest, queue: queue, completionHandler: completion)
-    }
+    func cookiedAsyncRequest(httpMethod: String, url: String, parameters: [String: Any]?, completion: @escaping (URLResponse?, Data?, Error?) -> Void) {}
 
     func construct(parameters: [String: Any]?) -> String? {
         guard let parameters = parameters else { return nil }
@@ -94,23 +69,5 @@ extension _NicoUtility {
 private let kPostCommentUrl = "https://api.cas.nicovideo.jp/v1/services/live/programs/%@/comments"
 
 extension _NicoUtility {
-    func postCommentRequest(lv: String, json: [String: Any], completion: @escaping (URLResponse?, Data?, Error?) -> Void) {
-        let url = String(format: kPostCommentUrl, lv)
-        let request = mutableRequest(customHeaders: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        if let data = try? JSONSerialization.data(withJSONObject: json, options: []) {
-            request.httpBody = data
-        }
-        if let cookies = sessionCookies() {
-            let requestHeader = HTTPCookie.requestHeaderFields(with: cookies)
-            request.allHTTPHeaderFields = requestHeader
-        } else {
-            log.error("could not get cookie")
-            completion(nil, nil, NSError(domain: "", code: 0, userInfo: nil))
-        }
-
-        let queue = OperationQueue()
-        NSURLConnection.sendAsynchronousRequest(request as URLRequest, queue: queue, completionHandler: completion)
-    }
+    func postCommentRequest(lv: String, json: [String: Any], completion: @escaping (URLResponse?, Data?, Error?) -> Void) {}
 }
