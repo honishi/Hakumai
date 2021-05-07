@@ -32,7 +32,7 @@ final class MainViewController: NSViewController, NSTableViewDataSource, NSTable
     @IBOutlet weak var communityImageView: NSImageView!
     @IBOutlet weak var liveTitleLabel: NSTextField!
     @IBOutlet weak var communityTitleLabel: NSTextField!
-    @IBOutlet weak var roomPositionLabel: NSTextField!
+    @IBOutlet weak var communityIdLabel: NSTextField!
 
     @IBOutlet weak var visitorsLabel: NSTextField!
     @IBOutlet weak var commentsLabel: NSTextField!
@@ -412,7 +412,7 @@ extension MainViewController {
             let communityTitle = live.community.title ?? "-"
             let level = live.community.level != nil ? String(live.community.level ?? 0) : "-"
             self.communityTitleLabel.stringValue = communityTitle + " (Lv." + level + ")"
-            self.roomPositionLabel.stringValue = (user.roomLabel ?? "") + " - " + String(user.seatNo ?? 0)
+            self.communityIdLabel.stringValue = live.community.community ?? "-"
 
             let commentPlaceholder = (user.isBSP == true) ?
                 "BSP Comment is not yet implemented. :P" : "⌘N (enter to comment)"
