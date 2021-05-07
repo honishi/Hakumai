@@ -23,8 +23,8 @@ final class Helper {
     // MARK: - Public Interface
     static func setupLogger(_ logger: XCGLogger) {
         #if DEBUG
-        Helper.colorizeLogger(log)
-        log.setup(
+        Helper.colorizeLogger(logger)
+        logger.setup(
             level: .debug,
             showThreadName: true,
             showLevel: true,
@@ -44,11 +44,11 @@ final class Helper {
 
     static func setupFileLogger(_ logger: XCGLogger, fileName: String) {
         #if DEBUG
-        Helper.colorizeLogger(log)
+        Helper.colorizeLogger(logger)
 
         Helper.createApplicationDirectoryIfNotExists()
         let path = Helper.applicationDirectoryPath() + "/" + fileName
-        log.setup(
+        logger.setup(
             level: .verbose,
             showThreadName: true,
             showLevel: true,
@@ -56,8 +56,8 @@ final class Helper {
             showLineNumbers: true,
             writeToFile: path)
 
-        if let console = log.destination(withIdentifier: XCGLogger.Constants.baseConsoleDestinationIdentifier) {
-            log.remove(destination: console)
+        if let console = logger.destination(withIdentifier: XCGLogger.Constants.baseConsoleDestinationIdentifier) {
+            logger.remove(destination: console)
         }
         #else
         logger.setup(
