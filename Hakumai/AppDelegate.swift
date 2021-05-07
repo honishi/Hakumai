@@ -63,7 +63,7 @@ extension AppDelegate {
 
 // MARK: KVO Functions
 extension AppDelegate {
-    // swiftlint:disable block_based_kvo
+    // swiftlint:disable cyclomatic_complexity block_based_kvo
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
         // log.debug("detected observing value changed: key[\(keyPath)]")
         guard let keyPath = keyPath, let change = change else { return }
@@ -74,6 +74,10 @@ extension AppDelegate {
 
         case (Parameters.enableCommentSpeech, let changed as Bool):
             MainViewController.shared.changeEnableCommentSpeech(changed)
+
+        case (Parameters.commentSpeechVolume, let changed as Int):
+            guard #available(macOS 10.14, *) else { return }
+            SpeechManager.sharedManager.setVoiceVolume(changed)
 
         case (Parameters.enableMuteUserIds, let changed as Bool):
             MainViewController.shared.changeEnableMuteUserIds(changed)
@@ -97,7 +101,7 @@ extension AppDelegate {
             break
         }
     }
-    // swiftlint:enable block_based_kvo
+    // swiftlint:enable cyclomatic_complexity block_based_kvo
 }
 
 // MARK: Application Initialize Utility
@@ -149,6 +153,7 @@ private extension AppDelegate {
             Parameters.sessionManagement: SessionManagementType.chrome.rawValue,
             Parameters.fontSize: kDefaultFontSize,
             Parameters.enableCommentSpeech: false,
+            Parameters.commentSpeechVolume: 100,
             Parameters.enableMuteUserIds: false,
             Parameters.enableMuteWords: false,
             Parameters.alwaysOnTop: false,
@@ -161,6 +166,7 @@ private extension AppDelegate {
             // general
             Parameters.sessionManagement,
             Parameters.enableCommentSpeech,
+            Parameters.commentSpeechVolume,
             // mute
             Parameters.enableMuteUserIds, Parameters.muteUserIds,
             Parameters.enableMuteWords, Parameters.muteWords,

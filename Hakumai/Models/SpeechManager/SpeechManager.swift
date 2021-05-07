@@ -31,6 +31,7 @@ final class SpeechManager: NSObject {
 
     private var chatQueue: [Chat] = []
     private var voiceSpeed = kVoiceSpeedMap[0].speed
+    private var voiceVolume = 100
     private var timer: Timer?
     private let synthesizer = AVSpeechSynthesizer()
     private var liveStartedDate: Date?
@@ -72,6 +73,12 @@ final class SpeechManager: NSObject {
         liveStartedDate = date
     }
 
+    // min/max: 0-100
+    func setVoiceVolume(_ volume: Int) {
+        voiceVolume = max(min(volume, 100), 0)
+        log.debug("set volume: \(voiceVolume)")
+    }
+
     func enqueue(chat: Chat) {
         guard let started = liveStartedDate,
               Date().timeIntervalSince(started) > 5 else {
@@ -101,6 +108,7 @@ final class SpeechManager: NSObject {
 
         let utterance = AVSpeechUtterance.init(string: cleanComment(from: comment))
         utterance.rate = adjustedVoiceSpeed(chatQueueCount: chatQueue.count, currentVoiceSpeed: voiceSpeed)
+        utterance.volume = Float(voiceVolume) / 100
         let voice = AVSpeechSynthesisVoice.init(language: "ja-JP")
         utterance.voice = voice
         synthesizer.speak(utterance)
