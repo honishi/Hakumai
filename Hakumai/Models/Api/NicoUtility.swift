@@ -104,6 +104,7 @@ final class NicoUtility: NicoUtilityType {
     private var managingSocket: WebSocket?
     private var messageSocket: WebSocket?
     private var messageSocketPingTimer: Timer?
+    private var shouldClearUserSessionCookie = true
     private var isFirstChatReceived = false
 
     // Usernames
@@ -113,7 +114,7 @@ final class NicoUtility: NicoUtilityType {
         let configuration = URLSessionConfiguration.af.default
         configuration.headers.add(.userAgent(userAgent))
         self.session = Session(configuration: configuration)
-        clearAllCookies()
+        clearHttpCookieStorage()
     }
 }
 
@@ -126,6 +127,7 @@ extension NicoUtility {
         }
 
         // 2. Go direct to `connect()` IF the user session cookie is availale.
+        clearUserSessionCookieIfReserved()
         delegate?.nicoUtilityWillPrepareLive(self)
         if let userSessionCookie = userSessionCookie {
             connect(liveNumber: liveNumber, userSessionCookie: userSessionCookie)
@@ -181,7 +183,8 @@ extension NicoUtility {
     }
 
     func reserveToClearUserSessionCookie() {
-        //
+        shouldClearUserSessionCookie = true
+        log.debug("reserved to clear user session cookie")
     }
 
     func loadThumbnail(completion: @escaping (Data?) -> Void) {
@@ -254,9 +257,8 @@ private extension NicoUtility {
             switch $0 {
             case .success(let embeddedData):
                 let live = embeddedData.toLive()
+                let user = embeddedData.toUser()
                 self?.live = live
-                // TODO: user
-                let user = User()
                 me.delegate?.nicoUtilityDidPrepareLive(me, user: user, live: live)
                 me.openManagingSocket(webSocketUrl: embeddedData.site.relive.webSocketUrl)
             case .failure(_):
@@ -267,7 +269,7 @@ private extension NicoUtility {
     }
 
     func reqeustLiveInfo(lv: Int, completion: @escaping (Result<EmbeddedDataProperties, NicoUtilityError>) -> Void) {
-        let urlRequest = urlRequestWithUserSession(
+        let urlRequest = urlRequestWithUserSessionCookie(
             urlString: "\(livePageUrl)\(lv)",
             userSession: userSessionCookie
         )
@@ -479,6 +481,7 @@ private extension NicoUtility {
     }
 }
 
+// MARK: - Private Methods (Ping Timer for Message Socket)
 private extension NicoUtility {
     func startMessageSocketPingTimer() {
         messageSocketPingTimer = Timer.scheduledTimer(
@@ -502,11 +505,18 @@ private extension NicoUtility {
 
 // MARK: - Private Utility Methods
 private extension NicoUtility {
-    func clearAllCookies() {
+    func clearHttpCookieStorage() {
         HTTPCookieStorage.shared.cookies?.forEach(HTTPCookieStorage.shared.deleteCookie)
     }
 
-    func urlRequestWithUserSession(urlString: String, userSession: String?) -> URLRequest {
+    func clearUserSessionCookieIfReserved() {
+        guard shouldClearUserSessionCookie else { return }
+        shouldClearUserSessionCookie = false
+        userSessionCookie = nil
+        log.debug("cleared user session cookie")
+    }
+
+    func urlRequestWithUserSessionCookie(urlString: String, userSession: String?) -> URLRequest {
         guard let url = URL(string: urlString) else {
             fatalError("This is NOT going to be happened.")
         }
@@ -548,6 +558,13 @@ private extension EmbeddedDataProperties {
         community.thumbnailUrl = URL(string: socialGroup.thumbnailImageUrl)
         live.community = community
         return live
+    }
+
+    func toUser() -> User {
+        let user = User()
+        user.userId = Int(self.user.id)
+        user.nickname = self.user.nickname
+        return user
     }
 }
 
