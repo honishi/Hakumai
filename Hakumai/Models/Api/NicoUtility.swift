@@ -70,6 +70,11 @@ enum NicoUtilityError: Error {
 private let userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36"
 private let livePageUrl = "https://live.nicovideo.jp/watch/lv"
 private let userPageUrl = "https://www.nicovideo.jp/user/"
+// Cookies:
+private let userSessionCookieDomain = "nicovideo.jp"
+private let userSessionCookieName = "user_session"
+private let userSessionCookieExpire = TimeInterval(7200)
+private let userSessionCookiePath = "/"
 
 // MARK: - WebSocket Messages
 private let startWatchingMessage = """
@@ -108,25 +113,50 @@ final class NicoUtility: NicoUtilityType {
         let configuration = URLSessionConfiguration.af.default
         configuration.headers.add(.userAgent(userAgent))
         self.session = Session(configuration: configuration)
+        clearAllCookies()
     }
 }
 
 // MARK: - Public Methods (Main)
 extension NicoUtility {
     func connect(liveNumber: Int, connectType: NicoConnectType) {
+        // 1. Cleanup current connection, if needed.
         if live != nil {
             disconnect()
         }
-        let completion = { (userSessionCookie: String?) -> Void in
+
+        // 2. Go direct to `connect()` IF the user session cookie is availale.
+        delegate?.nicoUtilityWillPrepareLive(self)
+        if let userSessionCookie = userSessionCookie {
+            connect(liveNumber: liveNumber, userSessionCookie: userSessionCookie)
+            return
+        }
+
+        // 3. Ok, there's no cookie available, go get it..
+        let cookieCompletion = { (userSessionCookie: String?) -> Void in
+            log.debug("Cookie result: [\(connectType)] [\(userSessionCookie ?? "-")]")
+            guard let userSessionCookie = userSessionCookie else {
+                let reason = "No available cookie."
+                log.error(reason)
+                self.delegate?.nicoUtilityDidFailToPrepareLive(self, reason: reason)
+                return
+            }
             self.connect(liveNumber: liveNumber, userSessionCookie: userSessionCookie)
         }
         switch connectType {
         case .chrome:
-            CookieUtility.requestBrowserCookie(browserType: .chrome, completion: completion)
+            CookieUtility.requestBrowserCookie(
+                browserType: .chrome,
+                completion: cookieCompletion)
         case .safari:
-            CookieUtility.requestBrowserCookie(browserType: .safari, completion: completion)
+            CookieUtility.requestBrowserCookie(
+                browserType: .safari,
+                completion: cookieCompletion)
         case .login(let mail, let password):
-            CookieUtility.requestLoginCookie(mailAddress: mail, password: password, completion: completion)
+            CookieUtility.requestLoginCookie(
+                mailAddress: mail,
+                password: password,
+                completion: cookieCompletion)
         }
     }
 
@@ -215,20 +245,9 @@ extension NicoUtility {
 
 // MARK: - Private Methods
 private extension NicoUtility {
-    func connect(liveNumber: Int, userSessionCookie: String?) {
-        guard let userSessionCookie = userSessionCookie else {
-            let reason = "No available cookie."
-            log.error(reason)
-            delegate?.nicoUtilityDidFailToPrepareLive(self, reason: reason)
-            return
-        }
-
+    func connect(liveNumber: Int, userSessionCookie: String) {
         self.userSessionCookie = userSessionCookie
         self.lastLiveNumber = liveNumber
-
-        // TODO: use cookie
-
-        delegate?.nicoUtilityWillPrepareLive(self)
 
         reqeustLiveInfo(lv: liveNumber) { [weak self] in
             guard let me = self else { return }
@@ -248,8 +267,11 @@ private extension NicoUtility {
     }
 
     func reqeustLiveInfo(lv: Int, completion: @escaping (Result<EmbeddedDataProperties, NicoUtilityError>) -> Void) {
-        let url = livePageUrl + "\(lv)"
-        let request = session.request(url)
+        let urlRequest = urlRequestWithUserSession(
+            urlString: "\(livePageUrl)\(lv)",
+            userSession: userSessionCookie
+        )
+        let request = session.request(urlRequest)
         request.cURLDescription(calling: { log.debug($0) })
         request.responseData {
             log.debug($0.debugDescription)
@@ -480,8 +502,33 @@ private extension NicoUtility {
 
 // MARK: - Private Utility Methods
 private extension NicoUtility {
-    func customHeaders() -> [String: String] {
-        return [:]
+    func clearAllCookies() {
+        HTTPCookieStorage.shared.cookies?.forEach(HTTPCookieStorage.shared.deleteCookie)
+    }
+
+    func urlRequestWithUserSession(urlString: String, userSession: String?) -> URLRequest {
+        guard let url = URL(string: urlString) else {
+            fatalError("This is NOT going to be happened.")
+        }
+        var urlRequest = URLRequest(url: url)
+        if let _httpCookies = httpCookies(userSession: userSession) {
+            urlRequest.allHTTPHeaderFields = HTTPCookie.requestHeaderFields(with: _httpCookies)
+        }
+        return urlRequest
+    }
+
+    func httpCookies(userSession: String?) -> [HTTPCookie]? {
+        guard let userSession = userSession,
+              let sessionCookie = HTTPCookie(
+                properties: [
+                    HTTPCookiePropertyKey.domain: userSessionCookieDomain,
+                    HTTPCookiePropertyKey.name: userSessionCookieName,
+                    HTTPCookiePropertyKey.value: userSession,
+                    HTTPCookiePropertyKey.expires: Date().addingTimeInterval(userSessionCookieExpire),
+                    HTTPCookiePropertyKey.path: userSessionCookiePath
+                ]
+              ) else { return nil }
+        return [sessionCookie]
     }
 }
 
