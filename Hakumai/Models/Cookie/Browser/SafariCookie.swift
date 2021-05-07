@@ -36,12 +36,10 @@ final class SafariCookie {
 // MARK: - Private Functions
 private extension SafariCookie {
     static func parse(cookiePath: String, callback: @escaping(SafariCookieError?, [Cookie]?) -> Void) {
-        guard let data = NSData(contentsOf: NSURL(fileURLWithPath: cookiePath) as URL) else { return }
-        SafariCookie.parse(data: data, callback: callback)
-    }
-
-    static func parse(cookieURL: NSURL, callback: @escaping(SafariCookieError?, [Cookie]?) -> Void) {
-        guard let data = NSData(contentsOf: cookieURL as URL) else { return }
+        guard let data = NSData(contentsOf: NSURL(fileURLWithPath: cookiePath) as URL) else {
+            callback(nil, nil)
+            return
+        }
         SafariCookie.parse(data: data, callback: callback)
     }
 

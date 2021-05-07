@@ -21,6 +21,10 @@ private let kCalculateActiveInterval: TimeInterval = 5
 private let kMaximumFontSizeForNonMainColumn: CGFloat = 16
 private let kDefaultMinimumRowHeight: CGFloat = 17
 
+private let safariCookieAlertTitle = "No Safari Cookie found"
+private let safariCookieAlertDescription = "To retrieve the cookie from Safari, please open the Security & Privacy section of the System Preference and give the \"Full Disk Access\" right to Hakumai app."
+private let safariCookieAlertImageName = "safariCookieAlertImage"
+
 // swiftlint:disable file_length
 final class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate, NSControlTextEditingDelegate, NicoUtilityDelegate, UserWindowControllerDelegate {
     // MARK: - Properties
@@ -432,12 +436,13 @@ extension MainViewController {
         logSystemMessageToTableView("Prepared live as user \(user.nickname ?? "").")
     }
 
-    func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, reason: String) {
+    func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, reason: String, error: NicoUtilityError?) {
         logSystemMessageToTableView("Failed to prepare live.(\(reason))")
         DispatchQueue.main.async {
             self.connectButton.isEnabled = true
             self.progressIndicator.stopAnimation(self)
         }
+        showCookiePrivilegeAlertIfNeeded(error: error)
     }
 
     func nicoUtilityDidConnectToLive(_ nicoUtility: NicoUtilityType, roomPosition: RoomPosition) {
@@ -853,6 +858,38 @@ extension MainViewController {
         MessageContainer.sharedContainer.removeAll()
         rowHeightCacher.removeAll(keepingCapacity: false)
         tableView.reloadData()
+    }
+}
+
+// Alert view for Safari cookie
+private extension MainViewController {
+    func showCookiePrivilegeAlertIfNeeded(error: NicoUtilityError?) {
+        guard error == .noCookieFound else { return }
+        let param = UserDefaults.standard.integer(forKey: Parameters.sessionManagement)
+        guard let sessionManagementType = SessionManagementType(rawValue: param) else { return }
+        switch sessionManagementType {
+        case .safari:
+            let alert = NSAlert()
+            alert.messageText = safariCookieAlertTitle
+            alert.informativeText = safariCookieAlertDescription
+            if let image = NSImage(named: safariCookieAlertImageName) {
+                let imageView = NSImageView(image: image)
+                imageView.frame = NSRect.init(x: 0, y: 0, width: 300, height: 300)
+                alert.accessoryView = imageView
+            }
+            let securityButton = alert.addButton(withTitle: "Open Security & Privacy")
+            securityButton.target = self
+            securityButton.action = #selector(MainViewController.showSecurityPanel)
+            alert.addButton(withTitle: "Cancel")
+            alert.runModal()
+        default:
+            break
+        }
+    }
+
+    @objc func showSecurityPanel() {
+        let url = URL(fileURLWithPath: "/System/Library/PreferencePanes/Security.prefPane")
+        NSWorkspace.shared.open(url)
     }
 }
 

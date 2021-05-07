@@ -469,13 +469,13 @@ private extension _NicoUtility {
         guard let liveNumber = liveNumber else {
             let reason = "no valid live number"
             log.error(reason)
-            delegate?.nicoUtilityDidFailToPrepareLive(self, reason: reason)
+            delegate?.nicoUtilityDidFailToPrepareLive(self, reason: reason, error: nil)
             return
         }
         guard let  userSessionCookie = userSessionCookie else {
             let reason = "no available cookie"
             log.error(reason)
-            delegate?.nicoUtilityDidFailToPrepareLive(self, reason: reason)
+            delegate?.nicoUtilityDidFailToPrepareLive(self, reason: reason, error: nil)
             return
         }
 
@@ -518,7 +518,7 @@ private extension _NicoUtility {
             let communityFailure: (String) -> Void = { reason in
                 let reason = "failed to load community"
                 log.error(reason)
-                self.delegate?.nicoUtilityDidFailToPrepareLive(self, reason: reason)
+                self.delegate?.nicoUtilityDidFailToPrepareLive(self, reason: reason, error: nil)
                 return
             }
 
@@ -528,7 +528,7 @@ private extension _NicoUtility {
 
         let failure: (String) -> Void = { reason in
             log.error(reason)
-            self.delegate?.nicoUtilityDidFailToPrepareLive(self, reason: reason)
+            self.delegate?.nicoUtilityDidFailToPrepareLive(self, reason: reason, error: nil)
         }
 
         delegate?.nicoUtilityWillPrepareLive(self)
