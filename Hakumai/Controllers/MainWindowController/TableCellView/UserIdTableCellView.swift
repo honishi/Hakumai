@@ -13,6 +13,8 @@ private let kImageNameUserIdRawId = "UserIdRawId"
 private let kImageNameUserId184Id = "UserId184Id"
 private let kImageNameHandleNameOver184Id = "HandleNameOver184Id"
 private let kImageNameHandleNameOverRawId = "HandleNameOverRawId"
+private let kImageNamePremiumMisc = "PremiumMisc"
+private let systemUserLabel = "----------"
 
 final class UserIdTableCellView: NSTableCellView {
     @IBOutlet weak var userIdTextField: NSTextField!
@@ -26,7 +28,7 @@ final class UserIdTableCellView: NSTableCellView {
                 userIdTextField.stringValue = ""
                 return
             }
-            userIdImageView.image = image(forHandleName: info?.handleName, userId: userId)
+            userIdImageView.image = image(forHandleName: info?.handleName, userId: userId, premium: premium)
             setUserIdLabel(userId: userId, premium: premium, handleName: info?.handleName)
         }
     }
@@ -37,9 +39,11 @@ final class UserIdTableCellView: NSTableCellView {
 }
 
 private extension UserIdTableCellView {
-    func image(forHandleName handleName: String?, userId: String) -> NSImage {
+    func image(forHandleName handleName: String?, userId: String, premium: Premium) -> NSImage {
         let imageName: String
-        if handleName != nil {
+        if premium.isSystem {
+            imageName = kImageNamePremiumMisc
+        } else if handleName != nil {
             imageName = Chat.isRawUserId(userId) ? kImageNameHandleNameOverRawId : kImageNameHandleNameOver184Id
         } else {
             imageName = Chat.isRawUserId(userId) ? kImageNameUserIdRawId : kImageNameUserId184Id
@@ -53,11 +57,9 @@ private extension UserIdTableCellView {
 
     func setUserIdLabel(userId: String, premium: Premium, handleName: String?) {
         // set default name
-        if [.system, .caster, .operator].contains(premium) {
-            userIdTextField.stringValue = "----------"
-        } else {
-            userIdTextField.stringValue = concatUserName(userId: userId, userName: nil, handleName: handleName)
-        }
+        userIdTextField.stringValue = premium.isSystem ?
+            systemUserLabel :
+            concatUserName(userId: userId, userName: nil, handleName: handleName)
 
         // if needed, then resolve userid
         if handleName != nil || !Chat.isRawUserId(userId) || !(Chat.isUserComment(premium) || Chat.isBSPComment(premium)) {
