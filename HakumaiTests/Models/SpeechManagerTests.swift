@@ -19,6 +19,7 @@ final class SpeechManagerTests: XCTestCase {
         super.tearDown()
     }
 
+    @available(macOS 10.14, *)
     func testCleanComment() {
         var comment = ""
         var expected = ""

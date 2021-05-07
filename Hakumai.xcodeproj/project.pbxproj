@@ -66,8 +66,6 @@
 		DB80CA821A256F9A002636E0 /* MessageContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB80CA811A256F9A002636E0 /* MessageContainer.swift */; };
 		DB80CA831A256F9A002636E0 /* MessageContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB80CA811A256F9A002636E0 /* MessageContainer.swift */; };
 		DB80CA871A2575A0002636E0 /* MainViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB80CA861A2575A0002636E0 /* MainViewControllerExtensions.swift */; };
-		DB82B39C1C07207900EFE3D9 /* YukkuroidClient.m in Sources */ = {isa = PBXBuildFile; fileRef = DB82B39B1C07207900EFE3D9 /* YukkuroidClient.m */; };
-		DB82B39D1C07207900EFE3D9 /* YukkuroidClient.m in Sources */ = {isa = PBXBuildFile; fileRef = DB82B39B1C07207900EFE3D9 /* YukkuroidClient.m */; };
 		DB82B3A11C0724C000EFE3D9 /* SpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB82B3A01C0724C000EFE3D9 /* SpeechManager.swift */; };
 		DB82B3A21C0724C000EFE3D9 /* SpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB82B3A01C0724C000EFE3D9 /* SpeechManager.swift */; };
 		DB82B3A41C087BA200EFE3D9 /* SpeechManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB82B3A31C087BA200EFE3D9 /* SpeechManagerTests.swift */; };
@@ -213,8 +211,6 @@
 		DB7F21AF1A210017008D17E0 /* Community.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Community.swift; sourceTree = "<group>"; };
 		DB80CA811A256F9A002636E0 /* MessageContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageContainer.swift; sourceTree = "<group>"; };
 		DB80CA861A2575A0002636E0 /* MainViewControllerExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewControllerExtensions.swift; sourceTree = "<group>"; };
-		DB82B39A1C07207900EFE3D9 /* YukkuroidClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YukkuroidClient.h; path = Libraries/YukkuroidClient/YukkuroidClient.h; sourceTree = "<group>"; };
-		DB82B39B1C07207900EFE3D9 /* YukkuroidClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YukkuroidClient.m; path = Libraries/YukkuroidClient/YukkuroidClient.m; sourceTree = "<group>"; };
 		DB82B3A01C0724C000EFE3D9 /* SpeechManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SpeechManager.swift; path = SpeechManager/SpeechManager.swift; sourceTree = "<group>"; };
 		DB82B3A31C087BA200EFE3D9 /* SpeechManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechManagerTests.swift; sourceTree = "<group>"; };
 		DB8E71B41A544A5E00C6E696 /* _NicoUtilityExtractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = _NicoUtilityExtractor.swift; sourceTree = "<group>"; };
@@ -426,18 +422,8 @@
 		DB82B3991C071FF500EFE3D9 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				DB82B39E1C0723DA00EFE3D9 /* YukkuroidClient */,
 			);
 			name = Libraries;
-			sourceTree = "<group>";
-		};
-		DB82B39E1C0723DA00EFE3D9 /* YukkuroidClient */ = {
-			isa = PBXGroup;
-			children = (
-				DB82B39A1C07207900EFE3D9 /* YukkuroidClient.h */,
-				DB82B39B1C07207900EFE3D9 /* YukkuroidClient.m */,
-			);
-			name = YukkuroidClient;
 			sourceTree = "<group>";
 		};
 		DB82B39F1C07248700EFE3D9 /* SpeechManager */ = {
@@ -967,7 +953,6 @@
 				DB414C071A4810A5008D2F40 /* UserViewController.swift in Sources */,
 				DBA541E31A4821D4005FF218 /* UserWindow.swift in Sources */,
 				DB414C091A481138008D2F40 /* UserWindowController.swift in Sources */,
-				DB82B39C1C07207900EFE3D9 /* YukkuroidClient.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1028,7 +1013,6 @@
 				DB414C0D1A4814F2008D2F40 /* UserViewController.swift in Sources */,
 				DBA541E61A4821DE005FF218 /* UserWindow.swift in Sources */,
 				DB414C0C1A4814EF008D2F40 /* UserWindowController.swift in Sources */,
-				DB82B39D1C07207900EFE3D9 /* YukkuroidClient.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -11,12 +11,15 @@ import AppKit
 
 @NSApplicationMain
 final class AppDelegate: NSObject, NSApplicationDelegate {
+    @IBOutlet weak var speakMenuItem: NSMenuItem!
+
     // MARK: - NSApplicationDelegate Functions
     func applicationDidFinishLaunching(_ notification: Notification) {
         Helper.setupLogger(log)
         migrateApplicationVersion()
         initializeUserDefaults()
         addObserverForUserDefaults()
+        configureMenuItems()
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
@@ -60,7 +63,7 @@ extension AppDelegate {
 
 // MARK: KVO Functions
 extension AppDelegate {
-    // swiftlint:disable cyclomatic_complexity block_based_kvo
+    // swiftlint:disable block_based_kvo
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
         // log.debug("detected observing value changed: key[\(keyPath)]")
         guard let keyPath = keyPath, let change = change else { return }
@@ -94,7 +97,7 @@ extension AppDelegate {
             break
         }
     }
-    // swiftlint:enable cyclomatic_complexity block_based_kvo
+    // swiftlint:enable block_based_kvo
 }
 
 // MARK: Application Initialize Utility
@@ -167,6 +170,14 @@ private extension AppDelegate {
         for keyPath in keyPaths {
             UserDefaults.standard.addObserver(
                 self, forKeyPath: keyPath, options: [.initial, .new], context: nil)
+        }
+    }
+
+    func configureMenuItems() {
+        if #available(macOS 10.14, *) {
+            speakMenuItem.isHidden = false
+        } else {
+            speakMenuItem.isHidden = true
         }
     }
 }

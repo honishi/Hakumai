@@ -40,6 +40,7 @@ final class MainViewController: NSViewController, NSTableViewDataSource, NSTable
     @IBOutlet weak var visitorsLabel: NSTextField!
     @IBOutlet weak var commentsLabel: NSTextField!
     @IBOutlet weak var remainingSeatsLabel: NSTextField!
+    @IBOutlet weak var speakButton: NSButton!
 
     @IBOutlet weak var scrollView: NSScrollView!
     @IBOutlet weak var tableView: NSTableView!
@@ -115,6 +116,11 @@ extension MainViewController {
             self.communityImageView.layer?.borderWidth = 0.5
             self.communityImageView.layer?.masksToBounds = true
             self.communityImageView.layer?.borderColor = NSColor.black.cgColor
+        }
+        if #available(macOS 10.14, *) {
+            speakButton.isHidden = false
+        } else {
+            speakButton.isHidden = true
         }
     }
 
@@ -820,6 +826,7 @@ extension MainViewController {
 
     // MARK: Speech Handlers
     private func updateSpeechManagerState() {
+        guard #available(macOS 10.14, *) else { return }
         let enabled = UserDefaults.standard.bool(forKey: Parameters.enableCommentSpeech)
 
         if enabled && connectedToLive {
@@ -830,6 +837,7 @@ extension MainViewController {
     }
 
     private func handleSpeech(chat: Chat) {
+        guard #available(macOS 10.14, *) else { return }
         let enabled = UserDefaults.standard.bool(forKey: Parameters.enableCommentSpeech)
         guard enabled else { return }
         DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async {

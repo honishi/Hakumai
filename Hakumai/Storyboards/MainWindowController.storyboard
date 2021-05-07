@@ -384,7 +384,11 @@
                         <outlet property="delegate" destination="Voe-Tx-rLC" id="PrD-fu-P6m"/>
                     </connections>
                 </application>
-                <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="Hakumai" customModuleProvider="target"/>
+                <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="Hakumai" customModuleProvider="target">
+                    <connections>
+                        <outlet property="speakMenuItem" destination="4qe-Vn-EsX" id="ZD8-X2-2Db"/>
+                    </connections>
+                </customObject>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <userDefaultsController id="Qbm-2t-1Py"/>
                 <customObject id="zCO-sh-zt2" customClass="SUUpdater"/>
@@ -1028,6 +1032,7 @@
                         <outlet property="progressIndicator" destination="A3m-ux-Ivm" id="bCp-rD-QNX"/>
                         <outlet property="remainingSeatsLabel" destination="x2d-KV-3zy" id="opF-Ed-MaD"/>
                         <outlet property="scrollView" destination="3lG-BL-Thc" id="fKo-Wb-zpM"/>
+                        <outlet property="speakButton" destination="QmJ-8z-tPW" id="eZq-p3-ll6"/>
                         <outlet property="tableView" destination="21S-OF-mg3" id="Wty-uQ-xrm"/>
                         <outlet property="visitorsLabel" destination="8WA-yo-AuZ" id="7FD-gi-kwG"/>
                     </connections>

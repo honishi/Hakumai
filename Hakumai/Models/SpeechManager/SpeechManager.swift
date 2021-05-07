@@ -7,15 +7,16 @@
 //
 
 import Foundation
+import AVFoundation
 
 private let kDequeuChatTimerInterval: TimeInterval = 0.5
 
-private let kVoiceSpeedMap: [(queuCountRange: CountableRange<Int>, speed: Int)] = [
-    (0..<5, 100),
-    (5..<10, 125),
-    (10..<15, 150),
-    (15..<20, 175),
-    (20..<100, 200)
+private let kVoiceSpeedMap: [(queuCountRange: CountableRange<Int>, speed: Float)] = [
+    (0..<5, 0.5),
+    (5..<10, 0.55),
+    (10..<15, 0.6),
+    (15..<20, 0.65),
+    (20..<100, 0.7)
 ]
 private let kRefreshChatQueueThreshold = 30
 
@@ -23,6 +24,7 @@ private let kCleanCommentPatterns = [
     "^/\\w+ \\w+ \\w+ "
 ]
 
+@available(macOS 10.14, *)
 final class SpeechManager: NSObject {
     // MARK: - Properties
     static let sharedManager = SpeechManager()
@@ -30,7 +32,8 @@ final class SpeechManager: NSObject {
     private var chatQueue: [Chat] = []
     private var voiceSpeed = kVoiceSpeedMap[0].speed
     private var timer: Timer?
-    private var yukkuroidAvailable = false
+    private let synthesizer = AVSpeechSynthesizer()
+    private var managerStartedDate: Date?
 
     // MARK: - Object Lifecycle
     override init() {
@@ -42,9 +45,14 @@ final class SpeechManager: NSObject {
         guard timer == nil else { return }
         // use explicit main queue to ensure that the timer continues to run even when caller thread ends.
         DispatchQueue.main.async {
-            self.timer = Timer.scheduledTimer(timeInterval: kDequeuChatTimerInterval, target: self,
-                                              selector: #selector(SpeechManager.dequeue(_:)), userInfo: nil, repeats: true)
+            self.timer = Timer.scheduledTimer(
+                timeInterval: kDequeuChatTimerInterval,
+                target: self,
+                selector: #selector(SpeechManager.dequeue(_:)),
+                userInfo: nil,
+                repeats: true)
         }
+        managerStartedDate = Date()
         log.debug("started speech manager.")
     }
 
@@ -58,11 +66,19 @@ final class SpeechManager: NSObject {
         defer { objc_sync_exit(self) }
 
         chatQueue.removeAll()
+        managerStartedDate = nil
         log.debug("stopped speech manager.")
     }
 
     func enqueue(chat: Chat) {
-        guard YukkuroidClient.isAvailable() else { return }
+        guard let started = managerStartedDate,
+              Date().timeIntervalSince(started) > 5 else {
+            // Skip enqueuing since there's possibility that we receive lots of
+            // messages for this time slot.
+            log.debug("Skip enqueuing early chats.")
+            return
+        }
+
         guard chat.premium == .ippan || chat.premium == .premium || chat.premium == .bsp else { return }
 
         objc_sync_enter(self)
@@ -75,25 +91,17 @@ final class SpeechManager: NSObject {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
 
-        let currentAvailable = YukkuroidClient.isAvailable()
-
-        if yukkuroidAvailable != currentAvailable {
-            chatQueue.removeAll()
-            yukkuroidAvailable = currentAvailable
-        }
-
-        if 0 == chatQueue.count || YukkuroidClient.isStillPlaying(0) {
-            return
-        }
+        guard !synthesizer.isSpeaking, 0 < chatQueue.count else { return }
 
         guard let chat = chatQueue.first else { return }
         chatQueue.removeFirst()
         guard let comment = chat.comment else { return }
 
-        voiceSpeed = adjustedVoiceSpeed(chatQueueCount: chatQueue.count, currentVoiceSpeed: voiceSpeed)
-        YukkuroidClient.setVoiceSpeed(Int32(voiceSpeed), setting: 0)
-        YukkuroidClient.setKanjiText(cleanComment(from: comment))
-        YukkuroidClient.pushPlayButton(0)
+        let utterance = AVSpeechUtterance.init(string: cleanComment(from: comment))
+        utterance.rate = adjustedVoiceSpeed(chatQueueCount: chatQueue.count, currentVoiceSpeed: voiceSpeed)
+        let voice = AVSpeechSynthesisVoice.init(language: "ja-JP")
+        utterance.voice = voice
+        synthesizer.speak(utterance)
     }
 
     func refreshChatQueueIfQueuedTooMuch() -> Bool {
@@ -109,7 +117,7 @@ final class SpeechManager: NSObject {
     }
 
     // MARK: - Private Functions
-    private func adjustedVoiceSpeed(chatQueueCount count: Int, currentVoiceSpeed: Int) -> Int {
+    private func adjustedVoiceSpeed(chatQueueCount count: Int, currentVoiceSpeed: Float) -> Float {
         var candidateSpeed = kVoiceSpeedMap[0].speed
 
         if count == 0 {
