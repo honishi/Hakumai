@@ -190,6 +190,7 @@
 		DB2AE1041A0F2BAA00B1CE4D /* HakumaiTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "HakumaiTests-Bridging-Header.h"; path = "HakumaiTests/HakumaiTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		DB346B991A54648100137639 /* community_channel.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = community_channel.html; sourceTree = "<group>"; };
 		DB346B9B1A548C3B00137639 /* CommunityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommunityTests.swift; sourceTree = "<group>"; };
+		DB3AF8F22645A92500A52987 /* Hakumai.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Hakumai.entitlements; sourceTree = "<group>"; };
 		DB414C061A4810A5008D2F40 /* UserViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserViewController.swift; sourceTree = "<group>"; };
 		DB414C081A481138008D2F40 /* UserWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserWindowController.swift; sourceTree = "<group>"; };
 		DB414C0A1A4811C4008D2F40 /* Global.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
@@ -363,6 +364,7 @@
 				DB2AE0C31A0EE2FD00B1CE4D /* AppDelegate.swift */,
 				DB414C0A1A4811C4008D2F40 /* Global.swift */,
 				DB2AE1031A0F2BAA00B1CE4D /* Hakumai-Bridging-Header.h */,
+				DB3AF8F22645A92500A52987 /* Hakumai.entitlements */,
 				DB682D411A36E6AE00499C72 /* Parameter.swift */,
 			);
 			path = Hakumai;
@@ -1161,10 +1163,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Hakumai/Hakumai.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1050;
 				DEVELOPMENT_TEAM = N4SRN3NAQ3;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Hakumai/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -1192,10 +1196,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Hakumai/Hakumai.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1050;
 				DEVELOPMENT_TEAM = N4SRN3NAQ3;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Hakumai/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
