@@ -98,6 +98,7 @@ final class NicoUtility: NicoUtilityType {
     private let session: Session
     private var managingSocket: WebSocket?
     private var messageSocket: WebSocket?
+    private var messageSocketPingTimer: Timer?
     private var isFirstChatReceived = false
 
     // Usernames
@@ -283,6 +284,7 @@ private extension NicoUtility {
             guard let me = self else { return }
             switch $0 {
             case .success():
+                me.startMessageSocketPingTimer()
                 me.delegate?.nicoUtilityDidConnectToLive(me, roomPosition: RoomPosition.arena)
             case .failure(_):
                 let reason = "Failed to open message server."
@@ -292,6 +294,7 @@ private extension NicoUtility {
     }
 
     func disconnectSocketsAndResetState() {
+        stopMessageSocketPingTimer()
         [managingSocket, messageSocket].forEach { $0?.disconnect() }
         managingSocket = nil
         messageSocket = nil
@@ -451,6 +454,27 @@ private extension NicoUtility {
             delegate?.nicoUtilityDidReceiveFirstChat(self, chat: chat.toChat())
             isFirstChatReceived = true
         }
+    }
+}
+
+private extension NicoUtility {
+    func startMessageSocketPingTimer() {
+        messageSocketPingTimer = Timer.scheduledTimer(
+            timeInterval: 30,
+            target: self,
+            selector: #selector(NicoUtility.messageScoketPingTimerFired),
+            userInfo: nil,
+            repeats: true)
+    }
+
+    func stopMessageSocketPingTimer() {
+        messageSocketPingTimer?.invalidate()
+        messageSocketPingTimer = nil
+    }
+
+    @objc func messageScoketPingTimerFired() {
+        log.debug("Ping to message socket.")
+        messageSocket?.write(ping: Data())
     }
 }
 
