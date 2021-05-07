@@ -67,7 +67,6 @@ enum NicoUtilityError: Error {
 }
 
 // MARK: - Constants
-private let userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36"
 private let livePageUrl = "https://live.nicovideo.jp/watch/lv"
 private let userPageUrl = "https://www.nicovideo.jp/user/"
 // Cookies:
@@ -112,7 +111,7 @@ final class NicoUtility: NicoUtilityType {
 
     init() {
         let configuration = URLSessionConfiguration.af.default
-        configuration.headers.add(.userAgent(userAgent))
+        configuration.headers.add(.userAgent(commonUserAgentValue))
         self.session = Session(configuration: configuration)
         clearHttpCookieStorage()
     }
@@ -337,7 +336,7 @@ private extension NicoUtility {
             return
         }
         var request = URLRequest(url: url)
-        request.headers = ["User-Agent": userAgent]
+        request.headers = [commonUserAgentKey: commonUserAgentValue]
         request.timeoutInterval = 10
         let socket = WebSocket(request: request)
         socket.onEvent = { [weak self] in
@@ -416,7 +415,7 @@ private extension NicoUtility {
         }
         var request = URLRequest(url: url)
         request.headers = [
-            "User-Agent": userAgent,
+            commonUserAgentKey: commonUserAgentValue,
             "Sec-WebSocket-Extensions": "permessage-deflate; client_max_window_bits",
             "Sec-WebSocket-Protocol": "msg.nicovideo.jp#json"
         ]
