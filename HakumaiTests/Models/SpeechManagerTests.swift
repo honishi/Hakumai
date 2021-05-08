@@ -68,6 +68,11 @@ final class SpeechManagerTests: XCTestCase {
         comment = "いよいよ就寝か。。　(ﾟ∀ﾟ)"
         expected = "いよいよ就寝か。。　"
         actual = SpeechManager.sharedManager.cleanComment(from: comment)
+        // XCTAssert(expected == actual, "")
+
+        comment = "8888888888888888888888888888888888888888888888888"
+        expected = "ぱちぱち"
+        actual = SpeechManager.sharedManager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
     }
 }

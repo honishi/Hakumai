@@ -23,7 +23,8 @@ private let kRefreshChatQueueThreshold = 30
 private let kCleanCommentPatterns = [
     ("^/\\w+ \\w+ \\w+ ", ""),
     ("(w|ｗ){2,}$", " わらわら"),
-    ("(w|ｗ)$", " わら")
+    ("(w|ｗ)$", " わら"),
+    ("(8|８){3,}", "ぱちぱち")
 ]
 
 @available(macOS 10.14, *)
