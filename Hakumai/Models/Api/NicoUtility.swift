@@ -92,13 +92,20 @@ private let postCommentMessage = """
 
 // MARK: - Class
 final class NicoUtility: NicoUtilityType {
+    // Type
+    struct ConnectRequest {
+        let liveNumber: Int
+        let connectType: NicoConnectType
+    }
+
     // Public Properties
     static var shared: NicoUtility = NicoUtility()
     weak var delegate: NicoUtilityDelegate?
     private(set) var live: Live?
 
     // Private Properties
-    private var lastLiveNumber: Int?
+    private var ongoingConnectRequest: ConnectRequest?
+    private var lastEstablishedConnectRequest: ConnectRequest?
     private var userSessionCookie: String?
     private let session: Session
     private var managingSocket: WebSocket?
@@ -121,12 +128,18 @@ final class NicoUtility: NicoUtilityType {
 // MARK: - Public Methods (Main)
 extension NicoUtility {
     func connect(liveNumber: Int, connectType: NicoConnectType) {
-        // 1. Cleanup current connection, if needed.
+        // 1. Keep connection request.
+        ongoingConnectRequest = ConnectRequest(
+            liveNumber: liveNumber,
+            connectType: connectType
+        )
+
+        // 2. Cleanup current connection, if needed.
         if live != nil {
             disconnect()
         }
 
-        // 2. Go direct to `connect()` IF the user session cookie is availale.
+        // 3. Go direct to `connect()` IF the user session cookie is availale.
         clearUserSessionCookieIfReserved()
         delegate?.nicoUtilityWillPrepareLive(self)
         if let userSessionCookie = userSessionCookie {
@@ -134,7 +147,7 @@ extension NicoUtility {
             return
         }
 
-        // 3. Ok, there's no cookie available, go get it..
+        // 4. Ok, there's no cookie available, go get it..
         let cookieCompletion = { (userSessionCookie: String?) -> Void in
             log.debug("Cookie result: [\(connectType)] [\(userSessionCookie ?? "-")]")
             guard let userSessionCookie = userSessionCookie else {
@@ -250,7 +263,6 @@ extension NicoUtility {
 private extension NicoUtility {
     func connect(liveNumber: Int, userSessionCookie: String) {
         self.userSessionCookie = userSessionCookie
-        self.lastLiveNumber = liveNumber
 
         reqeustLiveInfo(lv: liveNumber) { [weak self] in
             guard let me = self else { return }
@@ -309,6 +321,7 @@ private extension NicoUtility {
             switch $0 {
             case .success():
                 me.startMessageSocketPingTimer()
+                me.lastEstablishedConnectRequest = me.ongoingConnectRequest
                 me.delegate?.nicoUtilityDidConnectToLive(me, roomPosition: RoomPosition.arena)
             case .failure(_):
                 let reason = "Failed to open message server."
@@ -326,6 +339,17 @@ private extension NicoUtility {
         live = nil
         // user = nil
         isFirstChatReceived = false
+    }
+
+    func reconnect() {
+        log.debug("Reconnecting...")
+        disconnect()
+        guard let last = lastEstablishedConnectRequest else {
+            log.warning("Could not reconnect since there's no last live info.")
+            return
+        }
+        delegate?.nicoUtilityWillReconnectToLive(self)
+        connect(liveNumber: last.liveNumber, connectType: last.connectType)
     }
 }
 
@@ -368,6 +392,7 @@ private extension NicoUtility {
             log.debug("ping")
         case .error(_):
             log.debug("error")
+            reconnect()
         case .viabilityChanged(_):
             log.debug("viabilityChanged")
         case .reconnectSuggested(_):
@@ -456,6 +481,7 @@ private extension NicoUtility {
             log.debug("ping")
         case .error(_):
             log.debug("error")
+            reconnect()
         case .viabilityChanged(_):
             log.debug("viabilityChanged")
         case .reconnectSuggested(_):
