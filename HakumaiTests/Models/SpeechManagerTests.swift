@@ -11,14 +11,13 @@ import XCTest
 final class SpeechManagerTests: XCTestCase {
     override func setUp() {
         super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
     }
 
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
     }
 
+    // swiftlint:disable function_body_length
     @available(macOS 10.14, *)
     func testCleanComment() {
         var comment = ""
@@ -75,4 +74,5 @@ final class SpeechManagerTests: XCTestCase {
         actual = SpeechManager.sharedManager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
     }
+    // swiftlint:enable function_body_length
 }
