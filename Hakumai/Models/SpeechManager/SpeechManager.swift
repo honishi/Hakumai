@@ -108,7 +108,7 @@ final class SpeechManager: NSObject {
 
         let utterance = AVSpeechUtterance.init(string: cleanComment(from: comment))
         utterance.rate = adjustedVoiceSpeed(chatQueueCount: chatQueue.count, currentVoiceSpeed: voiceSpeed)
-        utterance.volume = Float(voiceVolume) / 100
+        utterance.volume = Float(voiceVolume) / 100.0
         let voice = AVSpeechSynthesisVoice.init(language: "ja-JP")
         utterance.voice = voice
         synthesizer.speak(utterance)
