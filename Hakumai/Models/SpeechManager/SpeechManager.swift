@@ -12,16 +12,18 @@ import AVFoundation
 private let kDequeuChatTimerInterval: TimeInterval = 0.5
 
 private let kVoiceSpeedMap: [(queuCountRange: CountableRange<Int>, speed: Float)] = [
-    (0..<3, 0.6),
-    (3..<6, 0.65),
-    (6..<9, 0.7),
-    (9..<12, 0.75),
+    (0..<3, 0.55),
+    (3..<6, 0.60),
+    (6..<9, 0.65),
+    (9..<12, 0.7),
     (12..<100, 0.8)
 ]
 private let kRefreshChatQueueThreshold = 30
 
 private let kCleanCommentPatterns = [
-    "^/\\w+ \\w+ \\w+ "
+    ("^/\\w+ \\w+ \\w+ ", ""),
+    ("(w|ｗ){2,}$", " わらわら"),
+    ("(w|ｗ)$", " わら")
 ]
 
 @available(macOS 10.14, *)
@@ -146,12 +148,10 @@ final class SpeechManager: NSObject {
 
     // define as 'internal' for test
     func cleanComment(from comment: String) -> String {
-        var clean: String = ""
-
-        for pattern in kCleanCommentPatterns {
-            clean = comment.stringByRemovingRegexp(pattern: pattern)
+        var cleaned = comment
+        kCleanCommentPatterns.forEach {
+            cleaned = cleaned.stringByReplacingRegexp(pattern: $0.0, with: $0.1)
         }
-
-        return clean
+        return cleaned
     }
 }

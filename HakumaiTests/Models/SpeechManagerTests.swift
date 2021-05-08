@@ -34,5 +34,40 @@ final class SpeechManagerTests: XCTestCase {
         expected = "母親を殴っていた自分が恥ずかしくなりました @ ラピス"
         actual = SpeechManager.sharedManager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
+
+        comment = "w"
+        expected = " わら"
+        actual = SpeechManager.sharedManager.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
+
+        comment = "ｗ"
+        expected = " わら"
+        actual = SpeechManager.sharedManager.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
+
+        comment = "www"
+        expected = " わらわら"
+        actual = SpeechManager.sharedManager.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
+
+        comment = "ｗｗｗ"
+        expected = " わらわら"
+        actual = SpeechManager.sharedManager.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
+
+        comment = "こんにちはｗ"
+        expected = "こんにちは わら"
+        actual = SpeechManager.sharedManager.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
+
+        comment = "こんにちはｗｗｗ"
+        expected = "こんにちは わらわら"
+        actual = SpeechManager.sharedManager.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
+
+        comment = "いよいよ就寝か。。　(ﾟ∀ﾟ)"
+        expected = "いよいよ就寝か。。　"
+        actual = SpeechManager.sharedManager.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
     }
 }
