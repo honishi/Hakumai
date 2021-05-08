@@ -447,7 +447,8 @@ extension MainViewController {
             self.connectButton.image = NSImage(named: kConnectButtonImageNameStop)
             self.progressIndicator.stopAnimation(self)
         }
-        updateSpeechManagerState(updateLiveStartedDate: true)
+        setLiveStartedDateToSpeechManager()
+        updateSpeechManagerState()
     }
 
     func nicoUtilityDidReceiveFirstChat(_ nicoUtility: NicoUtilityType, chat: Chat) {
@@ -825,15 +826,17 @@ extension MainViewController {
     }
 
     // MARK: Speech Handlers
-    private func updateSpeechManagerState(updateLiveStartedDate: Bool = false) {
+    private func setLiveStartedDateToSpeechManager() {
+        guard #available(macOS 10.14, *) else { return }
+        SpeechManager.sharedManager.setLiveStartedDate()
+    }
+
+    private func updateSpeechManagerState() {
         guard #available(macOS 10.14, *) else { return }
         let enabled = UserDefaults.standard.bool(forKey: Parameters.enableCommentSpeech)
 
         if enabled && connectedToLive {
             SpeechManager.sharedManager.startManager()
-            if updateLiveStartedDate {
-                SpeechManager.sharedManager.updateLiveStartedDate()
-            }
         } else {
             SpeechManager.sharedManager.stopManager()
         }

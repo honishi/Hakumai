@@ -72,7 +72,7 @@ final class SpeechManager: NSObject {
         log.debug("stopped speech manager.")
     }
 
-    func updateLiveStartedDate(_ date: Date = Date()) {
+    func setLiveStartedDate(_ date: Date = Date()) {
         liveStartedDate = date
     }
 
