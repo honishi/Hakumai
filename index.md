@@ -16,7 +16,7 @@ v{{site.binary_version}}, {{site.binary_date}} (for Mac OS X 10.10-)
 
 <img src="./image/main.png" width="550px">
 
-* Hakumai は Mac OS X で動作するニコニコ生放送用のコメントビューア(コメビュ)です。
+* Hakumai は macOS で動作するニコニコ生放送用のコメントビューア(コメビュ)です。
 * <strike>配布、メンテナンスを終了しました。</strike> (2021/1/19)
 * ニコ生新仕様に対応したバージョンを現在テスト中です。(2021/5/8)
 
