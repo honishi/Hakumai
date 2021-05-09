@@ -216,9 +216,9 @@
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MZf-F3-ma6">
-                                            <rect key="frame" x="18" y="78" width="133" height="18"/>
+                                            <rect key="frame" x="18" y="78" width="287" height="18"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <buttonCell key="cell" type="check" title="Speak Comments" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="AtW-hc-GOF">
+                                            <buttonCell key="cell" type="check" title="Speak Comments (Requires macOS 10.14-)" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="AtW-hc-GOF">
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
@@ -277,6 +277,10 @@
                         <outlet property="mailAddressTextField" destination="RF4-gC-rH4" id="9L7-b0-tL6"/>
                         <outlet property="progressIndicator" destination="VTy-07-rfw" id="Zrv-pi-fy0"/>
                         <outlet property="sessionManagementMatrix" destination="y0n-lu-hbG" id="Dee-Od-G0x"/>
+                        <outlet property="speakCommentButton" destination="MZf-F3-ma6" id="9fp-wX-etw"/>
+                        <outlet property="speakVolumeSlider" destination="NBg-Gf-rw0" id="gzQ-f2-Xwi"/>
+                        <outlet property="speakVolumeTextField" destination="lhl-Ab-vvj" id="STj-TK-3lB"/>
+                        <outlet property="speakVolumeValueTextField" destination="TgB-HZ-aF1" id="siC-bI-K7H"/>
                     </connections>
                 </viewController>
                 <customObject id="iZj-NB-vz6" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
