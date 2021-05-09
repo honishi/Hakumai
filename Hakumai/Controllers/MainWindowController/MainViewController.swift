@@ -716,6 +716,7 @@ extension MainViewController {
 
         if comment.isEmpty {
             scrollTableViewToBottom()
+            scrollView.flashScrollers()
             return
         }
 
