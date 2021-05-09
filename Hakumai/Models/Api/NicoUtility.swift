@@ -68,6 +68,7 @@ enum NicoUtilityError: Error {
 }
 
 // MARK: - Constants
+// URLs:
 private let livePageUrl = "https://live.nicovideo.jp/watch/lv"
 private let userPageUrl = "https://www.nicovideo.jp/user/"
 // Cookies:
@@ -75,10 +76,15 @@ private let userSessionCookieDomain = "nicovideo.jp"
 private let userSessionCookieName = "user_session"
 private let userSessionCookieExpire = TimeInterval(7200)
 private let userSessionCookiePath = "/"
+// Misc:
+private let messageSocketPingInterval = 30
 
 // MARK: - WebSocket Messages
 private let startWatchingMessage = """
 {"type":"startWatching","data":{"stream":{"quality":"high","protocol":"hls","latency":"low","chasePlay":false},"room":{"protocol":"webSocket","commentable":true},"reconnect":false}}")
+"""
+private let keepSeatMessage = """
+{"type":"keepSeat"}
 """
 private let pongMessage = """
 {"type":"pong"}
@@ -110,9 +116,12 @@ final class NicoUtility: NicoUtilityType {
     private let session: Session
     private var managingSocket: WebSocket?
     private var messageSocket: WebSocket?
-    private var messageSocketPingTimer: Timer?
     private var shouldClearUserSessionCookie = true
     private var isFirstChatReceived = false
+
+    // Timers for WebSockets
+    private var managingSocketKeepTimer: Timer?
+    private var messageSocketPingTimer: Timer?
 
     // Usernames
     private var cachedUserNames = [String: String]()
@@ -320,7 +329,7 @@ private extension NicoUtility {
             guard let me = self else { return }
             switch $0 {
             case .success():
-                me.startMessageSocketPingTimer()
+                me.startMessageSocketPingTimer(interval: messageSocketPingInterval)
                 me.lastEstablishedConnectRequest = me.ongoingConnectRequest
                 me.delegate?.nicoUtilityDidConnectToLive(me, roomPosition: RoomPosition.arena)
             case .failure(_):
@@ -331,6 +340,7 @@ private extension NicoUtility {
     }
 
     func disconnectSocketsAndResetState() {
+        stopManagingSocketKeepTimer()
         stopMessageSocketPingTimer()
         [managingSocket, messageSocket].forEach { $0?.disconnect() }
         managingSocket = nil
@@ -405,6 +415,9 @@ private extension NicoUtility {
     func processWebSocketData(text: String, socket: WebSocket, completion: (Result<WebSocketRoomData, NicoUtilityError>) -> Void) {
         guard let decoded = decodeWebSocketData(text: text) else { return }
         switch decoded {
+        case let seat as WebSocketSeatData:
+            log.debug(seat)
+            startManagingSocketKeepTimer(interval: seat.data.keepIntervalSec)
         case let room as WebSocketRoomData:
             log.debug(room)
             completion(Result.success(room))
@@ -426,6 +439,8 @@ private extension NicoUtility {
         switch wsData.type {
         case .ping:
             return try? decoder.decode(WebSocketPingData.self, from: data)
+        case .seat:
+            return try? decoder.decode(WebSocketSeatData.self, from: data)
         case .room:
             return try? decoder.decode(WebSocketRoomData.self, from: data)
         case .statistics:
@@ -511,24 +526,52 @@ private extension NicoUtility {
     }
 }
 
+// MARK: - Private Methods (Keep Timer for Managing Socket)
+private extension NicoUtility {
+    func startManagingSocketKeepTimer(interval: Int) {
+        stopManagingSocketKeepTimer()
+        managingSocketKeepTimer = Timer.scheduledTimer(
+            timeInterval: Double(interval),
+            target: self,
+            selector: #selector(NicoUtility.managingScoketKeepTimerFired),
+            userInfo: nil,
+            repeats: true)
+        log.debug("Started managing socket keep timer.")
+    }
+
+    func stopManagingSocketKeepTimer() {
+        managingSocketKeepTimer?.invalidate()
+        managingSocketKeepTimer = nil
+        log.debug("Stopped managing socket keep timer.")
+    }
+
+    @objc func managingScoketKeepTimerFired() {
+        log.debug("Sending keep to managing socket.")
+        managingSocket?.write(string: keepSeatMessage)
+    }
+}
+
 // MARK: - Private Methods (Ping Timer for Message Socket)
 private extension NicoUtility {
-    func startMessageSocketPingTimer() {
+    func startMessageSocketPingTimer(interval: Int) {
+        stopMessageSocketPingTimer()
         messageSocketPingTimer = Timer.scheduledTimer(
-            timeInterval: 30,
+            timeInterval: Double(interval),
             target: self,
             selector: #selector(NicoUtility.messageScoketPingTimerFired),
             userInfo: nil,
             repeats: true)
+        log.debug("Started message socket ping timer.")
     }
 
     func stopMessageSocketPingTimer() {
         messageSocketPingTimer?.invalidate()
         messageSocketPingTimer = nil
+        log.debug("Stopped message socket ping timer.")
     }
 
     @objc func messageScoketPingTimerFired() {
-        log.debug("Ping to message socket.")
+        log.debug("Sending ping to message socket.")
         messageSocket?.write(ping: Data())
     }
 }
