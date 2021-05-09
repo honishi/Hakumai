@@ -26,7 +26,7 @@ v{{site.binary_version}}, {{site.binary_date}} (for macOS 10.12-)
 
 ### Binaries
 
-* <a href="https://hakumai.s3.amazonaws.com/Hakumai.0.0.52.zip">v0.0.52</a> (2021/5/8)
+* <a href="https://hakumai.s3.amazonaws.com/Hakumai.{{site.binary_version}}.zip">v{{site.binary_version}}</a> ({{site.binary_date}})
 
 ### Requirements
 
