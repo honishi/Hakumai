@@ -713,7 +713,11 @@ extension MainViewController {
 
     @IBAction func comment(_ sender: AnyObject) {
         let comment = commentTextField.stringValue
-        guard 0 < comment.count else { return }
+
+        if comment.isEmpty {
+            scrollTableViewToBottom()
+            return
+        }
 
         let anonymously = UserDefaults.standard.bool(forKey: Parameters.commentAnonymously)
         NicoUtility.shared.comment(comment, anonymously: anonymously) { comment in
