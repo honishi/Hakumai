@@ -274,6 +274,7 @@ extension NicoUtility {
                     completion(nil)
                 }
             }
+            log.info("Userid[\(userId)] -> [\(me.cachedUserNames[userId] ?? "-")] QueueCount: \(me.userNameResolvingOperationQueue.operationCount)")
         }
     }
 }
@@ -355,7 +356,10 @@ private extension NicoUtility {
     func disconnectSocketsAndResetState() {
         stopManagingSocketKeepTimer()
         stopMessageSocketPingTimer()
-        [managingSocket, messageSocket].forEach { $0?.disconnect() }
+        [managingSocket, messageSocket].forEach {
+            $0?.onEvent = nil
+            $0?.disconnect()
+        }
         managingSocket = nil
         messageSocket = nil
 
@@ -537,7 +541,7 @@ private extension NicoUtility {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         guard let chat = try? decoder.decode(WebSocketChatData.self, from: data) else { return }
-        log.debug(chat)
+        // log.debug(chat)
         if isFirstChatReceived {
             delegate?.nicoUtilityDidReceiveChat(self, chat: chat.toChat())
         } else {
