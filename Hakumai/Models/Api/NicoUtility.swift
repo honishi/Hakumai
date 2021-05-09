@@ -33,7 +33,7 @@ protocol NicoUtilityType {
     var live: Live? { get }
 
     // Main Methods
-    func connect(liveNumber: Int, connectType: NicoConnectType)
+    func connect(liveNumber: Int, sessionType: NicoSessionType)
     func disconnect(reserveToReconnect: Bool)
     func comment(_ comment: String, anonymously: Bool, completion: @escaping (_ comment: String?) -> Void)
 
@@ -53,7 +53,7 @@ protocol NicoUtilityType {
 }
 
 // MARK: - Types
-enum NicoConnectType {
+enum NicoSessionType {
     case chrome
     case safari
     case login(mail: String, password: String)
@@ -98,9 +98,12 @@ private let postCommentMessage = """
 // MARK: - Class
 final class NicoUtility: NicoUtilityType {
     // Type
+    enum ConnectContext {
+        case normal, reconnect
+    }
     struct ConnectRequest {
         let liveNumber: Int
-        let connectType: NicoConnectType
+        let sessionType: NicoSessionType
     }
 
     // Public Properties
@@ -136,11 +139,11 @@ final class NicoUtility: NicoUtilityType {
 
 // MARK: - Public Methods (Main)
 extension NicoUtility {
-    func connect(liveNumber: Int, connectType: NicoConnectType) {
+    func connect(liveNumber: Int, sessionType: NicoSessionType) {
         // 1. Keep connection request.
         ongoingConnectRequest = ConnectRequest(
             liveNumber: liveNumber,
-            connectType: connectType
+            sessionType: sessionType
         )
         lastEstablishedConnectRequest = nil
 
@@ -159,7 +162,7 @@ extension NicoUtility {
 
         // 4. Ok, there's no cookie available, go get it..
         let cookieCompletion = { (userSessionCookie: String?) -> Void in
-            log.debug("Cookie result: [\(connectType)] [\(userSessionCookie ?? "-")]")
+            log.debug("Cookie result: [\(sessionType)] [\(userSessionCookie ?? "-")]")
             guard let userSessionCookie = userSessionCookie else {
                 let reason = "No available cookie."
                 log.error(reason)
@@ -168,7 +171,7 @@ extension NicoUtility {
             }
             self.connect(liveNumber: liveNumber, userSessionCookie: userSessionCookie)
         }
-        switch connectType {
+        switch sessionType {
         case .chrome:
             CookieUtility.requestBrowserCookie(
                 browserType: .chrome,
@@ -378,7 +381,7 @@ private extension NicoUtility {
     }
 
     func _reconnect(_ last: ConnectRequest) {
-        connect(liveNumber: last.liveNumber, connectType: last.connectType)
+        connect(liveNumber: last.liveNumber, sessionType: last.sessionType)
     }
 }
 

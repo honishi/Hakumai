@@ -687,7 +687,7 @@ extension MainViewController {
         guard let sessionManagementType = SessionManagementType(
                 rawValue: UserDefaults.standard.integer(forKey: Parameters.sessionManagement)) else { return }
 
-        let connectType = { () -> NicoConnectType? in
+        let sessionType = { () -> NicoSessionType? in
             switch sessionManagementType {
             case .login:
                 guard let account = KeychainUtility.accountInKeychain() else { return nil }
@@ -699,8 +699,8 @@ extension MainViewController {
             }
         }()
 
-        guard let connectType = connectType else { return }
-        NicoUtility.shared.connect(liveNumber: liveNumber, connectType: connectType)
+        guard let sessionType = sessionType else { return }
+        NicoUtility.shared.connect(liveNumber: liveNumber, sessionType: sessionType)
     }
 
     @IBAction func connectButtonPressed(_ sender: AnyObject) {
