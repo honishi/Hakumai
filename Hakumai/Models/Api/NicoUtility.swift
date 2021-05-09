@@ -388,7 +388,10 @@ private extension NicoUtility {
     }
 
     func _reconnect(_ last: ConnectRequest) {
-        connect(liveNumber: last.liveNumber, sessionType: last.sessionType)
+        connect(
+            liveNumber: last.liveNumber,
+            sessionType: last.sessionType,
+            connectContext: .reconnect)
     }
 }
 
@@ -504,7 +507,7 @@ private extension NicoUtility {
                 resFrom: {
                     switch connectContex {
                     case .normal:       return -150
-                    case .reconnect:    return 0
+                    case .reconnect:    return -5
                     }
                 }(),
                 completion: completion)
