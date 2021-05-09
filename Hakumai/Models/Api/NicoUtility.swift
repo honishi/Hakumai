@@ -19,7 +19,6 @@ protocol NicoUtilityDelegate: AnyObject {
     func nicoUtilityDidPrepareLive(_ nicoUtility: NicoUtilityType, user: User, live: Live)
     func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, reason: String, error: NicoUtilityError?)
     func nicoUtilityDidConnectToLive(_ nicoUtility: NicoUtilityType, roomPosition: RoomPosition)
-    func nicoUtilityDidReceiveFirstChat(_ nicoUtility: NicoUtilityType, chat: Chat)
     func nicoUtilityDidReceiveChat(_ nicoUtility: NicoUtilityType, chat: Chat)
     func nicoUtilityDidGetKickedOut(_ nicoUtility: NicoUtilityType)
     func nicoUtilityWillReconnectToLive(_ nicoUtility: NicoUtilityType)
@@ -117,7 +116,6 @@ final class NicoUtility: NicoUtilityType {
     private var managingSocket: WebSocket?
     private var messageSocket: WebSocket?
     private var shouldClearUserSessionCookie = true
-    private var isFirstChatReceived = false
 
     // Timers for WebSockets
     private var managingSocketKeepTimer: Timer?
@@ -364,7 +362,6 @@ private extension NicoUtility {
         messageSocket = nil
 
         live = nil
-        isFirstChatReceived = false
     }
 
     func reconnect() {
@@ -542,12 +539,7 @@ private extension NicoUtility {
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         guard let chat = try? decoder.decode(WebSocketChatData.self, from: data) else { return }
         // log.debug(chat)
-        if isFirstChatReceived {
-            delegate?.nicoUtilityDidReceiveChat(self, chat: chat.toChat())
-        } else {
-            delegate?.nicoUtilityDidReceiveFirstChat(self, chat: chat.toChat())
-            isFirstChatReceived = true
-        }
+        delegate?.nicoUtilityDidReceiveChat(self, chat: chat.toChat())
     }
 }
 

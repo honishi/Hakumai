@@ -61,7 +61,6 @@ final class MainViewController: NSViewController, NSTableViewDataSource, NSTable
     // MARK: General Properties
     private(set) var live: Live?
     private var connectedToLive = false
-    private var openedRoomPosition: RoomPosition?
     private var chats = [Chat]()
 
     // row-height cache
@@ -453,21 +452,6 @@ extension MainViewController {
         updateSpeechManagerState()
     }
 
-    func nicoUtilityDidReceiveFirstChat(_ nicoUtility: NicoUtilityType, chat: Chat) {
-        guard let roomPosition = chat.roomPosition else { return }
-
-        logSystemMessageToTableView("Opened \(roomPosition.label()).")
-
-        if let openedRoomPosition = openedRoomPosition, roomPosition.rawValue <= openedRoomPosition.rawValue {
-            return
-        }
-        openedRoomPosition = chat.roomPosition
-
-        DispatchQueue.main.async {
-            self.notificationLabel.stringValue = "Opened: ~\(chat.roomPosition?.label() ?? "")"
-        }
-    }
-
     func nicoUtilityDidReceiveChat(_ nicoUtility: NicoUtilityType, chat: Chat) {
         // log.debug("\(chat.mail),\(chat.comment)")
         if let live = live {
@@ -494,7 +478,6 @@ extension MainViewController {
         logSystemMessageToTableView("Live closed.")
         stopTimers()
         connectedToLive = false
-        openedRoomPosition = nil
         updateSpeechManagerState()
 
         DispatchQueue.main.async {
