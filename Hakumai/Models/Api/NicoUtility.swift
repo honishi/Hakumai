@@ -513,6 +513,7 @@ private extension NicoUtility {
         messageSocket = socket
     }
 
+    // swiftlint:disable function_parameter_count
     func handleMessageSocketEvent(socket: WebSocket, event: WebSocketEvent, userId: String, threadId: String, resFrom: Int, completion: (Result<Void, NicoUtilityError>) -> Void) {
         switch event {
         case .connected(_):
@@ -545,6 +546,7 @@ private extension NicoUtility {
             log.debug("cancelled")
         }
     }
+    // swiftlint:enable function_parameter_count
 
     func sendStartThreadMessage(socket: WebSocket, userId: String, threadId: String, resFrom: Int) {
         let message = String.init(format: startThreadMessage, threadId, userId, resFrom)
