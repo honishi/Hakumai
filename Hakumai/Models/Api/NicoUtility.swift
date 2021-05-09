@@ -33,7 +33,7 @@ protocol NicoUtilityType {
     var live: Live? { get }
 
     // Main Methods
-    func connect(liveNumber: Int, sessionType: NicoSessionType)
+    func connect(liveNumber: Int, sessionType: NicoSessionType, connectContext: NicoUtility.ConnectContext)
     func disconnect(reserveToReconnect: Bool)
     func comment(_ comment: String, anonymously: Bool, completion: @escaping (_ comment: String?) -> Void)
 
@@ -139,7 +139,7 @@ final class NicoUtility: NicoUtilityType {
 
 // MARK: - Public Methods (Main)
 extension NicoUtility {
-    func connect(liveNumber: Int, sessionType: NicoSessionType) {
+    func connect(liveNumber: Int, sessionType: NicoSessionType, connectContext: NicoUtility.ConnectContext = .normal) {
         // 1. Keep connection request.
         ongoingConnectRequest = ConnectRequest(
             liveNumber: liveNumber,
@@ -156,7 +156,10 @@ extension NicoUtility {
         clearUserSessionCookieIfReserved()
         delegate?.nicoUtilityWillPrepareLive(self)
         if let userSessionCookie = userSessionCookie {
-            connect(liveNumber: liveNumber, userSessionCookie: userSessionCookie)
+            connect(
+                liveNumber: liveNumber,
+                userSessionCookie: userSessionCookie,
+                connectContext: connectContext)
             return
         }
 
@@ -169,7 +172,10 @@ extension NicoUtility {
                 self.delegate?.nicoUtilityDidFailToPrepareLive(self, reason: reason, error: .noCookieFound)
                 return
             }
-            self.connect(liveNumber: liveNumber, userSessionCookie: userSessionCookie)
+            self.connect(
+                liveNumber: liveNumber,
+                userSessionCookie: userSessionCookie,
+                connectContext: connectContext)
         }
         switch sessionType {
         case .chrome:
@@ -282,7 +288,7 @@ extension NicoUtility {
 
 // MARK: - Private Methods
 private extension NicoUtility {
-    func connect(liveNumber: Int, userSessionCookie: String) {
+    func connect(liveNumber: Int, userSessionCookie: String, connectContext: ConnectContext) {
         self.userSessionCookie = userSessionCookie
 
         reqeustLiveInfo(lv: liveNumber) { [weak self] in
@@ -295,7 +301,8 @@ private extension NicoUtility {
                 me.delegate?.nicoUtilityDidPrepareLive(me, user: user, live: live)
                 me.openManagingSocket(
                     webSocketUrl: embeddedData.site.relive.webSocketUrl,
-                    userId: embeddedData.user.id
+                    userId: embeddedData.user.id,
+                    connectContext: connectContext
                 )
             case .failure(_):
                 let reason = "Failed to load live info."
@@ -326,12 +333,12 @@ private extension NicoUtility {
         }
     }
 
-    func openManagingSocket(webSocketUrl: String, userId: String) {
+    func openManagingSocket(webSocketUrl: String, userId: String, connectContext: ConnectContext) {
         openManagingSocket(webSocketUrl: webSocketUrl) { [weak self] in
             guard let me = self else { return }
             switch $0 {
             case .success(let room):
-                me.openMessageSocket(userId: userId, room: room)
+                me.openMessageSocket(userId: userId, room: room, connectContext: connectContext)
             case .failure(_):
                 let reason = "Failed to load message server info."
                 me.delegate?.nicoUtilityDidFailToPrepareLive(me, reason: reason, error: nil)
@@ -339,8 +346,8 @@ private extension NicoUtility {
         }
     }
 
-    func openMessageSocket(userId: String, room: WebSocketRoomData) {
-        openMessageSocket(userId: userId, room: room) { [weak self] in
+    func openMessageSocket(userId: String, room: WebSocketRoomData, connectContext: ConnectContext) {
+        openMessageSocket(userId: userId, room: room, connectContex: connectContext) { [weak self] in
             guard let me = self else { return }
             switch $0 {
             case .success():
@@ -475,7 +482,7 @@ private extension NicoUtility {
 
 // MARK: - Private Methods (Message Socket)
 private extension NicoUtility {
-    func openMessageSocket(userId: String, room: WebSocketRoomData, completion: @escaping (Result<Void, NicoUtilityError>) -> Void) {
+    func openMessageSocket(userId: String, room: WebSocketRoomData, connectContex: ConnectContext, completion: @escaping (Result<Void, NicoUtilityError>) -> Void) {
         guard let url = URL(string: room.data.messageServer.uri) else {
             completion(Result.failure(NicoUtilityError.internal))
             return
@@ -493,19 +500,29 @@ private extension NicoUtility {
                 socket: socket,
                 event: $0,
                 userId: userId,
-                room: room,
+                threadId: room.data.threadId,
+                resFrom: {
+                    switch connectContex {
+                    case .normal:       return -150
+                    case .reconnect:    return 0
+                    }
+                }(),
                 completion: completion)
         }
         socket.connect()
         messageSocket = socket
     }
 
-    func handleMessageSocketEvent(socket: WebSocket, event: WebSocketEvent, userId: String, room: WebSocketRoomData, completion: (Result<Void, NicoUtilityError>) -> Void) {
+    func handleMessageSocketEvent(socket: WebSocket, event: WebSocketEvent, userId: String, threadId: String, resFrom: Int, completion: (Result<Void, NicoUtilityError>) -> Void) {
         switch event {
         case .connected(_):
             log.debug("connected")
             completion(Result.success(()))
-            sendStartThreadMessage(socket: socket, userId: userId, room: room)
+            sendStartThreadMessage(
+                socket: socket,
+                userId: userId,
+                threadId: threadId,
+                resFrom: resFrom)
         case .disconnected(_, _):
             log.debug("disconnected")
         case .text(let text):
@@ -529,10 +546,8 @@ private extension NicoUtility {
         }
     }
 
-    func sendStartThreadMessage(socket: WebSocket, userId: String, room: WebSocketRoomData, resFrom: Int = -150) {
-        let message = String.init(
-            format: startThreadMessage,
-            room.data.threadId, userId, resFrom)
+    func sendStartThreadMessage(socket: WebSocket, userId: String, threadId: String, resFrom: Int) {
+        let message = String.init(format: startThreadMessage, threadId, userId, resFrom)
         socket.write(string: message)
     }
 
