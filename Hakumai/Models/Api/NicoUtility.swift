@@ -371,6 +371,12 @@ private extension NicoUtility {
             return
         }
         delegate?.nicoUtilityWillReconnectToLive(self)
+
+        // Just in case, make some delay to invoke the connect method.
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) { self._reconnect(last) }
+    }
+
+    func _reconnect(_ last: ConnectRequest) {
         connect(liveNumber: last.liveNumber, connectType: last.connectType)
     }
 }
