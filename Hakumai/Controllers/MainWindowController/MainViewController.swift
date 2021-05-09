@@ -406,10 +406,12 @@ extension MainViewController {
         DispatchQueue.main.async {
             self.liveTitleLabel.stringValue = live.title ?? ""
 
-            let communityTitle = live.community.title ?? "-"
-            let level = live.community.level != nil ? String(live.community.level ?? 0) : "-"
-            self.communityTitleLabel.stringValue = communityTitle + " (Lv." + level + ")"
             self.communityIdLabel.stringValue = live.community.community ?? "-"
+            var communityTitle = live.community.title ?? "-"
+            if let level = live.community.level {
+                communityTitle += " (Lv.\(level))"
+            }
+            self.communityTitleLabel.stringValue = communityTitle
 
             let commentPlaceholder = (user.isBSP == true) ?
                 "BSP Comment is not yet implemented. :P" : "⌘N (enter to comment)"

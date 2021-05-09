@@ -14,6 +14,7 @@ extension NicoUtility {
         guard let document = try? ONOXMLDocument.htmlDocument(with: html) else { return nil }
         let xpathDataProps = "//script[@id=\"embedded-data\"]/@data-props"
         let dataPropsElement = document.rootElement.firstChild(withXPath: xpathDataProps)
+        log.debug(dataPropsElement?.stringValue ?? "-")
         guard let _dataPropsElement = dataPropsElement,
               !_dataPropsElement.isBlank,
               let data = _dataPropsElement.stringValue?.data(using: .utf8) else { return nil }

@@ -49,7 +49,7 @@ struct EmbeddedDataProperties: Codable {
         let name: String
         let thumbnailImageUrl: String
         let thumbnailSmallImageUrl: String
-        let level: Int
+        let level: Int?
     }
 
     struct EmbeddedDataUser: Codable {
