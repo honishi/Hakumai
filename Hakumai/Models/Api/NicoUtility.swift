@@ -375,23 +375,28 @@ private extension NicoUtility {
     }
 
     func reconnect() {
+        objc_sync_enter(self)
+        defer { objc_sync_exit(self) }
+
         log.debug("Reconnecting...")
-        disconnect()
-        guard let last = lastEstablishedConnectRequest else {
-            log.warning("Could not reconnect since there's no last live info.")
+        guard let lastConnection = lastEstablishedConnectRequest else {
+            log.warning("Failed to reconnect since there's no last established connection info.")
             return
         }
+        // Nullifying `lastEstablishedConnectRequest` to prevent the `reconnect()`
+        // method from being called multiple times from multiple thread.
+        lastEstablishedConnectRequest = nil
+
+        disconnect()
         delegate?.nicoUtilityWillReconnectToLive(self)
 
         // Just in case, make some delay to invoke the connect method.
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) { self._reconnect(last) }
-    }
-
-    func _reconnect(_ last: ConnectRequest) {
-        connect(
-            liveNumber: last.liveNumber,
-            sessionType: last.sessionType,
-            connectContext: .reconnect)
+        DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 2) {
+            self.connect(
+                liveNumber: lastConnection.liveNumber,
+                sessionType: lastConnection.sessionType,
+                connectContext: .reconnect)
+        }
     }
 }
 
@@ -439,6 +444,7 @@ private extension NicoUtility {
             log.debug("viabilityChanged")
         case .reconnectSuggested(_):
             log.debug("reconnectSuggested")
+            reconnect()
         case .cancelled:
             log.debug("cancelled")
         }
@@ -545,6 +551,7 @@ private extension NicoUtility {
             log.debug("viabilityChanged")
         case .reconnectSuggested(_):
             log.debug("reconnectSuggested")
+            reconnect()
         case .cancelled:
             log.debug("cancelled")
         }
