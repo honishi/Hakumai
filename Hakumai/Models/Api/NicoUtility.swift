@@ -80,7 +80,7 @@ private let messageSocketPingInterval = 30
 
 // MARK: - WebSocket Messages
 private let startWatchingMessage = """
-{"type":"startWatching","data":{"stream":{"quality":"high","protocol":"hls","latency":"low","chasePlay":false},"room":{"protocol":"webSocket","commentable":true},"reconnect":false}}")
+{"type":"startWatching","data":{}}
 """
 private let keepSeatMessage = """
 {"type":"keepSeat"}
