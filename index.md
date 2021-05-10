@@ -24,7 +24,7 @@ v{{site.binary_version}}, {{site.binary_date}} (for macOS 10.12-)
 
 ## Beta Testing
 
-### App Binary
+### Beta App
 
 * <a href="https://hakumai.s3.amazonaws.com/Hakumai.{{site.binary_version}}.zip">v{{site.binary_version}}</a> ({{site.binary_date}})
 
