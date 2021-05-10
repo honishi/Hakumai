@@ -42,13 +42,17 @@ extension String {
     }
 
     func stringByRemovingRegexp(pattern: String) -> String {
+        return stringByReplacingRegexp(pattern: pattern, with: "")
+    }
+
+    func stringByReplacingRegexp(pattern this: String, with that: String) -> String {
         let nsStringSelf = (self as NSString)
-        guard let regexp = try? NSRegularExpression(pattern: pattern, options: []) else { return self }
+        guard let regexp = try? NSRegularExpression(pattern: this, options: []) else { return self }
         let removed = regexp.stringByReplacingMatches(
             in: nsStringSelf as String,
             options: [],
             range: NSRange(location: 0, length: nsStringSelf.length),
-            withTemplate: "")
+            withTemplate: that)
         return (removed as String)
     }
 

@@ -8,13 +8,17 @@
 
 import Foundation
 
+enum BrowserType {
+    case chrome, safari
+}
+
 final class CookieUtility {
     // MARK: - Public Functions
     static func requestLoginCookie(mailAddress: String, password: String, completion: @escaping (_ userSessionCookie: String?) -> Void) {
         LoginCookie.requestCookie(mailAddress: mailAddress, password: password, completion: completion)
     }
 
-    static func requestBrowserCookie(browserType: BrowserType, completion: @escaping(String?) -> Void) {
+    static func requestBrowserCookie(browserType: BrowserType, completion: @escaping (String?) -> Void) {
         switch browserType {
         case .chrome:
             completion(ChromeCookie.storedCookie())
@@ -22,8 +26,6 @@ final class CookieUtility {
             SafariCookie.storedCookie(callback: { cookie in
                 completion(cookie)
             })
-        default:
-            break
         }
     }
 }

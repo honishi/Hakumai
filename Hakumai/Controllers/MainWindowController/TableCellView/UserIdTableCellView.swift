@@ -13,6 +13,8 @@ private let kImageNameUserIdRawId = "UserIdRawId"
 private let kImageNameUserId184Id = "UserId184Id"
 private let kImageNameHandleNameOver184Id = "HandleNameOver184Id"
 private let kImageNameHandleNameOverRawId = "HandleNameOverRawId"
+private let kImageNamePremiumMisc = "PremiumMisc"
+private let systemUserLabel = "----------"
 
 final class UserIdTableCellView: NSTableCellView {
     @IBOutlet weak var userIdTextField: NSTextField!
@@ -20,23 +22,28 @@ final class UserIdTableCellView: NSTableCellView {
 
     var info: (handleName: String?, userId: String?, premium: Premium?, comment: String?)? = nil {
         didSet {
+            self.currentUserId = info?.userId
             guard let userId = info?.userId, let premium = info?.premium else {
                 userIdImageView.image = nil
                 userIdTextField.stringValue = ""
                 return
             }
-            userIdImageView.image = image(forHandleName: info?.handleName, userId: userId)
+            userIdImageView.image = image(forHandleName: info?.handleName, userId: userId, premium: premium)
             setUserIdLabel(userId: userId, premium: premium, handleName: info?.handleName)
         }
     }
 
     var fontSize: CGFloat? { didSet { set(fontSize: fontSize) } }
+
+    private var currentUserId: String?
 }
 
 private extension UserIdTableCellView {
-    func image(forHandleName handleName: String?, userId: String) -> NSImage {
+    func image(forHandleName handleName: String?, userId: String, premium: Premium) -> NSImage {
         let imageName: String
-        if handleName != nil {
+        if premium.isSystem {
+            imageName = kImageNamePremiumMisc
+        } else if handleName != nil {
             imageName = Chat.isRawUserId(userId) ? kImageNameHandleNameOverRawId : kImageNameHandleNameOver184Id
         } else {
             imageName = Chat.isRawUserId(userId) ? kImageNameUserIdRawId : kImageNameUserId184Id
@@ -50,7 +57,9 @@ private extension UserIdTableCellView {
 
     func setUserIdLabel(userId: String, premium: Premium, handleName: String?) {
         // set default name
-        userIdTextField.stringValue = concatUserName(userId: userId, userName: nil, handleName: handleName)
+        userIdTextField.stringValue = premium.isSystem ?
+            systemUserLabel :
+            concatUserName(userId: userId, userName: nil, handleName: handleName)
 
         // if needed, then resolve userid
         if handleName != nil || !Chat.isRawUserId(userId) || !(Chat.isUserComment(premium) || Chat.isBSPComment(premium)) {
@@ -62,11 +71,18 @@ private extension UserIdTableCellView {
             return
         }
 
-        NicoUtility.shared.resolveUsername(forUserId: userId) {
+        NicoUtility.shared.resolveUsername(forUserId: userId) { [weak self] in
+            guard let me = self else { return }
+            guard me.currentUserId == userId else {
+                // Seems the view is reused before the previous async username
+                // resolving operation from this view is finished. So skip...
+                log.debug("Skip updating cell user name.")
+                return
+            }
             guard let userName = $0 else { return }
             DispatchQueue.main.async {
-                self.userIdTextField.stringValue =
-                    self.concatUserName(userId: userId, userName: userName, handleName: handleName)
+                me.userIdTextField.stringValue =
+                    me.concatUserName(userId: userId, userName: userName, handleName: handleName)
             }
         }
     }

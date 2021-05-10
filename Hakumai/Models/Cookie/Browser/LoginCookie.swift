@@ -7,52 +7,40 @@
 //
 
 import Foundation
+import Alamofire
 
 private let kNicoVideoDomain = "http://nicovideo.jp"
 private let kLoginUrl = "https://secure.nicovideo.jp/secure/login?site=niconico"
 
-// request header
-private let kUserAgent = kCommonUserAgent
-
 final class LoginCookie {
     // MARK: - Public Functions
     static func requestCookie(mailAddress: String, password: String, completion: @escaping (_ userSessionCookie: String?) -> Void) {
-        func httpCompletion(_ response: URLResponse?, _ data: Data?, _ connectionError: Error?) {
-            if let connectionError = connectionError {
-                log.error("login failed. connection error:[\(connectionError)]")
-                completion(nil)
-                return
-            }
-
-            guard let httpResponse = response as? HTTPURLResponse else { return }
-
-            if httpResponse.statusCode != 200 {
-                log.error("login failed. got unexpected status code::[\(httpResponse.statusCode)]")
-                completion(nil)
-                return
-            }
-
-            guard let userSessionCookie = LoginCookie.findUserSessionCookie() else {
-                completion(nil)
-                return
-            }
-            log.debug("found session cookie:[\(userSessionCookie)]")
-
-            completion(userSessionCookie)
-        }
-
         LoginCookie.removeAllStoredCookie()
 
-        let parameters = "mail=\(mailAddress)&password=\(password)"
+        guard let url = URL(string: kLoginUrl) else {
+            fatalError("This is NOT going to be happened.")
+        }
 
-        guard let url = URL(string: kLoginUrl) else { return }
-        let request = NSMutableURLRequest(url: url)
-        request.setValue(kUserAgent, forHTTPHeaderField: "User-Agent")
-        request.httpMethod = "POST"
-        request.httpBody = parameters.data(using: String.Encoding.utf8)
+        var request = URLRequest(url: url)
+        request.method = .post
+        request.allHTTPHeaderFields = [commonUserAgentKey: commonUserAgentValue]
+        request.httpBody = "mail=\(mailAddress)&password=\(password)".data(using: .utf8)
 
-        let queue = OperationQueue()
-        NSURLConnection.sendAsynchronousRequest(request as URLRequest, queue: queue, completionHandler: httpCompletion)
+        AF.request(request).response {
+            switch $0.result {
+            case .success:
+                guard let userSessionCookie = LoginCookie.findUserSessionCookie() else {
+                    completion(nil)
+                    return
+                }
+                log.debug("found session cookie:[\(userSessionCookie)]")
+                completion(userSessionCookie)
+
+            case .failure(let error):
+                log.error("login failed. got unexpected error:[\(error)]")
+                completion(nil)
+            }
+        }
     }
 }
 

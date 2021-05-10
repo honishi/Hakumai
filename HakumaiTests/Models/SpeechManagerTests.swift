@@ -11,14 +11,14 @@ import XCTest
 final class SpeechManagerTests: XCTestCase {
     override func setUp() {
         super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
     }
 
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
     }
 
+    // swiftlint:disable function_body_length
+    @available(macOS 10.14, *)
     func testCleanComment() {
         var comment = ""
         var expected = ""
@@ -33,5 +33,46 @@ final class SpeechManagerTests: XCTestCase {
         expected = "母親を殴っていた自分が恥ずかしくなりました @ ラピス"
         actual = SpeechManager.sharedManager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
+
+        comment = "w"
+        expected = " わら"
+        actual = SpeechManager.sharedManager.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
+
+        comment = "ｗ"
+        expected = " わら"
+        actual = SpeechManager.sharedManager.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
+
+        comment = "www"
+        expected = " わらわら"
+        actual = SpeechManager.sharedManager.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
+
+        comment = "ｗｗｗ"
+        expected = " わらわら"
+        actual = SpeechManager.sharedManager.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
+
+        comment = "こんにちはｗ"
+        expected = "こんにちは わら"
+        actual = SpeechManager.sharedManager.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
+
+        comment = "こんにちはｗｗｗ"
+        expected = "こんにちは わらわら"
+        actual = SpeechManager.sharedManager.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
+
+        comment = "いよいよ就寝か。。　(ﾟ∀ﾟ)"
+        expected = "いよいよ就寝か。。　"
+        actual = SpeechManager.sharedManager.cleanComment(from: comment)
+        // XCTAssert(expected == actual, "")
+
+        comment = "8888888888888888888888888888888888888888888888888"
+        expected = "ぱちぱち"
+        actual = SpeechManager.sharedManager.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
     }
+    // swiftlint:enable function_body_length
 }

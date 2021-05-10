@@ -10,21 +10,13 @@ import Foundation
 import XCGLogger
 
 private let kEnableColorizedLogger = true
-private let kLogColors: [(fg: (Int, Int, Int)?, bg: (Int, Int, Int)?)] = [  // solarized dark
-    ((147, 161, 161), nil),             // verbose (light grey)
-    ((147, 161, 161), nil),             // debug (dark grey)
-    (( 38, 139, 210), nil),             // info (blue)
-    ((181, 137, 0), nil),               // warning (orange)
-    ((220, 50, 47), nil),               // error (red)
-    ((238, 232, 213), (220, 50, 47))    // severe (white on red)
-]
 
 final class Helper {
     // MARK: - Public Interface
     static func setupLogger(_ logger: XCGLogger) {
         #if DEBUG
-        Helper.colorizeLogger(log)
-        log.setup(
+        Helper.colorizeLogger(logger)
+        logger.setup(
             level: .debug,
             showThreadName: true,
             showLevel: true,
@@ -44,11 +36,11 @@ final class Helper {
 
     static func setupFileLogger(_ logger: XCGLogger, fileName: String) {
         #if DEBUG
-        Helper.colorizeLogger(log)
+        Helper.colorizeLogger(logger)
 
         Helper.createApplicationDirectoryIfNotExists()
         let path = Helper.applicationDirectoryPath() + "/" + fileName
-        log.setup(
+        logger.setup(
             level: .verbose,
             showThreadName: true,
             showLevel: true,
@@ -56,8 +48,8 @@ final class Helper {
             showLineNumbers: true,
             writeToFile: path)
 
-        if let console = log.destination(withIdentifier: XCGLogger.Constants.baseConsoleDestinationIdentifier) {
-            log.remove(destination: console)
+        if let console = logger.destination(withIdentifier: XCGLogger.Constants.baseConsoleDestinationIdentifier) {
+            logger.remove(destination: console)
         }
         #else
         logger.setup(
@@ -93,19 +85,18 @@ final class Helper {
     // MARK: - Private Functions
     private static func colorizeLogger(_ logger: XCGLogger) {
         guard kEnableColorizedLogger else { return }
-        // solarized dark colors
-        // XXX: turn the colors off, temporarily
-        /*
-         logger.xcodeColors = [
-         .verbose:   XCGLogger.XcodeColor(fg: kLogColors[0].fg, bg: kLogColors[0].bg),
-         .debug:     XCGLogger.XcodeColor(fg: kLogColors[1].fg, bg: kLogColors[1].bg),
-         .info:      XCGLogger.XcodeColor(fg: kLogColors[2].fg, bg: kLogColors[2].bg),
-         .warning:   XCGLogger.XcodeColor(fg: kLogColors[3].fg, bg: kLogColors[3].bg),
-         .error:     XCGLogger.XcodeColor(fg: kLogColors[4].fg, bg: kLogColors[4].bg),
-         .severe:    XCGLogger.XcodeColor(fg: kLogColors[5].fg, bg: kLogColors[5].bg),
-         ]
-         */
-
+        logger.levelDescriptions = [
+            .verbose: "🟢:\(XCGLogger.Level.verbose.description)",
+            .debug: "🔵:\(XCGLogger.Level.debug.description)",
+            .info: "⚪️:\(XCGLogger.Level.info.description)",
+            .notice: "⚪️:\(XCGLogger.Level.notice.description)",
+            .warning: "🟠:\(XCGLogger.Level.warning.description)",
+            .error: "🔴:\(XCGLogger.Level.error.description)",
+            .severe: "🟣:\(XCGLogger.Level.severe.description)", // aka critical
+            .alert: "🔴:\(XCGLogger.Level.alert.description)",
+            .emergency: "🟣:\(XCGLogger.Level.emergency.description)"
+            // .none: "\(XCGLogger.Level.none.description)"
+        ]
         /*
          logger.verbose("test message.")
          logger.debug("test message.")

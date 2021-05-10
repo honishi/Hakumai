@@ -35,6 +35,11 @@ final class GeneralViewController: NSViewController {
     @IBOutlet weak var progressIndicator: NSProgressIndicator!
     @IBOutlet weak var checkAccountStatusLabel: NSTextField!
 
+    @IBOutlet weak var speakCommentButton: NSButton!
+    @IBOutlet weak var speakVolumeTextField: NSTextField!
+    @IBOutlet weak var speakVolumeValueTextField: NSTextField!
+    @IBOutlet weak var speakVolumeSlider: NSSlider!
+
     @objc dynamic var mailAddress: NSString! {
         didSet {
             validateCheckAccountButton()
@@ -55,6 +60,11 @@ final class GeneralViewController: NSViewController {
 
 // MARK: - NSViewController Overrides
 extension GeneralViewController {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        disableSpeakComponentsIfNeeded()
+    }
+
     override func viewDidAppear() {
         super.viewDidAppear()
 
@@ -102,6 +112,14 @@ extension GeneralViewController {
 
 // MARK: - Internal Functions
 private extension GeneralViewController {
+    func disableSpeakComponentsIfNeeded() {
+        if #available(macOS 10.14, *) { return }
+        speakCommentButton.isEnabled = false
+        speakVolumeTextField.isEnabled = false
+        speakVolumeValueTextField.isEnabled = false
+        speakVolumeSlider.isEnabled = false
+    }
+
     func validateCheckAccountButton() {
         checkAccountButton?.isEnabled = canLogin()
     }

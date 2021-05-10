@@ -11,12 +11,15 @@ import AppKit
 
 @NSApplicationMain
 final class AppDelegate: NSObject, NSApplicationDelegate {
+    @IBOutlet weak var speakMenuItem: NSMenuItem!
+
     // MARK: - NSApplicationDelegate Functions
     func applicationDidFinishLaunching(_ notification: Notification) {
         Helper.setupLogger(log)
         migrateApplicationVersion()
         initializeUserDefaults()
         addObserverForUserDefaults()
+        configureMenuItems()
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
@@ -69,11 +72,12 @@ extension AppDelegate {
         case (Parameters.sessionManagement, _):
             NicoUtility.shared.reserveToClearUserSessionCookie()
 
-        case (Parameters.showIfseetnoCommands, let changed as Bool):
-            MainViewController.shared.changeShowHbIfseetnoCommands(changed)
-
         case (Parameters.enableCommentSpeech, let changed as Bool):
             MainViewController.shared.changeEnableCommentSpeech(changed)
+
+        case (Parameters.commentSpeechVolume, let changed as Int):
+            guard #available(macOS 10.14, *) else { return }
+            SpeechManager.sharedManager.setVoiceVolume(changed)
 
         case (Parameters.enableMuteUserIds, let changed as Bool):
             MainViewController.shared.changeEnableMuteUserIds(changed)
@@ -147,9 +151,9 @@ private extension AppDelegate {
     func initializeUserDefaults() {
         let defaults: [String: Any] = [
             Parameters.sessionManagement: SessionManagementType.chrome.rawValue,
-            Parameters.showIfseetnoCommands: false,
             Parameters.fontSize: kDefaultFontSize,
             Parameters.enableCommentSpeech: false,
+            Parameters.commentSpeechVolume: 100,
             Parameters.enableMuteUserIds: false,
             Parameters.enableMuteWords: false,
             Parameters.alwaysOnTop: false,
@@ -160,8 +164,9 @@ private extension AppDelegate {
     func addObserverForUserDefaults() {
         let keyPaths = [
             // general
-            Parameters.sessionManagement, Parameters.showIfseetnoCommands,
+            Parameters.sessionManagement,
             Parameters.enableCommentSpeech,
+            Parameters.commentSpeechVolume,
             // mute
             Parameters.enableMuteUserIds, Parameters.muteUserIds,
             Parameters.enableMuteWords, Parameters.muteWords,
@@ -171,6 +176,14 @@ private extension AppDelegate {
         for keyPath in keyPaths {
             UserDefaults.standard.addObserver(
                 self, forKeyPath: keyPath, options: [.initial, .new], context: nil)
+        }
+    }
+
+    func configureMenuItems() {
+        if #available(macOS 10.14, *) {
+            speakMenuItem.isHidden = false
+        } else {
+            speakMenuItem.isHidden = true
         }
     }
 }

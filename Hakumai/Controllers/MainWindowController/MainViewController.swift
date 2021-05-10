@@ -16,10 +16,13 @@ private let kConnectButtonImageNameStart = "StartLive"
 private let kConnectButtonImageNameStop = "StopLive"
 private let kCommunityImageDefaultName = "NoImage"
 private let kUserWindowDefautlTopLeftPoint = NSPoint(x: 100, y: 100)
-private let kDelayToShowHbIfseetnoCommands: TimeInterval = 30
 private let kCalculateActiveInterval: TimeInterval = 5
 private let kMaximumFontSizeForNonMainColumn: CGFloat = 16
 private let kDefaultMinimumRowHeight: CGFloat = 17
+
+private let safariCookieAlertTitle = "No Safari Cookie found"
+private let safariCookieAlertDescription = "To retrieve the cookie from Safari, please open the Security & Privacy section of the System Preference and give the \"Full Disk Access\" right to Hakumai app."
+private let safariCookieAlertImageName = "safariCookieAlertImage"
 
 // swiftlint:disable file_length
 final class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate, NSControlTextEditingDelegate, NicoUtilityDelegate, UserWindowControllerDelegate {
@@ -32,11 +35,12 @@ final class MainViewController: NSViewController, NSTableViewDataSource, NSTable
     @IBOutlet weak var communityImageView: NSImageView!
     @IBOutlet weak var liveTitleLabel: NSTextField!
     @IBOutlet weak var communityTitleLabel: NSTextField!
-    @IBOutlet weak var roomPositionLabel: NSTextField!
+    @IBOutlet weak var communityIdLabel: NSTextField!
 
     @IBOutlet weak var visitorsLabel: NSTextField!
     @IBOutlet weak var commentsLabel: NSTextField!
     @IBOutlet weak var remainingSeatsLabel: NSTextField!
+    @IBOutlet weak var speakButton: NSButton!
 
     @IBOutlet weak var scrollView: NSScrollView!
     @IBOutlet weak var tableView: NSTableView!
@@ -57,7 +61,6 @@ final class MainViewController: NSViewController, NSTableViewDataSource, NSTable
     // MARK: General Properties
     private(set) var live: Live?
     private var connectedToLive = false
-    private var openedRoomPosition: RoomPosition?
     private var chats = [Chat]()
 
     // row-height cache
@@ -113,6 +116,11 @@ extension MainViewController {
             self.communityImageView.layer?.masksToBounds = true
             self.communityImageView.layer?.borderColor = NSColor.black.cgColor
         }
+        if #available(macOS 10.14, *) {
+            speakButton.isHidden = false
+        } else {
+            speakButton.isHidden = true
+        }
     }
 
     private func setupTableView() {
@@ -133,13 +141,6 @@ extension MainViewController {
     }
 
     // MARK: Utility
-    func changeShowHbIfseetnoCommands(_ show: Bool) {
-        MessageContainer.sharedContainer.showHbIfseetnoCommands = show
-        log.debug("changed show 'hbifseetno' commands: \(show)")
-
-        rebuildFilteredMessages()
-    }
-
     func changeEnableCommentSpeech(_ enabled: Bool) {
         // log.debug("\(enabled)")
         updateSpeechManagerState()
@@ -391,28 +392,25 @@ extension MainViewController {
     }
 
     // MARK: - NicoUtilityDelegate Functions
-    func nicoUtilityWillPrepareLive(_ nicoUtility: NicoUtility) {
+    func nicoUtilityWillPrepareLive(_ nicoUtility: NicoUtilityType) {
         DispatchQueue.main.async {
             self.connectButton.isEnabled = false
             self.progressIndicator.startAnimation(self)
         }
     }
 
-    func nicoUtilityDidPrepareLive(_ nicoUtility: NicoUtility, user: User, live: Live) {
+    func nicoUtilityDidPrepareLive(_ nicoUtility: NicoUtilityType, user: User, live: Live) {
         self.live = live
-
-        if let startTime = live.startTime {
-            let beginDate = Date(timeInterval: kDelayToShowHbIfseetnoCommands, since: startTime as Date)
-            MessageContainer.sharedContainer.beginDateToShowHbIfseetnoCommands = beginDate
-        }
 
         DispatchQueue.main.async {
             self.liveTitleLabel.stringValue = live.title ?? ""
 
-            let communityTitle = live.community.title ?? "-"
-            let level = live.community.level != nil ? String(live.community.level ?? 0) : "-"
-            self.communityTitleLabel.stringValue = communityTitle + " (Lv." + level + ")"
-            self.roomPositionLabel.stringValue = (user.roomLabel ?? "") + " - " + String(user.seatNo ?? 0)
+            self.communityIdLabel.stringValue = live.community.community ?? "-"
+            var communityTitle = live.community.title ?? "-"
+            if let level = live.community.level {
+                communityTitle += " (Lv.\(level))"
+            }
+            self.communityTitleLabel.stringValue = communityTitle
 
             let commentPlaceholder = (user.isBSP == true) ?
                 "BSP Comment is not yet implemented. :P" : "⌘N (enter to comment)"
@@ -432,15 +430,16 @@ extension MainViewController {
         logSystemMessageToTableView("Prepared live as user \(user.nickname ?? "").")
     }
 
-    func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtility, reason: String) {
+    func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, reason: String, error: NicoUtilityError?) {
         logSystemMessageToTableView("Failed to prepare live.(\(reason))")
         DispatchQueue.main.async {
             self.connectButton.isEnabled = true
             self.progressIndicator.stopAnimation(self)
         }
+        showCookiePrivilegeAlertIfNeeded(error: error)
     }
 
-    func nicoUtilityDidConnectToLive(_ nicoUtility: NicoUtility, roomPosition: RoomPosition) {
+    func nicoUtilityDidConnectToLive(_ nicoUtility: NicoUtilityType, roomPosition: RoomPosition) {
         guard connectedToLive == false else { return }
         connectedToLive = true
         logSystemMessageToTableView("Connected to live.")
@@ -449,25 +448,11 @@ extension MainViewController {
             self.connectButton.image = NSImage(named: kConnectButtonImageNameStop)
             self.progressIndicator.stopAnimation(self)
         }
+        setLiveStartedDateToSpeechManager()
         updateSpeechManagerState()
     }
 
-    func nicoUtilityDidReceiveFirstChat(_ nicoUtility: NicoUtility, chat: Chat) {
-        guard let roomPosition = chat.roomPosition else { return }
-
-        logSystemMessageToTableView("Opened \(roomPosition.label()).")
-
-        if let openedRoomPosition = openedRoomPosition, roomPosition.rawValue <= openedRoomPosition.rawValue {
-            return
-        }
-        openedRoomPosition = chat.roomPosition
-
-        DispatchQueue.main.async {
-            self.notificationLabel.stringValue = "Opened: ~\(chat.roomPosition?.label() ?? "")"
-        }
-    }
-
-    func nicoUtilityDidReceiveChat(_ nicoUtility: NicoUtility, chat: Chat) {
+    func nicoUtilityDidReceiveChat(_ nicoUtility: NicoUtilityType, chat: Chat) {
         // log.debug("\(chat.mail),\(chat.comment)")
         if let live = live {
             HandleNameManager.sharedManager.extractAndUpdateHandleName(live: live, chat: chat)
@@ -481,19 +466,18 @@ extension MainViewController {
         }
     }
 
-    func nicoUtilityDidGetKickedOut(_ nicoUtility: NicoUtility) {
+    func nicoUtilityDidGetKickedOut(_ nicoUtility: NicoUtilityType) {
         logSystemMessageToTableView("Got kicked out...")
     }
 
-    func nicoUtilityWillReconnectToLive(_ nicoUtility: NicoUtility) {
+    func nicoUtilityWillReconnectToLive(_ nicoUtility: NicoUtilityType) {
         logSystemMessageToTableView("Reconnecting...")
     }
 
-    func nicoUtilityDidDisconnect(_ nicoUtility: NicoUtility) {
+    func nicoUtilityDidDisconnect(_ nicoUtility: NicoUtilityType) {
         logSystemMessageToTableView("Live closed.")
         stopTimers()
         connectedToLive = false
-        openedRoomPosition = nil
         updateSpeechManagerState()
 
         DispatchQueue.main.async {
@@ -501,7 +485,7 @@ extension MainViewController {
         }
     }
 
-    func nicoUtilityDidReceiveHeartbeat(_ nicoUtility: NicoUtility, heartbeat: Heartbeat) {
+    func nicoUtilityDidReceiveHeartbeat(_ nicoUtility: NicoUtilityType, heartbeat: Heartbeat) {
         updateLiveStatistics(heartbeat: heartbeat)
     }
 
@@ -703,17 +687,20 @@ extension MainViewController {
         guard let sessionManagementType = SessionManagementType(
                 rawValue: UserDefaults.standard.integer(forKey: Parameters.sessionManagement)) else { return }
 
-        switch sessionManagementType {
-        case .login:
-            guard let account = KeychainUtility.accountInKeychain() else { return }
-            let mailAddress = account.mailAddress
-            let password = account.password
-            NicoUtility.shared.connect(liveNumber: liveNumber, mailAddress: mailAddress, password: password)
-        case .chrome:
-            NicoUtility.shared.connect(liveNumber: liveNumber, browserType: .chrome)
-        case .safari:
-            NicoUtility.shared.connect(liveNumber: liveNumber, browserType: .safari)
-        }
+        let sessionType = { () -> NicoSessionType? in
+            switch sessionManagementType {
+            case .login:
+                guard let account = KeychainUtility.accountInKeychain() else { return nil }
+                return .login(mail: account.mailAddress, password: account.password)
+            case .chrome:
+                return .chrome
+            case .safari:
+                return .safari
+            }
+        }()
+
+        guard let sessionType = sessionType else { return }
+        NicoUtility.shared.connect(liveNumber: liveNumber, sessionType: sessionType)
     }
 
     @IBAction func connectButtonPressed(_ sender: AnyObject) {
@@ -726,7 +713,12 @@ extension MainViewController {
 
     @IBAction func comment(_ sender: AnyObject) {
         let comment = commentTextField.stringValue
-        guard 0 < comment.count else { return }
+
+        if comment.isEmpty {
+            scrollTableViewToBottom()
+            scrollView.flashScrollers()
+            return
+        }
 
         let anonymously = UserDefaults.standard.bool(forKey: Parameters.commentAnonymously)
         NicoUtility.shared.comment(comment, anonymously: anonymously) { comment in
@@ -824,7 +816,13 @@ extension MainViewController {
     }
 
     // MARK: Speech Handlers
+    private func setLiveStartedDateToSpeechManager() {
+        guard #available(macOS 10.14, *) else { return }
+        SpeechManager.sharedManager.setLiveStartedDate()
+    }
+
     private func updateSpeechManagerState() {
+        guard #available(macOS 10.14, *) else { return }
         let enabled = UserDefaults.standard.bool(forKey: Parameters.enableCommentSpeech)
 
         if enabled && connectedToLive {
@@ -835,6 +833,7 @@ extension MainViewController {
     }
 
     private func handleSpeech(chat: Chat) {
+        guard #available(macOS 10.14, *) else { return }
         let enabled = UserDefaults.standard.bool(forKey: Parameters.enableCommentSpeech)
         guard enabled else { return }
         DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async {
@@ -850,6 +849,38 @@ extension MainViewController {
         MessageContainer.sharedContainer.removeAll()
         rowHeightCacher.removeAll(keepingCapacity: false)
         tableView.reloadData()
+    }
+}
+
+// Alert view for Safari cookie
+private extension MainViewController {
+    func showCookiePrivilegeAlertIfNeeded(error: NicoUtilityError?) {
+        guard error == .noCookieFound else { return }
+        let param = UserDefaults.standard.integer(forKey: Parameters.sessionManagement)
+        guard let sessionManagementType = SessionManagementType(rawValue: param) else { return }
+        switch sessionManagementType {
+        case .safari:
+            let alert = NSAlert()
+            alert.messageText = safariCookieAlertTitle
+            alert.informativeText = safariCookieAlertDescription
+            if let image = NSImage(named: safariCookieAlertImageName) {
+                let imageView = NSImageView(image: image)
+                imageView.frame = NSRect.init(x: 0, y: 0, width: 300, height: 300)
+                alert.accessoryView = imageView
+            }
+            let securityButton = alert.addButton(withTitle: "Open Security & Privacy")
+            securityButton.target = self
+            securityButton.action = #selector(MainViewController.showSecurityPanel)
+            alert.addButton(withTitle: "Cancel")
+            alert.runModal()
+        default:
+            break
+        }
+    }
+
+    @objc func showSecurityPanel() {
+        let url = URL(fileURLWithPath: "/System/Library/PreferencePanes/Security.prefPane")
+        NSWorkspace.shared.open(url)
     }
 }
 

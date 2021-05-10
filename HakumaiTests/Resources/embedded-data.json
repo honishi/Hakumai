@@ -1,0 +1,561 @@
+
+{
+  "akashic": {
+    "trustedChildOrigin": "^https?:\\/\\/ak\\.cdn\\.nimg\\.jp($|\\/)"
+  },
+  "site": {
+    "locale": "ja_JP",
+    "serverTime": 1620205886021,
+    "frontendVersion": "251.0.4",
+    "apiBaseUrl": "https://live.nicovideo.jp/",
+    "pollingApiBaseUrl": "https://papi.live.nicovideo.jp/",
+    "staticResourceBaseUrl": "https://nicolive.cdn.nimg.jp/relive/front_assets/",
+    "topPageUrl": "https://live.nicovideo.jp/",
+    "programCreatePageUrl": "https://live.nicovideo.jp/create",
+    "programEditPageUrl": "https://live.nicovideo.jp/edit",
+    "programWatchPageUrl": "https://live.nicovideo.jp/watch",
+    "recentPageUrl": "https://live.nicovideo.jp/recent",
+    "programArchivePageUrl": "https://live2.nicovideo.jp/watch/archive",
+    "myPageUrl": "http://live.nicovideo.jp/my",
+    "rankingPageUrl": "http://live.nicovideo.jp/ranking",
+    "searchPageUrl": "http://live.nicovideo.jp/search",
+    "focusPageUrl": "https://live2.nicovideo.jp/focus",
+    "timetablePageUrl": "https://live.nicovideo.jp/timetable",
+    "followedProgramsPageUrl": "https://live.nicovideo.jp/follow",
+    "frontendId": 9,
+    "familyService": {
+      "account": {
+        "accountRegistrationPageUrl": "https://account.nicovideo.jp/register",
+        "loginPageUrl": "https://account.nicovideo.jp/login",
+        "logoutPageUrl": "http://live.nicovideo.jp/logout",
+        "premiumMemberRegistrationPageUrl": "https://account.nicovideo.jp/premium/register",
+        "trackingParams": {
+          "siteId": "nicolive",
+          "pageId": "watch",
+          "mode": "landing",
+          "programStatus": "onair"
+        },
+        "profileRegistrationPageUrl": "https://account.nicovideo.jp/my/profile/register",
+        "contactsPageUrl": "https://account.nicovideo.jp/my/contacts",
+        "verifyEmailsPageUrl": "https://account.nicovideo.jp/contacts/emails/verify",
+        "accountSettingPageUrl": "https://account.nicovideo.jp/my/account",
+        "currentPageUrl": ""
+      },
+      "app": {
+        "topPageUrl": "http://app.nicovideo.jp/"
+      },
+      "atsumaru": {
+        "topPageUrl": "https://game.nicovideo.jp/atsumaru/"
+      },
+      "blomaga": {
+        "topPageUrl": "https://ch.nicovideo.jp/portal/blomaga"
+      },
+      "channel": {
+        "topPageUrl": "https://ch.nicovideo.jp/",
+        "forOrganizationAndCompanyPageUrl": "https://ch.nicovideo.jp/start"
+      },
+      "commons": {
+        "topPageUrl": "https://commons.nicovideo.jp/"
+      },
+      "community": {
+        "topPageUrl": "https://com.nicovideo.jp/"
+      },
+      "denfaminicogamer": {
+        "topPageUrl": "https://news.denfaminicogamer.jp/"
+      },
+      "dic": {
+        "topPageUrl": "https://dic.nicovideo.jp/"
+      },
+      "help": {
+        "liveHelpPageUrl": "https://qa.nicovideo.jp/category/show/417?site_domain=default",
+        "systemRequirementsPageUrl": "https://qa.nicovideo.jp/faq/show/1112?site_domain=default"
+      },
+      "ichiba": {
+        "configBaseUrl": "https://ichiba.nicovideo.jp/embed/",
+        "scriptUrl": "https://ichiba.nicovideo.jp/embed/ichiba_vanilla.js",
+        "topPageUrl": "https://ichiba.nicovideo.jp/"
+      },
+      "jk": {
+        "topPageUrl": "http://jk.nicovideo.jp/"
+      },
+      "mastodon": {
+        "topPageUrl": "https://rd.nicovideo.jp/cc/app/mastodon"
+      },
+      "news": {
+        "topPageUrl": "https://news.nicovideo.jp/"
+      },
+      "nicoad": {
+        "topPageUrl": "https://nicoad.nicovideo.jp/",
+        "apiBaseUrl": "https://api.nicoad.nicovideo.jp/"
+      },
+      "niconico": {
+        "topPageUrl": "https://www.nicovideo.jp/",
+        "userPageBaseUrl": "https://www.nicovideo.jp/user"
+      },
+      "niconicoQ": {
+        "topPageUrl": "https://q.nicovideo.jp/"
+      },
+      "point": {
+        "topPageUrl": "https://point.nicovideo.jp/index/bank/",
+        "purchasePageUrl": "https://point.nicovideo.jp/index/asp/purchase_point"
+      },
+      "seiga": {
+        "topPageUrl": "https://seiga.nicovideo.jp/",
+        "seigaPageBaseUrl": "https://seiga.nicovideo.jp/seiga",
+        "comicPageBaseUrl": "https://seiga.nicovideo.jp/comic"
+      },
+      "site": {
+        "serviceListPageUrl": "https://site.nicovideo.jp/service_list",
+        "salesAdvertisingPageUrl": "https://site.nicovideo.jp/sales_ads/",
+        "liveAppDownloadPageUrl": "https://site.live.nicovideo.jp/app/guide.html"
+      },
+      "solid": {
+        "topPageUrl": "https://3d.nicovideo.jp/"
+      },
+      "uad": {
+        "topPageUrl": "https://uad.nicovideo.jp/"
+      },
+      "video": {
+        "topPageUrl": "https://www.nicovideo.jp/video_top",
+        "myPageUrl": "https://www.nicovideo.jp/my/top",
+        "watchPageBaseUrl": "https://www.nicovideo.jp/watch",
+        "liveWatchHistoryPageUrl": "https://www.nicovideo.jp/my/history/live"
+      },
+      "faq": {
+        "pageUrl": "https://qa.nicovideo.jp/faq/show/5008?site_domain=default"
+      },
+      "bugreport": {
+        "pageUrl": "https://secure.nicovideo.jp/form/feedback_bugreport"
+      },
+      "rightsControlProgram": {
+        "pageUrl": "http://rcp-smile.nicovideo.jp/static/rule/"
+      },
+      "licenseSearch": {
+        "pageUrl": "https://license-search.nicovideo.jp/"
+      },
+      "info": {
+        "warnForPhishingPageUrl": "http://info.nicovideo.jp/base/phishing.html",
+        "nintendoGuidelinePageUrl": "http://info.nicovideo.jp/base/nintendo_guideline.html"
+      },
+      "search": {
+        "suggestionApiUrl": "https://sug.search.nicovideo.jp/suggestion/complete/"
+      },
+      "nicoex": {
+        "apiBaseUrl": "https://api.cas.nicovideo.jp/"
+      },
+      "akashic": {
+        "untrustedFrameUrl": "https://ak.cdn.nimg.jp/coe/games/loader/v2_1_0/loader_prod.html"
+      },
+      "superichiba": {
+        "apiBaseUrl": "https://api.spi.nicovideo.jp/",
+        "launchApiBaseUrl": "https://lapi.spi.nicovideo.jp/v1/",
+        "oroshiuriIchibaBaseUrl": "https://spi.nicovideo.jp/"
+      },
+      "nAir": {
+        "topPageUrl": "https://n-air-app.nicovideo.jp/"
+      },
+      "prizeBox": {
+        "topPageUrl": "https://prizebox.nicovideo.jp/"
+      },
+      "emotion": {
+        "baseUrl": "https://emotion.nicovideo.jp/"
+      }
+    },
+    "environments": {
+      "runningMode": "client"
+    },
+    "relive": {
+      "apiBaseUrl": "https://live2.nicovideo.jp/",
+      "webSocketUrl": "wss://a.live2.nicovideo.jp/unama/wsapi/v2/watch/12345?audience_token=12345_12345_12345_abcde",
+      "csrfToken": "ddeed10f3768285c"
+    },
+    "information": {
+      "html5PlayerInformationPageUrl": "https://blog.nicovideo.jp/niconews/5981.html",
+      "flashPlayerInstallInformationPageUrl": "https://qa.nicovideo.jp/faq/show/5693?site_domain=default",
+      "maintenanceInformationPageUrl": "https://blog.nicovideo.jp/niconews/category/ge_maintenance"
+    },
+    "rule": {
+      "agreementPageUrl": "https://site.live.nicovideo.jp/rule.html",
+      "guidelinePageUrl": "http://live.nicovideo.jp/img/help/guideline.pdf"
+    },
+    "spec": {
+      "watchUsageAndDevicePageUrl": "https://site.live.nicovideo.jp/watch.html",
+      "broadcastUsageDevicePageUrl": "https://site.live.nicovideo.jp/broadcast.html",
+      "minogashiProgramPageUrl": "https://site.nicovideo.jp/minogashi/",
+      "cruisePageUrl": "https://site.live.nicovideo.jp/cruise.html"
+    },
+    "ad": {
+      "adsApiBaseUrl": "https://ads.nicovideo.jp/"
+    },
+    "program": {
+      "liveCount": 0
+    },
+    "tag": {
+      "revisionCheckIntervalMs": 120000,
+      "registerHelpPageUrl": "https://qa.nicovideo.jp/faq/show/586?site_domain=default",
+      "userRegistrableMax": 10,
+      "textMaxLength": 18
+    },
+    "coe": {
+      "resourcesBaseUrl": "https://nicolive.cdn.nimg.jp/relive/common-resources/44.0.1/coe/1.0.22/prod/",
+      "coeContentBaseUrl": "https://ak.cdn.nimg.jp/coe/contents/aufeiR7C"
+    },
+    "timeshift": {
+      "reservationDetailListApiUrl": "https://live.nicovideo.jp/api/watchingreservation?mode=detaillist"
+    },
+    "broadcast": {
+      "usageHelpPageUrl": "https://qa.nicovideo.jp/faq/show/701?site_domain=default",
+      "stableBroadcastHelpPageUrl": "https://qa.nicovideo.jp/faq/show/674?site_domain=default",
+      "niconicoLiveEncoder": {
+        "downloadPageUrl": ""
+      },
+      "nair": {
+        "downloadPageUrl": "https://n-air-app.nicovideo.jp/"
+      },
+      "broadcasterStreamHelpPageUrl": "https://qa.nicovideo.jp/faq/show/10536?site_domain=default"
+    },
+    "enquete": {
+      "usageHelpPageUrl": "https://qa.nicovideo.jp/faq/show/4563?site_domain=default"
+    },
+    "trialWatch": {
+      "usageHelpPageUrl": "https://qa.nicovideo.jp/faq/show/16037?site_domain=default"
+    },
+    "videoQuote": {
+      "usageHelpPageUrl": ""
+    },
+    "autoExtend": {
+      "usageHelpPageUrl": "https://qa.nicovideo.jp/faq/show/10675?site_domain=default"
+    },
+    "nicobus": {
+      "publicApiBaseUrl": "https://public.api.nicovideo.jp/"
+    },
+    "dmc": {
+      "webRtc": {
+        "stunServerUrls": []
+      }
+    },
+    "frontendPublicApiUrl": "https://live2.nicovideo.jp/front/api/",
+    "commonResourcesBaseUrl": "https://nicolive.cdn.nimg.jp/relive/common-resources/",
+    "gift": {
+      "cantOpenPageCausedAdBlockHelpPageUrl": "https://qa.nicovideo.jp/faq/show/15454?site_domain=default"
+    },
+    "creatorPromotionProgram": {
+      "registrationHelpPageUrl": "https://qa.nicovideo.jp/faq/show/78?site_domain=default"
+    },
+    "stream": {
+      "lowLatencyHelpPageUrl": "https://qa.nicovideo.jp/faq/show/14782?site_domain=default"
+    },
+    "performance": {
+      "commentRender": {
+        "liteModeHelpPageUrl": "https://qa.nicovideo.jp/faq/show/10281?site_domain=default"
+      }
+    },
+    "nico": {
+      "webPushNotificationReceiveSettingHelpPageUrl": "https://qa.nicovideo.jp/faq/show/9218?site_domain=default"
+    },
+    "akashic": {
+      "switchRenderHelpPageUrl": "https://qa.nicovideo.jp/faq/show/13973?site_domain=default"
+    },
+    "device": {
+      "watchOnPlayStation4HelpPageUrl": "https://qa.nicovideo.jp/faq/show/133?site_domain=default",
+      "safariCantWatchHelpPageUrl": "https://qa.nicovideo.jp/faq/show/9448?site_domain=default"
+    },
+    "nicoCommonHeaderResourceBaseUrl": "https://secure-dcdn.cdn.nimg.jp",
+    "authony": {
+      "apiBaseUrl": "https://api.live2.nicovideo.jp/"
+    }
+  },
+  "user": {
+    "id": "12345",
+    "nickname": "ゲスト",
+    "birthday": "2001-01-01T00:00:00.000+09:00",
+    "isExplicitlyLoginable": true,
+    "isMobileMailAddressRegistered": false,
+    "isMailRegistered": true,
+    "isProfileRegistered": true,
+    "isLoggedIn": true,
+    "accountType": "premium",
+    "isOperator": false,
+    "isBroadcaster": false,
+    "premiumOrigin": "0",
+    "permissions": [
+      "ADD_ICHIBA_ITEM",
+      "CHASE_PLAY"
+    ],
+    "nicosid": "1612182673.772817568",
+    "superichiba": {
+      "deletable": false,
+      "hasBroadcasterRole": false
+    },
+    "iconUrl": "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/defaults/blank.jpg"
+  },
+  "program": {
+    "allegation": {
+      "commentAllegationApiUrl": "https://riso.live2.nicovideo.jp/allegation_audience"
+    },
+    "nicoliveProgramId": "lv331723624",
+    "reliveProgramId": "33422028309086",
+    "providerType": "community",
+    "visualProviderType": "community",
+    "title": "人の金で高級焼肉くいにいく",
+    "thumbnail": {
+      "small": "https://secure-dcdn.cdn.nimg.jp/comch/community-icon/64x64/co1736565.jpg?1614680354"
+    },
+    "screenshot": {
+      "urlSet": {
+        "large": "https://ssth.dmc.nico/thumbnail/20210505/18/11/nicolive-production-pg33422028309086/nicolive-production-pg33422028309086_800_450.jpg",
+        "middle": "https://ssth.dmc.nico/thumbnail/20210505/18/11/nicolive-production-pg33422028309086/nicolive-production-pg33422028309086_640_360.jpg",
+        "small": "https://ssth.dmc.nico/thumbnail/20210505/18/11/nicolive-production-pg33422028309086/nicolive-production-pg33422028309086_352_198.jpg",
+        "micro": "https://ssth.dmc.nico/thumbnail/20210505/18/11/nicolive-production-pg33422028309086/nicolive-production-pg33422028309086_160_90.jpg"
+      }
+    },
+    "supplier": {
+      "name": "むらまこ",
+      "pageUrl": "http://www.nicovideo.jp/user/387778",
+      "nicopediaArticle": {
+        "pageUrl": "https://dic.nicovideo.jp/l/%E3%82%80%E3%82%89%E3%81%BE%E3%81%93",
+        "exists": true
+      },
+      "programProviderId": "387778",
+      "icons": {
+        "uri50x50": "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/s/38/387778.jpg?1428398373",
+        "uri150x150": "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/38/387778.jpg?1428398373"
+      },
+      "level": 79,
+      "accountType": "premium"
+    },
+    "openTime": 1620205869,
+    "beginTime": 1620205869,
+    "vposBaseTime": 1620205866,
+    "endTime": 1620207669,
+    "scheduledEndTime": 1620207669,
+    "status": "ON_AIR",
+    "description": "@muramako_2525<br />上野公園でやってます。ステッカーあげます",
+    "substitute": {},
+    "tag": {
+      "updateApiUrl": "https://live2.nicovideo.jp/unama/api/v2/programs/lv331723624/livetags",
+      "lockApiUrl": "https://live2.nicovideo.jp/unama/api/v2/programs/lv331723624/livetags/lock",
+      "reportApiUrl": "https://live2.nicovideo.jp/unama/api/v2/programs/lv331723624/livetags/report",
+      "list": [
+        {
+          "text": "一般(その他)",
+          "existsNicopediaArticle": true,
+          "nicopediaArticlePageUrl": "https://dic.nicovideo.jp/a/%E4%B8%80%E8%88%AC%28%E3%81%9D%E3%81%AE%E4%BB%96%29",
+          "type": "category",
+          "isLocked": true,
+          "isDeletable": false
+        },
+        {
+          "text": "一般",
+          "existsNicopediaArticle": true,
+          "nicopediaArticlePageUrl": "https://dic.nicovideo.jp/a/%E4%B8%80%E8%88%AC",
+          "type": "category",
+          "isLocked": true,
+          "isDeletable": false
+        },
+        {
+          "text": "スマートフォン配信",
+          "existsNicopediaArticle": true,
+          "nicopediaArticlePageUrl": "https://dic.nicovideo.jp/a/%E3%82%B9%E3%83%9E%E3%83%BC%E3%83%88%E3%83%95%E3%82%A9%E3%83%B3%E9%85%8D%E4%BF%A1",
+          "type": "",
+          "isLocked": true,
+          "isDeletable": false
+        }
+      ],
+      "isLocked": false
+    },
+    "links": {
+      "feedbackPageUrl": "https://www.nicovideo.jp/feedback/live2_watch",
+      "contentsTreePageUrl": "https://commons.nicovideo.jp/tree/lv331723624",
+      "programReportPageUrl": "https://live.nicovideo.jp/program-allegation"
+    },
+    "player": {
+      "embedUrl": "https://live.nicovideo.jp/embed/",
+      "banner": {
+        "apiUrl": "https://live2.nicovideo.jp/unama/api/v3/programs/lv331723624/playerbanner"
+      }
+    },
+    "watchPageUrl": "https://live.nicovideo.jp/watch/lv331723624",
+    "gatePageUrl": "https://live.nicovideo.jp/gate/lv331723624",
+    "mediaServerType": "DMC",
+    "isPrivate": false,
+    "isTest": false,
+    "report": {
+      "imageApiUrl": "https://untnp.live.nicovideo.jp/img.report"
+    },
+    "isFollowerOnly": false,
+    "cueSheet": {
+      "eventsApiUrl": "https://live2.nicovideo.jp/api/v2/programs/lv331723624/operation/events"
+    },
+    "cueSheetSnapshot": {
+      "commentLocked": false,
+      "audienceCommentLayout": "normal"
+    },
+    "nicoad": {
+      "totalPoint": 0,
+      "ranking": []
+    },
+    "isGiftEnabled": true,
+    "stream": {
+      "maxQuality": "high"
+    },
+    "superichiba": {
+      "allowAudienceToAddNeta": true,
+      "canSupplierUse": true
+    },
+    "isChasePlayEnabled": true,
+    "isTimeshiftDownloadEnabled": true,
+    "statistics": {
+      "watchCount": 221,
+      "commentCount": 0
+    },
+    "isPremiumAppealBannerEnabled": true,
+    "isRecommendEnabled": true,
+    "isEmotionEnabled": true
+  },
+  "socialGroup": {
+    "type": "community",
+    "id": "co1736565",
+    "broadcastHistoryPageUrl": "https://com.nicovideo.jp/live_archives/co1736565",
+    "description": "<BR><BR>\n<Font Color=\"#A0522D\">\n\n　　　　　*’“・* 。<BR>\n　　　　　　　　|　　　　 `*。<BR>　　　\n　　　 ,｡∩∧_,,∧　 　* 　　　<Font Size=\"3\" Color=\"#ff9999\"><b>平日ヒロインむらかみクローバー”D”</b></Font><BR>\n　　　　　　+　(´･ω･`)　*｡+ﾟ<BR>\n　　　　　　`*｡ ヽ、　 つ *ﾟ*<BR>\n　　　　　　　`・+｡*・’ ﾟ⊃ +ﾟ<BR>\n　　　　　　　☆　　 ∪~ ｡*ﾟ<BR>\n　 　　　　　　`・+｡*・ ﾟ<BR>\n<BR>\n♥ﾟ+｡⌒Ｙ⌒Ｙ⌒Ｙ⌒Ｙ⌒Ｙ⌒Ｙ⌒Ｙ⌒Ｙ⌒Ｙ⌒Ｙ⌒⌒Ｙ⌒Ｙ⌒Ｙ⌒Ｙ⌒Ｙ⌒Ｙ⌒Ｙ⌒Ｙ⌒Ｙ⌒Ｙ⌒｡+ﾟ♥　<br>\n名前：むらまこ(ムラ・マコーシカ)<BR><BR>\n\nTwitter：＠muramako_2525<BR><BR>\n\n放送内容は、主に雑談。踊ってみたもしてますしゲームもやります<BR>\n趣味は筋トレで、痩せてることがいいところです<BR>\n胸はありません<BR><BR>\n\n\n♥ﾟ+｡⌒Ｙ⌒Ｙ⌒Ｙ⌒Ｙ⌒Ｙ⌒Ｙ⌒Ｙ⌒Ｙ⌒Ｙ⌒Ｙ⌒⌒Ｙ⌒Ｙ⌒Ｙ⌒Ｙ⌒Ｙ⌒Ｙ⌒Ｙ⌒Ｙ⌒Ｙ⌒Ｙ⌒｡+ﾟ♥<BR><BR>\n\n\n</Font>",
+    "name": "毎日ヒロインむらかみクローバー”D”",
+    "socialGroupPageUrl": "https://com.nicovideo.jp/community/co1736565",
+    "thumbnailImageUrl": "https://secure-dcdn.cdn.nimg.jp/comch/community-icon/128x128/co1736565.jpg?1614680354",
+    "thumbnailSmallImageUrl": "https://secure-dcdn.cdn.nimg.jp/comch/community-icon/64x64/co1736565.jpg?1614680354",
+    "level": 102,
+    "isFollowed": true,
+    "isJoined": true
+  },
+  "player": {
+    "name": "leo",
+    "audienceToken": "",
+    "isJumpDisabled": false,
+    "disablePlayVideoAd": false,
+    "isRestrictedCommentPost": false,
+    "streamAllocationType": "allHigh"
+  },
+  "ad": {
+    "isBillboardEnabled": false,
+    "isSiteHeaderBannerEnabled": true,
+    "isProgramInformationEnabled": true,
+    "isFooterEnabled": true,
+    "adsJsUrl": "https://res.ads.nicovideo.jp/assets/js/ads2.js?ref=live"
+  },
+  "billboard": {},
+  "assets": {
+    "scripts": {
+      "vendor": "scripts/vendor.be95d20c96.js",
+      "nicolib": "scripts/nicolib.55043ab61f.js",
+      "broadcaster-tool": "scripts/broadcaster-tool.b779c980.js",
+      "ichiba": "scripts/ichiba.b779c980.js",
+      "operator-tools": "scripts/operator-tools.b779c980.js",
+      "pc-watch": "scripts/pc-watch.b779c980.js",
+      "pc-watch.all": "scripts/pc-watch.all.b779c980.js",
+      "polyfill": "scripts/polyfill.b779c980.js"
+    },
+    "stylesheets": {
+      "broadcaster-tool": "stylesheets/broadcaster-tool.b537c28e.css",
+      "ichiba": "stylesheets/ichiba.2708a833.css",
+      "operator-tools": "stylesheets/operator-tools.e4aae334.css",
+      "pc-watch": "stylesheets/pc-watch.a5b52438.css",
+      "pc-watch.all": "stylesheets/pc-watch.all.99c53ad0.css"
+    }
+  },
+  "nicoEnquete": {
+    "isEnabled": false
+  },
+  "community": {
+    "id": "co1736565",
+    "followPageUrl": "https://com.nicovideo.jp/motion/co1736565?ref=live2watch",
+    "unfollowPageUrl": "https://com.nicovideo.jp/leave/co1736565"
+  },
+  "communityFollower": {
+    "records": [
+      {
+        "communityId": "co1736565",
+        "userId": "12345"
+      }
+    ]
+  },
+  "userFollower": {
+    "records": [
+      {
+        "followeeId": "387778",
+        "followerId": "12345"
+      }
+    ]
+  },
+  "userProgramWatch": {
+    "rejectedReasons": [],
+    "expireTime": null,
+    "canAutoRefresh": false
+  },
+  "userProgramReservation": {
+    "isReserved": false
+  },
+  "programWatch": {
+    "condition": {
+      "needLogin": false
+    }
+  },
+  "programTimeshift": {
+    "watchLimit": "Unlimited",
+    "publication": {
+      "status": "Before",
+      "expireTime": 1620831600
+    },
+    "reservation": {
+      "expireTime": 1620204069
+    }
+  },
+  "programTimeshiftWatch": {
+    "condition": {
+      "needReservation": true
+    }
+  },
+  "premiumAppealBanner": {
+    "premiumRegistrationUrl": "https://account.nicovideo.jp/premium/register?next_url=%2Fwatch%2Flv331723624&sec=pc_header_premium_appeal&site=nicolive&sub=watch_headerbar_0_community_lv331723624_onair"
+  },
+  "stream": {
+    "fmp4": {
+      "enabled": true,
+      "userTest": {
+        "condition": {
+          "isWithinUserTestTime": false
+        }
+      }
+    }
+  },
+  "programBroadcaster": {
+    "konomiTags": [
+      {
+        "text": "ニコニコ生放送",
+        "nicopediaArticleId": 1560,
+        "nicopediaArticleUrl": "https://dic.nicovideo.jp/id/1560"
+      },
+      {
+        "text": "競馬",
+        "nicopediaArticleId": 114956,
+        "nicopediaArticleUrl": "https://dic.nicovideo.jp/id/114956"
+      },
+      {
+        "text": "酒",
+        "nicopediaArticleId": 330854,
+        "nicopediaArticleUrl": "https://dic.nicovideo.jp/id/330854"
+      },
+      {
+        "text": "ユーザー生放送",
+        "nicopediaArticleId": 768557,
+        "nicopediaArticleUrl": "https://dic.nicovideo.jp/id/768557"
+      },
+      {
+        "text": "むらまこ",
+        "nicopediaArticleId": 5230887,
+        "nicopediaArticleUrl": "https://dic.nicovideo.jp/id/5230887"
+      }
+    ]
+  },
+  "programSuperichiba": {
+    "programIsPermittedToRequestSpecificNeta": false
+  }
+}

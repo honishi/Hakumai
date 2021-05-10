@@ -4,7 +4,10 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: macos-latest
+    # TODO: Activate this `macos-11.0` image.
+    # So far, seems the `macos-11.0` image is not available for everyone.
+    # See details at: https://github.com/actions/virtual-environments/issues/2486
+    runs-on: macos-11.0
 
     # checkout
     steps:
@@ -12,13 +15,15 @@ jobs:
 
       # debug prints
       - name: Show Xcode versions
-        run: ls /Applications | grep 'Xcode'
+        run: |
+          xcodebuild -version
+          ls /Applications | grep 'Xcode'
 
       # setup ruby
-      - name: Setup Ruby 2.5
+      - name: Setup Ruby
         uses: actions/setup-ruby@v1
         with:
-          ruby-version: "2.5"
+          ruby-version: "2.7"
       - name: Check Ruby version
         run: ruby -v
 
@@ -38,6 +43,12 @@ jobs:
         run: |
           bundle config path vendor/bundle
           bundle install --jobs 4 --retry 3
+
+      # setup xcode version
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '12.5'
 
       # setup xcode project
       - name: Setup cache for Pods
@@ -61,5 +72,6 @@ jobs:
       # https://github.com/CocoaPods/CocoaPods/issues/7708#issuecomment-423668677
       - name: Build and Run Tests
         run: |
+          xcodebuild -version
           export EXPANDED_CODE_SIGN_IDENTITY=""
           set -o pipefail && xcodebuild -workspace Hakumai.xcworkspace -scheme Hakumai -configuration Debug -destination 'platform=OS X' CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO test | bundle exec xcpretty -c

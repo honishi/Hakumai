@@ -7,188 +7,240 @@
 //
 
 import Foundation
+import Alamofire
+import Starscream
 import XCGLogger
 
-// file log
-private let kFileLogName = "Hakumai_Api.log"
-
-// MARK: - enum
-enum BrowserType {
-    case chrome
-    case safari
-    case firefox
-}
-
-// MARK: - protocol
-
+// MARK: - Protocol
 // note these functions are called in background thread, not main thread.
 // so use explicit main thread for updating ui in these callbacks.
-protocol NicoUtilityDelegate: class {
-    func nicoUtilityWillPrepareLive(_ nicoUtility: NicoUtility)
-    func nicoUtilityDidPrepareLive(_ nicoUtility: NicoUtility, user: User, live: Live)
-    func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtility, reason: String)
-    func nicoUtilityDidConnectToLive(_ nicoUtility: NicoUtility, roomPosition: RoomPosition)
-    func nicoUtilityDidReceiveFirstChat(_ nicoUtility: NicoUtility, chat: Chat)
-    func nicoUtilityDidReceiveChat(_ nicoUtility: NicoUtility, chat: Chat)
-    func nicoUtilityDidGetKickedOut(_ nicoUtility: NicoUtility)
-    func nicoUtilityWillReconnectToLive(_ nicoUtility: NicoUtility)
-    func nicoUtilityDidDisconnect(_ nicoUtility: NicoUtility)
-    func nicoUtilityDidReceiveHeartbeat(_ nicoUtility: NicoUtility, heartbeat: Heartbeat)
+protocol NicoUtilityDelegate: AnyObject {
+    func nicoUtilityWillPrepareLive(_ nicoUtility: NicoUtilityType)
+    func nicoUtilityDidPrepareLive(_ nicoUtility: NicoUtilityType, user: User, live: Live)
+    func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, reason: String, error: NicoUtilityError?)
+    func nicoUtilityDidConnectToLive(_ nicoUtility: NicoUtilityType, roomPosition: RoomPosition)
+    func nicoUtilityDidReceiveChat(_ nicoUtility: NicoUtilityType, chat: Chat)
+    func nicoUtilityDidGetKickedOut(_ nicoUtility: NicoUtilityType)
+    func nicoUtilityWillReconnectToLive(_ nicoUtility: NicoUtilityType)
+    func nicoUtilityDidDisconnect(_ nicoUtility: NicoUtilityType)
+    func nicoUtilityDidReceiveHeartbeat(_ nicoUtility: NicoUtilityType, heartbeat: Heartbeat)
 }
 
-// MARK: constant value
-// mapping between community level and standing room is based on following articles:
-private let kCommunityLevelStandRoomTable: [(levelRange: CountableClosedRange<Int>, standCount: Int)] = [
-    (  1...49, 1),     // a
-    ( 50...69, 2),     // a, b
-    ( 70...104, 3),     // a, b, c
-    (105...149, 4),     // a, b, c, d
-    (150...189, 5),     // a, b, c, d, e
-    (190...229, 6),     // a, b, c, d, e, f
-    (230...255, 7),     // a, b, c, d, e, f, g
-    (256...999, 9)     // a, b, c, d, e, f, g, h, i
-]
+protocol NicoUtilityType {
+    // Properties
+    static var shared: Self { get }
+    var delegate: NicoUtilityDelegate? { get }
+    var live: Live? { get }
 
-// urls for api
-private let kGetPlayerStatusUrl = "http://watch.live.nicovideo.jp/api/getplayerstatus"
-private let kGetPostKeyUrl = "http://live.nicovideo.jp/api/getpostkey"
-private let kHeartbeatUrl = "http://live.nicovideo.jp/api/heartbeat"
-private let kNgScoringUrl: String = "http://watch.live.nicovideo.jp/api/ngscoring"
+    // Main Methods
+    func connect(liveNumber: Int, sessionType: NicoSessionType, connectContext: NicoUtility.ConnectContext)
+    func disconnect(reserveToReconnect: Bool)
+    func comment(_ comment: String, anonymously: Bool, completion: @escaping (_ comment: String?) -> Void)
 
-// urls for scraping
-private let kCommunityUrlUser = "http://com.nicovideo.jp/community/"
-private let kCommunityUrlChannel = "http://ch.nicovideo.jp/"
-private let kUserUrl = "http://www.nicovideo.jp/user/"
+    // Methods for Community and Usernames
+    func loadThumbnail(completion: @escaping (Data?) -> Void)
+    func cachedUserName(forChat chat: Chat) -> String?
+    func cachedUserName(forUserId userId: String) -> String?
+    func resolveUsername(forUserId userId: String, completion: @escaping (String?) -> Void)
+    func extractUsername(fromHtmlData htmlData: Data) -> String?
 
-// request header
-let kCommonUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"
+    // Utility Methods
+    func urlString(forUserId userId: String) -> String
+    func reserveToClearUserSessionCookie()
 
-// intervals & sleep
-private let kHeartbeatDefaultInterval: TimeInterval = 30
+    // Miscellaneous Methods
+    func reportAsNgUser(chat: Chat, completion: @escaping (_ userId: String?) -> Void)
+}
 
-// other threshold
-private let kDefaultResFrom = 20
-private let kResolveUserNameOperationQueueOverloadThreshold = 10
+// MARK: - Types
+enum NicoSessionType {
+    case chrome
+    case safari
+    case login(mail: String, password: String)
+}
 
-// debug flag
-private let kDebugEnableForceReconnect = false
-private let kDebugForceReconnectChatCount = 20
+enum NicoUtilityError: Error {
+    case network
+    case `internal`
+    case noCookieFound
+    case unknown
+}
 
-// MARK: - class
-final class NicoUtility: NSObject, RoomListenerDelegate {
-    // MARK: - Properties
-    static let shared = NicoUtility()
+// MARK: - Constants
+// URLs:
+private let livePageUrl = "https://live.nicovideo.jp/watch/lv"
+private let userPageUrl = "https://www.nicovideo.jp/user/"
+// Cookies:
+private let userSessionCookieDomain = "nicovideo.jp"
+private let userSessionCookieName = "user_session"
+private let userSessionCookieExpire = TimeInterval(7200)
+private let userSessionCookiePath = "/"
+// Misc:
+private let messageSocketPingInterval = 30
 
+// MARK: - WebSocket Messages
+private let startWatchingMessage = """
+{"type":"startWatching","data":{"stream":{"quality":"high","protocol":"hls","latency":"low","chasePlay":false},"room":{"protocol":"webSocket","commentable":true},"reconnect":false}}")
+"""
+private let keepSeatMessage = """
+{"type":"keepSeat"}
+"""
+private let pongMessage = """
+{"type":"pong"}
+"""
+private let startThreadMessage = """
+[{"ping":{"content":"rs:0"}},{"ping":{"content":"ps:0"}},{"thread":{"thread":"%@","version":"20061206","user_id":"%@","res_from":%d,"with_global":1,"scores":1,"nicoru":0}},{"ping":{"content":"pf:0"}},{"ping":{"content":"rf:0"}}]
+"""
+private let postCommentMessage = """
+{"type":"postComment","data":{"text":"%@","vpos":%d,"isAnonymous":%@}}
+"""
+
+// MARK: - Class
+final class NicoUtility: NicoUtilityType {
+    // Type
+    enum ConnectContext {
+        case normal, reconnect
+    }
+    struct ConnectRequest {
+        let liveNumber: Int
+        let sessionType: NicoSessionType
+    }
+
+    // Public Properties
+    static var shared: NicoUtility = NicoUtility()
     weak var delegate: NicoUtilityDelegate?
-    var lastLiveNumber: Int?
+    private(set) var live: Live?
 
-    // live core information
-    var live: Live?
-    private var user: User?
-    private var messageServer: MessageServer?
+    // Private Properties
+    private var ongoingConnectRequest: ConnectRequest?
+    private var lastEstablishedConnectRequest: ConnectRequest?
+    private var userSessionCookie: String?
+    private let session: Session
+    private var managingSocket: WebSocket?
+    private var messageSocket: WebSocket?
+    private var shouldClearUserSessionCookie = true
 
-    private var messageServers = [MessageServer]()
-    private var roomListeners = [RoomListener]()
-    private var receivedFirstChat = [RoomPosition: Bool]()
+    // Timers for WebSockets
+    private var managingSocketKeepTimer: Timer?
+    private var messageSocketPingTimer: Timer?
 
-    // other variables
-    private let resolveUserNameOperationQueue = OperationQueue()
+    // Usernames
+    private let userNameResolvingOperationQueue = OperationQueue()
     private var cachedUserNames = [String: String]()
 
-    private var heartbeatTimer: Timer?
-    private var reservedToReconnect = false
-    private var chatCount = 0
-    private var resFrom = kDefaultResFrom
-
-    // session cookie
-    private var shouldClearUserSessionCookie = true
-    var userSessionCookie: String?
-
-    // logger
-    private let fileLog = XCGLogger()
-
-    // MARK: - Object Lifecycle
-    private override init() {
-        super.init()
-        initializeFileLogger()
-        initializeInstance()
+    init() {
+        let configuration = URLSessionConfiguration.af.default
+        configuration.headers.add(.userAgent(commonUserAgentValue))
+        self.session = Session(configuration: configuration)
+        clearHttpCookieStorage()
+        userNameResolvingOperationQueue.maxConcurrentOperationCount = 1
     }
 }
 
+// MARK: - Public Methods (Main)
 extension NicoUtility {
-    // MARK: - Public Interface
+    func connect(liveNumber: Int, sessionType: NicoSessionType, connectContext: NicoUtility.ConnectContext = .normal) {
+        // 1. Keep connection request.
+        ongoingConnectRequest = ConnectRequest(
+            liveNumber: liveNumber,
+            sessionType: sessionType
+        )
+        lastEstablishedConnectRequest = nil
+
+        // 2. Cleanup current connection, if needed.
+        if live != nil {
+            disconnect()
+        }
+
+        // 3. Go direct to `connect()` IF the user session cookie is availale.
+        clearUserSessionCookieIfReserved()
+        delegate?.nicoUtilityWillPrepareLive(self)
+        if let userSessionCookie = userSessionCookie {
+            connect(
+                liveNumber: liveNumber,
+                userSessionCookie: userSessionCookie,
+                connectContext: connectContext)
+            return
+        }
+
+        // 4. Ok, there's no cookie available, go get it..
+        let cookieCompletion = { (userSessionCookie: String?) -> Void in
+            log.debug("Cookie result: [\(sessionType)] [\(userSessionCookie ?? "-")]")
+            guard let userSessionCookie = userSessionCookie else {
+                let reason = "No available cookie."
+                log.error(reason)
+                self.delegate?.nicoUtilityDidFailToPrepareLive(self, reason: reason, error: .noCookieFound)
+                return
+            }
+            self.connect(
+                liveNumber: liveNumber,
+                userSessionCookie: userSessionCookie,
+                connectContext: connectContext)
+        }
+        switch sessionType {
+        case .chrome:
+            CookieUtility.requestBrowserCookie(
+                browserType: .chrome,
+                completion: cookieCompletion)
+        case .safari:
+            CookieUtility.requestBrowserCookie(
+                browserType: .safari,
+                completion: cookieCompletion)
+        case .login(let mail, let password):
+            CookieUtility.requestLoginCookie(
+                mailAddress: mail,
+                password: password,
+                completion: cookieCompletion)
+        }
+    }
+
+    func disconnect(reserveToReconnect: Bool = false) {
+        disconnectSocketsAndResetState()
+        delegate?.nicoUtilityDidDisconnect(self)
+    }
+
+    func comment(_ comment: String, anonymously: Bool, completion: @escaping (String?) -> Void) {
+        guard let baseTime = live?.baseTime else { return }
+        let elapsed = Int(Date().timeIntervalSince1970) - Int(baseTime.timeIntervalSince1970)
+        let vpos = elapsed * 100
+        let message = String.init(
+            format: postCommentMessage,
+            comment, vpos, anonymously ? "true" : "false")
+        log.debug(message)
+        managingSocket?.write(string: message)
+    }
+
+    func urlString(forUserId userId: String) -> String {
+        return userPageUrl + userId
+    }
+
     func reserveToClearUserSessionCookie() {
         shouldClearUserSessionCookie = true
         log.debug("reserved to clear user session cookie")
     }
 
-    func connect(liveNumber: Int, mailAddress: String, password: String) {
-        resFrom = kDefaultResFrom
-        clearUserSessionCookieIfReserved()
-
-        if userSessionCookie == nil {
-            let completion = { (userSessionCookie: String?) -> Void in
-                self.connect(liveNumber: liveNumber, userSessionCookie: userSessionCookie)
-            }
-            CookieUtility.requestLoginCookie(mailAddress: mailAddress, password: password, completion: completion)
-        } else {
-            connect(liveNumber: liveNumber, userSessionCookie: userSessionCookie)
-        }
-    }
-
-    func connect(liveNumber: Int, browserType: BrowserType) {
-        resFrom = kDefaultResFrom
-        clearUserSessionCookieIfReserved()
-
-        CookieUtility.requestBrowserCookie(browserType: browserType) { cookie in
-            guard let cookie = cookie else { return }
-            self.connect(liveNumber: liveNumber, userSessionCookie: cookie)
-        }
-    }
-
-    func disconnect(reserveToReconnect: Bool = false) {
-        reservedToReconnect = reserveToReconnect
-        for listener in roomListeners {
-            listener.closeSocket()
-        }
-        stopHeartbeatTimer()
-    }
-
-    func comment(_ comment: String, anonymously: Bool = true, completion: @escaping (_ comment: String?) -> Void) {
-        guard let live = live, let user = user, let lv = live.liveId else {
-            log.debug("no available stream, or user")
-            return
-        }
-        guard let assignedRoomListener = assignedRoomListener() else {
-            log.error("could not find assigned room listener")
-            return
-        }
-        guard let json = assignedRoomListener.commentJson(live: live, user: user, comment: comment, anonymously: anonymously) else {
-            log.error("could not create comment json")
-            return
-        }
-        postCommentRequest(lv: lv, json: json) { (_, _, _) in
-            // TODO: handle errors...
-        }
-    }
-
     func loadThumbnail(completion: @escaping (Data?) -> Void) {
-        guard let thumbnailUrl = live?.community.thumbnailUrl else {
-            log.debug("no thumbnail url")
+        guard let url = live?.community.thumbnailUrl else {
             completion(nil)
             return
         }
-        let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (response, data, connectionError) in
-            if connectionError != nil {
-                log.error("error in loading thumbnail request")
+        session.request(url).responseData {
+            switch $0.result {
+            case .success(let data):
+                completion(data)
+            case .failure(_):
                 completion(nil)
-                return
             }
-            completion(data)
         }
-        cookiedAsyncRequest(httpMethod: "GET", url: thumbnailUrl.absoluteString, parameters: nil, completion: httpCompletion)
     }
 
+    func reportAsNgUser(chat: Chat, completion: @escaping (String?) -> Void) {
+        //
+    }
+}
+
+// MARK: - Public Methods (Username)
+extension NicoUtility {
     func cachedUserName(forChat chat: Chat) -> String? {
         guard let userId = chat.userId else { return nil }
         return cachedUserName(forUserId: userId)
@@ -208,273 +260,375 @@ extension NicoUtility {
             completion(cachedUsername)
             return
         }
-        if kResolveUserNameOperationQueueOverloadThreshold < resolveUserNameOperationQueue.operationCount {
-            log.debug("detected overload, so skip resolve request")
-            completion(nil)
-            return
-        }
-        resolveUserNameOperationQueue.addOperation {
-            let resolveCompletion = { (response: URLResponse?, data: Data?, connectionError: Error?) in
-                guard connectionError == nil else {
+        userNameResolvingOperationQueue.addOperation { [weak self] in
+            guard let me = self else { return }
+            // 1. Again, chech if the user name is resolved in previous operation.
+            if let cachedUsername = me.cachedUserNames[userId] {
+                completion(cachedUsername)
+                return
+            }
+
+            // 2.Ok, there's no cached one, request user page synchronously, NOT async.
+            let url = userPageUrl + String(userId)
+            me.session.request(url).syncResponseData {
+                switch $0.result {
+                case .success(let data):
+                    let username = self?.extractUsername(fromHtmlData: data)
+                    me.cachedUserNames[userId] = username
+                    completion(username)
+                case .failure(_):
                     log.error("error in resolving username")
                     completion(nil)
-                    return
-                }
-                guard let data = data else { return }
-                let username = self.extractUsername(fromHtmlData: data)
-                self.cachedUserNames[userId] = username
-                completion(username)
-            }
-            self.cookiedAsyncRequest(httpMethod: "GET", url: kUserUrl + String(userId), parameters: nil, completion: resolveCompletion)
-        }
-    }
-
-    func reportAsNgUser(chat: Chat, completion: @escaping (_ userId: String?) -> Void) {
-        guard let liveId = live?.liveId, let userId = chat.userId, let date = chat.date,
-              let dateUsec = chat.dateUsec, let no = chat.no, let roomPosition = chat.roomPosition else { return }
-
-        let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (response, data, connectionError) in
-            guard connectionError == nil else {
-                log.error("error in requesting ng user")
-                completion(nil)
-                return
-            }
-            log.debug("completed to request ng user")
-            completion(userId)
-        }
-
-        let parameters: [String: Any] = [
-            "vid": liveId,
-            "lang": "ja-jp",
-            "type": "ID",
-            "locale": "GLOBAL",
-            "value": userId,
-            "player": "v4",
-            "uid": userId,
-            "tpos": String(Int(date.timeIntervalSince1970)) + "." + String(dateUsec),
-            "comment": String(no),
-            "thread": String(messageServers[roomPosition.rawValue].thread),
-            "comment_locale": "ja-jp"
-        ]
-        cookiedAsyncRequest(httpMethod: "POST", url: kNgScoringUrl, parameters: parameters, completion: httpCompletion)
-    }
-
-    func urlString(forUserId userId: String) -> String {
-        return kUserUrl + userId
-    }
-
-    // MARK: - RoomListenerDelegate Functions
-    func roomListenerDidReceiveThread(_ roomListener: RoomListener, thread: Thread) {
-        log.debug("\(thread)")
-        guard let roomPosition = roomListener.server?.roomPosition else { return }
-        delegate?.nicoUtilityDidConnectToLive(self, roomPosition: roomPosition)
-    }
-
-    func roomListenerDidReceiveChat(_ roomListener: RoomListener, chat: Chat) {
-        // log.debug("\(chat)")
-        if isFirstChat(roomListener: roomListener, chat: chat) {
-            delegate?.nicoUtilityDidReceiveFirstChat(self, chat: chat)
-
-            // open next room, if needed
-            let isCurrentLastRoomChat = (chat.roomPosition?.rawValue == roomListeners.count - 1)
-            if isCurrentLastRoomChat {
-                log.debug("found user comment in current last room, so try to open new message server.")
-                openNewMessageServer()
-            }
-        }
-
-        if shouldNotifyChatToDelegate(chat: chat) {
-            delegate?.nicoUtilityDidReceiveChat(self, chat: chat)
-        }
-
-        if isKickedOut(roomListener: roomListener, chat: chat) {
-            delegate?.nicoUtilityDidGetKickedOut(self)
-            resFrom = 0
-            reconnectToLastLive()
-        }
-
-        if isDisconnected(chat: chat) {
-            disconnect()
-        }
-
-        chatCount += 1
-
-        // quick test for reconnect
-        #if DEBUG
-        if kDebugEnableForceReconnect {
-            debugForceReconnect()
-        }
-        #endif
-    }
-
-    func roomListenerDidFinishListening(_ roomListener: RoomListener) {
-        objc_sync_enter(self)
-        if let index = roomListeners.firstIndex(of: roomListener) {
-            roomListeners.remove(at: index)
-        }
-        objc_sync_exit(self)
-
-        if roomListeners.count == 0 {
-            delegate?.nicoUtilityDidDisconnect(self)
-            reset()
-            if reservedToReconnect {
-                reservedToReconnect = false
-                connect(liveNumber: lastLiveNumber, userSessionCookie: userSessionCookie)
-            }
-        }
-    }
-
-    // MARK: Message Server Functions
-    func deriveMessageServers(originServer: MessageServer, community: Community) -> [MessageServer] {
-        var arenaServer = originServer
-
-        if 0 < originServer.roomPosition.rawValue {
-            for _ in 1...(originServer.roomPosition.rawValue) {
-                if let previous = arenaServer.previous() {
-                    arenaServer = previous
-                } else {
-                    return [originServer]
                 }
             }
-        }
-
-        var servers = [arenaServer]
-        var roomCount = 0
-
-        if community.isUser == true {
-            if let level = community.level {
-                roomCount = standRoomCount(forCommunityLevel: level)
-            } else {
-                // possible ban case. stand a, or up to assigned room
-                roomCount = max(1, originServer.roomPosition.rawValue)
-            }
-        } else {
-            // stand a, b, c, d, e
-            roomCount = 5
-        }
-
-        for _ in 1...roomCount {
-            if let next = servers.last?.next() {
-                servers.append(next)
-            } else {
-                return [originServer]
-            }
-        }
-
-        return servers
-    }
-
-    func standRoomCount(forCommunityLevel level: Int) -> Int {
-        for (levelRange, standCount) in kCommunityLevelStandRoomTable {
-            if levelRange.contains(level) {
-                return standCount
-            }
-        }
-        return 0
-    }
-
-    @objc func checkHeartbeat(_ timer: Timer) {
-        let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (response, data, connectionError) in
-            if connectionError != nil {
-                log.error("error in checking heartbeat")
-                return
-            }
-
-            guard let data = data else { return }
-
-            let responseString = NSString(data: data, encoding: String.Encoding.utf8.rawValue)
-            self.fileLog.debug("\(responseString ?? "")")
-
-            guard let heartbeat = self.extractHeartbeat(fromXmlData: data) else {
-                log.error("error in extracting heatbeat")
-                return
-            }
-            self.fileLog.debug("\(heartbeat)")
-
-            self.delegate?.nicoUtilityDidReceiveHeartbeat(self, heartbeat: heartbeat)
-
-            if let interval = heartbeat.waitTime {
-                self.stopHeartbeatTimer()
-                self.scheduleHeartbeatTimer(immediateFire: false, interval: TimeInterval(interval))
-            }
-        }
-
-        // self.live may be nil if live is time-shifted. so use optional binding.
-        if let liveId = live?.liveId {
-            cookiedAsyncRequest(httpMethod: "GET", url: kHeartbeatUrl, parameters: ["v": liveId], completion: httpCompletion)
+            log.info("Userid[\(userId)] -> [\(me.cachedUserNames[userId] ?? "-")] QueueCount: \(me.userNameResolvingOperationQueue.operationCount)")
         }
     }
 }
 
+// MARK: - Private Methods
 private extension NicoUtility {
-    func initializeFileLogger() {
-        Helper.setupFileLogger(fileLog, fileName: kFileLogName)
-    }
+    func connect(liveNumber: Int, userSessionCookie: String, connectContext: ConnectContext) {
+        self.userSessionCookie = userSessionCookie
 
-    func initializeInstance() {
-        resolveUserNameOperationQueue.maxConcurrentOperationCount = 1
-    }
-
-    func debugForceReconnect() {
-        if (chatCount % kDebugForceReconnectChatCount) == (kDebugForceReconnectChatCount - 1) {
-            reconnectToLastLive()
-        }
-    }
-
-    // MARK: Chat Checkers
-    func isFirstChat(roomListener: RoomListener, chat: Chat) -> Bool {
-        if chat.isUserComment {
-            if let room = roomListener.server?.roomPosition {
-                if receivedFirstChat[room] == nil || receivedFirstChat[room] == false {
-                    receivedFirstChat[room] = true
-                    return true
-                }
+        reqeustLiveInfo(lv: liveNumber) { [weak self] in
+            guard let me = self else { return }
+            switch $0 {
+            case .success(let embeddedData):
+                let live = embeddedData.toLive()
+                let user = embeddedData.toUser()
+                self?.live = live
+                me.delegate?.nicoUtilityDidPrepareLive(me, user: user, live: live)
+                me.openManagingSocket(
+                    webSocketUrl: embeddedData.site.relive.webSocketUrl,
+                    userId: embeddedData.user.id,
+                    connectContext: connectContext
+                )
+            case .failure(_):
+                let reason = "Failed to load live info."
+                me.delegate?.nicoUtilityDidFailToPrepareLive(me, reason: reason, error: nil)
             }
         }
-        return false
     }
 
-    func shouldNotifyChatToDelegate(chat: Chat) -> Bool {
-        // premium == 0, 1
-        if chat.isUserComment {
-            return true
+    func reqeustLiveInfo(lv: Int, completion: @escaping (Result<EmbeddedDataProperties, NicoUtilityError>) -> Void) {
+        let urlRequest = urlRequestWithUserSessionCookie(
+            urlString: "\(livePageUrl)\(lv)",
+            userSession: userSessionCookie
+        )
+        let request = session.request(urlRequest)
+        request.cURLDescription(calling: { log.debug($0) })
+        request.responseData {
+            log.debug($0.debugDescription)
+            switch $0.result {
+            case .success(let data):
+                guard let embedded = NicoUtility.extractEmbeddedDataPropertiesFromLivePage(html: data) else {
+                    completion(Result.failure(NicoUtilityError.internal))
+                    return
+                }
+                completion(Result.success(embedded))
+            case .failure(_):
+                completion(Result.failure(NicoUtilityError.internal))
+            }
         }
-        // comment == '/hb ifseetno xx'
-        if chat.kickOutSeatNo != nil {
-            return true
-        }
-        // others. is chat my assigned room's one?
-        if isAssignedMessageServerChat(chat: chat) {
-            return true
-        }
-        return false
     }
 
-    func isKickedOut(roomListener: RoomListener, chat: Chat) -> Bool {
-        // XXX: should use isAssignedMessageServerChat()
-        if roomListener.server?.roomPosition != messageServer?.roomPosition {
-            return false
+    func openManagingSocket(webSocketUrl: String, userId: String, connectContext: ConnectContext) {
+        openManagingSocket(webSocketUrl: webSocketUrl) { [weak self] in
+            guard let me = self else { return }
+            switch $0 {
+            case .success(let room):
+                me.openMessageSocket(userId: userId, room: room, connectContext: connectContext)
+            case .failure(_):
+                let reason = "Failed to load message server info."
+                me.delegate?.nicoUtilityDidFailToPrepareLive(me, reason: reason, error: nil)
+            }
         }
-        if let internalNo = chat.internalNo, internalNo < kDefaultResFrom {
-            // there is a possibility the kickout command is invoked as a result of my connection start. so ignore.
-            return false
-        }
-        if chat.kickOutSeatNo == user?.seatNo {
-            return true
-        }
-        return false
     }
 
-    func isDisconnected(chat: Chat) -> Bool {
-        return (chat.comment == "/disconnect" && chat.isSystemComment && isAssignedMessageServerChat(chat: chat))
+    func openMessageSocket(userId: String, room: WebSocketRoomData, connectContext: ConnectContext) {
+        openMessageSocket(userId: userId, room: room, connectContex: connectContext) { [weak self] in
+            guard let me = self else { return }
+            switch $0 {
+            case .success():
+                me.startMessageSocketPingTimer(interval: messageSocketPingInterval)
+                me.lastEstablishedConnectRequest = me.ongoingConnectRequest
+                me.delegate?.nicoUtilityDidConnectToLive(me, roomPosition: RoomPosition.arena)
+            case .failure(_):
+                let reason = "Failed to open message server."
+                me.delegate?.nicoUtilityDidFailToPrepareLive(me, reason: reason, error: nil)
+            }
+        }
     }
 
-    func isAssignedMessageServerChat(chat: Chat) -> Bool {
-        return chat.roomPosition == messageServer?.roomPosition
+    func disconnectSocketsAndResetState() {
+        stopManagingSocketKeepTimer()
+        stopMessageSocketPingTimer()
+        [managingSocket, messageSocket].forEach {
+            $0?.onEvent = nil
+            $0?.disconnect()
+        }
+        managingSocket = nil
+        messageSocket = nil
+
+        live = nil
     }
 
-    // MARK: - Internal Functions
-    // MARK: Connect
+    func reconnect() {
+        objc_sync_enter(self)
+        defer { objc_sync_exit(self) }
+
+        log.debug("Reconnecting...")
+        guard let lastConnection = lastEstablishedConnectRequest else {
+            log.warning("Failed to reconnect since there's no last established connection info.")
+            return
+        }
+        // Nullifying `lastEstablishedConnectRequest` to prevent the `reconnect()`
+        // method from being called multiple times from multiple thread.
+        lastEstablishedConnectRequest = nil
+
+        disconnect()
+        delegate?.nicoUtilityWillReconnectToLive(self)
+
+        // Just in case, make some delay to invoke the connect method.
+        DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 2) {
+            self.connect(
+                liveNumber: lastConnection.liveNumber,
+                sessionType: lastConnection.sessionType,
+                connectContext: .reconnect)
+        }
+    }
+}
+
+// MARK: Private Methods (Managing Socket)
+private extension NicoUtility {
+    func openManagingSocket(webSocketUrl: String, completion: @escaping (Result<WebSocketRoomData, NicoUtilityError>) -> Void) {
+        guard let url = URL(string: webSocketUrl) else {
+            completion(Result.failure(NicoUtilityError.internal))
+            return
+        }
+        var request = URLRequest(url: url)
+        request.headers = [commonUserAgentKey: commonUserAgentValue]
+        request.timeoutInterval = 10
+        let socket = WebSocket(request: request)
+        socket.onEvent = { [weak self] in
+            self?.handleManagingSocketEvent(
+                socket: socket,
+                event: $0,
+                completion: completion)
+        }
+        socket.connect()
+        managingSocket = socket
+    }
+
+    func handleManagingSocketEvent(socket: WebSocket, event: WebSocketEvent, completion: (Result<WebSocketRoomData, NicoUtilityError>) -> Void) {
+        switch event {
+        case .connected(_):
+            log.debug("connected")
+            socket.write(string: startWatchingMessage)
+        case .disconnected(_, _):
+            log.debug("disconnected")
+        case .text(let text):
+            log.debug("text: \(text)")
+            processWebSocketData(text: text, socket: socket, completion: completion)
+        case .binary(_):
+            log.debug("binary")
+        case .pong(_):
+            log.debug("pong")
+        case .ping(_):
+            log.debug("ping")
+        case .error(_):
+            log.debug("error")
+            reconnect()
+        case .viabilityChanged(_):
+            log.debug("viabilityChanged")
+        case .reconnectSuggested(_):
+            log.debug("reconnectSuggested")
+            reconnect()
+        case .cancelled:
+            log.debug("cancelled")
+        }
+    }
+
+    func processWebSocketData(text: String, socket: WebSocket, completion: (Result<WebSocketRoomData, NicoUtilityError>) -> Void) {
+        guard let decoded = decodeWebSocketData(text: text) else { return }
+        switch decoded {
+        case let seat as WebSocketSeatData:
+            log.debug(seat)
+            startManagingSocketKeepTimer(interval: seat.data.keepIntervalSec)
+        case let room as WebSocketRoomData:
+            log.debug(room)
+            completion(Result.success(room))
+        case is WebSocketPingData:
+            socket.write(string: pongMessage)
+        case let stat as WebSocketStatisticsData:
+            delegate?.nicoUtilityDidReceiveHeartbeat(self, heartbeat: stat.toHeartbeat())
+        case is WebSocketDisconnectData:
+            disconnect()
+        default:
+            break
+        }
+    }
+
+    func decodeWebSocketData(text: String) -> Any? {
+        guard let data = text.data(using: .utf8) else { return nil }
+        let decoder = JSONDecoder()
+        guard let wsData = try? decoder.decode(WebSocketData.self, from: data) else { return nil }
+        switch wsData.type {
+        case .ping:
+            return try? decoder.decode(WebSocketPingData.self, from: data)
+        case .seat:
+            return try? decoder.decode(WebSocketSeatData.self, from: data)
+        case .room:
+            return try? decoder.decode(WebSocketRoomData.self, from: data)
+        case .statistics:
+            return try? decoder.decode(WebSocketStatisticsData.self, from: data)
+        case .disconnect:
+            return try? decoder.decode(WebSocketDisconnectData.self, from: data)
+        }
+    }
+}
+
+// MARK: - Private Methods (Message Socket)
+private extension NicoUtility {
+    func openMessageSocket(userId: String, room: WebSocketRoomData, connectContex: ConnectContext, completion: @escaping (Result<Void, NicoUtilityError>) -> Void) {
+        guard let url = URL(string: room.data.messageServer.uri) else {
+            completion(Result.failure(NicoUtilityError.internal))
+            return
+        }
+        var request = URLRequest(url: url)
+        request.headers = [
+            commonUserAgentKey: commonUserAgentValue,
+            "Sec-WebSocket-Extensions": "permessage-deflate; client_max_window_bits",
+            "Sec-WebSocket-Protocol": "msg.nicovideo.jp#json"
+        ]
+        request.timeoutInterval = 10
+        let socket = WebSocket(request: request)
+        socket.onEvent = { [weak self] in
+            self?.handleMessageSocketEvent(
+                socket: socket,
+                event: $0,
+                userId: userId,
+                threadId: room.data.threadId,
+                resFrom: {
+                    switch connectContex {
+                    case .normal:       return -150
+                    case .reconnect:    return -5
+                    }
+                }(),
+                completion: completion)
+        }
+        socket.connect()
+        messageSocket = socket
+    }
+
+    // swiftlint:disable function_parameter_count
+    func handleMessageSocketEvent(socket: WebSocket, event: WebSocketEvent, userId: String, threadId: String, resFrom: Int, completion: (Result<Void, NicoUtilityError>) -> Void) {
+        switch event {
+        case .connected(_):
+            log.debug("connected")
+            completion(Result.success(()))
+            sendStartThreadMessage(
+                socket: socket,
+                userId: userId,
+                threadId: threadId,
+                resFrom: resFrom)
+        case .disconnected(_, _):
+            log.debug("disconnected")
+        case .text(let text):
+            log.debug("text: \(text)")
+            decodeChat(text: text)
+        case .binary(_):
+            log.debug("binary")
+        case .pong(_):
+            log.debug("pong")
+        case .ping(_):
+            log.debug("ping")
+        case .error(_):
+            log.debug("error")
+            reconnect()
+        case .viabilityChanged(_):
+            log.debug("viabilityChanged")
+        case .reconnectSuggested(_):
+            log.debug("reconnectSuggested")
+            reconnect()
+        case .cancelled:
+            log.debug("cancelled")
+        }
+    }
+    // swiftlint:enable function_parameter_count
+
+    func sendStartThreadMessage(socket: WebSocket, userId: String, threadId: String, resFrom: Int) {
+        let message = String.init(format: startThreadMessage, threadId, userId, resFrom)
+        socket.write(string: message)
+    }
+
+    func decodeChat(text: String) {
+        guard let data = text.data(using: .utf8) else { return }
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        guard let chat = try? decoder.decode(WebSocketChatData.self, from: data) else { return }
+        // log.debug(chat)
+        delegate?.nicoUtilityDidReceiveChat(self, chat: chat.toChat())
+    }
+}
+
+// MARK: - Private Methods (Keep Timer for Managing Socket)
+private extension NicoUtility {
+    func startManagingSocketKeepTimer(interval: Int) {
+        stopManagingSocketKeepTimer()
+        managingSocketKeepTimer = Timer.scheduledTimer(
+            timeInterval: Double(interval),
+            target: self,
+            selector: #selector(NicoUtility.managingScoketKeepTimerFired),
+            userInfo: nil,
+            repeats: true)
+        log.debug("Started managing socket keep timer.")
+    }
+
+    func stopManagingSocketKeepTimer() {
+        managingSocketKeepTimer?.invalidate()
+        managingSocketKeepTimer = nil
+        log.debug("Stopped managing socket keep timer.")
+    }
+
+    @objc func managingScoketKeepTimerFired() {
+        log.debug("Sending keep to managing socket.")
+        managingSocket?.write(string: keepSeatMessage)
+    }
+}
+
+// MARK: - Private Methods (Ping Timer for Message Socket)
+private extension NicoUtility {
+    func startMessageSocketPingTimer(interval: Int) {
+        stopMessageSocketPingTimer()
+        messageSocketPingTimer = Timer.scheduledTimer(
+            timeInterval: Double(interval),
+            target: self,
+            selector: #selector(NicoUtility.messageScoketPingTimerFired),
+            userInfo: nil,
+            repeats: true)
+        log.debug("Started message socket ping timer.")
+    }
+
+    func stopMessageSocketPingTimer() {
+        messageSocketPingTimer?.invalidate()
+        messageSocketPingTimer = nil
+        log.debug("Stopped message socket ping timer.")
+    }
+
+    @objc func messageScoketPingTimerFired() {
+        log.debug("Sending ping to message socket.")
+        messageSocket?.write(ping: Data())
+    }
+}
+
+// MARK: - Private Utility Methods
+private extension NicoUtility {
+    func clearHttpCookieStorage() {
+        HTTPCookieStorage.shared.cookies?.forEach(HTTPCookieStorage.shared.deleteCookie)
+    }
+
     func clearUserSessionCookieIfReserved() {
         guard shouldClearUserSessionCookie else { return }
         shouldClearUserSessionCookie = false
@@ -482,208 +636,112 @@ private extension NicoUtility {
         log.debug("cleared user session cookie")
     }
 
-    func reconnectToLastLive() {
-        delegate?.nicoUtilityWillReconnectToLive(self)
-        disconnect(reserveToReconnect: true)
+    func urlRequestWithUserSessionCookie(urlString: String, userSession: String?) -> URLRequest {
+        guard let url = URL(string: urlString) else {
+            fatalError("This is NOT going to be happened.")
+        }
+        var urlRequest = URLRequest(url: url)
+        if let _httpCookies = httpCookies(userSession: userSession) {
+            urlRequest.allHTTPHeaderFields = HTTPCookie.requestHeaderFields(with: _httpCookies)
+        }
+        return urlRequest
     }
 
-    // swiftlint:disable function_body_length
-    func connect(liveNumber: Int?, userSessionCookie: String?) {
-        guard let liveNumber = liveNumber else {
-            let reason = "no valid live number"
-            log.error(reason)
-            delegate?.nicoUtilityDidFailToPrepareLive(self, reason: reason)
-            return
-        }
-        guard let  userSessionCookie = userSessionCookie else {
-            let reason = "no available cookie"
-            log.error(reason)
-            delegate?.nicoUtilityDidFailToPrepareLive(self, reason: reason)
-            return
-        }
-
-        self.userSessionCookie = userSessionCookie
-        self.lastLiveNumber = liveNumber
-
-        if 0 < roomListeners.count {
-            log.debug("already has established connection, so disconnect and sleep ...")
-            disconnect(reserveToReconnect: true)
-            return
-        }
-
-        let success: (Live, User, MessageServer) -> Void = { (live, user, server) in
-            log.debug("extracted live: \(live)")
-            log.debug("extracted server: \(server)")
-
-            self.live = live
-            self.user = user
-            self.messageServer = server
-
-            let communitySuccess: () -> Void = {
-                guard let community = self.live?.community, let user = self.user,
-                      let live = self.live, let messageServer = self.messageServer else { return }
-                log.debug("loaded community:\(community)")
-
-                self.delegate?.nicoUtilityDidPrepareLive(self, user: user, live: live)
-
-                self.messageServers = self.deriveMessageServers(originServer: server, community: community)
-                log.debug("derived message servers:")
-                for server in self.messageServers {
-                    log.debug("\(server)")
-                }
-
-                for _ in 0...messageServer.roomPosition.rawValue {
-                    self.openNewMessageServer()
-                }
-                self.scheduleHeartbeatTimer(immediateFire: true)
-            }
-
-            let communityFailure: (String) -> Void = { reason in
-                let reason = "failed to load community"
-                log.error(reason)
-                self.delegate?.nicoUtilityDidFailToPrepareLive(self, reason: reason)
-                return
-            }
-
-            guard let community = self.live?.community else { return }
-            self.load(community: community, success: communitySuccess, failure: communityFailure)
-        }
-
-        let failure: (String) -> Void = { reason in
-            log.error(reason)
-            self.delegate?.nicoUtilityDidFailToPrepareLive(self, reason: reason)
-        }
-
-        delegate?.nicoUtilityWillPrepareLive(self)
-        requestGetPlayerStatus(liveNumber: liveNumber, success: success, failure: failure)
+    func httpCookies(userSession: String?) -> [HTTPCookie]? {
+        guard let userSession = userSession,
+              let sessionCookie = HTTPCookie(
+                properties: [
+                    HTTPCookiePropertyKey.domain: userSessionCookieDomain,
+                    HTTPCookiePropertyKey.name: userSessionCookieName,
+                    HTTPCookiePropertyKey.value: userSession,
+                    HTTPCookiePropertyKey.expires: Date().addingTimeInterval(userSessionCookieExpire),
+                    HTTPCookiePropertyKey.path: userSessionCookiePath
+                ]
+              ) else { return nil }
+        return [sessionCookie]
     }
-    // swiftlint:enable function_body_length
+}
 
-    func requestGetPlayerStatus(liveNumber: Int, success: @escaping (Live, User, MessageServer) -> Void, failure: @escaping (_ reason: String) -> Void) {
-        let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (response, data, connectionError) in
-            if connectionError != nil {
-                let message = "error in cookied async request"
-                log.error(message)
-                failure(message)
-                return
-            }
-            // let responseString = NSString(data: data, encoding: NSUTF8StringEncoding)
-            // fileLog.debug("\(responseString)")
-            guard let data = data else {
-                let message = "error in unpacking response data"
-                log.error(message)
-                failure(message)
-                return
-            }
-            let (error, code) = self.isErrorResponse(xmlData: data)
-            if error {
-                log.error(code)
-                failure(code)
-                return
-            }
-            let live = self.extractLive(fromXmlData: data)
-            let user = self.extractUser(fromXmlData: data)
-            var messageServer: MessageServer?
-            if let user = user {
-                messageServer = self.extractMessageServer(fromXmlData: data, user: user)
-            }
-            if let live = live, let user = user, let messageServer = messageServer {
-                success(live, user, messageServer)
-            } else {
-                let message = "error in extracting getplayerstatus response"
-                log.error(message)
-                failure(message)
-            }
-        }
-
-        cookiedAsyncRequest(httpMethod: "GET", url: kGetPlayerStatusUrl, parameters: ["v": "lv" + String(liveNumber)], completion: httpCompletion)
+// MARK: - Private Extensions
+private extension EmbeddedDataProperties {
+    func toLive() -> Live {
+        let live = Live()
+        live.liveId = program.nicoliveProgramId
+        live.title = program.title
+        live.baseTime = program.vposBaseTime.toDateAsTimeIntervalSince1970()
+        live.openTime = program.openTime.toDateAsTimeIntervalSince1970()
+        live.startTime = program.beginTime.toDateAsTimeIntervalSince1970()
+        let community = Community()
+        community.community = socialGroup.id
+        community.title = socialGroup.name
+        community.level = socialGroup.level
+        community.thumbnailUrl = URL(string: socialGroup.thumbnailImageUrl)
+        live.community = community
+        return live
     }
 
-    func load(community: Community, success: @escaping () -> Void, failure: @escaping (_ reason: String) -> Void) {
-        let httpCompletion: (URLResponse?, Data?, Error?) -> Void = { (response, data, connectionError) in
-            if connectionError != nil {
-                let message = "error in cookied async request"
-                log.error(message)
-                failure(message)
-                return
-            }
-            // let responseString = NSString(data: data, encoding: NSUTF8StringEncoding)
-            // log.debug("\(responseString)")
-            guard let data = data else {
-                let message = "error in unpacking response data"
-                log.error(message)
-                failure(message)
-                return
-            }
-            if community.isChannel == true {
-                self.extractChannelCommunity(fromHtmlData: data, community: community)
-            } else {
-                self.extractUserCommunity(fromHtmlData: data, community: community)
-            }
-            success()
-        }
-
-        guard let _community = community.community else { return }
-        let url = (community.isChannel == true ? kCommunityUrlChannel : kCommunityUrlUser) + _community
-        cookiedAsyncRequest(httpMethod: "GET", url: url, parameters: nil, completion: httpCompletion)
+    func toUser() -> User {
+        let user = User()
+        user.userId = Int(self.user.id)
+        user.nickname = self.user.nickname
+        return user
     }
+}
 
-    func openNewMessageServer() {
-        objc_sync_enter(self)
-
-        if roomListeners.count == messageServers.count {
-            log.info("already opened max servers.")
+private extension WebSocketChatData {
+    func toChat() -> Chat {
+        let chat = Chat()
+        chat.internalNo = self.chat.no
+        // TODO: ?
+        chat.roomPosition = .arena
+        chat.no = self.chat.no
+        chat.date = self.chat.date.toDateAsTimeIntervalSince1970()
+        chat.dateUsec = self.chat.dateUsec
+        if let mail = self.chat.mail {
+            chat.mail = [mail]
+        }
+        chat.userId = self.chat.userId
+        if let premium = self.chat.premium {
+            chat.premium = Premium(rawValue: premium)
         } else {
-            let targetServerIndex = roomListeners.count
-            let targetServer = messageServers[targetServerIndex]
-            let listener = RoomListener(delegate: self, server: targetServer)
-            roomListeners.append(listener)
-            log.info("created room listener instance:\(listener)")
-
-            DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async {
-                listener.openSocket(resFrom: self.resFrom)
-            }
+            chat.premium = .ippan
         }
-
-        objc_sync_exit(self)
+        chat.comment = self.chat.content
+        chat.score = 0
+        return chat
     }
+}
 
-    // MARK: Comment
-    func assignedRoomListener() -> RoomListener? {
-        guard let messageServer = messageServer else { return nil }
-        var assigned: RoomListener?
-        for roomListener in roomListeners {
-            guard let server = roomListener.server, server == messageServer else { continue }
-            assigned = roomListener
-            break
+private extension WebSocketStatisticsData {
+    func toHeartbeat() -> Heartbeat {
+        let hb = Heartbeat()
+        hb.status = .ok
+        hb.watchCount = data.viewers
+        hb.commentCount = data.comments
+        return hb
+    }
+}
+
+private extension DataRequest {
+    // "Synchronous" version of async `responseData()` method:
+    // https://github.com/Alamofire/Alamofire/issues/1147#issuecomment-212791012
+    // https://qiita.com/shtnkgm/items/d552bd3cf709266a9050#dispatchsemaphore%E3%82%92%E5%88%A9%E7%94%A8%E3%81%97%E3%81%A6%E9%9D%9E%E5%90%8C%E6%9C%9F%E5%87%A6%E7%90%86%E3%81%AE%E5%AE%8C%E4%BA%86%E3%82%92%E5%BE%85%E3%81%A4
+    @discardableResult
+    func syncResponseData(
+        queue: DispatchQueue = .main,
+        dataPreprocessor: DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
+        emptyResponseCodes: Set<Int> = DataResponseSerializer.defaultEmptyResponseCodes,
+        emptyRequestMethods: Set<HTTPMethod> = DataResponseSerializer.defaultEmptyRequestMethods,
+        completionHandler: @escaping (AFDataResponse<Data>) -> Void) -> Self {
+        let semaphore = DispatchSemaphore(value: 0)
+        responseData(queue: queue,
+                     dataPreprocessor: dataPreprocessor,
+                     emptyResponseCodes: emptyResponseCodes,
+                     emptyRequestMethods: emptyRequestMethods) {
+            completionHandler($0)
+            semaphore.signal()
         }
-        return assigned
-    }
-
-    // MARK: Heartbeat
-    func scheduleHeartbeatTimer(immediateFire: Bool = false, interval: TimeInterval = kHeartbeatDefaultInterval) {
-        stopHeartbeatTimer()
-        DispatchQueue.main.async {
-            self.heartbeatTimer = Timer.scheduledTimer(timeInterval: interval, target: self, selector: #selector(NicoUtility.checkHeartbeat(_:)), userInfo: nil, repeats: true)
-            if immediateFire {
-                self.heartbeatTimer?.fire()
-            }
-        }
-    }
-
-    func stopHeartbeatTimer() {
-        heartbeatTimer?.invalidate()
-        heartbeatTimer = nil
-    }
-
-    // MARK: Misc Utility
-    func reset() {
-        live = nil
-        user = nil
-        messageServer = nil
-        messageServers.removeAll(keepingCapacity: false)
-        roomListeners.removeAll(keepingCapacity: false)
-        receivedFirstChat.removeAll(keepingCapacity: false)
-        chatCount = 0
+        semaphore.wait()
+        return self
     }
 }

@@ -84,4 +84,6 @@ enum Premium: Int, CustomStringConvertible {
         case .ippanTransparent: return "一般 (透明)"
         }
     }
+
+    var isSystem: Bool { [.system, .caster, .operator].contains(self) }
 }
