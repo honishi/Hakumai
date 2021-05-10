@@ -513,7 +513,7 @@ private extension NicoUtility {
                 resFrom: {
                     switch connectContex {
                     case .normal:       return -150
-                    case .reconnect:    return -5
+                    case .reconnect:    return -10
                     }
                 }(),
                 completion: completion)
