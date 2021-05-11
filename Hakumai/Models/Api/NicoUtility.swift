@@ -42,7 +42,6 @@ protocol NicoUtilityType {
     func cachedUserName(forChat chat: Chat) -> String?
     func cachedUserName(forUserId userId: String) -> String?
     func resolveUsername(forUserId userId: String, completion: @escaping (String?) -> Void)
-    func extractUsername(fromHtmlData htmlData: Data) -> String?
 
     // Utility Methods
     func urlString(forUserId userId: String) -> String
@@ -70,6 +69,8 @@ enum NicoUtilityError: Error {
 // URLs:
 private let livePageUrl = "https://live.nicovideo.jp/watch/lv"
 private let userPageUrl = "https://www.nicovideo.jp/user/"
+private let userNicknameApiUrl = "https://api.live2.nicovideo.jp/api/v1/user/nickname"
+
 // Cookies:
 private let userSessionCookieDomain = "nicovideo.jp"
 private let userSessionCookieName = "user_session"
@@ -268,12 +269,21 @@ extension NicoUtility {
                 return
             }
 
-            // 2.Ok, there's no cached one, request user page synchronously, NOT async.
-            let url = userPageUrl + String(userId)
-            me.session.request(url).syncResponseData {
+            // 2.Ok, there's no cached one, request nickname api synchronously, NOT async.
+            me.session.request(
+                userNicknameApiUrl,
+                method: .get,
+                parameters: ["userId": userId]
+            )
+            .syncResponseData {
                 switch $0.result {
                 case .success(let data):
-                    let username = self?.extractUsername(fromHtmlData: data)
+                    guard let decoded = try? JSONDecoder().decode(UserNickname.self, from: data) else {
+                        log.error("error in decoding nickname response")
+                        completion(nil)
+                        return
+                    }
+                    let username = decoded.data.nickname
                     me.cachedUserNames[userId] = username
                     completion(username)
                 case .failure(_):

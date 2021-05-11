@@ -15,8 +15,6 @@
 		DB0ED6531A20B0A7007E9318 /* ChromeCookie.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0ED6511A20B0A7007E9318 /* ChromeCookie.swift */; };
 		DB0F0ECD1A16441D00F8BDC5 /* NicoUtilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0F0ECC1A16441D00F8BDC5 /* NicoUtilityTests.swift */; };
 		DB1CD2D01A2EE5BB00D3108A /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD65C1F1A2EB08D00B84C97 /* Message.swift */; };
-		DB1E32BF1A2B95C600CD874A /* user_1.html in Resources */ = {isa = PBXBuildFile; fileRef = DB1E32BE1A2B95C600CD874A /* user_1.html */; };
-		DB1E32C31A2BA53700CD874A /* user_me.html in Resources */ = {isa = PBXBuildFile; fileRef = DB1E32C21A2BA53700CD874A /* user_me.html */; };
 		DB1E32C91A2CC85C00CD874A /* UserIdTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1E32C81A2CC85C00CD874A /* UserIdTableCellView.swift */; };
 		DB1E32CB1A2CC87200CD874A /* UserIdTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB1E32CA1A2CC87200CD874A /* UserIdTableCellView.xib */; };
 		DB2AE0C41A0EE2FD00B1CE4D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0C31A0EE2FD00B1CE4D /* AppDelegate.swift */; };
@@ -93,8 +91,6 @@
 		DBB473091A3590C5002C797E /* NSXMLElementExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB473051A35909F002C797E /* NSXMLElementExtension.swift */; };
 		DBB4730B1A35951C002C797E /* Heartbeat.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB4730A1A35951C002C797E /* Heartbeat.swift */; };
 		DBB4730C1A359685002C797E /* Heartbeat.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB4730A1A35951C002C797E /* Heartbeat.swift */; };
-		DBB473101A35CE72002C797E /* heartbeat_ok.xml in Resources */ = {isa = PBXBuildFile; fileRef = DBB4730F1A35CE72002C797E /* heartbeat_ok.xml */; };
-		DBB473121A35CE86002C797E /* heartbeat_fail.xml in Resources */ = {isa = PBXBuildFile; fileRef = DBB473111A35CE86002C797E /* heartbeat_fail.xml */; };
 		DBB952161A8655AB0059850A /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB952151A8655AB0059850A /* Helper.swift */; };
 		DBB952171A8655AB0059850A /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB952151A8655AB0059850A /* Helper.swift */; };
 		DBCA2D242642BCF500B6147C /* NicoUtilityModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA2D232642BCF500B6147C /* NicoUtilityModel.swift */; };
@@ -154,8 +150,6 @@
 		DB0E10671A39B6DD00A10E00 /* MuteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MuteViewController.swift; sourceTree = "<group>"; };
 		DB0ED6511A20B0A7007E9318 /* ChromeCookie.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChromeCookie.swift; sourceTree = "<group>"; };
 		DB0F0ECC1A16441D00F8BDC5 /* NicoUtilityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicoUtilityTests.swift; sourceTree = "<group>"; };
-		DB1E32BE1A2B95C600CD874A /* user_1.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = user_1.html; sourceTree = "<group>"; };
-		DB1E32C21A2BA53700CD874A /* user_me.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = user_me.html; sourceTree = "<group>"; };
 		DB1E32C81A2CC85C00CD874A /* UserIdTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserIdTableCellView.swift; sourceTree = "<group>"; };
 		DB1E32CA1A2CC87200CD874A /* UserIdTableCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UserIdTableCellView.xib; sourceTree = "<group>"; };
 		DB2AE0BE1A0EE2FD00B1CE4D /* Hakumai.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hakumai.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -214,8 +208,6 @@
 		DBB473031A359082002C797E /* IntExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntExtension.swift; sourceTree = "<group>"; };
 		DBB473051A35909F002C797E /* NSXMLElementExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSXMLElementExtension.swift; sourceTree = "<group>"; };
 		DBB4730A1A35951C002C797E /* Heartbeat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Heartbeat.swift; sourceTree = "<group>"; };
-		DBB4730F1A35CE72002C797E /* heartbeat_ok.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = heartbeat_ok.xml; sourceTree = "<group>"; };
-		DBB473111A35CE86002C797E /* heartbeat_fail.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = heartbeat_fail.xml; sourceTree = "<group>"; };
 		DBB952151A8655AB0059850A /* Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
 		DBCA2D232642BCF500B6147C /* NicoUtilityModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoUtilityModel.swift; sourceTree = "<group>"; };
 		DBCA40D31A30AD48006299A9 /* MenuDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuDelegate.swift; sourceTree = "<group>"; };
@@ -559,11 +551,7 @@
 				DB346B991A54648100137639 /* community_channel.html */,
 				DBFA88901A1CAE85005349AD /* community_user.html */,
 				DBFB26D82642A32300B1FDEB /* embedded-data.json */,
-				DBB473111A35CE86002C797E /* heartbeat_fail.xml */,
-				DBB4730F1A35CE72002C797E /* heartbeat_ok.xml */,
 				DBFB26D42642921900B1FDEB /* live_page.html */,
-				DB1E32BE1A2B95C600CD874A /* user_1.html */,
-				DB1E32C21A2BA53700CD874A /* user_me.html */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -704,13 +692,9 @@
 				DB346B9A1A54648100137639 /* community_channel.html in Resources */,
 				DBFA88911A1CAE85005349AD /* community_user.html in Resources */,
 				DBFB26D92642A32300B1FDEB /* embedded-data.json in Resources */,
-				DBB473121A35CE86002C797E /* heartbeat_fail.xml in Resources */,
-				DBB473101A35CE72002C797E /* heartbeat_ok.xml in Resources */,
 				DBFB26D52642921900B1FDEB /* live_page.html in Resources */,
 				DB7EB89D1A24AA3700C3BFB5 /* RoomPositionTableCellView.xib in Resources */,
 				DB7B3DE31A242D7B00205470 /* ScoreTableCellView.xib in Resources */,
-				DB1E32BF1A2B95C600CD874A /* user_1.html in Resources */,
-				DB1E32C31A2BA53700CD874A /* user_me.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -63,6 +63,16 @@ struct EmbeddedDataProperties: Codable {
     let user: EmbeddedDataUser
 }
 
+// MARK: - Rest API
+struct UserNickname: Codable {
+    struct Data: Codable {
+        let id: String
+        let nickname: String
+    }
+
+    let data: Data
+}
+
 // MARK: - WebSocket (Managing, Generic Model)
 enum WebSocketDataType: String, Codable {
     case ping, seat, room, statistics, disconnect
