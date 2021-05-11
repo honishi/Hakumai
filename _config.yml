@@ -1,7 +1,7 @@
 # Site settings
 title: Hakumai - Mac用ニコ生コメントビューア(コメビュ)
 tag_text: Hakumai is ???
-description: HakumaiはMac OS Xに対応したニコニコ生放送用のコメントビューア(コメビュ)です。
+description: Hakumaiは Mac 用のニコニコ生放送用のコメントビューア(コメビュ)です。
 
 # Build settings
 markdown: kramdown
@@ -9,5 +9,5 @@ markdown: kramdown
 exclude: ["README.md"]
 
 # Binary version
-binary_version: 0.0.54
-binary_date: 2021/5/10
+binary_version: 0.0.55
+binary_date: 2021/5/11
