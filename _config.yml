@@ -2,6 +2,7 @@
 title: Hakumai - Mac用ニコ生コメントビューア(コメビュ)
 tag_text: Hakumai is ???
 description: Hakumaiは Mac 用のニコニコ生放送用のコメントビューア(コメビュ)です。
+canonical_url: https://honishi.github.io/Hakumai/
 
 # Build settings
 markdown: kramdown
