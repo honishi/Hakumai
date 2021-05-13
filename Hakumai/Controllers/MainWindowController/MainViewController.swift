@@ -311,10 +311,9 @@ extension MainViewController {
 
         switch convertFromNSUserInterfaceItemIdentifier(tableColumn.identifier) {
         case kRoomPositionColumnIdentifier:
-            guard let roomPosition = chat.roomPosition, let no = chat.no else { return }
             let roomPositionView = view as? RoomPositionTableCellView
-            roomPositionView?.roomPosition = roomPosition
-            roomPositionView?.commentNo = no
+            roomPositionView?.roomPosition = chat.roomPosition
+            roomPositionView?.commentNo = chat.no
             roomPositionView?.fontSize = min(tableViewFontSize, kMaximumFontSizeForNonMainColumn)
         case kScoreColumnIdentifier:
             let scoreView = view as? ScoreTableCellView
@@ -741,11 +740,11 @@ extension MainViewController {
         }
 
         let message = MessageContainer.sharedContainer[clickedRow]
-        guard message.messageType == .chat, let chat = message.chat, let userId = chat.userId else { return }
+        guard message.messageType == .chat, let chat = message.chat else { return }
         var userWindowController: UserWindowController?
 
         // check if user window exists?
-        for existing in userWindowControllers where userId == existing.userId {
+        for existing in userWindowControllers where chat.userId == existing.userId {
             userWindowController = existing
             log.debug("existing userwc found, use it:\(userWindowController?.description ?? "")")
             break
@@ -753,7 +752,7 @@ extension MainViewController {
 
         if userWindowController == nil {
             // not exist, so create and cache it
-            userWindowController = UserWindowController.generateInstance(delegate: self, userId: userId)
+            userWindowController = UserWindowController.generateInstance(delegate: self, userId: chat.userId)
             if let uwc = userWindowController {
                 positionUserWindow(uwc.window)
                 log.debug("no existing userwc found, create it:\(uwc.description)")

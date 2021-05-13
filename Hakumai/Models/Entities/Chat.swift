@@ -12,16 +12,15 @@ import Foundation
 private let kRegexpSeatNo = "/hb ifseetno (\\d+)"
 
 final class Chat: CustomStringConvertible {
-    var internalNo: Int?
-    var roomPosition: RoomPosition?
-    var no: Int?
-    var date: Date?
-    var dateUsec: Int?
-    var mail = [String]()
-    var userId: String?
-    var premium: Premium?
-    var comment: String?
-    var score: Int?
+    let roomPosition: RoomPosition = .arena
+    let no: Int
+    let date: Date
+    let dateUsec: Int
+    let mail: [String]?
+    let userId: String
+    let comment: String
+    let premium: Premium
+    let score: Int? = 0
 
     var isRawUserId: Bool { return Chat.isRawUserId(userId) }
     var isUserComment: Bool { return Chat.isUserComment(premium) }
@@ -29,20 +28,28 @@ final class Chat: CustomStringConvertible {
     var isSystemComment: Bool { return Chat.isSystemComment(premium) }
 
     var kickOutSeatNo: Int? {
-        guard let seatNo = comment?.extractRegexp(pattern: kRegexpSeatNo) else { return nil }
+        guard let seatNo = comment.extractRegexp(pattern: kRegexpSeatNo) else { return nil }
         return Int(seatNo)
     }
 
     var description: String {
         return (
-            "Chat: internalNo[\(internalNo ?? 0)] roomPosition[\(roomPosition?.description ?? "")] no[\(no ?? 0)] " +
-                "date[\(date?.description ?? "")] dateUsec[\(dateUsec ?? 0)] mail[\(mail)] userId[\(userId ?? "")] " +
-                "premium[\(premium?.description ?? "")] comment[\(comment ?? "")] score[\(score ?? 0)]"
+            "Chat: roomPosition[\(roomPosition.description)] no[\(no)] " +
+                "date[\(date.description)] dateUsec[\(dateUsec)] mail[\(mail ?? [])] userId[\(userId)] " +
+                "premium[\(premium.description)] comment[\(comment)]"
         )
     }
 
     // MARK: - Object Lifecycle
-    init() {}
+    init(no: Int, date: Date, dateUsec: Int, mail: [String]?, userId: String, comment: String, premium: Premium) {
+        self.no = no
+        self.date = date
+        self.dateUsec = dateUsec
+        self.mail = mail
+        self.userId = userId
+        self.comment = comment
+        self.premium = premium
+    }
 }
 
 // MARK: - Public Functions

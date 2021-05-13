@@ -40,25 +40,24 @@ final class HandleNameManager {
 // MARK: - Public Functions
 extension HandleNameManager {
     func extractAndUpdateHandleName(live: Live, chat: Chat) {
-        guard chat.userId != nil, let comment = chat.comment,
-              let handleName = extractHandleName(fromComment: comment) else { return }
+        guard let handleName = extractHandleName(fromComment: chat.comment) else { return }
         updateHandleName(live: live, chat: chat, handleName: handleName)
     }
 
     func updateHandleName(live: Live, chat: Chat, handleName: String) {
-        guard let communityId = live.community.community, let userId = chat.userId else { return }
+        guard let communityId = live.community.community else { return }
         let anonymous = !chat.isRawUserId
-        insertOrReplaceHandleName(communityId: communityId, userId: userId, anonymous: anonymous, handleName: handleName)
+        insertOrReplaceHandleName(communityId: communityId, userId: chat.userId, anonymous: anonymous, handleName: handleName)
     }
 
     func removeHandleName(live: Live, chat: Chat) {
-        guard let communityId = live.community.community, let userId = chat.userId else { return }
-        deleteHandleName(communityId: communityId, userId: userId)
+        guard let communityId = live.community.community else { return }
+        deleteHandleName(communityId: communityId, userId: chat.userId)
     }
 
     func handleName(forLive live: Live, chat: Chat) -> String? {
-        guard let communityId = live.community.community, let userId = chat.userId else { return nil }
-        return selectHandleName(communityId: communityId, userId: userId)
+        guard let communityId = live.community.community else { return nil }
+        return selectHandleName(communityId: communityId, userId: chat.userId)
     }
 
     // MARK: - Internal Functions

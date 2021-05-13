@@ -43,7 +43,7 @@ extension MenuDelegate: NSMenuItemValidation {
         case copyCommentMenuItem, tweetCommentMenuItem:
             return true
         case openUrlMenuItem:
-            return chat.comment?.extractUrlString() != nil ? true : false
+            return chat.comment.extractUrlString() != nil ? true : false
         case addHandleNameMenuItem:
             guard live != nil else { return false }
             return (chat.isUserComment || chat.isBSPComment)
@@ -79,14 +79,13 @@ extension MenuDelegate: NSSharingServiceDelegate {}
 extension MenuDelegate {
     // MARK: - Context Menu Handlers
     @IBAction func copyComment(_ sender: AnyObject) {
-        guard let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat,
-              let comment = chat.comment else { return }
-        _ = copyStringToPasteBoard(comment)
+        guard let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat else { return }
+        _ = copyStringToPasteBoard(chat.comment)
     }
 
     @IBAction func openUrl(_ sender: AnyObject) {
         guard let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat,
-              let urlString = chat.comment?.extractUrlString(),
+              let urlString = chat.comment.extractUrlString(),
               let urlObject = URL(string: urlString) else { return }
         NSWorkspace.shared.open(urlObject)
     }
@@ -95,7 +94,7 @@ extension MenuDelegate {
         guard let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat,
               let live = NicoUtility.shared.live else { return }
 
-        let comment = chat.comment ?? ""
+        let comment = chat.comment
         let liveName = live.title ?? ""
         let communityName = live.community.title ?? ""
         let liveUrl = live.liveUrlString
@@ -124,15 +123,14 @@ extension MenuDelegate {
     }
 
     @IBAction func addToMuteUser(_ sender: AnyObject) {
-        guard let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat,
-              let userId = chat.userId else { return }
+        guard let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat else { return }
         let defaults = UserDefaults.standard
         var muteUserIds = defaults.object(forKey: Parameters.muteUserIds) as? [[String: String]] ?? [[String: String]]()
         for muteUserId in muteUserIds where chat.userId == muteUserId[MuteUserIdKey.userId] {
-            log.debug("mute userid [\(chat.userId ?? "")] already registered, so skip")
+            log.debug("mute userid [\(chat.userId)] already registered, so skip")
             return
         }
-        muteUserIds.append([MuteUserIdKey.userId: userId])
+        muteUserIds.append([MuteUserIdKey.userId: chat.userId])
         defaults.set(muteUserIds, forKey: Parameters.muteUserIds)
         defaults.synchronize()
     }

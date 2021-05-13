@@ -235,16 +235,13 @@ extension NicoUtility {
         }
     }
 
-    func reportAsNgUser(chat: Chat, completion: @escaping (String?) -> Void) {
-        //
-    }
+    func reportAsNgUser(chat: Chat, completion: @escaping (String?) -> Void) {}
 }
 
 // MARK: - Public Methods (Username)
 extension NicoUtility {
     func cachedUserName(forChat chat: Chat) -> String? {
-        guard let userId = chat.userId else { return nil }
-        return cachedUserName(forUserId: userId)
+        return cachedUserName(forUserId: chat.userId)
     }
 
     func cachedUserName(forUserId userId: String) -> String? {
@@ -700,25 +697,22 @@ private extension EmbeddedDataProperties {
 
 private extension WebSocketChatData {
     func toChat() -> Chat {
-        let chat = Chat()
-        chat.internalNo = self.chat.no
-        // TODO: ?
-        chat.roomPosition = .arena
-        chat.no = self.chat.no
-        chat.date = self.chat.date.toDateAsTimeIntervalSince1970()
-        chat.dateUsec = self.chat.dateUsec
-        if let mail = self.chat.mail {
-            chat.mail = [mail]
-        }
-        chat.userId = self.chat.userId
-        if let premium = self.chat.premium {
-            chat.premium = Premium(rawValue: premium)
-        } else {
-            chat.premium = .ippan
-        }
-        chat.comment = self.chat.content
-        chat.score = 0
-        return chat
+        return Chat(
+            no: chat.no,
+            date: chat.date.toDateAsTimeIntervalSince1970(),
+            dateUsec: chat.dateUsec,
+            mail: {
+                guard let mail = chat.mail else { return nil }
+                return [mail]
+            }(),
+            userId: chat.userId,
+            comment: chat.content,
+            premium: {
+                guard let value = chat.premium,
+                      let premium = Premium(rawValue: value) else { return .ippan }
+                return premium
+            }()
+        )
     }
 }
 

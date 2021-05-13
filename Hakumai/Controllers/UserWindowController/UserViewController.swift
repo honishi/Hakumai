@@ -137,10 +137,9 @@ private extension UserViewController {
 
         switch convertFromNSUserInterfaceItemIdentifier(tableColumn.identifier) {
         case kRoomPositionColumnIdentifier:
-            guard let roomPosition = chat.roomPosition, let no = chat.no else { return }
             let roomPositionView = view as? RoomPositionTableCellView
-            roomPositionView?.roomPosition = roomPosition
-            roomPositionView?.commentNo = no
+            roomPositionView?.roomPosition = chat.roomPosition
+            roomPositionView?.commentNo = chat.no
         case kScoreColumnIdentifier:
             (view as? ScoreTableCellView)?.chat = chat
         case kCommentColumnIdentifier:
