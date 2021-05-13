@@ -35,6 +35,7 @@ protocol NicoUtilityType {
     // Main Methods
     func connect(liveNumber: Int, sessionType: NicoSessionType, connectContext: NicoUtility.ConnectContext)
     func disconnect(reserveToReconnect: Bool)
+    func reconnect()
     func comment(_ comment: String, anonymously: Bool, completion: @escaping (_ comment: String?) -> Void)
 
     // Methods for Community and Usernames
@@ -218,6 +219,31 @@ extension NicoUtility {
         delegate?.nicoUtilityDidDisconnect(self)
     }
 
+    func reconnect() {
+        objc_sync_enter(self)
+        defer { objc_sync_exit(self) }
+
+        log.debug("Reconnecting...")
+        guard let lastConnection = connectRequests.lastEstablished else {
+            log.warning("Failed to reconnect since there's no last established connection info.")
+            return
+        }
+        // Nullifying `lastEstablishedConnectRequest` to prevent the `reconnect()`
+        // method from being called multiple times from multiple thread.
+        connectRequests.lastEstablished = nil
+
+        disconnect()
+        delegate?.nicoUtilityWillReconnectToLive(self)
+
+        // Just in case, make some delay to invoke the connect method.
+        DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 2) {
+            self.connect(
+                liveNumber: lastConnection.liveNumber,
+                sessionType: lastConnection.sessionType,
+                connectContext: .reconnect)
+        }
+    }
+
     func comment(_ comment: String, anonymously: Bool, completion: @escaping (String?) -> Void) {
         guard let baseTime = live?.baseTime else { return }
         let elapsed = Int(Date().timeIntervalSince1970) - Int(baseTime.timeIntervalSince1970)
@@ -397,31 +423,6 @@ private extension NicoUtility {
         messageSocket = nil
 
         live = nil
-    }
-
-    func reconnect() {
-        objc_sync_enter(self)
-        defer { objc_sync_exit(self) }
-
-        log.debug("Reconnecting...")
-        guard let lastConnection = connectRequests.lastEstablished else {
-            log.warning("Failed to reconnect since there's no last established connection info.")
-            return
-        }
-        // Nullifying `lastEstablishedConnectRequest` to prevent the `reconnect()`
-        // method from being called multiple times from multiple thread.
-        connectRequests.lastEstablished = nil
-
-        disconnect()
-        delegate?.nicoUtilityWillReconnectToLive(self)
-
-        // Just in case, make some delay to invoke the connect method.
-        DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 2) {
-            self.connect(
-                liveNumber: lastConnection.liveNumber,
-                sessionType: lastConnection.sessionType,
-                connectContext: .reconnect)
-        }
     }
 }
 

@@ -20,6 +20,8 @@ private let kCalculateActiveInterval: TimeInterval = 5
 private let kMaximumFontSizeForNonMainColumn: CGFloat = 16
 private let kDefaultMinimumRowHeight: CGFloat = 17
 
+private let enableDebugReconnectButton = false
+
 private let safariCookieAlertTitle = "No Safari Cookie found"
 private let safariCookieAlertDescription = "To retrieve the cookie from Safari, please open the Security & Privacy section of the System Preference and give the \"Full Disk Access\" right to Hakumai app."
 private let safariCookieAlertImageName = "safariCookieAlertImage"
@@ -31,6 +33,8 @@ final class MainViewController: NSViewController, NSTableViewDataSource, NSTable
 
     // MARK: Main Outlets
     @IBOutlet weak var liveTextField: NSTextField!
+    @IBOutlet weak var reconnectButton: NSButton!
+    @IBOutlet weak var connectButton: NSButton!
 
     @IBOutlet weak var communityImageView: NSImageView!
     @IBOutlet weak var liveTitleLabel: NSTextField!
@@ -46,7 +50,6 @@ final class MainViewController: NSViewController, NSTableViewDataSource, NSTable
     @IBOutlet weak var tableView: NSTableView!
 
     @IBOutlet weak var commentTextField: NSTextField!
-    @IBOutlet weak var connectButton: NSButton!
     @IBOutlet weak var commentAnonymouslyButton: NSButton!
     @IBOutlet weak var elapsedLabel: NSTextField!
     @IBOutlet weak var activeLabel: NSTextField!
@@ -116,6 +119,7 @@ extension MainViewController {
             self.communityImageView.layer?.masksToBounds = true
             self.communityImageView.layer?.borderColor = NSColor.black.cgColor
         }
+        reconnectButton.isHidden = !enableDebugReconnectButton
         if #available(macOS 10.14, *) {
             speakButton.isHidden = false
         } else {
@@ -673,6 +677,10 @@ extension MainViewController {
             liveTextField.stringValue = url
             connectLive(self)
         }
+    }
+
+    @IBAction func reconnectLive(_ sender: Any) {
+        NicoUtility.shared.reconnect()
     }
 
     @IBAction func connectLive(_ sender: AnyObject) {
