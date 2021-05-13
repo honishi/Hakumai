@@ -102,9 +102,15 @@ final class NicoUtility: NicoUtilityType {
     enum ConnectContext {
         case normal, reconnect
     }
-    struct ConnectRequest {
-        let liveNumber: Int
-        let sessionType: NicoSessionType
+    struct ConnectRequests {
+        // swiftlint:disable nesting
+        struct Request {
+            let liveNumber: Int
+            let sessionType: NicoSessionType
+        }
+        // swiftlint:enable nesting
+        var onGoing: Request?
+        var lastEstablished: Request?
     }
     struct ChatNo {
         var latest: Int
@@ -117,9 +123,11 @@ final class NicoUtility: NicoUtilityType {
     private(set) var live: Live?
 
     // Private Properties
-    // TODO: make `connectRequests`
-    private var ongoingConnectRequest: ConnectRequest?
-    private var lastEstablishedConnectRequest: ConnectRequest?
+    private var connectRequests: ConnectRequests =
+        ConnectRequests(
+            onGoing: nil,
+            lastEstablished: nil
+        )
     private var userSessionCookie: String?
     private let session: Session
     private var managingSocket: WebSocket?
@@ -150,11 +158,11 @@ final class NicoUtility: NicoUtilityType {
 extension NicoUtility {
     func connect(liveNumber: Int, sessionType: NicoSessionType, connectContext: NicoUtility.ConnectContext = .normal) {
         // 1. Save connection request.
-        ongoingConnectRequest = ConnectRequest(
+        connectRequests.onGoing = ConnectRequests.Request(
             liveNumber: liveNumber,
             sessionType: sessionType
         )
-        lastEstablishedConnectRequest = nil
+        connectRequests.lastEstablished = nil
 
         // 2. Save chat numbers.
         switch connectContext {
@@ -369,7 +377,7 @@ private extension NicoUtility {
             switch $0 {
             case .success():
                 me.startMessageSocketPingTimer(interval: messageSocketPingInterval)
-                me.lastEstablishedConnectRequest = me.ongoingConnectRequest
+                me.connectRequests.lastEstablished = me.connectRequests.onGoing
                 me.delegate?.nicoUtilityDidConnectToLive(me, roomPosition: RoomPosition.arena)
             case .failure(_):
                 let reason = "Failed to open message server."
@@ -396,13 +404,13 @@ private extension NicoUtility {
         defer { objc_sync_exit(self) }
 
         log.debug("Reconnecting...")
-        guard let lastConnection = lastEstablishedConnectRequest else {
+        guard let lastConnection = connectRequests.lastEstablished else {
             log.warning("Failed to reconnect since there's no last established connection info.")
             return
         }
         // Nullifying `lastEstablishedConnectRequest` to prevent the `reconnect()`
         // method from being called multiple times from multiple thread.
-        lastEstablishedConnectRequest = nil
+        connectRequests.lastEstablished = nil
 
         disconnect()
         delegate?.nicoUtilityWillReconnectToLive(self)
