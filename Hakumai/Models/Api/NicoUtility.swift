@@ -106,6 +106,10 @@ final class NicoUtility: NicoUtilityType {
         let liveNumber: Int
         let sessionType: NicoSessionType
     }
+    struct ChatNo {
+        var latest: Int
+        var maxBeforeReconnect: Int
+    }
 
     // Public Properties
     static var shared: NicoUtility = NicoUtility()
@@ -113,6 +117,7 @@ final class NicoUtility: NicoUtilityType {
     private(set) var live: Live?
 
     // Private Properties
+    // TODO: make `connectRequests`
     private var ongoingConnectRequest: ConnectRequest?
     private var lastEstablishedConnectRequest: ConnectRequest?
     private var userSessionCookie: String?
@@ -129,6 +134,9 @@ final class NicoUtility: NicoUtilityType {
     private let userNameResolvingOperationQueue = OperationQueue()
     private var cachedUserNames = [String: String]()
 
+    // Comment Management for Reconnection
+    private var chatNo = ChatNo(latest: 0, maxBeforeReconnect: 0)
+
     init() {
         let configuration = URLSessionConfiguration.af.default
         configuration.headers.add(.userAgent(commonUserAgentValue))
@@ -141,19 +149,28 @@ final class NicoUtility: NicoUtilityType {
 // MARK: - Public Methods (Main)
 extension NicoUtility {
     func connect(liveNumber: Int, sessionType: NicoSessionType, connectContext: NicoUtility.ConnectContext = .normal) {
-        // 1. Keep connection request.
+        // 1. Save connection request.
         ongoingConnectRequest = ConnectRequest(
             liveNumber: liveNumber,
             sessionType: sessionType
         )
         lastEstablishedConnectRequest = nil
 
-        // 2. Cleanup current connection, if needed.
+        // 2. Save chat numbers.
+        switch connectContext {
+        case .normal:
+            chatNo.latest = 0
+            chatNo.maxBeforeReconnect = 0
+        case .reconnect:
+            chatNo.maxBeforeReconnect = chatNo.latest
+        }
+
+        // 3. Cleanup current connection, if needed.
         if live != nil {
             disconnect()
         }
 
-        // 3. Go direct to `connect()` IF the user session cookie is availale.
+        // 4. Go direct to `connect()` IF the user session cookie is availale.
         clearUserSessionCookieIfReserved()
         delegate?.nicoUtilityWillPrepareLive(self)
         if let userSessionCookie = userSessionCookie {
@@ -164,8 +181,8 @@ extension NicoUtility {
             return
         }
 
-        // 4. Ok, there's no cookie available, go get it..
-        let cookieCompletion = { (userSessionCookie: String?) -> Void in
+        // 5. Ok, there's no cookie available, go get it..
+        let completion = { (userSessionCookie: String?) -> Void in
             log.debug("Cookie result: [\(sessionType)] [\(userSessionCookie ?? "-")]")
             guard let userSessionCookie = userSessionCookie else {
                 let reason = "No available cookie."
@@ -180,18 +197,11 @@ extension NicoUtility {
         }
         switch sessionType {
         case .chrome:
-            CookieUtility.requestBrowserCookie(
-                browserType: .chrome,
-                completion: cookieCompletion)
+            CookieUtility.requestBrowserCookie(browserType: .chrome, completion: completion)
         case .safari:
-            CookieUtility.requestBrowserCookie(
-                browserType: .safari,
-                completion: cookieCompletion)
+            CookieUtility.requestBrowserCookie(browserType: .safari, completion: completion)
         case .login(let mail, let password):
-            CookieUtility.requestLoginCookie(
-                mailAddress: mail,
-                password: password,
-                completion: cookieCompletion)
+            CookieUtility.requestLoginCookie(mailAddress: mail, password: password, completion: completion)
         }
     }
 
@@ -520,7 +530,7 @@ private extension NicoUtility {
                 resFrom: {
                     switch connectContex {
                     case .normal:       return -150
-                    case .reconnect:    return -10
+                    case .reconnect:    return -100
                     }
                 }(),
                 completion: completion)
@@ -544,7 +554,7 @@ private extension NicoUtility {
             log.debug("disconnected")
         case .text(let text):
             log.debug("text: \(text)")
-            decodeChat(text: text)
+            processChat(text: text)
         case .binary(_):
             log.debug("binary")
         case .pong(_):
@@ -570,13 +580,19 @@ private extension NicoUtility {
         socket.write(string: message)
     }
 
-    func decodeChat(text: String) {
+    func processChat(text: String) {
         guard let data = text.data(using: .utf8) else { return }
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
-        guard let chat = try? decoder.decode(WebSocketChatData.self, from: data) else { return }
-        // log.debug(chat)
-        delegate?.nicoUtilityDidReceiveChat(self, chat: chat.toChat())
+        guard let _chat = try? decoder.decode(WebSocketChatData.self, from: data) else { return }
+        // log.debug(_chat)
+        let chat = _chat.toChat()
+        guard chatNo.maxBeforeReconnect < chat.no else {
+            log.debug("Skip duplicated chat.")
+            return
+        }
+        chatNo.latest = chat.no
+        delegate?.nicoUtilityDidReceiveChat(self, chat: chat)
     }
 }
 
