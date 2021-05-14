@@ -135,6 +135,7 @@ extension MainViewController {
         let nibs = [
             (kNibNameRoomPositionTableCellView, kRoomPositionColumnIdentifier),
             (kNibNameScoreTableCellView, kScoreColumnIdentifier),
+            (kNibNameCommentTableCellView, kCommentColumnIdentifier),
             (kNibNameUserIdTableCellView, kUserIdColumnIdentifier),
             (kNibNamePremiumTableCellView, kPremiumColumnIdentifier)]
 
@@ -294,9 +295,10 @@ extension MainViewController {
             scoreView?.chat = nil
             scoreView?.fontSize = nil
         case kCommentColumnIdentifier:
+            let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)
             let attributed = NSAttributedString(string: content, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
-            view.textField?.attributedStringValue = attributed
+            commentView?.attributedString = attributed
         case kUserIdColumnIdentifier:
             let userIdView = view as? UserIdTableCellView
             userIdView?.info = nil
@@ -324,9 +326,10 @@ extension MainViewController {
             scoreView?.chat = chat
             scoreView?.fontSize = min(tableViewFontSize, kMaximumFontSizeForNonMainColumn)
         case kCommentColumnIdentifier:
+            let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)
             let attributed = NSAttributedString(string: content as String, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
-            view.textField?.attributedStringValue = attributed
+            commentView?.attributedString = attributed
         case kUserIdColumnIdentifier:
             guard let live = live else { return }
             let userIdView = view as? UserIdTableCellView

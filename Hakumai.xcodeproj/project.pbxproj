@@ -29,6 +29,9 @@
 		DB414C0C1A4814EF008D2F40 /* UserWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB414C081A481138008D2F40 /* UserWindowController.swift */; };
 		DB414C0D1A4814F2008D2F40 /* UserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB414C061A4810A5008D2F40 /* UserViewController.swift */; };
 		DB414C0E1A481530008D2F40 /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB414C0A1A4811C4008D2F40 /* Global.swift */; };
+		DB5164FC264E662100F809B3 /* CommentTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5164FB264E662100F809B3 /* CommentTableCellView.swift */; };
+		DB5164FE264E664500F809B3 /* CommentTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB5164FD264E664500F809B3 /* CommentTableCellView.xib */; };
+		DB5164FF264E6A5F00F809B3 /* CommentTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5164FB264E662100F809B3 /* CommentTableCellView.swift */; };
 		DB52B0AD1A2102C700E78C6A /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB52B0AC1A2102C700E78C6A /* User.swift */; };
 		DB52B0AE1A2102C700E78C6A /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB52B0AC1A2102C700E78C6A /* User.swift */; };
 		DB55AC641A33905200CFAD99 /* PremiumTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB55AC631A33905200CFAD99 /* PremiumTableCellView.xib */; };
@@ -168,6 +171,8 @@
 		DB414C061A4810A5008D2F40 /* UserViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserViewController.swift; sourceTree = "<group>"; };
 		DB414C081A481138008D2F40 /* UserWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserWindowController.swift; sourceTree = "<group>"; };
 		DB414C0A1A4811C4008D2F40 /* Global.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
+		DB5164FB264E662100F809B3 /* CommentTableCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentTableCellView.swift; sourceTree = "<group>"; };
+		DB5164FD264E664500F809B3 /* CommentTableCellView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CommentTableCellView.xib; sourceTree = "<group>"; };
 		DB52B0AC1A2102C700E78C6A /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		DB55AC631A33905200CFAD99 /* PremiumTableCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PremiumTableCellView.xib; sourceTree = "<group>"; };
 		DB55AC671A33908300CFAD99 /* PremiumTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PremiumTableCellView.swift; sourceTree = "<group>"; };
@@ -372,6 +377,8 @@
 			isa = PBXGroup;
 			children = (
 				DB7B3DDB1A23B35300205470 /* ColoredView.swift */,
+				DB5164FB264E662100F809B3 /* CommentTableCellView.swift */,
+				DB5164FD264E664500F809B3 /* CommentTableCellView.xib */,
 				DB55AC671A33908300CFAD99 /* PremiumTableCellView.swift */,
 				DB55AC631A33905200CFAD99 /* PremiumTableCellView.xib */,
 				DB7EB8A11A24AA5100C3BFB5 /* RoomPositionTableCellView.swift */,
@@ -674,6 +681,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB5164FE264E664500F809B3 /* CommentTableCellView.xib in Resources */,
 				DB2AE0C81A0EE2FD00B1CE4D /* Images.xcassets in Resources */,
 				DBAC3D3321C55E4C00B09673 /* MainWindowController.storyboard in Resources */,
 				DBA541EA1A4838F4005FF218 /* PreferenceWindowController.storyboard in Resources */,
@@ -850,6 +858,7 @@
 				DBFA887B1A1BC25A005349AD /* Chat.swift in Sources */,
 				DB0ED6521A20B0A7007E9318 /* ChromeCookie.swift in Sources */,
 				DB7B3DDC1A23B35300205470 /* ColoredView.swift in Sources */,
+				DB5164FC264E662100F809B3 /* CommentTableCellView.swift in Sources */,
 				DB7F21B01A210017008D17E0 /* Community.swift in Sources */,
 				DBAAA7321A0F43BB00981004 /* CookieUtility.swift in Sources */,
 				DBFA88821A1BC8C9005349AD /* Enum.swift in Sources */,
@@ -906,6 +915,7 @@
 				DB7BA06E1A58B6B7000778CF /* ChatTests.swift in Sources */,
 				DB0ED6531A20B0A7007E9318 /* ChromeCookie.swift in Sources */,
 				DB7B3DDF1A23B4D700205470 /* ColoredView.swift in Sources */,
+				DB5164FF264E6A5F00F809B3 /* CommentTableCellView.swift in Sources */,
 				DB7F21B11A210017008D17E0 /* Community.swift in Sources */,
 				DB346B9C1A548C3B00137639 /* CommunityTests.swift in Sources */,
 				DBAAA7331A0F43BB00981004 /* CookieUtility.swift in Sources */,
