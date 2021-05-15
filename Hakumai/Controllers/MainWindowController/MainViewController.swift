@@ -395,6 +395,7 @@ extension MainViewController {
     func nicoUtilityWillPrepareLive(_ nicoUtility: NicoUtilityType) {
         DispatchQueue.main.async {
             self.connectButton.isEnabled = false
+            self.liveTextField.isEnabled = false
             self.progressIndicator.startAnimation(self)
         }
     }
@@ -439,6 +440,7 @@ extension MainViewController {
         logSystemMessageToTableView("Failed to prepare live.(\(reason))")
         DispatchQueue.main.async {
             self.connectButton.isEnabled = true
+            self.liveTextField.isEnabled = true
             self.progressIndicator.stopAnimation(self)
         }
         showCookiePrivilegeAlertIfNeeded(error: error)
@@ -457,6 +459,7 @@ extension MainViewController {
         DispatchQueue.main.async {
             self.connectButton.isEnabled = true
             self.connectButton.image = Asset.stopLive.image
+            self.liveTextField.isEnabled = true
             self.progressIndicator.stopAnimation(self)
         }
         updateSpeechManagerState()
@@ -501,7 +504,13 @@ extension MainViewController {
         updateSpeechManagerState()
 
         DispatchQueue.main.async {
-            self.connectButton.image = Asset.startLive.image
+            switch disconnectContext {
+            case .normal:
+                self.connectButton.image = Asset.startLive.image
+            case .reconnect:
+                self.connectButton.isEnabled = false
+                self.liveTextField.isEnabled = false
+            }
         }
     }
 
