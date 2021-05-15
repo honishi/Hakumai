@@ -20,7 +20,7 @@ private let kRegexpHandleName = ".*[@＠]\\s*(\\S{2,})\\s*"
 // handle name manager
 final class HandleNameManager {
     // MARK: - Properties
-    static let sharedManager = HandleNameManager()
+    static let shared = HandleNameManager()
 
     private var database: FMDatabase!
     private var databaseQueue: FMDatabaseQueue!

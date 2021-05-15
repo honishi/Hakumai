@@ -27,7 +27,7 @@ final class UserViewController: NSViewController {
                 if let userName = NicoUtility.shared.cachedUserName(forUserId: userId) {
                     userNameLabelValue = userName
                 }
-                messages = MessageContainer.sharedContainer.messages(fromUserId: userId)
+                messages = MessageContainer.shared.messages(fromUserId: userId)
             } else {
                 messages.removeAll(keepingCapacity: false)
                 rowHeightCacher.removeAll(keepingCapacity: false)

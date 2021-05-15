@@ -11,13 +11,13 @@ import AppKit
 
 final class MuteViewController: NSViewController {
     // MARK: - Properties
-    static let shared = MuteViewController.generateInstance()
+    static let shared = MuteViewController.make()
 
     @IBOutlet var muteUserIdsArrayController: NSArrayController!
     @IBOutlet var muteWordsArrayController: NSArrayController!
 
     // MARK: - Object Lifecycle
-    static func generateInstance() -> MuteViewController {
+    static func make() -> MuteViewController {
         return StoryboardScene.PreferenceWindowController.muteViewController.instantiate()
     }
 }

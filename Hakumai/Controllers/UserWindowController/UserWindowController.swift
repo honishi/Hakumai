@@ -29,7 +29,7 @@ final class UserWindowController: NSWindowController {
 }
 
 extension UserWindowController {
-    static func generateInstance(delegate: UserWindowControllerDelegate?, userId: String) -> UserWindowController {
+    static func make(delegate: UserWindowControllerDelegate?, userId: String) -> UserWindowController {
         let wc = StoryboardScene.UserWindowController.userWindowController.instantiate()
         wc.delegate = delegate
         wc.userId = userId

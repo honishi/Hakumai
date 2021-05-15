@@ -77,7 +77,7 @@ extension AppDelegate {
 
         case (Parameters.commentSpeechVolume, let changed as Int):
             guard #available(macOS 10.14, *) else { return }
-            SpeechManager.sharedManager.setVoiceVolume(changed)
+            SpeechManager.shared.setVoiceVolume(changed)
 
         case (Parameters.enableMuteUserIds, let changed as Bool):
             MainViewController.shared.changeEnableMuteUserIds(changed)

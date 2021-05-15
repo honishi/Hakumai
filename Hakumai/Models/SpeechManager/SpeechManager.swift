@@ -30,7 +30,7 @@ private let kCleanCommentPatterns = [
 @available(macOS 10.14, *)
 final class SpeechManager: NSObject {
     // MARK: - Properties
-    static let sharedManager = SpeechManager()
+    static let shared = SpeechManager()
 
     private var chatQueue: [Chat] = []
     private var voiceSpeed = kVoiceSpeedMap[0].speed

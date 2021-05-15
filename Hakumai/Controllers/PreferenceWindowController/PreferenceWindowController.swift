@@ -14,12 +14,12 @@ private let kToolbarItemIdentifierMute = "MuteToolbarItem"
 
 final class PreferenceWindowController: NSWindowController {
     // MARK: - Properties
-    static let shared = PreferenceWindowController.generateInstance()
+    static let shared = PreferenceWindowController.make()
 
     @IBOutlet weak var toolbar: NSToolbar!
 
     // MARK: Properties for Singleton
-    static func generateInstance() -> PreferenceWindowController {
+    static func make() -> PreferenceWindowController {
         let wc = StoryboardScene.PreferenceWindowController.preferenceWindowController.instantiate()
         wc.window?.center()
         return wc

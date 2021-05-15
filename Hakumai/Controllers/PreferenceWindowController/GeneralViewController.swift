@@ -23,7 +23,7 @@ import AppKit
 
 final class GeneralViewController: NSViewController {
     // MARK: - Properties
-    static let shared = GeneralViewController.generateInstance()
+    static let shared = GeneralViewController.make()
 
     @IBOutlet weak var sessionManagementMatrix: NSMatrix!
     @IBOutlet weak var mailAddressTextField: NSTextField!
@@ -48,7 +48,7 @@ final class GeneralViewController: NSViewController {
     }
 
     // MARK: - Object Lifecycle
-    static func generateInstance() -> GeneralViewController {
+    static func make() -> GeneralViewController {
         return StoryboardScene.PreferenceWindowController.generalViewController.instantiate()
     }
 }

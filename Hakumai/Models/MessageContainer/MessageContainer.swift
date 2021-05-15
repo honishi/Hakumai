@@ -12,7 +12,7 @@ import Foundation
 final class MessageContainer {
     // MARK: - Properties
     // MARK: Public
-    static let sharedContainer = MessageContainer()
+    static let shared = MessageContainer()
 
     var beginDateToShowHbIfseetnoCommands: Date?
     var showHbIfseetnoCommands = false
