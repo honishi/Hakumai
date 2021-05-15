@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Hiroyuki Onishi. All rights reserved.
 //
 
+// swiftlint:disable file_length
 import Foundation
 import Alamofire
 import Starscream
@@ -16,13 +17,13 @@ import XCGLogger
 // so use explicit main thread for updating ui in these callbacks.
 protocol NicoUtilityDelegate: AnyObject {
     func nicoUtilityWillPrepareLive(_ nicoUtility: NicoUtilityType)
-    func nicoUtilityDidPrepareLive(_ nicoUtility: NicoUtilityType, user: User, live: Live)
+    func nicoUtilityDidPrepareLive(_ nicoUtility: NicoUtilityType, user: User, live: Live, connectContext: NicoUtility.ConnectContext)
     func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, reason: String, error: NicoUtilityError?)
-    func nicoUtilityDidConnectToLive(_ nicoUtility: NicoUtilityType, roomPosition: RoomPosition)
+    func nicoUtilityDidConnectToLive(_ nicoUtility: NicoUtilityType, roomPosition: RoomPosition, connectContext: NicoUtility.ConnectContext)
     func nicoUtilityDidReceiveChat(_ nicoUtility: NicoUtilityType, chat: Chat)
     func nicoUtilityDidGetKickedOut(_ nicoUtility: NicoUtilityType)
-    func nicoUtilityWillReconnectToLive(_ nicoUtility: NicoUtilityType)
-    func nicoUtilityDidDisconnect(_ nicoUtility: NicoUtilityType)
+    func nicoUtilityWillReconnectToLive(_ nicoUtility: NicoUtilityType, reason: NicoUtility.ReconnectReason)
+    func nicoUtilityDidDisconnect(_ nicoUtility: NicoUtilityType, disconnectContext: NicoUtility.DisconnectContext)
     func nicoUtilityDidReceiveHeartbeat(_ nicoUtility: NicoUtilityType, heartbeat: Heartbeat)
 }
 
@@ -34,8 +35,8 @@ protocol NicoUtilityType {
 
     // Main Methods
     func connect(liveNumber: Int, sessionType: NicoSessionType, connectContext: NicoUtility.ConnectContext)
-    func disconnect(reserveToReconnect: Bool)
-    func reconnect()
+    func disconnect(disconnectContext: NicoUtility.DisconnectContext)
+    func reconnect(reason: NicoUtility.ReconnectReason)
     func comment(_ comment: String, anonymously: Bool, completion: @escaping (_ comment: String?) -> Void)
 
     // Methods for Community and Usernames
@@ -79,6 +80,8 @@ private let userSessionCookieExpire = TimeInterval(7200)
 private let userSessionCookiePath = "/"
 // Misc:
 private let messageSocketPingInterval = 30
+private let appHealthCheckInterval = 10
+private let appHealthCheckDisconnectDetectSec = 60
 
 // MARK: - WebSocket Messages
 private let startWatchingMessage = """
@@ -100,9 +103,10 @@ private let postCommentMessage = """
 // MARK: - Class
 final class NicoUtility: NicoUtilityType {
     // Type
-    enum ConnectContext {
-        case normal, reconnect
-    }
+    enum ConnectContext { case normal, reconnect }
+    enum DisconnectContext { case normal, reconnect }
+    enum ReconnectReason { case normal, noComments }
+
     struct ConnectRequests {
         // swiftlint:disable nesting
         struct Request {
@@ -116,6 +120,15 @@ final class NicoUtility: NicoUtilityType {
     struct ChatNo {
         var latest: Int
         var maxBeforeReconnect: Int
+    }
+    struct LastTextSocketDates {
+        var managing: Date
+        var message: Date
+
+        init() {
+            managing = Date()
+            message = Date()
+        }
     }
 
     // Public Properties
@@ -145,6 +158,10 @@ final class NicoUtility: NicoUtilityType {
 
     // Comment Management for Reconnection
     private var chatNo = ChatNo(latest: 0, maxBeforeReconnect: 0)
+
+    // App-side Health Check
+    private var lastTextSocketDates: LastTextSocketDates?
+    private var appHealthCheckTimer: Timer?
 
     init() {
         let configuration = URLSessionConfiguration.af.default
@@ -214,12 +231,12 @@ extension NicoUtility {
         }
     }
 
-    func disconnect(reserveToReconnect: Bool = false) {
+    func disconnect(disconnectContext: NicoUtility.DisconnectContext = .normal) {
         disconnectSocketsAndResetState()
-        delegate?.nicoUtilityDidDisconnect(self)
+        delegate?.nicoUtilityDidDisconnect(self, disconnectContext: disconnectContext)
     }
 
-    func reconnect() {
+    func reconnect(reason: ReconnectReason = .normal) {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
 
@@ -232,8 +249,13 @@ extension NicoUtility {
         // method from being called multiple times from multiple thread.
         connectRequests.lastEstablished = nil
 
-        disconnect()
-        delegate?.nicoUtilityWillReconnectToLive(self)
+        disconnect(disconnectContext: {
+            switch reason {
+            case .normal:       return .normal
+            case .noComments:   return .reconnect
+            }
+        }())
+        delegate?.nicoUtilityWillReconnectToLive(self, reason: reason)
 
         // Just in case, make some delay to invoke the connect method.
         DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 2) {
@@ -349,7 +371,7 @@ private extension NicoUtility {
                 let live = embeddedData.toLive()
                 let user = embeddedData.toUser()
                 self?.live = live
-                me.delegate?.nicoUtilityDidPrepareLive(me, user: user, live: live)
+                me.delegate?.nicoUtilityDidPrepareLive(me, user: user, live: live, connectContext: connectContext)
                 me.openManagingSocket(
                     webSocketUrl: embeddedData.site.relive.webSocketUrl,
                     userId: embeddedData.user.id,
@@ -403,8 +425,9 @@ private extension NicoUtility {
             switch $0 {
             case .success():
                 me.startMessageSocketPingTimer(interval: messageSocketPingInterval)
+                me.startAppHealthCheckTimer()
                 me.connectRequests.lastEstablished = me.connectRequests.onGoing
-                me.delegate?.nicoUtilityDidConnectToLive(me, roomPosition: RoomPosition.arena)
+                me.delegate?.nicoUtilityDidConnectToLive(me, roomPosition: RoomPosition.arena, connectContext: connectContext)
             case .failure(_):
                 let reason = "Failed to open message server."
                 me.delegate?.nicoUtilityDidFailToPrepareLive(me, reason: reason, error: nil)
@@ -415,6 +438,7 @@ private extension NicoUtility {
     func disconnectSocketsAndResetState() {
         stopManagingSocketKeepTimer()
         stopMessageSocketPingTimer()
+        stopAppHealthCheckTimer()
         [managingSocket, messageSocket].forEach {
             $0?.onEvent = nil
             $0?.disconnect()
@@ -457,6 +481,7 @@ private extension NicoUtility {
         case .text(let text):
             log.debug("text: \(text)")
             processWebSocketData(text: text, socket: socket, completion: completion)
+            lastTextSocketDates?.managing = Date()
         case .binary(_):
             log.debug("binary")
         case .pong(_):
@@ -564,6 +589,7 @@ private extension NicoUtility {
         case .text(let text):
             log.debug("text: \(text)")
             processChat(text: text)
+            lastTextSocketDates?.message = Date()
         case .binary(_):
             log.debug("binary")
         case .pong(_):
@@ -602,6 +628,9 @@ private extension NicoUtility {
         }
         chatNo.latest = chat.no
         delegate?.nicoUtilityDidReceiveChat(self, chat: chat)
+        if _chat.isDisconnect {
+            disconnect()
+        }
     }
 }
 
@@ -652,6 +681,45 @@ private extension NicoUtility {
     @objc func messageScoketPingTimerFired() {
         log.debug("Sending ping to message socket.")
         messageSocket?.write(ping: Data())
+    }
+}
+
+// MARK: - Private Methods (App-side Health Check Timer)
+private extension NicoUtility {
+    func startAppHealthCheckTimer(interval: Int = appHealthCheckInterval) {
+        stopAppHealthCheckTimer()
+        lastTextSocketDates = .init()
+        appHealthCheckTimer = Timer.scheduledTimer(
+            timeInterval: Double(interval),
+            target: self,
+            selector: #selector(NicoUtility.appHealthCheckTimerFired),
+            userInfo: nil,
+            repeats: true)
+        log.debug("Started app health check timer.")
+    }
+
+    func stopAppHealthCheckTimer() {
+        appHealthCheckTimer?.invalidate()
+        appHealthCheckTimer = nil
+        log.debug("Stopped app health check timer.")
+    }
+
+    @objc func appHealthCheckTimerFired() {
+        guard let lastTextSocketDates = lastTextSocketDates else {
+            log.error("No information available for app health check.")
+            return
+        }
+
+        // XXX: Refine the following condition, if needed.
+        // No comments received for last `appHealthCheckDisconnectDetectSec`(60) seconds?
+        let quietPeriod = Int(Date().timeIntervalSince(lastTextSocketDates.message))
+        let shouldReconnect = appHealthCheckDisconnectDetectSec < quietPeriod
+        log.debug("Quiet period: \(quietPeriod)/\(appHealthCheckDisconnectDetectSec) shouldReconnect: \(shouldReconnect)")
+
+        if shouldReconnect {
+            log.debug("Seems no comments for last \(appHealthCheckDisconnectDetectSec) sec. Reconnecting...")
+            reconnect(reason: .noComments)
+        }
     }
 }
 
@@ -739,6 +807,8 @@ private extension WebSocketChatData {
             }()
         )
     }
+
+    var isDisconnect: Bool { chat.premium == 2 && chat.content == "/disconnect" }
 }
 
 private extension WebSocketStatisticsData {

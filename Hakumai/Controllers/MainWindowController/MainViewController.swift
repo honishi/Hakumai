@@ -58,6 +58,7 @@ final class MainViewController: NSViewController, NSTableViewDataSource, NSTable
     private(set) var live: Live?
     private var connectedToLive = false
     private var chats = [Chat]()
+    private var liveStartedDate: Date?
 
     // row-height cache
     private var rowHeightCacher = [Int: CGFloat]()
@@ -398,7 +399,7 @@ extension MainViewController {
         }
     }
 
-    func nicoUtilityDidPrepareLive(_ nicoUtility: NicoUtilityType, user: User, live: Live) {
+    func nicoUtilityDidPrepareLive(_ nicoUtility: NicoUtilityType, user: User, live: Live, connectContext: NicoUtility.ConnectContext) {
         self.live = live
 
         DispatchQueue.main.async {
@@ -426,7 +427,12 @@ extension MainViewController {
             self.focusCommentTextField()
         }
 
-        logSystemMessageToTableView("Prepared live as user \(user.nickname ?? "").")
+        switch connectContext {
+        case .normal:
+            logSystemMessageToTableView("Prepared live as user \(user.nickname ?? "").")
+        case .reconnect:
+            break
+        }
     }
 
     func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, reason: String, error: NicoUtilityError?) {
@@ -438,16 +444,21 @@ extension MainViewController {
         showCookiePrivilegeAlertIfNeeded(error: error)
     }
 
-    func nicoUtilityDidConnectToLive(_ nicoUtility: NicoUtilityType, roomPosition: RoomPosition) {
+    func nicoUtilityDidConnectToLive(_ nicoUtility: NicoUtilityType, roomPosition: RoomPosition, connectContext: NicoUtility.ConnectContext) {
         guard connectedToLive == false else { return }
         connectedToLive = true
-        logSystemMessageToTableView("Connected to live.")
+        switch connectContext {
+        case .normal:
+            liveStartedDate = Date()
+            logSystemMessageToTableView("Connected to live.")
+        case .reconnect:
+            break
+        }
         DispatchQueue.main.async {
             self.connectButton.isEnabled = true
             self.connectButton.image = Asset.stopLive.image
             self.progressIndicator.stopAnimation(self)
         }
-        setLiveStartedDateToSpeechManager()
         updateSpeechManagerState()
     }
 
@@ -469,12 +480,22 @@ extension MainViewController {
         logSystemMessageToTableView("Got kicked out...")
     }
 
-    func nicoUtilityWillReconnectToLive(_ nicoUtility: NicoUtilityType) {
-        logSystemMessageToTableView("Reconnecting...")
+    func nicoUtilityWillReconnectToLive(_ nicoUtility: NicoUtilityType, reason: NicoUtility.ReconnectReason) {
+        switch reason {
+        case .normal:
+            logSystemMessageToTableView("Reconnecting...")
+        case .noComments:
+            break
+        }
     }
 
-    func nicoUtilityDidDisconnect(_ nicoUtility: NicoUtilityType) {
-        logSystemMessageToTableView("Live closed.")
+    func nicoUtilityDidDisconnect(_ nicoUtility: NicoUtilityType, disconnectContext: NicoUtility.DisconnectContext) {
+        switch disconnectContext {
+        case .normal:
+            logSystemMessageToTableView("Live closed.")
+        case .reconnect:
+            break
+        }
         stopTimers()
         connectedToLive = false
         updateSpeechManagerState()
@@ -816,11 +837,6 @@ extension MainViewController {
     }
 
     // MARK: Speech Handlers
-    private func setLiveStartedDateToSpeechManager() {
-        guard #available(macOS 10.14, *) else { return }
-        SpeechManager.shared.setLiveStartedDate()
-    }
-
     private func updateSpeechManagerState() {
         guard #available(macOS 10.14, *) else { return }
         let enabled = UserDefaults.standard.bool(forKey: Parameters.enableCommentSpeech)
@@ -836,6 +852,13 @@ extension MainViewController {
         guard #available(macOS 10.14, *) else { return }
         let enabled = UserDefaults.standard.bool(forKey: Parameters.enableCommentSpeech)
         guard enabled else { return }
+        guard let started = liveStartedDate,
+              Date().timeIntervalSince(started) > 5 else {
+            // Skip enqueuing since there's possibility that we receive lots of
+            // messages for this time slot.
+            log.debug("Skip enqueuing early chats.")
+            return
+        }
         DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async {
             SpeechManager.shared.enqueue(chat: chat)
             if SpeechManager.shared.refreshChatQueueIfQueuedTooMuch() {
