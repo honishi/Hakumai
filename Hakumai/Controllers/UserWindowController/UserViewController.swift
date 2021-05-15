@@ -9,11 +9,6 @@
 import Foundation
 import AppKit
 
-// constant value for storyboard
-/*
- private let kStoryboardIdGeneralViewController = "GeneralViewController"
- */
-
 final class UserViewController: NSViewController {
     // MARK: - Properties
     // MARK: Outlets

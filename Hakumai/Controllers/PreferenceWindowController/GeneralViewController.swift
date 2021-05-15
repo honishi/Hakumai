@@ -9,10 +9,6 @@
 import Foundation
 import AppKit
 
-// constant value for storyboard
-private let kStoryboardNamePreferenceWindowController = "PreferenceWindowController"
-private let kStoryboardIdGeneralViewController = "GeneralViewController"
-
 // - @objc() is required http://stackoverflow.com/a/27178765
 // - sample that returns bool http://stackoverflow.com/a/8327909
 @objc(IsLoginSessionManagementTransformer) class IsLoginSessionManagementTransformer: ValueTransformer {
@@ -52,9 +48,8 @@ final class GeneralViewController: NSViewController {
     }
 
     // MARK: - Object Lifecycle
-    static func generateInstance() -> GeneralViewController? {
-        let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
-        return storyboard.instantiateController(withIdentifier: kStoryboardIdGeneralViewController) as? GeneralViewController
+    static func generateInstance() -> GeneralViewController {
+        return StoryboardScene.PreferenceWindowController.generalViewController.instantiate()
     }
 }
 

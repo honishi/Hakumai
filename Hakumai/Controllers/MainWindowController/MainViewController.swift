@@ -9,9 +9,6 @@
 import Foundation
 import AppKit
 
-private let kStoryboardNameMainWindowController = "MainWindowController"
-private let kStoryboardIdHandleNameAddViewController = "HandleNameAddViewController"
-
 private let kUserWindowDefautlTopLeftPoint = NSPoint(x: 100, y: 100)
 private let kCalculateActiveInterval: TimeInterval = 5
 private let kMaximumFontSizeForNonMainColumn: CGFloat = 16
@@ -586,11 +583,8 @@ extension MainViewController {
 
     // MARK: - Public Functions
     func showHandleNameAddViewController(live: Live, chat: Chat) {
-        let storyboard = NSStoryboard(name: kStoryboardNameMainWindowController, bundle: nil)
-        guard let handleNameAddViewController = storyboard.instantiateController(withIdentifier: kStoryboardIdHandleNameAddViewController) as? HandleNameAddViewController else {
-            return
-        }
-
+        let handleNameAddViewController =
+            StoryboardScene.MainWindowController.handleNameAddViewController.instantiate()
         handleNameAddViewController.handleName = (defaultHandleName(live: live, chat: chat) ?? "") as NSString
         handleNameAddViewController.completion = { (cancelled: Bool, handleName: String?) -> Void in
             if !cancelled, let handleName = handleName {

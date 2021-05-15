@@ -9,10 +9,6 @@
 import Foundation
 import AppKit
 
-// constant value for storyboard
-private let kStoryboardNamePreferenceWindowController = "PreferenceWindowController"
-private let kStoryboardIdPreferenceWindowController = "PreferenceWindowController"
-
 private let kToolbarItemIdentifierGeneral = "GeneralToolbarItem"
 private let kToolbarItemIdentifierMute = "MuteToolbarItem"
 
@@ -23,13 +19,10 @@ final class PreferenceWindowController: NSWindowController {
     @IBOutlet weak var toolbar: NSToolbar!
 
     // MARK: Properties for Singleton
-    static func generateInstance() -> PreferenceWindowController? {
-        let storyboard = NSStoryboard(name: kStoryboardNamePreferenceWindowController, bundle: nil)
-        guard let preferenceWindowController = storyboard.instantiateController(withIdentifier: kStoryboardIdPreferenceWindowController) as? PreferenceWindowController else {
-            return nil
-        }
-        preferenceWindowController.window?.center()
-        return preferenceWindowController
+    static func generateInstance() -> PreferenceWindowController {
+        let wc = StoryboardScene.PreferenceWindowController.preferenceWindowController.instantiate()
+        wc.window?.center()
+        return wc
     }
 
     // MARK: - Object Lifecycle
@@ -50,9 +43,7 @@ final class PreferenceWindowController: NSWindowController {
 extension PreferenceWindowController {
     // MARK: - NSWindowController Overrides
     override func windowDidLoad() {
-        if let vc = GeneralViewController.shared {
-            changeContent(viewController: vc, itemIdentifier: kToolbarItemIdentifierGeneral)
-        }
+        changeContent(viewController: GeneralViewController.shared, itemIdentifier: kToolbarItemIdentifierGeneral)
         window?.center()
         window?.makeKey()
     }

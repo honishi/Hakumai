@@ -9,10 +9,6 @@
 import Foundation
 import AppKit
 
-// constant value for storyboard
-private let kStoryboardNameUserWindowController = "UserWindowController"
-private let kStoryboardIdUserWindowController = "UserWindowController"
-
 protocol UserWindowControllerDelegate: AnyObject {
     func userWindowControllerDidClose(_ userWindowController: UserWindowController)
 }
@@ -33,14 +29,11 @@ final class UserWindowController: NSWindowController {
 }
 
 extension UserWindowController {
-    static func generateInstance(delegate: UserWindowControllerDelegate?, userId: String) -> UserWindowController? {
-        let storyboard = NSStoryboard(name: kStoryboardNameUserWindowController, bundle: nil)
-        guard let userWindowController = storyboard.instantiateController(withIdentifier: kStoryboardIdUserWindowController) as? UserWindowController else {
-            return nil
-        }
-        userWindowController.delegate = delegate
-        userWindowController.userId = userId
-        return userWindowController
+    static func generateInstance(delegate: UserWindowControllerDelegate?, userId: String) -> UserWindowController {
+        let wc = StoryboardScene.UserWindowController.userWindowController.instantiate()
+        wc.delegate = delegate
+        wc.userId = userId
+        return wc
     }
 }
 
