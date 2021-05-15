@@ -7,33 +7,21 @@ layout: default
 <a href="https://twitter.com/share" class="twitter-share-button" data-text="Hakumai - Mac用ニコ生コメントビューア">Tweet</a>
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 
-<!--
 <a href="https://hakumai.s3.amazonaws.com/Hakumai.{{site.binary_version}}.zip" class="button button-primary"><i class="fa fa-download"></i> Download</a>
 v{{site.binary_version}}, {{site.binary_date}} (for macOS 10.12-)
--->
 
 ## About Hakumai
 
 <img src="./image/main.png" width="550px">
 
 * Hakumai は macOS で動作するニコニコ生放送用のコメントビューア(コメビュ)です。
-* <strike>配布、メンテナンスを終了しました。</strike> (2021/1/19)
-* ニコ生新仕様に対応したバージョンを現在テスト中です。(2021/5/8)
-
-<img src="./image/food_kome_masu.png" width="150px">
-
-## Beta Testing
-
-### Beta App
-
-* <a href="https://hakumai.s3.amazonaws.com/Hakumai.{{site.binary_version}}.zip">v{{site.binary_version}}</a> ({{site.binary_date}})
 
 ### Requirements
 
-* macOS 10.12 Sierra 以降に対応
-* コメント棒読みには macOS 10.14 Mojave 以降が必要
-  
-<img src="./image/taue_man2.png" width="150px">
+* macOS 10.12 Sierra 以降が必要
+* Google Chrome と Safari に対応
+
+<img src="./image/job_kome_nouka.png" width="160px">
 
 ## How to Uninstall Hakumai completely
 
@@ -44,7 +32,7 @@ rm -r ~/Library/Application\ Support/com.honishi.Hakumai/
 Keychain Accessで"com.honishi.Hakumai.account"のエントリを削除(あれば)
 ~~~
 
-<img src="./image/imfull.png" width="150px">
+<img src="./image/imfull.png" width="160px">
 
 ## Contacts
 
