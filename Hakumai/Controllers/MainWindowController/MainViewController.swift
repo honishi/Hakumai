@@ -21,7 +21,10 @@ private let safariCookieAlertDescription = "To retrieve the cookie from Safari, 
 
 // swiftlint:disable file_length
 final class MainViewController: NSViewController {
-    // MARK: - Properties
+    // MARK: Types
+    enum ConnectionStatus { case disconnected, connecting, connected }
+
+    // MARK: Properties
     static var shared: MainViewController!
 
     // MARK: Main Outlets
@@ -46,7 +49,6 @@ final class MainViewController: NSViewController {
     @IBOutlet weak var commentAnonymouslyButton: NSButton!
     @IBOutlet weak var elapsedLabel: NSTextField!
     @IBOutlet weak var activeLabel: NSTextField!
-    @IBOutlet weak var notificationLabel: NSTextField!
     @IBOutlet weak var progressIndicator: NSProgressIndicator!
 
     // MARK: Menu Delegate
@@ -96,10 +98,7 @@ extension MainViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        buildViews()
-        setupTableView()
-        registerNibs()
+        configureViews()
     }
 
     override func viewDidAppear() {
@@ -309,40 +308,16 @@ extension MainViewController: NSControlTextEditingDelegate {
 // MARK: - NicoUtilityDelegate Functions
 extension MainViewController: NicoUtilityDelegate {
     func nicoUtilityWillPrepareLive(_ nicoUtility: NicoUtilityType) {
-        DispatchQueue.main.async {
-            self.connectButton.isEnabled = false
-            self.liveTextField.isEnabled = false
-            self.progressIndicator.startAnimation(self)
-        }
+        updateMainControlViews(status: .connecting)
     }
 
     func nicoUtilityDidPrepareLive(_ nicoUtility: NicoUtilityType, user: User, live: Live, connectContext: NicoUtility.ConnectContext) {
         self.live = live
 
-        DispatchQueue.main.async {
-            self.liveTitleLabel.stringValue = live.title ?? ""
-
-            self.communityIdLabel.stringValue = live.community.community ?? "-"
-            var communityTitle = live.community.title ?? "-"
-            if let level = live.community.level {
-                communityTitle += " (Lv.\(level))"
-            }
-            self.communityTitleLabel.stringValue = communityTitle
-
-            let commentPlaceholder = (user.isBSP == true) ?
-                "BSP Comment is not yet implemented. :P" : "⌘N (enter to comment)"
-            let commentEnabled = (user.isBSP == true) ? false : true
-
-            self.commentTextField.placeholderString = commentPlaceholder
-            self.commentTextField.isEnabled = commentEnabled
-            self.commentAnonymouslyButton.isEnabled = commentEnabled
-
-            self.notificationLabel.stringValue = "Opened: ---"
-
-            self.startTimers()
-            self.loadThumbnail()
-            self.focusCommentTextField()
-        }
+        updateCommunityViews(live: live)
+        startTimers()
+        loadThumbnail()
+        focusCommentTextField()
 
         switch connectContext {
         case .normal:
@@ -354,11 +329,7 @@ extension MainViewController: NicoUtilityDelegate {
 
     func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, reason: String, error: NicoUtilityError?) {
         logSystemMessageToTableView("Failed to prepare live.(\(reason))")
-        DispatchQueue.main.async {
-            self.connectButton.isEnabled = true
-            self.liveTextField.isEnabled = true
-            self.progressIndicator.stopAnimation(self)
-        }
+        updateMainControlViews(status: .disconnected)
         showCookiePrivilegeAlertIfNeeded(error: error)
     }
 
@@ -372,12 +343,7 @@ extension MainViewController: NicoUtilityDelegate {
         case .reconnect:
             break
         }
-        DispatchQueue.main.async {
-            self.connectButton.isEnabled = true
-            self.connectButton.image = Asset.stopLive.image
-            self.liveTextField.isEnabled = true
-            self.progressIndicator.stopAnimation(self)
-        }
+        updateMainControlViews(status: .connected)
         updateSpeechManagerState()
     }
 
@@ -393,10 +359,6 @@ extension MainViewController: NicoUtilityDelegate {
                 userWindowController.reloadMessages()
             }
         }
-    }
-
-    func nicoUtilityDidGetKickedOut(_ nicoUtility: NicoUtilityType) {
-        logSystemMessageToTableView("Got kicked out...")
     }
 
     func nicoUtilityWillReconnectToLive(_ nicoUtility: NicoUtilityType, reason: NicoUtility.ReconnectReason) {
@@ -419,14 +381,9 @@ extension MainViewController: NicoUtilityDelegate {
         connectedToLive = false
         updateSpeechManagerState()
 
-        DispatchQueue.main.async {
-            switch disconnectContext {
-            case .normal:
-                self.connectButton.image = Asset.startLive.image
-            case .reconnect:
-                self.connectButton.isEnabled = false
-                self.liveTextField.isEnabled = false
-            }
+        switch disconnectContext {
+        case .normal:       updateMainControlViews(status: .disconnected)
+        case .reconnect:    updateMainControlViews(status: .connecting)
         }
     }
 
@@ -554,7 +511,7 @@ extension MainViewController {
 
 // MARK: Configure Views
 private extension MainViewController {
-    func buildViews() {
+    func configureViews() {
         // use async to properly render border line. if not async, the line sometimes disappears
         DispatchQueue.main.async {
             self.communityImageView.layer?.borderWidth = 0.5
@@ -562,11 +519,17 @@ private extension MainViewController {
             self.communityImageView.layer?.borderColor = NSColor.black.cgColor
         }
         reconnectButton.isHidden = !enableDebugReconnectButton
+
         if #available(macOS 10.14, *) {
             speakButton.isHidden = false
         } else {
             speakButton.isHidden = true
         }
+
+        commentTextField.placeholderString = "⌘N (empty ⏎ to scroll to bottom)"
+
+        setupTableView()
+        registerNibs()
     }
 
     func setupTableView() {
@@ -585,6 +548,43 @@ private extension MainViewController {
             guard let nib = NSNib(nibNamed: nibName, bundle: Bundle.main) else { continue }
             tableView.register(nib, forIdentifier: convertToNSUserInterfaceItemIdentifier(identifier))
         }
+    }
+
+    func updateMainControlViews(status connectionStatus: ConnectionStatus) {
+        DispatchQueue.main.async { self._updateMainControlViews(status: connectionStatus) }
+    }
+
+    func _updateMainControlViews(status connectionStatus: ConnectionStatus) {
+        switch connectionStatus {
+        case .disconnected:
+            connectButton.isEnabled = true
+            connectButton.image = Asset.startLive.image
+            liveTextField.isEnabled = true
+            progressIndicator.stopAnimation(self)
+        case .connecting:
+            connectButton.isEnabled = false
+            liveTextField.isEnabled = false
+            progressIndicator.startAnimation(self)
+        case .connected:
+            connectButton.isEnabled = true
+            connectButton.image = Asset.stopLive.image
+            liveTextField.isEnabled = true
+            progressIndicator.stopAnimation(self)
+        }
+    }
+
+    func updateCommunityViews(live: Live) {
+        DispatchQueue.main.async { self._updateCommunityViews(live: live) }
+    }
+
+    func _updateCommunityViews(live: Live) {
+        liveTitleLabel.stringValue = live.title ?? ""
+        communityIdLabel.stringValue = live.community.community ?? "-"
+        var communityTitle = live.community.title ?? "-"
+        if let level = live.community.level {
+            communityTitle += " (Lv.\(level))"
+        }
+        communityTitleLabel.stringValue = communityTitle
     }
 }
 
@@ -723,7 +723,8 @@ extension MainViewController {
     }
 
     @IBAction func reconnectLive(_ sender: Any) {
-        NicoUtility.shared.reconnect()
+        // NicoUtility.shared.reconnect()
+        NicoUtility.shared.reconnect(reason: .noComments)
     }
 
     @IBAction func connectLive(_ sender: AnyObject) {
