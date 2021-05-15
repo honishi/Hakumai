@@ -60,6 +60,11 @@ final class SpeechManagerTests: XCTestCase {
         actual = SpeechManager.shared.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
 
+        comment = "誰も共感してくれなくて可哀想wwwぶた"
+        expected = "誰も共感してくれなくて可哀想 わらわらぶた"
+        actual = SpeechManager.shared.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
+
         comment = "いよいよ就寝か。。　(ﾟ∀ﾟ)"
         expected = "いよいよ就寝か。。　"
         actual = SpeechManager.shared.cleanComment(from: comment)
