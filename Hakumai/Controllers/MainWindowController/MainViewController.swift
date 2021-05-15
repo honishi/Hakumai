@@ -20,7 +20,7 @@ private let safariCookieAlertTitle = "No Safari Cookie found"
 private let safariCookieAlertDescription = "To retrieve the cookie from Safari, please open the Security & Privacy section of the System Preference and give the \"Full Disk Access\" right to Hakumai app."
 
 // swiftlint:disable file_length
-final class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate, NSControlTextEditingDelegate, NicoUtilityDelegate {
+final class MainViewController: NSViewController {
     // MARK: - Properties
     static var shared: MainViewController!
 
@@ -88,6 +88,12 @@ extension MainViewController {
 
 // MARK: - NSViewController Functions
 extension MainViewController {
+    override var representedObject: Any? {
+        didSet {
+            // Update the view, if already loaded.
+        }
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -100,119 +106,17 @@ extension MainViewController {
         // kickTableViewStressTest()
         // updateStandardUserDefaults()
     }
-
-    override var representedObject: Any? {
-        didSet {
-            // Update the view, if already loaded.
-        }
-    }
-}
-
-// MARK: Configure Views
-private extension MainViewController {
-    func buildViews() {
-        // use async to properly render border line. if not async, the line sometimes disappears
-        DispatchQueue.main.async {
-            self.communityImageView.layer?.borderWidth = 0.5
-            self.communityImageView.layer?.masksToBounds = true
-            self.communityImageView.layer?.borderColor = NSColor.black.cgColor
-        }
-        reconnectButton.isHidden = !enableDebugReconnectButton
-        if #available(macOS 10.14, *) {
-            speakButton.isHidden = false
-        } else {
-            speakButton.isHidden = true
-        }
-    }
-
-    func setupTableView() {
-        tableView.doubleAction = #selector(MainViewController.openUserWindow(_:))
-    }
-
-    func registerNibs() {
-        let nibs = [
-            (kNibNameRoomPositionTableCellView, kRoomPositionColumnIdentifier),
-            (kNibNameScoreTableCellView, kScoreColumnIdentifier),
-            (kNibNameCommentTableCellView, kCommentColumnIdentifier),
-            (kNibNameUserIdTableCellView, kUserIdColumnIdentifier),
-            (kNibNamePremiumTableCellView, kPremiumColumnIdentifier)]
-
-        for (nibName, identifier) in nibs {
-            guard let nib = NSNib(nibNamed: nibName, bundle: Bundle.main) else { continue }
-            tableView.register(nib, forIdentifier: convertToNSUserInterfaceItemIdentifier(identifier))
-        }
-    }
-}
-
-// MARK: Utility
-extension MainViewController {
-    func changeEnableCommentSpeech(_ enabled: Bool) {
-        // log.debug("\(enabled)")
-        updateSpeechManagerState()
-    }
-
-    func changeFontSize(_ fontSize: CGFloat) {
-        tableViewFontSize = fontSize
-
-        minimumRowHeight = calculateMinimumRowHeight(fontSize: tableViewFontSize)
-        tableView.rowHeight = minimumRowHeight
-        rowHeightCacher.removeAll(keepingCapacity: false)
-        tableView.reloadData()
-    }
-
-    func changeEnableMuteUserIds(_ enabled: Bool) {
-        MessageContainer.shared.enableMuteUserIds = enabled
-        log.debug("changed enable mute userids: \(enabled)")
-
-        rebuildFilteredMessages()
-    }
-
-    func changeMuteUserIds(_ muteUserIds: [[String: String]]) {
-        MessageContainer.shared.muteUserIds = muteUserIds
-        log.debug("changed mute userids: \(muteUserIds)")
-
-        rebuildFilteredMessages()
-    }
-
-    func changeEnableMuteWords(_ enabled: Bool) {
-        MessageContainer.shared.enableMuteWords = enabled
-        log.debug("changed enable mute words: \(enabled)")
-
-        rebuildFilteredMessages()
-    }
-
-    func changeMuteWords(_ muteWords: [[String: String]]) {
-        MessageContainer.shared.muteWords = muteWords
-        log.debug("changed mute words: \(muteWords)")
-
-        rebuildFilteredMessages()
-    }
-
-    private func rebuildFilteredMessages() {
-        DispatchQueue.main.async {
-            self.progressIndicator.startAnimation(self)
-            let shouldScroll = self.shouldTableViewScrollToBottom()
-
-            MessageContainer.shared.rebuildFilteredMessages {
-                self.tableView.reloadData()
-
-                if shouldScroll {
-                    self.scrollTableViewToBottom()
-                }
-                self.scrollView.flashScrollers()
-
-                self.progressIndicator.stopAnimation(self)
-            }
-        }
-    }
 }
 
 // MARK: - NSTableViewDataSource Functions
-extension MainViewController {
+extension MainViewController: NSTableViewDataSource {
     func numberOfRows(in tableView: NSTableView) -> Int {
         return MessageContainer.shared.count()
     }
+}
 
+// MARK: - NSTableViewDelegate Functions
+extension MainViewController: NSTableViewDelegate {
     func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
         let message = MessageContainer.shared[row]
 
@@ -369,7 +273,7 @@ extension MainViewController {
 }
 
 // MARK: - NSControlTextEditingDelegate Functions
-extension MainViewController {
+extension MainViewController: NSControlTextEditingDelegate {
     func control(_ control: NSControl, textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
         let isMovedUp = commandSelector == #selector(NSResponder.moveUp(_:))
         let isMovedDown = commandSelector == #selector(NSResponder.moveDown(_:))
@@ -403,7 +307,7 @@ extension MainViewController {
 }
 
 // MARK: - NicoUtilityDelegate Functions
-extension MainViewController {
+extension MainViewController: NicoUtilityDelegate {
     func nicoUtilityWillPrepareLive(_ nicoUtility: NicoUtilityType) {
         DispatchQueue.main.async {
             self.connectButton.isEnabled = false
@@ -531,10 +435,156 @@ extension MainViewController {
     }
 }
 
+// MARK: - UserWindowControllerDelegate Functions
+extension MainViewController: UserWindowControllerDelegate {
+    func userWindowControllerDidClose(_ userWindowController: UserWindowController) {
+        log.debug("")
+        if let index = userWindowControllers.firstIndex(of: userWindowController) {
+            userWindowControllers.remove(at: index)
+        }
+    }
+}
+
+// MARK: - Public Functions
+extension MainViewController {
+    func showHandleNameAddViewController(live: Live, chat: Chat) {
+        let handleNameAddViewController =
+            StoryboardScene.MainWindowController.handleNameAddViewController.instantiate()
+        handleNameAddViewController.handleName = (defaultHandleName(live: live, chat: chat) ?? "") as NSString
+        handleNameAddViewController.completion = { (cancelled: Bool, handleName: String?) -> Void in
+            if !cancelled, let handleName = handleName {
+                HandleNameManager.shared.updateHandleName(live: live, chat: chat, handleName: handleName)
+                MainViewController.shared.refreshHandleName()
+            }
+
+            self.dismiss(handleNameAddViewController)
+            // TODO: deinit in handleNameViewController is not called after this completion
+        }
+
+        presentAsSheet(handleNameAddViewController)
+    }
+
+    private func defaultHandleName(live: Live, chat: Chat) -> String? {
+        var defaultHandleName: String?
+        if let handleName = HandleNameManager.shared.handleName(forLive: live, chat: chat) {
+            defaultHandleName = handleName
+        } else if let userName = NicoUtility.shared.cachedUserName(forChat: chat) {
+            defaultHandleName = userName
+        }
+        return defaultHandleName
+    }
+
+    func refreshHandleName() {
+        tableView.reloadData()
+        scrollView.flashScrollers()
+    }
+
+    // MARK: Hotkeys
+    func focusLiveTextField() {
+        liveTextField.becomeFirstResponder()
+    }
+
+    func focusCommentTextField() {
+        commentTextField.becomeFirstResponder()
+    }
+}
+
+// MARK: Utility
+extension MainViewController {
+    func changeEnableCommentSpeech(_ enabled: Bool) {
+        // log.debug("\(enabled)")
+        updateSpeechManagerState()
+    }
+
+    func changeFontSize(_ fontSize: CGFloat) {
+        tableViewFontSize = fontSize
+
+        minimumRowHeight = calculateMinimumRowHeight(fontSize: tableViewFontSize)
+        tableView.rowHeight = minimumRowHeight
+        rowHeightCacher.removeAll(keepingCapacity: false)
+        tableView.reloadData()
+    }
+
+    func changeEnableMuteUserIds(_ enabled: Bool) {
+        MessageContainer.shared.enableMuteUserIds = enabled
+        log.debug("changed enable mute userids: \(enabled)")
+        rebuildFilteredMessages()
+    }
+
+    func changeMuteUserIds(_ muteUserIds: [[String: String]]) {
+        MessageContainer.shared.muteUserIds = muteUserIds
+        log.debug("changed mute userids: \(muteUserIds)")
+        rebuildFilteredMessages()
+    }
+
+    func changeEnableMuteWords(_ enabled: Bool) {
+        MessageContainer.shared.enableMuteWords = enabled
+        log.debug("changed enable mute words: \(enabled)")
+        rebuildFilteredMessages()
+    }
+
+    func changeMuteWords(_ muteWords: [[String: String]]) {
+        MessageContainer.shared.muteWords = muteWords
+        log.debug("changed mute words: \(muteWords)")
+        rebuildFilteredMessages()
+    }
+
+    private func rebuildFilteredMessages() {
+        DispatchQueue.main.async {
+            self.progressIndicator.startAnimation(self)
+            let shouldScroll = self.shouldTableViewScrollToBottom()
+            MessageContainer.shared.rebuildFilteredMessages {
+                self.tableView.reloadData()
+                if shouldScroll {
+                    self.scrollTableViewToBottom()
+                }
+                self.scrollView.flashScrollers()
+                self.progressIndicator.stopAnimation(self)
+            }
+        }
+    }
+}
+
 // MARK: Chat Message Utility (Internal)
 extension MainViewController {
     func logSystemMessageToTableView(_ message: String) {
         appendTableView(message)
+    }
+}
+
+// MARK: Configure Views
+private extension MainViewController {
+    func buildViews() {
+        // use async to properly render border line. if not async, the line sometimes disappears
+        DispatchQueue.main.async {
+            self.communityImageView.layer?.borderWidth = 0.5
+            self.communityImageView.layer?.masksToBounds = true
+            self.communityImageView.layer?.borderColor = NSColor.black.cgColor
+        }
+        reconnectButton.isHidden = !enableDebugReconnectButton
+        if #available(macOS 10.14, *) {
+            speakButton.isHidden = false
+        } else {
+            speakButton.isHidden = true
+        }
+    }
+
+    func setupTableView() {
+        tableView.doubleAction = #selector(MainViewController.openUserWindow(_:))
+    }
+
+    func registerNibs() {
+        let nibs = [
+            (kNibNameRoomPositionTableCellView, kRoomPositionColumnIdentifier),
+            (kNibNameScoreTableCellView, kScoreColumnIdentifier),
+            (kNibNameCommentTableCellView, kCommentColumnIdentifier),
+            (kNibNameUserIdTableCellView, kUserIdColumnIdentifier),
+            (kNibNamePremiumTableCellView, kPremiumColumnIdentifier)]
+
+        for (nibName, identifier) in nibs {
+            guard let nib = NSNib(nibNamed: nibName, bundle: Bundle.main) else { continue }
+            tableView.register(nib, forIdentifier: convertToNSUserInterfaceItemIdentifier(identifier))
+        }
     }
 }
 
@@ -617,60 +667,6 @@ private extension MainViewController {
 
             NSAnimationContext.endGrouping()
         }
-    }
-}
-
-// MARK: - UserWindowControllerDelegate Functions
-extension MainViewController: UserWindowControllerDelegate {
-    func userWindowControllerDidClose(_ userWindowController: UserWindowController) {
-        log.debug("")
-        if let index = userWindowControllers.firstIndex(of: userWindowController) {
-            userWindowControllers.remove(at: index)
-        }
-    }
-}
-
-// MARK: - Public Functions
-extension MainViewController {
-    func showHandleNameAddViewController(live: Live, chat: Chat) {
-        let handleNameAddViewController =
-            StoryboardScene.MainWindowController.handleNameAddViewController.instantiate()
-        handleNameAddViewController.handleName = (defaultHandleName(live: live, chat: chat) ?? "") as NSString
-        handleNameAddViewController.completion = { (cancelled: Bool, handleName: String?) -> Void in
-            if !cancelled, let handleName = handleName {
-                HandleNameManager.shared.updateHandleName(live: live, chat: chat, handleName: handleName)
-                MainViewController.shared.refreshHandleName()
-            }
-
-            self.dismiss(handleNameAddViewController)
-            // TODO: deinit in handleNameViewController is not called after this completion
-        }
-
-        presentAsSheet(handleNameAddViewController)
-    }
-
-    private func defaultHandleName(live: Live, chat: Chat) -> String? {
-        var defaultHandleName: String?
-        if let handleName = HandleNameManager.shared.handleName(forLive: live, chat: chat) {
-            defaultHandleName = handleName
-        } else if let userName = NicoUtility.shared.cachedUserName(forChat: chat) {
-            defaultHandleName = userName
-        }
-        return defaultHandleName
-    }
-
-    func refreshHandleName() {
-        tableView.reloadData()
-        scrollView.flashScrollers()
-    }
-
-    // MARK: Hotkeys
-    func focusLiveTextField() {
-        liveTextField.becomeFirstResponder()
-    }
-
-    func focusCommentTextField() {
-        commentTextField.becomeFirstResponder()
     }
 }
 
