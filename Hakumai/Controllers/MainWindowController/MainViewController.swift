@@ -20,7 +20,7 @@ private let safariCookieAlertTitle = "No Safari Cookie found"
 private let safariCookieAlertDescription = "To retrieve the cookie from Safari, please open the Security & Privacy section of the System Preference and give the \"Full Disk Access\" right to Hakumai app."
 
 // swiftlint:disable file_length
-final class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate, NSControlTextEditingDelegate, NicoUtilityDelegate, UserWindowControllerDelegate {
+final class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate, NSControlTextEditingDelegate, NicoUtilityDelegate {
     // MARK: - Properties
     static var shared: MainViewController!
 
@@ -77,15 +77,17 @@ final class MainViewController: NSViewController, NSTableViewDataSource, NSTable
     private var nextUserWindowTopLeftPoint: NSPoint = NSPoint.zero
 }
 
+// MARK: - Object Lifecycle
 extension MainViewController {
-    // MARK: - Object Lifecycle
     override func awakeFromNib() {
         super.awakeFromNib()
 
         MainViewController.shared = self
     }
+}
 
-    // MARK: - NSViewController Functions
+// MARK: - NSViewController Functions
+extension MainViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -104,9 +106,11 @@ extension MainViewController {
             // Update the view, if already loaded.
         }
     }
+}
 
-    // MARK: Configure Views
-    private func buildViews() {
+// MARK: Configure Views
+private extension MainViewController {
+    func buildViews() {
         // use async to properly render border line. if not async, the line sometimes disappears
         DispatchQueue.main.async {
             self.communityImageView.layer?.borderWidth = 0.5
@@ -121,11 +125,11 @@ extension MainViewController {
         }
     }
 
-    private func setupTableView() {
+    func setupTableView() {
         tableView.doubleAction = #selector(MainViewController.openUserWindow(_:))
     }
 
-    private func registerNibs() {
+    func registerNibs() {
         let nibs = [
             (kNibNameRoomPositionTableCellView, kRoomPositionColumnIdentifier),
             (kNibNameScoreTableCellView, kScoreColumnIdentifier),
@@ -138,8 +142,10 @@ extension MainViewController {
             tableView.register(nib, forIdentifier: convertToNSUserInterfaceItemIdentifier(identifier))
         }
     }
+}
 
-    // MARK: Utility
+// MARK: Utility
+extension MainViewController {
     func changeEnableCommentSpeech(_ enabled: Bool) {
         // log.debug("\(enabled)")
         updateSpeechManagerState()
@@ -199,8 +205,10 @@ extension MainViewController {
             }
         }
     }
+}
 
-    // MARK: - NSTableViewDataSource Functions
+// MARK: - NSTableViewDataSource Functions
+extension MainViewController {
     func numberOfRows(in tableView: NSTableView) -> Int {
         return MessageContainer.shared.count()
     }
@@ -358,8 +366,10 @@ extension MainViewController {
 
         return (content, attributes)
     }
+}
 
-    // MARK: - NSControlTextEditingDelegate Functions
+// MARK: - NSControlTextEditingDelegate Functions
+extension MainViewController {
     func control(_ control: NSControl, textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
         let isMovedUp = commandSelector == #selector(NSResponder.moveUp(_:))
         let isMovedDown = commandSelector == #selector(NSResponder.moveDown(_:))
@@ -390,8 +400,10 @@ extension MainViewController {
             self.commentTextField.selectText(self)
         }
     }
+}
 
-    // MARK: - NicoUtilityDelegate Functions
+// MARK: - NicoUtilityDelegate Functions
+extension MainViewController {
     func nicoUtilityWillPrepareLive(_ nicoUtility: NicoUtilityType) {
         DispatchQueue.main.async {
             self.connectButton.isEnabled = false
@@ -517,14 +529,18 @@ extension MainViewController {
     func nicoUtilityDidReceiveHeartbeat(_ nicoUtility: NicoUtilityType, heartbeat: Heartbeat) {
         updateLiveStatistics(heartbeat: heartbeat)
     }
+}
 
-    // MARK: System Message Utility
+// MARK: Chat Message Utility (Internal)
+extension MainViewController {
     func logSystemMessageToTableView(_ message: String) {
         appendTableView(message)
     }
+}
 
-    // MARK: Chat Append Utility
-    private func appendTableView(_ chatOrSystemMessage: Any) {
+// MARK: Chat Message Utility (Private)
+private extension MainViewController {
+    func appendTableView(_ chatOrSystemMessage: Any) {
         DispatchQueue.main.async {
             let shouldScroll = self.shouldTableViewScrollToBottom()
             let (appended, count) = MessageContainer.shared.append(chatOrSystemMessage: chatOrSystemMessage)
@@ -543,7 +559,7 @@ extension MainViewController {
         }
     }
 
-    private func logMessage(_ message: Message) {
+    func logMessage(_ message: Message) {
         var content: String?
         if message.messageType == .system {
             content = message.message
@@ -553,7 +569,7 @@ extension MainViewController {
         log.debug("[ \(content ?? "-") ]")
     }
 
-    private func shouldTableViewScrollToBottom() -> Bool {
+    func shouldTableViewScrollToBottom() -> Bool {
         if 0 < currentScrollAnimationCount {
             return lastShouldScrollToBottom
         }
@@ -572,7 +588,7 @@ extension MainViewController {
         return shouldScroll
     }
 
-    private func scrollTableViewToBottom(animated: Bool = false) {
+    func scrollTableViewToBottom(animated: Bool = false) {
         let clipView = scrollView.contentView
         let x = clipView.documentVisibleRect.origin.x
         let y = clipView.documentRect.size.height - clipView.documentVisibleRect.size.height
@@ -602,16 +618,20 @@ extension MainViewController {
             NSAnimationContext.endGrouping()
         }
     }
+}
 
-    // MARK: - UserWindowControllerDelegate Functions
+// MARK: - UserWindowControllerDelegate Functions
+extension MainViewController: UserWindowControllerDelegate {
     func userWindowControllerDidClose(_ userWindowController: UserWindowController) {
         log.debug("")
         if let index = userWindowControllers.firstIndex(of: userWindowController) {
             userWindowControllers.remove(at: index)
         }
     }
+}
 
-    // MARK: - Public Functions
+// MARK: - Public Functions
+extension MainViewController {
     func showHandleNameAddViewController(live: Live, chat: Chat) {
         let handleNameAddViewController =
             StoryboardScene.MainWindowController.handleNameAddViewController.instantiate()
@@ -652,9 +672,11 @@ extension MainViewController {
     func focusCommentTextField() {
         commentTextField.becomeFirstResponder()
     }
+}
 
-    // MARK: - Internal Functions
-    private func initializeHandleNameManager() {
+// MARK: - Internal Functions
+private extension MainViewController {
+    func initializeHandleNameManager() {
         progressIndicator.startAnimation(self)
         // force to invoke setup methods in HandleNameManager()
         _ = HandleNameManager.shared
@@ -662,7 +684,7 @@ extension MainViewController {
     }
 
     // MARK: Live Info Updater
-    private func loadThumbnail() {
+    func loadThumbnail() {
         NicoUtility.shared.loadThumbnail { (imageData) -> Void in
             DispatchQueue.main.async {
                 guard let data = imageData else { return }
@@ -671,7 +693,7 @@ extension MainViewController {
         }
     }
 
-    private func updateLiveStatistics(heartbeat: Heartbeat) {
+    func updateLiveStatistics(heartbeat: Heartbeat) {
         guard heartbeat.status == .ok,
               let watchCount = heartbeat.watchCount,
               let commentCount = heartbeat.commentCount else { return }
@@ -690,8 +712,10 @@ extension MainViewController {
             self.remainingSeatsLabel.stringValue = "Seats: " + remaining
         }
     }
+}
 
-    // MARK: Control Handlers
+// MARK: Control Handlers
+extension MainViewController {
     @IBAction func grabUrlFromBrowser(_ sender: AnyObject) {
         guard let session = SessionManagementType(rawValue:
                                                     UserDefaults.standard.integer(forKey: Parameters.sessionManagement)) else { return }
@@ -801,14 +825,16 @@ extension MainViewController {
         }
         nextUserWindowTopLeftPoint = userWindow.cascadeTopLeft(from: topLeftPoint)
     }
+}
 
-    // MARK: Timer Functions
-    private func startTimers() {
+// MARK: Timer Functions
+private extension MainViewController {
+    func startTimers() {
         elapsedTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(MainViewController.displayElapsed(_:)), userInfo: nil, repeats: true)
         activeTimer = Timer.scheduledTimer(timeInterval: kCalculateActiveInterval, target: self, selector: #selector(MainViewController.calculateActive(_:)), userInfo: nil, repeats: true)
     }
 
-    private func stopTimers() {
+    func stopTimers() {
         elapsedTimer?.invalidate()
         elapsedTimer = nil
         activeTimer?.invalidate()
@@ -844,9 +870,11 @@ extension MainViewController {
             }
         }
     }
+}
 
-    // MARK: Speech Handlers
-    private func updateSpeechManagerState() {
+// MARK: Speech Handlers
+private extension MainViewController {
+    func updateSpeechManagerState() {
         guard #available(macOS 10.14, *) else { return }
         let enabled = UserDefaults.standard.bool(forKey: Parameters.enableCommentSpeech)
 
@@ -857,7 +885,7 @@ extension MainViewController {
         }
     }
 
-    private func handleSpeech(chat: Chat) {
+    func handleSpeech(chat: Chat) {
         guard #available(macOS 10.14, *) else { return }
         let enabled = UserDefaults.standard.bool(forKey: Parameters.enableCommentSpeech)
         guard enabled else { return }
@@ -875,9 +903,11 @@ extension MainViewController {
             }
         }
     }
+}
 
-    // MARK: Misc Utility
-    private func clearAllChats() {
+// MARK: Misc Utility
+private extension MainViewController {
+    func clearAllChats() {
         MessageContainer.shared.removeAll()
         rowHeightCacher.removeAll(keepingCapacity: false)
         tableView.reloadData()
