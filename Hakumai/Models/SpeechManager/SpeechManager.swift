@@ -21,7 +21,7 @@ private let kVoiceSpeedMap: [(queuCountRange: CountableRange<Int>, speed: Float)
 private let kRefreshChatQueueThreshold = 30
 
 private let kCleanCommentPatterns = [
-    ("https?://[\\w!?/+\\-_~;.,*&@#$%()'\\[\\]]+", " URL "),
+    ("https?://[\\w!?/+\\-_~;.,*&@#$%()'\\[\\]=]+", " URL "),
     ("(w|ｗ){2,}$", " わらわら"),
     ("(w|ｗ)$", " わら"),
     ("(8|８){3,}", "ぱちぱち")
