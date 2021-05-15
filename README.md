@@ -1,3 +1,9 @@
+⚠️ Currently, the application code is maintained in another private repository. This is because the sensitive info around user authentication is now committed into the code.
+
+This repo has not been archived since the gh-pages branch of this repository is still used for app publication. BUT please be noted that it’s, actually, in the archived state, from the app code perspective.️️
+
+***
+
 <img src="./document/image/logo.png" width="500px">
 
 [![Swift 5.0](https://img.shields.io/badge/Swift-5.0-orange.svg?style=flat)](https://swift.org/)
