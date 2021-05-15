@@ -12,9 +12,6 @@ import AppKit
 private let kStoryboardNameMainWindowController = "MainWindowController"
 private let kStoryboardIdHandleNameAddViewController = "HandleNameAddViewController"
 
-private let kConnectButtonImageNameStart = "StartLive"
-private let kConnectButtonImageNameStop = "StopLive"
-private let kCommunityImageDefaultName = "NoImage"
 private let kUserWindowDefautlTopLeftPoint = NSPoint(x: 100, y: 100)
 private let kCalculateActiveInterval: TimeInterval = 5
 private let kMaximumFontSizeForNonMainColumn: CGFloat = 16
@@ -24,7 +21,6 @@ private let enableDebugReconnectButton = false
 
 private let safariCookieAlertTitle = "No Safari Cookie found"
 private let safariCookieAlertDescription = "To retrieve the cookie from Safari, please open the Security & Privacy section of the System Preference and give the \"Full Disk Access\" right to Hakumai app."
-private let safariCookieAlertImageName = "safariCookieAlertImage"
 
 // swiftlint:disable file_length
 final class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate, NSControlTextEditingDelegate, NicoUtilityDelegate, UserWindowControllerDelegate {
@@ -451,7 +447,7 @@ extension MainViewController {
         logSystemMessageToTableView("Connected to live.")
         DispatchQueue.main.async {
             self.connectButton.isEnabled = true
-            self.connectButton.image = NSImage(named: kConnectButtonImageNameStop)
+            self.connectButton.image = Asset.stopLive.image
             self.progressIndicator.stopAnimation(self)
         }
         setLiveStartedDateToSpeechManager()
@@ -487,7 +483,7 @@ extension MainViewController {
         updateSpeechManagerState()
 
         DispatchQueue.main.async {
-            self.connectButton.image = NSImage(named: kConnectButtonImageNameStart)
+            self.connectButton.image = Asset.startLive.image
         }
     }
 
@@ -691,7 +687,7 @@ extension MainViewController {
         guard let liveNumber = liveTextField.stringValue.extractLiveNumber() else { return }
 
         clearAllChats()
-        communityImageView.image = NSImage(named: kCommunityImageDefaultName)
+        communityImageView.image = Asset.noImage.image
         NicoUtility.shared.delegate = self
 
         guard let sessionManagementType = SessionManagementType(
@@ -873,11 +869,9 @@ private extension MainViewController {
             let alert = NSAlert()
             alert.messageText = safariCookieAlertTitle
             alert.informativeText = safariCookieAlertDescription
-            if let image = NSImage(named: safariCookieAlertImageName) {
-                let imageView = NSImageView(image: image)
-                imageView.frame = NSRect.init(x: 0, y: 0, width: 300, height: 300)
-                alert.accessoryView = imageView
-            }
+            let imageView = NSImageView(image: Asset.safariCookieAlertImage.image)
+            imageView.frame = NSRect.init(x: 0, y: 0, width: 300, height: 300)
+            alert.accessoryView = imageView
             let securityButton = alert.addButton(withTitle: "Open Security & Privacy")
             securityButton.target = self
             securityButton.action = #selector(MainViewController.showSecurityPanel)

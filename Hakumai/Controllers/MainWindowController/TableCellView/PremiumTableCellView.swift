@@ -9,10 +9,6 @@
 import Foundation
 import AppKit
 
-private let kImageNamePremium = "PremiumPremium"
-private let kImageNameIppan = "PremiumIppan"
-private let kImageNameMisc = "PremiumMisc"
-
 final class PremiumTableCellView: NSTableCellView {
     @IBOutlet weak var premiumImageView: NSImageView!
     @IBOutlet weak var premiumTextField: NSTextField!
@@ -32,17 +28,15 @@ private extension PremiumTableCellView {
         premiumTextField.stringValue = premium.label()
     }
 
-    func image(forPremium premium: Premium) -> NSImage? {
-        var image: NSImage?
+    func image(forPremium premium: Premium) -> NSImage {
         switch premium {
         case .premium:
-            image = NSImage(named: kImageNamePremium)
+            return Asset.premiumPremium.image
         case .ippan, .ippanTransparent:
-            image = NSImage(named: kImageNameIppan)
+            return Asset.premiumIppan.image
         case .system, .caster, .operator, .bsp:
-            image = NSImage(named: kImageNameMisc)
+            return Asset.premiumMisc.image
         }
-        return image
     }
 
     func set(fontSize: CGFloat?) {

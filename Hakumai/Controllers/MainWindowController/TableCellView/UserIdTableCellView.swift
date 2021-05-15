@@ -9,11 +9,6 @@
 import Foundation
 import AppKit
 
-private let kImageNameUserIdRawId = "UserIdRawId"
-private let kImageNameUserId184Id = "UserId184Id"
-private let kImageNameHandleNameOver184Id = "HandleNameOver184Id"
-private let kImageNameHandleNameOverRawId = "HandleNameOverRawId"
-private let kImageNamePremiumMisc = "PremiumMisc"
 private let systemUserLabel = "----------"
 
 final class UserIdTableCellView: NSTableCellView {
@@ -40,19 +35,14 @@ final class UserIdTableCellView: NSTableCellView {
 
 private extension UserIdTableCellView {
     func image(forHandleName handleName: String?, userId: String, premium: Premium) -> NSImage {
-        let imageName: String
         if premium.isSystem {
-            imageName = kImageNamePremiumMisc
+            return Asset.premiumMisc.image
         } else if handleName != nil {
-            imageName = Chat.isRawUserId(userId) ? kImageNameHandleNameOverRawId : kImageNameHandleNameOver184Id
-        } else {
-            imageName = Chat.isRawUserId(userId) ? kImageNameUserIdRawId : kImageNameUserId184Id
+            return Chat.isRawUserId(userId) ?
+                Asset.handleNameOverRawId.image : Asset.handleNameOver184Id.image
         }
-        guard let image = NSImage(named: imageName) else {
-            log.error("fatal: this should never be happened..")
-            return NSImage()
-        }
-        return image
+        return Chat.isRawUserId(userId) ?
+            Asset.userIdRawId.image : Asset.userId184Id.image
     }
 
     func setUserIdLabel(userId: String, premium: Premium, handleName: String?) {
