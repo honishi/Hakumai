@@ -8,6 +8,7 @@
 
 import Foundation
 import XCTest
+@testable import Hakumai
 
 private let kAsyncTimeout: TimeInterval = 3
 

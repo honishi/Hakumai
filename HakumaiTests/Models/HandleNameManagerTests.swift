@@ -8,6 +8,7 @@
 
 import Foundation
 import XCTest
+@testable import Hakumai
 
 final class HandleNameManagerTests: XCTestCase {
     override func setUp() {

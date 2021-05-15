@@ -221,7 +221,6 @@ private extension MessageContainer {
         return appended
     }
 
-    // swiftlint:disable cyclomatic_complexity
     func shouldAppend(message: Message) -> Bool {
         // filter by message type
         if message.messageType == .system {
@@ -250,5 +249,4 @@ private extension MessageContainer {
 
         return true
     }
-    // swiftlint:enable cyclomatic_complexity
 }

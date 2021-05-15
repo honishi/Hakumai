@@ -7,6 +7,7 @@
 //
 
 import XCTest
+@testable import Hakumai
 
 final class SpeechManagerTests: XCTestCase {
     override func setUp() {
