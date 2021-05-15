@@ -12,11 +12,7 @@
 		DB0E10641A39B6C200A10E00 /* GeneralViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0E10631A39B6C200A10E00 /* GeneralViewController.swift */; };
 		DB0E10681A39B6DD00A10E00 /* MuteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0E10671A39B6DD00A10E00 /* MuteViewController.swift */; };
 		DB0ED6521A20B0A7007E9318 /* ChromeCookie.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0ED6511A20B0A7007E9318 /* ChromeCookie.swift */; };
-		DB0ED6531A20B0A7007E9318 /* ChromeCookie.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0ED6511A20B0A7007E9318 /* ChromeCookie.swift */; };
 		DB0F0ECD1A16441D00F8BDC5 /* NicoUtilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0F0ECC1A16441D00F8BDC5 /* NicoUtilityTests.swift */; };
-		DB1CD2D01A2EE5BB00D3108A /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD65C1F1A2EB08D00B84C97 /* Message.swift */; };
-		DB1E32BF1A2B95C600CD874A /* user_1.html in Resources */ = {isa = PBXBuildFile; fileRef = DB1E32BE1A2B95C600CD874A /* user_1.html */; };
-		DB1E32C31A2BA53700CD874A /* user_me.html in Resources */ = {isa = PBXBuildFile; fileRef = DB1E32C21A2BA53700CD874A /* user_me.html */; };
 		DB1E32C91A2CC85C00CD874A /* UserIdTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1E32C81A2CC85C00CD874A /* UserIdTableCellView.swift */; };
 		DB1E32CB1A2CC87200CD874A /* UserIdTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB1E32CA1A2CC87200CD874A /* UserIdTableCellView.xib */; };
 		DB2AE0C41A0EE2FD00B1CE4D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0C31A0EE2FD00B1CE4D /* AppDelegate.swift */; };
@@ -28,59 +24,38 @@
 		DB414C071A4810A5008D2F40 /* UserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB414C061A4810A5008D2F40 /* UserViewController.swift */; };
 		DB414C091A481138008D2F40 /* UserWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB414C081A481138008D2F40 /* UserWindowController.swift */; };
 		DB414C0B1A4811C4008D2F40 /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB414C0A1A4811C4008D2F40 /* Global.swift */; };
-		DB414C0C1A4814EF008D2F40 /* UserWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB414C081A481138008D2F40 /* UserWindowController.swift */; };
-		DB414C0D1A4814F2008D2F40 /* UserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB414C061A4810A5008D2F40 /* UserViewController.swift */; };
-		DB414C0E1A481530008D2F40 /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB414C0A1A4811C4008D2F40 /* Global.swift */; };
+		DB5164FC264E662100F809B3 /* CommentTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5164FB264E662100F809B3 /* CommentTableCellView.swift */; };
+		DB5164FE264E664500F809B3 /* CommentTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB5164FD264E664500F809B3 /* CommentTableCellView.xib */; };
 		DB52B0AD1A2102C700E78C6A /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB52B0AC1A2102C700E78C6A /* User.swift */; };
-		DB52B0AE1A2102C700E78C6A /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB52B0AC1A2102C700E78C6A /* User.swift */; };
 		DB55AC641A33905200CFAD99 /* PremiumTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB55AC631A33905200CFAD99 /* PremiumTableCellView.xib */; };
 		DB55AC681A33908300CFAD99 /* PremiumTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB55AC671A33908300CFAD99 /* PremiumTableCellView.swift */; };
-		DB55AC691A3394EE00CFAD99 /* PremiumTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB55AC671A33908300CFAD99 /* PremiumTableCellView.swift */; };
 		DB682D421A36E6AE00499C72 /* Parameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB682D411A36E6AE00499C72 /* Parameter.swift */; };
-		DB682D451A36E73D00499C72 /* Parameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB682D411A36E6AE00499C72 /* Parameter.swift */; };
 		DB73A38C1A4F43F6008423D0 /* MuteAddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB73A38B1A4F43F6008423D0 /* MuteAddViewController.swift */; };
-		DB73A38D1A4F43F6008423D0 /* MuteAddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB73A38B1A4F43F6008423D0 /* MuteAddViewController.swift */; };
 		DB74B86C1A6E790C0064AC28 /* BrowserHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB74B86B1A6E790C0064AC28 /* BrowserHelper.swift */; };
-		DB74B86D1A6E790C0064AC28 /* BrowserHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB74B86B1A6E790C0064AC28 /* BrowserHelper.swift */; };
 		DB7B3DDC1A23B35300205470 /* ColoredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B3DDB1A23B35300205470 /* ColoredView.swift */; };
-		DB7B3DDF1A23B4D700205470 /* ColoredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B3DDB1A23B35300205470 /* ColoredView.swift */; };
 		DB7B3DE21A242D7B00205470 /* ScoreTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB7B3DE11A242D7B00205470 /* ScoreTableCellView.xib */; };
-		DB7B3DE31A242D7B00205470 /* ScoreTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB7B3DE11A242D7B00205470 /* ScoreTableCellView.xib */; };
 		DB7B3DE51A2434FB00205470 /* ScoreTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B3DE41A2434FB00205470 /* ScoreTableCellView.swift */; };
-		DB7B3DE61A2434FB00205470 /* ScoreTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B3DE41A2434FB00205470 /* ScoreTableCellView.swift */; };
 		DB7B3DE81A246EE200205470 /* UIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B3DE71A246EE200205470 /* UIHelper.swift */; };
-		DB7B3DE91A246EE200205470 /* UIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B3DE71A246EE200205470 /* UIHelper.swift */; };
 		DB7BA06E1A58B6B7000778CF /* ChatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA06D1A58B6B7000778CF /* ChatTests.swift */; };
 		DB7BA0721A58C021000778CF /* HandleNameAddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA0711A58C021000778CF /* HandleNameAddViewController.swift */; };
 		DB7EB89C1A24AA3700C3BFB5 /* RoomPositionTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB7EB89B1A24AA3700C3BFB5 /* RoomPositionTableCellView.xib */; };
-		DB7EB89D1A24AA3700C3BFB5 /* RoomPositionTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB7EB89B1A24AA3700C3BFB5 /* RoomPositionTableCellView.xib */; };
 		DB7EB8A21A24AA5100C3BFB5 /* RoomPositionTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7EB8A11A24AA5100C3BFB5 /* RoomPositionTableCellView.swift */; };
-		DB7EB8A31A24AA5100C3BFB5 /* RoomPositionTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7EB8A11A24AA5100C3BFB5 /* RoomPositionTableCellView.swift */; };
 		DB7F21B01A210017008D17E0 /* Community.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7F21AF1A210017008D17E0 /* Community.swift */; };
-		DB7F21B11A210017008D17E0 /* Community.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7F21AF1A210017008D17E0 /* Community.swift */; };
 		DB80CA821A256F9A002636E0 /* MessageContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB80CA811A256F9A002636E0 /* MessageContainer.swift */; };
-		DB80CA831A256F9A002636E0 /* MessageContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB80CA811A256F9A002636E0 /* MessageContainer.swift */; };
 		DB80CA871A2575A0002636E0 /* MainViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB80CA861A2575A0002636E0 /* MainViewControllerExtensions.swift */; };
 		DB82B3A11C0724C000EFE3D9 /* SpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB82B3A01C0724C000EFE3D9 /* SpeechManager.swift */; };
-		DB82B3A21C0724C000EFE3D9 /* SpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB82B3A01C0724C000EFE3D9 /* SpeechManager.swift */; };
 		DB82B3A41C087BA200EFE3D9 /* SpeechManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB82B3A31C087BA200EFE3D9 /* SpeechManagerTests.swift */; };
 		DB9EFC741A3E974A0087D302 /* NSWindowExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9EFC731A3E974A0087D302 /* NSWindowExtension.swift */; };
 		DB9EFC781A3E9EB10087D302 /* PreferenceWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9EFC771A3E9EB10087D302 /* PreferenceWindow.swift */; };
 		DBA414CC1A1A16F300E0CAD3 /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA414CB1A1A16F300E0CAD3 /* StringExtension.swift */; };
-		DBA414CD1A1A16F300E0CAD3 /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA414CB1A1A16F300E0CAD3 /* StringExtension.swift */; };
 		DBA414D21A1A176E00E0CAD3 /* StringExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA414D11A1A176E00E0CAD3 /* StringExtensionTests.swift */; };
 		DBA541E31A4821D4005FF218 /* UserWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA541E21A4821D4005FF218 /* UserWindow.swift */; };
-		DBA541E61A4821DE005FF218 /* UserWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA541E21A4821D4005FF218 /* UserWindow.swift */; };
 		DBA541E81A483710005FF218 /* UserWindowController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DBA541E71A483710005FF218 /* UserWindowController.storyboard */; };
 		DBA541EA1A4838F4005FF218 /* PreferenceWindowController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DBA541E91A4838F4005FF218 /* PreferenceWindowController.storyboard */; };
 		DBAAA7321A0F43BB00981004 /* CookieUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7311A0F43BB00981004 /* CookieUtility.swift */; };
-		DBAAA7331A0F43BB00981004 /* CookieUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7311A0F43BB00981004 /* CookieUtility.swift */; };
 		DBAAA7511A0FDA4500981004 /* NicoUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7501A0FDA4500981004 /* NicoUtility.swift */; };
-		DBAAA7521A0FDA4500981004 /* NicoUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7501A0FDA4500981004 /* NicoUtility.swift */; };
 		DBAB695C1A5B70A5002FCD95 /* LoginCookie.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAB695B1A5B70A5002FCD95 /* LoginCookie.swift */; };
-		DBAB695F1A5B79AF002FCD95 /* LoginCookie.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAB695B1A5B70A5002FCD95 /* LoginCookie.swift */; };
 		DBAB69621A5C1A70002FCD95 /* KeychainUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAB69611A5C1A70002FCD95 /* KeychainUtility.swift */; };
-		DBAB69631A5C1A70002FCD95 /* KeychainUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAB69611A5C1A70002FCD95 /* KeychainUtility.swift */; };
 		DBAC3D3321C55E4C00B09673 /* MainWindowController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DBAC3D3221C55E4C00B09673 /* MainWindowController.storyboard */; };
 		DBAC3D3921C568B500B09673 /* Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAC3D3821C568B500B09673 /* Images.swift */; };
 		DBAC3D3B21C569A900B09673 /* StoryBoards.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAC3D3A21C569A900B09673 /* StoryBoards.swift */; };
@@ -88,35 +63,20 @@
 		DBB473001A358FFC002C797E /* CharacterExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB472FF1A358FFC002C797E /* CharacterExtension.swift */; };
 		DBB473041A359082002C797E /* IntExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB473031A359082002C797E /* IntExtension.swift */; };
 		DBB473061A35909F002C797E /* NSXMLElementExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB473051A35909F002C797E /* NSXMLElementExtension.swift */; };
-		DBB473071A3590BE002C797E /* CharacterExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB472FF1A358FFC002C797E /* CharacterExtension.swift */; };
-		DBB473081A3590C2002C797E /* IntExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB473031A359082002C797E /* IntExtension.swift */; };
-		DBB473091A3590C5002C797E /* NSXMLElementExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB473051A35909F002C797E /* NSXMLElementExtension.swift */; };
 		DBB4730B1A35951C002C797E /* Heartbeat.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB4730A1A35951C002C797E /* Heartbeat.swift */; };
-		DBB4730C1A359685002C797E /* Heartbeat.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB4730A1A35951C002C797E /* Heartbeat.swift */; };
-		DBB473101A35CE72002C797E /* heartbeat_ok.xml in Resources */ = {isa = PBXBuildFile; fileRef = DBB4730F1A35CE72002C797E /* heartbeat_ok.xml */; };
-		DBB473121A35CE86002C797E /* heartbeat_fail.xml in Resources */ = {isa = PBXBuildFile; fileRef = DBB473111A35CE86002C797E /* heartbeat_fail.xml */; };
 		DBB952161A8655AB0059850A /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB952151A8655AB0059850A /* Helper.swift */; };
-		DBB952171A8655AB0059850A /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB952151A8655AB0059850A /* Helper.swift */; };
 		DBCA2D242642BCF500B6147C /* NicoUtilityModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA2D232642BCF500B6147C /* NicoUtilityModel.swift */; };
-		DBCA2D252642BE8500B6147C /* NicoUtilityModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA2D232642BCF500B6147C /* NicoUtilityModel.swift */; };
 		DBCA40D41A30AD48006299A9 /* MenuDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA40D31A30AD48006299A9 /* MenuDelegate.swift */; };
-		DBD65C121A2CD1AD00B84C97 /* UserIdTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1E32C81A2CC85C00CD874A /* UserIdTableCellView.swift */; };
 		DBD65C201A2EB08D00B84C97 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD65C1F1A2EB08D00B84C97 /* Message.swift */; };
 		DBE093FF1A5869A2004554FD /* HandleNameManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE093FE1A5869A2004554FD /* HandleNameManagerTests.swift */; };
 		DBE094021A586FFC004554FD /* HandleNameManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE094011A586FFC004554FD /* HandleNameManager.swift */; };
-		DBE094031A586FFC004554FD /* HandleNameManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE094011A586FFC004554FD /* HandleNameManager.swift */; };
 		DBF88AEB1D68AEB00047B412 /* SafariCookie.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF88AEA1D68AEB00047B412 /* SafariCookie.swift */; };
-		DBF88AEC1D68AEB00047B412 /* SafariCookie.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF88AEA1D68AEB00047B412 /* SafariCookie.swift */; };
 		DBFA887B1A1BC25A005349AD /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA887A1A1BC25A005349AD /* Chat.swift */; };
-		DBFA887C1A1BC25A005349AD /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA887A1A1BC25A005349AD /* Chat.swift */; };
 		DBFA88821A1BC8C9005349AD /* Enum.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA88811A1BC8C9005349AD /* Enum.swift */; };
-		DBFA88831A1BC8C9005349AD /* Enum.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA88811A1BC8C9005349AD /* Enum.swift */; };
 		DBFA888B1A1C9A56005349AD /* Live.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA888A1A1C9A56005349AD /* Live.swift */; };
-		DBFA888C1A1C9A56005349AD /* Live.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA888A1A1C9A56005349AD /* Live.swift */; };
 		DBFA88911A1CAE85005349AD /* community_user.html in Resources */ = {isa = PBXBuildFile; fileRef = DBFA88901A1CAE85005349AD /* community_user.html */; };
 		DBFB26D3264290A600B1FDEB /* NicoUtility+Extractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB26D2264290A600B1FDEB /* NicoUtility+Extractor.swift */; };
 		DBFB26D52642921900B1FDEB /* live_page.html in Resources */ = {isa = PBXBuildFile; fileRef = DBFB26D42642921900B1FDEB /* live_page.html */; };
-		DBFB26D7264295D500B1FDEB /* NicoUtility+Extractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB26D2264290A600B1FDEB /* NicoUtility+Extractor.swift */; };
 		DBFB26D92642A32300B1FDEB /* embedded-data.json in Resources */ = {isa = PBXBuildFile; fileRef = DBFB26D82642A32300B1FDEB /* embedded-data.json */; };
 		DBFB81511A36B52E00294934 /* PreferenceWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB81501A36B52E00294934 /* PreferenceWindowController.swift */; };
 /* End PBXBuildFile section */
@@ -154,8 +114,6 @@
 		DB0E10671A39B6DD00A10E00 /* MuteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MuteViewController.swift; sourceTree = "<group>"; };
 		DB0ED6511A20B0A7007E9318 /* ChromeCookie.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChromeCookie.swift; sourceTree = "<group>"; };
 		DB0F0ECC1A16441D00F8BDC5 /* NicoUtilityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicoUtilityTests.swift; sourceTree = "<group>"; };
-		DB1E32BE1A2B95C600CD874A /* user_1.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = user_1.html; sourceTree = "<group>"; };
-		DB1E32C21A2BA53700CD874A /* user_me.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = user_me.html; sourceTree = "<group>"; };
 		DB1E32C81A2CC85C00CD874A /* UserIdTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserIdTableCellView.swift; sourceTree = "<group>"; };
 		DB1E32CA1A2CC87200CD874A /* UserIdTableCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UserIdTableCellView.xib; sourceTree = "<group>"; };
 		DB2AE0BE1A0EE2FD00B1CE4D /* Hakumai.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hakumai.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -174,6 +132,8 @@
 		DB414C061A4810A5008D2F40 /* UserViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserViewController.swift; sourceTree = "<group>"; };
 		DB414C081A481138008D2F40 /* UserWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserWindowController.swift; sourceTree = "<group>"; };
 		DB414C0A1A4811C4008D2F40 /* Global.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
+		DB5164FB264E662100F809B3 /* CommentTableCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentTableCellView.swift; sourceTree = "<group>"; };
+		DB5164FD264E664500F809B3 /* CommentTableCellView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CommentTableCellView.xib; sourceTree = "<group>"; };
 		DB52B0AC1A2102C700E78C6A /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		DB55AC631A33905200CFAD99 /* PremiumTableCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PremiumTableCellView.xib; sourceTree = "<group>"; };
 		DB55AC671A33908300CFAD99 /* PremiumTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PremiumTableCellView.swift; sourceTree = "<group>"; };
@@ -214,8 +174,6 @@
 		DBB473031A359082002C797E /* IntExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntExtension.swift; sourceTree = "<group>"; };
 		DBB473051A35909F002C797E /* NSXMLElementExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSXMLElementExtension.swift; sourceTree = "<group>"; };
 		DBB4730A1A35951C002C797E /* Heartbeat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Heartbeat.swift; sourceTree = "<group>"; };
-		DBB4730F1A35CE72002C797E /* heartbeat_ok.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = heartbeat_ok.xml; sourceTree = "<group>"; };
-		DBB473111A35CE86002C797E /* heartbeat_fail.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = heartbeat_fail.xml; sourceTree = "<group>"; };
 		DBB952151A8655AB0059850A /* Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
 		DBCA2D232642BCF500B6147C /* NicoUtilityModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoUtilityModel.swift; sourceTree = "<group>"; };
 		DBCA40D31A30AD48006299A9 /* MenuDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuDelegate.swift; sourceTree = "<group>"; };
@@ -325,7 +283,6 @@
 				DBE73ECC1A1A1B9600A8BCA9 /* Controllers */,
 				DBA414CE1A1A16FB00E0CAD3 /* Extensions */,
 				DBAC3D3721C564DD00B09673 /* Generated */,
-				DB82B3991C071FF500EFE3D9 /* Libraries */,
 				DBA414CA1A1A13FC00E0CAD3 /* Models */,
 				DBAC3D3621C5649300B09673 /* Resources */,
 				DBAC3D3421C55EFB00B09673 /* Storyboards */,
@@ -380,6 +337,8 @@
 			isa = PBXGroup;
 			children = (
 				DB7B3DDB1A23B35300205470 /* ColoredView.swift */,
+				DB5164FB264E662100F809B3 /* CommentTableCellView.swift */,
+				DB5164FD264E664500F809B3 /* CommentTableCellView.xib */,
 				DB55AC671A33908300CFAD99 /* PremiumTableCellView.swift */,
 				DB55AC631A33905200CFAD99 /* PremiumTableCellView.xib */,
 				DB7EB8A11A24AA5100C3BFB5 /* RoomPositionTableCellView.swift */,
@@ -390,13 +349,6 @@
 				DB1E32CA1A2CC87200CD874A /* UserIdTableCellView.xib */,
 			);
 			path = TableCellView;
-			sourceTree = "<group>";
-		};
-		DB82B3991C071FF500EFE3D9 /* Libraries */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Libraries;
 			sourceTree = "<group>";
 		};
 		DB82B39F1C07248700EFE3D9 /* SpeechManager */ = {
@@ -559,11 +511,7 @@
 				DB346B991A54648100137639 /* community_channel.html */,
 				DBFA88901A1CAE85005349AD /* community_user.html */,
 				DBFB26D82642A32300B1FDEB /* embedded-data.json */,
-				DBB473111A35CE86002C797E /* heartbeat_fail.xml */,
-				DBB4730F1A35CE72002C797E /* heartbeat_ok.xml */,
 				DBFB26D42642921900B1FDEB /* live_page.html */,
-				DB1E32BE1A2B95C600CD874A /* user_1.html */,
-				DB1E32C21A2BA53700CD874A /* user_me.html */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -686,6 +634,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB5164FE264E664500F809B3 /* CommentTableCellView.xib in Resources */,
 				DB2AE0C81A0EE2FD00B1CE4D /* Images.xcassets in Resources */,
 				DBAC3D3321C55E4C00B09673 /* MainWindowController.storyboard in Resources */,
 				DBA541EA1A4838F4005FF218 /* PreferenceWindowController.storyboard in Resources */,
@@ -704,13 +653,7 @@
 				DB346B9A1A54648100137639 /* community_channel.html in Resources */,
 				DBFA88911A1CAE85005349AD /* community_user.html in Resources */,
 				DBFB26D92642A32300B1FDEB /* embedded-data.json in Resources */,
-				DBB473121A35CE86002C797E /* heartbeat_fail.xml in Resources */,
-				DBB473101A35CE72002C797E /* heartbeat_ok.xml in Resources */,
 				DBFB26D52642921900B1FDEB /* live_page.html in Resources */,
-				DB7EB89D1A24AA3700C3BFB5 /* RoomPositionTableCellView.xib in Resources */,
-				DB7B3DE31A242D7B00205470 /* ScoreTableCellView.xib in Resources */,
-				DB1E32BF1A2B95C600CD874A /* user_1.html in Resources */,
-				DB1E32C31A2BA53700CD874A /* user_me.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -866,6 +809,7 @@
 				DBFA887B1A1BC25A005349AD /* Chat.swift in Sources */,
 				DB0ED6521A20B0A7007E9318 /* ChromeCookie.swift in Sources */,
 				DB7B3DDC1A23B35300205470 /* ColoredView.swift in Sources */,
+				DB5164FC264E662100F809B3 /* CommentTableCellView.swift in Sources */,
 				DB7F21B01A210017008D17E0 /* Community.swift in Sources */,
 				DBAAA7321A0F43BB00981004 /* CookieUtility.swift in Sources */,
 				DBFA88821A1BC8C9005349AD /* Enum.swift in Sources */,
@@ -916,49 +860,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DB74B86D1A6E790C0064AC28 /* BrowserHelper.swift in Sources */,
-				DBB473071A3590BE002C797E /* CharacterExtension.swift in Sources */,
-				DBFA887C1A1BC25A005349AD /* Chat.swift in Sources */,
 				DB7BA06E1A58B6B7000778CF /* ChatTests.swift in Sources */,
-				DB0ED6531A20B0A7007E9318 /* ChromeCookie.swift in Sources */,
-				DB7B3DDF1A23B4D700205470 /* ColoredView.swift in Sources */,
-				DB7F21B11A210017008D17E0 /* Community.swift in Sources */,
 				DB346B9C1A548C3B00137639 /* CommunityTests.swift in Sources */,
-				DBAAA7331A0F43BB00981004 /* CookieUtility.swift in Sources */,
-				DBFA88831A1BC8C9005349AD /* Enum.swift in Sources */,
-				DB414C0E1A481530008D2F40 /* Global.swift in Sources */,
 				DB2AE0D71A0EE2FD00B1CE4D /* HakumaiTests.swift in Sources */,
-				DBE094031A586FFC004554FD /* HandleNameManager.swift in Sources */,
 				DBE093FF1A5869A2004554FD /* HandleNameManagerTests.swift in Sources */,
-				DBB4730C1A359685002C797E /* Heartbeat.swift in Sources */,
-				DBB952171A8655AB0059850A /* Helper.swift in Sources */,
-				DBB473081A3590C2002C797E /* IntExtension.swift in Sources */,
-				DBAB69631A5C1A70002FCD95 /* KeychainUtility.swift in Sources */,
-				DBFA888C1A1C9A56005349AD /* Live.swift in Sources */,
-				DBAB695F1A5B79AF002FCD95 /* LoginCookie.swift in Sources */,
-				DB1CD2D01A2EE5BB00D3108A /* Message.swift in Sources */,
-				DB80CA831A256F9A002636E0 /* MessageContainer.swift in Sources */,
-				DB73A38D1A4F43F6008423D0 /* MuteAddViewController.swift in Sources */,
-				DBFB26D7264295D500B1FDEB /* NicoUtility+Extractor.swift in Sources */,
-				DBAAA7521A0FDA4500981004 /* NicoUtility.swift in Sources */,
-				DBCA2D252642BE8500B6147C /* NicoUtilityModel.swift in Sources */,
 				DB0F0ECD1A16441D00F8BDC5 /* NicoUtilityTests.swift in Sources */,
-				DBB473091A3590C5002C797E /* NSXMLElementExtension.swift in Sources */,
-				DB682D451A36E73D00499C72 /* Parameter.swift in Sources */,
-				DB55AC691A3394EE00CFAD99 /* PremiumTableCellView.swift in Sources */,
-				DB7EB8A31A24AA5100C3BFB5 /* RoomPositionTableCellView.swift in Sources */,
-				DBF88AEC1D68AEB00047B412 /* SafariCookie.swift in Sources */,
-				DB7B3DE61A2434FB00205470 /* ScoreTableCellView.swift in Sources */,
-				DB82B3A21C0724C000EFE3D9 /* SpeechManager.swift in Sources */,
 				DB82B3A41C087BA200EFE3D9 /* SpeechManagerTests.swift in Sources */,
-				DBA414CD1A1A16F300E0CAD3 /* StringExtension.swift in Sources */,
 				DBA414D21A1A176E00E0CAD3 /* StringExtensionTests.swift in Sources */,
-				DB7B3DE91A246EE200205470 /* UIHelper.swift in Sources */,
-				DB52B0AE1A2102C700E78C6A /* User.swift in Sources */,
-				DBD65C121A2CD1AD00B84C97 /* UserIdTableCellView.swift in Sources */,
-				DB414C0D1A4814F2008D2F40 /* UserViewController.swift in Sources */,
-				DBA541E61A4821DE005FF218 /* UserWindow.swift in Sources */,
-				DB414C0C1A4814EF008D2F40 /* UserWindowController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1096,7 +1004,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hakumai/Hakumai.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1054;
+				CURRENT_PROJECT_VERSION = 1058;
 				DEVELOPMENT_TEAM = N4SRN3NAQ3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Hakumai/Info.plist;
@@ -1105,7 +1013,7 @@
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
 				);
-				MARKETING_VERSION = 0.0.54;
+				MARKETING_VERSION = 0.0.58;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1129,7 +1037,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hakumai/Hakumai.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1054;
+				CURRENT_PROJECT_VERSION = 1058;
 				DEVELOPMENT_TEAM = N4SRN3NAQ3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Hakumai/Info.plist;
@@ -1138,7 +1046,7 @@
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
 				);
-				MARKETING_VERSION = 0.0.54;
+				MARKETING_VERSION = 0.0.58;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = (
 					"$(inherited)",

@@ -30,7 +30,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 // MARK: Menu Handlers
 extension AppDelegate {
     @IBAction func openPreferences(_ sender: AnyObject) {
-        PreferenceWindowController.shared?.showWindow(self)
+        PreferenceWindowController.shared.showWindow(self)
     }
 
     @IBAction func openUrl(_ sender: AnyObject) {
@@ -77,7 +77,7 @@ extension AppDelegate {
 
         case (Parameters.commentSpeechVolume, let changed as Int):
             guard #available(macOS 10.14, *) else { return }
-            SpeechManager.sharedManager.setVoiceVolume(changed)
+            SpeechManager.shared.setVoiceVolume(changed)
 
         case (Parameters.enableMuteUserIds, let changed as Bool):
             MainViewController.shared.changeEnableMuteUserIds(changed)

@@ -9,20 +9,15 @@
 import Foundation
 import AppKit
 
-private let kStoryboardNameMainWindowController = "MainWindowController"
-private let kStoryboardIdHandleNameAddViewController = "HandleNameAddViewController"
-
-private let kConnectButtonImageNameStart = "StartLive"
-private let kConnectButtonImageNameStop = "StopLive"
-private let kCommunityImageDefaultName = "NoImage"
 private let kUserWindowDefautlTopLeftPoint = NSPoint(x: 100, y: 100)
 private let kCalculateActiveInterval: TimeInterval = 5
 private let kMaximumFontSizeForNonMainColumn: CGFloat = 16
 private let kDefaultMinimumRowHeight: CGFloat = 17
 
+private let enableDebugReconnectButton = false
+
 private let safariCookieAlertTitle = "No Safari Cookie found"
 private let safariCookieAlertDescription = "To retrieve the cookie from Safari, please open the Security & Privacy section of the System Preference and give the \"Full Disk Access\" right to Hakumai app."
-private let safariCookieAlertImageName = "safariCookieAlertImage"
 
 // swiftlint:disable file_length
 final class MainViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate, NSControlTextEditingDelegate, NicoUtilityDelegate, UserWindowControllerDelegate {
@@ -31,6 +26,8 @@ final class MainViewController: NSViewController, NSTableViewDataSource, NSTable
 
     // MARK: Main Outlets
     @IBOutlet weak var liveTextField: NSTextField!
+    @IBOutlet weak var reconnectButton: NSButton!
+    @IBOutlet weak var connectButton: NSButton!
 
     @IBOutlet weak var communityImageView: NSImageView!
     @IBOutlet weak var liveTitleLabel: NSTextField!
@@ -46,7 +43,6 @@ final class MainViewController: NSViewController, NSTableViewDataSource, NSTable
     @IBOutlet weak var tableView: NSTableView!
 
     @IBOutlet weak var commentTextField: NSTextField!
-    @IBOutlet weak var connectButton: NSButton!
     @IBOutlet weak var commentAnonymouslyButton: NSButton!
     @IBOutlet weak var elapsedLabel: NSTextField!
     @IBOutlet weak var activeLabel: NSTextField!
@@ -116,6 +112,7 @@ extension MainViewController {
             self.communityImageView.layer?.masksToBounds = true
             self.communityImageView.layer?.borderColor = NSColor.black.cgColor
         }
+        reconnectButton.isHidden = !enableDebugReconnectButton
         if #available(macOS 10.14, *) {
             speakButton.isHidden = false
         } else {
@@ -131,6 +128,7 @@ extension MainViewController {
         let nibs = [
             (kNibNameRoomPositionTableCellView, kRoomPositionColumnIdentifier),
             (kNibNameScoreTableCellView, kScoreColumnIdentifier),
+            (kNibNameCommentTableCellView, kCommentColumnIdentifier),
             (kNibNameUserIdTableCellView, kUserIdColumnIdentifier),
             (kNibNamePremiumTableCellView, kPremiumColumnIdentifier)]
 
@@ -156,28 +154,28 @@ extension MainViewController {
     }
 
     func changeEnableMuteUserIds(_ enabled: Bool) {
-        MessageContainer.sharedContainer.enableMuteUserIds = enabled
+        MessageContainer.shared.enableMuteUserIds = enabled
         log.debug("changed enable mute userids: \(enabled)")
 
         rebuildFilteredMessages()
     }
 
     func changeMuteUserIds(_ muteUserIds: [[String: String]]) {
-        MessageContainer.sharedContainer.muteUserIds = muteUserIds
+        MessageContainer.shared.muteUserIds = muteUserIds
         log.debug("changed mute userids: \(muteUserIds)")
 
         rebuildFilteredMessages()
     }
 
     func changeEnableMuteWords(_ enabled: Bool) {
-        MessageContainer.sharedContainer.enableMuteWords = enabled
+        MessageContainer.shared.enableMuteWords = enabled
         log.debug("changed enable mute words: \(enabled)")
 
         rebuildFilteredMessages()
     }
 
     func changeMuteWords(_ muteWords: [[String: String]]) {
-        MessageContainer.sharedContainer.muteWords = muteWords
+        MessageContainer.shared.muteWords = muteWords
         log.debug("changed mute words: \(muteWords)")
 
         rebuildFilteredMessages()
@@ -188,7 +186,7 @@ extension MainViewController {
             self.progressIndicator.startAnimation(self)
             let shouldScroll = self.shouldTableViewScrollToBottom()
 
-            MessageContainer.sharedContainer.rebuildFilteredMessages {
+            MessageContainer.shared.rebuildFilteredMessages {
                 self.tableView.reloadData()
 
                 if shouldScroll {
@@ -203,11 +201,11 @@ extension MainViewController {
 
     // MARK: - NSTableViewDataSource Functions
     func numberOfRows(in tableView: NSTableView) -> Int {
-        return MessageContainer.sharedContainer.count()
+        return MessageContainer.shared.count()
     }
 
     func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
-        let message = MessageContainer.sharedContainer[row]
+        let message = MessageContainer.shared[row]
 
         if let cached = rowHeightCacher[message.messageNo] {
             return cached
@@ -265,7 +263,7 @@ extension MainViewController {
             view?.textField?.stringValue = ""
         }
 
-        let message = MessageContainer.sharedContainer[row]
+        let message = MessageContainer.shared[row]
 
         guard let _view = view, let tableColumn = tableColumn else { return nil }
 
@@ -290,9 +288,10 @@ extension MainViewController {
             scoreView?.chat = nil
             scoreView?.fontSize = nil
         case kCommentColumnIdentifier:
+            let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)
             let attributed = NSAttributedString(string: content, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
-            view.textField?.attributedStringValue = attributed
+            commentView?.attributedString = attributed
         case kUserIdColumnIdentifier:
             let userIdView = view as? UserIdTableCellView
             userIdView?.info = nil
@@ -311,23 +310,23 @@ extension MainViewController {
 
         switch convertFromNSUserInterfaceItemIdentifier(tableColumn.identifier) {
         case kRoomPositionColumnIdentifier:
-            guard let roomPosition = chat.roomPosition, let no = chat.no else { return }
             let roomPositionView = view as? RoomPositionTableCellView
-            roomPositionView?.roomPosition = roomPosition
-            roomPositionView?.commentNo = no
+            roomPositionView?.roomPosition = chat.roomPosition
+            roomPositionView?.commentNo = chat.no
             roomPositionView?.fontSize = min(tableViewFontSize, kMaximumFontSizeForNonMainColumn)
         case kScoreColumnIdentifier:
             let scoreView = view as? ScoreTableCellView
             scoreView?.chat = chat
             scoreView?.fontSize = min(tableViewFontSize, kMaximumFontSizeForNonMainColumn)
         case kCommentColumnIdentifier:
+            let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)
             let attributed = NSAttributedString(string: content as String, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
-            view.textField?.attributedStringValue = attributed
+            commentView?.attributedString = attributed
         case kUserIdColumnIdentifier:
             guard let live = live else { return }
             let userIdView = view as? UserIdTableCellView
-            let handleName = HandleNameManager.sharedManager.handleName(forLive: live, chat: chat)
+            let handleName = HandleNameManager.shared.handleName(forLive: live, chat: chat)
             userIdView?.info = (handleName: handleName, userId: chat.userId, premium: chat.premium, comment: chat.comment)
             userIdView?.fontSize = tableViewFontSize
         case kPremiumColumnIdentifier:
@@ -445,7 +444,7 @@ extension MainViewController {
         logSystemMessageToTableView("Connected to live.")
         DispatchQueue.main.async {
             self.connectButton.isEnabled = true
-            self.connectButton.image = NSImage(named: kConnectButtonImageNameStop)
+            self.connectButton.image = Asset.stopLive.image
             self.progressIndicator.stopAnimation(self)
         }
         setLiveStartedDateToSpeechManager()
@@ -455,7 +454,7 @@ extension MainViewController {
     func nicoUtilityDidReceiveChat(_ nicoUtility: NicoUtilityType, chat: Chat) {
         // log.debug("\(chat.mail),\(chat.comment)")
         if let live = live {
-            HandleNameManager.sharedManager.extractAndUpdateHandleName(live: live, chat: chat)
+            HandleNameManager.shared.extractAndUpdateHandleName(live: live, chat: chat)
         }
         appendTableView(chat)
 
@@ -481,7 +480,7 @@ extension MainViewController {
         updateSpeechManagerState()
 
         DispatchQueue.main.async {
-            self.connectButton.image = NSImage(named: kConnectButtonImageNameStart)
+            self.connectButton.image = Asset.startLive.image
         }
     }
 
@@ -498,10 +497,10 @@ extension MainViewController {
     private func appendTableView(_ chatOrSystemMessage: Any) {
         DispatchQueue.main.async {
             let shouldScroll = self.shouldTableViewScrollToBottom()
-            let (appended, count) = MessageContainer.sharedContainer.append(chatOrSystemMessage: chatOrSystemMessage)
+            let (appended, count) = MessageContainer.shared.append(chatOrSystemMessage: chatOrSystemMessage)
             guard appended else { return }
             let rowIndex = count - 1
-            let message = MessageContainer.sharedContainer[rowIndex]
+            let message = MessageContainer.shared[rowIndex]
             self.tableView.insertRows(at: IndexSet(integer: rowIndex), withAnimation: NSTableView.AnimationOptions())
             // self.logChat(chatOrSystemMessage)
             if shouldScroll {
@@ -584,15 +583,12 @@ extension MainViewController {
 
     // MARK: - Public Functions
     func showHandleNameAddViewController(live: Live, chat: Chat) {
-        let storyboard = NSStoryboard(name: kStoryboardNameMainWindowController, bundle: nil)
-        guard let handleNameAddViewController = storyboard.instantiateController(withIdentifier: kStoryboardIdHandleNameAddViewController) as? HandleNameAddViewController else {
-            return
-        }
-
+        let handleNameAddViewController =
+            StoryboardScene.MainWindowController.handleNameAddViewController.instantiate()
         handleNameAddViewController.handleName = (defaultHandleName(live: live, chat: chat) ?? "") as NSString
         handleNameAddViewController.completion = { (cancelled: Bool, handleName: String?) -> Void in
             if !cancelled, let handleName = handleName {
-                HandleNameManager.sharedManager.updateHandleName(live: live, chat: chat, handleName: handleName)
+                HandleNameManager.shared.updateHandleName(live: live, chat: chat, handleName: handleName)
                 MainViewController.shared.refreshHandleName()
             }
 
@@ -605,7 +601,7 @@ extension MainViewController {
 
     private func defaultHandleName(live: Live, chat: Chat) -> String? {
         var defaultHandleName: String?
-        if let handleName = HandleNameManager.sharedManager.handleName(forLive: live, chat: chat) {
+        if let handleName = HandleNameManager.shared.handleName(forLive: live, chat: chat) {
             defaultHandleName = handleName
         } else if let userName = NicoUtility.shared.cachedUserName(forChat: chat) {
             defaultHandleName = userName
@@ -631,7 +627,7 @@ extension MainViewController {
     private func initializeHandleNameManager() {
         progressIndicator.startAnimation(self)
         // force to invoke setup methods in HandleNameManager()
-        _ = HandleNameManager.sharedManager
+        _ = HandleNameManager.shared
         progressIndicator.stopAnimation(self)
     }
 
@@ -676,12 +672,16 @@ extension MainViewController {
         }
     }
 
+    @IBAction func reconnectLive(_ sender: Any) {
+        NicoUtility.shared.reconnect()
+    }
+
     @IBAction func connectLive(_ sender: AnyObject) {
         initializeHandleNameManager()
         guard let liveNumber = liveTextField.stringValue.extractLiveNumber() else { return }
 
         clearAllChats()
-        communityImageView.image = NSImage(named: kCommunityImageDefaultName)
+        communityImageView.image = Asset.noImage.image
         NicoUtility.shared.delegate = self
 
         guard let sessionManagementType = SessionManagementType(
@@ -740,12 +740,12 @@ extension MainViewController {
             return
         }
 
-        let message = MessageContainer.sharedContainer[clickedRow]
-        guard message.messageType == .chat, let chat = message.chat, let userId = chat.userId else { return }
+        let message = MessageContainer.shared[clickedRow]
+        guard message.messageType == .chat, let chat = message.chat else { return }
         var userWindowController: UserWindowController?
 
         // check if user window exists?
-        for existing in userWindowControllers where userId == existing.userId {
+        for existing in userWindowControllers where chat.userId == existing.userId {
             userWindowController = existing
             log.debug("existing userwc found, use it:\(userWindowController?.description ?? "")")
             break
@@ -753,7 +753,7 @@ extension MainViewController {
 
         if userWindowController == nil {
             // not exist, so create and cache it
-            userWindowController = UserWindowController.generateInstance(delegate: self, userId: userId)
+            userWindowController = UserWindowController.make(delegate: self, userId: chat.userId)
             if let uwc = userWindowController {
                 positionUserWindow(uwc.window)
                 log.debug("no existing userwc found, create it:\(uwc.description)")
@@ -807,7 +807,7 @@ extension MainViewController {
     }
 
     @objc func calculateActive(_ timer: Timer) {
-        MessageContainer.sharedContainer.calculateActive { (active: Int?) -> Void in
+        MessageContainer.shared.calculateActive { (active: Int?) -> Void in
             guard let activeCount = active else { return }
             DispatchQueue.main.async {
                 self.activeLabel.stringValue = "Active: \(activeCount)"
@@ -818,7 +818,7 @@ extension MainViewController {
     // MARK: Speech Handlers
     private func setLiveStartedDateToSpeechManager() {
         guard #available(macOS 10.14, *) else { return }
-        SpeechManager.sharedManager.setLiveStartedDate()
+        SpeechManager.shared.setLiveStartedDate()
     }
 
     private func updateSpeechManagerState() {
@@ -826,9 +826,9 @@ extension MainViewController {
         let enabled = UserDefaults.standard.bool(forKey: Parameters.enableCommentSpeech)
 
         if enabled && connectedToLive {
-            SpeechManager.sharedManager.startManager()
+            SpeechManager.shared.startManager()
         } else {
-            SpeechManager.sharedManager.stopManager()
+            SpeechManager.shared.stopManager()
         }
     }
 
@@ -837,8 +837,8 @@ extension MainViewController {
         let enabled = UserDefaults.standard.bool(forKey: Parameters.enableCommentSpeech)
         guard enabled else { return }
         DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async {
-            SpeechManager.sharedManager.enqueue(chat: chat)
-            if SpeechManager.sharedManager.refreshChatQueueIfQueuedTooMuch() {
+            SpeechManager.shared.enqueue(chat: chat)
+            if SpeechManager.shared.refreshChatQueueIfQueuedTooMuch() {
                 // logSystemMessageToTableView("Refreshed speech queue.")
             }
         }
@@ -846,7 +846,7 @@ extension MainViewController {
 
     // MARK: Misc Utility
     private func clearAllChats() {
-        MessageContainer.sharedContainer.removeAll()
+        MessageContainer.shared.removeAll()
         rowHeightCacher.removeAll(keepingCapacity: false)
         tableView.reloadData()
     }
@@ -863,11 +863,9 @@ private extension MainViewController {
             let alert = NSAlert()
             alert.messageText = safariCookieAlertTitle
             alert.informativeText = safariCookieAlertDescription
-            if let image = NSImage(named: safariCookieAlertImageName) {
-                let imageView = NSImageView(image: image)
-                imageView.frame = NSRect.init(x: 0, y: 0, width: 300, height: 300)
-                alert.accessoryView = imageView
-            }
+            let imageView = NSImageView(image: Asset.safariCookieAlertImage.image)
+            imageView.frame = NSRect.init(x: 0, y: 0, width: 300, height: 300)
+            alert.accessoryView = imageView
             let securityButton = alert.addButton(withTitle: "Open Security & Privacy")
             securityButton.target = self
             securityButton.action = #selector(MainViewController.showSecurityPanel)

@@ -20,10 +20,4 @@ extension NicoUtility {
               let data = _dataPropsElement.stringValue?.data(using: .utf8) else { return nil }
         return try? JSONDecoder().decode(EmbeddedDataProperties.self, from: data)
     }
-
-    func extractUsername(fromHtmlData htmlData: Data) -> String? {
-        guard let document = try? ONOXMLDocument.htmlDocument(with: htmlData) else { return nil }
-        let xpath = "//meta[@property=\"profile:username\"]/@content"
-        return document.rootElement.firstChild(withXPath: xpath)?.stringValue
-    }
 }

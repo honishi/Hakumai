@@ -35,6 +35,7 @@ protocol NicoUtilityType {
     // Main Methods
     func connect(liveNumber: Int, sessionType: NicoSessionType, connectContext: NicoUtility.ConnectContext)
     func disconnect(reserveToReconnect: Bool)
+    func reconnect()
     func comment(_ comment: String, anonymously: Bool, completion: @escaping (_ comment: String?) -> Void)
 
     // Methods for Community and Usernames
@@ -42,7 +43,6 @@ protocol NicoUtilityType {
     func cachedUserName(forChat chat: Chat) -> String?
     func cachedUserName(forUserId userId: String) -> String?
     func resolveUsername(forUserId userId: String, completion: @escaping (String?) -> Void)
-    func extractUsername(fromHtmlData htmlData: Data) -> String?
 
     // Utility Methods
     func urlString(forUserId userId: String) -> String
@@ -70,6 +70,8 @@ enum NicoUtilityError: Error {
 // URLs:
 private let livePageUrl = "https://live.nicovideo.jp/watch/lv"
 private let userPageUrl = "https://www.nicovideo.jp/user/"
+private let userNicknameApiUrl = "https://api.live2.nicovideo.jp/api/v1/user/nickname"
+
 // Cookies:
 private let userSessionCookieDomain = "nicovideo.jp"
 private let userSessionCookieName = "user_session"
@@ -80,7 +82,7 @@ private let messageSocketPingInterval = 30
 
 // MARK: - WebSocket Messages
 private let startWatchingMessage = """
-{"type":"startWatching","data":{"stream":{"quality":"high","protocol":"hls","latency":"low","chasePlay":false},"room":{"protocol":"webSocket","commentable":true},"reconnect":false}}")
+{"type":"startWatching","data":{}}
 """
 private let keepSeatMessage = """
 {"type":"keepSeat"}
@@ -101,9 +103,19 @@ final class NicoUtility: NicoUtilityType {
     enum ConnectContext {
         case normal, reconnect
     }
-    struct ConnectRequest {
-        let liveNumber: Int
-        let sessionType: NicoSessionType
+    struct ConnectRequests {
+        // swiftlint:disable nesting
+        struct Request {
+            let liveNumber: Int
+            let sessionType: NicoSessionType
+        }
+        // swiftlint:enable nesting
+        var onGoing: Request?
+        var lastEstablished: Request?
+    }
+    struct ChatNo {
+        var latest: Int
+        var maxBeforeReconnect: Int
     }
 
     // Public Properties
@@ -112,8 +124,11 @@ final class NicoUtility: NicoUtilityType {
     private(set) var live: Live?
 
     // Private Properties
-    private var ongoingConnectRequest: ConnectRequest?
-    private var lastEstablishedConnectRequest: ConnectRequest?
+    private var connectRequests: ConnectRequests =
+        ConnectRequests(
+            onGoing: nil,
+            lastEstablished: nil
+        )
     private var userSessionCookie: String?
     private let session: Session
     private var managingSocket: WebSocket?
@@ -128,6 +143,9 @@ final class NicoUtility: NicoUtilityType {
     private let userNameResolvingOperationQueue = OperationQueue()
     private var cachedUserNames = [String: String]()
 
+    // Comment Management for Reconnection
+    private var chatNo = ChatNo(latest: 0, maxBeforeReconnect: 0)
+
     init() {
         let configuration = URLSessionConfiguration.af.default
         configuration.headers.add(.userAgent(commonUserAgentValue))
@@ -140,19 +158,28 @@ final class NicoUtility: NicoUtilityType {
 // MARK: - Public Methods (Main)
 extension NicoUtility {
     func connect(liveNumber: Int, sessionType: NicoSessionType, connectContext: NicoUtility.ConnectContext = .normal) {
-        // 1. Keep connection request.
-        ongoingConnectRequest = ConnectRequest(
+        // 1. Save connection request.
+        connectRequests.onGoing = ConnectRequests.Request(
             liveNumber: liveNumber,
             sessionType: sessionType
         )
-        lastEstablishedConnectRequest = nil
+        connectRequests.lastEstablished = nil
 
-        // 2. Cleanup current connection, if needed.
+        // 2. Save chat numbers.
+        switch connectContext {
+        case .normal:
+            chatNo.latest = 0
+            chatNo.maxBeforeReconnect = 0
+        case .reconnect:
+            chatNo.maxBeforeReconnect = chatNo.latest
+        }
+
+        // 3. Cleanup current connection, if needed.
         if live != nil {
             disconnect()
         }
 
-        // 3. Go direct to `connect()` IF the user session cookie is availale.
+        // 4. Go direct to `connect()` IF the user session cookie is availale.
         clearUserSessionCookieIfReserved()
         delegate?.nicoUtilityWillPrepareLive(self)
         if let userSessionCookie = userSessionCookie {
@@ -163,8 +190,8 @@ extension NicoUtility {
             return
         }
 
-        // 4. Ok, there's no cookie available, go get it..
-        let cookieCompletion = { (userSessionCookie: String?) -> Void in
+        // 5. Ok, there's no cookie available, go get it..
+        let completion = { (userSessionCookie: String?) -> Void in
             log.debug("Cookie result: [\(sessionType)] [\(userSessionCookie ?? "-")]")
             guard let userSessionCookie = userSessionCookie else {
                 let reason = "No available cookie."
@@ -179,24 +206,42 @@ extension NicoUtility {
         }
         switch sessionType {
         case .chrome:
-            CookieUtility.requestBrowserCookie(
-                browserType: .chrome,
-                completion: cookieCompletion)
+            CookieUtility.requestBrowserCookie(browserType: .chrome, completion: completion)
         case .safari:
-            CookieUtility.requestBrowserCookie(
-                browserType: .safari,
-                completion: cookieCompletion)
+            CookieUtility.requestBrowserCookie(browserType: .safari, completion: completion)
         case .login(let mail, let password):
-            CookieUtility.requestLoginCookie(
-                mailAddress: mail,
-                password: password,
-                completion: cookieCompletion)
+            CookieUtility.requestLoginCookie(mailAddress: mail, password: password, completion: completion)
         }
     }
 
     func disconnect(reserveToReconnect: Bool = false) {
         disconnectSocketsAndResetState()
         delegate?.nicoUtilityDidDisconnect(self)
+    }
+
+    func reconnect() {
+        objc_sync_enter(self)
+        defer { objc_sync_exit(self) }
+
+        log.debug("Reconnecting...")
+        guard let lastConnection = connectRequests.lastEstablished else {
+            log.warning("Failed to reconnect since there's no last established connection info.")
+            return
+        }
+        // Nullifying `lastEstablishedConnectRequest` to prevent the `reconnect()`
+        // method from being called multiple times from multiple thread.
+        connectRequests.lastEstablished = nil
+
+        disconnect()
+        delegate?.nicoUtilityWillReconnectToLive(self)
+
+        // Just in case, make some delay to invoke the connect method.
+        DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 2) {
+            self.connect(
+                liveNumber: lastConnection.liveNumber,
+                sessionType: lastConnection.sessionType,
+                connectContext: .reconnect)
+        }
     }
 
     func comment(_ comment: String, anonymously: Bool, completion: @escaping (String?) -> Void) {
@@ -234,16 +279,13 @@ extension NicoUtility {
         }
     }
 
-    func reportAsNgUser(chat: Chat, completion: @escaping (String?) -> Void) {
-        //
-    }
+    func reportAsNgUser(chat: Chat, completion: @escaping (String?) -> Void) {}
 }
 
 // MARK: - Public Methods (Username)
 extension NicoUtility {
     func cachedUserName(forChat chat: Chat) -> String? {
-        guard let userId = chat.userId else { return nil }
-        return cachedUserName(forUserId: userId)
+        return cachedUserName(forUserId: chat.userId)
     }
 
     func cachedUserName(forUserId userId: String) -> String? {
@@ -268,12 +310,21 @@ extension NicoUtility {
                 return
             }
 
-            // 2.Ok, there's no cached one, request user page synchronously, NOT async.
-            let url = userPageUrl + String(userId)
-            me.session.request(url).syncResponseData {
+            // 2.Ok, there's no cached one, request nickname api synchronously, NOT async.
+            me.session.request(
+                userNicknameApiUrl,
+                method: .get,
+                parameters: ["userId": userId]
+            )
+            .syncResponseData {
                 switch $0.result {
                 case .success(let data):
-                    let username = self?.extractUsername(fromHtmlData: data)
+                    guard let decoded = try? JSONDecoder().decode(UserNickname.self, from: data) else {
+                        log.error("error in decoding nickname response")
+                        completion(nil)
+                        return
+                    }
+                    let username = decoded.data.nickname
                     me.cachedUserNames[userId] = username
                     completion(username)
                 case .failure(_):
@@ -352,7 +403,7 @@ private extension NicoUtility {
             switch $0 {
             case .success():
                 me.startMessageSocketPingTimer(interval: messageSocketPingInterval)
-                me.lastEstablishedConnectRequest = me.ongoingConnectRequest
+                me.connectRequests.lastEstablished = me.connectRequests.onGoing
                 me.delegate?.nicoUtilityDidConnectToLive(me, roomPosition: RoomPosition.arena)
             case .failure(_):
                 let reason = "Failed to open message server."
@@ -372,31 +423,6 @@ private extension NicoUtility {
         messageSocket = nil
 
         live = nil
-    }
-
-    func reconnect() {
-        objc_sync_enter(self)
-        defer { objc_sync_exit(self) }
-
-        log.debug("Reconnecting...")
-        guard let lastConnection = lastEstablishedConnectRequest else {
-            log.warning("Failed to reconnect since there's no last established connection info.")
-            return
-        }
-        // Nullifying `lastEstablishedConnectRequest` to prevent the `reconnect()`
-        // method from being called multiple times from multiple thread.
-        lastEstablishedConnectRequest = nil
-
-        disconnect()
-        delegate?.nicoUtilityWillReconnectToLive(self)
-
-        // Just in case, make some delay to invoke the connect method.
-        DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 2) {
-            self.connect(
-                liveNumber: lastConnection.liveNumber,
-                sessionType: lastConnection.sessionType,
-                connectContext: .reconnect)
-        }
     }
 }
 
@@ -513,7 +539,7 @@ private extension NicoUtility {
                 resFrom: {
                     switch connectContex {
                     case .normal:       return -150
-                    case .reconnect:    return -5
+                    case .reconnect:    return -100
                     }
                 }(),
                 completion: completion)
@@ -537,7 +563,7 @@ private extension NicoUtility {
             log.debug("disconnected")
         case .text(let text):
             log.debug("text: \(text)")
-            decodeChat(text: text)
+            processChat(text: text)
         case .binary(_):
             log.debug("binary")
         case .pong(_):
@@ -563,13 +589,19 @@ private extension NicoUtility {
         socket.write(string: message)
     }
 
-    func decodeChat(text: String) {
+    func processChat(text: String) {
         guard let data = text.data(using: .utf8) else { return }
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
-        guard let chat = try? decoder.decode(WebSocketChatData.self, from: data) else { return }
-        // log.debug(chat)
-        delegate?.nicoUtilityDidReceiveChat(self, chat: chat.toChat())
+        guard let _chat = try? decoder.decode(WebSocketChatData.self, from: data) else { return }
+        // log.debug(_chat)
+        let chat = _chat.toChat()
+        guard chatNo.maxBeforeReconnect < chat.no else {
+            log.debug("Skip duplicated chat.")
+            return
+        }
+        chatNo.latest = chat.no
+        delegate?.nicoUtilityDidReceiveChat(self, chat: chat)
     }
 }
 
@@ -690,25 +722,22 @@ private extension EmbeddedDataProperties {
 
 private extension WebSocketChatData {
     func toChat() -> Chat {
-        let chat = Chat()
-        chat.internalNo = self.chat.no
-        // TODO: ?
-        chat.roomPosition = .arena
-        chat.no = self.chat.no
-        chat.date = self.chat.date.toDateAsTimeIntervalSince1970()
-        chat.dateUsec = self.chat.dateUsec
-        if let mail = self.chat.mail {
-            chat.mail = [mail]
-        }
-        chat.userId = self.chat.userId
-        if let premium = self.chat.premium {
-            chat.premium = Premium(rawValue: premium)
-        } else {
-            chat.premium = .ippan
-        }
-        chat.comment = self.chat.content
-        chat.score = 0
-        return chat
+        return Chat(
+            no: chat.no,
+            date: chat.date.toDateAsTimeIntervalSince1970(),
+            dateUsec: chat.dateUsec,
+            mail: {
+                guard let mail = chat.mail else { return nil }
+                return [mail]
+            }(),
+            userId: chat.userId,
+            comment: chat.content,
+            premium: {
+                guard let value = chat.premium,
+                      let premium = Premium(rawValue: value) else { return .ippan }
+                return premium
+            }()
+        )
     }
 }
 

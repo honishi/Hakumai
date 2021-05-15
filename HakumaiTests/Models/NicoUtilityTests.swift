@@ -8,6 +8,7 @@
 
 import Foundation
 import XCTest
+@testable import Hakumai
 
 private let kAsyncTimeout: TimeInterval = 3
 
@@ -25,20 +26,6 @@ final class NicoUtilityTests: XCTestCase {
         let html = dataForResource("live_page.html")
         let extracted = NicoUtility.extractEmbeddedDataPropertiesFromLivePage(html: html)
         XCTAssert(extracted?.site.relive.webSocketUrl == "wss://a.live2.nicovideo.jp/unama/wsapi/v2/watch/12345?audience_token=12345_12345_12345_abcde")
-    }
-
-    // MARK: - Username Resolver
-    func testExtractUsername() {
-        var data: Data!
-        var resolved: String?
-
-        data = dataForResource("user_1.html")
-        resolved = NicoUtility.shared.extractUsername(fromHtmlData: data)
-        XCTAssert(resolved == "しみっちゃん", "")
-
-        data = dataForResource("user_me.html")
-        resolved = NicoUtility.shared.extractUsername(fromHtmlData: data)
-        XCTAssert(resolved == "honishi", "")
     }
 
     // MARK: - Test Utility

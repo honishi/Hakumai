@@ -8,6 +8,7 @@
 
 import Foundation
 import XCTest
+@testable import Hakumai
 
 final class HandleNameManagerTests: XCTestCase {
     override func setUp() {
@@ -48,7 +49,7 @@ final class HandleNameManagerTests: XCTestCase {
     }
 
     func checkExtractHandleName(_ comment: String, expected: String?) {
-        XCTAssert(HandleNameManager.sharedManager.extractHandleName(fromComment: comment) == expected, "")
+        XCTAssert(HandleNameManager.shared.extractHandleName(fromComment: comment) == expected, "")
     }
 
     func testInsertOrReplaceThenSelectHandleName() {
@@ -56,9 +57,9 @@ final class HandleNameManagerTests: XCTestCase {
         let userId = String(arc4random() % 100)
         let handleName = "山田"
 
-        HandleNameManager.sharedManager.insertOrReplaceHandleName(communityId: communityId, userId: userId, anonymous: false, handleName: handleName)
+        HandleNameManager.shared.insertOrReplaceHandleName(communityId: communityId, userId: userId, anonymous: false, handleName: handleName)
 
-        let resolved = HandleNameManager.sharedManager.selectHandleName(communityId: communityId, userId: userId)
+        let resolved = HandleNameManager.shared.selectHandleName(communityId: communityId, userId: userId)
         XCTAssert(resolved == handleName, "")
     }
 }

@@ -39,17 +39,14 @@ extension MainViewController {
     }
 
     private func randomChat() -> Chat {
-        let chat = Chat()
-
-        chat.roomPosition = RoomPosition.arena
-        chat.userId = "xxx" + String(arc4random() % 1000)
-        chat.no = (Int(arc4random()) % 1000)
-        chat.score = -(Int(arc4random()) % 30000)
-        chat.comment = "hello " * (Int(arc4random()) % 100)
-        chat.date = Date()
-        chat.mail = ["184"]
-        chat.premium = Premium.premium
-
-        return chat
+        return Chat(
+            no: Int(arc4random()) % 1000,
+            date: Date(),
+            dateUsec: 0,
+            mail: ["184"],
+            userId: "xxx" + String(arc4random() % 1000),
+            comment: "hello " * (Int(arc4random()) % 100),
+            premium: .premium
+        )
     }
 }

@@ -36,20 +36,20 @@ extension MenuDelegate: NSMenuItemValidation {
         let clickedRow = tableView.clickedRow
         guard clickedRow != -1 else { return false }
 
-        let message = MessageContainer.sharedContainer[clickedRow]
+        let message = MessageContainer.shared[clickedRow]
         guard message.messageType == .chat, let chat = message.chat else { return false }
 
         switch menuItem {
         case copyCommentMenuItem, tweetCommentMenuItem:
             return true
         case openUrlMenuItem:
-            return chat.comment?.extractUrlString() != nil ? true : false
+            return chat.comment.extractUrlString() != nil ? true : false
         case addHandleNameMenuItem:
             guard live != nil else { return false }
             return (chat.isUserComment || chat.isBSPComment)
         case removeHandleNameMenuItem:
             guard let live = live else { return false }
-            let hasHandleName = (HandleNameManager.sharedManager.handleName(forLive: live, chat: chat) != nil)
+            let hasHandleName = (HandleNameManager.shared.handleName(forLive: live, chat: chat) != nil)
             return hasHandleName
         case addToMuteUserMenuItem, reportAsNgUserMenuItem:
             return (chat.isUserComment || chat.isBSPComment)
@@ -68,7 +68,7 @@ extension MenuDelegate: NSMenuDelegate {
     func menuWillOpen(_ menu: NSMenu) {
         resetMenu()
         guard tableView.clickedRow != -1 else { return }
-        let message = MessageContainer.sharedContainer[tableView.clickedRow]
+        let message = MessageContainer.shared[tableView.clickedRow]
         guard message.messageType == .chat, let chat = message.chat else { return }
         configureMenu(chat)
     }
@@ -79,23 +79,22 @@ extension MenuDelegate: NSSharingServiceDelegate {}
 extension MenuDelegate {
     // MARK: - Context Menu Handlers
     @IBAction func copyComment(_ sender: AnyObject) {
-        guard let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat,
-              let comment = chat.comment else { return }
-        _ = copyStringToPasteBoard(comment)
+        guard let chat = MessageContainer.shared[tableView.clickedRow].chat else { return }
+        _ = copyStringToPasteBoard(chat.comment)
     }
 
     @IBAction func openUrl(_ sender: AnyObject) {
-        guard let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat,
-              let urlString = chat.comment?.extractUrlString(),
+        guard let chat = MessageContainer.shared[tableView.clickedRow].chat,
+              let urlString = chat.comment.extractUrlString(),
               let urlObject = URL(string: urlString) else { return }
         NSWorkspace.shared.open(urlObject)
     }
 
     @IBAction func tweetComment(_ sender: AnyObject) {
-        guard let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat,
+        guard let chat = MessageContainer.shared[tableView.clickedRow].chat,
               let live = NicoUtility.shared.live else { return }
 
-        let comment = chat.comment ?? ""
+        let comment = chat.comment
         let liveName = live.title ?? ""
         let communityName = live.community.title ?? ""
         let liveUrl = live.liveUrlString
@@ -109,36 +108,35 @@ extension MenuDelegate {
     }
 
     @IBAction func addHandleName(_ sender: AnyObject) {
-        guard let live = live, let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat else {
+        guard let live = live, let chat = MessageContainer.shared[tableView.clickedRow].chat else {
             return
         }
         MainViewController.shared.showHandleNameAddViewController(live: live, chat: chat)
     }
 
     @IBAction func removeHandleName(_ sender: AnyObject) {
-        guard let live = live, let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat else {
+        guard let live = live, let chat = MessageContainer.shared[tableView.clickedRow].chat else {
             return
         }
-        HandleNameManager.sharedManager.removeHandleName(live: live, chat: chat)
+        HandleNameManager.shared.removeHandleName(live: live, chat: chat)
         MainViewController.shared.refreshHandleName()
     }
 
     @IBAction func addToMuteUser(_ sender: AnyObject) {
-        guard let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat,
-              let userId = chat.userId else { return }
+        guard let chat = MessageContainer.shared[tableView.clickedRow].chat else { return }
         let defaults = UserDefaults.standard
         var muteUserIds = defaults.object(forKey: Parameters.muteUserIds) as? [[String: String]] ?? [[String: String]]()
         for muteUserId in muteUserIds where chat.userId == muteUserId[MuteUserIdKey.userId] {
-            log.debug("mute userid [\(chat.userId ?? "")] already registered, so skip")
+            log.debug("mute userid [\(chat.userId)] already registered, so skip")
             return
         }
-        muteUserIds.append([MuteUserIdKey.userId: userId])
+        muteUserIds.append([MuteUserIdKey.userId: chat.userId])
         defaults.set(muteUserIds, forKey: Parameters.muteUserIds)
         defaults.synchronize()
     }
 
     @IBAction func reportAsNgUser(_ sender: AnyObject) {
-        guard let chat = MessageContainer.sharedContainer[tableView.clickedRow].chat else { return }
+        guard let chat = MessageContainer.shared[tableView.clickedRow].chat else { return }
         NicoUtility.shared.reportAsNgUser(chat: chat) { userId in
             if userId == nil {
                 MainViewController.shared.logSystemMessageToTableView("Failed to report NG user.")
@@ -149,7 +147,7 @@ extension MenuDelegate {
     }
 
     @IBAction func openUserPage(_ sender: AnyObject) {
-        guard let userId = MessageContainer.sharedContainer[tableView.clickedRow].chat?.userId else { return }
+        guard let userId = MessageContainer.shared[tableView.clickedRow].chat?.userId else { return }
         let userPageUrlString = NicoUtility.shared.urlString(forUserId: userId)
         guard let url = URL(string: userPageUrlString) else { return }
         NSWorkspace.shared.open(url)

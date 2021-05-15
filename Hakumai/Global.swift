@@ -16,6 +16,7 @@ let log = XCGLogger.default
 let kNibNameRoomPositionTableCellView = "RoomPositionTableCellView"
 let kNibNameScoreTableCellView = "ScoreTableCellView"
 let kNibNameUserIdTableCellView = "UserIdTableCellView"
+let kNibNameCommentTableCellView = "CommentTableCellView"
 let kNibNamePremiumTableCellView = "PremiumTableCellView"
 
 let kRoomPositionColumnIdentifier = "RoomPositionColumn"
@@ -23,7 +24,6 @@ let kScoreColumnIdentifier = "ScoreColumn"
 let kCommentColumnIdentifier = "CommentColumn"
 let kUserIdColumnIdentifier = "UserIdColumn"
 let kPremiumColumnIdentifier = "PremiumColumn"
-let kMailColumnIdentifier = "MailColumn"
 
 // MARK: Common regular expressions
 // mail address regular expression based on http://qiita.com/sakuro/items/1eaa307609ceaaf51123

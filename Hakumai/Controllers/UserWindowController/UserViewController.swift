@@ -9,11 +9,6 @@
 import Foundation
 import AppKit
 
-// constant value for storyboard
-/*
- private let kStoryboardIdGeneralViewController = "GeneralViewController"
- */
-
 final class UserViewController: NSViewController {
     // MARK: - Properties
     // MARK: Outlets
@@ -32,7 +27,7 @@ final class UserViewController: NSViewController {
                 if let userName = NicoUtility.shared.cachedUserName(forUserId: userId) {
                     userNameLabelValue = userName
                 }
-                messages = MessageContainer.sharedContainer.messages(fromUserId: userId)
+                messages = MessageContainer.shared.messages(fromUserId: userId)
             } else {
                 messages.removeAll(keepingCapacity: false)
                 rowHeightCacher.removeAll(keepingCapacity: false)
@@ -61,7 +56,8 @@ extension UserViewController {
     private func registerNibs() {
         let nibs = [
             (kNibNameRoomPositionTableCellView, kRoomPositionColumnIdentifier),
-            (kNibNameScoreTableCellView, kScoreColumnIdentifier)]
+            (kNibNameScoreTableCellView, kScoreColumnIdentifier),
+            (kNibNameCommentTableCellView, kCommentColumnIdentifier)]
         for (nibName, identifier) in nibs {
             guard let nib = NSNib(nibNamed: nibName, bundle: Bundle.main) else { continue }
             tableView.register(nib, forIdentifier: convertToNSUserInterfaceItemIdentifier(identifier))
@@ -137,21 +133,18 @@ private extension UserViewController {
 
         switch convertFromNSUserInterfaceItemIdentifier(tableColumn.identifier) {
         case kRoomPositionColumnIdentifier:
-            guard let roomPosition = chat.roomPosition, let no = chat.no else { return }
             let roomPositionView = view as? RoomPositionTableCellView
-            roomPositionView?.roomPosition = roomPosition
-            roomPositionView?.commentNo = no
+            roomPositionView?.roomPosition = chat.roomPosition
+            roomPositionView?.commentNo = chat.no
         case kScoreColumnIdentifier:
             (view as? ScoreTableCellView)?.chat = chat
         case kCommentColumnIdentifier:
+            let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)
             attributed = NSAttributedString(string: content, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
+            commentView?.attributedString = attributed
         default:
             break
-        }
-
-        if let attributed = attributed {
-            view.textField?.attributedStringValue = attributed
         }
     }
 
