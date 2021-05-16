@@ -707,7 +707,8 @@ extension MainViewController {
 
     @IBAction func reconnectLive(_ sender: Any) {
         // NicoUtility.shared.reconnect()
-        NicoUtility.shared.reconnect(reason: .noTexts)
+        NicoUtility.shared.reconnect(reason: .noPong)
+        // NicoUtility.shared.reconnect(reason: .noTexts)
     }
 
     @IBAction func connectLive(_ sender: AnyObject) {
