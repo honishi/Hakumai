@@ -38,7 +38,7 @@ private let pongMessage = """
 {"type":"pong"}
 """
 private let startThreadMessage = """
-[{"ping":{"content":"rs:0"}},{"ping":{"content":"ps:0"}},{"thread":{"thread":"%@","version":"20061206","user_id":"%@","res_from":%d,"with_global":1,"scores":1,"nicoru":0}},{"ping":{"content":"pf:0"}},{"ping":{"content":"rf:0"}}]
+[{"ping":{"content":"rs:0"}},{"ping":{"content":"ps:0"}},{"thread":{"thread":"%@","version":"20061206","user_id":"%@","res_from":%d,"with_global":1,"scores":1,"nicoru":0,"threadkey":"%@"}},{"ping":{"content":"pf:0"}},{"ping":{"content":"rf:0"}}]
 """
 private let postCommentMessage = """
 {"type":"postComment","data":{"text":"%@","vpos":%d,"isAnonymous":%@}}
@@ -508,6 +508,7 @@ private extension NicoUtility {
                     case .reconnect:    return -100
                     }
                 }(),
+                threadKey: room.data.yourPostKey,
                 completion: completion)
         }
         socket.connect()
@@ -515,7 +516,7 @@ private extension NicoUtility {
     }
 
     // swiftlint:disable function_parameter_count
-    func handleMessageSocketEvent(socket: WebSocket, event: WebSocketEvent, userId: String, threadId: String, resFrom: Int, completion: (Result<Void, NicoError>) -> Void) {
+    func handleMessageSocketEvent(socket: WebSocket, event: WebSocketEvent, userId: String, threadId: String, resFrom: Int, threadKey: String, completion: (Result<Void, NicoError>) -> Void) {
         switch event {
         case .connected(_):
             log.debug("connected")
@@ -524,7 +525,8 @@ private extension NicoUtility {
                 socket: socket,
                 userId: userId,
                 threadId: threadId,
-                resFrom: resFrom)
+                resFrom: resFrom,
+                threadKey: threadKey)
         case .disconnected(_, _):
             log.debug("disconnected")
         case .text(let text):
@@ -551,8 +553,8 @@ private extension NicoUtility {
     }
     // swiftlint:enable function_parameter_count
 
-    func sendStartThreadMessage(socket: WebSocket, userId: String, threadId: String, resFrom: Int) {
-        let message = String.init(format: startThreadMessage, threadId, userId, resFrom)
+    func sendStartThreadMessage(socket: WebSocket, userId: String, threadId: String, resFrom: Int, threadKey: String) {
+        let message = String.init(format: startThreadMessage, threadId, userId, resFrom, threadKey)
         socket.write(string: message)
     }
 
