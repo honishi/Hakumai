@@ -39,7 +39,6 @@ final class MainViewController: NSViewController {
 
     @IBOutlet weak var visitorsLabel: NSTextField!
     @IBOutlet weak var commentsLabel: NSTextField!
-    @IBOutlet weak var remainingSeatsLabel: NSTextField!
     @IBOutlet weak var speakButton: NSButton!
 
     @IBOutlet weak var scrollView: NSScrollView!
@@ -387,8 +386,8 @@ extension MainViewController: NicoUtilityDelegate {
         }
     }
 
-    func nicoUtilityDidReceiveHeartbeat(_ nicoUtility: NicoUtilityType, heartbeat: Heartbeat) {
-        updateLiveStatistics(heartbeat: heartbeat)
+    func nicoUtilityDidReceiveStatistics(_ nicoUtility: NicoUtilityType, stat: LiveStatistics) {
+        updateLiveStatistics(stat: stat)
     }
 }
 
@@ -689,23 +688,13 @@ private extension MainViewController {
         }
     }
 
-    func updateLiveStatistics(heartbeat: Heartbeat) {
-        guard heartbeat.status == .ok,
-              let watchCount = heartbeat.watchCount,
-              let commentCount = heartbeat.commentCount else { return }
-
-        let visitors = String(watchCount).numberStringWithSeparatorComma()
-        let comments = String(commentCount).numberStringWithSeparatorComma()
-
-        var remaining = "-"
-        if let free = heartbeat.freeSlotNum {
-            remaining = free == 0 ? "満員" : String(free).numberStringWithSeparatorComma()
-        }
+    func updateLiveStatistics(stat: LiveStatistics) {
+        let visitors = String(stat.viewers).numberStringWithSeparatorComma()
+        let comments = String(stat.comments).numberStringWithSeparatorComma()
 
         DispatchQueue.main.async {
             self.visitorsLabel.stringValue = "Visitors: " + visitors
             self.commentsLabel.stringValue = "Comments: " + comments
-            self.remainingSeatsLabel.stringValue = "Seats: " + remaining
         }
     }
 }

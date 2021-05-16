@@ -66,7 +66,7 @@
 		DBB473001A358FFC002C797E /* CharacterExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB472FF1A358FFC002C797E /* CharacterExtension.swift */; };
 		DBB473041A359082002C797E /* IntExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB473031A359082002C797E /* IntExtension.swift */; };
 		DBB473061A35909F002C797E /* NSXMLElementExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB473051A35909F002C797E /* NSXMLElementExtension.swift */; };
-		DBB4730B1A35951C002C797E /* Heartbeat.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB4730A1A35951C002C797E /* Heartbeat.swift */; };
+		DBB4730B1A35951C002C797E /* LiveStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB4730A1A35951C002C797E /* LiveStatistics.swift */; };
 		DBB952161A8655AB0059850A /* LoggerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB952151A8655AB0059850A /* LoggerHelper.swift */; };
 		DBCA2D242642BCF500B6147C /* NicoRestApiModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA2D232642BCF500B6147C /* NicoRestApiModel.swift */; };
 		DBCA40D41A30AD48006299A9 /* MenuDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA40D31A30AD48006299A9 /* MenuDelegate.swift */; };
@@ -179,7 +179,7 @@
 		DBB472FF1A358FFC002C797E /* CharacterExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacterExtension.swift; sourceTree = "<group>"; };
 		DBB473031A359082002C797E /* IntExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntExtension.swift; sourceTree = "<group>"; };
 		DBB473051A35909F002C797E /* NSXMLElementExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSXMLElementExtension.swift; sourceTree = "<group>"; };
-		DBB4730A1A35951C002C797E /* Heartbeat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Heartbeat.swift; sourceTree = "<group>"; };
+		DBB4730A1A35951C002C797E /* LiveStatistics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveStatistics.swift; sourceTree = "<group>"; };
 		DBB952151A8655AB0059850A /* LoggerHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoggerHelper.swift; sourceTree = "<group>"; };
 		DBCA2D232642BCF500B6147C /* NicoRestApiModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoRestApiModel.swift; sourceTree = "<group>"; };
 		DBCA40D31A30AD48006299A9 /* MenuDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuDelegate.swift; sourceTree = "<group>"; };
@@ -522,8 +522,8 @@
 				DBFA887A1A1BC25A005349AD /* Chat.swift */,
 				DB7F21AF1A210017008D17E0 /* Community.swift */,
 				DBFA88811A1BC8C9005349AD /* Enum.swift */,
-				DBB4730A1A35951C002C797E /* Heartbeat.swift */,
 				DBFA888A1A1C9A56005349AD /* Live.swift */,
+				DBB4730A1A35951C002C797E /* LiveStatistics.swift */,
 				DB52B0AC1A2102C700E78C6A /* User.swift */,
 			);
 			path = Application;
@@ -841,11 +841,11 @@
 				DB414C0B1A4811C4008D2F40 /* Global.swift in Sources */,
 				DB7BA0721A58C021000778CF /* HandleNameAddViewController.swift in Sources */,
 				DBE094021A586FFC004554FD /* HandleNameManager.swift in Sources */,
-				DBB4730B1A35951C002C797E /* Heartbeat.swift in Sources */,
 				DBAC3D3921C568B500B09673 /* Images.swift in Sources */,
 				DBB473041A359082002C797E /* IntExtension.swift in Sources */,
 				DBAB69621A5C1A70002FCD95 /* KeychainUtility.swift in Sources */,
 				DBFA888B1A1C9A56005349AD /* Live.swift in Sources */,
+				DBB4730B1A35951C002C797E /* LiveStatistics.swift in Sources */,
 				DBB952161A8655AB0059850A /* LoggerHelper.swift in Sources */,
 				DBAB695C1A5B70A5002FCD95 /* LoginCookie.swift in Sources */,
 				DB2AE0C61A0EE2FD00B1CE4D /* MainViewController.swift in Sources */,

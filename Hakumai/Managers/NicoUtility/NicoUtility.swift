@@ -470,7 +470,7 @@ private extension NicoUtility {
         case is WebSocketPingData:
             socket.write(string: pongMessage)
         case let stat as WebSocketStatisticsData:
-            delegate?.nicoUtilityDidReceiveHeartbeat(self, heartbeat: stat.toHeartbeat())
+            delegate?.nicoUtilityDidReceiveStatistics(self, stat: stat.toLiveStatistics())
         case is WebSocketDisconnectData:
             disconnect()
         default:
@@ -769,12 +769,13 @@ private extension WebSocketChatData {
 }
 
 private extension WebSocketStatisticsData {
-    func toHeartbeat() -> Heartbeat {
-        let hb = Heartbeat()
-        hb.status = .ok
-        hb.watchCount = data.viewers
-        hb.commentCount = data.comments
-        return hb
+    func toLiveStatistics() -> LiveStatistics {
+        return LiveStatistics(
+            viewers: data.viewers,
+            comments: data.comments,
+            adPoints: data.adPoints,
+            giftPoints: data.giftPoints
+        )
     }
 }
 
