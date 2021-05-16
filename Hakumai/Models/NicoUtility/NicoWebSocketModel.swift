@@ -8,7 +8,7 @@
 
 import Foundation
 
-// MARK: - WebSocket (Managing, Generic Model)
+// MARK: - WebSocket (Watch, Generic Model)
 enum WebSocketDataType: String, Codable {
     case ping, seat, room, statistics, disconnect
 }
@@ -17,7 +17,7 @@ struct WebSocketData: Codable {
     let type: WebSocketDataType
 }
 
-// MARK: - WebSocket (Managing, Specific Model)
+// MARK: - WebSocket (Watch, Specific Model)
 struct WebSocketPingData: Codable {
     let type: WebSocketDataType
 }

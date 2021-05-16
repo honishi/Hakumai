@@ -121,11 +121,11 @@ final class NicoUtility: NicoUtilityType {
         var maxBeforeReconnect: Int
     }
     struct LastTextSocketDates {
-        var managing: Date
+        var watch: Date
         var message: Date
 
         init() {
-            managing = Date()
+            watch = Date()
             message = Date()
         }
     }
@@ -143,12 +143,12 @@ final class NicoUtility: NicoUtilityType {
         )
     private var userSessionCookie: String?
     private let session: Session
-    private var managingSocket: WebSocket?
+    private var watchSocket: WebSocket?
     private var messageSocket: WebSocket?
     private var shouldClearUserSessionCookie = true
 
     // Timers for WebSockets
-    private var managingSocketKeepTimer: Timer?
+    private var watchSocketKeepSeatTimer: Timer?
     private var messageSocketPingTimer: Timer?
 
     // Usernames
@@ -273,7 +273,7 @@ extension NicoUtility {
             format: postCommentMessage,
             comment, vpos, anonymously ? "true" : "false")
         log.debug(message)
-        managingSocket?.write(string: message)
+        watchSocket?.write(string: message)
     }
 
     func urlString(forUserId userId: String) -> String {
@@ -371,7 +371,7 @@ private extension NicoUtility {
                 let user = embeddedData.toUser()
                 self?.live = live
                 me.delegate?.nicoUtilityDidPrepareLive(me, user: user, live: live, connectContext: connectContext)
-                me.openManagingSocket(
+                me.openWatchSocket(
                     webSocketUrl: embeddedData.site.relive.webSocketUrl,
                     userId: embeddedData.user.id,
                     connectContext: connectContext
@@ -405,8 +405,8 @@ private extension NicoUtility {
         }
     }
 
-    func openManagingSocket(webSocketUrl: String, userId: String, connectContext: ConnectContext) {
-        openManagingSocket(webSocketUrl: webSocketUrl) { [weak self] in
+    func openWatchSocket(webSocketUrl: String, userId: String, connectContext: ConnectContext) {
+        openWatchSocket(webSocketUrl: webSocketUrl) { [weak self] in
             guard let me = self else { return }
             switch $0 {
             case .success(let room):
@@ -435,23 +435,23 @@ private extension NicoUtility {
     }
 
     func disconnectSocketsAndResetState() {
-        stopManagingSocketKeepTimer()
+        stopWatchSocketKeepSeatTimer()
         stopMessageSocketPingTimer()
         stopAppHealthCheckTimer()
-        [managingSocket, messageSocket].forEach {
+        [watchSocket, messageSocket].forEach {
             $0?.onEvent = nil
             $0?.disconnect()
         }
-        managingSocket = nil
+        watchSocket = nil
         messageSocket = nil
 
         live = nil
     }
 }
 
-// MARK: Private Methods (Managing Socket)
+// MARK: Private Methods (Watch Socket)
 private extension NicoUtility {
-    func openManagingSocket(webSocketUrl: String, completion: @escaping (Result<WebSocketRoomData, NicoUtilityError>) -> Void) {
+    func openWatchSocket(webSocketUrl: String, completion: @escaping (Result<WebSocketRoomData, NicoUtilityError>) -> Void) {
         guard let url = URL(string: webSocketUrl) else {
             completion(Result.failure(NicoUtilityError.internal))
             return
@@ -461,16 +461,16 @@ private extension NicoUtility {
         request.timeoutInterval = 10
         let socket = WebSocket(request: request)
         socket.onEvent = { [weak self] in
-            self?.handleManagingSocketEvent(
+            self?.handleWatchSocketEvent(
                 socket: socket,
                 event: $0,
                 completion: completion)
         }
         socket.connect()
-        managingSocket = socket
+        watchSocket = socket
     }
 
-    func handleManagingSocketEvent(socket: WebSocket, event: WebSocketEvent, completion: (Result<WebSocketRoomData, NicoUtilityError>) -> Void) {
+    func handleWatchSocketEvent(socket: WebSocket, event: WebSocketEvent, completion: (Result<WebSocketRoomData, NicoUtilityError>) -> Void) {
         switch event {
         case .connected(_):
             log.debug("connected")
@@ -480,7 +480,7 @@ private extension NicoUtility {
         case .text(let text):
             log.debug("text: \(text)")
             processWebSocketData(text: text, socket: socket, completion: completion)
-            lastTextSocketDates?.managing = Date()
+            lastTextSocketDates?.watch = Date()
         case .binary(_):
             log.debug("binary")
         case .pong(_):
@@ -505,7 +505,7 @@ private extension NicoUtility {
         switch decoded {
         case let seat as WebSocketSeatData:
             log.debug(seat)
-            startManagingSocketKeepTimer(interval: seat.data.keepIntervalSec)
+            startWatchSocketKeepSeatTimer(interval: seat.data.keepIntervalSec)
         case let room as WebSocketRoomData:
             log.debug(room)
             completion(Result.success(room))
@@ -633,28 +633,28 @@ private extension NicoUtility {
     }
 }
 
-// MARK: - Private Methods (Keep Timer for Managing Socket)
+// MARK: - Private Methods (Keep Seat Timer for Watch Socket)
 private extension NicoUtility {
-    func startManagingSocketKeepTimer(interval: Int) {
-        stopManagingSocketKeepTimer()
-        managingSocketKeepTimer = Timer.scheduledTimer(
+    func startWatchSocketKeepSeatTimer(interval: Int) {
+        stopWatchSocketKeepSeatTimer()
+        watchSocketKeepSeatTimer = Timer.scheduledTimer(
             timeInterval: Double(interval),
             target: self,
-            selector: #selector(NicoUtility.managingScoketKeepTimerFired),
+            selector: #selector(NicoUtility.watchScoketKeepSeatTimerFired),
             userInfo: nil,
             repeats: true)
-        log.debug("Started managing socket keep timer.")
+        log.debug("Started watch socket keep-seat timer.")
     }
 
-    func stopManagingSocketKeepTimer() {
-        managingSocketKeepTimer?.invalidate()
-        managingSocketKeepTimer = nil
-        log.debug("Stopped managing socket keep timer.")
+    func stopWatchSocketKeepSeatTimer() {
+        watchSocketKeepSeatTimer?.invalidate()
+        watchSocketKeepSeatTimer = nil
+        log.debug("Stopped watch socket keep-seat timer.")
     }
 
-    @objc func managingScoketKeepTimerFired() {
-        log.debug("Sending keep to managing socket.")
-        managingSocket?.write(string: keepSeatMessage)
+    @objc func watchScoketKeepSeatTimerFired() {
+        log.debug("Sending keep-seat to watch socket.")
+        watchSocket?.write(string: keepSeatMessage)
     }
 }
 
