@@ -23,7 +23,7 @@ private let userSessionCookieName = "user_session"
 private let userSessionCookieExpire = TimeInterval(7200)
 private let userSessionCookiePath = "/"
 // Misc:
-private let messageSocketPingInterval = 30
+private let messageSocketEmptyMessageInterval = 60
 private let appHealthCheckInterval = 10
 private let appHealthCheckDisconnectDetectSec = 60
 
@@ -52,7 +52,6 @@ final class NicoUtility: NicoUtilityType {
         case safari
         case login(mail: String, password: String)
     }
-
     enum NicoError: Error {
         case network
         case `internal`
@@ -106,7 +105,7 @@ final class NicoUtility: NicoUtilityType {
 
     // Timers for WebSockets
     private var watchSocketKeepSeatTimer: Timer?
-    private var messageSocketPingTimer: Timer?
+    private var messageSocketEmptyMessageTimer: Timer?
 
     // Usernames
     private let userNameResolvingOperationQueue = OperationQueue()
@@ -365,7 +364,7 @@ private extension NicoUtility {
             guard let me = self else { return }
             switch $0 {
             case .success():
-                me.startMessageSocketPingTimer(interval: messageSocketPingInterval)
+                me.startMessageSocketEmptyMessageTimer(interval: messageSocketEmptyMessageInterval)
                 me.startAppHealthCheckTimer()
                 me.connectRequests.lastEstablished = me.connectRequests.onGoing
                 me.delegate?.nicoUtilityDidConnectToLive(me, roomPosition: RoomPosition.arena, connectContext: connectContext)
@@ -378,7 +377,7 @@ private extension NicoUtility {
 
     func disconnectSocketsAndResetState() {
         stopWatchSocketKeepSeatTimer()
-        stopMessageSocketPingTimer()
+        stopMessageSocketEmptyMessageTimer()
         stopAppHealthCheckTimer()
         [watchSocket, messageSocket].forEach {
             $0?.onEvent = nil
@@ -583,7 +582,7 @@ private extension NicoUtility {
         watchSocketKeepSeatTimer = Timer.scheduledTimer(
             timeInterval: Double(interval),
             target: self,
-            selector: #selector(NicoUtility.watchScoketKeepSeatTimerFired),
+            selector: #selector(NicoUtility.watchSocketKeepSeatTimerFired),
             userInfo: nil,
             repeats: true)
         log.debug("Started watch socket keep-seat timer.")
@@ -595,35 +594,35 @@ private extension NicoUtility {
         log.debug("Stopped watch socket keep-seat timer.")
     }
 
-    @objc func watchScoketKeepSeatTimerFired() {
+    @objc func watchSocketKeepSeatTimerFired() {
         log.debug("Sending keep-seat to watch socket.")
         watchSocket?.write(string: keepSeatMessage)
     }
 }
 
-// MARK: - Private Methods (Ping Timer for Message Socket)
+// MARK: - Private Methods (Empty Message Timer for Message Socket)
 private extension NicoUtility {
-    func startMessageSocketPingTimer(interval: Int) {
-        stopMessageSocketPingTimer()
-        messageSocketPingTimer = Timer.scheduledTimer(
+    func startMessageSocketEmptyMessageTimer(interval: Int) {
+        stopMessageSocketEmptyMessageTimer()
+        messageSocketEmptyMessageTimer = Timer.scheduledTimer(
             timeInterval: Double(interval),
             target: self,
-            selector: #selector(NicoUtility.messageScoketPingTimerFired),
+            selector: #selector(NicoUtility.messageSocketEmptyMessageTimerFired),
             userInfo: nil,
             repeats: true)
-        log.debug("Started message socket ping timer.")
+        log.debug("Started message socket empty-message timer.")
     }
 
-    func stopMessageSocketPingTimer() {
-        messageSocketPingTimer?.invalidate()
-        messageSocketPingTimer = nil
-        log.debug("Stopped message socket ping timer.")
+    func stopMessageSocketEmptyMessageTimer() {
+        messageSocketEmptyMessageTimer?.invalidate()
+        messageSocketEmptyMessageTimer = nil
+        log.debug("Stopped message socket empty-message timer.")
     }
 
-    @objc func messageScoketPingTimerFired() {
-        log.debug("Sending ping to message socket.")
+    @objc func messageSocketEmptyMessageTimerFired() {
+        log.debug("Sending empty-message to message socket.")
         messageSocket?.write(string: "")
-        messageSocket?.write(ping: Data())
+        // messageSocket?.write(ping: Data())
     }
 }
 
