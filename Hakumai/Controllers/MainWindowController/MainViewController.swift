@@ -327,7 +327,7 @@ extension MainViewController: NicoUtilityDelegate {
         }
     }
 
-    func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, reason: String, error: NicoUtilityError?) {
+    func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, reason: String, error: NicoUtility.NicoError?) {
         logSystemMessageToTableView("Failed to prepare live.(\(reason))")
         updateMainControlViews(status: .disconnected)
         showCookiePrivilegeAlertIfNeeded(error: error)
@@ -738,7 +738,7 @@ extension MainViewController {
         guard let sessionManagementType = SessionManagementType(
                 rawValue: UserDefaults.standard.integer(forKey: Parameters.sessionManagement)) else { return }
 
-        let sessionType = { () -> NicoSessionType? in
+        let sessionType = { () -> NicoUtility.SessionType? in
             switch sessionManagementType {
             case .login:
                 guard let account = KeychainUtility.accountInKeychain() else { return nil }
@@ -913,7 +913,7 @@ private extension MainViewController {
 
 // Alert view for Safari cookie
 private extension MainViewController {
-    func showCookiePrivilegeAlertIfNeeded(error: NicoUtilityError?) {
+    func showCookiePrivilegeAlertIfNeeded(error: NicoUtility.NicoError?) {
         guard error == .noCookieFound else { return }
         let param = UserDefaults.standard.integer(forKey: Parameters.sessionManagement)
         guard let sessionManagementType = SessionManagementType(rawValue: param) else { return }

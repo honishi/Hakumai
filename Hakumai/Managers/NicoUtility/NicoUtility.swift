@@ -12,60 +12,6 @@ import Alamofire
 import Starscream
 import XCGLogger
 
-// MARK: - Protocol
-// note these functions are called in background thread, not main thread.
-// so use explicit main thread for updating ui in these callbacks.
-protocol NicoUtilityDelegate: AnyObject {
-    func nicoUtilityWillPrepareLive(_ nicoUtility: NicoUtilityType)
-    func nicoUtilityDidPrepareLive(_ nicoUtility: NicoUtilityType, user: User, live: Live, connectContext: NicoUtility.ConnectContext)
-    func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, reason: String, error: NicoUtilityError?)
-    func nicoUtilityDidConnectToLive(_ nicoUtility: NicoUtilityType, roomPosition: RoomPosition, connectContext: NicoUtility.ConnectContext)
-    func nicoUtilityDidReceiveChat(_ nicoUtility: NicoUtilityType, chat: Chat)
-    func nicoUtilityWillReconnectToLive(_ nicoUtility: NicoUtilityType, reason: NicoUtility.ReconnectReason)
-    func nicoUtilityDidDisconnect(_ nicoUtility: NicoUtilityType, disconnectContext: NicoUtility.DisconnectContext)
-    func nicoUtilityDidReceiveHeartbeat(_ nicoUtility: NicoUtilityType, heartbeat: Heartbeat)
-}
-
-protocol NicoUtilityType {
-    // Properties
-    static var shared: Self { get }
-    var delegate: NicoUtilityDelegate? { get }
-    var live: Live? { get }
-
-    // Main Methods
-    func connect(liveNumber: Int, sessionType: NicoSessionType, connectContext: NicoUtility.ConnectContext)
-    func disconnect(disconnectContext: NicoUtility.DisconnectContext)
-    func reconnect(reason: NicoUtility.ReconnectReason)
-    func comment(_ comment: String, anonymously: Bool, completion: @escaping (_ comment: String?) -> Void)
-
-    // Methods for Community and Usernames
-    func loadThumbnail(completion: @escaping (Data?) -> Void)
-    func cachedUserName(forChat chat: Chat) -> String?
-    func cachedUserName(forUserId userId: String) -> String?
-    func resolveUsername(forUserId userId: String, completion: @escaping (String?) -> Void)
-
-    // Utility Methods
-    func urlString(forUserId userId: String) -> String
-    func reserveToClearUserSessionCookie()
-
-    // Miscellaneous Methods
-    func reportAsNgUser(chat: Chat, completion: @escaping (_ userId: String?) -> Void)
-}
-
-// MARK: - Types
-enum NicoSessionType {
-    case chrome
-    case safari
-    case login(mail: String, password: String)
-}
-
-enum NicoUtilityError: Error {
-    case network
-    case `internal`
-    case noCookieFound
-    case unknown
-}
-
 // MARK: - Constants
 // URLs:
 private let livePageUrl = "https://live.nicovideo.jp/watch/lv"
@@ -101,7 +47,19 @@ private let postCommentMessage = """
 
 // MARK: - Class
 final class NicoUtility: NicoUtilityType {
-    // Type
+    // MARK: - Types
+    enum SessionType {
+        case chrome
+        case safari
+        case login(mail: String, password: String)
+    }
+
+    enum NicoError: Error {
+        case network
+        case `internal`
+        case noCookieFound
+        case unknown
+    }
     enum ConnectContext { case normal, reconnect }
     enum DisconnectContext { case normal, reconnect }
     enum ReconnectReason { case normal, noComments }
@@ -110,7 +68,7 @@ final class NicoUtility: NicoUtilityType {
         // swiftlint:disable nesting
         struct Request {
             let liveNumber: Int
-            let sessionType: NicoSessionType
+            let sessionType: SessionType
         }
         // swiftlint:enable nesting
         var onGoing: Request?
@@ -173,7 +131,7 @@ final class NicoUtility: NicoUtilityType {
 
 // MARK: - Public Methods (Main)
 extension NicoUtility {
-    func connect(liveNumber: Int, sessionType: NicoSessionType, connectContext: NicoUtility.ConnectContext = .normal) {
+    func connect(liveNumber: Int, sessionType: SessionType, connectContext: NicoUtility.ConnectContext = .normal) {
         // 1. Save connection request.
         connectRequests.onGoing = ConnectRequests.Request(
             liveNumber: liveNumber,
@@ -383,7 +341,7 @@ private extension NicoUtility {
         }
     }
 
-    func reqeustLiveInfo(lv: Int, completion: @escaping (Result<EmbeddedDataProperties, NicoUtilityError>) -> Void) {
+    func reqeustLiveInfo(lv: Int, completion: @escaping (Result<EmbeddedDataProperties, NicoError>) -> Void) {
         let urlRequest = urlRequestWithUserSessionCookie(
             urlString: "\(livePageUrl)\(lv)",
             userSession: userSessionCookie
@@ -395,12 +353,12 @@ private extension NicoUtility {
             switch $0.result {
             case .success(let data):
                 guard let embedded = NicoUtility.extractEmbeddedDataPropertiesFromLivePage(html: data) else {
-                    completion(Result.failure(NicoUtilityError.internal))
+                    completion(Result.failure(NicoError.internal))
                     return
                 }
                 completion(Result.success(embedded))
             case .failure(_):
-                completion(Result.failure(NicoUtilityError.internal))
+                completion(Result.failure(NicoError.internal))
             }
         }
     }
@@ -451,9 +409,9 @@ private extension NicoUtility {
 
 // MARK: Private Methods (Watch Socket)
 private extension NicoUtility {
-    func openWatchSocket(webSocketUrl: String, completion: @escaping (Result<WebSocketRoomData, NicoUtilityError>) -> Void) {
+    func openWatchSocket(webSocketUrl: String, completion: @escaping (Result<WebSocketRoomData, NicoError>) -> Void) {
         guard let url = URL(string: webSocketUrl) else {
-            completion(Result.failure(NicoUtilityError.internal))
+            completion(Result.failure(NicoError.internal))
             return
         }
         var request = URLRequest(url: url)
@@ -470,7 +428,7 @@ private extension NicoUtility {
         watchSocket = socket
     }
 
-    func handleWatchSocketEvent(socket: WebSocket, event: WebSocketEvent, completion: (Result<WebSocketRoomData, NicoUtilityError>) -> Void) {
+    func handleWatchSocketEvent(socket: WebSocket, event: WebSocketEvent, completion: (Result<WebSocketRoomData, NicoError>) -> Void) {
         switch event {
         case .connected(_):
             log.debug("connected")
@@ -500,7 +458,7 @@ private extension NicoUtility {
         }
     }
 
-    func processWebSocketData(text: String, socket: WebSocket, completion: (Result<WebSocketRoomData, NicoUtilityError>) -> Void) {
+    func processWebSocketData(text: String, socket: WebSocket, completion: (Result<WebSocketRoomData, NicoError>) -> Void) {
         guard let decoded = decodeWebSocketData(text: text) else { return }
         switch decoded {
         case let seat as WebSocketSeatData:
@@ -541,9 +499,9 @@ private extension NicoUtility {
 
 // MARK: - Private Methods (Message Socket)
 private extension NicoUtility {
-    func openMessageSocket(userId: String, room: WebSocketRoomData, connectContex: ConnectContext, completion: @escaping (Result<Void, NicoUtilityError>) -> Void) {
+    func openMessageSocket(userId: String, room: WebSocketRoomData, connectContex: ConnectContext, completion: @escaping (Result<Void, NicoError>) -> Void) {
         guard let url = URL(string: room.data.messageServer.uri) else {
-            completion(Result.failure(NicoUtilityError.internal))
+            completion(Result.failure(NicoError.internal))
             return
         }
         var request = URLRequest(url: url)
@@ -573,7 +531,7 @@ private extension NicoUtility {
     }
 
     // swiftlint:disable function_parameter_count
-    func handleMessageSocketEvent(socket: WebSocket, event: WebSocketEvent, userId: String, threadId: String, resFrom: Int, completion: (Result<Void, NicoUtilityError>) -> Void) {
+    func handleMessageSocketEvent(socket: WebSocket, event: WebSocketEvent, userId: String, threadId: String, resFrom: Int, completion: (Result<Void, NicoError>) -> Void) {
         switch event {
         case .connected(_):
             log.debug("connected")
