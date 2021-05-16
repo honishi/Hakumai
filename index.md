@@ -14,7 +14,7 @@ v{{site.binary_version}}, {{site.binary_date}} (for macOS 10.12-)
 
 <img src="./image/main.png" width="550px">
 
-* Hakumai は macOS で動作するニコニコ生放送用のコメントビューア(コメビュ)です。
+* Hakumai は macOS で動作するニコニコ生放送用のコメントビューア (コメビュ) です。
 
 ### Requirements
 
