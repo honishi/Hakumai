@@ -28,7 +28,7 @@ final class HandleNameManager {
     // MARK: - Object Lifecycle
     init() {
         objc_sync_enter(self)
-        Helper.createApplicationDirectoryIfNotExists()
+        LoggerHelper.createApplicationDirectoryIfNotExists()
         database = HandleNameManager.databaseForHandleNames()
         databaseQueue = HandleNameManager.databaseQueueForHandleNames()
         createHandleNamesTableIfNotExists()
@@ -172,7 +172,7 @@ private extension HandleNameManager {
 
     // MARK: Database Instance Utility
     static func fullPathForHandleNamesDatabase() -> String {
-        return Helper.applicationDirectoryPath() + "/" + kHandleNamesDatabase
+        return LoggerHelper.applicationDirectoryPath() + "/" + kHandleNamesDatabase
     }
 
     static func databaseForHandleNames() -> FMDatabase? {

@@ -11,61 +11,6 @@ import Alamofire
 import Starscream
 import XCGLogger
 
-// MARK: - Protocol
-// note these functions are called in background thread, not main thread.
-// so use explicit main thread for updating ui in these callbacks.
-protocol NicoUtilityDelegate: AnyObject {
-    func nicoUtilityWillPrepareLive(_ nicoUtility: NicoUtilityType)
-    func nicoUtilityDidPrepareLive(_ nicoUtility: NicoUtilityType, user: User, live: Live)
-    func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, reason: String, error: NicoUtilityError?)
-    func nicoUtilityDidConnectToLive(_ nicoUtility: NicoUtilityType, roomPosition: RoomPosition)
-    func nicoUtilityDidReceiveChat(_ nicoUtility: NicoUtilityType, chat: Chat)
-    func nicoUtilityDidGetKickedOut(_ nicoUtility: NicoUtilityType)
-    func nicoUtilityWillReconnectToLive(_ nicoUtility: NicoUtilityType)
-    func nicoUtilityDidDisconnect(_ nicoUtility: NicoUtilityType)
-    func nicoUtilityDidReceiveHeartbeat(_ nicoUtility: NicoUtilityType, heartbeat: Heartbeat)
-}
-
-protocol NicoUtilityType {
-    // Properties
-    static var shared: Self { get }
-    var delegate: NicoUtilityDelegate? { get }
-    var live: Live? { get }
-
-    // Main Methods
-    func connect(liveNumber: Int, sessionType: NicoSessionType, connectContext: NicoUtility.ConnectContext)
-    func disconnect(reserveToReconnect: Bool)
-    func reconnect()
-    func comment(_ comment: String, anonymously: Bool, completion: @escaping (_ comment: String?) -> Void)
-
-    // Methods for Community and Usernames
-    func loadThumbnail(completion: @escaping (Data?) -> Void)
-    func cachedUserName(forChat chat: Chat) -> String?
-    func cachedUserName(forUserId userId: String) -> String?
-    func resolveUsername(forUserId userId: String, completion: @escaping (String?) -> Void)
-
-    // Utility Methods
-    func urlString(forUserId userId: String) -> String
-    func reserveToClearUserSessionCookie()
-
-    // Miscellaneous Methods
-    func reportAsNgUser(chat: Chat, completion: @escaping (_ userId: String?) -> Void)
-}
-
-// MARK: - Types
-enum NicoSessionType {
-    case chrome
-    case safari
-    case login(mail: String, password: String)
-}
-
-enum NicoUtilityError: Error {
-    case network
-    case `internal`
-    case noCookieFound
-    case unknown
-}
-
 // MARK: - Constants
 // URLs:
 private let livePageUrl = "https://live.nicovideo.jp/watch/lv"
@@ -79,6 +24,8 @@ private let userSessionCookieExpire = TimeInterval(7200)
 private let userSessionCookiePath = "/"
 // Misc:
 private let messageSocketPingInterval = 30
+private let appHealthCheckInterval = 10
+private let appHealthCheckDisconnectDetectSec = 60
 
 // MARK: - WebSocket Messages
 private let startWatchingMessage = """
@@ -99,23 +46,45 @@ private let postCommentMessage = """
 
 // MARK: - Class
 final class NicoUtility: NicoUtilityType {
-    // Type
-    enum ConnectContext {
-        case normal, reconnect
+    // MARK: - Types
+    enum SessionType {
+        case chrome
+        case safari
+        case login(mail: String, password: String)
     }
+
+    enum NicoError: Error {
+        case network
+        case `internal`
+        case noCookieFound
+        case unknown
+    }
+    enum ConnectContext { case normal, reconnect }
+    enum DisconnectContext { case normal, reconnect }
+    enum ReconnectReason { case normal, noComments }
+
     struct ConnectRequests {
         // swiftlint:disable nesting
         struct Request {
             let liveNumber: Int
-            let sessionType: NicoSessionType
+            let sessionType: SessionType
         }
         // swiftlint:enable nesting
         var onGoing: Request?
         var lastEstablished: Request?
     }
-    struct ChatNo {
+    struct ChatNumbers {
         var latest: Int
         var maxBeforeReconnect: Int
+    }
+    struct LastTextSocketDates {
+        var watch: Date
+        var message: Date
+
+        init() {
+            watch = Date()
+            message = Date()
+        }
     }
 
     // Public Properties
@@ -131,12 +100,12 @@ final class NicoUtility: NicoUtilityType {
         )
     private var userSessionCookie: String?
     private let session: Session
-    private var managingSocket: WebSocket?
+    private var watchSocket: WebSocket?
     private var messageSocket: WebSocket?
     private var shouldClearUserSessionCookie = true
 
     // Timers for WebSockets
-    private var managingSocketKeepTimer: Timer?
+    private var watchSocketKeepSeatTimer: Timer?
     private var messageSocketPingTimer: Timer?
 
     // Usernames
@@ -144,7 +113,11 @@ final class NicoUtility: NicoUtilityType {
     private var cachedUserNames = [String: String]()
 
     // Comment Management for Reconnection
-    private var chatNo = ChatNo(latest: 0, maxBeforeReconnect: 0)
+    private var chatNumbers = ChatNumbers(latest: 0, maxBeforeReconnect: 0)
+
+    // App-side Health Check
+    private var lastTextSocketDates: LastTextSocketDates?
+    private var appHealthCheckTimer: Timer?
 
     init() {
         let configuration = URLSessionConfiguration.af.default
@@ -157,7 +130,7 @@ final class NicoUtility: NicoUtilityType {
 
 // MARK: - Public Methods (Main)
 extension NicoUtility {
-    func connect(liveNumber: Int, sessionType: NicoSessionType, connectContext: NicoUtility.ConnectContext = .normal) {
+    func connect(liveNumber: Int, sessionType: SessionType, connectContext: NicoUtility.ConnectContext = .normal) {
         // 1. Save connection request.
         connectRequests.onGoing = ConnectRequests.Request(
             liveNumber: liveNumber,
@@ -168,10 +141,10 @@ extension NicoUtility {
         // 2. Save chat numbers.
         switch connectContext {
         case .normal:
-            chatNo.latest = 0
-            chatNo.maxBeforeReconnect = 0
+            chatNumbers.latest = 0
+            chatNumbers.maxBeforeReconnect = 0
         case .reconnect:
-            chatNo.maxBeforeReconnect = chatNo.latest
+            chatNumbers.maxBeforeReconnect = chatNumbers.latest
         }
 
         // 3. Cleanup current connection, if needed.
@@ -214,12 +187,12 @@ extension NicoUtility {
         }
     }
 
-    func disconnect(reserveToReconnect: Bool = false) {
+    func disconnect(disconnectContext: NicoUtility.DisconnectContext = .normal) {
         disconnectSocketsAndResetState()
-        delegate?.nicoUtilityDidDisconnect(self)
+        delegate?.nicoUtilityDidDisconnect(self, disconnectContext: disconnectContext)
     }
 
-    func reconnect() {
+    func reconnect(reason: ReconnectReason = .normal) {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
 
@@ -232,8 +205,13 @@ extension NicoUtility {
         // method from being called multiple times from multiple thread.
         connectRequests.lastEstablished = nil
 
-        disconnect()
-        delegate?.nicoUtilityWillReconnectToLive(self)
+        disconnect(disconnectContext: {
+            switch reason {
+            case .normal:       return .normal
+            case .noComments:   return .reconnect
+            }
+        }())
+        delegate?.nicoUtilityWillReconnectToLive(self, reason: reason)
 
         // Just in case, make some delay to invoke the connect method.
         DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 2) {
@@ -252,7 +230,7 @@ extension NicoUtility {
             format: postCommentMessage,
             comment, vpos, anonymously ? "true" : "false")
         log.debug(message)
-        managingSocket?.write(string: message)
+        watchSocket?.write(string: message)
     }
 
     func urlString(forUserId userId: String) -> String {
@@ -262,21 +240,6 @@ extension NicoUtility {
     func reserveToClearUserSessionCookie() {
         shouldClearUserSessionCookie = true
         log.debug("reserved to clear user session cookie")
-    }
-
-    func loadThumbnail(completion: @escaping (Data?) -> Void) {
-        guard let url = live?.community.thumbnailUrl else {
-            completion(nil)
-            return
-        }
-        session.request(url).responseData {
-            switch $0.result {
-            case .success(let data):
-                completion(data)
-            case .failure(_):
-                completion(nil)
-            }
-        }
     }
 
     func reportAsNgUser(chat: Chat, completion: @escaping (String?) -> Void) {}
@@ -349,8 +312,8 @@ private extension NicoUtility {
                 let live = embeddedData.toLive()
                 let user = embeddedData.toUser()
                 self?.live = live
-                me.delegate?.nicoUtilityDidPrepareLive(me, user: user, live: live)
-                me.openManagingSocket(
+                me.delegate?.nicoUtilityDidPrepareLive(me, user: user, live: live, connectContext: connectContext)
+                me.openWatchSocket(
                     webSocketUrl: embeddedData.site.relive.webSocketUrl,
                     userId: embeddedData.user.id,
                     connectContext: connectContext
@@ -362,7 +325,7 @@ private extension NicoUtility {
         }
     }
 
-    func reqeustLiveInfo(lv: Int, completion: @escaping (Result<EmbeddedDataProperties, NicoUtilityError>) -> Void) {
+    func reqeustLiveInfo(lv: Int, completion: @escaping (Result<EmbeddedDataProperties, NicoError>) -> Void) {
         let urlRequest = urlRequestWithUserSessionCookie(
             urlString: "\(livePageUrl)\(lv)",
             userSession: userSessionCookie
@@ -374,18 +337,18 @@ private extension NicoUtility {
             switch $0.result {
             case .success(let data):
                 guard let embedded = NicoUtility.extractEmbeddedDataPropertiesFromLivePage(html: data) else {
-                    completion(Result.failure(NicoUtilityError.internal))
+                    completion(Result.failure(NicoError.internal))
                     return
                 }
                 completion(Result.success(embedded))
             case .failure(_):
-                completion(Result.failure(NicoUtilityError.internal))
+                completion(Result.failure(NicoError.internal))
             }
         }
     }
 
-    func openManagingSocket(webSocketUrl: String, userId: String, connectContext: ConnectContext) {
-        openManagingSocket(webSocketUrl: webSocketUrl) { [weak self] in
+    func openWatchSocket(webSocketUrl: String, userId: String, connectContext: ConnectContext) {
+        openWatchSocket(webSocketUrl: webSocketUrl) { [weak self] in
             guard let me = self else { return }
             switch $0 {
             case .success(let room):
@@ -403,8 +366,9 @@ private extension NicoUtility {
             switch $0 {
             case .success():
                 me.startMessageSocketPingTimer(interval: messageSocketPingInterval)
+                me.startAppHealthCheckTimer()
                 me.connectRequests.lastEstablished = me.connectRequests.onGoing
-                me.delegate?.nicoUtilityDidConnectToLive(me, roomPosition: RoomPosition.arena)
+                me.delegate?.nicoUtilityDidConnectToLive(me, roomPosition: RoomPosition.arena, connectContext: connectContext)
             case .failure(_):
                 let reason = "Failed to open message server."
                 me.delegate?.nicoUtilityDidFailToPrepareLive(me, reason: reason, error: nil)
@@ -413,24 +377,25 @@ private extension NicoUtility {
     }
 
     func disconnectSocketsAndResetState() {
-        stopManagingSocketKeepTimer()
+        stopWatchSocketKeepSeatTimer()
         stopMessageSocketPingTimer()
-        [managingSocket, messageSocket].forEach {
+        stopAppHealthCheckTimer()
+        [watchSocket, messageSocket].forEach {
             $0?.onEvent = nil
             $0?.disconnect()
         }
-        managingSocket = nil
+        watchSocket = nil
         messageSocket = nil
 
         live = nil
     }
 }
 
-// MARK: Private Methods (Managing Socket)
+// MARK: Private Methods (Watch Socket)
 private extension NicoUtility {
-    func openManagingSocket(webSocketUrl: String, completion: @escaping (Result<WebSocketRoomData, NicoUtilityError>) -> Void) {
+    func openWatchSocket(webSocketUrl: String, completion: @escaping (Result<WebSocketRoomData, NicoError>) -> Void) {
         guard let url = URL(string: webSocketUrl) else {
-            completion(Result.failure(NicoUtilityError.internal))
+            completion(Result.failure(NicoError.internal))
             return
         }
         var request = URLRequest(url: url)
@@ -438,16 +403,16 @@ private extension NicoUtility {
         request.timeoutInterval = 10
         let socket = WebSocket(request: request)
         socket.onEvent = { [weak self] in
-            self?.handleManagingSocketEvent(
+            self?.handleWatchSocketEvent(
                 socket: socket,
                 event: $0,
                 completion: completion)
         }
         socket.connect()
-        managingSocket = socket
+        watchSocket = socket
     }
 
-    func handleManagingSocketEvent(socket: WebSocket, event: WebSocketEvent, completion: (Result<WebSocketRoomData, NicoUtilityError>) -> Void) {
+    func handleWatchSocketEvent(socket: WebSocket, event: WebSocketEvent, completion: (Result<WebSocketRoomData, NicoError>) -> Void) {
         switch event {
         case .connected(_):
             log.debug("connected")
@@ -457,6 +422,7 @@ private extension NicoUtility {
         case .text(let text):
             log.debug("text: \(text)")
             processWebSocketData(text: text, socket: socket, completion: completion)
+            lastTextSocketDates?.watch = Date()
         case .binary(_):
             log.debug("binary")
         case .pong(_):
@@ -476,19 +442,20 @@ private extension NicoUtility {
         }
     }
 
-    func processWebSocketData(text: String, socket: WebSocket, completion: (Result<WebSocketRoomData, NicoUtilityError>) -> Void) {
+    func processWebSocketData(text: String, socket: WebSocket, completion: (Result<WebSocketRoomData, NicoError>) -> Void) {
         guard let decoded = decodeWebSocketData(text: text) else { return }
         switch decoded {
         case let seat as WebSocketSeatData:
             log.debug(seat)
-            startManagingSocketKeepTimer(interval: seat.data.keepIntervalSec)
+            startWatchSocketKeepSeatTimer(interval: seat.data.keepIntervalSec)
         case let room as WebSocketRoomData:
             log.debug(room)
             completion(Result.success(room))
         case is WebSocketPingData:
             socket.write(string: pongMessage)
+            log.debug("pong: \(pongMessage)")
         case let stat as WebSocketStatisticsData:
-            delegate?.nicoUtilityDidReceiveHeartbeat(self, heartbeat: stat.toHeartbeat())
+            delegate?.nicoUtilityDidReceiveStatistics(self, stat: stat.toLiveStatistics())
         case is WebSocketDisconnectData:
             disconnect()
         default:
@@ -517,9 +484,9 @@ private extension NicoUtility {
 
 // MARK: - Private Methods (Message Socket)
 private extension NicoUtility {
-    func openMessageSocket(userId: String, room: WebSocketRoomData, connectContex: ConnectContext, completion: @escaping (Result<Void, NicoUtilityError>) -> Void) {
+    func openMessageSocket(userId: String, room: WebSocketRoomData, connectContex: ConnectContext, completion: @escaping (Result<Void, NicoError>) -> Void) {
         guard let url = URL(string: room.data.messageServer.uri) else {
-            completion(Result.failure(NicoUtilityError.internal))
+            completion(Result.failure(NicoError.internal))
             return
         }
         var request = URLRequest(url: url)
@@ -549,7 +516,7 @@ private extension NicoUtility {
     }
 
     // swiftlint:disable function_parameter_count
-    func handleMessageSocketEvent(socket: WebSocket, event: WebSocketEvent, userId: String, threadId: String, resFrom: Int, completion: (Result<Void, NicoUtilityError>) -> Void) {
+    func handleMessageSocketEvent(socket: WebSocket, event: WebSocketEvent, userId: String, threadId: String, resFrom: Int, completion: (Result<Void, NicoError>) -> Void) {
         switch event {
         case .connected(_):
             log.debug("connected")
@@ -564,6 +531,7 @@ private extension NicoUtility {
         case .text(let text):
             log.debug("text: \(text)")
             processChat(text: text)
+            lastTextSocketDates?.message = Date()
         case .binary(_):
             log.debug("binary")
         case .pong(_):
@@ -596,37 +564,40 @@ private extension NicoUtility {
         guard let _chat = try? decoder.decode(WebSocketChatData.self, from: data) else { return }
         // log.debug(_chat)
         let chat = _chat.toChat()
-        guard chatNo.maxBeforeReconnect < chat.no else {
+        guard chatNumbers.maxBeforeReconnect < chat.no else {
             log.debug("Skip duplicated chat.")
             return
         }
-        chatNo.latest = chat.no
+        chatNumbers.latest = chat.no
         delegate?.nicoUtilityDidReceiveChat(self, chat: chat)
+        if _chat.isDisconnect {
+            disconnect()
+        }
     }
 }
 
-// MARK: - Private Methods (Keep Timer for Managing Socket)
+// MARK: - Private Methods (Keep Seat Timer for Watch Socket)
 private extension NicoUtility {
-    func startManagingSocketKeepTimer(interval: Int) {
-        stopManagingSocketKeepTimer()
-        managingSocketKeepTimer = Timer.scheduledTimer(
+    func startWatchSocketKeepSeatTimer(interval: Int) {
+        stopWatchSocketKeepSeatTimer()
+        watchSocketKeepSeatTimer = Timer.scheduledTimer(
             timeInterval: Double(interval),
             target: self,
-            selector: #selector(NicoUtility.managingScoketKeepTimerFired),
+            selector: #selector(NicoUtility.watchScoketKeepSeatTimerFired),
             userInfo: nil,
             repeats: true)
-        log.debug("Started managing socket keep timer.")
+        log.debug("Started watch socket keep-seat timer.")
     }
 
-    func stopManagingSocketKeepTimer() {
-        managingSocketKeepTimer?.invalidate()
-        managingSocketKeepTimer = nil
-        log.debug("Stopped managing socket keep timer.")
+    func stopWatchSocketKeepSeatTimer() {
+        watchSocketKeepSeatTimer?.invalidate()
+        watchSocketKeepSeatTimer = nil
+        log.debug("Stopped watch socket keep-seat timer.")
     }
 
-    @objc func managingScoketKeepTimerFired() {
-        log.debug("Sending keep to managing socket.")
-        managingSocket?.write(string: keepSeatMessage)
+    @objc func watchScoketKeepSeatTimerFired() {
+        log.debug("Sending keep-seat to watch socket.")
+        watchSocket?.write(string: keepSeatMessage)
     }
 }
 
@@ -651,7 +622,47 @@ private extension NicoUtility {
 
     @objc func messageScoketPingTimerFired() {
         log.debug("Sending ping to message socket.")
+        messageSocket?.write(string: "")
         messageSocket?.write(ping: Data())
+    }
+}
+
+// MARK: - Private Methods (App-side Health Check Timer)
+private extension NicoUtility {
+    func startAppHealthCheckTimer(interval: Int = appHealthCheckInterval) {
+        stopAppHealthCheckTimer()
+        lastTextSocketDates = .init()
+        appHealthCheckTimer = Timer.scheduledTimer(
+            timeInterval: Double(interval),
+            target: self,
+            selector: #selector(NicoUtility.appHealthCheckTimerFired),
+            userInfo: nil,
+            repeats: true)
+        log.debug("Started app health check timer.")
+    }
+
+    func stopAppHealthCheckTimer() {
+        appHealthCheckTimer?.invalidate()
+        appHealthCheckTimer = nil
+        log.debug("Stopped app health check timer.")
+    }
+
+    @objc func appHealthCheckTimerFired() {
+        guard let lastTextSocketDates = lastTextSocketDates else {
+            log.error("No information available for app health check.")
+            return
+        }
+
+        // XXX: Refine the following condition, if needed.
+        // No comments received for last `appHealthCheckDisconnectDetectSec`(60) seconds?
+        let quietPeriod = Int(Date().timeIntervalSince(lastTextSocketDates.message))
+        let shouldReconnect = appHealthCheckDisconnectDetectSec < quietPeriod
+        log.debug("Quiet period: \(quietPeriod)/\(appHealthCheckDisconnectDetectSec) shouldReconnect: \(shouldReconnect)")
+
+        if shouldReconnect {
+            log.debug("Seems no comments for last \(appHealthCheckDisconnectDetectSec) sec. Reconnecting...")
+            reconnect(reason: .noComments)
+        }
     }
 }
 
@@ -739,15 +750,18 @@ private extension WebSocketChatData {
             }()
         )
     }
+
+    var isDisconnect: Bool { chat.premium == 2 && chat.content == "/disconnect" }
 }
 
 private extension WebSocketStatisticsData {
-    func toHeartbeat() -> Heartbeat {
-        let hb = Heartbeat()
-        hb.status = .ok
-        hb.watchCount = data.viewers
-        hb.commentCount = data.comments
-        return hb
+    func toLiveStatistics() -> LiveStatistics {
+        return LiveStatistics(
+            viewers: data.viewers,
+            comments: data.comments,
+            adPoints: data.adPoints,
+            giftPoints: data.giftPoints
+        )
     }
 }
 

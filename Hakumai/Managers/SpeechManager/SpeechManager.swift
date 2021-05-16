@@ -12,17 +12,17 @@ import AVFoundation
 private let kDequeuChatTimerInterval: TimeInterval = 0.5
 
 private let kVoiceSpeedMap: [(queuCountRange: CountableRange<Int>, speed: Float)] = [
-    (0..<3, 0.55),
-    (3..<6, 0.60),
-    (6..<9, 0.65),
-    (9..<12, 0.7),
-    (12..<100, 0.8)
+    (0..<2, 0.50),
+    (2..<4, 0.55),
+    (4..<7, 0.60),
+    (7..<10, 0.65),
+    (10..<100, 0.75)
 ]
 private let kRefreshChatQueueThreshold = 30
 
 private let kCleanCommentPatterns = [
-    ("^/\\w+ \\w+ \\w+ ", ""),
-    ("(w|ｗ){2,}$", " わらわら"),
+    ("https?://[\\w!?/+\\-_~;.,*&@#$%()'\\[\\]=]+", " URL "),
+    ("(w|ｗ){2,}", " わらわら"),
     ("(w|ｗ)$", " わら"),
     ("(8|８){3,}", "ぱちぱち")
 ]
@@ -37,7 +37,6 @@ final class SpeechManager: NSObject {
     private var voiceVolume = 100
     private var timer: Timer?
     private let synthesizer = AVSpeechSynthesizer()
-    private var liveStartedDate: Date?
 
     // MARK: - Object Lifecycle
     override init() {
@@ -72,10 +71,6 @@ final class SpeechManager: NSObject {
         log.debug("stopped speech manager.")
     }
 
-    func setLiveStartedDate(_ date: Date = Date()) {
-        liveStartedDate = date
-    }
-
     // min/max: 0-100
     func setVoiceVolume(_ volume: Int) {
         voiceVolume = max(min(volume, 100), 0)
@@ -83,14 +78,6 @@ final class SpeechManager: NSObject {
     }
 
     func enqueue(chat: Chat) {
-        guard let started = liveStartedDate,
-              Date().timeIntervalSince(started) > 5 else {
-            // Skip enqueuing since there's possibility that we receive lots of
-            // messages for this time slot.
-            log.debug("Skip enqueuing early chats.")
-            return
-        }
-
         guard chat.premium == .ippan || chat.premium == .premium || chat.premium == .bsp else { return }
 
         objc_sync_enter(self)

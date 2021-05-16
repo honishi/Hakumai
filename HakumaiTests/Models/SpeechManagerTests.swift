@@ -30,11 +30,6 @@ final class SpeechManagerTests: XCTestCase {
         actual = SpeechManager.shared.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
 
-        comment = "/press show yellow 母親を殴っていた自分が恥ずかしくなりました @ ラピス"
-        expected = "母親を殴っていた自分が恥ずかしくなりました @ ラピス"
-        actual = SpeechManager.shared.cleanComment(from: comment)
-        XCTAssert(expected == actual, "")
-
         comment = "w"
         expected = " わら"
         actual = SpeechManager.shared.cleanComment(from: comment)
@@ -65,6 +60,11 @@ final class SpeechManagerTests: XCTestCase {
         actual = SpeechManager.shared.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
 
+        comment = "誰も共感してくれなくて可哀想wwwぶた"
+        expected = "誰も共感してくれなくて可哀想 わらわらぶた"
+        actual = SpeechManager.shared.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
+
         comment = "いよいよ就寝か。。　(ﾟ∀ﾟ)"
         expected = "いよいよ就寝か。。　"
         actual = SpeechManager.shared.cleanComment(from: comment)
@@ -72,6 +72,21 @@ final class SpeechManagerTests: XCTestCase {
 
         comment = "8888888888888888888888888888888888888888888888888"
         expected = "ぱちぱち"
+        actual = SpeechManager.shared.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
+
+        comment = "これ見てhttps://example.com/aaa"
+        expected = "これ見て URL "
+        actual = SpeechManager.shared.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
+
+        comment = "これ見てhttps://example.com/aaaこれ"
+        expected = "これ見て URL "
+        actual = SpeechManager.shared.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
+
+        comment = "これ見てhttps://www.youtube.com/watch?v=9Pg2CDCm34w"
+        expected = "これ見て URL "
         actual = SpeechManager.shared.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
     }

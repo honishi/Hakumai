@@ -11,11 +11,11 @@ import XCGLogger
 
 private let kEnableColorizedLogger = true
 
-final class Helper {
+final class LoggerHelper {
     // MARK: - Public Interface
     static func setupLogger(_ logger: XCGLogger) {
         #if DEBUG
-        Helper.colorizeLogger(logger)
+        LoggerHelper.colorizeLogger(logger)
         logger.setup(
             level: .debug,
             showThreadName: true,
@@ -36,10 +36,10 @@ final class Helper {
 
     static func setupFileLogger(_ logger: XCGLogger, fileName: String) {
         #if DEBUG
-        Helper.colorizeLogger(logger)
+        LoggerHelper.colorizeLogger(logger)
 
-        Helper.createApplicationDirectoryIfNotExists()
-        let path = Helper.applicationDirectoryPath() + "/" + fileName
+        LoggerHelper.createApplicationDirectoryIfNotExists()
+        let path = LoggerHelper.applicationDirectoryPath() + "/" + fileName
         logger.setup(
             level: .verbose,
             showThreadName: true,
@@ -63,7 +63,7 @@ final class Helper {
     }
 
     static func createApplicationDirectoryIfNotExists() {
-        let path = Helper.applicationDirectoryPath()
+        let path = LoggerHelper.applicationDirectoryPath()
         guard !FileManager.default.fileExists(atPath: path) else { return }
         do {
             try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: false, attributes: nil)
