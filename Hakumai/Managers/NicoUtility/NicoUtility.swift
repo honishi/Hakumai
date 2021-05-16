@@ -74,7 +74,7 @@ final class NicoUtility: NicoUtilityType {
         var onGoing: Request?
         var lastEstablished: Request?
     }
-    struct ChatNo {
+    struct ChatNumbers {
         var latest: Int
         var maxBeforeReconnect: Int
     }
@@ -114,7 +114,7 @@ final class NicoUtility: NicoUtilityType {
     private var cachedUserNames = [String: String]()
 
     // Comment Management for Reconnection
-    private var chatNo = ChatNo(latest: 0, maxBeforeReconnect: 0)
+    private var chatNumbers = ChatNumbers(latest: 0, maxBeforeReconnect: 0)
 
     // App-side Health Check
     private var lastTextSocketDates: LastTextSocketDates?
@@ -142,10 +142,10 @@ extension NicoUtility {
         // 2. Save chat numbers.
         switch connectContext {
         case .normal:
-            chatNo.latest = 0
-            chatNo.maxBeforeReconnect = 0
+            chatNumbers.latest = 0
+            chatNumbers.maxBeforeReconnect = 0
         case .reconnect:
-            chatNo.maxBeforeReconnect = chatNo.latest
+            chatNumbers.maxBeforeReconnect = chatNumbers.latest
         }
 
         // 3. Cleanup current connection, if needed.
@@ -579,11 +579,11 @@ private extension NicoUtility {
         guard let _chat = try? decoder.decode(WebSocketChatData.self, from: data) else { return }
         // log.debug(_chat)
         let chat = _chat.toChat()
-        guard chatNo.maxBeforeReconnect < chat.no else {
+        guard chatNumbers.maxBeforeReconnect < chat.no else {
             log.debug("Skip duplicated chat.")
             return
         }
-        chatNo.latest = chat.no
+        chatNumbers.latest = chat.no
         delegate?.nicoUtilityDidReceiveChat(self, chat: chat)
         if _chat.isDisconnect {
             disconnect()
