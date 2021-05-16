@@ -364,7 +364,7 @@ extension MainViewController: NicoUtilityDelegate {
         switch reason {
         case .normal:
             logSystemMessageToTableView("Reconnecting...")
-        case .noTexts:
+        case .noPong, .noTexts:
             break
         }
     }

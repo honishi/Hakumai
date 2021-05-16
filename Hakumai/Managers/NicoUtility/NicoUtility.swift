@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Hiroyuki Onishi. All rights reserved.
 //
 
+// swiftlint:disable file_length
 import Foundation
 import Alamofire
 import Starscream
@@ -24,6 +25,8 @@ private let userSessionCookieExpire = TimeInterval(7200)
 private let userSessionCookiePath = "/"
 // Misc:
 private let messageSocketEmptyMessageInterval = 60
+private let lastPongCheckInterval = 10
+private let pongCatchDelay = 5
 private let lastTextCheckInterval = 10
 private let lastTextCheckDisconnectDetectSec = 60
 
@@ -60,7 +63,7 @@ final class NicoUtility: NicoUtilityType {
     }
     enum ConnectContext { case normal, reconnect }
     enum DisconnectContext { case normal, reconnect }
-    enum ReconnectReason { case normal, noTexts }
+    enum ReconnectReason { case normal, noPong, noTexts }
 
     struct ConnectRequests {
         // swiftlint:disable nesting
@@ -113,6 +116,11 @@ final class NicoUtility: NicoUtilityType {
 
     // Comment Management for Reconnection
     private var chatNumbers = ChatNumbers(latest: 0, maxBeforeReconnect: 0)
+
+    // App-side Health Check (Last Pong)
+    private var lastPongSocketDates: LastSocketDates?
+    private var lastPongCheckTimer: Timer?
+    private var pongCatchTimer: Timer?
 
     // App-side Health Check (Last Text)
     private var lastTextSocketDates: LastSocketDates?
@@ -206,8 +214,8 @@ extension NicoUtility {
 
         disconnect(disconnectContext: {
             switch reason {
-            case .normal:       return .normal
-            case .noTexts:   return .reconnect
+            case .normal:           return .normal
+            case .noPong, .noTexts: return .reconnect
             }
         }())
         delegate?.nicoUtilityWillReconnectToLive(self, reason: reason)
@@ -365,6 +373,7 @@ private extension NicoUtility {
             switch $0 {
             case .success():
                 me.startMessageSocketEmptyMessageTimer(interval: messageSocketEmptyMessageInterval)
+                me.startLastPongCheckTimer()
                 me.startLastTextCheckTimer()
                 me.connectRequests.lastEstablished = me.connectRequests.onGoing
                 me.delegate?.nicoUtilityDidConnectToLive(me, roomPosition: RoomPosition.arena, connectContext: connectContext)
@@ -378,6 +387,7 @@ private extension NicoUtility {
     func disconnectSocketsAndResetState() {
         stopWatchSocketKeepSeatTimer()
         stopMessageSocketEmptyMessageTimer()
+        stopLastPongCheckTimer()
         stopLastTextCheckTimer()
         [watchSocket, messageSocket].forEach {
             $0?.onEvent = nil
@@ -426,6 +436,7 @@ private extension NicoUtility {
             log.debug("binary")
         case .pong(_):
             log.debug("pong")
+            lastPongSocketDates?.watch = Date()
         case .ping(_):
             log.debug("ping")
         case .error(_):
@@ -537,6 +548,7 @@ private extension NicoUtility {
             log.debug("binary")
         case .pong(_):
             log.debug("pong")
+            lastPongSocketDates?.message = Date()
         case .ping(_):
             log.debug("ping")
         case .error(_):
@@ -624,7 +636,56 @@ private extension NicoUtility {
     @objc func messageSocketEmptyMessageTimerFired() {
         log.debug("Sending empty-message to message socket.")
         messageSocket?.write(string: "")
-        // messageSocket?.write(ping: Data())
+    }
+}
+
+// MARK: - Private Methods (Last Pong Check Timer)
+private extension NicoUtility {
+    func startLastPongCheckTimer(interval: Int = lastPongCheckInterval) {
+        stopLastPongCheckTimer()
+        lastPongSocketDates = .init()
+        lastPongCheckTimer = Timer.scheduledTimer(
+            timeInterval: Double(interval),
+            target: self,
+            selector: #selector(NicoUtility.lastPongCheckTimerFired),
+            userInfo: nil,
+            repeats: true)
+        log.debug("Started last-pong check timer.")
+    }
+
+    func stopLastPongCheckTimer() {
+        lastPongCheckTimer?.invalidate()
+        lastPongCheckTimer = nil
+        pongCatchTimer?.invalidate()
+        pongCatchTimer = nil
+        lastPongSocketDates = nil
+        log.debug("Stopped last-pong check timer.")
+    }
+
+    @objc func lastPongCheckTimerFired() {
+        let pingDate = Date()
+        messageSocket?.write(ping: Data())
+        pongCatchTimer?.invalidate()
+        pongCatchTimer = Timer.scheduledTimer(
+            timeInterval: Double(pongCatchDelay),
+            target: self,
+            selector: #selector(NicoUtility.pongCatchTimerFired),
+            userInfo: pingDate,
+            repeats: false)
+    }
+
+    @objc func pongCatchTimerFired(sender: Timer) {
+        guard let pingDate = sender.userInfo as? Date,
+              let pongDate = lastPongSocketDates?.message else {
+            log.error("No information available for last pong check.")
+            return
+        }
+        let isPongReceived = pongDate.timeIntervalSince(pingDate) > 0
+        log.debug("ping: \(pingDate) pong: \(pongDate) isPongReceived: \(isPongReceived)")
+        if !isPongReceived {
+            log.debug("Seems no pong for last ping. Reconnecting...")
+            reconnect(reason: .noPong)
+        }
     }
 }
 
@@ -639,13 +700,14 @@ private extension NicoUtility {
             selector: #selector(NicoUtility.lastTextCheckTimerFired),
             userInfo: nil,
             repeats: true)
-        log.debug("Started app health check timer.")
+        log.debug("Started last-text check timer.")
     }
 
     func stopLastTextCheckTimer() {
         lastTextCheckTimer?.invalidate()
         lastTextCheckTimer = nil
-        log.debug("Stopped app health check timer.")
+        lastTextSocketDates = nil
+        log.debug("Stopped last-text check timer.")
     }
 
     @objc func lastTextCheckTimerFired() {
