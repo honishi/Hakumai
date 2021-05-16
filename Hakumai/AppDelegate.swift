@@ -15,7 +15,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: - NSApplicationDelegate Functions
     func applicationDidFinishLaunching(_ notification: Notification) {
-        Helper.setupLogger(log)
+        LoggerHelper.setupLogger(log)
         migrateApplicationVersion()
         initializeUserDefaults()
         addObserverForUserDefaults()

@@ -34,7 +34,7 @@ final class ChromeCookie {
     // MARK: - Properties
     private static let fileLog: XCGLogger = {
         let logger = XCGLogger()
-        Helper.setupFileLogger(logger, fileName: kFileLogName)
+        LoggerHelper.setupFileLogger(logger, fileName: kFileLogName)
         return logger
     }()
 

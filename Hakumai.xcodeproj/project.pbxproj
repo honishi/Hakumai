@@ -66,7 +66,7 @@
 		DBB473041A359082002C797E /* IntExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB473031A359082002C797E /* IntExtension.swift */; };
 		DBB473061A35909F002C797E /* NSXMLElementExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB473051A35909F002C797E /* NSXMLElementExtension.swift */; };
 		DBB4730B1A35951C002C797E /* Heartbeat.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB4730A1A35951C002C797E /* Heartbeat.swift */; };
-		DBB952161A8655AB0059850A /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB952151A8655AB0059850A /* Helper.swift */; };
+		DBB952161A8655AB0059850A /* LoggerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB952151A8655AB0059850A /* LoggerHelper.swift */; };
 		DBCA2D242642BCF500B6147C /* NicoRestApiModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA2D232642BCF500B6147C /* NicoRestApiModel.swift */; };
 		DBCA40D41A30AD48006299A9 /* MenuDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA40D31A30AD48006299A9 /* MenuDelegate.swift */; };
 		DBD65C201A2EB08D00B84C97 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD65C1F1A2EB08D00B84C97 /* Message.swift */; };
@@ -178,7 +178,7 @@
 		DBB473031A359082002C797E /* IntExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntExtension.swift; sourceTree = "<group>"; };
 		DBB473051A35909F002C797E /* NSXMLElementExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSXMLElementExtension.swift; sourceTree = "<group>"; };
 		DBB4730A1A35951C002C797E /* Heartbeat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Heartbeat.swift; sourceTree = "<group>"; };
-		DBB952151A8655AB0059850A /* Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
+		DBB952151A8655AB0059850A /* LoggerHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoggerHelper.swift; sourceTree = "<group>"; };
 		DBCA2D232642BCF500B6147C /* NicoRestApiModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoRestApiModel.swift; sourceTree = "<group>"; };
 		DBCA40D31A30AD48006299A9 /* MenuDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuDelegate.swift; sourceTree = "<group>"; };
 		DBD65C1F1A2EB08D00B84C97 /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
@@ -283,7 +283,6 @@
 		DB2AE0C01A0EE2FD00B1CE4D /* Hakumai */ = {
 			isa = PBXGroup;
 			children = (
-				DBC94B901C0911FE00100886 /* Common */,
 				DBE73ECC1A1A1B9600A8BCA9 /* Controllers */,
 				DBA414CE1A1A16FB00E0CAD3 /* Extensions */,
 				DBAC3D3721C564DD00B09673 /* Generated */,
@@ -355,6 +354,7 @@
 			children = (
 				DB0ED64E1A20B07E007E9318 /* Cookie */,
 				DBAB69601A5C1A2F002FCD95 /* Keychain */,
+				DBB952151A8655AB0059850A /* LoggerHelper.swift */,
 			);
 			path = Infrastructures;
 			sourceTree = "<group>";
@@ -469,14 +469,6 @@
 				DBAC3D3A21C569A900B09673 /* StoryBoards.swift */,
 			);
 			path = Generated;
-			sourceTree = "<group>";
-		};
-		DBC94B901C0911FE00100886 /* Common */ = {
-			isa = PBXGroup;
-			children = (
-				DBB952151A8655AB0059850A /* Helper.swift */,
-			);
-			path = Common;
 			sourceTree = "<group>";
 		};
 		DBD65C191A2E0C3200B84C97 /* MainWindowController */ = {
@@ -847,11 +839,11 @@
 				DB7BA0721A58C021000778CF /* HandleNameAddViewController.swift in Sources */,
 				DBE094021A586FFC004554FD /* HandleNameManager.swift in Sources */,
 				DBB4730B1A35951C002C797E /* Heartbeat.swift in Sources */,
-				DBB952161A8655AB0059850A /* Helper.swift in Sources */,
 				DBAC3D3921C568B500B09673 /* Images.swift in Sources */,
 				DBB473041A359082002C797E /* IntExtension.swift in Sources */,
 				DBAB69621A5C1A70002FCD95 /* KeychainUtility.swift in Sources */,
 				DBFA888B1A1C9A56005349AD /* Live.swift in Sources */,
+				DBB952161A8655AB0059850A /* LoggerHelper.swift in Sources */,
 				DBAB695C1A5B70A5002FCD95 /* LoginCookie.swift in Sources */,
 				DB2AE0C61A0EE2FD00B1CE4D /* MainViewController.swift in Sources */,
 				DB80CA871A2575A0002636E0 /* MainViewControllerExtensions.swift in Sources */,
