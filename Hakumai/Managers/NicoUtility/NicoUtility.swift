@@ -453,6 +453,7 @@ private extension NicoUtility {
             completion(Result.success(room))
         case is WebSocketPingData:
             socket.write(string: pongMessage)
+            log.debug("pong: \(pongMessage)")
         case let stat as WebSocketStatisticsData:
             delegate?.nicoUtilityDidReceiveStatistics(self, stat: stat.toLiveStatistics())
         case is WebSocketDisconnectData:
@@ -621,6 +622,7 @@ private extension NicoUtility {
 
     @objc func messageScoketPingTimerFired() {
         log.debug("Sending ping to message socket.")
+        messageSocket?.write(string: "")
         messageSocket?.write(ping: Data())
     }
 }
