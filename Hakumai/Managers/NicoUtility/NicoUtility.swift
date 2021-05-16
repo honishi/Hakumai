@@ -6,7 +6,6 @@
 //  Copyright (c) 2014 Hiroyuki Onishi. All rights reserved.
 //
 
-// swiftlint:disable file_length
 import Foundation
 import Alamofire
 import Starscream
@@ -241,21 +240,6 @@ extension NicoUtility {
     func reserveToClearUserSessionCookie() {
         shouldClearUserSessionCookie = true
         log.debug("reserved to clear user session cookie")
-    }
-
-    func loadThumbnail(completion: @escaping (Data?) -> Void) {
-        guard let url = live?.community.thumbnailUrl else {
-            completion(nil)
-            return
-        }
-        session.request(url).responseData {
-            switch $0.result {
-            case .success(let data):
-                completion(data)
-            case .failure(_):
-                completion(nil)
-            }
-        }
     }
 
     func reportAsNgUser(chat: Chat, completion: @escaping (String?) -> Void) {}

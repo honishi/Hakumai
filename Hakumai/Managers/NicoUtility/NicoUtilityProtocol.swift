@@ -22,7 +22,6 @@ protocol NicoUtilityType {
     func comment(_ comment: String, anonymously: Bool, completion: @escaping (_ comment: String?) -> Void)
 
     // Methods for Community and Usernames
-    func loadThumbnail(completion: @escaping (Data?) -> Void)
     func cachedUserName(forChat chat: Chat) -> String?
     func cachedUserName(forUserId userId: String) -> String?
     func resolveUsername(forUserId userId: String, completion: @escaping (String?) -> Void)

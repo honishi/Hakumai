@@ -8,6 +8,7 @@
 
 import Foundation
 import AppKit
+import Kingfisher
 
 private let kUserWindowDefautlTopLeftPoint = NSPoint(x: 100, y: 100)
 private let kCalculateActiveInterval: TimeInterval = 5
@@ -313,9 +314,8 @@ extension MainViewController: NicoUtilityDelegate {
     func nicoUtilityDidPrepareLive(_ nicoUtility: NicoUtilityType, user: User, live: Live, connectContext: NicoUtility.ConnectContext) {
         self.live = live
 
-        updateCommunityViews(live: live)
+        updateCommunityViews(for: live)
         startTimers()
-        loadThumbnail()
         focusCommentTextField()
 
         switch connectContext {
@@ -572,11 +572,14 @@ private extension MainViewController {
         }
     }
 
-    func updateCommunityViews(live: Live) {
-        DispatchQueue.main.async { self._updateCommunityViews(live: live) }
+    func updateCommunityViews(for live: Live) {
+        DispatchQueue.main.async { self._updateCommunityViews(for: live) }
     }
 
-    func _updateCommunityViews(live: Live) {
+    func _updateCommunityViews(for live: Live) {
+        if let url = live.community.thumbnailUrl {
+            communityImageView.kf.setImage(with: url)
+        }
         liveTitleLabel.stringValue = live.title ?? ""
         communityIdLabel.stringValue = live.community.community ?? "-"
         var communityTitle = live.community.title ?? "-"
@@ -679,15 +682,6 @@ private extension MainViewController {
     }
 
     // MARK: Live Info Updater
-    func loadThumbnail() {
-        NicoUtility.shared.loadThumbnail { (imageData) -> Void in
-            DispatchQueue.main.async {
-                guard let data = imageData else { return }
-                self.communityImageView.image = NSImage(data: data)
-            }
-        }
-    }
-
     func updateLiveStatistics(stat: LiveStatistics) {
         let visitors = String(stat.viewers).numberStringWithSeparatorComma()
         let comments = String(stat.comments).numberStringWithSeparatorComma()
