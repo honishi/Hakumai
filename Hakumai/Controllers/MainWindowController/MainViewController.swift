@@ -364,7 +364,7 @@ extension MainViewController: NicoUtilityDelegate {
         switch reason {
         case .normal:
             logSystemMessageToTableView("Reconnecting...")
-        case .noComments:
+        case .noTexts:
             break
         }
     }
@@ -707,7 +707,7 @@ extension MainViewController {
 
     @IBAction func reconnectLive(_ sender: Any) {
         // NicoUtility.shared.reconnect()
-        NicoUtility.shared.reconnect(reason: .noComments)
+        NicoUtility.shared.reconnect(reason: .noTexts)
     }
 
     @IBAction func connectLive(_ sender: AnyObject) {

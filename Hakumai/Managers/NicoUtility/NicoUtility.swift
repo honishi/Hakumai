@@ -24,8 +24,8 @@ private let userSessionCookieExpire = TimeInterval(7200)
 private let userSessionCookiePath = "/"
 // Misc:
 private let messageSocketEmptyMessageInterval = 60
-private let appHealthCheckInterval = 10
-private let appHealthCheckDisconnectDetectSec = 60
+private let lastTextCheckInterval = 10
+private let lastTextCheckDisconnectDetectSec = 60
 
 // MARK: - WebSocket Messages
 private let startWatchingMessage = """
@@ -60,7 +60,7 @@ final class NicoUtility: NicoUtilityType {
     }
     enum ConnectContext { case normal, reconnect }
     enum DisconnectContext { case normal, reconnect }
-    enum ReconnectReason { case normal, noComments }
+    enum ReconnectReason { case normal, noTexts }
 
     struct ConnectRequests {
         // swiftlint:disable nesting
@@ -76,7 +76,7 @@ final class NicoUtility: NicoUtilityType {
         var latest: Int
         var maxBeforeReconnect: Int
     }
-    struct LastTextSocketDates {
+    struct LastSocketDates {
         var watch: Date
         var message: Date
 
@@ -114,9 +114,9 @@ final class NicoUtility: NicoUtilityType {
     // Comment Management for Reconnection
     private var chatNumbers = ChatNumbers(latest: 0, maxBeforeReconnect: 0)
 
-    // App-side Health Check
-    private var lastTextSocketDates: LastTextSocketDates?
-    private var appHealthCheckTimer: Timer?
+    // App-side Health Check (Last Text)
+    private var lastTextSocketDates: LastSocketDates?
+    private var lastTextCheckTimer: Timer?
 
     init() {
         let configuration = URLSessionConfiguration.af.default
@@ -207,7 +207,7 @@ extension NicoUtility {
         disconnect(disconnectContext: {
             switch reason {
             case .normal:       return .normal
-            case .noComments:   return .reconnect
+            case .noTexts:   return .reconnect
             }
         }())
         delegate?.nicoUtilityWillReconnectToLive(self, reason: reason)
@@ -365,7 +365,7 @@ private extension NicoUtility {
             switch $0 {
             case .success():
                 me.startMessageSocketEmptyMessageTimer(interval: messageSocketEmptyMessageInterval)
-                me.startAppHealthCheckTimer()
+                me.startLastTextCheckTimer()
                 me.connectRequests.lastEstablished = me.connectRequests.onGoing
                 me.delegate?.nicoUtilityDidConnectToLive(me, roomPosition: RoomPosition.arena, connectContext: connectContext)
             case .failure(_):
@@ -378,7 +378,7 @@ private extension NicoUtility {
     func disconnectSocketsAndResetState() {
         stopWatchSocketKeepSeatTimer()
         stopMessageSocketEmptyMessageTimer()
-        stopAppHealthCheckTimer()
+        stopLastTextCheckTimer()
         [watchSocket, messageSocket].forEach {
             $0?.onEvent = nil
             $0?.disconnect()
@@ -628,41 +628,41 @@ private extension NicoUtility {
     }
 }
 
-// MARK: - Private Methods (App-side Health Check Timer)
+// MARK: - Private Methods (Last Text Check Timer)
 private extension NicoUtility {
-    func startAppHealthCheckTimer(interval: Int = appHealthCheckInterval) {
-        stopAppHealthCheckTimer()
+    func startLastTextCheckTimer(interval: Int = lastTextCheckInterval) {
+        stopLastTextCheckTimer()
         lastTextSocketDates = .init()
-        appHealthCheckTimer = Timer.scheduledTimer(
+        lastTextCheckTimer = Timer.scheduledTimer(
             timeInterval: Double(interval),
             target: self,
-            selector: #selector(NicoUtility.appHealthCheckTimerFired),
+            selector: #selector(NicoUtility.lastTextCheckTimerFired),
             userInfo: nil,
             repeats: true)
         log.debug("Started app health check timer.")
     }
 
-    func stopAppHealthCheckTimer() {
-        appHealthCheckTimer?.invalidate()
-        appHealthCheckTimer = nil
+    func stopLastTextCheckTimer() {
+        lastTextCheckTimer?.invalidate()
+        lastTextCheckTimer = nil
         log.debug("Stopped app health check timer.")
     }
 
-    @objc func appHealthCheckTimerFired() {
+    @objc func lastTextCheckTimerFired() {
         guard let lastTextSocketDates = lastTextSocketDates else {
-            log.error("No information available for app health check.")
+            log.error("No information available for last text check.")
             return
         }
 
         // XXX: Refine the following condition, if needed.
         // No comments received for last `appHealthCheckDisconnectDetectSec`(60) seconds?
         let quietPeriod = Int(Date().timeIntervalSince(lastTextSocketDates.message))
-        let shouldReconnect = appHealthCheckDisconnectDetectSec < quietPeriod
-        log.debug("Quiet period: \(quietPeriod)/\(appHealthCheckDisconnectDetectSec) shouldReconnect: \(shouldReconnect)")
+        let shouldReconnect = lastTextCheckDisconnectDetectSec < quietPeriod
+        log.debug("Quiet period: \(quietPeriod)/\(lastTextCheckDisconnectDetectSec) Should reconnect?: \(shouldReconnect)")
 
         if shouldReconnect {
-            log.debug("Seems no comments for last \(appHealthCheckDisconnectDetectSec) sec. Reconnecting...")
-            reconnect(reason: .noComments)
+            log.debug("Seems no comments for last \(lastTextCheckDisconnectDetectSec) sec. Reconnecting...")
+            reconnect(reason: .noTexts)
         }
     }
 }
