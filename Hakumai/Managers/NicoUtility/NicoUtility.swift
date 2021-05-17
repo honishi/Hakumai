@@ -96,6 +96,7 @@ final class NicoUtility: NicoUtilityType {
     private(set) var live: Live?
 
     // Private Properties
+    private var isConnected = false
     private var connectRequests: ConnectRequests =
         ConnectRequests(
             onGoing: nil,
@@ -341,7 +342,7 @@ private extension NicoUtility {
         let request = session.request(urlRequest)
         request.cURLDescription(calling: { log.debug($0) })
         request.responseData {
-            log.debug($0.debugDescription)
+            // log.debug($0.debugDescription)
             switch $0.result {
             case .success(let data):
                 guard let embedded = NicoUtility.extractEmbeddedDataPropertiesFromLivePage(html: data) else {
@@ -375,6 +376,8 @@ private extension NicoUtility {
             case .success():
                 me.startAllTimers()
                 me.connectRequests.lastEstablished = me.connectRequests.onGoing
+                me.connectRequests.onGoing = nil
+                me.isConnected = true
                 me.delegate?.nicoUtilityDidConnectToLive(me, roomPosition: RoomPosition.arena, connectContext: connectContext)
             case .failure(_):
                 let reason = "Failed to open message server."
@@ -394,6 +397,7 @@ private extension NicoUtility {
         messageSocket = nil
 
         live = nil
+        isConnected = false
     }
 
     func startAllTimers() {
@@ -661,7 +665,7 @@ private extension NicoUtility {
             selector: #selector(NicoUtility.pingPongCheckTimerFired),
             userInfo: nil,
             repeats: true)
-        log.debug("Started last-pong check timer.")
+        log.debug("Started ping-pong check timer.")
     }
 
     func stopPingPongCheckTimer() {
@@ -670,7 +674,7 @@ private extension NicoUtility {
         pongCatchTimer?.invalidate()
         pongCatchTimer = nil
         lastPongSocketDates = nil
-        log.debug("Stopped last-pong check timer.")
+        log.debug("Stopped ping-pong check timer.")
     }
 
     @objc func pingPongCheckTimerFired() {
@@ -703,6 +707,7 @@ private extension NicoUtility {
 // MARK: - Private Methods (Last Text Check Timer)
 private extension NicoUtility {
     func setTextSocketEventCheckTimer(delay: Int) {
+        guard isConnected else { return }
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
         clearTextSocketEventCheckTimer()
