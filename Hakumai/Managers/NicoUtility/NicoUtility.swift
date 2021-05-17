@@ -26,7 +26,7 @@ private let userSessionCookiePath = "/"
 // Misc:
 private let defaultWatchSocketKeepSeatInterval = 30
 private let messageSocketEmptyMessageInterval = 60
-private let lastPongCheckInterval = 10
+private let pingPongCheckInterval = 10
 private let pongCatchDelay = 5
 private let lastTextCheckInterval = 10
 private let textEventDisconnectDetectDelay = 60
@@ -121,7 +121,7 @@ final class NicoUtility: NicoUtilityType {
 
     // App-side Health Check (Last Pong)
     private var lastPongSocketDates: LastSocketDates?
-    private var lastPongCheckTimer: Timer?
+    private var pingPongCheckTimer: Timer?
     private var pongCatchTimer: Timer?
 
     // App-side Health Check (Text Socket)
@@ -399,14 +399,14 @@ private extension NicoUtility {
     func startAllTimers() {
         startWatchSocketKeepSeatTimer(interval: watchSocketKeepSeatInterval)
         startMessageSocketEmptyMessageTimer(interval: messageSocketEmptyMessageInterval)
-        startLastPongCheckTimer()
+        startPingPongCheckTimer()
         log.debug("Started all timers.")
     }
 
     func stopAllTimers() {
         stopWatchSocketKeepSeatTimer()
         stopMessageSocketEmptyMessageTimer()
-        stopLastPongCheckTimer()
+        stopPingPongCheckTimer()
         clearTextSocketEventCheckTimer()
         log.debug("Stopped all timers.")
     }
@@ -650,30 +650,30 @@ private extension NicoUtility {
     }
 }
 
-// MARK: - Private Methods (Last Pong Check Timer)
+// MARK: - Private Methods (Ping-Pong Check Timer)
 private extension NicoUtility {
-    func startLastPongCheckTimer(interval: Int = lastPongCheckInterval) {
-        stopLastPongCheckTimer()
+    func startPingPongCheckTimer(interval: Int = pingPongCheckInterval) {
+        stopPingPongCheckTimer()
         lastPongSocketDates = .init()
-        lastPongCheckTimer = Timer.scheduledTimer(
+        pingPongCheckTimer = Timer.scheduledTimer(
             timeInterval: Double(interval),
             target: self,
-            selector: #selector(NicoUtility.lastPongCheckTimerFired),
+            selector: #selector(NicoUtility.pingPongCheckTimerFired),
             userInfo: nil,
             repeats: true)
         log.debug("Started last-pong check timer.")
     }
 
-    func stopLastPongCheckTimer() {
-        lastPongCheckTimer?.invalidate()
-        lastPongCheckTimer = nil
+    func stopPingPongCheckTimer() {
+        pingPongCheckTimer?.invalidate()
+        pingPongCheckTimer = nil
         pongCatchTimer?.invalidate()
         pongCatchTimer = nil
         lastPongSocketDates = nil
         log.debug("Stopped last-pong check timer.")
     }
 
-    @objc func lastPongCheckTimerFired() {
+    @objc func pingPongCheckTimerFired() {
         let pingDate = Date()
         messageSocket?.write(ping: Data())
         pongCatchTimer?.invalidate()
