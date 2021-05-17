@@ -24,11 +24,12 @@ private let userSessionCookieName = "user_session"
 private let userSessionCookieExpire = TimeInterval(7200)
 private let userSessionCookiePath = "/"
 // Misc:
+private let defaultWatchSocketKeepSeatInterval = 30
 private let messageSocketEmptyMessageInterval = 60
 private let lastPongCheckInterval = 10
 private let pongCatchDelay = 5
 private let lastTextCheckInterval = 10
-private let lastTextCheckDisconnectDetectSec = 60
+private let textEventDisconnectDetectDelay = 60
 
 // MARK: - WebSocket Messages
 private let startWatchingMessage = """
@@ -107,6 +108,7 @@ final class NicoUtility: NicoUtilityType {
     private var shouldClearUserSessionCookie = true
 
     // Timers for WebSockets
+    private var watchSocketKeepSeatInterval = 30
     private var watchSocketKeepSeatTimer: Timer?
     private var messageSocketEmptyMessageTimer: Timer?
 
@@ -122,9 +124,8 @@ final class NicoUtility: NicoUtilityType {
     private var lastPongCheckTimer: Timer?
     private var pongCatchTimer: Timer?
 
-    // App-side Health Check (Last Text)
-    private var lastTextSocketDates: LastSocketDates?
-    private var lastTextCheckTimer: Timer?
+    // App-side Health Check (Text Socket)
+    private var textSocketEventCheckTimer: Timer?
 
     init() {
         let configuration = URLSessionConfiguration.af.default
@@ -372,9 +373,7 @@ private extension NicoUtility {
             guard let me = self else { return }
             switch $0 {
             case .success():
-                me.startMessageSocketEmptyMessageTimer(interval: messageSocketEmptyMessageInterval)
-                me.startLastPongCheckTimer()
-                me.startLastTextCheckTimer()
+                me.startAllTimers()
                 me.connectRequests.lastEstablished = me.connectRequests.onGoing
                 me.delegate?.nicoUtilityDidConnectToLive(me, roomPosition: RoomPosition.arena, connectContext: connectContext)
             case .failure(_):
@@ -385,10 +384,8 @@ private extension NicoUtility {
     }
 
     func disconnectSocketsAndResetState() {
-        stopWatchSocketKeepSeatTimer()
-        stopMessageSocketEmptyMessageTimer()
-        stopLastPongCheckTimer()
-        stopLastTextCheckTimer()
+        stopAllTimers()
+
         [watchSocket, messageSocket].forEach {
             $0?.onEvent = nil
             $0?.disconnect()
@@ -397,6 +394,21 @@ private extension NicoUtility {
         messageSocket = nil
 
         live = nil
+    }
+
+    func startAllTimers() {
+        startWatchSocketKeepSeatTimer(interval: watchSocketKeepSeatInterval)
+        startMessageSocketEmptyMessageTimer(interval: messageSocketEmptyMessageInterval)
+        startLastPongCheckTimer()
+        log.debug("Started all timers.")
+    }
+
+    func stopAllTimers() {
+        stopWatchSocketKeepSeatTimer()
+        stopMessageSocketEmptyMessageTimer()
+        stopLastPongCheckTimer()
+        clearTextSocketEventCheckTimer()
+        log.debug("Stopped all timers.")
     }
 }
 
@@ -430,8 +442,7 @@ private extension NicoUtility {
             log.debug("disconnected")
         case .text(let text):
             log.debug("text: \(text)")
-            processWebSocketData(text: text, socket: socket, completion: completion)
-            lastTextSocketDates?.watch = Date()
+            processWatchSocketTextEvent(text: text, socket: socket, completion: completion)
         case .binary(_):
             log.debug("binary")
         case .pong(_):
@@ -452,12 +463,12 @@ private extension NicoUtility {
         }
     }
 
-    func processWebSocketData(text: String, socket: WebSocket, completion: (Result<WebSocketRoomData, NicoError>) -> Void) {
+    func processWatchSocketTextEvent(text: String, socket: WebSocket, completion: (Result<WebSocketRoomData, NicoError>) -> Void) {
         guard let decoded = decodeWebSocketData(text: text) else { return }
         switch decoded {
         case let seat as WebSocketSeatData:
             log.debug(seat)
-            startWatchSocketKeepSeatTimer(interval: seat.data.keepIntervalSec)
+            watchSocketKeepSeatInterval = seat.data.keepIntervalSec
         case let room as WebSocketRoomData:
             log.debug(room)
             completion(Result.success(room))
@@ -542,8 +553,8 @@ private extension NicoUtility {
             log.debug("disconnected")
         case .text(let text):
             log.debug("text: \(text)")
-            processChat(text: text)
-            lastTextSocketDates?.message = Date()
+            processMessageSocketTextEvent(text: text)
+            setTextSocketEventCheckTimer(delay: textEventDisconnectDetectDelay)
         case .binary(_):
             log.debug("binary")
         case .pong(_):
@@ -570,7 +581,7 @@ private extension NicoUtility {
         socket.write(string: message)
     }
 
-    func processChat(text: String) {
+    func processMessageSocketTextEvent(text: String) {
         guard let data = text.data(using: .utf8) else { return }
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
@@ -691,41 +702,28 @@ private extension NicoUtility {
 
 // MARK: - Private Methods (Last Text Check Timer)
 private extension NicoUtility {
-    func startLastTextCheckTimer(interval: Int = lastTextCheckInterval) {
-        stopLastTextCheckTimer()
-        lastTextSocketDates = .init()
-        lastTextCheckTimer = Timer.scheduledTimer(
-            timeInterval: Double(interval),
+    func setTextSocketEventCheckTimer(delay: Int) {
+        objc_sync_enter(self)
+        defer { objc_sync_exit(self) }
+        clearTextSocketEventCheckTimer()
+        textSocketEventCheckTimer = Timer.scheduledTimer(
+            timeInterval: Double(delay),
             target: self,
-            selector: #selector(NicoUtility.lastTextCheckTimerFired),
+            selector: #selector(NicoUtility.textSocketEventCheckTimerFired),
             userInfo: nil,
-            repeats: true)
-        log.debug("Started last-text check timer.")
+            repeats: false)
+        // log.debug("Set text socket event timer. (\(delay) sec)")
     }
 
-    func stopLastTextCheckTimer() {
-        lastTextCheckTimer?.invalidate()
-        lastTextCheckTimer = nil
-        lastTextSocketDates = nil
-        log.debug("Stopped last-text check timer.")
+    func clearTextSocketEventCheckTimer() {
+        textSocketEventCheckTimer?.invalidate()
+        textSocketEventCheckTimer = nil
+        // log.debug("Clear text socket event timer.")
     }
 
-    @objc func lastTextCheckTimerFired() {
-        guard let lastTextSocketDates = lastTextSocketDates else {
-            log.error("No information available for last text check.")
-            return
-        }
-
-        // XXX: Refine the following condition, if needed.
-        // No comments received for last `appHealthCheckDisconnectDetectSec`(60) seconds?
-        let quietPeriod = Int(Date().timeIntervalSince(lastTextSocketDates.message))
-        let shouldReconnect = lastTextCheckDisconnectDetectSec < quietPeriod
-        log.debug("Quiet period: \(quietPeriod)/\(lastTextCheckDisconnectDetectSec) Should reconnect?: \(shouldReconnect)")
-
-        if shouldReconnect {
-            log.debug("Seems no comments for last \(lastTextCheckDisconnectDetectSec) sec. Reconnecting...")
-            reconnect(reason: .noTexts)
-        }
+    @objc func textSocketEventCheckTimerFired() {
+        log.debug("Seems no comments for a while. Reconnecting...")
+        reconnect(reason: .noTexts)
     }
 }
 
