@@ -8,9 +8,6 @@
 
 import Foundation
 
-// regular expression
-private let kRegexpSeatNo = "/hb ifseetno (\\d+)"
-
 final class Chat: CustomStringConvertible {
     let roomPosition: RoomPosition = .arena
     let no: Int
@@ -27,11 +24,6 @@ final class Chat: CustomStringConvertible {
     var isBSPComment: Bool { return Chat.isBSPComment(premium) }
     var isSystemComment: Bool { return Chat.isSystemComment(premium) }
 
-    var kickOutSeatNo: Int? {
-        guard let seatNo = comment.extractRegexp(pattern: kRegexpSeatNo) else { return nil }
-        return Int(seatNo)
-    }
-
     var description: String {
         return (
             "Chat: roomPosition[\(roomPosition.description)] no[\(no)] " +
@@ -47,7 +39,8 @@ final class Chat: CustomStringConvertible {
         self.dateUsec = dateUsec
         self.mail = mail
         self.userId = userId
-        self.comment = comment
+        // self.comment = comment
+        self.comment = Chat.replaceSlashCommand(comment: comment, premium: premium)
         self.premium = premium
     }
 }
@@ -77,5 +70,26 @@ extension Chat {
     static func isSystemComment(_ premium: Premium?) -> Bool {
         guard let premium = premium else { return false }
         return premium == .system || premium == .caster || premium == .operator
+    }
+}
+
+private let commentReplacePatterns = [
+    ("^/emotion ", "💬 "),
+    ("^/spi ", "🎮 "),
+    ("^/info \\d+ ", "ℹ️ "),
+    ("^/nicoad ", "📣 "),
+    ("^/gift ", "🎁 "),
+    ("^/vote ", "🙋‍♂️ "),
+    ("^/quote ", "🎥 ")
+]
+
+extension Chat {
+    static func replaceSlashCommand(comment: String, premium: Premium) -> String {
+        guard premium == .caster else { return comment }
+        var replaced = comment
+        commentReplacePatterns.forEach {
+            replaced = replaced.stringByReplacingRegexp(pattern: $0.0, with: $0.1)
+        }
+        return replaced
     }
 }

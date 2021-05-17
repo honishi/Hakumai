@@ -32,4 +32,16 @@ final class ChatTests: XCTestCase {
         XCTAssert(Chat.isUserComment(Premium.system) == false, "")
         XCTAssert(Chat.isUserComment(nil) == false, "")
     }
+
+    func testReplaceComment() {
+        var comment = ""
+        var expected = ""
+        var actual = ""
+        let caster = Premium.caster
+
+        comment = "/emotion ノシ"
+        expected = "💭 ノシ"
+        actual = Chat.replaceSlashCommand(comment: comment, premium: caster)
+        XCTAssert(expected == actual, "")
+    }
 }
