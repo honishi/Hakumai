@@ -483,6 +483,9 @@ private extension NicoUtility {
             delegate?.nicoUtilityDidReceiveStatistics(self, stat: stat.toLiveStatistics())
         case is WebSocketDisconnectData:
             disconnect()
+        case is WebSocketReconnectData:
+            // XXX: Add delay based on `waitTimeSec` parameter.
+            reconnect()
         default:
             break
         }
@@ -503,6 +506,8 @@ private extension NicoUtility {
             return try? decoder.decode(WebSocketStatisticsData.self, from: data)
         case .disconnect:
             return try? decoder.decode(WebSocketDisconnectData.self, from: data)
+        case .reconnect:
+            return try? decoder.decode(WebSocketReconnectData.self, from: data)
         }
     }
 }
