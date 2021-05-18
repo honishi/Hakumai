@@ -40,7 +40,7 @@ final class ChatTests: XCTestCase {
         let caster = Premium.caster
 
         comment = "/emotion ノシ"
-        expected = "💭 ノシ"
+        expected = "💬 ノシ"
         actual = Chat.replaceSlashCommand(comment: comment, premium: caster)
         XCTAssert(expected == actual, "")
     }

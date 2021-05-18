@@ -85,7 +85,7 @@ private let commentReplacePatterns = [
 
 extension Chat {
     static func replaceSlashCommand(comment: String, premium: Premium) -> String {
-        guard premium == .caster else { return comment }
+        guard premium == .caster, comment.starts(with: "/") else { return comment }
         var replaced = comment
         commentReplacePatterns.forEach {
             replaced = replaced.stringByReplacingRegexp(pattern: $0.0, with: $0.1)
