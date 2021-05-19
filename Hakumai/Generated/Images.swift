@@ -19,49 +19,22 @@ internal typealias AssetImageTypeAlias = ImageAsset.Image
 
 // swiftlint:disable identifier_name line_length nesting type_body_length type_name
 internal enum Asset {
-  internal static let importChrome = ImageAsset(name: "ImportChrome")
   internal static let importLink = ImageAsset(name: "ImportLink")
-  internal static let noImage = ImageAsset(name: "NoImage")
-  internal static let images = DataAsset(name: "Images")
+  internal static let startLive = ImageAsset(name: "StartLive")
+  internal static let stopLive = ImageAsset(name: "StopLive")
   internal static let premiumIppan = ImageAsset(name: "PremiumIppan")
   internal static let premiumMisc = ImageAsset(name: "PremiumMisc")
   internal static let premiumPremium = ImageAsset(name: "PremiumPremium")
-  internal static let startLive = ImageAsset(name: "StartLive")
-  internal static let stopLive = ImageAsset(name: "StopLive")
   internal static let handleNameOver184Id = ImageAsset(name: "HandleNameOver184Id")
   internal static let handleNameOverRawId = ImageAsset(name: "HandleNameOverRawId")
   internal static let userId184Id = ImageAsset(name: "UserId184Id")
   internal static let userIdRawId = ImageAsset(name: "UserIdRawId")
-  internal static let safariCookieAlertImage = ImageAsset(name: "safariCookieAlertImage")
+  internal static let defaultCommunityImage = ImageAsset(name: "DefaultCommunityImage")
+  internal static let safariCookieAlertImage = ImageAsset(name: "SafariCookieAlertImage")
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name
 
 // MARK: - Implementation Details
-
-internal struct DataAsset {
-  internal fileprivate(set) var name: String
-
-  #if os(iOS) || os(tvOS) || os(macOS)
-  @available(iOS 9.0, macOS 10.11, *)
-  internal var data: NSDataAsset {
-    return NSDataAsset(asset: self)
-  }
-  #endif
-}
-
-#if os(iOS) || os(tvOS) || os(macOS)
-@available(iOS 9.0, macOS 10.11, *)
-internal extension NSDataAsset {
-  convenience init!(asset: DataAsset) {
-    let bundle = BundleToken.bundle
-    #if os(iOS) || os(tvOS)
-    self.init(name: asset.name, bundle: bundle)
-    #elseif os(macOS)
-    self.init(name: NSDataAsset.Name(asset.name), bundle: bundle)
-    #endif
-  }
-}
-#endif
 
 internal struct ImageAsset {
   internal fileprivate(set) var name: String

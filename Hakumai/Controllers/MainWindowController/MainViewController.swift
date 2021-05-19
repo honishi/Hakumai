@@ -578,7 +578,10 @@ private extension MainViewController {
 
     func _updateCommunityViews(for live: Live) {
         if let url = live.community.thumbnailUrl {
-            communityImageView.kf.setImage(with: url)
+            communityImageView.kf.setImage(
+                with: url,
+                placeholder: Asset.defaultCommunityImage.image
+            )
         }
         liveTitleLabel.stringValue = live.title ?? ""
         communityIdLabel.stringValue = live.community.community ?? "-"
@@ -716,7 +719,7 @@ extension MainViewController {
         guard let liveNumber = liveTextField.stringValue.extractLiveNumber() else { return }
 
         clearAllChats()
-        communityImageView.image = Asset.noImage.image
+        communityImageView.image = Asset.defaultCommunityImage.image
         NicoUtility.shared.delegate = self
 
         guard let sessionManagementType = SessionManagementType(
