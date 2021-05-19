@@ -153,3 +153,8 @@ pre > code {
   margin: 0 auto;
   padding: 0 1rem;
 }
+
+.thanks {
+  word-break: keep-all;
+  font-size: 0.8rem;
+}
