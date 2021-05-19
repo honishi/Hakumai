@@ -46,15 +46,15 @@ extension MenuDelegate: NSMenuItemValidation {
             return chat.comment.extractUrlString() != nil ? true : false
         case addHandleNameMenuItem:
             guard live != nil else { return false }
-            return (chat.isUserComment || chat.isBSPComment)
+            return chat.isUserComment
         case removeHandleNameMenuItem:
             guard let live = live else { return false }
             let hasHandleName = (HandleNameManager.shared.handleName(forLive: live, chat: chat) != nil)
             return hasHandleName
         case addToMuteUserMenuItem, reportAsNgUserMenuItem:
-            return (chat.isUserComment || chat.isBSPComment)
+            return chat.isUserComment
         case openUserPageMenuItem:
-            return (chat.isRawUserId && (chat.isUserComment || chat.isBSPComment)) ? true : false
+            return (chat.isRawUserId && chat.isUserComment) ? true : false
         default:
             break
         }

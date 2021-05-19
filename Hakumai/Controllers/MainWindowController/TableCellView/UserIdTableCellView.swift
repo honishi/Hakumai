@@ -52,7 +52,7 @@ private extension UserIdTableCellView {
             concatUserName(userId: userId, userName: nil, handleName: handleName)
 
         // if needed, then resolve userid
-        if handleName != nil || !Chat.isRawUserId(userId) || !(Chat.isUserComment(premium) || Chat.isBSPComment(premium)) {
+        if handleName != nil || !Chat.isRawUserId(userId) || !Chat.isUserComment(premium) {
             return
         }
 

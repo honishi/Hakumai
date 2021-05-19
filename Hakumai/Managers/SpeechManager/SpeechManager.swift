@@ -78,7 +78,7 @@ final class SpeechManager: NSObject {
     }
 
     func enqueue(chat: Chat) {
-        guard chat.premium == .ippan || chat.premium == .premium || chat.premium == .bsp else { return }
+        guard chat.premium == .ippan || chat.premium == .premium else { return }
 
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
