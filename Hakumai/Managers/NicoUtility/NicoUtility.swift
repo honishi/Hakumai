@@ -114,6 +114,7 @@ final class NicoUtility: NicoUtilityType {
     private var messageSocketEmptyMessageTimer: Timer?
 
     // Usernames
+    private let userNameResolvingOperationQueue = OperationQueue()
     private var cachedUserNames = [String: String]()
 
     // Comment Management for Reconnection
@@ -132,6 +133,7 @@ final class NicoUtility: NicoUtilityType {
         configuration.headers.add(.userAgent(commonUserAgentValue))
         self.session = Session(configuration: configuration)
         clearHttpCookieStorage()
+        userNameResolvingOperationQueue.maxConcurrentOperationCount = 1
     }
 }
 
@@ -272,26 +274,38 @@ extension NicoUtility {
             completion(cachedUsername)
             return
         }
-        session
-            .request(userNicknameApiUrl, method: .get, parameters: ["userId": userId])
-            .responseData { [weak self] in
-                guard let me = self else { return }
+        userNameResolvingOperationQueue.addOperation { [weak self] in
+            guard let me = self else { return }
+            // 1. Again, chech if the user name is resolved in previous operation.
+            if let cachedUsername = me.cachedUserNames[userId] {
+                completion(cachedUsername)
+                return
+            }
+
+            // 2.Ok, there's no cached one, request nickname api synchronously, NOT async.
+            me.session.request(
+                userNicknameApiUrl,
+                method: .get,
+                parameters: ["userId": userId]
+            )
+            .syncResponseData {
                 switch $0.result {
                 case .success(let data):
                     guard let decoded = try? JSONDecoder().decode(UserNickname.self, from: data) else {
-                        log.error("Error in decoding nickname response.")
+                        log.error("error in decoding nickname response")
                         completion(nil)
                         return
                     }
                     let username = decoded.data.nickname
                     me.cachedUserNames[userId] = username
-                    log.info("Resolved user id: [\(userId)] -> [\(me.cachedUserNames[userId] ?? "-")]")
                     completion(username)
                 case .failure(_):
-                    log.error("Error in resolving username.")
+                    log.error("error in resolving username")
                     completion(nil)
                 }
             }
+            log.info("Userid[\(userId)] -> [\(me.cachedUserNames[userId] ?? "-")] QueueCount: \(me.userNameResolvingOperationQueue.operationCount)")
+        }
     }
 }
 
@@ -819,5 +833,29 @@ private extension WebSocketStatisticsData {
             adPoints: data.adPoints,
             giftPoints: data.giftPoints
         )
+    }
+}
+
+private extension DataRequest {
+    // "Synchronous" version of async `responseData()` method:
+    // https://github.com/Alamofire/Alamofire/issues/1147#issuecomment-212791012
+    // https://qiita.com/shtnkgm/items/d552bd3cf709266a9050#dispatchsemaphore%E3%82%92%E5%88%A9%E7%94%A8%E3%81%97%E3%81%A6%E9%9D%9E%E5%90%8C%E6%9C%9F%E5%87%A6%E7%90%86%E3%81%AE%E5%AE%8C%E4%BA%86%E3%82%92%E5%BE%85%E3%81%A4
+    @discardableResult
+    func syncResponseData(
+        queue: DispatchQueue = .main,
+        dataPreprocessor: DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
+        emptyResponseCodes: Set<Int> = DataResponseSerializer.defaultEmptyResponseCodes,
+        emptyRequestMethods: Set<HTTPMethod> = DataResponseSerializer.defaultEmptyRequestMethods,
+        completionHandler: @escaping (AFDataResponse<Data>) -> Void) -> Self {
+        let semaphore = DispatchSemaphore(value: 0)
+        responseData(queue: queue,
+                     dataPreprocessor: dataPreprocessor,
+                     emptyResponseCodes: emptyResponseCodes,
+                     emptyRequestMethods: emptyRequestMethods) {
+            completionHandler($0)
+            semaphore.signal()
+        }
+        semaphore.wait()
+        return self
     }
 }
