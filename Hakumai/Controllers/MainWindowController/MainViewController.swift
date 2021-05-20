@@ -15,7 +15,7 @@ private let kCalculateActiveInterval: TimeInterval = 5
 private let kMaximumFontSizeForNonMainColumn: CGFloat = 16
 private let kDefaultMinimumRowHeight: CGFloat = 17
 
-private let enableDebugOAuthButton = true
+private let enableDebugAuthButton = true
 private let enableDebugReconnectButton = false
 
 private let safariCookieAlertTitle = "No Safari Cookie found"
@@ -31,7 +31,7 @@ final class MainViewController: NSViewController {
 
     // MARK: Main Outlets
     @IBOutlet weak var liveTextField: NSTextField!
-    @IBOutlet weak var debugOAuthButton: NSButton!
+    @IBOutlet weak var debugAuthButton: NSButton!
     @IBOutlet weak var debugReconnectButton: NSButton!
     @IBOutlet weak var connectButton: NSButton!
 
@@ -77,6 +77,10 @@ final class MainViewController: NSViewController {
     private var elapsedTimer: Timer?
     private var activeTimer: Timer?
 
+    // AuthWindowController
+    private var authWindowController: AuthWindowController?
+
+    // UserWindowControllers
     private var userWindowControllers = [UserWindowController]()
     private var nextUserWindowTopLeftPoint: NSPoint = NSPoint.zero
 }
@@ -519,7 +523,7 @@ private extension MainViewController {
             self.communityImageView.layer?.masksToBounds = true
             self.communityImageView.layer?.borderColor = NSColor.black.cgColor
         }
-        debugOAuthButton.isHidden = !enableDebugOAuthButton
+        debugAuthButton.isHidden = !enableDebugAuthButton
         debugReconnectButton.isHidden = !enableDebugReconnectButton
 
         if #available(macOS 10.14, *) {
@@ -711,8 +715,8 @@ extension MainViewController {
         }
     }
 
-    @IBAction func debugOAuthButtonPressed(_ sender: Any) {
-        showOAuthWindowController()
+    @IBAction func debugAuthButtonPressed(_ sender: Any) {
+        showAuthWindowController()
     }
 
     @IBAction func debugReconnectButtonPressed(_ sender: Any) {
@@ -904,8 +908,11 @@ private extension MainViewController {
         tableView.reloadData()
     }
 
-    func showOAuthWindowController() {
-        log.debug("")
+    func showAuthWindowController() {
+        if authWindowController == nil {
+            authWindowController = AuthWindowController.make()
+        }
+        authWindowController?.showWindow(self)
     }
 }
 

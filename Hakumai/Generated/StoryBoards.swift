@@ -12,6 +12,11 @@ import AppKit
 
 // swiftlint:disable explicit_type_interface identifier_name line_length type_body_length type_name
 internal enum StoryboardScene {
+  internal enum AuthWindowController: StoryboardType {
+    internal static let storyboardName = "AuthWindowController"
+
+    internal static let authWindowController = SceneType<Hakumai.AuthWindowController>(storyboard: AuthWindowController.self, identifier: "AuthWindowController")
+  }
   internal enum MainWindowController: StoryboardType {
     internal static let storyboardName = "MainWindowController"
 

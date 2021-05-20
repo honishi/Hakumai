@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Window Controller-->
+        <scene sceneID="kCh-Bc-ISg">
+            <objects>
+                <windowController storyboardIdentifier="AuthWindowController" id="q9w-Jq-LSf" customClass="AuthWindowController" customModule="Hakumai" customModuleProvider="target" sceneMemberID="viewController">
+                    <window key="window" title="Login" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="Mxn-Ul-Gbf">
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES" resizable="YES"/>
+                        <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+                        <rect key="contentRect" x="245" y="301" width="500" height="300"/>
+                        <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1025"/>
+                        <view key="contentView" id="BRn-m2-AOo">
+                            <rect key="frame" x="0.0" y="0.0" width="500" height="300"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </view>
+                        <connections>
+                            <outlet property="delegate" destination="q9w-Jq-LSf" id="xY0-f1-kkc"/>
+                        </connections>
+                    </window>
+                    <connections>
+                        <segue destination="d4Q-O6-5Tu" kind="relationship" relationship="window.shadowedContentViewController" id="jEs-pf-jw7"/>
+                    </connections>
+                </windowController>
+                <customObject id="bl2-ez-eJU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-709" y="381"/>
+        </scene>
+        <!--Auth View Controller-->
+        <scene sceneID="YbI-5q-7Cf">
+            <objects>
+                <viewController id="d4Q-O6-5Tu" customClass="AuthViewController" customModule="Hakumai" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="7cB-Xu-Tnp">
+                        <rect key="frame" x="0.0" y="0.0" width="800" height="600"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="d2o-Kr-HyA">
+                                <rect key="frame" x="381" y="292" width="38" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Login" id="PTY-EB-GcE">
+                                    <font key="font" usesAppearanceFont="YES"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="d2o-Kr-HyA" firstAttribute="centerY" secondItem="7cB-Xu-Tnp" secondAttribute="centerY" id="bb4-HN-eNl"/>
+                            <constraint firstItem="d2o-Kr-HyA" firstAttribute="centerX" secondItem="7cB-Xu-Tnp" secondAttribute="centerX" id="v2g-It-9r4"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <customObject id="GxL-QM-di7" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-709" y="990"/>
+        </scene>
+    </scenes>
+</document>
