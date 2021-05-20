@@ -21,7 +21,6 @@ final class Chat: CustomStringConvertible {
 
     var isRawUserId: Bool { return Chat.isRawUserId(userId) }
     var isUserComment: Bool { return Chat.isUserComment(premium) }
-    var isBSPComment: Bool { return Chat.isBSPComment(premium) }
     var isSystemComment: Bool { return Chat.isSystemComment(premium) }
 
     var description: String {
@@ -62,11 +61,6 @@ extension Chat {
         return premium == .ippan || premium == .premium || premium == .ippanTransparent
     }
 
-    static func isBSPComment(_ premium: Premium?) -> Bool {
-        guard let premium = premium else { return false }
-        return premium == .bsp
-    }
-
     static func isSystemComment(_ premium: Premium?) -> Bool {
         guard let premium = premium else { return false }
         return premium == .system || premium == .caster || premium == .operator
@@ -80,7 +74,8 @@ private let commentReplacePatterns = [
     ("^/nicoad ", "📣 "),
     ("^/gift ", "🎁 "),
     ("^/vote ", "🙋‍♂️ "),
-    ("^/quote ", "🎥 ")
+    ("^/quote ", "⛴ "),
+    ("^/cruise ", "⚓️ ")
 ]
 
 extension Chat {

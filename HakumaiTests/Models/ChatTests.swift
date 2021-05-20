@@ -28,7 +28,6 @@ final class ChatTests: XCTestCase {
     func testIsUserComment() {
         XCTAssert(Chat.isUserComment(Premium.ippan) == true, "")
         XCTAssert(Chat.isUserComment(Premium.premium) == true, "")
-        XCTAssert(Chat.isUserComment(Premium.bsp) == false, "")
         XCTAssert(Chat.isUserComment(Premium.system) == false, "")
         XCTAssert(Chat.isUserComment(nil) == false, "")
     }

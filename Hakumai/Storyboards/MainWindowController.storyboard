@@ -502,7 +502,7 @@
                                                     <constraint firstAttribute="height" constant="55" id="NLv-j6-Vde"/>
                                                     <constraint firstAttribute="width" constant="55" id="pr9-rr-7yq"/>
                                                 </constraints>
-                                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NoImage" id="Rj1-mk-21r"/>
+                                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="DefaultCommunityImage" id="Rj1-mk-21r"/>
                                             </imageView>
                                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalHuggingPriority="249" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="d3A-5T-Fi5">
                                                 <rect key="frame" x="63" y="0.0" width="593" height="55"/>
@@ -998,8 +998,8 @@ Gw
         </scene>
     </scenes>
     <resources>
+        <image name="DefaultCommunityImage" width="128" height="128"/>
         <image name="ImportLink" width="110" height="110"/>
-        <image name="NoImage" width="128" height="128"/>
         <image name="StartLive" width="110" height="110"/>
     </resources>
 </document>
