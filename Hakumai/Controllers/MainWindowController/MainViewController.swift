@@ -15,6 +15,7 @@ private let kCalculateActiveInterval: TimeInterval = 5
 private let kMaximumFontSizeForNonMainColumn: CGFloat = 16
 private let kDefaultMinimumRowHeight: CGFloat = 17
 
+private let enableDebugOAuthButton = true
 private let enableDebugReconnectButton = false
 
 private let safariCookieAlertTitle = "No Safari Cookie found"
@@ -30,7 +31,8 @@ final class MainViewController: NSViewController {
 
     // MARK: Main Outlets
     @IBOutlet weak var liveTextField: NSTextField!
-    @IBOutlet weak var reconnectButton: NSButton!
+    @IBOutlet weak var debugOAuthButton: NSButton!
+    @IBOutlet weak var debugReconnectButton: NSButton!
     @IBOutlet weak var connectButton: NSButton!
 
     @IBOutlet weak var communityImageView: NSImageView!
@@ -517,7 +519,8 @@ private extension MainViewController {
             self.communityImageView.layer?.masksToBounds = true
             self.communityImageView.layer?.borderColor = NSColor.black.cgColor
         }
-        reconnectButton.isHidden = !enableDebugReconnectButton
+        debugOAuthButton.isHidden = !enableDebugOAuthButton
+        debugReconnectButton.isHidden = !enableDebugReconnectButton
 
         if #available(macOS 10.14, *) {
             speakButton.isHidden = false
@@ -708,7 +711,11 @@ extension MainViewController {
         }
     }
 
-    @IBAction func reconnectLive(_ sender: Any) {
+    @IBAction func debugOAuthButtonPressed(_ sender: Any) {
+        showOAuthWindowController()
+    }
+
+    @IBAction func debugReconnectButtonPressed(_ sender: Any) {
         // NicoUtility.shared.reconnect()
         NicoUtility.shared.reconnect(reason: .noPong)
         // NicoUtility.shared.reconnect(reason: .noTexts)
@@ -895,6 +902,10 @@ private extension MainViewController {
         MessageContainer.shared.removeAll()
         rowHeightCacher.removeAll(keepingCapacity: false)
         tableView.reloadData()
+    }
+
+    func showOAuthWindowController() {
+        log.debug("")
     }
 }
 
