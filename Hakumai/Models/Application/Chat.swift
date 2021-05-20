@@ -74,7 +74,8 @@ private let commentReplacePatterns = [
     ("^/nicoad ", "📣 "),
     ("^/gift ", "🎁 "),
     ("^/vote ", "🙋‍♂️ "),
-    ("^/quote ", "⛴ ")
+    ("^/quote ", "⛴ "),
+    ("^/cruise ", "⚓️ ")
 ]
 
 extension Chat {
