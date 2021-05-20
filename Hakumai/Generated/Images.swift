@@ -19,6 +19,8 @@ internal typealias AssetImageTypeAlias = ImageAsset.Image
 
 // swiftlint:disable identifier_name line_length nesting type_body_length type_name
 internal enum Asset {
+  internal static let defaultCommunityImage = ImageAsset(name: "DefaultCommunityImage")
+  internal static let safariCookieAlertImage = ImageAsset(name: "SafariCookieAlertImage")
   internal static let importLink = ImageAsset(name: "ImportLink")
   internal static let startLive = ImageAsset(name: "StartLive")
   internal static let stopLive = ImageAsset(name: "StopLive")
@@ -29,8 +31,6 @@ internal enum Asset {
   internal static let handleNameOverRawId = ImageAsset(name: "HandleNameOverRawId")
   internal static let userId184Id = ImageAsset(name: "UserId184Id")
   internal static let userIdRawId = ImageAsset(name: "UserIdRawId")
-  internal static let defaultCommunityImage = ImageAsset(name: "DefaultCommunityImage")
-  internal static let safariCookieAlertImage = ImageAsset(name: "SafariCookieAlertImage")
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name
 
