@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
+        <plugIn identifier="com.apple.WebKit2IBPlugin" version="18122"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -39,20 +40,24 @@
                         <rect key="frame" x="0.0" y="0.0" width="800" height="600"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="d2o-Kr-HyA">
-                                <rect key="frame" x="381" y="292" width="38" height="16"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" title="Login" id="PTY-EB-GcE">
-                                    <font key="font" usesAppearanceFont="YES"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
+                            <wkWebView wantsLayer="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lY0-Ec-zzn">
+                                <rect key="frame" x="0.0" y="0.0" width="800" height="600"/>
+                                <wkWebViewConfiguration key="configuration">
+                                    <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
+                                    <wkPreferences key="preferences"/>
+                                </wkWebViewConfiguration>
+                            </wkWebView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="d2o-Kr-HyA" firstAttribute="centerY" secondItem="7cB-Xu-Tnp" secondAttribute="centerY" id="bb4-HN-eNl"/>
-                            <constraint firstItem="d2o-Kr-HyA" firstAttribute="centerX" secondItem="7cB-Xu-Tnp" secondAttribute="centerX" id="v2g-It-9r4"/>
+                            <constraint firstAttribute="trailing" secondItem="lY0-Ec-zzn" secondAttribute="trailing" id="CbC-8W-Eaa"/>
+                            <constraint firstItem="lY0-Ec-zzn" firstAttribute="top" secondItem="7cB-Xu-Tnp" secondAttribute="top" id="ETB-ap-8AV"/>
+                            <constraint firstAttribute="bottom" secondItem="lY0-Ec-zzn" secondAttribute="bottom" id="WGn-U5-pr3"/>
+                            <constraint firstItem="lY0-Ec-zzn" firstAttribute="leading" secondItem="7cB-Xu-Tnp" secondAttribute="leading" id="gBZ-T6-Wwm"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="webView" destination="lY0-Ec-zzn" id="yNy-0V-YUo"/>
+                    </connections>
                 </viewController>
                 <customObject id="GxL-QM-di7" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>

@@ -16,6 +16,7 @@ extension AuthWindowController {
 }
 
 final class AuthWindowController: NSWindowController {
+
     deinit {
         log.debug("deinit")
     }
@@ -29,5 +30,12 @@ final class AuthWindowController: NSWindowController {
 extension AuthWindowController: NSWindowDelegate {
     func windowWillClose(_ notification: Notification) {
         log.debug("will close")
+    }
+}
+
+extension AuthWindowController {
+    func startAuthorization() {
+        guard let vc = contentViewController as? AuthViewController else { return }
+        vc.startAuthorization()
     }
 }

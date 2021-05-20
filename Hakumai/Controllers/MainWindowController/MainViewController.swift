@@ -912,6 +912,7 @@ private extension MainViewController {
         if authWindowController == nil {
             authWindowController = AuthWindowController.make()
         }
+        authWindowController?.startAuthorization()
         authWindowController?.showWindow(self)
     }
 }
