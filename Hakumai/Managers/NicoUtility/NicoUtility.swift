@@ -288,6 +288,7 @@ extension NicoUtility {
                 method: .get,
                 parameters: ["userId": userId]
             )
+            .validate()
             .syncResponseData {
                 switch $0.result {
                 case .success(let data):
@@ -339,21 +340,22 @@ private extension NicoUtility {
             urlString: "\(livePageUrl)\(lv)",
             userSession: userSessionCookie
         )
-        let request = session.request(urlRequest)
-        request.cURLDescription(calling: { log.debug($0) })
-        request.responseData {
-            // log.debug($0.debugDescription)
-            switch $0.result {
-            case .success(let data):
-                guard let embedded = NicoUtility.extractEmbeddedDataPropertiesFromLivePage(html: data) else {
+        session.request(urlRequest)
+            .cURLDescription(calling: { log.debug($0) })
+            .validate()
+            .responseData {
+                // log.debug($0.debugDescription)
+                switch $0.result {
+                case .success(let data):
+                    guard let embedded = NicoUtility.extractEmbeddedDataPropertiesFromLivePage(html: data) else {
+                        completion(Result.failure(NicoError.internal))
+                        return
+                    }
+                    completion(Result.success(embedded))
+                case .failure(_):
                     completion(Result.failure(NicoError.internal))
-                    return
                 }
-                completion(Result.success(embedded))
-            case .failure(_):
-                completion(Result.failure(NicoError.internal))
             }
-        }
     }
 
     func openWatchSocket(webSocketUrl: String, userId: String, connectContext: ConnectContext) {
