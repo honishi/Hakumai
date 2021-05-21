@@ -12,6 +12,8 @@ import WebKit
 private let hakumaiClientId = "FYtgnF18kxhSwNY2"
 private let authWebBaseUrl = "https://oauth.nicovideo.jp"
 private let authWebPath = "/oauth2/authorize?response_type=code&client_id=\(hakumaiClientId)"
+private let hakumaiUrlScheme = "hakumai"
+private let accessTokenParameterName = "response"
 
 final class AuthViewController: NSViewController {
     // MARK: - Properties
@@ -35,8 +37,14 @@ extension AuthViewController {
 
 extension AuthViewController: WKNavigationDelegate {
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-        // guard let url = navigationAction.request.url else { return }
+        guard let url = navigationAction.request.url else { return }
         // log.debug(url)
+        if url.scheme == hakumaiUrlScheme {
+            extractAccessToken(url: url)
+            decisionHandler(.cancel)
+            closeWindow()
+            return
+        }
         decisionHandler(.allow)
     }
 }
@@ -44,5 +52,23 @@ extension AuthViewController: WKNavigationDelegate {
 private extension AuthViewController {
     func configureView() {
         webView.navigationDelegate = self
+    }
+
+    func extractAccessToken(url: URL) {
+        guard let response = url.queryValue(for: accessTokenParameterName) else { return }
+        log.debug(response)
+        // TODO: extract response value and store
+    }
+
+    func closeWindow() {
+        view.window?.close()
+    }
+}
+
+private extension URL {
+    // https://qiita.com/shtnkgm/items/0f69d8000f10bdf7cbe2
+    func queryValue(for key: String) -> String? {
+        let queryItems = URLComponents(string: absoluteString)?.queryItems
+        return queryItems?.filter { $0.name == key }.compactMap { $0.value }.first
     }
 }
