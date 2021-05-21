@@ -7,14 +7,21 @@
 //
 
 import Foundation
+import Alamofire
+
+private let hakumaiServerApiBaseUrl = "https://hakumai-app.com"
+private let hakumaiServerApiPathRefreshToken = "/api/v1/refresh-token"
 
 protocol AuthManagerProtocol {
     func extractCallbackResponseAndSaveToken(response: String, completion: ((Result<Void, AuthManagerError>) -> Void))
-    func refreshToken(completion: ((Result<Void, AuthManagerError>) -> Void))
+    func refreshToken(completion: @escaping ((Result<Void, AuthManagerError>) -> Void))
 }
 
 enum AuthManagerError: Error {
+    case noAvailableRefreshToken
+    case refreshTokenFailed
     case decode
+    case `internal`
 }
 
 extension AuthManager {
@@ -55,8 +62,32 @@ extension AuthManager {
         completion(.success(()))
     }
 
-    func refreshToken(completion: ((Result<Void, AuthManagerError>) -> Void)) {
-        // TODO: call token endpoint
+    func refreshToken(completion: @escaping ((Result<Void, AuthManagerError>) -> Void)) {
+        guard let refreshToken = currentToken?.refreshToken else {
+            completion(.failure(.noAvailableRefreshToken))
+            return
+        }
+        guard let url = URL(string: hakumaiServerApiBaseUrl + hakumaiServerApiPathRefreshToken) else {
+            completion(.failure(.internal))
+            return
+        }
+        var request = URLRequest(url: url)
+        request.method = .post
+        request.httpBody = "refresh_token=\(refreshToken)".data(using: .utf8)
+        AF.request(request)
+            .cURLDescription { log.debug($0) }
+            .validate()
+            .responseData {
+                log.debug($0)
+                switch $0.result {
+                case .success(let data):
+                    // TODO: extract
+                    log.debug(data)
+                    completion(.success(()))
+                case .failure(_):
+                    completion(.failure(.refreshTokenFailed))
+                }
+            }
     }
 }
 

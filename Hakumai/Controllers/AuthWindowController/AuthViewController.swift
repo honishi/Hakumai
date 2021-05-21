@@ -12,7 +12,7 @@ import WebKit
 private let hakumaiClientId = "FYtgnF18kxhSwNY2"
 private let authWebBaseUrl = "https://oauth.nicovideo.jp"
 private let authWebPath = "/oauth2/authorize?response_type=code&client_id=\(hakumaiClientId)"
-private let hakumaiUrlScheme = "hakumai"
+private let hakumaiAppUrlScheme = "hakumai"
 private let accessTokenParameterName = "response"
 
 final class AuthViewController: NSViewController {
@@ -42,7 +42,7 @@ extension AuthViewController: WKNavigationDelegate {
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         guard let url = navigationAction.request.url else { return }
         // log.debug(url)
-        if url.scheme == hakumaiUrlScheme {
+        if url.scheme == hakumaiAppUrlScheme {
             extractAccessToken(url: url)
             decisionHandler(.cancel)
             closeWindow()
@@ -63,6 +63,24 @@ private extension AuthViewController {
         // TODO: extract response value and store
         authManager.extractCallbackResponseAndSaveToken(response: response) {
             log.debug($0)
+            switch $0 {
+            case .success():
+                testRefreshToken()
+            case .failure(let error):
+                log.error(error)
+            }
+        }
+    }
+
+    func testRefreshToken() {
+        authManager.refreshToken {
+            log.debug($0)
+            switch $0 {
+            case .success():
+                break
+            case .failure(let error):
+                log.error(error)
+            }
         }
     }
 
