@@ -43,7 +43,7 @@ extension AuthViewController: WKNavigationDelegate {
         guard let url = navigationAction.request.url else { return }
         // log.debug(url)
         if url.scheme == hakumaiAppUrlScheme {
-            extractAccessToken(url: url)
+            extractCallbackResponse(from: url)
             decisionHandler(.cancel)
             closeWindow()
             return
@@ -57,7 +57,7 @@ private extension AuthViewController {
         webView.navigationDelegate = self
     }
 
-    func extractAccessToken(url: URL) {
+    func extractCallbackResponse(from url: URL) {
         guard let response = url.queryValue(for: accessTokenParameterName) else { return }
         // log.debug(response)
         // TODO: extract response value and store

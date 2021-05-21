@@ -14,5 +14,7 @@ struct TokenResponse: Codable {
     let expiresIn: Int
     let scope: String
     let refreshToken: String
-    let idToken: String
+    // `idToken` is provided when `grant_type` = `authorization_code`, but
+    // is not provided when it's `refresh_token`. So making this optional.
+    let idToken: String?
 }

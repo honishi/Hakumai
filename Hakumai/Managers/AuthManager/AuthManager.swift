@@ -36,7 +36,7 @@ final class AuthManager: AuthManagerProtocol {
         let expiresIn: Int
         let scope: String
         let refreshToken: String
-        let idToken: String
+        let idToken: String?
     }
 
     // MARK: Properties
@@ -47,13 +47,7 @@ final class AuthManager: AuthManagerProtocol {
 
 extension AuthManager {
     func extractCallbackResponseAndSaveToken(response: String, completion: ((Result<Void, AuthManagerError>) -> Void)) {
-        guard let data = response.data(using: .utf8) else {
-            completion(.failure(.decode))
-            return
-        }
-        let decoder = JSONDecoder()
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
-        guard let tokenResponse = try? decoder.decode(TokenResponse.self, from: data) else {
+        guard let tokenResponse = decodeTokenResponse(from: response) else {
             completion(.failure(.decode))
             return
         }
@@ -77,14 +71,20 @@ extension AuthManager {
         AF.request(request)
             .cURLDescription { log.debug($0) }
             .validate()
-            .responseData {
-                log.debug($0)
+            .responseString { [weak self] in
+                guard let me = self else { return }
+                // log.debug($0)
                 switch $0.result {
-                case .success(let data):
-                    // TODO: extract
-                    log.debug(data)
+                case .success(let string):
+                    log.debug(string)
+                    guard let tokenResponse = me.decodeTokenResponse(from: string) else {
+                        completion(.failure(.decode))
+                        return
+                    }
+                    me.saveToken(from: tokenResponse)
                     completion(.success(()))
-                case .failure(_):
+                case .failure(let error):
+                    log.error(error)
                     completion(.failure(.refreshTokenFailed))
                 }
             }
@@ -92,6 +92,17 @@ extension AuthManager {
 }
 
 private extension AuthManager {
+    func decodeTokenResponse(from string: String) -> TokenResponse? {
+        guard let data = string.data(using: .utf8) else { return nil }
+        return decodeTokenResponse(from: data)
+    }
+
+    func decodeTokenResponse(from data: Data) -> TokenResponse? {
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        return try? decoder.decode(TokenResponse.self, from: data)
+    }
+
     func saveToken(from response: TokenResponse) {
         currentToken = Token(
             accessToken: response.accessToken,
