@@ -32,6 +32,8 @@
 		DB52B0AD1A2102C700E78C6A /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB52B0AC1A2102C700E78C6A /* User.swift */; };
 		DB55AC641A33905200CFAD99 /* PremiumTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB55AC631A33905200CFAD99 /* PremiumTableCellView.xib */; };
 		DB55AC681A33908300CFAD99 /* PremiumTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB55AC671A33908300CFAD99 /* PremiumTableCellView.swift */; };
+		DB576ED02657A4980041050A /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB576ECF2657A4980041050A /* AuthManager.swift */; };
+		DB576ED32657A5BC0041050A /* AuthModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB576ED22657A5BC0041050A /* AuthModel.swift */; };
 		DB682D421A36E6AE00499C72 /* Parameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB682D411A36E6AE00499C72 /* Parameter.swift */; };
 		DB6DD2AA2650EC86009A9574 /* NicoWebSocketModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6DD2A92650EC86009A9574 /* NicoWebSocketModel.swift */; };
 		DB6DD2AC2650ECD7009A9574 /* NicoWebModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6DD2AB2650ECD7009A9574 /* NicoWebModel.swift */; };
@@ -146,6 +148,8 @@
 		DB52B0AC1A2102C700E78C6A /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		DB55AC631A33905200CFAD99 /* PremiumTableCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PremiumTableCellView.xib; sourceTree = "<group>"; };
 		DB55AC671A33908300CFAD99 /* PremiumTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PremiumTableCellView.swift; sourceTree = "<group>"; };
+		DB576ECF2657A4980041050A /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
+		DB576ED22657A5BC0041050A /* AuthModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthModel.swift; sourceTree = "<group>"; };
 		DB682D411A36E6AE00499C72 /* Parameter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Parameter.swift; sourceTree = "<group>"; };
 		DB6DD2A92650EC86009A9574 /* NicoWebSocketModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoWebSocketModel.swift; sourceTree = "<group>"; };
 		DB6DD2AB2650ECD7009A9574 /* NicoWebModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoWebModel.swift; sourceTree = "<group>"; };
@@ -355,9 +359,26 @@
 			path = UserWindowController;
 			sourceTree = "<group>";
 		};
+		DB576ECE2657A4860041050A /* AuthManager */ = {
+			isa = PBXGroup;
+			children = (
+				DB576ECF2657A4980041050A /* AuthManager.swift */,
+			);
+			path = AuthManager;
+			sourceTree = "<group>";
+		};
+		DB576ED12657A5990041050A /* AuthManager */ = {
+			isa = PBXGroup;
+			children = (
+				DB576ED22657A5BC0041050A /* AuthModel.swift */,
+			);
+			path = AuthManager;
+			sourceTree = "<group>";
+		};
 		DB6DD2A62650E958009A9574 /* Managers */ = {
 			isa = PBXGroup;
 			children = (
+				DB576ECE2657A4860041050A /* AuthManager */,
 				DBE093F91A5867A7004554FD /* HandleNameManager */,
 				DB1E32C41A2C0CCE00CD874A /* MessageContainer */,
 				DBE093F61A585EC5004554FD /* NicoUtility */,
@@ -416,6 +437,7 @@
 			isa = PBXGroup;
 			children = (
 				DBFA887D1A1BC264005349AD /* Application */,
+				DB576ED12657A5990041050A /* AuthManager */,
 				DB6DD2A82650EB95009A9574 /* NicoUtility */,
 			);
 			path = Models;
@@ -848,6 +870,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				DB2AE0C41A0EE2FD00B1CE4D /* AppDelegate.swift in Sources */,
+				DB576ED02657A4980041050A /* AuthManager.swift in Sources */,
+				DB576ED32657A5BC0041050A /* AuthModel.swift in Sources */,
 				DB15AF9A26567AF1009DACBE /* AuthViewController.swift in Sources */,
 				DB15AF9826567A9D009DACBE /* AuthWindowController.swift in Sources */,
 				DB74B86C1A6E790C0064AC28 /* BrowserHelper.swift in Sources */,

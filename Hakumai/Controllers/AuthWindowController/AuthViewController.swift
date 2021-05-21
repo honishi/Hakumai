@@ -18,12 +18,15 @@ private let accessTokenParameterName = "response"
 final class AuthViewController: NSViewController {
     // MARK: - Properties
     @IBOutlet private weak var webView: WKWebView!
+
+    private var authManager: AuthManagerProtocol!
 }
 
 extension AuthViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        authManager = AuthManager.shared
     }
 }
 
@@ -56,8 +59,11 @@ private extension AuthViewController {
 
     func extractAccessToken(url: URL) {
         guard let response = url.queryValue(for: accessTokenParameterName) else { return }
-        log.debug(response)
+        // log.debug(response)
         // TODO: extract response value and store
+        authManager.extractCallbackResponseAndSaveToken(response: response) {
+            log.debug($0)
+        }
     }
 
     func closeWindow() {
