@@ -56,6 +56,12 @@ final class ChatTests: XCTestCase {
         actual = Chat.replaceSlashCommand(comment: comment, premium: caster)
         XCTAssert(expected == actual, "")
 
+        // gift (NULL=名無し)
+        comment = "/gift stamp_okaeri NULL \"名無し\" 30 \"\" \"おかえり\""
+        expected = "🎁 名無しさんがギフト「おかえり(30pt)」を贈りました"
+        actual = Chat.replaceSlashCommand(comment: comment, premium: caster)
+        XCTAssert(expected == actual, "")
+
         // info
         comment = "/info 10 「横山緑」が好きな1人が来場しました"
         expected = "ℹ️ 「横山緑」が好きな1人が来場しました"
