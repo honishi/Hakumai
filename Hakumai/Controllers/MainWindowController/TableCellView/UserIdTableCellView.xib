@@ -13,6 +13,13 @@
             <rect key="frame" x="0.0" y="0.0" width="100" height="50"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
+                <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="WOK-sa-2n9">
+                    <rect key="frame" x="0.0" y="17" width="17" height="17"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="17" id="Dsg-rV-h29"/>
+                    </constraints>
+                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="UserIdRawId" id="mw3-QE-7jV"/>
+                </imageView>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Khl-KA-YVW">
                     <rect key="frame" x="20" y="17" width="82" height="16"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" id="5gd-H5-3cs">
@@ -21,13 +28,6 @@
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="WOK-sa-2n9">
-                    <rect key="frame" x="0.0" y="17" width="17" height="17"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="17" id="Dsg-rV-h29"/>
-                    </constraints>
-                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="UserIdRawId" id="mw3-QE-7jV"/>
-                </imageView>
             </subviews>
             <constraints>
                 <constraint firstAttribute="centerY" secondItem="WOK-sa-2n9" secondAttribute="centerY" id="6dK-Gj-Yf7"/>
