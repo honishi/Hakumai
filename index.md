@@ -44,7 +44,7 @@ https://donation.yahoo.co.jp/
 </a>
 </div>
 
-## Contacts
+## Contact
 
 * <a href="http://twitter.com/d3d7x" target="_blank">@d3d7x</a>
   (aka <a href="http://twitter.com/honishi" target="_blank">@honishi</a>)
