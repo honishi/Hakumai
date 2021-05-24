@@ -30,7 +30,7 @@ extension AuthManager {
 
 final class AuthManager: AuthManagerProtocol {
     // MARK: Types
-    struct Token {
+    struct Token: Codable {
         let accessToken: String
         let tokenType: String
         let expiresIn: Int
@@ -113,5 +113,8 @@ private extension AuthManager {
             idToken: response.idToken
         )
         // TODO: save to keychain
+        guard let token = currentToken,
+              let encoded = try? JSONEncoder().encode(token) else { return }
+        log.debug(String(data: encoded, encoding: .utf8))
     }
 }
