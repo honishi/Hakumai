@@ -511,12 +511,7 @@ extension MainViewController {
 // MARK: Configure Views
 private extension MainViewController {
     func configureViews() {
-        // use async to properly render border line. if not async, the line sometimes disappears
-        DispatchQueue.main.async {
-            self.communityImageView.layer?.borderWidth = 0.5
-            self.communityImageView.layer?.masksToBounds = true
-            self.communityImageView.layer?.borderColor = NSColor.black.cgColor
-        }
+        communityImageView.addBorder()
         reconnectButton.isHidden = !enableDebugReconnectButton
 
         if #available(macOS 10.14, *) {

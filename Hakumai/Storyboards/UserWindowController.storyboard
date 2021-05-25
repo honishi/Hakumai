@@ -170,13 +170,13 @@
                                         </customSpacing>
                                     </stackView>
                                     <scrollView wantsLayer="YES" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RVu-Jo-eWK">
-                                        <rect key="frame" x="0.0" y="0.0" width="560" height="287"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="584" height="287"/>
                                         <clipView key="contentView" id="19a-fH-JPg">
-                                            <rect key="frame" x="1" y="1" width="558" height="285"/>
+                                            <rect key="frame" x="1" y="1" width="582" height="285"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="LMq-nI-fjO" viewBased="YES" id="2W3-fv-MQQ">
-                                                    <rect key="frame" x="0.0" y="0.0" width="558" height="262"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="582" height="262"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <size key="intercellSpacing" width="3" height="2"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -235,13 +235,16 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
                                         <tableHeaderView key="headerView" wantsLayer="YES" id="LMq-nI-fjO">
-                                            <rect key="frame" x="0.0" y="0.0" width="558" height="23"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="582" height="23"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableHeaderView>
                                     </scrollView>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstItem="vN0-rY-5xL" firstAttribute="width" secondItem="cMi-3S-oww" secondAttribute="width" id="A9k-qA-Vbr"/>
+                                    <constraint firstAttribute="trailing" secondItem="vN0-rY-5xL" secondAttribute="trailing" id="7P3-kg-kum"/>
+                                    <constraint firstAttribute="trailing" secondItem="RVu-Jo-eWK" secondAttribute="trailing" id="AjR-SM-teM"/>
+                                    <constraint firstItem="vN0-rY-5xL" firstAttribute="leading" secondItem="cMi-3S-oww" secondAttribute="leading" id="kav-ex-sL1"/>
+                                    <constraint firstItem="RVu-Jo-eWK" firstAttribute="leading" secondItem="cMi-3S-oww" secondAttribute="leading" id="yLd-cd-IOf"/>
                                 </constraints>
                                 <visibilityPriorities>
                                     <integer value="1000"/>

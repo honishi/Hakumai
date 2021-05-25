@@ -38,6 +38,7 @@ final class UserViewController: NSViewController {
 extension UserViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureView()
         registerNibs()
     }
 
@@ -160,6 +161,10 @@ extension UserViewController {
 }
 
 private extension UserViewController {
+    func configureView() {
+        userIconImageView.addBorder()
+    }
+
     func configure(view: NSTableCellView, forChat message: Message, withTableColumn tableColumn: NSTableColumn) {
         guard let chat = message.chat else { return }
 
