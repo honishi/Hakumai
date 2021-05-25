@@ -147,9 +147,8 @@ extension MenuDelegate {
     }
 
     @IBAction func openUserPage(_ sender: AnyObject) {
-        guard let userId = MessageContainer.shared[tableView.clickedRow].chat?.userId else { return }
-        let userPageUrlString = NicoUtility.shared.urlString(forUserId: userId)
-        guard let url = URL(string: userPageUrlString) else { return }
+        guard let userId = MessageContainer.shared[tableView.clickedRow].chat?.userId,
+              let url = NicoUtility.shared.userPageUrl(for: userId) else { return }
         NSWorkspace.shared.open(url)
     }
 }

@@ -15,7 +15,7 @@ import XCGLogger
 // MARK: - Constants
 // URLs:
 private let livePageUrl = "https://live.nicovideo.jp/watch/lv"
-private let userPageUrl = "https://www.nicovideo.jp/user/"
+private let _userPageUrl = "https://www.nicovideo.jp/user/"
 private let userNicknameApiUrl = "https://api.live2.nicovideo.jp/api/v1/user/nickname"
 
 // Cookies:
@@ -242,8 +242,8 @@ extension NicoUtility {
         watchSocket?.write(string: message)
     }
 
-    func urlString(forUserId userId: String) -> String {
-        return userPageUrl + userId
+    func userPageUrl(for userId: String) -> URL? {
+        return URL(string: _userPageUrl + userId)
     }
 
     func reserveToClearUserSessionCookie() {

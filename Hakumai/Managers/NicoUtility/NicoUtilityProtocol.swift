@@ -21,13 +21,13 @@ protocol NicoUtilityType {
     func reconnect(reason: NicoUtility.ReconnectReason)
     func comment(_ comment: String, anonymously: Bool, completion: @escaping (_ comment: String?) -> Void)
 
-    // Methods for Community and Usernames
+    // Methods for User Accounts
     func cachedUserName(forChat chat: Chat) -> String?
     func cachedUserName(forUserId userId: String) -> String?
     func resolveUsername(forUserId userId: String, completion: @escaping (String?) -> Void)
+    func userPageUrl(for userId: String) -> URL?
 
     // Utility Methods
-    func urlString(forUserId userId: String) -> String
     func reserveToClearUserSessionCookie()
 
     // Miscellaneous Methods
