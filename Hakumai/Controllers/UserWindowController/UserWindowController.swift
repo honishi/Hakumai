@@ -15,8 +15,8 @@ protocol UserWindowControllerDelegate: AnyObject {
 
 final class UserWindowController: NSWindowController {
     // MARK: - Properties
-    weak var delegate: UserWindowControllerDelegate?
-    var userId: String? { didSet { reloadMessages() } }
+    private weak var delegate: UserWindowControllerDelegate?
+    private(set) var userId: String = ""
 
     // MARK: - Object Lifecycle
     deinit {
@@ -25,10 +25,10 @@ final class UserWindowController: NSWindowController {
 }
 
 extension UserWindowController {
-    static func make(delegate: UserWindowControllerDelegate?, userId: String) -> UserWindowController {
+    static func make(delegate: UserWindowControllerDelegate?, userId: String, handleName: String?) -> UserWindowController {
         let wc = StoryboardScene.UserWindowController.userWindowController.instantiate()
         wc.delegate = delegate
-        wc.userId = userId
+        wc.set(userId: userId, handleName: handleName)
         return wc
     }
 }
@@ -44,8 +44,14 @@ extension UserWindowController: NSWindowDelegate {
 
 // MARK: - Public Functions
 extension UserWindowController {
+    func set(userId: String, handleName: String?) {
+        self.userId = userId
+        guard let userViewController = contentViewController as? UserViewController else { return }
+        userViewController.set(userId: userId, handleName: handleName)
+    }
+
     func reloadMessages() {
         guard let userViewController = contentViewController as? UserViewController else { return }
-        userViewController.userId = userId
+        userViewController.reloadMessages()
     }
 }

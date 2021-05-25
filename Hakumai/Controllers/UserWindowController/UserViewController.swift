@@ -10,19 +10,23 @@ import Foundation
 import AppKit
 import Kingfisher
 
+private let defaultLabelValue = "-----"
+
 final class UserViewController: NSViewController {
     // MARK: - Properties
     // MARK: Outlets
     @IBOutlet private weak var userIconImageView: NSImageView!
     @IBOutlet private weak var userIdButton: NSButton!
     @IBOutlet private weak var userNameValueLabel: NSTextField!
+    @IBOutlet private weak var handleNameValueLabel: NSTextField!
     @IBOutlet private weak var tableView: NSTableView!
     @IBOutlet private weak var scrollView: NSScrollView!
 
     // MARK: Basics
-    var userId: String? { didSet { setUserId() } }
-    var messages = [Message]()
-    var rowHeightCacher = [Int: CGFloat]()
+    private var userId: String = ""
+    private var handleName: String?
+    private var messages = [Message]()
+    private var rowHeightCacher = [Int: CGFloat]()
 
     // MARK: - Object Lifecycle
     required init?(coder: NSCoder) {
@@ -110,9 +114,46 @@ extension UserViewController: NSTableViewDataSource, NSTableViewDelegate {
 }
 
 extension UserViewController {
+    func set(userId: String, handleName: String?) {
+        reset()
+
+        self.userId = userId
+        self.handleName = handleName
+
+        // User Icon
+        if let userIconUrl = NicoUtility.shared.userIconUrl(for: userId) {
+            userIconImageView.kf.setImage(
+                with: userIconUrl,
+                placeholder: Asset.defaultUserImage.image
+            )
+        }
+        // User ID
+        userIdButton.title = userId
+        // UserName
+        if let userName = NicoUtility.shared.cachedUserName(forUserId: userId) {
+            userNameValueLabel.stringValue = userName
+        } else {
+            userNameValueLabel.stringValue = defaultLabelValue
+            resolveUserName(for: userId)
+        }
+        // Handle Name
+        handleNameValueLabel.stringValue = handleName ?? "(Not Set)"
+        // Messages
+        reloadMessages()
+    }
+
+    func reloadMessages() {
+        messages = MessageContainer.shared.messages(fromUserId: userId)
+        let shouldScroll = shouldTableViewScrollToBottom()
+        tableView.reloadData()
+        if shouldScroll {
+            scrollTableViewToBottom()
+        }
+        scrollView.flashScrollers()
+    }
+
     @IBAction func userIdButtonPressed(_ sender: Any) {
-        guard let userId = userId,
-              Chat.isRawUserId(userId),
+        guard Chat.isRawUserId(userId),
               let url = NicoUtility.shared.userPageUrl(for: userId) else { return }
         NSWorkspace.shared.open(url)
     }
@@ -141,30 +182,9 @@ private extension UserViewController {
         }
     }
 
-    func setUserId() {
-        var userIdLabelValue: String?
-        var userNameLabelValue: String?
-        if let userId = userId {
-            if let userIconUrl = NicoUtility.shared.userIconUrl(for: userId) {
-                userIconImageView.kf.setImage(
-                    with: userIconUrl,
-                    placeholder: Asset.defaultUserImage.image
-                )
-            }
-            userIdLabelValue = userId
-            if let userName = NicoUtility.shared.cachedUserName(forUserId: userId) {
-                userNameLabelValue = userName
-            } else {
-                resolveUserName(for: userId)
-            }
-            messages = MessageContainer.shared.messages(fromUserId: userId)
-        } else {
-            messages.removeAll(keepingCapacity: false)
-            rowHeightCacher.removeAll(keepingCapacity: false)
-        }
-        userIdButton.title = userIdLabelValue ?? "-----"
-        userNameValueLabel.stringValue = userNameLabelValue ?? "-----"
-        reloadMessages()
+    func reset() {
+        messages.removeAll(keepingCapacity: false)
+        rowHeightCacher.removeAll(keepingCapacity: false)
     }
 
     func resolveUserName(for userId: String?) {
@@ -212,15 +232,6 @@ private extension UserViewController {
         let origin = NSPoint(x: x, y: y)
 
         clipView.setBoundsOrigin(origin)
-    }
-
-    func reloadMessages() {
-        let shouldScroll = shouldTableViewScrollToBottom()
-        tableView.reloadData()
-        if shouldScroll {
-            scrollTableViewToBottom()
-        }
-        scrollView.flashScrollers()
     }
 }
 

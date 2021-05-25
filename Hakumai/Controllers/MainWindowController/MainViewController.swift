@@ -791,7 +791,13 @@ extension MainViewController {
 
         if userWindowController == nil {
             // not exist, so create and cache it
-            userWindowController = UserWindowController.make(delegate: self, userId: chat.userId)
+            var handleName: String?
+            if let live = live,
+               let _handleName = HandleNameManager.shared.handleName(forLive: live, chat: chat) {
+                handleName = _handleName
+            }
+            userWindowController = UserWindowController.make(
+                delegate: self, userId: chat.userId, handleName: handleName)
             if let uwc = userWindowController {
                 positionUserWindow(uwc.window)
                 log.debug("no existing userwc found, create it:\(uwc.description)")
