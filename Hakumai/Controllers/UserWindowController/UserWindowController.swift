@@ -16,11 +16,7 @@ protocol UserWindowControllerDelegate: AnyObject {
 final class UserWindowController: NSWindowController {
     // MARK: - Properties
     weak var delegate: UserWindowControllerDelegate?
-    var userId: String? {
-        didSet {
-            reloadMessages()
-        }
-    }
+    var userId: String? { didSet { reloadMessages() } }
 
     // MARK: - Object Lifecycle
     deinit {

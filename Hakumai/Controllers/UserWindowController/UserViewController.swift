@@ -8,35 +8,19 @@
 
 import Foundation
 import AppKit
+import Kingfisher
 
 final class UserViewController: NSViewController {
     // MARK: - Properties
     // MARK: Outlets
-    @IBOutlet weak var userIdLabel: NSTextField!
-    @IBOutlet weak var userNameLabel: NSTextField!
-    @IBOutlet weak var tableView: NSTableView!
-    @IBOutlet weak var scrollView: NSScrollView!
+    @IBOutlet private weak var userIconImageView: NSImageView!
+    @IBOutlet private weak var userIdLabel: NSTextField!
+    @IBOutlet private weak var userNameLabel: NSTextField!
+    @IBOutlet private weak var tableView: NSTableView!
+    @IBOutlet private weak var scrollView: NSScrollView!
 
     // MARK: Basics
-    var userId: String? {
-        didSet {
-            var userIdLabelValue: String?
-            var userNameLabelValue: String?
-            if let userId = userId {
-                userIdLabelValue = userId
-                if let userName = NicoUtility.shared.cachedUserName(forUserId: userId) {
-                    userNameLabelValue = userName
-                }
-                messages = MessageContainer.shared.messages(fromUserId: userId)
-            } else {
-                messages.removeAll(keepingCapacity: false)
-                rowHeightCacher.removeAll(keepingCapacity: false)
-            }
-            userIdLabel.stringValue = "UserId: " + (userIdLabelValue ?? "-----")
-            userNameLabel.stringValue = "UserName: " + (userNameLabelValue ?? "-----")
-            reloadMessages()
-        }
-    }
+    var userId: String? { didSet { setUserId() } }
     var messages = [Message]()
     var rowHeightCacher = [Int: CGFloat]()
 
@@ -146,6 +130,30 @@ private extension UserViewController {
         default:
             break
         }
+    }
+
+    func setUserId() {
+        var userIdLabelValue: String?
+        var userNameLabelValue: String?
+        if let userId = userId {
+            if let userIconUrl = NicoUtility.shared.userIconUrl(for: userId) {
+                userIconImageView.kf.setImage(
+                    with: userIconUrl,
+                    placeholder: Asset.defaultUserImage.image
+                )
+            }
+            userIdLabelValue = userId
+            if let userName = NicoUtility.shared.cachedUserName(forUserId: userId) {
+                userNameLabelValue = userName
+            }
+            messages = MessageContainer.shared.messages(fromUserId: userId)
+        } else {
+            messages.removeAll(keepingCapacity: false)
+            rowHeightCacher.removeAll(keepingCapacity: false)
+        }
+        userIdLabel.stringValue = "UserId: " + (userIdLabelValue ?? "-----")
+        userNameLabel.stringValue = "UserName: " + (userNameLabelValue ?? "-----")
+        reloadMessages()
     }
 
     // MARK: Utility

@@ -16,6 +16,7 @@ import XCGLogger
 // URLs:
 private let livePageUrl = "https://live.nicovideo.jp/watch/lv"
 private let _userPageUrl = "https://www.nicovideo.jp/user/"
+private let _userIconUrl = "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/"
 private let userNicknameApiUrl = "https://api.live2.nicovideo.jp/api/v1/user/nickname"
 
 // Cookies:
@@ -244,6 +245,12 @@ extension NicoUtility {
 
     func userPageUrl(for userId: String) -> URL? {
         return URL(string: _userPageUrl + userId)
+    }
+
+    func userIconUrl(for userId: String) -> URL? {
+        guard let number = Int(userId) else { return nil }
+        let path = number / 10000
+        return URL(string: "\(_userIconUrl)\(path)/\(userId).jpg")
     }
 
     func reserveToClearUserSessionCookie() {
