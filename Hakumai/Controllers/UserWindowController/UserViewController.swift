@@ -196,7 +196,7 @@ private extension UserViewController {
         guard let userId = userId else { return }
         NicoUtility.shared.resolveUsername(forUserId: userId) { [weak self] in
             guard let resolved = $0 else { return }
-            self?.userNameValueLabel.stringValue = resolved
+            DispatchQueue.main.async { self?.userNameValueLabel.stringValue = resolved }
         }
     }
 
