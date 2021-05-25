@@ -50,13 +50,13 @@
                                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="DefaultUserImage" id="Xnj-mi-i5X"/>
                                             </imageView>
                                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Zc1-eZ-HMM">
-                                                <rect key="frame" x="63" y="53" width="521" height="55"/>
+                                                <rect key="frame" x="63" y="52" width="521" height="57"/>
                                                 <subviews>
                                                     <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uhY-DO-X88">
-                                                        <rect key="frame" x="0.0" y="37" width="100" height="18"/>
+                                                        <rect key="frame" x="0.0" y="37" width="110" height="20"/>
                                                         <subviews>
                                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="djL-Ot-r3k">
-                                                                <rect key="frame" x="-2" y="1" width="48" height="17"/>
+                                                                <rect key="frame" x="-2" y="3" width="48" height="17"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" constant="17" id="HnU-NM-MJ0"/>
                                                                 </constraints>
@@ -67,10 +67,10 @@
                                                                 </textFieldCell>
                                                             </textField>
                                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="S5c-Yh-gfA">
-                                                                <rect key="frame" x="52" y="0.0" width="48" height="18"/>
-                                                                <buttonCell key="cell" type="inline" title="xxxxxx" bezelStyle="inline" alignment="center" borderStyle="border" inset="2" id="a0K-Pn-VpK">
+                                                                <rect key="frame" x="51" y="-2" width="60" height="23"/>
+                                                                <buttonCell key="cell" type="roundTextured" title="XXXXX" bezelStyle="texturedRounded" alignment="center" borderStyle="border" inset="2" id="a0K-Pn-VpK">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                                    <font key="font" metaFont="systemBold" size="16"/>
+                                                                    <font key="font" metaFont="system"/>
                                                                 </buttonCell>
                                                                 <connections>
                                                                     <action selector="userIdButtonPressed:" target="JAf-Qg-MGY" id="Rl7-bV-z2z"/>
