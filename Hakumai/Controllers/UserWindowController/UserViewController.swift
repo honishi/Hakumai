@@ -14,8 +14,8 @@ final class UserViewController: NSViewController {
     // MARK: - Properties
     // MARK: Outlets
     @IBOutlet private weak var userIconImageView: NSImageView!
-    @IBOutlet private weak var userIdLabel: NSTextField!
-    @IBOutlet private weak var userNameLabel: NSTextField!
+    @IBOutlet private weak var userIdButton: NSButton!
+    @IBOutlet private weak var userNameValueLabel: NSTextField!
     @IBOutlet private weak var tableView: NSTableView!
     @IBOutlet private weak var scrollView: NSScrollView!
 
@@ -109,6 +109,15 @@ extension UserViewController: NSTableViewDataSource, NSTableViewDelegate {
     }
 }
 
+extension UserViewController {
+    @IBAction func userIdButtonPressed(_ sender: Any) {
+        guard let userId = userId,
+              Chat.isRawUserId(userId),
+              let url = NicoUtility.shared.userPageUrl(for: userId) else { return }
+        NSWorkspace.shared.open(url)
+    }
+}
+
 private extension UserViewController {
     func configure(view: NSTableCellView, forChat message: Message, withTableColumn tableColumn: NSTableColumn) {
         guard let chat = message.chat else { return }
@@ -145,15 +154,25 @@ private extension UserViewController {
             userIdLabelValue = userId
             if let userName = NicoUtility.shared.cachedUserName(forUserId: userId) {
                 userNameLabelValue = userName
+            } else {
+                resolveUserName(for: userId)
             }
             messages = MessageContainer.shared.messages(fromUserId: userId)
         } else {
             messages.removeAll(keepingCapacity: false)
             rowHeightCacher.removeAll(keepingCapacity: false)
         }
-        userIdLabel.stringValue = "UserId: " + (userIdLabelValue ?? "-----")
-        userNameLabel.stringValue = "UserName: " + (userNameLabelValue ?? "-----")
+        userIdButton.title = userIdLabelValue ?? "-----"
+        userNameValueLabel.stringValue = userNameLabelValue ?? "-----"
         reloadMessages()
+    }
+
+    func resolveUserName(for userId: String?) {
+        guard let userId = userId else { return }
+        NicoUtility.shared.resolveUsername(forUserId: userId) { [weak self] in
+            guard let resolved = $0 else { return }
+            self?.userNameValueLabel.stringValue = resolved
+        }
     }
 
     // MARK: Utility
