@@ -517,12 +517,7 @@ extension MainViewController {
 // MARK: Configure Views
 private extension MainViewController {
     func configureViews() {
-        // use async to properly render border line. if not async, the line sometimes disappears
-        DispatchQueue.main.async {
-            self.communityImageView.layer?.borderWidth = 0.5
-            self.communityImageView.layer?.masksToBounds = true
-            self.communityImageView.layer?.borderColor = NSColor.black.cgColor
-        }
+        communityImageView.addBorder()
         debugAuthButton.isHidden = !enableDebugAuthButton
         debugReconnectButton.isHidden = !enableDebugReconnectButton
 
@@ -802,7 +797,13 @@ extension MainViewController {
 
         if userWindowController == nil {
             // not exist, so create and cache it
-            userWindowController = UserWindowController.make(delegate: self, userId: chat.userId)
+            var handleName: String?
+            if let live = live,
+               let _handleName = HandleNameManager.shared.handleName(forLive: live, chat: chat) {
+                handleName = _handleName
+            }
+            userWindowController = UserWindowController.make(
+                delegate: self, userId: chat.userId, handleName: handleName)
             if let uwc = userWindowController {
                 positionUserWindow(uwc.window)
                 log.debug("no existing userwc found, create it:\(uwc.description)")

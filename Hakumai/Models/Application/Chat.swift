@@ -67,22 +67,41 @@ extension Chat {
     }
 }
 
-private let commentReplacePatterns = [
+private let commentPreReplacePatterns = [
+    // "/gift champagne_2 14560037 \"空気\" 900 \"\" \"シャンパーン\" 1"
+    // "/gift 空気さんがギフト「シャンパーン(900pt)」を贈りました"
+    ("^(/gift ).+ .+ \"(.+?)\" (\\d+?) \".*?\" \"(.+?)\".*$", "$1$2さんがギフト「$4($3pt)」を贈りました"),
+    // "/info 10 「横山緑」が好きな1人が来場しました"
+    // "/info 「横山緑」が好きな1人が来場しました"
+    ("^(/info )\\d+? (.+)$", "$1$2"),
+    // "/nicoad {\"totalAdPoint\":15800,\"message\":\"【広告貢献1位】makimakiさんが2100ptニコニ広告しました\",\"version\":\"1\"}"
+    // "/nicoad 【広告貢献1位】makimakiさんが2100ptニコニ広告しました"
+    ("^(/nicoad ).+\"message\":\"(.+?)\".+$", "$1$2"),
+    // "/vote start お墓 継ぐ 継がない 自分の代で終わらせる"
+    // "/vote アンケ start お墓 継ぐ 継がない 自分の代で終わらせる"
+    ("^(/vote )(.+)$", "$1アンケ $2"),
+    ("^(/\\w+ )\"(.+)\"$", "$1$2")
+]
+
+private let commentEmojiReplacePatterns = [
+    ("^/cruise ", "⚓️ "),
     ("^/emotion ", "💬 "),
-    ("^/spi ", "🎮 "),
-    ("^/info \\d+ ", "ℹ️ "),
-    ("^/nicoad ", "📣 "),
     ("^/gift ", "🎁 "),
-    ("^/vote ", "🙋‍♂️ "),
+    ("^/info ", "ℹ️ "),
+    ("^/nicoad ", "📣 "),
     ("^/quote ", "⛴ "),
-    ("^/cruise ", "⚓️ ")
+    ("^/spi ", "🎮 "),
+    ("^/vote ", "🙋‍♂️ ")
 ]
 
 extension Chat {
     static func replaceSlashCommand(comment: String, premium: Premium) -> String {
         guard premium == .caster, comment.starts(with: "/") else { return comment }
         var replaced = comment
-        commentReplacePatterns.forEach {
+        commentPreReplacePatterns.forEach {
+            replaced = replaced.stringByReplacingRegexp(pattern: $0.0, with: $0.1)
+        }
+        commentEmojiReplacePatterns.forEach {
             replaced = replaced.stringByReplacingRegexp(pattern: $0.0, with: $0.1)
         }
         return replaced

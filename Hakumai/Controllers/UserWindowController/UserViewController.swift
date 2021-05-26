@@ -8,37 +8,25 @@
 
 import Foundation
 import AppKit
+import Kingfisher
+
+private let defaultLabelValue = "-----"
 
 final class UserViewController: NSViewController {
     // MARK: - Properties
     // MARK: Outlets
-    @IBOutlet weak var userIdLabel: NSTextField!
-    @IBOutlet weak var userNameLabel: NSTextField!
-    @IBOutlet weak var tableView: NSTableView!
-    @IBOutlet weak var scrollView: NSScrollView!
+    @IBOutlet private weak var userIconImageView: NSImageView!
+    @IBOutlet private weak var userIdButton: NSButton!
+    @IBOutlet private weak var userNameValueLabel: NSTextField!
+    @IBOutlet private weak var handleNameValueLabel: NSTextField!
+    @IBOutlet private weak var tableView: NSTableView!
+    @IBOutlet private weak var scrollView: NSScrollView!
 
     // MARK: Basics
-    var userId: String? {
-        didSet {
-            var userIdLabelValue: String?
-            var userNameLabelValue: String?
-            if let userId = userId {
-                userIdLabelValue = userId
-                if let userName = NicoUtility.shared.cachedUserName(forUserId: userId) {
-                    userNameLabelValue = userName
-                }
-                messages = MessageContainer.shared.messages(fromUserId: userId)
-            } else {
-                messages.removeAll(keepingCapacity: false)
-                rowHeightCacher.removeAll(keepingCapacity: false)
-            }
-            userIdLabel.stringValue = "UserId: " + (userIdLabelValue ?? "-----")
-            userNameLabel.stringValue = "UserName: " + (userNameLabelValue ?? "-----")
-            reloadMessages()
-        }
-    }
-    var messages = [Message]()
-    var rowHeightCacher = [Int: CGFloat]()
+    private var userId: String = ""
+    private var handleName: String?
+    private var messages = [Message]()
+    private var rowHeightCacher = [Int: CGFloat]()
 
     // MARK: - Object Lifecycle
     required init?(coder: NSCoder) {
@@ -50,6 +38,7 @@ final class UserViewController: NSViewController {
 extension UserViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureView()
         registerNibs()
     }
 
@@ -125,7 +114,57 @@ extension UserViewController: NSTableViewDataSource, NSTableViewDelegate {
     }
 }
 
+extension UserViewController {
+    func set(userId: String, handleName: String?) {
+        reset()
+
+        self.userId = userId
+        self.handleName = handleName
+
+        // User Icon
+        if let userIconUrl = NicoUtility.shared.userIconUrl(for: userId) {
+            userIconImageView.kf.setImage(
+                with: userIconUrl,
+                placeholder: Asset.defaultUserImage.image
+            )
+        }
+        // User ID
+        userIdButton.title = userId
+        // UserName
+        if let userName = NicoUtility.shared.cachedUserName(forUserId: userId) {
+            userNameValueLabel.stringValue = userName
+        } else {
+            userNameValueLabel.stringValue = defaultLabelValue
+            resolveUserName(for: userId)
+        }
+        // Handle Name
+        handleNameValueLabel.stringValue = handleName ?? "(Not Set)"
+        // Messages
+        reloadMessages()
+    }
+
+    func reloadMessages() {
+        messages = MessageContainer.shared.messages(fromUserId: userId)
+        let shouldScroll = shouldTableViewScrollToBottom()
+        tableView.reloadData()
+        if shouldScroll {
+            scrollTableViewToBottom()
+        }
+        scrollView.flashScrollers()
+    }
+
+    @IBAction func userIdButtonPressed(_ sender: Any) {
+        guard Chat.isRawUserId(userId),
+              let url = NicoUtility.shared.userPageUrl(for: userId) else { return }
+        NSWorkspace.shared.open(url)
+    }
+}
+
 private extension UserViewController {
+    func configureView() {
+        userIconImageView.addBorder()
+    }
+
     func configure(view: NSTableCellView, forChat message: Message, withTableColumn tableColumn: NSTableColumn) {
         guard let chat = message.chat else { return }
 
@@ -145,6 +184,19 @@ private extension UserViewController {
             commentView?.attributedString = attributed
         default:
             break
+        }
+    }
+
+    func reset() {
+        messages.removeAll(keepingCapacity: false)
+        rowHeightCacher.removeAll(keepingCapacity: false)
+    }
+
+    func resolveUserName(for userId: String?) {
+        guard let userId = userId else { return }
+        NicoUtility.shared.resolveUsername(forUserId: userId) { [weak self] in
+            guard let resolved = $0 else { return }
+            DispatchQueue.main.async { self?.userNameValueLabel.stringValue = resolved }
         }
     }
 
@@ -185,15 +237,6 @@ private extension UserViewController {
         let origin = NSPoint(x: x, y: y)
 
         clipView.setBoundsOrigin(origin)
-    }
-
-    func reloadMessages() {
-        let shouldScroll = shouldTableViewScrollToBottom()
-        tableView.reloadData()
-        if shouldScroll {
-            scrollTableViewToBottom()
-        }
-        scrollView.flashScrollers()
     }
 }
 
