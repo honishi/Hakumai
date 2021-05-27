@@ -46,7 +46,6 @@ final class AuthManager: AuthManagerProtocol {
     init(tokenStore: TokenStoreProtocol) {
         self.tokenStore = tokenStore
         currentToken = loadToken()
-        log.debug(currentToken)
     }
 }
 
