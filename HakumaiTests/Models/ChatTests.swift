@@ -32,6 +32,7 @@ final class ChatTests: XCTestCase {
         XCTAssert(Chat.isUserComment(nil) == false, "")
     }
 
+    // swiftlint:disable function_body_length
     func testReplaceComment() {
         var comment = ""
         var expected = ""
@@ -98,4 +99,5 @@ final class ChatTests: XCTestCase {
         actual = Chat.replaceSlashCommand(comment: comment, premium: caster)
         XCTAssert(expected == actual, "")
     }
+    // swiftlint:enable function_body_length
 }

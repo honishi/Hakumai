@@ -25,7 +25,7 @@ enum AuthManagerError: Error {
 }
 
 extension AuthManager {
-    static let shared = AuthManager()
+    static let shared = AuthManager(tokenStore: TokenStore())
 }
 
 final class AuthManager: AuthManagerProtocol {
@@ -40,9 +40,14 @@ final class AuthManager: AuthManagerProtocol {
     }
 
     // MARK: Properties
+    private let tokenStore: TokenStoreProtocol
     private var currentToken: Token?
 
-    init() {}
+    init(tokenStore: TokenStoreProtocol) {
+        self.tokenStore = tokenStore
+        currentToken = loadToken()
+        log.debug(currentToken)
+    }
 }
 
 extension AuthManager {
@@ -112,9 +117,31 @@ private extension AuthManager {
             refreshToken: response.refreshToken,
             idToken: response.idToken
         )
-        // TODO: save to keychain
-        guard let token = currentToken,
-              let encoded = try? JSONEncoder().encode(token) else { return }
-        log.debug(String(data: encoded, encoding: .utf8))
+        tokenStore.saveToken(
+            accessToken: response.accessToken,
+            tokenType: response.tokenType,
+            expiresIn: response.expiresIn,
+            scope: response.scope,
+            refreshToken: response.refreshToken,
+            idToken: response.idToken
+        )
+    }
+
+    func loadToken() -> Token? {
+        guard let storedToken = tokenStore.loadToken() else { return nil }
+        return storedToken.toAuthManagerToken()
+    }
+}
+
+private extension StoredToken {
+    func toAuthManagerToken() -> AuthManager.Token {
+        return AuthManager.Token(
+            accessToken: accessToken,
+            tokenType: tokenType,
+            expiresIn: expiresIn,
+            scope: scope,
+            refreshToken: refreshToken,
+            idToken: idToken
+        )
     }
 }
