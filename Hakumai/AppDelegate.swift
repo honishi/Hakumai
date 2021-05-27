@@ -20,6 +20,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         initializeUserDefaults()
         addObserverForUserDefaults()
         configureMenuItems()
+        debugPrintToken()
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
@@ -204,5 +205,14 @@ private extension AppDelegate {
         guard kMinimumFontSize...kMaximumFontSize ~= fontSize else { return }
         UserDefaults.standard.set(fontSize, forKey: Parameters.fontSize)
         UserDefaults.standard.synchronize()
+    }
+}
+
+// MARK: Debug Methods
+private extension AppDelegate {
+    func debugPrintToken() {
+        log.debug("accessToken: " + (AuthManager.shared.currentToken?.accessToken ?? "-"))
+        log.debug("expireIn: " + String((AuthManager.shared.currentToken?.expiresIn ?? 0)))
+        log.debug("refreshToken: " + (AuthManager.shared.currentToken?.refreshToken ?? "-"))
     }
 }

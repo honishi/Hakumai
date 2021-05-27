@@ -13,8 +13,20 @@ private let hakumaiServerApiBaseUrl = "https://hakumai-app.com"
 private let hakumaiServerApiPathRefreshToken = "/api/v1/refresh-token"
 
 protocol AuthManagerProtocol {
+    var currentToken: AuthManagerToken? { get }
+
     func extractCallbackResponseAndSaveToken(response: String, completion: ((Result<Void, AuthManagerError>) -> Void))
     func refreshToken(completion: @escaping ((Result<Void, AuthManagerError>) -> Void))
+    func clearToken()
+}
+
+struct AuthManagerToken: Codable {
+    let accessToken: String
+    let tokenType: String
+    let expiresIn: Int
+    let scope: String
+    let refreshToken: String
+    let idToken: String?
 }
 
 enum AuthManagerError: Error {
@@ -29,23 +41,14 @@ extension AuthManager {
 }
 
 final class AuthManager: AuthManagerProtocol {
-    // MARK: Types
-    struct Token: Codable {
-        let accessToken: String
-        let tokenType: String
-        let expiresIn: Int
-        let scope: String
-        let refreshToken: String
-        let idToken: String?
-    }
-
     // MARK: Properties
     private let tokenStore: TokenStoreProtocol
-    private var currentToken: Token?
+    private(set) var currentToken: AuthManagerToken?
 
     init(tokenStore: TokenStoreProtocol) {
         self.tokenStore = tokenStore
         currentToken = loadToken()
+        log.debug("")
     }
 }
 
@@ -93,6 +96,11 @@ extension AuthManager {
                 }
             }
     }
+
+    func clearToken() {
+        currentToken = nil
+        tokenStore.clearToken()
+    }
 }
 
 private extension AuthManager {
@@ -108,7 +116,7 @@ private extension AuthManager {
     }
 
     func saveToken(from response: TokenResponse) {
-        currentToken = Token(
+        currentToken = AuthManagerToken(
             accessToken: response.accessToken,
             tokenType: response.tokenType,
             expiresIn: response.expiresIn,
@@ -126,15 +134,15 @@ private extension AuthManager {
         )
     }
 
-    func loadToken() -> Token? {
+    func loadToken() -> AuthManagerToken? {
         guard let storedToken = tokenStore.loadToken() else { return nil }
         return storedToken.toAuthManagerToken()
     }
 }
 
 private extension StoredToken {
-    func toAuthManagerToken() -> AuthManager.Token {
-        return AuthManager.Token(
+    func toAuthManagerToken() -> AuthManagerToken {
+        return AuthManagerToken(
             accessToken: accessToken,
             tokenType: tokenType,
             expiresIn: expiresIn,
