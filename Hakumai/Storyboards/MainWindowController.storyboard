@@ -824,11 +824,26 @@
                                     <real value="3.4028234663852886e+38"/>
                                 </customSpacing>
                             </stackView>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="DTd-Qo-eNc">
+                                <rect key="frame" x="353" y="62" width="94" height="32"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="80" id="Fev-wl-xdV"/>
+                                </constraints>
+                                <buttonCell key="cell" type="push" title="👇" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1l6-WO-pC3">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="scrollToBottomButtonPressed:" target="XfG-lQ-9wD" id="2T1-Pj-JvN"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="z38-Lm-gGi" secondAttribute="trailing" constant="8" id="GwQ-WX-Gqm"/>
                             <constraint firstItem="z38-Lm-gGi" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="8" id="PFN-B3-Bud"/>
+                            <constraint firstItem="DTd-Qo-eNc" firstAttribute="centerX" secondItem="3lG-BL-Thc" secondAttribute="centerX" id="XJC-Sy-KaN"/>
                             <constraint firstItem="z38-Lm-gGi" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="8" id="cTn-Tx-7Xs"/>
+                            <constraint firstItem="DTd-Qo-eNc" firstAttribute="bottom" secondItem="3lG-BL-Thc" secondAttribute="bottom" constant="-8" id="ejL-Xh-iEo"/>
                             <constraint firstAttribute="bottom" secondItem="z38-Lm-gGi" secondAttribute="bottom" constant="8" id="fLA-Xd-WSw"/>
                         </constraints>
                     </view>
@@ -847,6 +862,7 @@
                         <outlet property="menuDelegate" destination="Riw-FG-ugq" id="l3S-iG-Ve5"/>
                         <outlet property="progressIndicator" destination="A3m-ux-Ivm" id="bCp-rD-QNX"/>
                         <outlet property="reconnectButton" destination="IZs-cK-l0Y" id="neM-ub-baA"/>
+                        <outlet property="scrollToBottomButton" destination="DTd-Qo-eNc" id="AZ5-1a-134"/>
                         <outlet property="scrollView" destination="3lG-BL-Thc" id="fKo-Wb-zpM"/>
                         <outlet property="speakButton" destination="QmJ-8z-tPW" id="eZq-p3-ll6"/>
                         <outlet property="tableView" destination="21S-OF-mg3" id="Wty-uQ-xrm"/>
