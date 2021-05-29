@@ -597,16 +597,16 @@ private extension MainViewController {
     }
 
     func _updateCommunityViews(for live: Live) {
-        if let url = live.community.thumbnailUrl {
+        if let url = live.community?.thumbnailUrl {
             communityImageView.kf.setImage(
                 with: url,
                 placeholder: Asset.defaultCommunityImage.image
             )
         }
-        liveTitleLabel.stringValue = live.title ?? ""
-        communityIdLabel.stringValue = live.community.community ?? "-"
-        var communityTitle = live.community.title ?? "-"
-        if let level = live.community.level {
+        liveTitleLabel.stringValue = live.title
+        communityIdLabel.stringValue = live.community?.communityId ?? "-"
+        var communityTitle = live.community?.title ?? "-"
+        if let level = live.community?.level {
             communityTitle += " (Lv.\(level))"
         }
         communityTitleLabel.stringValue = communityTitle

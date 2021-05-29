@@ -19,9 +19,9 @@ final class Chat: CustomStringConvertible {
     let premium: Premium
     let score: Int? = 0
 
-    var isRawUserId: Bool { return Chat.isRawUserId(userId) }
-    var isUserComment: Bool { return Chat.isUserComment(premium) }
-    var isSystemComment: Bool { return Chat.isSystemComment(premium) }
+    var isRawUserId: Bool { Chat.isRawUserId(userId) }
+    var isUserComment: Bool { Chat.isUserComment(premium) }
+    var isSystemComment: Bool { Chat.isSystemComment(premium) }
 
     var description: String {
         return (
