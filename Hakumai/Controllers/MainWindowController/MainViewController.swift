@@ -113,11 +113,11 @@ extension MainViewController {
     }
 
     @IBAction func scrollToBottomButtonPressed(_ sender: Any) {
-        scrollTableViewToBottom()
+        scrollView.scrollToBottom()
     }
 
     private func updateScrollToBottomButtonVisibility() {
-        scrollToBottomButton.isHidden = isTableViewReachedToBottom()
+        scrollToBottomButton.isHidden = scrollView.isReachedToBottom
     }
 }
 
@@ -502,11 +502,11 @@ extension MainViewController {
     private func rebuildFilteredMessages() {
         DispatchQueue.main.async {
             self.progressIndicator.startAnimation(self)
-            let shouldScroll = self.isTableViewReachedToBottom()
+            let shouldScroll = self.scrollView.isReachedToBottom
             MessageContainer.shared.rebuildFilteredMessages {
                 self.tableView.reloadData()
                 if shouldScroll {
-                    self.scrollTableViewToBottom()
+                    self.scrollView.scrollToBottom()
                 }
                 self.scrollView.flashScrollers()
                 self.progressIndicator.stopAnimation(self)
@@ -617,7 +617,7 @@ private extension MainViewController {
 private extension MainViewController {
     func appendTableView(_ chatOrSystemMessage: Any) {
         DispatchQueue.main.async {
-            let shouldScroll = self.isTableViewReachedToBottom()
+            let shouldScroll = self.scrollView.isReachedToBottom
             let (appended, count) = MessageContainer.shared.append(chatOrSystemMessage: chatOrSystemMessage)
             guard appended else { return }
             let rowIndex = count - 1
@@ -625,7 +625,7 @@ private extension MainViewController {
             self.tableView.insertRows(at: IndexSet(integer: rowIndex), withAnimation: NSTableView.AnimationOptions())
             // self.logChat(chatOrSystemMessage)
             if shouldScroll {
-                self.scrollTableViewToBottom()
+                self.scrollView.scrollToBottom()
             }
             if message.messageType == .chat, let chat = message.chat {
                 self.handleSpeech(chat: chat)
@@ -642,31 +642,6 @@ private extension MainViewController {
             content = message.chat?.comment
         }
         log.debug("[ \(content ?? "-") ]")
-    }
-
-    func isTableViewReachedToBottom() -> Bool {
-        let viewRect = scrollView.contentView.documentRect
-        let visibleRect = scrollView.contentView.documentVisibleRect
-        // log.debug("\(viewRect)-\(visibleRect)")
-
-        let bottomY = viewRect.size.height
-        let offsetBottomY = visibleRect.origin.y + visibleRect.size.height
-        let allowance: CGFloat = 16
-
-        let shouldScroll = (bottomY <= (offsetBottomY + allowance))
-        return shouldScroll
-    }
-
-    func scrollTableViewToBottom() {
-        let clipView = scrollView.contentView
-        let x = clipView.documentVisibleRect.origin.x
-        let y = clipView.documentRect.size.height - clipView.documentVisibleRect.size.height
-        let origin = NSPoint(x: x, y: y)
-
-        // note: do not use scrollRowToVisible here.
-        // scroll will be sometimes stopped when very long comment arrives.
-        // tableView.scrollRowToVisible(tableView.numberOfRows - 1)
-        clipView.setBoundsOrigin(origin)
     }
 }
 
@@ -748,7 +723,7 @@ extension MainViewController {
         let comment = commentTextField.stringValue
 
         if comment.isEmpty {
-            scrollTableViewToBottom()
+            scrollView.scrollToBottom()
             scrollView.flashScrollers()
             return
         }

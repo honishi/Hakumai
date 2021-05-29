@@ -30,6 +30,7 @@
 		DB55AC641A33905200CFAD99 /* PremiumTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB55AC631A33905200CFAD99 /* PremiumTableCellView.xib */; };
 		DB55AC681A33908300CFAD99 /* PremiumTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB55AC671A33908300CFAD99 /* PremiumTableCellView.swift */; };
 		DB682D421A36E6AE00499C72 /* Parameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB682D411A36E6AE00499C72 /* Parameter.swift */; };
+		DB6C73142662894B0026A8C0 /* NSScrollView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6C73132662894B0026A8C0 /* NSScrollView+Extensions.swift */; };
 		DB6DD2AA2650EC86009A9574 /* NicoWebSocketModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6DD2A92650EC86009A9574 /* NicoWebSocketModel.swift */; };
 		DB6DD2AC2650ECD7009A9574 /* NicoWebModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6DD2AB2650ECD7009A9574 /* NicoWebModel.swift */; };
 		DB6DD2AE2650F1B0009A9574 /* NicoUtilityProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6DD2AD2650F1B0009A9574 /* NicoUtilityProtocol.swift */; };
@@ -142,6 +143,7 @@
 		DB55AC631A33905200CFAD99 /* PremiumTableCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PremiumTableCellView.xib; sourceTree = "<group>"; };
 		DB55AC671A33908300CFAD99 /* PremiumTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PremiumTableCellView.swift; sourceTree = "<group>"; };
 		DB682D411A36E6AE00499C72 /* Parameter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Parameter.swift; sourceTree = "<group>"; };
+		DB6C73132662894B0026A8C0 /* NSScrollView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSScrollView+Extensions.swift"; sourceTree = "<group>"; };
 		DB6DD2A92650EC86009A9574 /* NicoWebSocketModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoWebSocketModel.swift; sourceTree = "<group>"; };
 		DB6DD2AB2650ECD7009A9574 /* NicoWebModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoWebModel.swift; sourceTree = "<group>"; };
 		DB6DD2AD2650F1B0009A9574 /* NicoUtilityProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoUtilityProtocol.swift; sourceTree = "<group>"; };
@@ -413,6 +415,7 @@
 			children = (
 				DBB472FF1A358FFC002C797E /* Character+Extensions.swift */,
 				DBB473031A359082002C797E /* Int+Extensions.swift */,
+				DB6C73132662894B0026A8C0 /* NSScrollView+Extensions.swift */,
 				DBD7A1E8265D5863001C87E0 /* NSView+Extensions.swift */,
 				DB9EFC731A3E974A0087D302 /* NSWindow+Extensions.swift */,
 				DBB473051A35909F002C797E /* NSXMLElement+Extensions.swift */,
@@ -867,6 +870,7 @@
 				DB6DD2AE2650F1B0009A9574 /* NicoUtilityProtocol.swift in Sources */,
 				DB6DD2AC2650ECD7009A9574 /* NicoWebModel.swift in Sources */,
 				DB6DD2AA2650EC86009A9574 /* NicoWebSocketModel.swift in Sources */,
+				DB6C73142662894B0026A8C0 /* NSScrollView+Extensions.swift in Sources */,
 				DBD7A1E9265D5863001C87E0 /* NSView+Extensions.swift in Sources */,
 				DB9EFC741A3E974A0087D302 /* NSWindow+Extensions.swift in Sources */,
 				DBB473061A35909F002C797E /* NSXMLElement+Extensions.swift in Sources */,
