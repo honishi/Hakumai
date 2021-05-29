@@ -13,10 +13,10 @@ private let communityPrefixUser = "^co\\d+"
 private let communityPrefixChannel = "^ch\\d+"
 
 final class Community: CustomStringConvertible {
-    var communityId: String
-    var title: String
-    var level: Int
-    var thumbnailUrl: URL?
+    let communityId: String
+    let title: String
+    let level: Int
+    let thumbnailUrl: URL?
 
     var isUser: Bool { communityId.hasRegexp(pattern: communityPrefixUser) }
     var isChannel: Bool { communityId.hasRegexp(pattern: communityPrefixChannel) }
