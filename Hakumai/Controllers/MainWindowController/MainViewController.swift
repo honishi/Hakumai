@@ -30,28 +30,29 @@ final class MainViewController: NSViewController {
     static var shared: MainViewController!
 
     // MARK: Main Outlets
-    @IBOutlet weak var liveTextField: NSTextField!
-    @IBOutlet weak var debugAuthButton: NSButton!
-    @IBOutlet weak var debugReconnectButton: NSButton!
-    @IBOutlet weak var connectButton: NSButton!
+    @IBOutlet private weak var liveTextField: NSTextField!
+    @IBOutlet private weak var debugAuthButton: NSButton!
+    @IBOutlet private weak var debugReconnectButton: NSButton!
+    @IBOutlet private weak var connectButton: NSButton!
 
-    @IBOutlet weak var communityImageView: NSImageView!
-    @IBOutlet weak var liveTitleLabel: NSTextField!
-    @IBOutlet weak var communityTitleLabel: NSTextField!
-    @IBOutlet weak var communityIdLabel: NSTextField!
+    @IBOutlet private weak var communityImageView: NSImageView!
+    @IBOutlet private weak var liveTitleLabel: NSTextField!
+    @IBOutlet private weak var communityTitleLabel: NSTextField!
+    @IBOutlet private weak var communityIdLabel: NSTextField!
 
-    @IBOutlet weak var visitorsLabel: NSTextField!
-    @IBOutlet weak var commentsLabel: NSTextField!
-    @IBOutlet weak var speakButton: NSButton!
+    @IBOutlet private weak var visitorsLabel: NSTextField!
+    @IBOutlet private weak var commentsLabel: NSTextField!
+    @IBOutlet private weak var speakButton: NSButton!
 
-    @IBOutlet weak var scrollView: NSScrollView!
-    @IBOutlet weak var tableView: NSTableView!
+    @IBOutlet private weak var scrollView: NSScrollView!
+    @IBOutlet private(set) weak var tableView: NSTableView!
+    @IBOutlet private weak var scrollToBottomButton: NSButton!
 
-    @IBOutlet weak var commentTextField: NSTextField!
-    @IBOutlet weak var commentAnonymouslyButton: NSButton!
-    @IBOutlet weak var elapsedLabel: NSTextField!
-    @IBOutlet weak var activeLabel: NSTextField!
-    @IBOutlet weak var progressIndicator: NSProgressIndicator!
+    @IBOutlet private weak var commentTextField: NSTextField!
+    @IBOutlet private weak var commentAnonymouslyButton: NSButton!
+    @IBOutlet private weak var elapsedLabel: NSTextField!
+    @IBOutlet private weak var activeLabel: NSTextField!
+    @IBOutlet private weak var progressIndicator: NSProgressIndicator!
 
     // MARK: Menu Delegate
     // swiftlint:disable weak_delegate
@@ -67,8 +68,6 @@ final class MainViewController: NSViewController {
     // row-height cache
     private var rowHeightCacher = [Int: CGFloat]()
     private var minimumRowHeight: CGFloat = kDefaultMinimumRowHeight
-    private var lastShouldScrollToBottom = true
-    private var currentScrollAnimationCount = 0
     private var tableViewFontSize: CGFloat = CGFloat(kDefaultFontSize)
 
     private var commentHistory = [String]()
@@ -110,6 +109,21 @@ extension MainViewController {
     override func viewDidAppear() {
         // kickTableViewStressTest()
         // updateStandardUserDefaults()
+    }
+}
+
+// MARK: ScrollView related Functions
+extension MainViewController {
+    @objc func scrollViewContentViewDidChangeBounds(_ notification: Notification) {
+        updateScrollToBottomButtonVisibility()
+    }
+
+    @IBAction func scrollToBottomButtonPressed(_ sender: Any) {
+        scrollTableViewToBottom()
+    }
+
+    private func updateScrollToBottomButtonVisibility() {
+        scrollToBottomButton.isHidden = isTableViewReachedToBottom()
     }
 }
 
@@ -494,7 +508,7 @@ extension MainViewController {
     private func rebuildFilteredMessages() {
         DispatchQueue.main.async {
             self.progressIndicator.startAnimation(self)
-            let shouldScroll = self.shouldTableViewScrollToBottom()
+            let shouldScroll = self.isTableViewReachedToBottom()
             MessageContainer.shared.rebuildFilteredMessages {
                 self.tableView.reloadData()
                 if shouldScroll {
@@ -529,11 +543,22 @@ private extension MainViewController {
 
         commentTextField.placeholderString = "⌘N (empty ⏎ to scroll to bottom)"
 
-        setupTableView()
+        configureScrollView()
+        configureTableView()
         registerNibs()
+        updateScrollToBottomButtonVisibility()
     }
 
-    func setupTableView() {
+    func configureScrollView() {
+        scrollView.contentView.postsBoundsChangedNotifications = true
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(scrollViewContentViewDidChangeBounds),
+            name: NSView.boundsDidChangeNotification,
+            object: self.scrollView.contentView)
+    }
+
+    func configureTableView() {
         tableView.doubleAction = #selector(MainViewController.openUserWindow(_:))
     }
 
@@ -599,7 +624,7 @@ private extension MainViewController {
 private extension MainViewController {
     func appendTableView(_ chatOrSystemMessage: Any) {
         DispatchQueue.main.async {
-            let shouldScroll = self.shouldTableViewScrollToBottom()
+            let shouldScroll = self.isTableViewReachedToBottom()
             let (appended, count) = MessageContainer.shared.append(chatOrSystemMessage: chatOrSystemMessage)
             guard appended else { return }
             let rowIndex = count - 1
@@ -626,54 +651,29 @@ private extension MainViewController {
         log.debug("[ \(content ?? "-") ]")
     }
 
-    func shouldTableViewScrollToBottom() -> Bool {
-        if 0 < currentScrollAnimationCount {
-            return lastShouldScrollToBottom
-        }
-
+    func isTableViewReachedToBottom() -> Bool {
         let viewRect = scrollView.contentView.documentRect
         let visibleRect = scrollView.contentView.documentVisibleRect
         // log.debug("\(viewRect)-\(visibleRect)")
 
         let bottomY = viewRect.size.height
         let offsetBottomY = visibleRect.origin.y + visibleRect.size.height
-        let allowance: CGFloat = 10
+        let allowance: CGFloat = 16
 
         let shouldScroll = (bottomY <= (offsetBottomY + allowance))
-        lastShouldScrollToBottom = shouldScroll
-
         return shouldScroll
     }
 
-    func scrollTableViewToBottom(animated: Bool = false) {
+    func scrollTableViewToBottom() {
         let clipView = scrollView.contentView
         let x = clipView.documentVisibleRect.origin.x
         let y = clipView.documentRect.size.height - clipView.documentVisibleRect.size.height
         let origin = NSPoint(x: x, y: y)
 
-        if !animated {
-            // note: do not use scrollRowToVisible here.
-            // scroll will be sometimes stopped when very long comment arrives.
-            // tableView.scrollRowToVisible(tableView.numberOfRows - 1)
-            clipView.setBoundsOrigin(origin)
-        } else {
-            // http://stackoverflow.com/questions/19399242/soft-scroll-animation-nsscrollview-scrolltopoint
-            currentScrollAnimationCount += 1
-            // log.debug("start scroll animation:\(currentScrollAnimationCount)")
-
-            NSAnimationContext.beginGrouping()
-            NSAnimationContext.current.duration = 0.5
-
-            NSAnimationContext.current.completionHandler = { () -> Void in
-                self.currentScrollAnimationCount -= 1
-                // log.debug("  end scroll animation:\(self.currentScrollAnimationCount)")
-            }
-
-            clipView.animator().setBoundsOrigin(origin)
-            // scrollView.reflectScrolledClipView(clipView)
-
-            NSAnimationContext.endGrouping()
-        }
+        // note: do not use scrollRowToVisible here.
+        // scroll will be sometimes stopped when very long comment arrives.
+        // tableView.scrollRowToVisible(tableView.numberOfRows - 1)
+        clipView.setBoundsOrigin(origin)
     }
 }
 
