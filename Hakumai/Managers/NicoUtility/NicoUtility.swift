@@ -802,10 +802,10 @@ private extension EmbeddedDataProperties {
     }
 
     func toUser() -> User {
-        let user = User()
-        user.userId = Int(self.user.id)
-        user.nickname = self.user.nickname
-        return user
+        return User(
+            userId: Int(user.id) ?? 0,
+            nickname: user.nickname
+        )
     }
 }
 

@@ -334,7 +334,7 @@ extension MainViewController: NicoUtilityDelegate {
 
         switch connectContext {
         case .normal:
-            logSystemMessageToTableView("Prepared live as user \(user.nickname ?? "").")
+            logSystemMessageToTableView("Prepared live as user \(user.nickname).")
         case .reconnect:
             break
         }
