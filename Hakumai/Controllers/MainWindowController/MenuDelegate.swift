@@ -95,10 +95,10 @@ extension MenuDelegate {
               let live = NicoUtility.shared.live else { return }
 
         let comment = chat.comment
-        let liveName = live.title ?? ""
-        let communityName = live.community.title ?? ""
+        let liveName = live.title
+        let communityName = live.community?.title ?? ""
         let liveUrl = live.liveUrlString
-        let communityId = live.community.community ?? ""
+        let communityId = live.community?.communityId ?? ""
 
         let status = "「\(comment)」/ \(liveName) (\(communityName)) \(liveUrl) #\(communityId)"
 

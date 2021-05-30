@@ -8,26 +8,33 @@
 
 import Foundation
 
-private let kLiveBaseUrl = "http://live.nicovideo.jp/watch/"
+private let liveBaseUrl = "http://live.nicovideo.jp/watch/"
 
 final class Live: CustomStringConvertible {
     // "lv" prefix is included in live id like "lv12345"
-    var liveId: String?
-    var title: String?
-    var community: Community = Community()
-    var baseTime: Date?
-    var openTime: Date?
-    var startTime: Date?
+    let liveId: String
+    let title: String
+    let community: Community?
+    let baseTime: Date
+    let openTime: Date
+    let startTime: Date
 
-    var liveUrlString: String { return kLiveBaseUrl + (liveId ?? "") }
+    var liveUrlString: String { liveBaseUrl + liveId }
 
     var description: String {
         return (
-            "Live: liveId[\(liveId ?? "")] title[\(title ?? "")] community[\(community)] " +
-                "baseTime[\(baseTime?.description ?? "")] openTime[\(openTime?.description ?? "")] startTime[\(startTime?.description ?? "")]"
+            "Live: liveId[\(liveId)] title[\(title)] community[\(community?.description ?? "-")] " +
+                "baseTime[\(baseTime.description)] openTime[\(openTime.description)] startTime[\(startTime.description)]"
         )
     }
 
     // MARK: - Object Lifecycle
-    init() {}
+    init(liveId: String, title: String, community: Community?, baseTime: Date, openTime: Date, startTime: Date) {
+        self.liveId = liveId
+        self.title = title
+        self.community = community
+        self.baseTime = baseTime
+        self.openTime = openTime
+        self.startTime = startTime
+    }
 }

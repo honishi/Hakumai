@@ -8,27 +8,15 @@
 
 import Foundation
 
-private let kRoomLabelForArena = "c[oh]\\d+"
-private let kRoomLabelForArenaOffical = "アリーナ"
-
 final class User: CustomStringConvertible {
-    var userId: Int?
-    var nickname: String?
-    var isPremium: Int?
-    var roomLabel: String?
-    var seatNo: Int?
+    let userId: Int
+    let nickname: String
 
-    var isArena: Bool? {
-        return roomLabel?.hasRegexp(pattern: kRoomLabelForArena) == true ? true : roomLabel?.hasRegexp(pattern: kRoomLabelForArenaOffical)
-    }
-
-    var description: String {
-        return (
-            "User: userId[\(userId ?? 0)] nickname[\(nickname ?? "")] isPremium[\(isPremium ?? 0)] " +
-                "roomLabel[\(roomLabel ?? "")] seatNo[\(seatNo ?? 0)] isArena[\(isArena ?? false)]"
-        )
-    }
+    var description: String { "User: userId[\(userId)] nickname[\(nickname)]" }
 
     // MARK: - Object Lifecycle
-    init() {}
+    init(userId: Int, nickname: String) {
+        self.userId = userId
+        self.nickname = nickname
+    }
 }

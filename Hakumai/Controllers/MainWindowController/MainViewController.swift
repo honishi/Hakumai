@@ -44,9 +44,8 @@ final class MainViewController: NSViewController {
     @IBOutlet private weak var commentsLabel: NSTextField!
     @IBOutlet private weak var speakButton: NSButton!
 
-    @IBOutlet private weak var scrollView: NSScrollView!
+    @IBOutlet private weak var scrollView: BottomButtonScrollView!
     @IBOutlet private(set) weak var tableView: NSTableView!
-    @IBOutlet private weak var scrollToBottomButton: NSButton!
 
     @IBOutlet private weak var commentTextField: NSTextField!
     @IBOutlet private weak var commentAnonymouslyButton: NSButton!
@@ -109,21 +108,6 @@ extension MainViewController {
     override func viewDidAppear() {
         // kickTableViewStressTest()
         // updateStandardUserDefaults()
-    }
-}
-
-// MARK: ScrollView related Functions
-extension MainViewController {
-    @objc func scrollViewContentViewDidChangeBounds(_ notification: Notification) {
-        updateScrollToBottomButtonVisibility()
-    }
-
-    @IBAction func scrollToBottomButtonPressed(_ sender: Any) {
-        scrollView.scrollToBottom()
-    }
-
-    private func updateScrollToBottomButtonVisibility() {
-        scrollToBottomButton.isHidden = scrollView.isReachedToBottom
     }
 }
 
@@ -340,7 +324,7 @@ extension MainViewController: NicoUtilityDelegate {
 
         switch connectContext {
         case .normal:
-            logSystemMessageToTableView("Prepared live as user \(user.nickname ?? "").")
+            logSystemMessageToTableView("Prepared live as user \(user.nickname).")
         case .reconnect:
             break
         }
@@ -543,19 +527,9 @@ private extension MainViewController {
 
         commentTextField.placeholderString = "⌘N (empty ⏎ to scroll to bottom)"
 
-        configureScrollView()
+        scrollView.enableBottomScrollButton()
         configureTableView()
         registerNibs()
-        updateScrollToBottomButtonVisibility()
-    }
-
-    func configureScrollView() {
-        scrollView.contentView.postsBoundsChangedNotifications = true
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(scrollViewContentViewDidChangeBounds),
-            name: NSView.boundsDidChangeNotification,
-            object: self.scrollView.contentView)
     }
 
     func configureTableView() {
@@ -604,16 +578,16 @@ private extension MainViewController {
     }
 
     func _updateCommunityViews(for live: Live) {
-        if let url = live.community.thumbnailUrl {
+        if let url = live.community?.thumbnailUrl {
             communityImageView.kf.setImage(
                 with: url,
                 placeholder: Asset.defaultCommunityImage.image
             )
         }
-        liveTitleLabel.stringValue = live.title ?? ""
-        communityIdLabel.stringValue = live.community.community ?? "-"
-        var communityTitle = live.community.title ?? "-"
-        if let level = live.community.level {
+        liveTitleLabel.stringValue = live.title
+        communityIdLabel.stringValue = live.community?.communityId ?? "-"
+        var communityTitle = live.community?.title ?? "-"
+        if let level = live.community?.level {
             communityTitle += " (Lv.\(level))"
         }
         communityTitleLabel.stringValue = communityTitle

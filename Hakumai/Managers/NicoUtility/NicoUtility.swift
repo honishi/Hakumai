@@ -788,26 +788,26 @@ private extension NicoUtility {
 // MARK: - Private Extensions
 private extension EmbeddedDataProperties {
     func toLive() -> Live {
-        let live = Live()
-        live.liveId = program.nicoliveProgramId
-        live.title = program.title
-        live.baseTime = program.vposBaseTime.toDateAsTimeIntervalSince1970()
-        live.openTime = program.openTime.toDateAsTimeIntervalSince1970()
-        live.startTime = program.beginTime.toDateAsTimeIntervalSince1970()
-        let community = Community()
-        community.community = socialGroup.id
-        community.title = socialGroup.name
-        community.level = socialGroup.level
-        community.thumbnailUrl = URL(string: socialGroup.thumbnailImageUrl)
-        live.community = community
-        return live
+        return Live(
+            liveId: program.nicoliveProgramId,
+            title: program.title,
+            community: Community(
+                communityId: socialGroup.id,
+                title: socialGroup.name,
+                level: socialGroup.level ?? 0,
+                thumbnailUrl: URL(string: socialGroup.thumbnailImageUrl)
+            ),
+            baseTime: program.vposBaseTime.toDateAsTimeIntervalSince1970(),
+            openTime: program.openTime.toDateAsTimeIntervalSince1970(),
+            startTime: program.beginTime.toDateAsTimeIntervalSince1970()
+        )
     }
 
     func toUser() -> User {
-        let user = User()
-        user.userId = Int(self.user.id)
-        user.nickname = self.user.nickname
-        return user
+        return User(
+            userId: Int(user.id) ?? 0,
+            nickname: user.nickname
+        )
     }
 }
 

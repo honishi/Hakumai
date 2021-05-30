@@ -20,7 +20,7 @@ final class UserViewController: NSViewController {
     @IBOutlet private weak var userNameValueLabel: NSTextField!
     @IBOutlet private weak var handleNameValueLabel: NSTextField!
     @IBOutlet private weak var tableView: NSTableView!
-    @IBOutlet private weak var scrollView: NSScrollView!
+    @IBOutlet private weak var scrollView: BottomButtonScrollView!
 
     // MARK: Basics
     private var userId: String = ""
@@ -145,12 +145,18 @@ extension UserViewController {
 
     func reloadMessages() {
         messages = MessageContainer.shared.messages(fromUserId: userId)
-        let shouldScroll = shouldTableViewScrollToBottom()
+        let shouldScroll = scrollView.isReachedToBottom
         tableView.reloadData()
         if shouldScroll {
-            scrollTableViewToBottom()
+            scrollView.scrollToBottom()
         }
         scrollView.flashScrollers()
+        // Use main queue here. This ensures the `updateBottomButtonVisibility()` call is
+        // executed after the completion of `tableView.reloadData()` for sure.
+        // (`updateBottomButtonVisibility()` needs to be called after `tableView.reloadData()` call.)
+        DispatchQueue.main.async {
+            self.scrollView.updateBottomButtonVisibility()
+        }
     }
 
     @IBAction func userIdButtonPressed(_ sender: Any) {
@@ -163,6 +169,7 @@ extension UserViewController {
 private extension UserViewController {
     func configureView() {
         userIconImageView.addBorder()
+        scrollView.enableBottomScrollButton()
     }
 
     func configure(view: NSTableCellView, forChat message: Message, withTableColumn tableColumn: NSTableColumn) {
@@ -214,29 +221,6 @@ private extension UserViewController {
         }
 
         return (content, attributes)
-    }
-
-    func shouldTableViewScrollToBottom() -> Bool {
-        let viewRect = scrollView.contentView.documentRect
-        let visibleRect = scrollView.contentView.documentVisibleRect
-        // log.debug("\(viewRect)-\(visibleRect)")
-
-        let bottomY = viewRect.size.height
-        let offsetBottomY = visibleRect.origin.y + visibleRect.size.height
-        let allowance: CGFloat = 10
-
-        let shouldScroll = (bottomY <= (offsetBottomY + allowance))
-
-        return shouldScroll
-    }
-
-    func scrollTableViewToBottom() {
-        let clipView = scrollView.contentView
-        let x = clipView.documentVisibleRect.origin.x
-        let y = clipView.documentRect.size.height - clipView.documentVisibleRect.size.height
-        let origin = NSPoint(x: x, y: y)
-
-        clipView.setBoundsOrigin(origin)
     }
 }
 

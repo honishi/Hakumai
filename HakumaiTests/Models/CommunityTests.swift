@@ -20,12 +20,20 @@ final class CommunityTests: XCTestCase {
     }
 
     func testIsChannel() {
-        let community: Community = Community()
+        let channelCommunity = Community(
+            communityId: "ch12345",
+            title: "channel",
+            level: 0,
+            thumbnailUrl: nil
+        )
+        XCTAssert(channelCommunity.isChannel == true, "")
 
-        community.community = "ch12345"
-        XCTAssert(community.isChannel == true, "")
-
-        community.community = "co12345"
-        XCTAssert(community.isChannel == false, "")
+        let userCommunity = Community(
+            communityId: "co12345",
+            title: "user",
+            level: 0,
+            thumbnailUrl: nil
+        )
+        XCTAssert(userCommunity.isChannel == false, "")
     }
 }
