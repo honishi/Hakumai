@@ -30,7 +30,7 @@ final class MainViewController: NSViewController {
 
     // MARK: Main Outlets
     @IBOutlet private weak var liveTextField: NSTextField!
-    @IBOutlet private weak var reconnectButton: NSButton!
+    @IBOutlet private weak var debugReconnectButton: NSButton!
     @IBOutlet private weak var connectButton: NSButton!
 
     @IBOutlet private weak var communityImageView: NSImageView!
@@ -510,7 +510,7 @@ extension MainViewController {
 private extension MainViewController {
     func configureViews() {
         communityImageView.addBorder()
-        reconnectButton.isHidden = !enableDebugReconnectButton
+        debugReconnectButton.isHidden = !enableDebugReconnectButton
 
         if #available(macOS 10.14, *) {
             speakButton.isHidden = false

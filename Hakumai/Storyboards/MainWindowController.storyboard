@@ -841,12 +841,12 @@
                         <outlet property="communityImageView" destination="NQm-lE-rVr" id="Vlq-76-e8s"/>
                         <outlet property="communityTitleLabel" destination="mqT-iT-cC6" id="JMh-Lc-OmS"/>
                         <outlet property="connectButton" destination="hii-Mo-bho" id="UHG-jK-W7S"/>
+                        <outlet property="debugReconnectButton" destination="IZs-cK-l0Y" id="neM-ub-baA"/>
                         <outlet property="elapsedLabel" destination="p3A-6s-IKD" id="6T8-le-0s2"/>
                         <outlet property="liveTextField" destination="gZN-es-bFO" id="vZe-3V-txV"/>
                         <outlet property="liveTitleLabel" destination="65a-aX-RIL" id="uvT-R4-GZO"/>
                         <outlet property="menuDelegate" destination="Riw-FG-ugq" id="l3S-iG-Ve5"/>
                         <outlet property="progressIndicator" destination="A3m-ux-Ivm" id="bCp-rD-QNX"/>
-                        <outlet property="reconnectButton" destination="IZs-cK-l0Y" id="neM-ub-baA"/>
                         <outlet property="scrollView" destination="3lG-BL-Thc" id="fKo-Wb-zpM"/>
                         <outlet property="speakButton" destination="QmJ-8z-tPW" id="eZq-p3-ll6"/>
                         <outlet property="tableView" destination="21S-OF-mg3" id="Wty-uQ-xrm"/>
