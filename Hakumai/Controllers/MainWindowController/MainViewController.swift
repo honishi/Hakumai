@@ -42,9 +42,8 @@ final class MainViewController: NSViewController {
     @IBOutlet private weak var commentsLabel: NSTextField!
     @IBOutlet private weak var speakButton: NSButton!
 
-    @IBOutlet private weak var scrollView: NSScrollView!
+    @IBOutlet private weak var scrollView: BottomButtonScrollView!
     @IBOutlet private(set) weak var tableView: NSTableView!
-    @IBOutlet private weak var scrollToBottomButton: NSButton!
 
     @IBOutlet private weak var commentTextField: NSTextField!
     @IBOutlet private weak var commentAnonymouslyButton: NSButton!
@@ -103,21 +102,6 @@ extension MainViewController {
     override func viewDidAppear() {
         // kickTableViewStressTest()
         // updateStandardUserDefaults()
-    }
-}
-
-// MARK: ScrollView related Functions
-extension MainViewController {
-    @objc func scrollViewContentViewDidChangeBounds(_ notification: Notification) {
-        updateScrollToBottomButtonVisibility()
-    }
-
-    @IBAction func scrollToBottomButtonPressed(_ sender: Any) {
-        scrollView.scrollToBottom()
-    }
-
-    private func updateScrollToBottomButtonVisibility() {
-        scrollToBottomButton.isHidden = scrollView.isReachedToBottom
     }
 }
 
@@ -536,19 +520,9 @@ private extension MainViewController {
 
         commentTextField.placeholderString = "⌘N (empty ⏎ to scroll to bottom)"
 
-        configureScrollView()
+        scrollView.enableBottomScrollButton()
         configureTableView()
         registerNibs()
-        updateScrollToBottomButtonVisibility()
-    }
-
-    func configureScrollView() {
-        scrollView.contentView.postsBoundsChangedNotifications = true
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(scrollViewContentViewDidChangeBounds),
-            name: NSView.boundsDidChangeNotification,
-            object: self.scrollView.contentView)
     }
 
     func configureTableView() {

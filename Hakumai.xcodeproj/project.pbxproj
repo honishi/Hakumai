@@ -30,6 +30,7 @@
 		DB55AC641A33905200CFAD99 /* PremiumTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB55AC631A33905200CFAD99 /* PremiumTableCellView.xib */; };
 		DB55AC681A33908300CFAD99 /* PremiumTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB55AC671A33908300CFAD99 /* PremiumTableCellView.swift */; };
 		DB682D421A36E6AE00499C72 /* Parameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB682D411A36E6AE00499C72 /* Parameter.swift */; };
+		DB690973266372230081F24F /* BottomButtonScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB690972266372230081F24F /* BottomButtonScrollView.swift */; };
 		DB6C73142662894B0026A8C0 /* NSScrollView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6C73132662894B0026A8C0 /* NSScrollView+Extensions.swift */; };
 		DB6DD2AA2650EC86009A9574 /* NicoWebSocketModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6DD2A92650EC86009A9574 /* NicoWebSocketModel.swift */; };
 		DB6DD2AC2650ECD7009A9574 /* NicoWebModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6DD2AB2650ECD7009A9574 /* NicoWebModel.swift */; };
@@ -143,6 +144,7 @@
 		DB55AC631A33905200CFAD99 /* PremiumTableCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PremiumTableCellView.xib; sourceTree = "<group>"; };
 		DB55AC671A33908300CFAD99 /* PremiumTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PremiumTableCellView.swift; sourceTree = "<group>"; };
 		DB682D411A36E6AE00499C72 /* Parameter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Parameter.swift; sourceTree = "<group>"; };
+		DB690972266372230081F24F /* BottomButtonScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomButtonScrollView.swift; sourceTree = "<group>"; };
 		DB6C73132662894B0026A8C0 /* NSScrollView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSScrollView+Extensions.swift"; sourceTree = "<group>"; };
 		DB6DD2A92650EC86009A9574 /* NicoWebSocketModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoWebSocketModel.swift; sourceTree = "<group>"; };
 		DB6DD2AB2650ECD7009A9574 /* NicoWebModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoWebModel.swift; sourceTree = "<group>"; };
@@ -344,6 +346,14 @@
 			path = UserWindowController;
 			sourceTree = "<group>";
 		};
+		DB690971266372080081F24F /* CustomView */ = {
+			isa = PBXGroup;
+			children = (
+				DB690972266372230081F24F /* BottomButtonScrollView.swift */,
+			);
+			path = CustomView;
+			sourceTree = "<group>";
+		};
 		DB6DD2A62650E958009A9574 /* Managers */ = {
 			isa = PBXGroup;
 			children = (
@@ -513,6 +523,7 @@
 		DBE73ECC1A1A1B9600A8BCA9 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				DB690971266372080081F24F /* CustomView */,
 				DBD65C191A2E0C3200B84C97 /* MainWindowController */,
 				DBFB814D1A36B4F300294934 /* PreferenceWindowController */,
 				DB414C031A48106B008D2F40 /* UserWindowController */,
@@ -703,6 +714,7 @@
 				"${BUILT_PRODUCTS_DIR}/ObjcExceptionBridging/ObjcExceptionBridging.framework",
 				"${BUILT_PRODUCTS_DIR}/Ono/Ono.framework",
 				"${BUILT_PRODUCTS_DIR}/SAMKeychain/SAMKeychain.framework",
+				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
 				"${PODS_ROOT}/Sparkle/Sparkle.framework",
 				"${BUILT_PRODUCTS_DIR}/Starscream/Starscream.framework",
 				"${BUILT_PRODUCTS_DIR}/XCGLogger/XCGLogger.framework",
@@ -715,6 +727,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjcExceptionBridging.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Ono.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SAMKeychain.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Sparkle.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Starscream.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/XCGLogger.framework",
@@ -836,6 +849,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DB2AE0C41A0EE2FD00B1CE4D /* AppDelegate.swift in Sources */,
+				DB690973266372230081F24F /* BottomButtonScrollView.swift in Sources */,
 				DB74B86C1A6E790C0064AC28 /* BrowserHelper.swift in Sources */,
 				DBB473001A358FFC002C797E /* Character+Extensions.swift in Sources */,
 				DBFA887B1A1BC25A005349AD /* Chat.swift in Sources */,

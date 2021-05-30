@@ -9,6 +9,7 @@ PODS:
   - ObjcExceptionBridging/ObjcExceptionBridging (1.0.1)
   - Ono (2.1.2)
   - SAMKeychain (1.5.3)
+  - SnapKit (5.0.1)
   - Sparkle (1.26.0)
   - Starscream (4.0.4)
   - SwiftGen (6.4.0)
@@ -24,6 +25,7 @@ DEPENDENCIES:
   - Kingfisher (~> 6.3.0)
   - Ono (~> 2.1.2)
   - SAMKeychain (~> 1.5.3)
+  - SnapKit (~> 5.0.1)
   - Sparkle (~> 1.26.0)
   - Starscream (~> 4.0.4)
   - SwiftGen (~> 6.4.0)
@@ -38,6 +40,7 @@ SPEC REPOS:
     - ObjcExceptionBridging
     - Ono
     - SAMKeychain
+    - SnapKit
     - Sparkle
     - Starscream
     - SwiftGen
@@ -51,12 +54,13 @@ SPEC CHECKSUMS:
   ObjcExceptionBridging: c30e00eb3700467e695faeea30e26e18bd445001
   Ono: 26a7c1fc4df13ece7747560a1d80655807a8a000
   SAMKeychain: 483e1c9f32984d50ca961e26818a534283b4cd5c
+  SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
   Sparkle: d56d028f4b0c123577825f5d1004f6140d77f90e
   Starscream: 5178aed56b316f13fa3bc55694e583d35dd414d9
   SwiftGen: 67860cc7c3cfc2ed25b9b74cfd55495fc89f9108
   SwiftLint: 99f82d07b837b942dd563c668de129a03fc3fb52
   XCGLogger: 1943831ef907df55108b0b18657953f868de973b
 
-PODFILE CHECKSUM: 33ddfab663776f6121d6558837289d65bd30b1ca
+PODFILE CHECKSUM: 92e5c2b3f376965a0e6704f912b9c88d14ccd6ab
 
 COCOAPODS: 1.10.1
