@@ -24,7 +24,7 @@ extension BottomButtonScrollView {
         bottomButton.title = title
         bottomButton.target = self
         bottomButton.action = #selector(bottomScrollButtonPressed)
-        bottomButton.isHidden = true
+        updateBottomButtonVisibility()
 
         // Make sure we need to call `addSubview()` of `superview`, not of `self`.
         // Seems `self` and its descendants are not controlled by auto layout,
@@ -44,8 +44,12 @@ extension BottomButtonScrollView {
             object: nil)
     }
 
-    @objc func contentViewDidChangeBounds(_ notification: Notification) {
+    func updateBottomButtonVisibility() {
         bottomButton.isHidden = isReachedToBottom
+    }
+
+    @objc func contentViewDidChangeBounds(_ notification: Notification) {
+        updateBottomButtonVisibility()
     }
 
     @objc func bottomScrollButtonPressed(_ sender: Any) {

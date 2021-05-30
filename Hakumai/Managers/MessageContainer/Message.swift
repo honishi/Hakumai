@@ -55,3 +55,14 @@ final class Message {
         Static.messageNo = 0
     }
 }
+
+// Debug Functions
+extension Message {
+    static func makeDummyMessage() -> Message {
+        return Message(message: "dummy message.")
+    }
+
+    static func makeDummyMessages(count: Int) -> [Message] {
+        return (1...count).map { _ in makeDummyMessage() }
+    }
+}

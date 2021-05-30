@@ -145,12 +145,15 @@ extension UserViewController {
 
     func reloadMessages() {
         messages = MessageContainer.shared.messages(fromUserId: userId)
-        let shouldScroll = shouldTableViewScrollToBottom()
+        let shouldScroll = scrollView.isReachedToBottom
         tableView.reloadData()
         if shouldScroll {
-            scrollTableViewToBottom()
+            scrollView.scrollToBottom()
         }
         scrollView.flashScrollers()
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.1) {
+            self.scrollView.updateBottomButtonVisibility()
+        }
     }
 
     @IBAction func userIdButtonPressed(_ sender: Any) {
@@ -215,29 +218,6 @@ private extension UserViewController {
         }
 
         return (content, attributes)
-    }
-
-    func shouldTableViewScrollToBottom() -> Bool {
-        let viewRect = scrollView.contentView.documentRect
-        let visibleRect = scrollView.contentView.documentVisibleRect
-        // log.debug("\(viewRect)-\(visibleRect)")
-
-        let bottomY = viewRect.size.height
-        let offsetBottomY = visibleRect.origin.y + visibleRect.size.height
-        let allowance: CGFloat = 10
-
-        let shouldScroll = (bottomY <= (offsetBottomY + allowance))
-
-        return shouldScroll
-    }
-
-    func scrollTableViewToBottom() {
-        let clipView = scrollView.contentView
-        let x = clipView.documentVisibleRect.origin.x
-        let y = clipView.documentRect.size.height - clipView.documentVisibleRect.size.height
-        let origin = NSPoint(x: x, y: y)
-
-        clipView.setBoundsOrigin(origin)
     }
 }
 
