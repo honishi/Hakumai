@@ -24,6 +24,7 @@ extension BottomButtonScrollView {
         bottomButton.title = title
         bottomButton.target = self
         bottomButton.action = #selector(bottomScrollButtonPressed)
+        bottomButton.isHidden = true
 
         // Make sure we need to call `addSubview()` of `superview`, not of `self`.
         // Seems `self` and its descendants are not controlled by auto layout,

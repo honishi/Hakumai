@@ -20,7 +20,7 @@ final class UserViewController: NSViewController {
     @IBOutlet private weak var userNameValueLabel: NSTextField!
     @IBOutlet private weak var handleNameValueLabel: NSTextField!
     @IBOutlet private weak var tableView: NSTableView!
-    @IBOutlet private weak var scrollView: NSScrollView!
+    @IBOutlet private weak var scrollView: BottomButtonScrollView!
 
     // MARK: Basics
     private var userId: String = ""
@@ -163,6 +163,7 @@ extension UserViewController {
 private extension UserViewController {
     func configureView() {
         userIconImageView.addBorder()
+        scrollView.enableBottomScrollButton()
     }
 
     func configure(view: NSTableCellView, forChat message: Message, withTableColumn tableColumn: NSTableColumn) {
