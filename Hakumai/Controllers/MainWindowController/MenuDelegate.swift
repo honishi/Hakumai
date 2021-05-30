@@ -95,10 +95,10 @@ extension MenuDelegate {
               let live = NicoUtility.shared.live else { return }
 
         let comment = chat.comment
-        let liveName = live.title ?? ""
-        let communityName = live.community.title ?? ""
+        let liveName = live.title
+        let communityName = live.community?.title ?? ""
         let liveUrl = live.liveUrlString
-        let communityId = live.community.community ?? ""
+        let communityId = live.community?.communityId ?? ""
 
         let status = "「\(comment)」/ \(liveName) (\(communityName)) \(liveUrl) #\(communityId)"
 
@@ -147,9 +147,8 @@ extension MenuDelegate {
     }
 
     @IBAction func openUserPage(_ sender: AnyObject) {
-        guard let userId = MessageContainer.shared[tableView.clickedRow].chat?.userId else { return }
-        let userPageUrlString = NicoUtility.shared.urlString(forUserId: userId)
-        guard let url = URL(string: userPageUrlString) else { return }
+        guard let userId = MessageContainer.shared[tableView.clickedRow].chat?.userId,
+              let url = NicoUtility.shared.userPageUrl(for: userId) else { return }
         NSWorkspace.shared.open(url)
     }
 }

@@ -29,27 +29,27 @@ final class MainViewController: NSViewController {
     static var shared: MainViewController!
 
     // MARK: Main Outlets
-    @IBOutlet weak var liveTextField: NSTextField!
-    @IBOutlet weak var reconnectButton: NSButton!
-    @IBOutlet weak var connectButton: NSButton!
+    @IBOutlet private weak var liveTextField: NSTextField!
+    @IBOutlet private weak var reconnectButton: NSButton!
+    @IBOutlet private weak var connectButton: NSButton!
 
-    @IBOutlet weak var communityImageView: NSImageView!
-    @IBOutlet weak var liveTitleLabel: NSTextField!
-    @IBOutlet weak var communityTitleLabel: NSTextField!
-    @IBOutlet weak var communityIdLabel: NSTextField!
+    @IBOutlet private weak var communityImageView: NSImageView!
+    @IBOutlet private weak var liveTitleLabel: NSTextField!
+    @IBOutlet private weak var communityTitleLabel: NSTextField!
+    @IBOutlet private weak var communityIdLabel: NSTextField!
 
-    @IBOutlet weak var visitorsLabel: NSTextField!
-    @IBOutlet weak var commentsLabel: NSTextField!
-    @IBOutlet weak var speakButton: NSButton!
+    @IBOutlet private weak var visitorsLabel: NSTextField!
+    @IBOutlet private weak var commentsLabel: NSTextField!
+    @IBOutlet private weak var speakButton: NSButton!
 
-    @IBOutlet weak var scrollView: NSScrollView!
-    @IBOutlet weak var tableView: NSTableView!
+    @IBOutlet private weak var scrollView: BottomButtonScrollView!
+    @IBOutlet private(set) weak var tableView: NSTableView!
 
-    @IBOutlet weak var commentTextField: NSTextField!
-    @IBOutlet weak var commentAnonymouslyButton: NSButton!
-    @IBOutlet weak var elapsedLabel: NSTextField!
-    @IBOutlet weak var activeLabel: NSTextField!
-    @IBOutlet weak var progressIndicator: NSProgressIndicator!
+    @IBOutlet private weak var commentTextField: NSTextField!
+    @IBOutlet private weak var commentAnonymouslyButton: NSButton!
+    @IBOutlet private weak var elapsedLabel: NSTextField!
+    @IBOutlet private weak var activeLabel: NSTextField!
+    @IBOutlet private weak var progressIndicator: NSProgressIndicator!
 
     // MARK: Menu Delegate
     // swiftlint:disable weak_delegate
@@ -65,8 +65,6 @@ final class MainViewController: NSViewController {
     // row-height cache
     private var rowHeightCacher = [Int: CGFloat]()
     private var minimumRowHeight: CGFloat = kDefaultMinimumRowHeight
-    private var lastShouldScrollToBottom = true
-    private var currentScrollAnimationCount = 0
     private var tableViewFontSize: CGFloat = CGFloat(kDefaultFontSize)
 
     private var commentHistory = [String]()
@@ -320,7 +318,7 @@ extension MainViewController: NicoUtilityDelegate {
 
         switch connectContext {
         case .normal:
-            logSystemMessageToTableView("Prepared live as user \(user.nickname ?? "").")
+            logSystemMessageToTableView("Prepared live as user \(user.nickname).")
         case .reconnect:
             break
         }
@@ -488,11 +486,11 @@ extension MainViewController {
     private func rebuildFilteredMessages() {
         DispatchQueue.main.async {
             self.progressIndicator.startAnimation(self)
-            let shouldScroll = self.shouldTableViewScrollToBottom()
+            let shouldScroll = self.scrollView.isReachedToBottom
             MessageContainer.shared.rebuildFilteredMessages {
                 self.tableView.reloadData()
                 if shouldScroll {
-                    self.scrollTableViewToBottom()
+                    self.scrollView.scrollToBottom()
                 }
                 self.scrollView.flashScrollers()
                 self.progressIndicator.stopAnimation(self)
@@ -511,12 +509,7 @@ extension MainViewController {
 // MARK: Configure Views
 private extension MainViewController {
     func configureViews() {
-        // use async to properly render border line. if not async, the line sometimes disappears
-        DispatchQueue.main.async {
-            self.communityImageView.layer?.borderWidth = 0.5
-            self.communityImageView.layer?.masksToBounds = true
-            self.communityImageView.layer?.borderColor = NSColor.black.cgColor
-        }
+        communityImageView.addBorder()
         reconnectButton.isHidden = !enableDebugReconnectButton
 
         if #available(macOS 10.14, *) {
@@ -527,11 +520,12 @@ private extension MainViewController {
 
         commentTextField.placeholderString = "⌘N (empty ⏎ to scroll to bottom)"
 
-        setupTableView()
+        scrollView.enableBottomScrollButton()
+        configureTableView()
         registerNibs()
     }
 
-    func setupTableView() {
+    func configureTableView() {
         tableView.doubleAction = #selector(MainViewController.openUserWindow(_:))
     }
 
@@ -577,16 +571,16 @@ private extension MainViewController {
     }
 
     func _updateCommunityViews(for live: Live) {
-        if let url = live.community.thumbnailUrl {
+        if let url = live.community?.thumbnailUrl {
             communityImageView.kf.setImage(
                 with: url,
                 placeholder: Asset.defaultCommunityImage.image
             )
         }
-        liveTitleLabel.stringValue = live.title ?? ""
-        communityIdLabel.stringValue = live.community.community ?? "-"
-        var communityTitle = live.community.title ?? "-"
-        if let level = live.community.level {
+        liveTitleLabel.stringValue = live.title
+        communityIdLabel.stringValue = live.community?.communityId ?? "-"
+        var communityTitle = live.community?.title ?? "-"
+        if let level = live.community?.level {
             communityTitle += " (Lv.\(level))"
         }
         communityTitleLabel.stringValue = communityTitle
@@ -597,7 +591,7 @@ private extension MainViewController {
 private extension MainViewController {
     func appendTableView(_ chatOrSystemMessage: Any) {
         DispatchQueue.main.async {
-            let shouldScroll = self.shouldTableViewScrollToBottom()
+            let shouldScroll = self.scrollView.isReachedToBottom
             let (appended, count) = MessageContainer.shared.append(chatOrSystemMessage: chatOrSystemMessage)
             guard appended else { return }
             let rowIndex = count - 1
@@ -605,7 +599,7 @@ private extension MainViewController {
             self.tableView.insertRows(at: IndexSet(integer: rowIndex), withAnimation: NSTableView.AnimationOptions())
             // self.logChat(chatOrSystemMessage)
             if shouldScroll {
-                self.scrollTableViewToBottom()
+                self.scrollView.scrollToBottom()
             }
             if message.messageType == .chat, let chat = message.chat {
                 self.handleSpeech(chat: chat)
@@ -622,56 +616,6 @@ private extension MainViewController {
             content = message.chat?.comment
         }
         log.debug("[ \(content ?? "-") ]")
-    }
-
-    func shouldTableViewScrollToBottom() -> Bool {
-        if 0 < currentScrollAnimationCount {
-            return lastShouldScrollToBottom
-        }
-
-        let viewRect = scrollView.contentView.documentRect
-        let visibleRect = scrollView.contentView.documentVisibleRect
-        // log.debug("\(viewRect)-\(visibleRect)")
-
-        let bottomY = viewRect.size.height
-        let offsetBottomY = visibleRect.origin.y + visibleRect.size.height
-        let allowance: CGFloat = 10
-
-        let shouldScroll = (bottomY <= (offsetBottomY + allowance))
-        lastShouldScrollToBottom = shouldScroll
-
-        return shouldScroll
-    }
-
-    func scrollTableViewToBottom(animated: Bool = false) {
-        let clipView = scrollView.contentView
-        let x = clipView.documentVisibleRect.origin.x
-        let y = clipView.documentRect.size.height - clipView.documentVisibleRect.size.height
-        let origin = NSPoint(x: x, y: y)
-
-        if !animated {
-            // note: do not use scrollRowToVisible here.
-            // scroll will be sometimes stopped when very long comment arrives.
-            // tableView.scrollRowToVisible(tableView.numberOfRows - 1)
-            clipView.setBoundsOrigin(origin)
-        } else {
-            // http://stackoverflow.com/questions/19399242/soft-scroll-animation-nsscrollview-scrolltopoint
-            currentScrollAnimationCount += 1
-            // log.debug("start scroll animation:\(currentScrollAnimationCount)")
-
-            NSAnimationContext.beginGrouping()
-            NSAnimationContext.current.duration = 0.5
-
-            NSAnimationContext.current.completionHandler = { () -> Void in
-                self.currentScrollAnimationCount -= 1
-                // log.debug("  end scroll animation:\(self.currentScrollAnimationCount)")
-            }
-
-            clipView.animator().setBoundsOrigin(origin)
-            // scrollView.reflectScrolledClipView(clipView)
-
-            NSAnimationContext.endGrouping()
-        }
     }
 }
 
@@ -753,7 +697,7 @@ extension MainViewController {
         let comment = commentTextField.stringValue
 
         if comment.isEmpty {
-            scrollTableViewToBottom()
+            scrollView.scrollToBottom()
             scrollView.flashScrollers()
             return
         }
@@ -791,7 +735,13 @@ extension MainViewController {
 
         if userWindowController == nil {
             // not exist, so create and cache it
-            userWindowController = UserWindowController.make(delegate: self, userId: chat.userId)
+            var handleName: String?
+            if let live = live,
+               let _handleName = HandleNameManager.shared.handleName(forLive: live, chat: chat) {
+                handleName = _handleName
+            }
+            userWindowController = UserWindowController.make(
+                delegate: self, userId: chat.userId, handleName: handleName)
             if let uwc = userWindowController {
                 positionUserWindow(uwc.window)
                 log.debug("no existing userwc found, create it:\(uwc.description)")

@@ -45,18 +45,18 @@ extension HandleNameManager {
     }
 
     func updateHandleName(live: Live, chat: Chat, handleName: String) {
-        guard let communityId = live.community.community else { return }
+        guard let communityId = live.community?.communityId else { return }
         let anonymous = !chat.isRawUserId
         insertOrReplaceHandleName(communityId: communityId, userId: chat.userId, anonymous: anonymous, handleName: handleName)
     }
 
     func removeHandleName(live: Live, chat: Chat) {
-        guard let communityId = live.community.community else { return }
+        guard let communityId = live.community?.communityId else { return }
         deleteHandleName(communityId: communityId, userId: chat.userId)
     }
 
     func handleName(forLive live: Live, chat: Chat) -> String? {
-        guard let communityId = live.community.community else { return nil }
+        guard let communityId = live.community?.communityId else { return nil }
         return selectHandleName(communityId: communityId, userId: chat.userId)
     }
 
