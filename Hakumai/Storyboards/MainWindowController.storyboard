@@ -843,6 +843,7 @@
                         <outlet property="connectButton" destination="hii-Mo-bho" id="UHG-jK-W7S"/>
                         <outlet property="debugReconnectButton" destination="IZs-cK-l0Y" id="neM-ub-baA"/>
                         <outlet property="elapsedLabel" destination="p3A-6s-IKD" id="6T8-le-0s2"/>
+                        <outlet property="grabUrlButton" destination="GRS-m4-7KE" id="WFa-bJ-le5"/>
                         <outlet property="liveTextField" destination="gZN-es-bFO" id="vZe-3V-txV"/>
                         <outlet property="liveTitleLabel" destination="65a-aX-RIL" id="uvT-R4-GZO"/>
                         <outlet property="menuDelegate" destination="Riw-FG-ugq" id="l3S-iG-Ve5"/>

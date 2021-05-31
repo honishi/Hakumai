@@ -29,6 +29,7 @@ final class MainViewController: NSViewController {
     static var shared: MainViewController!
 
     // MARK: Main Outlets
+    @IBOutlet private weak var grabUrlButton: NSButton!
     @IBOutlet private weak var liveTextField: NSTextField!
     @IBOutlet private weak var debugReconnectButton: NSButton!
     @IBOutlet private weak var connectButton: NSButton!
@@ -548,20 +549,18 @@ private extension MainViewController {
     }
 
     func _updateMainControlViews(status connectionStatus: ConnectionStatus) {
+        let controls: [NSControl] = [grabUrlButton, connectButton, liveTextField]
         switch connectionStatus {
         case .disconnected:
-            connectButton.isEnabled = true
+            controls.forEach { $0.isEnabled = true }
             connectButton.image = Asset.startLive.image
-            liveTextField.isEnabled = true
             progressIndicator.stopAnimation(self)
         case .connecting:
-            connectButton.isEnabled = false
-            liveTextField.isEnabled = false
+            controls.forEach { $0.isEnabled = false }
             progressIndicator.startAnimation(self)
         case .connected:
-            connectButton.isEnabled = true
+            controls.forEach { $0.isEnabled = true }
             connectButton.image = Asset.stopLive.image
-            liveTextField.isEnabled = true
             progressIndicator.stopAnimation(self)
         }
     }
