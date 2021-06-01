@@ -1,0 +1,9 @@
+/* 
+  Localizable.strings
+  Hakumai
+
+  Created by Hiroyuki Onishi on 2021/06/02.
+  Copyright © 2021 Hiroyuki Onishi. All rights reserved.
+*/
+
+"hello" = "Hello";

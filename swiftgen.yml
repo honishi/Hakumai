@@ -12,3 +12,9 @@ xcassets:
   outputs:
     templateName: swift4
     output: Images.swift
+strings:
+  inputs:
+    - Resources/Localization/en.lproj/Localizable.strings
+  outputs:
+    templateName: structured-swift5
+    output: Localize.swift

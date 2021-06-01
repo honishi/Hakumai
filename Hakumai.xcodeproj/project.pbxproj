@@ -19,6 +19,8 @@
 		DB2AE0C61A0EE2FD00B1CE4D /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0C51A0EE2FD00B1CE4D /* MainViewController.swift */; };
 		DB2AE0C81A0EE2FD00B1CE4D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB2AE0C71A0EE2FD00B1CE4D /* Images.xcassets */; };
 		DB2AE0D71A0EE2FD00B1CE4D /* HakumaiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0D61A0EE2FD00B1CE4D /* HakumaiTests.swift */; };
+		DB2F516126669675000A1C58 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DB2F516326669675000A1C58 /* Localizable.strings */; };
+		DB2F516726669B3E000A1C58 /* Localize.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2F516626669B3E000A1C58 /* Localize.swift */; };
 		DB346B9A1A54648100137639 /* community_channel.html in Resources */ = {isa = PBXBuildFile; fileRef = DB346B991A54648100137639 /* community_channel.html */; };
 		DB346B9C1A548C3B00137639 /* CommunityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB346B9B1A548C3B00137639 /* CommunityTests.swift */; };
 		DB414C071A4810A5008D2F40 /* UserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB414C061A4810A5008D2F40 /* UserViewController.swift */; };
@@ -132,6 +134,9 @@
 		DB2AE0D61A0EE2FD00B1CE4D /* HakumaiTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HakumaiTests.swift; path = HakumaiTests/HakumaiTests.swift; sourceTree = "<group>"; };
 		DB2AE1031A0F2BAA00B1CE4D /* Hakumai-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Hakumai-Bridging-Header.h"; sourceTree = "<group>"; };
 		DB2AE1041A0F2BAA00B1CE4D /* HakumaiTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "HakumaiTests-Bridging-Header.h"; path = "HakumaiTests/HakumaiTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		DB2F516226669675000A1C58 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		DB2F5164266696FD000A1C58 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
+		DB2F516626669B3E000A1C58 /* Localize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Localize.swift; sourceTree = "<group>"; };
 		DB346B991A54648100137639 /* community_channel.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = community_channel.html; sourceTree = "<group>"; };
 		DB346B9B1A548C3B00137639 /* CommunityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommunityTests.swift; sourceTree = "<group>"; };
 		DB3AF8F22645A92500A52987 /* Hakumai.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Hakumai.entitlements; sourceTree = "<group>"; };
@@ -336,6 +341,14 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		DB2F51652666998F000A1C58 /* Localization */ = {
+			isa = PBXGroup;
+			children = (
+				DB2F516326669675000A1C58 /* Localizable.strings */,
+			);
+			path = Localization;
+			sourceTree = "<group>";
+		};
 		DB414C031A48106B008D2F40 /* UserWindowController */ = {
 			isa = PBXGroup;
 			children = (
@@ -475,6 +488,7 @@
 		DBAC3D3621C5649300B09673 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				DB2F51652666998F000A1C58 /* Localization */,
 				DB2AE0C71A0EE2FD00B1CE4D /* Images.xcassets */,
 			);
 			path = Resources;
@@ -484,6 +498,7 @@
 			isa = PBXGroup;
 			children = (
 				DBAC3D3821C568B500B09673 /* Images.swift */,
+				DB2F516626669B3E000A1C58 /* Localize.swift */,
 				DBAC3D3A21C569A900B09673 /* StoryBoards.swift */,
 			);
 			path = Generated;
@@ -657,6 +672,7 @@
 			knownRegions = (
 				en,
 				Base,
+				ja,
 			);
 			mainGroup = DB2AE0B51A0EE2FD00B1CE4D;
 			productRefGroup = DB2AE0BF1A0EE2FD00B1CE4D /* Products */;
@@ -676,6 +692,7 @@
 			files = (
 				DB5164FE264E664500F809B3 /* CommentTableCellView.xib in Resources */,
 				DB2AE0C81A0EE2FD00B1CE4D /* Images.xcassets in Resources */,
+				DB2F516126669675000A1C58 /* Localizable.strings in Resources */,
 				DBAC3D3321C55E4C00B09673 /* MainWindowController.storyboard in Resources */,
 				DBA541EA1A4838F4005FF218 /* PreferenceWindowController.storyboard in Resources */,
 				DB55AC641A33905200CFAD99 /* PremiumTableCellView.xib in Resources */,
@@ -867,6 +884,7 @@
 				DBAB69621A5C1A70002FCD95 /* KeychainUtility.swift in Sources */,
 				DBFA888B1A1C9A56005349AD /* Live.swift in Sources */,
 				DBB4730B1A35951C002C797E /* LiveStatistics.swift in Sources */,
+				DB2F516726669B3E000A1C58 /* Localize.swift in Sources */,
 				DBB952161A8655AB0059850A /* LoggerHelper.swift in Sources */,
 				DBAB695C1A5B70A5002FCD95 /* LoginCookie.swift in Sources */,
 				DB2AE0C61A0EE2FD00B1CE4D /* MainViewController.swift in Sources */,
@@ -929,6 +947,18 @@
 			targetProxy = DB2AE0D11A0EE2FD00B1CE4D /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		DB2F516326669675000A1C58 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DB2F516226669675000A1C58 /* en */,
+				DB2F5164266696FD000A1C58 /* ja */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		DB2AE0D81A0EE2FD00B1CE4D /* Debug */ = {

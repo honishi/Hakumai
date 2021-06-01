@@ -20,6 +20,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         initializeUserDefaults()
         addObserverForUserDefaults()
         configureMenuItems()
+        log.debug(L10n.hello)
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
