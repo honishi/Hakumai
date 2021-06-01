@@ -652,10 +652,9 @@
 			};
 			buildConfigurationList = DB2AE0B91A0EE2FD00B1CE4D /* Build configuration list for PBXProject "Hakumai" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
 				Base,
 			);
