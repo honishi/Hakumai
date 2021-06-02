@@ -10,15 +10,18 @@ import Foundation
 import AppKit
 import Kingfisher
 
-private let kUserWindowDefautlTopLeftPoint = NSPoint(x: 100, y: 100)
-private let kCalculateActiveInterval: TimeInterval = 5
-private let kMaximumFontSizeForNonMainColumn: CGFloat = 16
-private let kDefaultMinimumRowHeight: CGFloat = 17
+private let userWindowDefautlTopLeftPoint = NSPoint(x: 100, y: 100)
+private let calculateActiveUserInterval: TimeInterval = 5
+private let maximumFontSizeForNonMainColumn: CGFloat = 16
+private let defaultMinimumRowHeight: CGFloat = 17
 
 private let enableDebugReconnectButton = false
 
 private let safariCookieAlertTitle = "No Safari Cookie found"
 private let safariCookieAlertDescription = "To retrieve the cookie from Safari, please open the Security & Privacy section of the System Preference and give the \"Full Disk Access\" right to Hakumai app."
+
+private let defaultElapsedTimeValue = "--:--:--"
+private let defaultActiveUserValue = "---"
 
 // swiftlint:disable file_length
 final class MainViewController: NSViewController {
@@ -48,8 +51,11 @@ final class MainViewController: NSViewController {
 
     @IBOutlet private weak var commentTextField: NSTextField!
     @IBOutlet private weak var commentAnonymouslyButton: NSButton!
-    @IBOutlet private weak var elapsedLabel: NSTextField!
-    @IBOutlet private weak var activeLabel: NSTextField!
+
+    @IBOutlet private weak var elapsedTimeTitleLabel: NSTextField!
+    @IBOutlet private weak var elapsedTimeValueLabel: NSTextField!
+    @IBOutlet private weak var activeUserTitleLabel: NSTextField!
+    @IBOutlet private weak var activeUserValueLabel: NSTextField!
     @IBOutlet private weak var progressIndicator: NSProgressIndicator!
 
     // MARK: Menu Delegate
@@ -65,14 +71,14 @@ final class MainViewController: NSViewController {
 
     // row-height cache
     private var rowHeightCacher = [Int: CGFloat]()
-    private var minimumRowHeight: CGFloat = kDefaultMinimumRowHeight
+    private var minimumRowHeight: CGFloat = defaultMinimumRowHeight
     private var tableViewFontSize: CGFloat = CGFloat(kDefaultFontSize)
 
     private var commentHistory = [String]()
     private var commentHistoryIndex: Int = 0
 
-    private var elapsedTimer: Timer?
-    private var activeTimer: Timer?
+    private var elapsedTimeTimer: Timer?
+    private var activeUserTimer: Timer?
 
     private var userWindowControllers = [UserWindowController]()
     private var nextUserWindowTopLeftPoint: NSPoint = NSPoint.zero
@@ -224,11 +230,11 @@ extension MainViewController: NSTableViewDelegate {
             let roomPositionView = view as? RoomPositionTableCellView
             roomPositionView?.roomPosition = chat.roomPosition
             roomPositionView?.commentNo = chat.no
-            roomPositionView?.fontSize = min(tableViewFontSize, kMaximumFontSizeForNonMainColumn)
+            roomPositionView?.fontSize = min(tableViewFontSize, maximumFontSizeForNonMainColumn)
         case kScoreColumnIdentifier:
             let scoreView = view as? ScoreTableCellView
             scoreView?.chat = chat
-            scoreView?.fontSize = min(tableViewFontSize, kMaximumFontSizeForNonMainColumn)
+            scoreView?.fontSize = min(tableViewFontSize, maximumFontSizeForNonMainColumn)
         case kCommentColumnIdentifier:
             let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)
@@ -243,7 +249,7 @@ extension MainViewController: NSTableViewDelegate {
         case kPremiumColumnIdentifier:
             let premiumView = view as? PremiumTableCellView
             premiumView?.premium = chat.premium
-            premiumView?.fontSize = min(tableViewFontSize, kMaximumFontSizeForNonMainColumn)
+            premiumView?.fontSize = min(tableViewFontSize, maximumFontSizeForNonMainColumn)
         default:
             break
         }
@@ -521,6 +527,11 @@ private extension MainViewController {
 
         commentTextField.placeholderString = "⌘N (empty ⏎ to scroll to bottom)"
 
+        elapsedTimeTitleLabel.stringValue = L10n.elapsedTime + ":"
+        elapsedTimeValueLabel.stringValue = defaultElapsedTimeValue
+        activeUserTitleLabel.stringValue = L10n.activeUser + ":"
+        activeUserValueLabel.stringValue = defaultActiveUserValue
+
         scrollView.enableBottomScrollButton()
         configureTableView()
         registerNibs()
@@ -754,7 +765,7 @@ extension MainViewController {
         guard let userWindow = userWindow else { return }
         var topLeftPoint: NSPoint = nextUserWindowTopLeftPoint
         if userWindowControllers.count == 0 {
-            topLeftPoint = kUserWindowDefautlTopLeftPoint
+            topLeftPoint = userWindowDefautlTopLeftPoint
         }
         nextUserWindowTopLeftPoint = userWindow.cascadeTopLeft(from: topLeftPoint)
     }
@@ -763,19 +774,29 @@ extension MainViewController {
 // MARK: Timer Functions
 private extension MainViewController {
     func startTimers() {
-        elapsedTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(MainViewController.displayElapsed(_:)), userInfo: nil, repeats: true)
-        activeTimer = Timer.scheduledTimer(timeInterval: kCalculateActiveInterval, target: self, selector: #selector(MainViewController.calculateActive(_:)), userInfo: nil, repeats: true)
+        elapsedTimeTimer = Timer.scheduledTimer(
+            timeInterval: 1,
+            target: self,
+            selector: #selector(MainViewController.updateElapsedLabelValue),
+            userInfo: nil,
+            repeats: true)
+        activeUserTimer = Timer.scheduledTimer(
+            timeInterval: calculateActiveUserInterval,
+            target: self,
+            selector: #selector(MainViewController.calculateAndUpdateActiveUserLabel),
+            userInfo: nil,
+            repeats: true)
     }
 
     func stopTimers() {
-        elapsedTimer?.invalidate()
-        elapsedTimer = nil
-        activeTimer?.invalidate()
-        activeTimer = nil
+        elapsedTimeTimer?.invalidate()
+        elapsedTimeTimer = nil
+        activeUserTimer?.invalidate()
+        activeUserTimer = nil
     }
 
-    @objc func displayElapsed(_ timer: Timer) {
-        var display = "--:--:--"
+    @objc func updateElapsedLabelValue() {
+        var display = defaultElapsedTimeValue
 
         if let startTime = NicoUtility.shared.live?.startTime {
             var prefix = ""
@@ -790,17 +811,13 @@ private extension MainViewController {
             display = "\(prefix)\(hour):\(minute):\(second)"
         }
 
-        DispatchQueue.main.async {
-            self.elapsedLabel.stringValue = "Elapsed: " + display
-        }
+        DispatchQueue.main.async { self.elapsedTimeValueLabel.stringValue = display }
     }
 
-    @objc func calculateActive(_ timer: Timer) {
+    @objc func calculateAndUpdateActiveUserLabel() {
         MessageContainer.shared.calculateActive { (active: Int?) -> Void in
-            guard let activeCount = active else { return }
-            DispatchQueue.main.async {
-                self.activeLabel.stringValue = "Active: \(activeCount)"
-            }
+            guard let active = active else { return }
+            DispatchQueue.main.async { self.activeUserValueLabel.stringValue = String(active) }
         }
     }
 }

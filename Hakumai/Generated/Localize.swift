@@ -10,8 +10,10 @@ import Foundation
 // swiftlint:disable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 internal enum L10n {
-  /// Hello
-  internal static let hello = L10n.tr("Localizable", "hello")
+  /// Active User
+  internal static let activeUser = L10n.tr("Localizable", "active_user")
+  /// Elapsed Time
+  internal static let elapsedTime = L10n.tr("Localizable", "elapsed_time")
 }
 // swiftlint:enable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:enable nesting type_body_length type_name vertical_whitespace_opening_braces

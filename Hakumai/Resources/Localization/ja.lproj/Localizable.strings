@@ -6,4 +6,8 @@
   Copyright © 2021 Hiroyuki Onishi. All rights reserved.
 */
 
-"hello" = "こんにちは";
+///
+/// Common
+///
+"active_user" = "アクティブユーザー";
+"elapsed_time" = "経過時間";
