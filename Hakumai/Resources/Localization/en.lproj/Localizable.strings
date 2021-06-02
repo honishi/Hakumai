@@ -10,4 +10,7 @@
 /// Common
 ///
 "active_user" = "Active User";
+"comment_count" = "Comments";
 "elapsed_time" = "Elapsed Time";
+"speak_comment" = "Speak";
+"visitor_count" = "Visitors";

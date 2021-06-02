@@ -21,7 +21,7 @@ private let safariCookieAlertTitle = "No Safari Cookie found"
 private let safariCookieAlertDescription = "To retrieve the cookie from Safari, please open the Security & Privacy section of the System Preference and give the \"Full Disk Access\" right to Hakumai app."
 
 private let defaultElapsedTimeValue = "--:--:--"
-private let defaultActiveUserValue = "---"
+private let defaultLabelValue = "---"
 
 // swiftlint:disable file_length
 final class MainViewController: NSViewController {
@@ -42,8 +42,10 @@ final class MainViewController: NSViewController {
     @IBOutlet private weak var communityTitleLabel: NSTextField!
     @IBOutlet private weak var communityIdLabel: NSTextField!
 
-    @IBOutlet private weak var visitorsLabel: NSTextField!
-    @IBOutlet private weak var commentsLabel: NSTextField!
+    @IBOutlet private weak var visitorsTitleLabel: NSTextField!
+    @IBOutlet private weak var visitorsValueLabel: NSTextField!
+    @IBOutlet private weak var commentsTitleLabel: NSTextField!
+    @IBOutlet private weak var commentsValueLabel: NSTextField!
     @IBOutlet private weak var speakButton: NSButton!
 
     @IBOutlet private weak var scrollView: BottomButtonScrollView!
@@ -519,6 +521,12 @@ private extension MainViewController {
         communityImageView.addBorder()
         debugReconnectButton.isHidden = !enableDebugReconnectButton
 
+        visitorsTitleLabel.stringValue = L10n.visitorCount + ":"
+        visitorsValueLabel.stringValue = defaultLabelValue
+        commentsTitleLabel.stringValue = L10n.commentCount + ":"
+        commentsValueLabel.stringValue = defaultLabelValue
+        speakButton.title = L10n.speakComment
+
         if #available(macOS 10.14, *) {
             speakButton.isHidden = false
         } else {
@@ -530,7 +538,7 @@ private extension MainViewController {
         elapsedTimeTitleLabel.stringValue = L10n.elapsedTime + ":"
         elapsedTimeValueLabel.stringValue = defaultElapsedTimeValue
         activeUserTitleLabel.stringValue = L10n.activeUser + ":"
-        activeUserValueLabel.stringValue = defaultActiveUserValue
+        activeUserValueLabel.stringValue = defaultLabelValue
 
         scrollView.enableBottomScrollButton()
         configureTableView()
@@ -642,10 +650,9 @@ private extension MainViewController {
     func updateLiveStatistics(stat: LiveStatistics) {
         let visitors = String(stat.viewers).numberStringWithSeparatorComma()
         let comments = String(stat.comments).numberStringWithSeparatorComma()
-
         DispatchQueue.main.async {
-            self.visitorsLabel.stringValue = "Visitors: " + visitors
-            self.commentsLabel.stringValue = "Comments: " + comments
+            self.visitorsValueLabel.stringValue = visitors
+            self.commentsValueLabel.stringValue = comments
         }
     }
 }

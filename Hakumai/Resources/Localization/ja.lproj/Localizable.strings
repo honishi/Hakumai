@@ -10,4 +10,7 @@
 /// Common
 ///
 "active_user" = "アクティブユーザー";
+"comment_count" = "コメント";
 "elapsed_time" = "経過時間";
+"speak_comment" = "読み上げ";
+"visitor_count" = "来場者";

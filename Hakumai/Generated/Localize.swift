@@ -12,8 +12,14 @@ import Foundation
 internal enum L10n {
   /// Active User
   internal static let activeUser = L10n.tr("Localizable", "active_user")
+  /// Comments
+  internal static let commentCount = L10n.tr("Localizable", "comment_count")
   /// Elapsed Time
   internal static let elapsedTime = L10n.tr("Localizable", "elapsed_time")
+  /// Speak
+  internal static let speakComment = L10n.tr("Localizable", "speak_comment")
+  /// Visitors
+  internal static let visitorCount = L10n.tr("Localizable", "visitor_count")
 }
 // swiftlint:enable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:enable nesting type_body_length type_name vertical_whitespace_opening_braces
