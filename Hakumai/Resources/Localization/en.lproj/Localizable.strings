@@ -9,8 +9,13 @@
 ///
 /// Common
 ///
-"active_user" = "Active User";
+"active_user" = "Active Users";
 "comment_count" = "Comments";
+"comment_text_field_placeholder" = "⌘N (Empty ⏎ to scroll to bottom)";
+"community_id" = "Community Id";
+"community_name" = "Community Name";
 "elapsed_time" = "Elapsed Time";
+"live_title" = "Live Title";
+"live_url_text_field_placeholder" = "⌘L (Live URL, Live#)";
 "speak_comment" = "Speak";
 "visitor_count" = "Visitors";

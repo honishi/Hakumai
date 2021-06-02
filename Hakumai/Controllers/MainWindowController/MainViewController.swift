@@ -33,7 +33,7 @@ final class MainViewController: NSViewController {
 
     // MARK: Main Outlets
     @IBOutlet private weak var grabUrlButton: NSButton!
-    @IBOutlet private weak var liveTextField: NSTextField!
+    @IBOutlet private weak var liveUrlTextField: NSTextField!
     @IBOutlet private weak var debugReconnectButton: NSButton!
     @IBOutlet private weak var connectButton: NSButton!
 
@@ -444,7 +444,7 @@ extension MainViewController {
 
     // MARK: Hotkeys
     func focusLiveTextField() {
-        liveTextField.becomeFirstResponder()
+        liveUrlTextField.becomeFirstResponder()
     }
 
     func focusCommentTextField() {
@@ -521,9 +521,15 @@ private extension MainViewController {
         communityImageView.addBorder()
         debugReconnectButton.isHidden = !enableDebugReconnectButton
 
-        visitorsTitleLabel.stringValue = L10n.visitorCount + ":"
+        liveUrlTextField.placeholderString = L10n.liveUrlTextFieldPlaceholder
+
+        liveTitleLabel.stringValue = "[\(L10n.liveTitle)]"
+        communityIdLabel.stringValue = "[\(L10n.communityId)]"
+        communityTitleLabel.stringValue = "[\(L10n.communityName)]"
+
+        visitorsTitleLabel.stringValue = "\(L10n.visitorCount):"
         visitorsValueLabel.stringValue = defaultLabelValue
-        commentsTitleLabel.stringValue = L10n.commentCount + ":"
+        commentsTitleLabel.stringValue = "\(L10n.commentCount):"
         commentsValueLabel.stringValue = defaultLabelValue
         speakButton.title = L10n.speakComment
 
@@ -533,11 +539,11 @@ private extension MainViewController {
             speakButton.isHidden = true
         }
 
-        commentTextField.placeholderString = "⌘N (empty ⏎ to scroll to bottom)"
+        commentTextField.placeholderString = L10n.commentTextFieldPlaceholder
 
-        elapsedTimeTitleLabel.stringValue = L10n.elapsedTime + ":"
+        elapsedTimeTitleLabel.stringValue = "\(L10n.elapsedTime):"
         elapsedTimeValueLabel.stringValue = defaultElapsedTimeValue
-        activeUserTitleLabel.stringValue = L10n.activeUser + ":"
+        activeUserTitleLabel.stringValue = "\(L10n.activeUser):"
         activeUserValueLabel.stringValue = defaultLabelValue
 
         scrollView.enableBottomScrollButton()
@@ -568,7 +574,7 @@ private extension MainViewController {
     }
 
     func _updateMainControlViews(status connectionStatus: ConnectionStatus) {
-        let controls: [NSControl] = [grabUrlButton, connectButton, liveTextField]
+        let controls: [NSControl] = [grabUrlButton, liveUrlTextField, connectButton]
         switch connectionStatus {
         case .disconnected:
             controls.forEach { $0.isEnabled = true }
@@ -664,7 +670,7 @@ extension MainViewController {
                                                     UserDefaults.standard.integer(forKey: Parameters.sessionManagement)) else { return }
         let browser: BrowserHelper.BrowserType = session == .safari ? .safari : .chrome
         if let url = BrowserHelper.extractUrl(fromBrowser: browser) {
-            liveTextField.stringValue = url
+            liveUrlTextField.stringValue = url
             connectLive(self)
         }
     }
@@ -677,7 +683,7 @@ extension MainViewController {
 
     @IBAction func connectLive(_ sender: AnyObject) {
         initializeHandleNameManager()
-        guard let liveNumber = liveTextField.stringValue.extractLiveNumber() else { return }
+        guard let liveNumber = liveUrlTextField.stringValue.extractLiveNumber() else { return }
 
         clearAllChats()
         communityImageView.image = Asset.defaultCommunityImage.image
