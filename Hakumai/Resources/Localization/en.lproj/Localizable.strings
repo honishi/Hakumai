@@ -19,3 +19,14 @@
 "live_url_text_field_placeholder" = "⌘L (Live URL, Live#)";
 "speak_comment" = "Speak";
 "visitor_count" = "Visitors";
+
+///
+/// Comment Menu
+///
+"copy_comment" = "Copy Commnet";
+"open_url_in_comment" = "Open URL in Comment";
+"add_handle_name" = "Add Handle Name";
+"remove_handle_name" = "Remove Handle Name";
+"add_to_mute_user" = "Add to Mute User";
+"report_as_ng_user" = "Report as NG User";
+"open_user_page" = "Open User Page";

@@ -19,3 +19,14 @@
 "live_url_text_field_placeholder" = "⌘L (放送URL, 放送番号)";
 "speak_comment" = "読み上げ";
 "visitor_count" = "来場者";
+
+///
+/// Comment Menu
+///
+"copy_comment" = "コメントをコピー";
+"open_url_in_comment" = "コメント中のURLを開く";
+"add_handle_name" = "ハンドル名を追加";
+"remove_handle_name" = "ハンドル名を削除";
+"add_to_mute_user" = "ユーザーをミュートに追加";
+"report_as_ng_user" = "NGユーザーとして報告";
+"open_user_page" = "ユーザーページを開く";
