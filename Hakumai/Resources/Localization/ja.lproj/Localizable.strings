@@ -44,6 +44,15 @@
 "zoom_in" = "拡大";
 "zoom_out" = "縮小";
 
+/// Window Menu
+"minimize" = "しまう";
+"zoom" = "拡大/縮小";
+"bring_all_to_front" = "すべてを手前に移動";
+"always_on_top" = "常に前面に表示";
+
+/// Help Menu
+"hakumai_help" = "Hakumai ヘルプ";
+
 ///
 /// Main Window
 ///

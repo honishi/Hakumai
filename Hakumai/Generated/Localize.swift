@@ -18,6 +18,10 @@ internal enum L10n {
   internal static let addHandleName = L10n.tr("Localizable", "add_handle_name")
   /// Add to Mute User
   internal static let addToMuteUser = L10n.tr("Localizable", "add_to_mute_user")
+  /// Always On Top
+  internal static let alwaysOnTop = L10n.tr("Localizable", "always_on_top")
+  /// Bring All to Front
+  internal static let bringAllToFront = L10n.tr("Localizable", "bring_all_to_front")
   /// Check for Updates...
   internal static let checkForUpdate = L10n.tr("Localizable", "check_for_update")
   /// Comments
@@ -48,6 +52,8 @@ internal enum L10n {
   internal static let file = L10n.tr("Localizable", "file")
   /// Grab URL from Browser
   internal static let grabUrlFromBrowser = L10n.tr("Localizable", "grab_url_from_browser")
+  /// Hakumai Help
+  internal static let hakumaiHelp = L10n.tr("Localizable", "hakumai_help")
   /// Help
   internal static let help = L10n.tr("Localizable", "help")
   /// Hide Hakumai
@@ -58,6 +64,8 @@ internal enum L10n {
   internal static let liveTitle = L10n.tr("Localizable", "live_title")
   /// ⌘L (Live URL, Live#)
   internal static let liveUrlTextFieldPlaceholder = L10n.tr("Localizable", "live_url_text_field_placeholder")
+  /// Minimize
+  internal static let minimize = L10n.tr("Localizable", "minimize")
   /// New Comment
   internal static let newComment = L10n.tr("Localizable", "new_comment")
   /// Open URL
@@ -92,6 +100,8 @@ internal enum L10n {
   internal static let visitorCount = L10n.tr("Localizable", "visitor_count")
   /// Window
   internal static let window = L10n.tr("Localizable", "window")
+  /// Zoom
+  internal static let zoom = L10n.tr("Localizable", "zoom")
   /// Zoom In
   internal static let zoomIn = L10n.tr("Localizable", "zoom_in")
   /// Zoom Out

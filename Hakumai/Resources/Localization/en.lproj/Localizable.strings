@@ -44,6 +44,15 @@
 "zoom_in" = "Zoom In";
 "zoom_out" = "Zoom Out";
 
+/// Window Menu
+"minimize" = "Minimize";
+"zoom" = "Zoom";
+"bring_all_to_front" = "Bring All to Front";
+"always_on_top" = "Always On Top";
+
+/// Help Menu
+"hakumai_help" = "Hakumai Help";
+
 ///
 /// Main Window
 ///
