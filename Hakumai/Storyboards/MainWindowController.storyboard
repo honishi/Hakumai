@@ -94,29 +94,44 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="File" id="bib-Uj-vzu">
                                     <items>
-                                        <menuItem title="Open URL" keyEquivalent="l" id="Ywy-4g-xSA">
+                                        <menuItem title="open_url" keyEquivalent="l" id="Ywy-4g-xSA">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="open_url"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="openUrl:" target="Voe-Tx-rLC" id="22B-I0-jYi"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Grab URL from Browser" keyEquivalent="u" id="Jqb-00-zb4">
+                                        <menuItem title="grab_url_from_browser" keyEquivalent="u" id="Jqb-00-zb4">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="grab_url_from_browser"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="grabUrlFromChrome:" target="Voe-Tx-rLC" id="qgK-4S-6R8"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="m54-Is-iLE"/>
-                                        <menuItem title="New Comment" keyEquivalent="n" id="Ev7-F1-Fdp">
+                                        <menuItem title="new_comment" keyEquivalent="n" id="Ev7-F1-Fdp">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="new_comment"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="newComment:" target="Voe-Tx-rLC" id="fIv-c4-V7t"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Enable 184" keyEquivalent="8" id="2e5-0U-xeR">
+                                        <menuItem title="enable_184" keyEquivalent="8" id="2e5-0U-xeR">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="enable_184"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <binding destination="Qbm-2t-1Py" name="value" keyPath="values.CommentAnonymously" id="hJB-zU-DOM"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="Cmf-8h-m6S"/>
-                                        <menuItem title="Speak" keyEquivalent="s" id="4qe-Vn-EsX">
+                                        <menuItem title="speak" keyEquivalent="s" id="4qe-Vn-EsX">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="speak"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <binding destination="Qbm-2t-1Py" name="value" keyPath="values.EnableCommentSpeech" id="N3u-GY-btT"/>
                                             </connections>

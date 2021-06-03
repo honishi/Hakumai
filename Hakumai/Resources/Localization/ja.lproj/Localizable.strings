@@ -25,6 +25,13 @@
 "show_all" = "すべてを表示";
 "quit_hakumai" = "Hakumai を終了";
 
+/// File Menu
+"open_url" = "URL を開く";
+"grab_url_from_browser" = "ブラウザから URL をコピーする";
+"new_comment" = "新規コメント";
+"enable_184" = "184コメント";
+"speak" = "コメント読み上げ";
+
 ///
 /// Main Window
 ///

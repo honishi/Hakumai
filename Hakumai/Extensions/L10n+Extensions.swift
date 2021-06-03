@@ -6,6 +6,9 @@
 //  Copyright © 2021 Hiroyuki Onishi. All rights reserved.
 //
 
+//
+// L10n extension Based on https://qiita.com/mogmet/items/67bae14f021f9734365e
+//
 import Foundation
 import Cocoa
 

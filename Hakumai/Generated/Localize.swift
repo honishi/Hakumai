@@ -34,8 +34,12 @@ internal enum L10n {
   internal static let edit = L10n.tr("Localizable", "edit")
   /// Elapsed Time
   internal static let elapsedTime = L10n.tr("Localizable", "elapsed_time")
+  /// Enable 184
+  internal static let enable184 = L10n.tr("Localizable", "enable_184")
   /// File
   internal static let file = L10n.tr("Localizable", "file")
+  /// Grab URL from Browser
+  internal static let grabUrlFromBrowser = L10n.tr("Localizable", "grab_url_from_browser")
   /// Help
   internal static let help = L10n.tr("Localizable", "help")
   /// Hide Hakumai
@@ -46,6 +50,10 @@ internal enum L10n {
   internal static let liveTitle = L10n.tr("Localizable", "live_title")
   /// ⌘L (Live URL, Live#)
   internal static let liveUrlTextFieldPlaceholder = L10n.tr("Localizable", "live_url_text_field_placeholder")
+  /// New Comment
+  internal static let newComment = L10n.tr("Localizable", "new_comment")
+  /// Open URL
+  internal static let openUrl = L10n.tr("Localizable", "open_url")
   /// Open URL in Comment
   internal static let openUrlInComment = L10n.tr("Localizable", "open_url_in_comment")
   /// Open User Page
@@ -62,6 +70,8 @@ internal enum L10n {
   internal static let services = L10n.tr("Localizable", "services")
   /// Show All
   internal static let showAll = L10n.tr("Localizable", "show_all")
+  /// Speak
+  internal static let speak = L10n.tr("Localizable", "speak")
   /// Speak
   internal static let speakComment = L10n.tr("Localizable", "speak_comment")
   /// View

@@ -25,6 +25,13 @@
 "show_all" = "Show All";
 "quit_hakumai" = "Quit Hakumai";
 
+/// File Menu
+"open_url" = "Open URL";
+"grab_url_from_browser" = "Grab URL from Browser";
+"new_comment" = "New Comment";
+"enable_184" = "Enable 184";
+"speak" = "Speak";
+
 ///
 /// Main Window
 ///
