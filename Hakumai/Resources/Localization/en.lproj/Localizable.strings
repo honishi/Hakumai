@@ -39,6 +39,11 @@
 "delete" = "Delete";
 "select_all" = "Select All";
 
+/// View Menu
+"default_zoom" = "Default Zoom";
+"zoom_in" = "Zoom In";
+"zoom_out" = "Zoom Out";
+
 ///
 /// Main Window
 ///

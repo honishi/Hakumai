@@ -208,17 +208,26 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="View" id="hAj-eX-3B5">
                                     <items>
-                                        <menuItem title="Default Zoom" keyEquivalent="0" id="FFU-3o-uv0">
+                                        <menuItem title="default_zoom" keyEquivalent="0" id="FFU-3o-uv0">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="default_zoom"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="zoomDefault:" target="Voe-Tx-rLC" id="heL-7o-OjN"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Zoom In" keyEquivalent="+" id="YJU-gw-Wfc">
+                                        <menuItem title="zoom_in" keyEquivalent="+" id="YJU-gw-Wfc">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="zoom_in"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="zoomIn:" target="Voe-Tx-rLC" id="w7N-5V-gYl"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Zoom Out" keyEquivalent="-" id="qRo-aa-So3">
+                                        <menuItem title="zoom_out" keyEquivalent="-" id="qRo-aa-So3">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="zoom_out"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="zoomOut:" target="Voe-Tx-rLC" id="H8n-ka-rWt"/>
                                             </connections>

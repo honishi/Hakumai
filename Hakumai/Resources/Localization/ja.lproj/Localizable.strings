@@ -39,6 +39,11 @@
 "delete" = "削除";
 "select_all" = "すべて選択";
 
+/// View Menu
+"default_zoom" = "標準のサイズ";
+"zoom_in" = "拡大";
+"zoom_out" = "縮小";
+
 ///
 /// Main Window
 ///

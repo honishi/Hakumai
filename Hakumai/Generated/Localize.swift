@@ -34,6 +34,8 @@ internal enum L10n {
   internal static let copyComment = L10n.tr("Localizable", "copy_comment")
   /// Cut
   internal static let cut = L10n.tr("Localizable", "cut")
+  /// Default Zoom
+  internal static let defaultZoom = L10n.tr("Localizable", "default_zoom")
   /// Delete
   internal static let delete = L10n.tr("Localizable", "delete")
   /// Edit
@@ -90,6 +92,10 @@ internal enum L10n {
   internal static let visitorCount = L10n.tr("Localizable", "visitor_count")
   /// Window
   internal static let window = L10n.tr("Localizable", "window")
+  /// Zoom In
+  internal static let zoomIn = L10n.tr("Localizable", "zoom_in")
+  /// Zoom Out
+  internal static let zoomOut = L10n.tr("Localizable", "zoom_out")
 }
 // swiftlint:enable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:enable nesting type_body_length type_name vertical_whitespace_opening_braces
