@@ -7,7 +7,26 @@
 */
 
 ///
-/// Common
+/// Main Menu
+///
+"file" = "File";
+"edit" = "Edit";
+"view" = "View";
+"window" = "Window";
+"help" = "Help";
+
+/// Hakumai Menu
+"about_hakumai" = "About Hakumai";
+"check_for_update" = "Check for Updates...";
+"preferences" = "Preferences...";
+"services" = "Services";
+"hide_hakumai" = "Hide Hakumai";
+"hide_others" = "Hide Others";
+"show_all" = "Show All";
+"quit_hakumai" = "Quit Hakumai";
+
+///
+/// Main Window
 ///
 "active_user" = "Active Users";
 "comment_count" = "Comments";
@@ -23,7 +42,7 @@
 ///
 /// Comment Menu
 ///
-"copy_comment" = "Copy Commnet";
+"copy_comment" = "Copy Comment";
 "open_url_in_comment" = "Open URL in Comment";
 "add_handle_name" = "Add Handle Name";
 "remove_handle_name" = "Remove Handle Name";

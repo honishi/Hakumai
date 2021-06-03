@@ -11,6 +11,14 @@ import Cocoa
 
 private let fatalErrorMessageForGetter = "only set this value"
 
+extension NSMenu {
+    @IBInspectable
+    private var localizedKey: String? {
+        get { fatalError(fatalErrorMessageForGetter) }
+        set { title = newValue?.localized ?? "" }
+    }
+}
+
 extension NSMenuItem {
     @IBInspectable
     private var localizedKey: String? {

@@ -7,7 +7,26 @@
 */
 
 ///
-/// Common
+/// Main Menu
+///
+"file" = "ファイル";
+"edit" = "編集";
+"view" = "表示";
+"window" = "ウィンドウ";
+"help" = "ヘルプ";
+
+/// Hakumai Menu
+"about_hakumai" = "Hakumai について";
+"check_for_update" = "アップデートを確認...";
+"preferences" = "環境設定...";
+"services" = "サービス";
+"hide_hakumai" = "Hakumai を隠す";
+"hide_others" = "他を隠す";
+"show_all" = "すべてを表示";
+"quit_hakumai" = "Hakumai を終了";
+
+///
+/// Main Window
 ///
 "active_user" = "アクティブユーザー";
 "comment_count" = "コメント";
