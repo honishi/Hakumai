@@ -32,6 +32,13 @@
 "enable_184" = "184コメント";
 "speak" = "コメント読み上げ";
 
+/// Edit Menu
+"cut" = "カット";
+"copy" = "コピー";
+"paste" = "ペースト";
+"delete" = "削除";
+"select_all" = "すべて選択";
+
 ///
 /// Main Window
 ///

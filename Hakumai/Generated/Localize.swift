@@ -28,8 +28,14 @@ internal enum L10n {
   internal static let communityId = L10n.tr("Localizable", "community_id")
   /// Community Name
   internal static let communityName = L10n.tr("Localizable", "community_name")
+  /// Copy
+  internal static let copy = L10n.tr("Localizable", "copy")
   /// Copy Comment
   internal static let copyComment = L10n.tr("Localizable", "copy_comment")
+  /// Cut
+  internal static let cut = L10n.tr("Localizable", "cut")
+  /// Delete
+  internal static let delete = L10n.tr("Localizable", "delete")
   /// Edit
   internal static let edit = L10n.tr("Localizable", "edit")
   /// Elapsed Time
@@ -58,6 +64,8 @@ internal enum L10n {
   internal static let openUrlInComment = L10n.tr("Localizable", "open_url_in_comment")
   /// Open User Page
   internal static let openUserPage = L10n.tr("Localizable", "open_user_page")
+  /// Paste
+  internal static let paste = L10n.tr("Localizable", "paste")
   /// Preferences...
   internal static let preferences = L10n.tr("Localizable", "preferences")
   /// Quit Hakumai
@@ -66,6 +74,8 @@ internal enum L10n {
   internal static let removeHandleName = L10n.tr("Localizable", "remove_handle_name")
   /// Report as NG User
   internal static let reportAsNgUser = L10n.tr("Localizable", "report_as_ng_user")
+  /// Select All
+  internal static let selectAll = L10n.tr("Localizable", "select_all")
   /// Services
   internal static let services = L10n.tr("Localizable", "services")
   /// Show All

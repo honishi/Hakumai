@@ -32,6 +32,13 @@
 "enable_184" = "Enable 184";
 "speak" = "Speak";
 
+/// Edit Menu
+"cut" = "Cut";
+"copy" = "Copy";
+"paste" = "Paste";
+"delete" = "Delete";
+"select_all" = "Select All";
+
 ///
 /// Main Window
 ///
