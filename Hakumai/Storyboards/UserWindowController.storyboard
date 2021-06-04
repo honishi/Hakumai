@@ -60,7 +60,7 @@
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" constant="17" id="HnU-NM-MJ0"/>
                                                                 </constraints>
-                                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="sr1-of-5We">
+                                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Label" id="sr1-of-5We">
                                                                     <font key="font" metaFont="system"/>
                                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -94,7 +94,7 @@
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" constant="17" id="SIw-fo-zwM"/>
                                                                 </constraints>
-                                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="NM3-nH-S7r">
+                                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Label" id="NM3-nH-S7r">
                                                                     <font key="font" metaFont="system"/>
                                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -123,7 +123,7 @@
                                                         <subviews>
                                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cdr-BY-3RS">
                                                                 <rect key="frame" x="-2" y="0.0" width="37" height="16"/>
-                                                                <textFieldCell key="cell" lineBreakMode="clipping" title="Label" id="ufS-pQ-wvv">
+                                                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Label" id="ufS-pQ-wvv">
                                                                     <font key="font" usesAppearanceFont="YES"/>
                                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -148,6 +148,10 @@
                                                         </customSpacing>
                                                     </stackView>
                                                 </subviews>
+                                                <constraints>
+                                                    <constraint firstItem="cdr-BY-3RS" firstAttribute="width" secondItem="djL-Ot-r3k" secondAttribute="width" id="jzw-ED-xaT"/>
+                                                    <constraint firstItem="CjM-Yf-m63" firstAttribute="width" secondItem="djL-Ot-r3k" secondAttribute="width" id="lfl-Qd-NXZ"/>
+                                                </constraints>
                                                 <visibilityPriorities>
                                                     <integer value="1000"/>
                                                     <integer value="1000"/>
