@@ -44,6 +44,14 @@
 "check_spelling_while_typing" = "入力中にスペルチェック";
 "check_grammar_with_spelling" = "スペルと一緒に文法をチェック";
 "correct_spelling_automatically" = "スペルを自動的に修正";
+"substitutions" = "自動置換";
+"show_substitutions" = "自動置換を表示";
+"smart_copy_paste" = "スマートコピー/ペースト";
+"smart_quotes" = "スマート引用符";
+"smart_dashes" = "スマートダッシュ記号";
+"smart_links" = "スマートリンク";
+"data_detectors" = "データ検出";
+"text_replacement" = "テキストの置換";
 
 /// View Menu
 "default_zoom" = "標準のサイズ";

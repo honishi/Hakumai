@@ -44,6 +44,14 @@
 "check_spelling_while_typing" = "Check Spelling While Typing";
 "check_grammar_with_spelling" = "Check Grammar With Spelling";
 "correct_spelling_automatically" = "Correct Spelling Automatically";
+"substitutions" = "Substitutions";
+"show_substitutions" = "Show Substitutions";
+"smart_copy_paste" = "Smart Copy/Paste";
+"smart_quotes" = "Smart Quotes";
+"smart_dashes" = "Smart Dashes";
+"smart_links" = "Smart Links";
+"data_detectors" = "Data Detectors";
+"text_replacement" = "Text Replacement";
 
 /// View Menu
 "default_zoom" = "Default Zoom";

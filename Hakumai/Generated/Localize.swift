@@ -46,6 +46,8 @@ internal enum L10n {
   internal static let correctSpellingAutomatically = L10n.tr("Localizable", "correct_spelling_automatically")
   /// Cut
   internal static let cut = L10n.tr("Localizable", "cut")
+  /// Data Detectors
+  internal static let dataDetectors = L10n.tr("Localizable", "data_detectors")
   /// Default Zoom
   internal static let defaultZoom = L10n.tr("Localizable", "default_zoom")
   /// Delete
@@ -100,12 +102,26 @@ internal enum L10n {
   internal static let showAll = L10n.tr("Localizable", "show_all")
   /// Show Spelling and Grammar
   internal static let showSpellingAndGrammar = L10n.tr("Localizable", "show_spelling_and_grammar")
+  /// Show Substitutions
+  internal static let showSubstitutions = L10n.tr("Localizable", "show_substitutions")
+  /// Smart Copy/Paste
+  internal static let smartCopyPaste = L10n.tr("Localizable", "smart_copy_paste")
+  /// Smart Dashes
+  internal static let smartDashes = L10n.tr("Localizable", "smart_dashes")
+  /// Smart Links
+  internal static let smartLinks = L10n.tr("Localizable", "smart_links")
+  /// Smart Quotes
+  internal static let smartQuotes = L10n.tr("Localizable", "smart_quotes")
   /// Speak
   internal static let speak = L10n.tr("Localizable", "speak")
   /// Speak
   internal static let speakComment = L10n.tr("Localizable", "speak_comment")
   /// Spelling and Grammar
   internal static let spellingAndGrammar = L10n.tr("Localizable", "spelling_and_grammar")
+  /// Substitutions
+  internal static let substitutions = L10n.tr("Localizable", "substitutions")
+  /// Text Replacement
+  internal static let textReplacement = L10n.tr("Localizable", "text_replacement")
   /// View
   internal static let view = L10n.tr("Localizable", "view")
   /// Visitors

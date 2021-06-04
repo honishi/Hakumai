@@ -291,55 +291,79 @@
                                                 <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="spelling_and_grammar"/>
                                             </userDefinedRuntimeAttributes>
                                         </menuItem>
-                                        <menuItem title="Substitutions" id="9ic-FL-obx">
+                                        <menuItem title="substitutions" id="9ic-FL-obx">
                                             <modifierMask key="keyEquivalentModifierMask"/>
-                                            <menu key="submenu" title="Substitutions" id="FeM-D8-WVr">
+                                            <menu key="submenu" title="substitutions" id="FeM-D8-WVr">
                                                 <items>
-                                                    <menuItem title="Show Substitutions" id="z6F-FW-3nz">
+                                                    <menuItem title="show_substitutions" id="z6F-FW-3nz">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="show_substitutions"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="orderFrontSubstitutionsPanel:" target="Ady-hI-5gd" id="oku-mr-iSq"/>
                                                         </connections>
                                                     </menuItem>
                                                     <menuItem isSeparatorItem="YES" id="gPx-C9-uUO"/>
-                                                    <menuItem title="Smart Copy/Paste" id="9yt-4B-nSM">
+                                                    <menuItem title="smart_copy_paste" id="9yt-4B-nSM">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="smart_copy_paste"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="toggleSmartInsertDelete:" target="Ady-hI-5gd" id="3IJ-Se-DZD"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Smart Quotes" id="hQb-2v-fYv">
+                                                    <menuItem title="smart_quotes" id="hQb-2v-fYv">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="smart_quotes"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="toggleAutomaticQuoteSubstitution:" target="Ady-hI-5gd" id="ptq-xd-QOA"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Smart Dashes" id="rgM-f4-ycn">
+                                                    <menuItem title="smart_dashes" id="rgM-f4-ycn">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="smart_dashes"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="toggleAutomaticDashSubstitution:" target="Ady-hI-5gd" id="oCt-pO-9gS"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Smart Links" id="cwL-P1-jid">
+                                                    <menuItem title="smart_links" id="cwL-P1-jid">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="smart_links"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="toggleAutomaticLinkDetection:" target="Ady-hI-5gd" id="Gip-E3-Fov"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Data Detectors" id="tRr-pd-1PS">
+                                                    <menuItem title="data_detectors" id="tRr-pd-1PS">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="data_detectors"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="toggleAutomaticDataDetection:" target="Ady-hI-5gd" id="R1I-Nq-Kbl"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Text Replacement" id="HFQ-gK-NFA">
+                                                    <menuItem title="text_replacement" id="HFQ-gK-NFA">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="text_replacement"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="toggleAutomaticTextReplacement:" target="Ady-hI-5gd" id="DvP-Fe-Py6"/>
                                                         </connections>
                                                     </menuItem>
                                                 </items>
                                             </menu>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="substitutions"/>
+                                            </userDefinedRuntimeAttributes>
                                         </menuItem>
                                         <menuItem title="Transformations" id="2oI-Rn-ZJC">
                                             <modifierMask key="keyEquivalentModifierMask"/>
