@@ -70,7 +70,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="450" height="400"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <box autoresizesSubviews="NO" borderType="line" title="Session Management" translatesAutoresizingMaskIntoConstraints="NO" id="MWm-if-ayO">
+                            <box autoresizesSubviews="NO" borderType="line" title="session_management" translatesAutoresizingMaskIntoConstraints="NO" id="MWm-if-ayO">
                                 <rect key="frame" x="17" y="216" width="416" height="164"/>
                                 <view key="contentView" id="rtk-61-lXP">
                                     <rect key="frame" x="3" y="3" width="410" height="146"/>
@@ -159,7 +159,7 @@
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EXx-bO-Ndv">
                                             <rect key="frame" x="35" y="50" width="95" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Mail Address:" id="721-5w-6vS">
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Label" id="721-5w-6vS">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -168,7 +168,7 @@
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7zQ-8n-W5G">
                                             <rect key="frame" x="35" y="24" width="95" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Password:" id="rLD-L3-vRk">
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Label" id="rLD-L3-vRk">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -190,15 +190,35 @@
                                                 </binding>
                                             </connections>
                                         </button>
-                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7ho-fM-1a0">
-                                            <rect key="frame" x="317" y="20" width="100" height="17"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Status: ---" id="QGc-tt-ZFI">
-                                                <font key="font" metaFont="system" size="10"/>
-                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                            </textFieldCell>
-                                        </textField>
+                                        <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" fixedFrame="YES" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="S6U-py-ZeX">
+                                            <rect key="frame" x="317" y="26" width="62" height="13"/>
+                                            <subviews>
+                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8Ol-wh-34C">
+                                                    <rect key="frame" x="-2" y="0.0" width="31" height="13"/>
+                                                    <textFieldCell key="cell" lineBreakMode="clipping" title="Label" id="vbg-Vv-qO6">
+                                                        <font key="font" metaFont="system" size="10"/>
+                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                </textField>
+                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7ho-fM-1a0">
+                                                    <rect key="frame" x="33" y="0.0" width="31" height="13"/>
+                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="QGc-tt-ZFI">
+                                                        <font key="font" metaFont="system" size="10"/>
+                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                </textField>
+                                            </subviews>
+                                            <visibilityPriorities>
+                                                <integer value="1000"/>
+                                                <integer value="1000"/>
+                                            </visibilityPriorities>
+                                            <customSpacing>
+                                                <real value="3.4028234663852886e+38"/>
+                                                <real value="3.4028234663852886e+38"/>
+                                            </customSpacing>
+                                        </stackView>
                                         <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="VTy-07-rfw">
                                             <rect key="frame" x="380" y="120" width="16" height="16"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -209,7 +229,7 @@
                                     <constraint firstAttribute="height" constant="160" id="VMQ-2n-Vua"/>
                                 </constraints>
                             </box>
-                            <box borderType="line" title="Comment Speaking" translatesAutoresizingMaskIntoConstraints="NO" id="ICr-HG-iyb">
+                            <box borderType="line" title="comment_speaking" translatesAutoresizingMaskIntoConstraints="NO" id="ICr-HG-iyb">
                                 <rect key="frame" x="17" y="69" width="416" height="124"/>
                                 <view key="contentView" id="Mny-of-dvr">
                                     <rect key="frame" x="3" y="3" width="410" height="106"/>
@@ -273,13 +293,21 @@
                     </view>
                     <connections>
                         <outlet property="checkAccountButton" destination="QxL-35-zQB" id="Ys6-42-qov"/>
-                        <outlet property="checkAccountStatusLabel" destination="7ho-fM-1a0" id="iUM-zU-vwp"/>
-                        <outlet property="mailAddressTextField" destination="RF4-gC-rH4" id="9L7-b0-tL6"/>
+                        <outlet property="checkAccountStatusTitleLabel" destination="8Ol-wh-34C" id="nRm-vU-HdN"/>
+                        <outlet property="checkAccountStatusValueLabel" destination="7ho-fM-1a0" id="iUM-zU-vwp"/>
+                        <outlet property="chromeButtonCell" destination="Ici-yj-KuI" id="ZIX-rJ-KYV"/>
+                        <outlet property="commentSpeakingBox" destination="ICr-HG-iyb" id="6y6-k7-mqr"/>
+                        <outlet property="loginButtonCell" destination="fBE-E6-cig" id="IGt-TM-Q7e"/>
+                        <outlet property="mailAddressTitleTextField" destination="EXx-bO-Ndv" id="k6F-qC-a5A"/>
+                        <outlet property="mailAddressValueTextField" destination="RF4-gC-rH4" id="9L7-b0-tL6"/>
+                        <outlet property="passwordTitleTextField" destination="7zQ-8n-W5G" id="014-eJ-l2N"/>
                         <outlet property="progressIndicator" destination="VTy-07-rfw" id="Zrv-pi-fy0"/>
+                        <outlet property="safariButtonCell" destination="wGq-x5-Aua" id="lb1-w9-hCF"/>
+                        <outlet property="sessionManagementBox" destination="MWm-if-ayO" id="MhO-co-gdr"/>
                         <outlet property="sessionManagementMatrix" destination="y0n-lu-hbG" id="Dee-Od-G0x"/>
                         <outlet property="speakCommentButton" destination="MZf-F3-ma6" id="9fp-wX-etw"/>
                         <outlet property="speakVolumeSlider" destination="NBg-Gf-rw0" id="gzQ-f2-Xwi"/>
-                        <outlet property="speakVolumeTextField" destination="lhl-Ab-vvj" id="STj-TK-3lB"/>
+                        <outlet property="speakVolumeTitleTextField" destination="lhl-Ab-vvj" id="STj-TK-3lB"/>
                         <outlet property="speakVolumeValueTextField" destination="TgB-HZ-aF1" id="siC-bI-K7H"/>
                     </connections>
                 </viewController>

@@ -24,6 +24,8 @@ internal enum L10n {
   internal static let bringAllToFront = L10n.tr("Localizable", "bring_all_to_front")
   /// Capitalize
   internal static let capitalize = L10n.tr("Localizable", "capitalize")
+  /// Check
+  internal static let check = L10n.tr("Localizable", "check")
   /// Check Document Now
   internal static let checkDocumentNow = L10n.tr("Localizable", "check_document_now")
   /// Check for Updates...
@@ -34,6 +36,8 @@ internal enum L10n {
   internal static let checkSpellingWhileTyping = L10n.tr("Localizable", "check_spelling_while_typing")
   /// Comments
   internal static let commentCount = L10n.tr("Localizable", "comment_count")
+  /// Comment Speaking
+  internal static let commentSpeaking = L10n.tr("Localizable", "comment_speaking")
   /// ⌘N (Empty ⏎ to scroll to bottom)
   internal static let commentTextFieldPlaceholder = L10n.tr("Localizable", "comment_text_field_placeholder")
   /// Community Id
@@ -54,6 +58,8 @@ internal enum L10n {
   internal static let defaultZoom = L10n.tr("Localizable", "default_zoom")
   /// Delete
   internal static let delete = L10n.tr("Localizable", "delete")
+  /// Direct Login (Not Recommended)
+  internal static let directLogin = L10n.tr("Localizable", "direct_login")
   /// Edit
   internal static let edit = L10n.tr("Localizable", "edit")
   /// Elapsed Time
@@ -62,6 +68,8 @@ internal enum L10n {
   internal static let enable184 = L10n.tr("Localizable", "enable_184")
   /// File
   internal static let file = L10n.tr("Localizable", "file")
+  /// Google Chrome
+  internal static let googleChrome = L10n.tr("Localizable", "google_chrome")
   /// Grab URL from Browser
   internal static let grabUrlFromBrowser = L10n.tr("Localizable", "grab_url_from_browser")
   /// Hakumai Help
@@ -78,6 +86,8 @@ internal enum L10n {
   internal static let liveTitle = L10n.tr("Localizable", "live_title")
   /// ⌘L (Live URL, Live#)
   internal static let liveUrlTextFieldPlaceholder = L10n.tr("Localizable", "live_url_text_field_placeholder")
+  /// Mail Address
+  internal static let mailAddress = L10n.tr("Localizable", "mail_address")
   /// Make Lower Case
   internal static let makeLowerCase = L10n.tr("Localizable", "make_lower_case")
   /// Make Upper Case
@@ -92,6 +102,8 @@ internal enum L10n {
   internal static let openUrlInComment = L10n.tr("Localizable", "open_url_in_comment")
   /// Open User Page
   internal static let openUserPage = L10n.tr("Localizable", "open_user_page")
+  /// Password
+  internal static let password = L10n.tr("Localizable", "password")
   /// Paste
   internal static let paste = L10n.tr("Localizable", "paste")
   /// Preferences...
@@ -102,10 +114,14 @@ internal enum L10n {
   internal static let removeHandleName = L10n.tr("Localizable", "remove_handle_name")
   /// Report as NG User
   internal static let reportAsNgUser = L10n.tr("Localizable", "report_as_ng_user")
+  /// Safari
+  internal static let safari = L10n.tr("Localizable", "safari")
   /// Select All
   internal static let selectAll = L10n.tr("Localizable", "select_all")
   /// Services
   internal static let services = L10n.tr("Localizable", "services")
+  /// Session Management
+  internal static let sessionManagement = L10n.tr("Localizable", "session_management")
   /// Show All
   internal static let showAll = L10n.tr("Localizable", "show_all")
   /// Show Spelling and Grammar
@@ -124,12 +140,18 @@ internal enum L10n {
   internal static let speak = L10n.tr("Localizable", "speak")
   /// Speak
   internal static let speakComment = L10n.tr("Localizable", "speak_comment")
+  /// Speak Comments (Requires macOS 10.14-)
+  internal static let speakComments = L10n.tr("Localizable", "speak_comments")
+  /// Speak Volume
+  internal static let speakVolume = L10n.tr("Localizable", "speak_volume")
   /// Speech
   internal static let speech = L10n.tr("Localizable", "speech")
   /// Spelling and Grammar
   internal static let spellingAndGrammar = L10n.tr("Localizable", "spelling_and_grammar")
   /// Start Speaking
   internal static let startSpeaking = L10n.tr("Localizable", "start_speaking")
+  /// Status
+  internal static let status = L10n.tr("Localizable", "status")
   /// Stop Speaking
   internal static let stopSpeaking = L10n.tr("Localizable", "stop_speaking")
   /// Substitutions

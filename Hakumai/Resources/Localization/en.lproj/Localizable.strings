@@ -105,3 +105,19 @@
 "user_id" = "User ID";
 "user_name" = "User Name";
 "handle_name" = "Handle Name";
+
+///
+/// Preference Window
+///
+/// General
+"session_management" = "Session Management";
+"google_chrome" = "Google Chrome";
+"safari" = "Safari";
+"direct_login" = "Direct Login (Not Recommended)";
+"mail_address" = "Mail Address";
+"password" = "Password";
+"check" = "Check";
+"status" = "Status";
+"comment_speaking" = "Comment Speaking";
+"speak_comments" = "Speak Comments (Requires macOS 10.14-)";
+"speak_volume" = "Speak Volume";
