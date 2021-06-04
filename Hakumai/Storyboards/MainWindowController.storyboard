@@ -650,7 +650,7 @@
                                         </customSpacing>
                                     </stackView>
                                     <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalCompressionResistancePriority="250" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jZp-vI-7KI">
-                                        <rect key="frame" x="0.0" y="498" width="484" height="55"/>
+                                        <rect key="frame" x="2" y="498" width="480" height="55"/>
                                         <subviews>
                                             <imageView wantsLayer="YES" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="NQm-lE-rVr">
                                                 <rect key="frame" x="0.0" y="0.0" width="55" height="55"/>
@@ -661,10 +661,10 @@
                                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="DefaultCommunityImage" id="Rj1-mk-21r"/>
                                             </imageView>
                                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="250" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="d3A-5T-Fi5">
-                                                <rect key="frame" x="63" y="0.0" width="293" height="55"/>
+                                                <rect key="frame" x="63" y="0.0" width="289" height="55"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="249" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="65a-aX-RIL">
-                                                        <rect key="frame" x="-2" y="38" width="297" height="17"/>
+                                                        <rect key="frame" x="-2" y="38" width="293" height="17"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="17" id="aX3-eX-5Te"/>
                                                         </constraints>
@@ -675,7 +675,7 @@
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="249" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="gpJ-ll-AbX">
-                                                        <rect key="frame" x="-2" y="19" width="297" height="17"/>
+                                                        <rect key="frame" x="-2" y="19" width="293" height="17"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="17" id="Z7e-7q-EMI"/>
                                                         </constraints>
@@ -686,7 +686,7 @@
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="249" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="mqT-iT-cC6">
-                                                        <rect key="frame" x="-2" y="0.0" width="297" height="17"/>
+                                                        <rect key="frame" x="-2" y="0.0" width="293" height="17"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="17" id="x00-mC-etv"/>
                                                         </constraints>
@@ -709,7 +709,7 @@
                                                 </customSpacing>
                                             </stackView>
                                             <stackView distribution="fill" orientation="vertical" alignment="trailing" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ArW-TH-cda">
-                                                <rect key="frame" x="364" y="2" width="120" height="52"/>
+                                                <rect key="frame" x="360" y="2" width="120" height="52"/>
                                                 <subviews>
                                                     <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9sP-vu-ghg">
                                                         <rect key="frame" x="60" y="36" width="60" height="16"/>
@@ -1010,11 +1010,11 @@
                                     </stackView>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstItem="jZp-vI-7KI" firstAttribute="leading" secondItem="z38-Lm-gGi" secondAttribute="leading" id="3j6-iA-LWG"/>
+                                    <constraint firstItem="jZp-vI-7KI" firstAttribute="leading" secondItem="z38-Lm-gGi" secondAttribute="leading" constant="2" id="3j6-iA-LWG"/>
                                     <constraint firstAttribute="trailing" secondItem="sqR-k0-9ll" secondAttribute="trailing" id="5wq-tl-Dem"/>
                                     <constraint firstItem="OKI-Gn-3JM" firstAttribute="leading" secondItem="z38-Lm-gGi" secondAttribute="leading" id="DBz-fX-yox"/>
                                     <constraint firstAttribute="trailing" secondItem="heY-85-Bud" secondAttribute="trailing" id="Gse-8Y-ytN"/>
-                                    <constraint firstAttribute="trailing" secondItem="jZp-vI-7KI" secondAttribute="trailing" id="V72-5r-XVw"/>
+                                    <constraint firstAttribute="trailing" secondItem="jZp-vI-7KI" secondAttribute="trailing" constant="2" id="V72-5r-XVw"/>
                                     <constraint firstAttribute="trailing" secondItem="OKI-Gn-3JM" secondAttribute="trailing" id="c5J-Le-bvc"/>
                                     <constraint firstAttribute="trailing" secondItem="3lG-BL-Thc" secondAttribute="trailing" id="gNw-Sx-Cn4"/>
                                     <constraint firstItem="3lG-BL-Thc" firstAttribute="leading" secondItem="z38-Lm-gGi" secondAttribute="leading" id="ggT-ox-TR8"/>
