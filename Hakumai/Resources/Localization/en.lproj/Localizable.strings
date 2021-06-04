@@ -88,12 +88,15 @@
 "speak_comment" = "Speak";
 "visitor_count" = "Visitors";
 
+/// Handle Add
+"set_update_handle_name" = "Set/Update Handle Name";
+
 ///
 /// Comment Menu
 ///
 "copy_comment" = "Copy Comment";
 "open_url_in_comment" = "Open URL in Comment";
-"add_handle_name" = "Add Handle Name";
+"set_handle_name" = "Set Handle Name";
 "remove_handle_name" = "Remove Handle Name";
 "add_to_mute_user" = "Add to Mute User";
 "report_as_ng_user" = "Report as NG User";
@@ -127,4 +130,13 @@
 /// Mute
 "enable_mute_user_ids" = "Enable Mute User Ids";
 "enable_mute_words" = "Enable Mute Words";
+
+/// Mute Add
 "enter_mute_user_id_word" = "Enter Mute User Id / Word";
+
+///
+/// Common
+///
+"add" = "Add";
+"cancel" = "Cancel";
+"set" = "Set";

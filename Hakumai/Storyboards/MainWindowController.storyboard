@@ -1126,13 +1126,13 @@
                 </menu>
                 <customObject id="Riw-FG-ugq" customClass="MenuDelegate" customModule="Hakumai" customModuleProvider="target">
                     <connections>
-                        <outlet property="addHandleNameMenuItem" destination="cOM-FI-15Y" id="gbs-UV-eRI"/>
                         <outlet property="addToMuteUserMenuItem" destination="vkF-qq-cvh" id="lRE-o7-CNO"/>
                         <outlet property="copyCommentMenuItem" destination="CZ2-j4-uTm" id="FO6-qx-8DC"/>
                         <outlet property="openUrlMenuItem" destination="rwi-Ju-wYL" id="4ds-0I-koO"/>
                         <outlet property="openUserPageMenuItem" destination="9gC-Dv-kyp" id="Yqk-Mt-JHF"/>
                         <outlet property="removeHandleNameMenuItem" destination="vop-lQ-wo6" id="eKS-r7-dtJ"/>
                         <outlet property="reportAsNgUserMenuItem" destination="L1C-9u-5sm" id="Edy-Ao-CgH"/>
+                        <outlet property="setHandleNameMenuItem" destination="cOM-FI-15Y" id="gbs-UV-eRI"/>
                     </connections>
                 </customObject>
                 <userDefaultsController representsSharedInstance="YES" id="TkR-hQ-T5S"/>
@@ -1147,60 +1147,110 @@
                         <rect key="frame" x="0.0" y="0.0" width="290" height="117"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gR0-0B-UDL">
-                                <rect key="frame" x="18" y="80" width="171" height="17"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Add/Update Handle Name:" id="aQh-PC-Qu6">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                            <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oTt-jC-Q27">
-                                <rect key="frame" x="20" y="50" width="250" height="22"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="aZf-eF-6vH">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                                <connections>
-                                    <action selector="addHandleName:" target="2hv-da-cfM" id="xh1-2a-uo9"/>
-                                    <binding destination="2hv-da-cfM" name="value" keyPath="self.handleName" id="Vb6-CG-yru">
-                                        <dictionary key="options">
-                                            <bool key="NSContinuouslyUpdatesValue" value="YES"/>
-                                        </dictionary>
-                                    </binding>
-                                </connections>
-                            </textField>
-                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Sw7-sV-cSm">
-                                <rect key="frame" x="196" y="14" width="80" height="32"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="push" title="Add" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xCk-aI-qVP">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="addHandleName:" target="2hv-da-cfM" id="Rjb-LB-b3q"/>
-                                    <binding destination="2hv-da-cfM" name="enabled" keyPath="self.handleName.length" id="OQ0-Mz-k2r"/>
-                                </connections>
-                            </button>
-                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zwB-Mb-UaV">
-                                <rect key="frame" x="113" y="14" width="83" height="32"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="a7x-T3-7pR">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                    <string key="keyEquivalent" base64-UTF8="YES">
+                            <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NRC-9G-OKz">
+                                <rect key="frame" x="20" y="24" width="250" height="73"/>
+                                <subviews>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gR0-0B-UDL">
+                                        <rect key="frame" x="-2" y="57" width="166" height="16"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Add/Update Handle Name:" id="aQh-PC-Qu6">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oTt-jC-Q27">
+                                        <rect key="frame" x="0.0" y="28" width="250" height="21"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="aZf-eF-6vH">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                        <connections>
+                                            <action selector="addHandleName:" target="2hv-da-cfM" id="xh1-2a-uo9"/>
+                                            <binding destination="2hv-da-cfM" name="value" keyPath="self.handleName" id="Vb6-CG-yru">
+                                                <dictionary key="options">
+                                                    <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                                </dictionary>
+                                            </binding>
+                                        </connections>
+                                    </textField>
+                                    <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fiN-Kf-XJZ">
+                                        <rect key="frame" x="0.0" y="0.0" width="250" height="20"/>
+                                        <subviews>
+                                            <customView verticalCompressionResistancePriority="249" translatesAutoresizingMaskIntoConstraints="NO" id="CYY-K2-pXt">
+                                                <rect key="frame" x="0.0" y="0.0" width="74" height="20"/>
+                                            </customView>
+                                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zwB-Mb-UaV">
+                                                <rect key="frame" x="75" y="-7" width="94" height="32"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="20" id="umB-MR-YJQ"/>
+                                                    <constraint firstAttribute="width" constant="80" id="zBI-HR-aGf"/>
+                                                </constraints>
+                                                <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="a7x-T3-7pR">
+                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                    <font key="font" metaFont="system"/>
+                                                    <string key="keyEquivalent" base64-UTF8="YES">
 Gw
 </string>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="cancelToAdd:" target="2hv-da-cfM" id="8Rp-ue-Fha"/>
-                                </connections>
-                            </button>
+                                                </buttonCell>
+                                                <connections>
+                                                    <action selector="cancelToAdd:" target="2hv-da-cfM" id="8Rp-ue-Fha"/>
+                                                </connections>
+                                            </button>
+                                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Sw7-sV-cSm">
+                                                <rect key="frame" x="163" y="-7" width="94" height="32"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="20" id="lbF-zf-MSi"/>
+                                                    <constraint firstAttribute="width" constant="80" id="ziN-GD-Mir"/>
+                                                </constraints>
+                                                <buttonCell key="cell" type="push" title="Add" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xCk-aI-qVP">
+                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                    <font key="font" metaFont="system"/>
+                                                </buttonCell>
+                                                <connections>
+                                                    <action selector="addHandleName:" target="2hv-da-cfM" id="Rjb-LB-b3q"/>
+                                                    <binding destination="2hv-da-cfM" name="enabled" keyPath="self.handleName.length" id="OQ0-Mz-k2r"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <visibilityPriorities>
+                                            <integer value="1000"/>
+                                            <integer value="1000"/>
+                                            <integer value="1000"/>
+                                        </visibilityPriorities>
+                                        <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
+                                            <real value="3.4028234663852886e+38"/>
+                                            <real value="3.4028234663852886e+38"/>
+                                        </customSpacing>
+                                    </stackView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="250" id="uRj-gZ-kuU"/>
+                                </constraints>
+                                <visibilityPriorities>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                </visibilityPriorities>
+                                <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                </customSpacing>
+                            </stackView>
                         </subviews>
+                        <constraints>
+                            <constraint firstItem="NRC-9G-OKz" firstAttribute="leading" secondItem="Ej3-qk-QpB" secondAttribute="leading" constant="20" symbolic="YES" id="Fke-Fz-3gX"/>
+                            <constraint firstAttribute="trailing" secondItem="NRC-9G-OKz" secondAttribute="trailing" constant="20" symbolic="YES" id="uXN-MO-BPq"/>
+                            <constraint firstItem="NRC-9G-OKz" firstAttribute="top" secondItem="Ej3-qk-QpB" secondAttribute="top" constant="20" symbolic="YES" id="wGc-eO-3ae"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="cancelButton" destination="zwB-Mb-UaV" id="ll4-TD-qWL"/>
+                        <outlet property="setButton" destination="Sw7-sV-cSm" id="FDG-ni-b3S"/>
+                        <outlet property="titleLabel" destination="gR0-0B-UDL" id="gBH-ip-zcN"/>
+                    </connections>
                 </viewController>
                 <customObject id="Jz0-En-dM8" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>

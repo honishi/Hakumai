@@ -14,14 +14,16 @@ internal enum L10n {
   internal static let aboutHakumai = L10n.tr("Localizable", "about_hakumai")
   /// Active Users
   internal static let activeUser = L10n.tr("Localizable", "active_user")
-  /// Add Handle Name
-  internal static let addHandleName = L10n.tr("Localizable", "add_handle_name")
+  /// Add
+  internal static let add = L10n.tr("Localizable", "add")
   /// Add to Mute User
   internal static let addToMuteUser = L10n.tr("Localizable", "add_to_mute_user")
   /// Always On Top
   internal static let alwaysOnTop = L10n.tr("Localizable", "always_on_top")
   /// Bring All to Front
   internal static let bringAllToFront = L10n.tr("Localizable", "bring_all_to_front")
+  /// Cancel
+  internal static let cancel = L10n.tr("Localizable", "cancel")
   /// Capitalize
   internal static let capitalize = L10n.tr("Localizable", "capitalize")
   /// Check
@@ -130,6 +132,12 @@ internal enum L10n {
   internal static let services = L10n.tr("Localizable", "services")
   /// Session Management
   internal static let sessionManagement = L10n.tr("Localizable", "session_management")
+  /// Set
+  internal static let `set` = L10n.tr("Localizable", "set")
+  /// Set Handle Name
+  internal static let setHandleName = L10n.tr("Localizable", "set_handle_name")
+  /// Set/Update Handle Name
+  internal static let setUpdateHandleName = L10n.tr("Localizable", "set_update_handle_name")
   /// Show All
   internal static let showAll = L10n.tr("Localizable", "show_all")
   /// Show Spelling and Grammar
