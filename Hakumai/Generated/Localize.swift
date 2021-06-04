@@ -22,6 +22,8 @@ internal enum L10n {
   internal static let alwaysOnTop = L10n.tr("Localizable", "always_on_top")
   /// Bring All to Front
   internal static let bringAllToFront = L10n.tr("Localizable", "bring_all_to_front")
+  /// Capitalize
+  internal static let capitalize = L10n.tr("Localizable", "capitalize")
   /// Check Document Now
   internal static let checkDocumentNow = L10n.tr("Localizable", "check_document_now")
   /// Check for Updates...
@@ -74,6 +76,10 @@ internal enum L10n {
   internal static let liveTitle = L10n.tr("Localizable", "live_title")
   /// ⌘L (Live URL, Live#)
   internal static let liveUrlTextFieldPlaceholder = L10n.tr("Localizable", "live_url_text_field_placeholder")
+  /// Make Lower Case
+  internal static let makeLowerCase = L10n.tr("Localizable", "make_lower_case")
+  /// Make Upper Case
+  internal static let makeUpperCase = L10n.tr("Localizable", "make_upper_case")
   /// Minimize
   internal static let minimize = L10n.tr("Localizable", "minimize")
   /// New Comment
@@ -116,12 +122,20 @@ internal enum L10n {
   internal static let speak = L10n.tr("Localizable", "speak")
   /// Speak
   internal static let speakComment = L10n.tr("Localizable", "speak_comment")
+  /// Speech
+  internal static let speech = L10n.tr("Localizable", "speech")
   /// Spelling and Grammar
   internal static let spellingAndGrammar = L10n.tr("Localizable", "spelling_and_grammar")
+  /// Start Speaking
+  internal static let startSpeaking = L10n.tr("Localizable", "start_speaking")
+  /// Stop Speaking
+  internal static let stopSpeaking = L10n.tr("Localizable", "stop_speaking")
   /// Substitutions
   internal static let substitutions = L10n.tr("Localizable", "substitutions")
   /// Text Replacement
   internal static let textReplacement = L10n.tr("Localizable", "text_replacement")
+  /// Transformations
+  internal static let transformations = L10n.tr("Localizable", "transformations")
   /// View
   internal static let view = L10n.tr("Localizable", "view")
   /// Visitors

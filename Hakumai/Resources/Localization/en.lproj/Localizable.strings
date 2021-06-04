@@ -52,6 +52,13 @@
 "smart_links" = "Smart Links";
 "data_detectors" = "Data Detectors";
 "text_replacement" = "Text Replacement";
+"transformations" = "Transformations";
+"make_upper_case" = "Make Upper Case";
+"make_lower_case" = "Make Lower Case";
+"capitalize" = "Capitalize";
+"speech" = "Speech";
+"start_speaking" = "Start Speaking";
+"stop_speaking" = "Stop Speaking";
 
 /// View Menu
 "default_zoom" = "Default Zoom";

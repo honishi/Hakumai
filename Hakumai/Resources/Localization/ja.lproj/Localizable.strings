@@ -52,6 +52,13 @@
 "smart_links" = "スマートリンク";
 "data_detectors" = "データ検出";
 "text_replacement" = "テキストの置換";
+"transformations" = "変換";
+"make_upper_case" = "大文字にする";
+"make_lower_case" = "小文字にする";
+"capitalize" = "語頭を大文字にする";
+"speech" = "スピーチ";
+"start_speaking" = "読み上げを開始";
+"stop_speaking" = "読み上げを停止";
 
 /// View Menu
 "default_zoom" = "標準のサイズ";
