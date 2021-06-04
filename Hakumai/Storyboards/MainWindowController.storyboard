@@ -199,7 +199,7 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="uyl-h8-XO2"/>
-                                        <menuItem title="Find" id="4EN-yA-p0u">
+                                        <menuItem title="Find" hidden="YES" id="4EN-yA-p0u">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <menu key="submenu" title="Find" id="1b7-l0-nxx">
                                                 <items>
@@ -237,41 +237,59 @@
                                                 </items>
                                             </menu>
                                         </menuItem>
-                                        <menuItem title="Spelling and Grammar" id="Dv1-io-Yv7">
+                                        <menuItem title="spelling_and_grammar" id="Dv1-io-Yv7">
                                             <modifierMask key="keyEquivalentModifierMask"/>
-                                            <menu key="submenu" title="Spelling" id="3IN-sU-3Bg">
+                                            <menu key="submenu" title="spelling_and_grammar" id="3IN-sU-3Bg">
                                                 <items>
-                                                    <menuItem title="Show Spelling and Grammar" keyEquivalent=":" id="HFo-cy-zxI">
+                                                    <menuItem title="show_spelling_and_grammar" keyEquivalent=":" id="HFo-cy-zxI">
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="show_spelling_and_grammar"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="showGuessPanel:" target="Ady-hI-5gd" id="vFj-Ks-hy3"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Check Document Now" keyEquivalent=";" id="hz2-CU-CR7">
+                                                    <menuItem title="check_document_now" keyEquivalent=";" id="hz2-CU-CR7">
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="check_document_now"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="checkSpelling:" target="Ady-hI-5gd" id="fz7-VC-reM"/>
                                                         </connections>
                                                     </menuItem>
                                                     <menuItem isSeparatorItem="YES" id="bNw-od-mp5"/>
-                                                    <menuItem title="Check Spelling While Typing" id="rbD-Rh-wIN">
+                                                    <menuItem title="check_spelling_while_typing" id="rbD-Rh-wIN">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="check_spelling_while_typing"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="toggleContinuousSpellChecking:" target="Ady-hI-5gd" id="7w6-Qz-0kB"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Check Grammar With Spelling" id="mK6-2p-4JG">
+                                                    <menuItem title="check_grammar_with_spelling" id="mK6-2p-4JG">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="check_grammar_with_spelling"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="toggleGrammarChecking:" target="Ady-hI-5gd" id="muD-Qn-j4w"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Correct Spelling Automatically" id="78Y-hA-62v">
+                                                    <menuItem title="correct_spelling_automatically" id="78Y-hA-62v">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="correct_spelling_automatically"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="toggleAutomaticSpellingCorrection:" target="Ady-hI-5gd" id="2lM-Qi-WAP"/>
                                                         </connections>
                                                     </menuItem>
                                                 </items>
                                             </menu>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="spelling_and_grammar"/>
+                                            </userDefinedRuntimeAttributes>
                                         </menuItem>
                                         <menuItem title="Substitutions" id="9ic-FL-obx">
                                             <modifierMask key="keyEquivalentModifierMask"/>

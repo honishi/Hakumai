@@ -38,6 +38,12 @@
 "paste" = "Paste";
 "delete" = "Delete";
 "select_all" = "Select All";
+"spelling_and_grammar" = "Spelling and Grammar";
+"show_spelling_and_grammar" = "Show Spelling and Grammar";
+"check_document_now" = "Check Document Now";
+"check_spelling_while_typing" = "Check Spelling While Typing";
+"check_grammar_with_spelling" = "Check Grammar With Spelling";
+"correct_spelling_automatically" = "Correct Spelling Automatically";
 
 /// View Menu
 "default_zoom" = "Default Zoom";

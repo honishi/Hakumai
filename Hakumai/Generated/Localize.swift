@@ -22,8 +22,14 @@ internal enum L10n {
   internal static let alwaysOnTop = L10n.tr("Localizable", "always_on_top")
   /// Bring All to Front
   internal static let bringAllToFront = L10n.tr("Localizable", "bring_all_to_front")
+  /// Check Document Now
+  internal static let checkDocumentNow = L10n.tr("Localizable", "check_document_now")
   /// Check for Updates...
   internal static let checkForUpdate = L10n.tr("Localizable", "check_for_update")
+  /// Check Grammar With Spelling
+  internal static let checkGrammarWithSpelling = L10n.tr("Localizable", "check_grammar_with_spelling")
+  /// Check Spelling While Typing
+  internal static let checkSpellingWhileTyping = L10n.tr("Localizable", "check_spelling_while_typing")
   /// Comments
   internal static let commentCount = L10n.tr("Localizable", "comment_count")
   /// ⌘N (Empty ⏎ to scroll to bottom)
@@ -36,6 +42,8 @@ internal enum L10n {
   internal static let copy = L10n.tr("Localizable", "copy")
   /// Copy Comment
   internal static let copyComment = L10n.tr("Localizable", "copy_comment")
+  /// Correct Spelling Automatically
+  internal static let correctSpellingAutomatically = L10n.tr("Localizable", "correct_spelling_automatically")
   /// Cut
   internal static let cut = L10n.tr("Localizable", "cut")
   /// Default Zoom
@@ -90,10 +98,14 @@ internal enum L10n {
   internal static let services = L10n.tr("Localizable", "services")
   /// Show All
   internal static let showAll = L10n.tr("Localizable", "show_all")
+  /// Show Spelling and Grammar
+  internal static let showSpellingAndGrammar = L10n.tr("Localizable", "show_spelling_and_grammar")
   /// Speak
   internal static let speak = L10n.tr("Localizable", "speak")
   /// Speak
   internal static let speakComment = L10n.tr("Localizable", "speak_comment")
+  /// Spelling and Grammar
+  internal static let spellingAndGrammar = L10n.tr("Localizable", "spelling_and_grammar")
   /// View
   internal static let view = L10n.tr("Localizable", "view")
   /// Visitors
