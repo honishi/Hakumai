@@ -106,6 +106,8 @@ internal enum L10n {
   internal static let minimize = L10n.tr("Localizable", "minimize")
   /// New Comment
   internal static let newComment = L10n.tr("Localizable", "new_comment")
+  /// Open Security & Privacy
+  internal static let openSecurityPrivacy = L10n.tr("Localizable", "open_security_privacy")
   /// Open URL
   internal static let openUrl = L10n.tr("Localizable", "open_url")
   /// Open URL in Comment
@@ -126,6 +128,10 @@ internal enum L10n {
   internal static let reportAsNgUser = L10n.tr("Localizable", "report_as_ng_user")
   /// Safari
   internal static let safari = L10n.tr("Localizable", "safari")
+  /// To retrieve the cookie from Safari, please open the "Security & Privacy" in the "System Preference”, go to the "Privacy" tab and give the "Full Disk Access" right to Hakumai app.
+  internal static let safariCookieAlertDescription = L10n.tr("Localizable", "safari_cookie_alert_description")
+  /// No Safari Cookie found
+  internal static let safariCookieAlertTitle = L10n.tr("Localizable", "safari_cookie_alert_title")
   /// Select All
   internal static let selectAll = L10n.tr("Localizable", "select_all")
   /// Services

@@ -87,6 +87,9 @@
 "live_url_text_field_placeholder" = "⌘L (放送URL, 放送番号)";
 "speak_comment" = "読み上げ";
 "visitor_count" = "来場者";
+"safari_cookie_alert_title" = "Safari から Cookie が取得できません";
+"safari_cookie_alert_description" = "Safari から Cookie を取得するには、「システム環境設定」の中から「セキュリティとプライバシー」を開き、「プライバシー」タブの「フルディスクアクセス」の中の Hakumai アプリにチェックを入れてください。";
+"open_security_privacy" = "セキュリティとプライバシーを開く";
 
 /// Handle Add
 "set_update_handle_name" = "ハンドル名を設定・更新";

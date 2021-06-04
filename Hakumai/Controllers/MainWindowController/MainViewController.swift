@@ -17,9 +17,6 @@ private let defaultMinimumRowHeight: CGFloat = 17
 
 private let enableDebugReconnectButton = false
 
-private let safariCookieAlertTitle = "No Safari Cookie found"
-private let safariCookieAlertDescription = "To retrieve the cookie from Safari, please open the Security & Privacy section of the System Preference and give the \"Full Disk Access\" right to Hakumai app."
-
 private let defaultElapsedTimeValue = "--:--:--"
 private let defaultLabelValue = "---"
 
@@ -886,15 +883,15 @@ private extension MainViewController {
         switch sessionManagementType {
         case .safari:
             let alert = NSAlert()
-            alert.messageText = safariCookieAlertTitle
-            alert.informativeText = safariCookieAlertDescription
+            alert.messageText = L10n.safariCookieAlertTitle
+            alert.informativeText = L10n.safariCookieAlertDescription
             let imageView = NSImageView(image: Asset.safariCookieAlertImage.image)
             imageView.frame = NSRect.init(x: 0, y: 0, width: 300, height: 300)
             alert.accessoryView = imageView
-            let securityButton = alert.addButton(withTitle: "Open Security & Privacy")
+            let securityButton = alert.addButton(withTitle: L10n.openSecurityPrivacy)
             securityButton.target = self
             securityButton.action = #selector(MainViewController.showSecurityPanel)
-            alert.addButton(withTitle: "Cancel")
+            alert.addButton(withTitle: L10n.cancel)
             alert.runModal()
         default:
             break

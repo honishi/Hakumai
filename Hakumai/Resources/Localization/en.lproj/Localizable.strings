@@ -87,6 +87,9 @@
 "live_url_text_field_placeholder" = "⌘L (Live URL, Live#)";
 "speak_comment" = "Speak";
 "visitor_count" = "Visitors";
+"safari_cookie_alert_title" = "No Safari Cookie found";
+"safari_cookie_alert_description" = "To retrieve the cookie from Safari, please open the \"Security & Privacy\" in the \"System Preference\”, go to the \"Privacy\" tab and give the \"Full Disk Access\" right to Hakumai app.";
+"open_security_privacy" = "Open Security & Privacy";
 
 /// Handle Add
 "set_update_handle_name" = "Set/Update Handle Name";
