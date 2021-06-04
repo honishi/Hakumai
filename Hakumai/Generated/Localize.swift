@@ -46,6 +46,8 @@ internal enum L10n {
   internal static let communityId = L10n.tr("Localizable", "community_id")
   /// Community Name
   internal static let communityName = L10n.tr("Localizable", "community_name")
+  /// Connected to live.
+  internal static let connectedToLive = L10n.tr("Localizable", "connected_to_live")
   /// Copy
   internal static let copy = L10n.tr("Localizable", "copy")
   /// Copy Comment
@@ -76,6 +78,12 @@ internal enum L10n {
   internal static let enterMuteUserIdWord = L10n.tr("Localizable", "enter_mute_user_id_word")
   /// Failed
   internal static let failed = L10n.tr("Localizable", "failed")
+  /// Failed to comment.
+  internal static let failedToComment = L10n.tr("Localizable", "failed_to_comment")
+  /// Failed to prepare live. (%@)
+  internal static func failedToPrepareLive(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "failed_to_prepare_live", String(describing: p1))
+  }
   /// File
   internal static let file = L10n.tr("Localizable", "file")
   /// Google Chrome
@@ -92,6 +100,8 @@ internal enum L10n {
   internal static let hideHakumai = L10n.tr("Localizable", "hide_hakumai")
   /// Hide Others
   internal static let hideOthers = L10n.tr("Localizable", "hide_others")
+  /// Live closed.
+  internal static let liveClosed = L10n.tr("Localizable", "live_closed")
   /// Live Title
   internal static let liveTitle = L10n.tr("Localizable", "live_title")
   /// ⌘L (Live URL, Live#)
@@ -120,8 +130,14 @@ internal enum L10n {
   internal static let paste = L10n.tr("Localizable", "paste")
   /// Preferences...
   internal static let preferences = L10n.tr("Localizable", "preferences")
+  /// Prepared live as user %@.
+  internal static func preparedLive(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "prepared_live", String(describing: p1))
+  }
   /// Quit Hakumai
   internal static let quitHakumai = L10n.tr("Localizable", "quit_hakumai")
+  /// Reconnecting...
+  internal static let reconnecting = L10n.tr("Localizable", "reconnecting")
   /// Remove Handle Name
   internal static let removeHandleName = L10n.tr("Localizable", "remove_handle_name")
   /// Report as NG User

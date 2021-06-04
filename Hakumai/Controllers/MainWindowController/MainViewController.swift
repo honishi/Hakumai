@@ -103,6 +103,7 @@ extension MainViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureViews()
+        DispatchQueue.main.async { self.focusLiveTextField() }
     }
 
     override func viewDidAppear() {
@@ -324,14 +325,14 @@ extension MainViewController: NicoUtilityDelegate {
 
         switch connectContext {
         case .normal:
-            logSystemMessageToTableView("Prepared live as user \(user.nickname).")
+            logSystemMessageToTableView(L10n.preparedLive(user.nickname))
         case .reconnect:
             break
         }
     }
 
     func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, reason: String, error: NicoUtility.NicoError?) {
-        logSystemMessageToTableView("Failed to prepare live.(\(reason))")
+        logSystemMessageToTableView(L10n.failedToPrepareLive(reason))
         updateMainControlViews(status: .disconnected)
         showCookiePrivilegeAlertIfNeeded(error: error)
     }
@@ -342,7 +343,7 @@ extension MainViewController: NicoUtilityDelegate {
         switch connectContext {
         case .normal:
             liveStartedDate = Date()
-            logSystemMessageToTableView("Connected to live.")
+            logSystemMessageToTableView(L10n.connectedToLive)
         case .reconnect:
             break
         }
@@ -367,7 +368,7 @@ extension MainViewController: NicoUtilityDelegate {
     func nicoUtilityWillReconnectToLive(_ nicoUtility: NicoUtilityType, reason: NicoUtility.ReconnectReason) {
         switch reason {
         case .normal:
-            logSystemMessageToTableView("Reconnecting...")
+            logSystemMessageToTableView(L10n.reconnecting)
         case .noPong, .noTexts:
             break
         }
@@ -376,7 +377,7 @@ extension MainViewController: NicoUtilityDelegate {
     func nicoUtilityDidDisconnect(_ nicoUtility: NicoUtilityType, disconnectContext: NicoUtility.DisconnectContext) {
         switch disconnectContext {
         case .normal:
-            logSystemMessageToTableView("Live closed.")
+            logSystemMessageToTableView(L10n.liveClosed)
         case .reconnect:
             break
         }
@@ -673,9 +674,11 @@ extension MainViewController {
     }
 
     @IBAction func reconnectLive(_ sender: Any) {
-        // NicoUtility.shared.reconnect()
-        NicoUtility.shared.reconnect(reason: .noPong)
-        // NicoUtility.shared.reconnect(reason: .noTexts)
+        let reason: NicoUtility.ReconnectReason
+        reason = .normal
+        // reason = .noPong
+        // reason = .noTexts
+        NicoUtility.shared.reconnect(reason: reason)
     }
 
     @IBAction func connectLive(_ sender: AnyObject) {
@@ -725,7 +728,7 @@ extension MainViewController {
         let anonymously = UserDefaults.standard.bool(forKey: Parameters.commentAnonymously)
         NicoUtility.shared.comment(comment, anonymously: anonymously) { comment in
             if comment == nil {
-                self.logSystemMessageToTableView("Failed to comment.")
+                self.logSystemMessageToTableView(L10n.failedToComment)
             }
         }
         commentTextField.stringValue = ""

@@ -91,6 +91,14 @@
 "safari_cookie_alert_description" = "To retrieve the cookie from Safari, please open the \"Security & Privacy\" in the \"System Preference\”, go to the \"Privacy\" tab and give the \"Full Disk Access\" right to Hakumai app.";
 "open_security_privacy" = "Open Security & Privacy";
 
+/// Message
+"prepared_live" = "Prepared live as user %@.";
+"failed_to_prepare_live" = "Failed to prepare live. (%@)";
+"connected_to_live" = "Connected to live.";
+"live_closed" = "Live closed.";
+"reconnecting" = "Reconnecting...";
+"failed_to_comment" = "Failed to comment.";
+
 /// Handle Add
 "set_update_handle_name" = "Set/Update Handle Name";
 

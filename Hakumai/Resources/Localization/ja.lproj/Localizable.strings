@@ -91,6 +91,14 @@
 "safari_cookie_alert_description" = "Safari から Cookie を取得するには、「システム環境設定」の中から「セキュリティとプライバシー」を開き、「プライバシー」タブの「フルディスクアクセス」の中の Hakumai アプリにチェックを入れてください。";
 "open_security_privacy" = "セキュリティとプライバシーを開く";
 
+/// Message
+"prepared_live" = "ユーザー %@ で放送の情報を取得しました.";
+"failed_to_prepare_live" = "放送の情報取得に失敗しました. (%@)";
+"connected_to_live" = "放送に接続しました.";
+"live_closed" = "放送から切断しました.";
+"reconnecting" = "再接続します...";
+"failed_to_comment" = "コメントに失敗しました.";
+
 /// Handle Add
 "set_update_handle_name" = "ハンドル名を設定・更新";
 
