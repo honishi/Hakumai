@@ -785,64 +785,112 @@
             <objects>
                 <viewController storyboardIdentifier="MuteAddViewController" id="9lI-n8-548" customClass="MuteAddViewController" customModule="Hakumai" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="Z0I-2M-U0S">
-                        <rect key="frame" x="0.0" y="0.0" width="300" height="113"/>
+                        <rect key="frame" x="0.0" y="0.0" width="300" height="120"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6VM-az-ow4">
-                                <rect key="frame" x="18" y="76" width="200" height="17"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Enter Mute User Id / Word:" id="FlA-m3-CVz">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                            <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ldH-s4-3VX">
-                                <rect key="frame" x="20" y="46" width="260" height="22"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="68l-xU-phD">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                                <connections>
-                                    <action selector="addMute:" target="9lI-n8-548" id="EAY-Nd-vry"/>
-                                    <binding destination="9lI-n8-548" name="value" keyPath="self.muteValue" id="ch8-su-UWk">
-                                        <dictionary key="options">
-                                            <bool key="NSContinuouslyUpdatesValue" value="YES"/>
-                                        </dictionary>
-                                    </binding>
-                                </connections>
-                            </textField>
-                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Sgw-tq-0w5">
-                                <rect key="frame" x="200" y="19" width="80" height="19"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="roundRect" title="Add" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="wrR-VC-jlF">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="cellTitle"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="addMute:" target="9lI-n8-548" id="hGr-Lv-coW"/>
-                                    <binding destination="9lI-n8-548" name="enabled" keyPath="self.muteValue.length" id="dAH-pn-RwO"/>
-                                </connections>
-                            </button>
-                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2I5-fW-V6c">
-                                <rect key="frame" x="112" y="19" width="80" height="19"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="roundRect" title="Cancel" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ZJi-lX-Khz">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="cellTitle"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="cancelAddMute:" target="9lI-n8-548" id="0lP-N7-1ru"/>
-                                </connections>
-                            </button>
+                            <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YBM-Xh-aQc">
+                                <rect key="frame" x="20" y="29" width="260" height="71"/>
+                                <subviews>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6VM-az-ow4">
+                                        <rect key="frame" x="-2" y="55" width="165" height="16"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Enter Mute User Id / Word:" id="FlA-m3-CVz">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ldH-s4-3VX">
+                                        <rect key="frame" x="0.0" y="26" width="260" height="21"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="68l-xU-phD">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                        <connections>
+                                            <action selector="addMute:" target="9lI-n8-548" id="EAY-Nd-vry"/>
+                                            <binding destination="9lI-n8-548" name="value" keyPath="self.muteValue" id="ch8-su-UWk">
+                                                <dictionary key="options">
+                                                    <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                                </dictionary>
+                                            </binding>
+                                        </connections>
+                                    </textField>
+                                    <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="N3K-zT-cJO">
+                                        <rect key="frame" x="0.0" y="0.0" width="260" height="18"/>
+                                        <subviews>
+                                            <customView verticalCompressionResistancePriority="249" translatesAutoresizingMaskIntoConstraints="NO" id="rdH-6G-1HS">
+                                                <rect key="frame" x="0.0" y="0.0" width="84" height="18"/>
+                                            </customView>
+                                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2I5-fW-V6c">
+                                                <rect key="frame" x="92" y="-1" width="80" height="19"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="18" id="Y5x-ml-re5"/>
+                                                    <constraint firstAttribute="width" constant="80" id="gte-GY-BcZ"/>
+                                                </constraints>
+                                                <buttonCell key="cell" type="roundRect" title="Cancel" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ZJi-lX-Khz">
+                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                    <font key="font" metaFont="cellTitle"/>
+                                                </buttonCell>
+                                                <connections>
+                                                    <action selector="cancelAddMute:" target="9lI-n8-548" id="0lP-N7-1ru"/>
+                                                </connections>
+                                            </button>
+                                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Sgw-tq-0w5">
+                                                <rect key="frame" x="180" y="-1" width="80" height="19"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="80" id="8z4-0R-oPG"/>
+                                                    <constraint firstAttribute="height" constant="18" id="Voe-8e-bWY"/>
+                                                </constraints>
+                                                <buttonCell key="cell" type="roundRect" title="Add" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="wrR-VC-jlF">
+                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                    <font key="font" metaFont="cellTitle"/>
+                                                </buttonCell>
+                                                <connections>
+                                                    <action selector="addMute:" target="9lI-n8-548" id="hGr-Lv-coW"/>
+                                                    <binding destination="9lI-n8-548" name="enabled" keyPath="self.muteValue.length" id="dAH-pn-RwO"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <visibilityPriorities>
+                                            <integer value="1000"/>
+                                            <integer value="1000"/>
+                                            <integer value="1000"/>
+                                        </visibilityPriorities>
+                                        <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
+                                            <real value="3.4028234663852886e+38"/>
+                                            <real value="3.4028234663852886e+38"/>
+                                        </customSpacing>
+                                    </stackView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="260" id="Kfd-v9-Bze"/>
+                                </constraints>
+                                <visibilityPriorities>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                </visibilityPriorities>
+                                <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                </customSpacing>
+                            </stackView>
                         </subviews>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="YBM-Xh-aQc" secondAttribute="trailing" constant="20" symbolic="YES" id="3pX-cL-3pk"/>
+                            <constraint firstItem="YBM-Xh-aQc" firstAttribute="leading" secondItem="Z0I-2M-U0S" secondAttribute="leading" constant="20" symbolic="YES" id="5DK-ve-UsA"/>
+                            <constraint firstItem="YBM-Xh-aQc" firstAttribute="top" secondItem="Z0I-2M-U0S" secondAttribute="top" constant="20" symbolic="YES" id="bCx-gx-hLY"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="titleLabel" destination="6VM-az-ow4" id="VUH-Lk-2QA"/>
+                    </connections>
                 </viewController>
                 <customObject id="fvF-6F-IGF" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1182" y="987.5"/>
+            <point key="canvasLocation" x="1188" y="1071"/>
         </scene>
     </scenes>
     <resources>

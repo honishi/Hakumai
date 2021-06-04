@@ -70,6 +70,8 @@ internal enum L10n {
   internal static let enableMuteUserIds = L10n.tr("Localizable", "enable_mute_user_ids")
   /// Enable Mute Words
   internal static let enableMuteWords = L10n.tr("Localizable", "enable_mute_words")
+  /// Enter Mute User Id / Word
+  internal static let enterMuteUserIdWord = L10n.tr("Localizable", "enter_mute_user_id_word")
   /// Failed
   internal static let failed = L10n.tr("Localizable", "failed")
   /// File

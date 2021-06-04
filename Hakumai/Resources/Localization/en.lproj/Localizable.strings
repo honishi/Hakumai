@@ -127,4 +127,4 @@
 /// Mute
 "enable_mute_user_ids" = "Enable Mute User Ids";
 "enable_mute_words" = "Enable Mute Words";
-// "" = "";
+"enter_mute_user_id_word" = "Enter Mute User Id / Word";

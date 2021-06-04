@@ -127,4 +127,4 @@
 /// Mute
 "enable_mute_user_ids" = "ユーザーID指定のミュートを使う";
 "enable_mute_words" = "単語指定のミュートを使う";
-// "" = "";
+"enter_mute_user_id_word" = "ミュートするユーザーID / 単語";
