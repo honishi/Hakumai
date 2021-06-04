@@ -123,3 +123,8 @@
 "comment_speaking" = "コメント読み上げ";
 "speak_comments" = "コメント読み上げ (macOS 10.14 以降が必要)";
 "speak_volume" = "読み上げボリューム";
+
+/// Mute
+"enable_mute_user_ids" = "ユーザーID指定のミュートを使う";
+"enable_mute_words" = "単語指定のミュートを使う";
+// "" = "";

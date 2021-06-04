@@ -123,3 +123,8 @@
 "comment_speaking" = "Comment Speaking";
 "speak_comments" = "Speak Comments (Requires macOS 10.14-)";
 "speak_volume" = "Speak Volume";
+
+/// Mute
+"enable_mute_user_ids" = "Enable Mute User Ids";
+"enable_mute_words" = "Enable Mute Words";
+// "" = "";

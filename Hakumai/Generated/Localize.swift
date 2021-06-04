@@ -66,6 +66,10 @@ internal enum L10n {
   internal static let elapsedTime = L10n.tr("Localizable", "elapsed_time")
   /// Enable 184
   internal static let enable184 = L10n.tr("Localizable", "enable_184")
+  /// Enable Mute User Ids
+  internal static let enableMuteUserIds = L10n.tr("Localizable", "enable_mute_user_ids")
+  /// Enable Mute Words
+  internal static let enableMuteWords = L10n.tr("Localizable", "enable_mute_words")
   /// Failed
   internal static let failed = L10n.tr("Localizable", "failed")
   /// File
