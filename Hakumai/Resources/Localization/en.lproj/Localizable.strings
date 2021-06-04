@@ -98,3 +98,10 @@
 "add_to_mute_user" = "Add to Mute User";
 "report_as_ng_user" = "Report as NG User";
 "open_user_page" = "Open User Page";
+
+///
+/// User Window
+///
+"user_id" = "User ID";
+"user_name" = "User Name";
+"handle_name" = "Handle Name";

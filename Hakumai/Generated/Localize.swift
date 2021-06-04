@@ -66,6 +66,8 @@ internal enum L10n {
   internal static let grabUrlFromBrowser = L10n.tr("Localizable", "grab_url_from_browser")
   /// Hakumai Help
   internal static let hakumaiHelp = L10n.tr("Localizable", "hakumai_help")
+  /// Handle Name
+  internal static let handleName = L10n.tr("Localizable", "handle_name")
   /// Help
   internal static let help = L10n.tr("Localizable", "help")
   /// Hide Hakumai
@@ -136,6 +138,10 @@ internal enum L10n {
   internal static let textReplacement = L10n.tr("Localizable", "text_replacement")
   /// Transformations
   internal static let transformations = L10n.tr("Localizable", "transformations")
+  /// User ID
+  internal static let userId = L10n.tr("Localizable", "user_id")
+  /// User Name
+  internal static let userName = L10n.tr("Localizable", "user_name")
   /// View
   internal static let view = L10n.tr("Localizable", "view")
   /// Visitors

@@ -16,8 +16,11 @@ final class UserViewController: NSViewController {
     // MARK: - Properties
     // MARK: Outlets
     @IBOutlet private weak var userIconImageView: NSImageView!
+    @IBOutlet private weak var userIdTitleLabel: NSTextField!
     @IBOutlet private weak var userIdButton: NSButton!
+    @IBOutlet private weak var userNameTitleLabel: NSTextField!
     @IBOutlet private weak var userNameValueLabel: NSTextField!
+    @IBOutlet private weak var handleNameTitleLabel: NSTextField!
     @IBOutlet private weak var handleNameValueLabel: NSTextField!
     @IBOutlet private weak var tableView: NSTableView!
     @IBOutlet private weak var scrollView: BottomButtonScrollView!
@@ -169,6 +172,9 @@ extension UserViewController {
 private extension UserViewController {
     func configureView() {
         userIconImageView.addBorder()
+        userIdTitleLabel.stringValue = "\(L10n.userId):"
+        userNameTitleLabel.stringValue = "\(L10n.userName):"
+        handleNameTitleLabel.stringValue = "\(L10n.handleName):"
         scrollView.enableBottomScrollButton()
     }
 

@@ -98,3 +98,10 @@
 "add_to_mute_user" = "ユーザーをミュートに追加";
 "report_as_ng_user" = "NGユーザーとして報告";
 "open_user_page" = "ユーザーページを開く";
+
+///
+/// User Window
+///
+"user_id" = "ユーザーID";
+"user_name" = "ユーザー名";
+"handle_name" = "ハンドル";
