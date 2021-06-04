@@ -95,10 +95,10 @@ extension GeneralViewController {
             DispatchQueue.main.async {
                 self.progressIndicator.stopAnimation(self)
                 if userSessionCookie == nil {
-                    self.checkAccountStatusValueLabel.stringValue = "Failed"
+                    self.checkAccountStatusValueLabel.stringValue = L10n.failed
                     return
                 }
-                self.checkAccountStatusValueLabel.stringValue = "Success"
+                self.checkAccountStatusValueLabel.stringValue = L10n.success
                 KeychainUtility.removeAllAccountsInKeychain()
                 KeychainUtility.setAccountToKeychain(mailAddress: self.mailAddress as String, password: self.password as String)
             }

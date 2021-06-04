@@ -66,6 +66,8 @@ internal enum L10n {
   internal static let elapsedTime = L10n.tr("Localizable", "elapsed_time")
   /// Enable 184
   internal static let enable184 = L10n.tr("Localizable", "enable_184")
+  /// Failed
+  internal static let failed = L10n.tr("Localizable", "failed")
   /// File
   internal static let file = L10n.tr("Localizable", "file")
   /// Google Chrome
@@ -156,6 +158,8 @@ internal enum L10n {
   internal static let stopSpeaking = L10n.tr("Localizable", "stop_speaking")
   /// Substitutions
   internal static let substitutions = L10n.tr("Localizable", "substitutions")
+  /// Success
+  internal static let success = L10n.tr("Localizable", "success")
   /// Text Replacement
   internal static let textReplacement = L10n.tr("Localizable", "text_replacement")
   /// Transformations
