@@ -11,14 +11,13 @@ import AppKit
 
 final class MenuDelegate: NSObject {
     // MARK: Menu Outlets
-    @IBOutlet weak var copyCommentMenuItem: NSMenuItem!
-    @IBOutlet weak var openUrlMenuItem: NSMenuItem!
-    @IBOutlet weak var tweetCommentMenuItem: NSMenuItem!
-    @IBOutlet weak var addHandleNameMenuItem: NSMenuItem!
-    @IBOutlet weak var removeHandleNameMenuItem: NSMenuItem!
-    @IBOutlet weak var addToMuteUserMenuItem: NSMenuItem!
-    @IBOutlet weak var reportAsNgUserMenuItem: NSMenuItem!
-    @IBOutlet weak var openUserPageMenuItem: NSMenuItem!
+    @IBOutlet private weak var copyCommentMenuItem: NSMenuItem!
+    @IBOutlet private weak var openUrlMenuItem: NSMenuItem!
+    @IBOutlet private weak var addHandleNameMenuItem: NSMenuItem!
+    @IBOutlet private weak var removeHandleNameMenuItem: NSMenuItem!
+    @IBOutlet private weak var addToMuteUserMenuItem: NSMenuItem!
+    @IBOutlet private weak var reportAsNgUserMenuItem: NSMenuItem!
+    @IBOutlet private weak var openUserPageMenuItem: NSMenuItem!
 
     // MARK: Computed Properties
     var tableView: NSTableView { return MainViewController.shared.tableView }
@@ -27,6 +26,7 @@ final class MenuDelegate: NSObject {
     // MARK: - Object Lifecycle
     override func awakeFromNib() {
         super.awakeFromNib()
+        configureView()
     }
 }
 
@@ -40,7 +40,7 @@ extension MenuDelegate: NSMenuItemValidation {
         guard message.messageType == .chat, let chat = message.chat else { return false }
 
         switch menuItem {
-        case copyCommentMenuItem, tweetCommentMenuItem:
+        case copyCommentMenuItem:
             return true
         case openUrlMenuItem:
             return chat.comment.extractUrlString() != nil ? true : false
@@ -90,23 +90,6 @@ extension MenuDelegate {
         NSWorkspace.shared.open(urlObject)
     }
 
-    @IBAction func tweetComment(_ sender: AnyObject) {
-        guard let chat = MessageContainer.shared[tableView.clickedRow].chat,
-              let live = NicoUtility.shared.live else { return }
-
-        let comment = chat.comment
-        let liveName = live.title
-        let communityName = live.community?.title ?? ""
-        let liveUrl = live.liveUrlString
-        let communityId = live.community?.communityId ?? ""
-
-        let status = "「\(comment)」/ \(liveName) (\(communityName)) \(liveUrl) #\(communityId)"
-
-        let service = NSSharingService(named: .postOnTwitter)
-        service?.delegate = self
-        service?.perform(withItems: [status])
-    }
-
     @IBAction func addHandleName(_ sender: AnyObject) {
         guard let live = live, let chat = MessageContainer.shared[tableView.clickedRow].chat else {
             return
@@ -154,6 +137,16 @@ extension MenuDelegate {
 }
 
 private extension MenuDelegate {
+    func configureView() {
+        copyCommentMenuItem.title = L10n.copyComment
+        openUrlMenuItem.title = L10n.openUrlInComment
+        addHandleNameMenuItem.title = L10n.addHandleName
+        removeHandleNameMenuItem.title = L10n.removeHandleName
+        addToMuteUserMenuItem.title = L10n.addToMuteUser
+        reportAsNgUserMenuItem.title = L10n.reportAsNgUser
+        openUserPageMenuItem.title = L10n.openUserPage
+    }
+
     func resetMenu() {}
     func configureMenu(_ chat: Chat) {}
 

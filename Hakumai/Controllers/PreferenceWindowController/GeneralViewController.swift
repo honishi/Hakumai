@@ -9,6 +9,8 @@
 import Foundation
 import AppKit
 
+private let defaultAccountStatusValue = "---"
+
 // - @objc() is required http://stackoverflow.com/a/27178765
 // - sample that returns bool http://stackoverflow.com/a/8327909
 @objc(IsLoginSessionManagementTransformer) class IsLoginSessionManagementTransformer: ValueTransformer {
@@ -25,27 +27,27 @@ final class GeneralViewController: NSViewController {
     // MARK: - Properties
     static let shared = GeneralViewController.make()
 
-    @IBOutlet weak var sessionManagementMatrix: NSMatrix!
-    @IBOutlet weak var mailAddressTextField: NSTextField!
-    @IBOutlet weak var checkAccountButton: NSButton!
-    @IBOutlet weak var progressIndicator: NSProgressIndicator!
-    @IBOutlet weak var checkAccountStatusLabel: NSTextField!
+    @IBOutlet private weak var sessionManagementBox: NSBox!
+    @IBOutlet private weak var sessionManagementMatrix: NSMatrix!
+    @IBOutlet private weak var chromeButtonCell: NSButtonCell!
+    @IBOutlet private weak var safariButtonCell: NSButtonCell!
+    @IBOutlet private weak var loginButtonCell: NSButtonCell!
+    @IBOutlet private weak var mailAddressTitleTextField: NSTextField!
+    @IBOutlet private weak var mailAddressValueTextField: NSTextField!
+    @IBOutlet private weak var passwordTitleTextField: NSTextField!
+    @IBOutlet private weak var checkAccountButton: NSButton!
+    @IBOutlet private weak var progressIndicator: NSProgressIndicator!
+    @IBOutlet private weak var checkAccountStatusTitleLabel: NSTextField!
+    @IBOutlet private weak var checkAccountStatusValueLabel: NSTextField!
 
-    @IBOutlet weak var speakCommentButton: NSButton!
-    @IBOutlet weak var speakVolumeTextField: NSTextField!
-    @IBOutlet weak var speakVolumeValueTextField: NSTextField!
-    @IBOutlet weak var speakVolumeSlider: NSSlider!
+    @IBOutlet private weak var commentSpeakingBox: NSBox!
+    @IBOutlet private weak var speakCommentButton: NSButton!
+    @IBOutlet private weak var speakVolumeTitleTextField: NSTextField!
+    @IBOutlet private weak var speakVolumeValueTextField: NSTextField!
+    @IBOutlet private weak var speakVolumeSlider: NSSlider!
 
-    @objc dynamic var mailAddress: NSString! {
-        didSet {
-            validateCheckAccountButton()
-        }
-    }
-    @objc dynamic var password: NSString! {
-        didSet {
-            validateCheckAccountButton()
-        }
-    }
+    @objc dynamic var mailAddress: NSString! { didSet { validateCheckAccountButton() } }
+    @objc dynamic var password: NSString! { didSet { validateCheckAccountButton() } }
 
     // MARK: - Object Lifecycle
     static func make() -> GeneralViewController {
@@ -57,6 +59,7 @@ final class GeneralViewController: NSViewController {
 extension GeneralViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureView()
         disableSpeakComponentsIfNeeded()
     }
 
@@ -76,7 +79,7 @@ extension GeneralViewController {
         guard let matrix = sender as? NSMatrix else { return }
         // log.debug("\(matrix.selectedTag())")
         if matrix.selectedTag() == SessionManagementType.login.rawValue {
-            mailAddressTextField.becomeFirstResponder()
+            mailAddressValueTextField.becomeFirstResponder()
         }
     }
 
@@ -92,10 +95,10 @@ extension GeneralViewController {
             DispatchQueue.main.async {
                 self.progressIndicator.stopAnimation(self)
                 if userSessionCookie == nil {
-                    self.checkAccountStatusLabel.stringValue = "Status: Failed"
+                    self.checkAccountStatusValueLabel.stringValue = L10n.failed
                     return
                 }
-                self.checkAccountStatusLabel.stringValue = "Status: Success"
+                self.checkAccountStatusValueLabel.stringValue = L10n.success
                 KeychainUtility.removeAllAccountsInKeychain()
                 KeychainUtility.setAccountToKeychain(mailAddress: self.mailAddress as String, password: self.password as String)
             }
@@ -107,10 +110,26 @@ extension GeneralViewController {
 
 // MARK: - Internal Functions
 private extension GeneralViewController {
+    func configureView() {
+        sessionManagementBox.title = L10n.sessionManagement
+        chromeButtonCell.title = L10n.googleChrome
+        safariButtonCell.title = L10n.safari
+        loginButtonCell.title = L10n.directLogin
+        mailAddressTitleTextField.stringValue = "\(L10n.mailAddress):"
+        passwordTitleTextField.stringValue = "\(L10n.password):"
+        checkAccountButton.title = L10n.check
+        checkAccountStatusTitleLabel.stringValue = "\(L10n.status):"
+        checkAccountStatusValueLabel.stringValue = defaultAccountStatusValue
+
+        commentSpeakingBox.title = L10n.commentSpeaking
+        speakCommentButton.title = L10n.speakComments
+        speakVolumeTitleTextField.stringValue = "\(L10n.speakVolume):"
+    }
+
     func disableSpeakComponentsIfNeeded() {
         if #available(macOS 10.14, *) { return }
         speakCommentButton.isEnabled = false
-        speakVolumeTextField.isEnabled = false
+        speakVolumeTitleTextField.isEnabled = false
         speakVolumeValueTextField.isEnabled = false
         speakVolumeSlider.isEnabled = false
     }

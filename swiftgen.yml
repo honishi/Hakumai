@@ -4,11 +4,17 @@ ib:
   inputs:
     - Storyboards
   outputs:
-    templateName: scenes-swift4
+    templateName: scenes-swift5
     output: StoryBoards.swift
 xcassets:
   inputs:
     - Resources/Images.xcassets
   outputs:
-    templateName: swift4
+    templateName: swift5
     output: Images.swift
+strings:
+  inputs:
+    - Resources/Localization/en.lproj/Localizable.strings
+  outputs:
+    templateName: structured-swift5
+    output: Localize.swift

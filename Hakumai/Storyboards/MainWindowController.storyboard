@@ -16,49 +16,73 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Hakumai" systemMenu="apple" id="uQy-DD-JDr">
                                     <items>
-                                        <menuItem title="About Hakumai" id="5kV-Vb-QxS">
+                                        <menuItem title="about_hakumai" id="5kV-Vb-QxS">
                                             <modifierMask key="keyEquivalentModifierMask"/>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="about_hakumai"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="orderFrontStandardAboutPanel:" target="Ady-hI-5gd" id="Exp-CZ-Vem"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="VOq-y0-SEH"/>
-                                        <menuItem title="Check for Updates..." id="qnO-Bs-3iG">
+                                        <menuItem title="check_for_update" id="qnO-Bs-3iG">
                                             <modifierMask key="keyEquivalentModifierMask"/>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="check_for_update"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="checkForUpdates:" target="zCO-sh-zt2" id="spw-5V-d7y"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Preferences…" keyEquivalent="," id="BOF-NM-1cW">
+                                        <menuItem title="preferences" keyEquivalent="," id="BOF-NM-1cW">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="preferences"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="openPreferences:" target="Voe-Tx-rLC" id="gD5-dr-Scr"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="wFC-TO-SCJ"/>
-                                        <menuItem title="Services" id="NMo-om-nkz">
+                                        <menuItem title="services" id="NMo-om-nkz">
                                             <modifierMask key="keyEquivalentModifierMask"/>
-                                            <menu key="submenu" title="Services" systemMenu="services" id="hz9-B4-Xy5"/>
+                                            <menu key="submenu" title="services" systemMenu="services" id="hz9-B4-Xy5"/>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="services"/>
+                                            </userDefinedRuntimeAttributes>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="4je-JR-u6R"/>
-                                        <menuItem title="Hide Hakumai" keyEquivalent="h" id="Olw-nP-bQN">
+                                        <menuItem title="hide_hakumai" keyEquivalent="h" id="Olw-nP-bQN">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="hide_hakumai"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="hide:" target="Ady-hI-5gd" id="PnN-Uc-m68"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Hide Others" keyEquivalent="h" id="Vdr-fp-XzO">
+                                        <menuItem title="hide_others" keyEquivalent="h" id="Vdr-fp-XzO">
                                             <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="hide_others"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="hideOtherApplications:" target="Ady-hI-5gd" id="VT4-aY-XCT"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Show All" id="Kd2-mp-pUS">
+                                        <menuItem title="show_all" id="Kd2-mp-pUS">
                                             <modifierMask key="keyEquivalentModifierMask"/>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="show_all"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="unhideAllApplications:" target="Ady-hI-5gd" id="Dhg-Le-xox"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="kCx-OE-vgT"/>
-                                        <menuItem title="Quit Hakumai" keyEquivalent="q" id="4sb-4s-VLi">
+                                        <menuItem title="quit_hakumai" keyEquivalent="q" id="4sb-4s-VLi">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="quit_hakumai"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="terminate:" target="Ady-hI-5gd" id="Te7-pn-YzF"/>
                                             </connections>
@@ -70,34 +94,52 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="File" id="bib-Uj-vzu">
                                     <items>
-                                        <menuItem title="Open URL" keyEquivalent="l" id="Ywy-4g-xSA">
+                                        <menuItem title="open_url" keyEquivalent="l" id="Ywy-4g-xSA">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="open_url"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="openUrl:" target="Voe-Tx-rLC" id="22B-I0-jYi"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Grab URL from Browser" keyEquivalent="u" id="Jqb-00-zb4">
+                                        <menuItem title="grab_url_from_browser" keyEquivalent="u" id="Jqb-00-zb4">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="grab_url_from_browser"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="grabUrlFromChrome:" target="Voe-Tx-rLC" id="qgK-4S-6R8"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="m54-Is-iLE"/>
-                                        <menuItem title="New Comment" keyEquivalent="n" id="Ev7-F1-Fdp">
+                                        <menuItem title="new_comment" keyEquivalent="n" id="Ev7-F1-Fdp">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="new_comment"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="newComment:" target="Voe-Tx-rLC" id="fIv-c4-V7t"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Enable 184" keyEquivalent="8" id="2e5-0U-xeR">
+                                        <menuItem title="enable_184" keyEquivalent="8" id="2e5-0U-xeR">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="enable_184"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <binding destination="Qbm-2t-1Py" name="value" keyPath="values.CommentAnonymously" id="hJB-zU-DOM"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="Cmf-8h-m6S"/>
-                                        <menuItem title="Speak" keyEquivalent="s" id="4qe-Vn-EsX">
+                                        <menuItem title="speak" keyEquivalent="s" id="4qe-Vn-EsX">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="speak"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <binding destination="Qbm-2t-1Py" name="value" keyPath="values.EnableCommentSpeech" id="N3u-GY-btT"/>
                                             </connections>
                                         </menuItem>
                                     </items>
+                                    <userDefinedRuntimeAttributes>
+                                        <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="file"/>
+                                    </userDefinedRuntimeAttributes>
                                 </menu>
                             </menuItem>
                             <menuItem title="Edit" id="5QF-Oa-p0T">
@@ -115,34 +157,49 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="WRV-NI-Exz"/>
-                                        <menuItem title="Cut" keyEquivalent="x" id="uRl-iY-unG">
+                                        <menuItem title="cut" keyEquivalent="x" id="uRl-iY-unG">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="cut"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="cut:" target="Ady-hI-5gd" id="YJe-68-I9s"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Copy" keyEquivalent="c" id="x3v-GG-iWU">
+                                        <menuItem title="copy" keyEquivalent="c" id="x3v-GG-iWU">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="copy"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="copy:" target="Ady-hI-5gd" id="G1f-GL-Joy"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Paste" keyEquivalent="v" id="gVA-U4-sdL">
+                                        <menuItem title="paste" keyEquivalent="v" id="gVA-U4-sdL">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="paste"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="paste:" target="Ady-hI-5gd" id="UvS-8e-Qdg"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Delete" id="pa3-QI-u2k">
+                                        <menuItem title="delete" id="pa3-QI-u2k">
                                             <modifierMask key="keyEquivalentModifierMask"/>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="delete"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="delete:" target="Ady-hI-5gd" id="0Mk-Ml-PaM"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Select All" keyEquivalent="a" id="Ruw-6m-B2m">
+                                        <menuItem title="select_all" keyEquivalent="a" id="Ruw-6m-B2m">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="select_all"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="selectAll:" target="Ady-hI-5gd" id="VNm-Mi-diN"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="uyl-h8-XO2"/>
-                                        <menuItem title="Find" id="4EN-yA-p0u">
+                                        <menuItem title="Find" hidden="YES" id="4EN-yA-p0u">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <menu key="submenu" title="Find" id="1b7-l0-nxx">
                                                 <items>
@@ -180,202 +237,301 @@
                                                 </items>
                                             </menu>
                                         </menuItem>
-                                        <menuItem title="Spelling and Grammar" id="Dv1-io-Yv7">
+                                        <menuItem title="spelling_and_grammar" id="Dv1-io-Yv7">
                                             <modifierMask key="keyEquivalentModifierMask"/>
-                                            <menu key="submenu" title="Spelling" id="3IN-sU-3Bg">
+                                            <menu key="submenu" title="spelling_and_grammar" id="3IN-sU-3Bg">
                                                 <items>
-                                                    <menuItem title="Show Spelling and Grammar" keyEquivalent=":" id="HFo-cy-zxI">
+                                                    <menuItem title="show_spelling_and_grammar" keyEquivalent=":" id="HFo-cy-zxI">
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="show_spelling_and_grammar"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="showGuessPanel:" target="Ady-hI-5gd" id="vFj-Ks-hy3"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Check Document Now" keyEquivalent=";" id="hz2-CU-CR7">
+                                                    <menuItem title="check_document_now" keyEquivalent=";" id="hz2-CU-CR7">
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="check_document_now"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="checkSpelling:" target="Ady-hI-5gd" id="fz7-VC-reM"/>
                                                         </connections>
                                                     </menuItem>
                                                     <menuItem isSeparatorItem="YES" id="bNw-od-mp5"/>
-                                                    <menuItem title="Check Spelling While Typing" id="rbD-Rh-wIN">
+                                                    <menuItem title="check_spelling_while_typing" id="rbD-Rh-wIN">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="check_spelling_while_typing"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="toggleContinuousSpellChecking:" target="Ady-hI-5gd" id="7w6-Qz-0kB"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Check Grammar With Spelling" id="mK6-2p-4JG">
+                                                    <menuItem title="check_grammar_with_spelling" id="mK6-2p-4JG">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="check_grammar_with_spelling"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="toggleGrammarChecking:" target="Ady-hI-5gd" id="muD-Qn-j4w"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Correct Spelling Automatically" id="78Y-hA-62v">
+                                                    <menuItem title="correct_spelling_automatically" id="78Y-hA-62v">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="correct_spelling_automatically"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="toggleAutomaticSpellingCorrection:" target="Ady-hI-5gd" id="2lM-Qi-WAP"/>
                                                         </connections>
                                                     </menuItem>
                                                 </items>
                                             </menu>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="spelling_and_grammar"/>
+                                            </userDefinedRuntimeAttributes>
                                         </menuItem>
-                                        <menuItem title="Substitutions" id="9ic-FL-obx">
+                                        <menuItem title="substitutions" id="9ic-FL-obx">
                                             <modifierMask key="keyEquivalentModifierMask"/>
-                                            <menu key="submenu" title="Substitutions" id="FeM-D8-WVr">
+                                            <menu key="submenu" title="substitutions" id="FeM-D8-WVr">
                                                 <items>
-                                                    <menuItem title="Show Substitutions" id="z6F-FW-3nz">
+                                                    <menuItem title="show_substitutions" id="z6F-FW-3nz">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="show_substitutions"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="orderFrontSubstitutionsPanel:" target="Ady-hI-5gd" id="oku-mr-iSq"/>
                                                         </connections>
                                                     </menuItem>
                                                     <menuItem isSeparatorItem="YES" id="gPx-C9-uUO"/>
-                                                    <menuItem title="Smart Copy/Paste" id="9yt-4B-nSM">
+                                                    <menuItem title="smart_copy_paste" id="9yt-4B-nSM">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="smart_copy_paste"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="toggleSmartInsertDelete:" target="Ady-hI-5gd" id="3IJ-Se-DZD"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Smart Quotes" id="hQb-2v-fYv">
+                                                    <menuItem title="smart_quotes" id="hQb-2v-fYv">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="smart_quotes"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="toggleAutomaticQuoteSubstitution:" target="Ady-hI-5gd" id="ptq-xd-QOA"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Smart Dashes" id="rgM-f4-ycn">
+                                                    <menuItem title="smart_dashes" id="rgM-f4-ycn">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="smart_dashes"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="toggleAutomaticDashSubstitution:" target="Ady-hI-5gd" id="oCt-pO-9gS"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Smart Links" id="cwL-P1-jid">
+                                                    <menuItem title="smart_links" id="cwL-P1-jid">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="smart_links"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="toggleAutomaticLinkDetection:" target="Ady-hI-5gd" id="Gip-E3-Fov"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Data Detectors" id="tRr-pd-1PS">
+                                                    <menuItem title="data_detectors" id="tRr-pd-1PS">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="data_detectors"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="toggleAutomaticDataDetection:" target="Ady-hI-5gd" id="R1I-Nq-Kbl"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Text Replacement" id="HFQ-gK-NFA">
+                                                    <menuItem title="text_replacement" id="HFQ-gK-NFA">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="text_replacement"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="toggleAutomaticTextReplacement:" target="Ady-hI-5gd" id="DvP-Fe-Py6"/>
                                                         </connections>
                                                     </menuItem>
                                                 </items>
                                             </menu>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="substitutions"/>
+                                            </userDefinedRuntimeAttributes>
                                         </menuItem>
-                                        <menuItem title="Transformations" id="2oI-Rn-ZJC">
+                                        <menuItem title="transformations" id="2oI-Rn-ZJC">
                                             <modifierMask key="keyEquivalentModifierMask"/>
-                                            <menu key="submenu" title="Transformations" id="c8a-y6-VQd">
+                                            <menu key="submenu" title="transformations" id="c8a-y6-VQd">
                                                 <items>
-                                                    <menuItem title="Make Upper Case" id="vmV-6d-7jI">
+                                                    <menuItem title="make_upper_case" id="vmV-6d-7jI">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="make_upper_case"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="uppercaseWord:" target="Ady-hI-5gd" id="sPh-Tk-edu"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Make Lower Case" id="d9M-CD-aMd">
+                                                    <menuItem title="make_lower_case" id="d9M-CD-aMd">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="make_lower_case"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="lowercaseWord:" target="Ady-hI-5gd" id="iUZ-b5-hil"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Capitalize" id="UEZ-Bs-lqG">
+                                                    <menuItem title="capitalize" id="UEZ-Bs-lqG">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="capitalize"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="capitalizeWord:" target="Ady-hI-5gd" id="26H-TL-nsh"/>
                                                         </connections>
                                                     </menuItem>
                                                 </items>
                                             </menu>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="transformations"/>
+                                            </userDefinedRuntimeAttributes>
                                         </menuItem>
-                                        <menuItem title="Speech" id="xrE-MZ-jX0">
+                                        <menuItem title="speech" id="xrE-MZ-jX0">
                                             <modifierMask key="keyEquivalentModifierMask"/>
-                                            <menu key="submenu" title="Speech" id="3rS-ZA-NoH">
+                                            <menu key="submenu" title="speech" id="3rS-ZA-NoH">
                                                 <items>
-                                                    <menuItem title="Start Speaking" id="Ynk-f8-cLZ">
+                                                    <menuItem title="start_speaking" id="Ynk-f8-cLZ">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="start_speaking"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="startSpeaking:" target="Ady-hI-5gd" id="654-Ng-kyl"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Stop Speaking" id="Oyz-dy-DGm">
+                                                    <menuItem title="stop_speaking" id="Oyz-dy-DGm">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <userDefinedRuntimeAttributes>
+                                                            <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="stop_speaking"/>
+                                                        </userDefinedRuntimeAttributes>
                                                         <connections>
                                                             <action selector="stopSpeaking:" target="Ady-hI-5gd" id="dX8-6p-jy9"/>
                                                         </connections>
                                                     </menuItem>
                                                 </items>
                                             </menu>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="speech"/>
+                                            </userDefinedRuntimeAttributes>
                                         </menuItem>
                                     </items>
+                                    <userDefinedRuntimeAttributes>
+                                        <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="edit"/>
+                                    </userDefinedRuntimeAttributes>
                                 </menu>
                             </menuItem>
                             <menuItem title="View" id="KHJ-TJ-2hd">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="View" id="hAj-eX-3B5">
                                     <items>
-                                        <menuItem title="Default Zoom" keyEquivalent="0" id="FFU-3o-uv0">
+                                        <menuItem title="default_zoom" keyEquivalent="0" id="FFU-3o-uv0">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="default_zoom"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="zoomDefault:" target="Voe-Tx-rLC" id="heL-7o-OjN"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Zoom In" keyEquivalent="+" id="YJU-gw-Wfc">
+                                        <menuItem title="zoom_in" keyEquivalent="+" id="YJU-gw-Wfc">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="zoom_in"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="zoomIn:" target="Voe-Tx-rLC" id="w7N-5V-gYl"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Zoom Out" keyEquivalent="-" id="qRo-aa-So3">
+                                        <menuItem title="zoom_out" keyEquivalent="-" id="qRo-aa-So3">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="zoom_out"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="zoomOut:" target="Voe-Tx-rLC" id="H8n-ka-rWt"/>
                                             </connections>
                                         </menuItem>
                                     </items>
+                                    <userDefinedRuntimeAttributes>
+                                        <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="view"/>
+                                    </userDefinedRuntimeAttributes>
                                 </menu>
                             </menuItem>
                             <menuItem title="Window" id="aUF-d1-5bR">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Window" systemMenu="window" id="Td7-aD-5lo">
                                     <items>
-                                        <menuItem title="Minimize" keyEquivalent="m" id="OY7-WF-poV">
+                                        <menuItem title="minimize" keyEquivalent="m" id="OY7-WF-poV">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="minimize"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="performMiniaturize:" target="Ady-hI-5gd" id="VwT-WD-YPe"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Zoom" id="R4o-n2-Eq4">
+                                        <menuItem title="zoom" id="R4o-n2-Eq4">
                                             <modifierMask key="keyEquivalentModifierMask"/>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="zoom"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="performZoom:" target="Ady-hI-5gd" id="DIl-cC-cCs"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="eu3-7i-yIM"/>
-                                        <menuItem title="Bring All to Front" id="LE2-aR-0XJ">
+                                        <menuItem title="bring_all_to_front" id="LE2-aR-0XJ">
                                             <modifierMask key="keyEquivalentModifierMask"/>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="bring_all_to_front"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="arrangeInFront:" target="Ady-hI-5gd" id="DRN-fu-gQh"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="fSq-dG-fr2"/>
-                                        <menuItem title="Always On Top" keyEquivalent="t" id="Imh-AC-vGA">
+                                        <menuItem title="always_on_top" keyEquivalent="t" id="Imh-AC-vGA">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="always_on_top"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <binding destination="Qbm-2t-1Py" name="value" keyPath="values.AlwaysOnTop" id="Bnm-T5-SYV"/>
                                             </connections>
                                         </menuItem>
                                     </items>
+                                    <userDefinedRuntimeAttributes>
+                                        <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="window"/>
+                                    </userDefinedRuntimeAttributes>
                                 </menu>
                             </menuItem>
                             <menuItem title="Help" id="wpr-3q-Mcd">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Help" systemMenu="help" id="F2S-fz-NVQ">
                                     <items>
-                                        <menuItem title="Hakumai Help" keyEquivalent="?" id="FKE-Sm-Kum">
+                                        <menuItem title="hakumai_help" keyEquivalent="?" id="FKE-Sm-Kum">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="hakumai_help"/>
+                                            </userDefinedRuntimeAttributes>
                                             <connections>
                                                 <action selector="showHelp:" target="Ady-hI-5gd" id="y7X-2Q-9no"/>
                                             </connections>
                                         </menuItem>
                                     </items>
+                                    <userDefinedRuntimeAttributes>
+                                        <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="help"/>
+                                    </userDefinedRuntimeAttributes>
                                 </menu>
                             </menuItem>
                         </items>
@@ -414,21 +570,21 @@
                 </windowController>
                 <customObject id="Oky-zY-oP4" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="75" y="234"/>
+            <point key="canvasLocation" x="-581" y="1310"/>
         </scene>
         <!--Main View Controller-->
         <scene sceneID="hIz-AP-VOD">
             <objects>
                 <viewController id="XfG-lQ-9wD" customClass="MainViewController" customModule="Hakumai" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="m2S-Jp-Qdl">
-                        <rect key="frame" x="0.0" y="0.0" width="939" height="479"/>
+                        <rect key="frame" x="0.0" y="0.0" width="500" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="z38-Lm-gGi">
-                                <rect key="frame" x="8" y="8" width="923" height="463"/>
+                            <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="z38-Lm-gGi">
+                                <rect key="frame" x="8" y="8" width="484" height="584"/>
                                 <subviews>
-                                    <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sqR-k0-9ll">
-                                        <rect key="frame" x="0.0" y="440" width="923" height="23"/>
+                                    <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalCompressionResistancePriority="250" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sqR-k0-9ll">
+                                        <rect key="frame" x="0.0" y="561" width="484" height="23"/>
                                         <subviews>
                                             <button toolTip="Grab URL from Browser (⌘U)" translatesAutoresizingMaskIntoConstraints="NO" id="GRS-m4-7KE">
                                                 <rect key="frame" x="0.0" y="0.0" width="23" height="23"/>
@@ -444,9 +600,9 @@
                                                     <action selector="grabUrlFromBrowser:" target="XfG-lQ-9wD" id="yJa-cb-vIG"/>
                                                 </connections>
                                             </button>
-                                            <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gZN-es-bFO">
-                                                <rect key="frame" x="31" y="1" width="711" height="21"/>
-                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" placeholderString="⌘L (live url, live#)" drawsBackground="YES" usesSingleLineMode="YES" id="iDS-0h-Uje">
+                                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="gZN-es-bFO">
+                                                <rect key="frame" x="31" y="1" width="329" height="21"/>
+                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="iDS-0h-Uje">
                                                     <font key="font" metaFont="system"/>
                                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -466,7 +622,7 @@
                                                 </connections>
                                             </button>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="IZs-cK-l0Y">
-                                                <rect key="frame" x="800" y="-5" width="99" height="32"/>
+                                                <rect key="frame" x="361" y="-5" width="99" height="32"/>
                                                 <buttonCell key="cell" type="push" title="Reconnect" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kUI-oS-7wC">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="system"/>
@@ -476,7 +632,7 @@
                                                 </connections>
                                             </button>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hii-Mo-bho">
-                                                <rect key="frame" x="900" y="0.0" width="23" height="23"/>
+                                                <rect key="frame" x="461" y="0.0" width="23" height="23"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="23" id="sHU-9D-NQq"/>
                                                     <constraint firstAttribute="height" constant="23" id="tRB-ro-kon"/>
@@ -505,8 +661,8 @@
                                             <real value="3.4028234663852886e+38"/>
                                         </customSpacing>
                                     </stackView>
-                                    <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jZp-vI-7KI">
-                                        <rect key="frame" x="0.0" y="377" width="923" height="55"/>
+                                    <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalCompressionResistancePriority="250" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jZp-vI-7KI">
+                                        <rect key="frame" x="2" y="498" width="480" height="55"/>
                                         <subviews>
                                             <imageView wantsLayer="YES" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="NQm-lE-rVr">
                                                 <rect key="frame" x="0.0" y="0.0" width="55" height="55"/>
@@ -516,37 +672,37 @@
                                                 </constraints>
                                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="DefaultCommunityImage" id="Rj1-mk-21r"/>
                                             </imageView>
-                                            <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalHuggingPriority="249" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="d3A-5T-Fi5">
-                                                <rect key="frame" x="63" y="0.0" width="732" height="55"/>
+                                            <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="250" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="d3A-5T-Fi5">
+                                                <rect key="frame" x="63" y="0.0" width="289" height="55"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="249" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="65a-aX-RIL">
-                                                        <rect key="frame" x="-2" y="38" width="736" height="17"/>
+                                                        <rect key="frame" x="-2" y="38" width="293" height="17"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="17" id="aX3-eX-5Te"/>
                                                         </constraints>
-                                                        <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="[Live Name]" id="dok-kh-Amw">
+                                                        <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Label" id="dok-kh-Amw">
                                                             <font key="font" metaFont="systemBold"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="249" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="gpJ-ll-AbX">
-                                                        <rect key="frame" x="-2" y="19" width="736" height="17"/>
+                                                        <rect key="frame" x="-2" y="19" width="293" height="17"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="17" id="Z7e-7q-EMI"/>
                                                         </constraints>
-                                                        <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="[Community Id]" id="yqU-Gi-9N3">
+                                                        <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Label" id="yqU-Gi-9N3">
                                                             <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="249" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="mqT-iT-cC6">
-                                                        <rect key="frame" x="-2" y="0.0" width="736" height="17"/>
+                                                        <rect key="frame" x="-2" y="0.0" width="293" height="17"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="17" id="x00-mC-etv"/>
                                                         </constraints>
-                                                        <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="[Community Name]" id="jGH-vk-fS8">
+                                                        <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Label" id="jGH-vk-fS8">
                                                             <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -565,30 +721,66 @@
                                                 </customSpacing>
                                             </stackView>
                                             <stackView distribution="fill" orientation="vertical" alignment="trailing" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ArW-TH-cda">
-                                                <rect key="frame" x="803" y="1" width="120" height="54"/>
+                                                <rect key="frame" x="360" y="2" width="120" height="52"/>
                                                 <subviews>
-                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8WA-yo-AuZ">
-                                                        <rect key="frame" x="47" y="37" width="75" height="17"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="height" constant="17" id="sqq-LC-XiV"/>
-                                                        </constraints>
-                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Visitors: ---" id="38Q-Sg-SN7">
-                                                            <font key="font" metaFont="system"/>
-                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                        </textFieldCell>
-                                                    </textField>
-                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vmz-z1-HHp">
-                                                        <rect key="frame" x="27" y="18" width="95" height="17"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="height" constant="17" id="5UV-iv-lkf"/>
-                                                        </constraints>
-                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Comments: ---" id="7FK-MT-WVK">
-                                                            <font key="font" metaFont="system"/>
-                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                        </textFieldCell>
-                                                    </textField>
+                                                    <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9sP-vu-ghg">
+                                                        <rect key="frame" x="60" y="36" width="60" height="16"/>
+                                                        <subviews>
+                                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tHd-Ot-EY7">
+                                                                <rect key="frame" x="-2" y="0.0" width="37" height="16"/>
+                                                                <textFieldCell key="cell" lineBreakMode="clipping" title="Label" id="WAQ-XW-fh4">
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                </textFieldCell>
+                                                            </textField>
+                                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8WA-yo-AuZ">
+                                                                <rect key="frame" x="39" y="0.0" width="23" height="16"/>
+                                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="---" id="38Q-Sg-SN7">
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                                </textFieldCell>
+                                                            </textField>
+                                                        </subviews>
+                                                        <visibilityPriorities>
+                                                            <integer value="1000"/>
+                                                            <integer value="1000"/>
+                                                        </visibilityPriorities>
+                                                        <customSpacing>
+                                                            <real value="3.4028234663852886e+38"/>
+                                                            <real value="3.4028234663852886e+38"/>
+                                                        </customSpacing>
+                                                    </stackView>
+                                                    <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TZQ-cV-kEw">
+                                                        <rect key="frame" x="60" y="18" width="60" height="16"/>
+                                                        <subviews>
+                                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sUO-Tj-pNh">
+                                                                <rect key="frame" x="-2" y="0.0" width="37" height="16"/>
+                                                                <textFieldCell key="cell" lineBreakMode="clipping" title="Label" id="bf4-fy-VCl">
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                </textFieldCell>
+                                                            </textField>
+                                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vmz-z1-HHp">
+                                                                <rect key="frame" x="39" y="0.0" width="23" height="16"/>
+                                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="---" id="7FK-MT-WVK">
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                                </textFieldCell>
+                                                            </textField>
+                                                        </subviews>
+                                                        <visibilityPriorities>
+                                                            <integer value="1000"/>
+                                                            <integer value="1000"/>
+                                                        </visibilityPriorities>
+                                                        <customSpacing>
+                                                            <real value="3.4028234663852886e+38"/>
+                                                            <real value="3.4028234663852886e+38"/>
+                                                        </customSpacing>
+                                                    </stackView>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="QmJ-8z-tPW">
                                                         <rect key="frame" x="56" y="-1" width="64" height="18"/>
                                                         <buttonCell key="cell" type="check" title="Speak" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="EpQ-m0-lHg">
@@ -626,14 +818,14 @@
                                             <real value="3.4028234663852886e+38"/>
                                         </customSpacing>
                                     </stackView>
-                                    <scrollView wantsLayer="YES" horizontalHuggingPriority="249" verticalHuggingPriority="249" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" horizontalScrollElasticity="none" verticalScrollElasticity="allowed" translatesAutoresizingMaskIntoConstraints="NO" id="3lG-BL-Thc" customClass="BottomButtonScrollView" customModule="Hakumai" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="53" width="784" height="316"/>
+                                    <scrollView wantsLayer="YES" horizontalHuggingPriority="249" verticalHuggingPriority="249" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" horizontalScrollElasticity="none" verticalScrollElasticity="allowed" translatesAutoresizingMaskIntoConstraints="NO" id="3lG-BL-Thc" customClass="BottomButtonScrollView" customModule="Hakumai" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="53" width="484" height="437"/>
                                         <clipView key="contentView" id="2u9-qQ-bep">
-                                            <rect key="frame" x="1" y="1" width="921" height="314"/>
+                                            <rect key="frame" x="1" y="1" width="482" height="435"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="none" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveName="MainTableView" rowSizeStyle="automatic" headerView="cl3-1e-Mq0" viewBased="YES" id="21S-OF-mg3">
-                                                    <rect key="frame" x="0.0" y="0.0" width="921" height="291"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="584" height="412"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <size key="intercellSpacing" width="6" height="2"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -717,16 +909,16 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
                                         <tableHeaderView key="headerView" wantsLayer="YES" id="cl3-1e-Mq0">
-                                            <rect key="frame" x="0.0" y="0.0" width="921" height="23"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="584" height="23"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableHeaderView>
                                     </scrollView>
-                                    <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OKI-Gn-3JM">
-                                        <rect key="frame" x="0.0" y="24" width="923" height="21"/>
+                                    <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalCompressionResistancePriority="250" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OKI-Gn-3JM">
+                                        <rect key="frame" x="0.0" y="24" width="484" height="21"/>
                                         <subviews>
-                                            <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="pml-Sh-s7e">
-                                                <rect key="frame" x="0.0" y="0.0" width="868" height="21"/>
-                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" placeholderString="⌘N (enter to comment)" drawsBackground="YES" id="39S-6e-1RP">
+                                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="pml-Sh-s7e">
+                                                <rect key="frame" x="0.0" y="0.0" width="429" height="21"/>
+                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="39S-6e-1RP">
                                                     <font key="font" metaFont="system"/>
                                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -737,7 +929,7 @@
                                                 </connections>
                                             </textField>
                                             <button toolTip="Toggle 184 (⌘8)" horizontalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UtQ-bi-lar">
-                                                <rect key="frame" x="874" y="2" width="49" height="18"/>
+                                                <rect key="frame" x="435" y="2" width="49" height="18"/>
                                                 <buttonCell key="cell" type="check" title="184" bezelStyle="regularSquare" imagePosition="left" alignment="right" state="on" inset="2" id="XOy-JF-DaI">
                                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                     <font key="font" metaFont="system"/>
@@ -756,39 +948,55 @@
                                             <real value="3.4028234663852886e+38"/>
                                         </customSpacing>
                                     </stackView>
-                                    <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="heY-85-Bud">
-                                        <rect key="frame" x="0.0" y="0.0" width="923" height="16"/>
+                                    <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalCompressionResistancePriority="250" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="heY-85-Bud">
+                                        <rect key="frame" x="0.0" y="0.0" width="484" height="16"/>
                                         <subviews>
+                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="N6D-ME-Btf">
+                                                <rect key="frame" x="-2" y="0.0" width="37" height="16"/>
+                                                <textFieldCell key="cell" lineBreakMode="clipping" title="Label" id="y7K-5Q-Jqm">
+                                                    <font key="font" metaFont="system"/>
+                                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                </textFieldCell>
+                                            </textField>
                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="p3A-6s-IKD">
-                                                <rect key="frame" x="-2" y="0.0" width="129" height="16"/>
+                                                <rect key="frame" x="39" y="0.0" width="65" height="16"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="width" constant="125" id="jRn-6P-vSi"/>
+                                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="61" id="Lvw-WX-8bI"/>
                                                 </constraints>
-                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Elapsed: --:--:--" id="Gf3-nI-of1">
+                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="00:00:00" id="Gf3-nI-of1">
                                                     <font key="font" metaFont="system"/>
                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                </textFieldCell>
+                                            </textField>
+                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="YsV-Gk-O1z">
+                                                <rect key="frame" x="108" y="0.0" width="37" height="16"/>
+                                                <textFieldCell key="cell" lineBreakMode="clipping" title="Label" id="AfQ-A8-0ge">
+                                                    <font key="font" metaFont="system"/>
+                                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                 </textFieldCell>
                                             </textField>
                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="09h-Eb-cuW">
-                                                <rect key="frame" x="131" y="0.0" width="79" height="16"/>
+                                                <rect key="frame" x="149" y="0.0" width="41" height="16"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="width" constant="75" id="wxf-k4-uEw"/>
+                                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="37" id="Zpl-WQ-yZ2"/>
                                                 </constraints>
-                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Active: ---" id="Gc8-kb-8sm">
+                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="0000" id="Gc8-kb-8sm">
                                                     <font key="font" metaFont="system"/>
                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                 </textFieldCell>
                                             </textField>
-                                            <customView horizontalHuggingPriority="249" horizontalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="Bhv-Hd-OhN">
-                                                <rect key="frame" x="216" y="3" width="683" height="10"/>
+                                            <customView horizontalHuggingPriority="249" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Bhv-Hd-OhN">
+                                                <rect key="frame" x="196" y="3" width="264" height="10"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="10" id="211-WL-9vo"/>
                                                 </constraints>
                                             </customView>
                                             <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="A3m-ux-Ivm">
-                                                <rect key="frame" x="907" y="0.0" width="16" height="16"/>
+                                                <rect key="frame" x="468" y="0.0" width="16" height="16"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="16" id="QHY-Bl-b8P"/>
                                                     <constraint firstAttribute="height" constant="16" id="nas-mc-ksj"/>
@@ -800,8 +1008,12 @@
                                             <integer value="1000"/>
                                             <integer value="1000"/>
                                             <integer value="1000"/>
+                                            <integer value="1000"/>
+                                            <integer value="1000"/>
                                         </visibilityPriorities>
                                         <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
+                                            <real value="3.4028234663852886e+38"/>
                                             <real value="3.4028234663852886e+38"/>
                                             <real value="3.4028234663852886e+38"/>
                                             <real value="3.4028234663852886e+38"/>
@@ -810,16 +1022,16 @@
                                     </stackView>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstItem="sqR-k0-9ll" firstAttribute="leading" secondItem="z38-Lm-gGi" secondAttribute="leading" id="1EG-GV-Ju7"/>
-                                    <constraint firstItem="OKI-Gn-3JM" firstAttribute="leading" secondItem="z38-Lm-gGi" secondAttribute="leading" id="D0M-03-wLT"/>
-                                    <constraint firstAttribute="trailing" secondItem="OKI-Gn-3JM" secondAttribute="trailing" id="NaT-7M-lSC"/>
-                                    <constraint firstItem="heY-85-Bud" firstAttribute="leading" secondItem="z38-Lm-gGi" secondAttribute="leading" id="SQy-Xd-8Yk"/>
-                                    <constraint firstAttribute="trailing" secondItem="3lG-BL-Thc" secondAttribute="trailing" id="aVs-gb-CFC"/>
-                                    <constraint firstAttribute="trailing" secondItem="sqR-k0-9ll" secondAttribute="trailing" id="jWN-ae-aXU"/>
-                                    <constraint firstAttribute="trailing" secondItem="heY-85-Bud" secondAttribute="trailing" id="knS-0Z-Hdn"/>
-                                    <constraint firstAttribute="trailing" secondItem="jZp-vI-7KI" secondAttribute="trailing" id="pwC-CG-Rtw"/>
-                                    <constraint firstItem="jZp-vI-7KI" firstAttribute="leading" secondItem="z38-Lm-gGi" secondAttribute="leading" id="qBH-gL-jC4"/>
-                                    <constraint firstItem="3lG-BL-Thc" firstAttribute="leading" secondItem="z38-Lm-gGi" secondAttribute="leading" id="sjC-Lv-gNV"/>
+                                    <constraint firstItem="jZp-vI-7KI" firstAttribute="leading" secondItem="z38-Lm-gGi" secondAttribute="leading" constant="2" id="3j6-iA-LWG"/>
+                                    <constraint firstAttribute="trailing" secondItem="sqR-k0-9ll" secondAttribute="trailing" id="5wq-tl-Dem"/>
+                                    <constraint firstItem="OKI-Gn-3JM" firstAttribute="leading" secondItem="z38-Lm-gGi" secondAttribute="leading" id="DBz-fX-yox"/>
+                                    <constraint firstAttribute="trailing" secondItem="heY-85-Bud" secondAttribute="trailing" id="Gse-8Y-ytN"/>
+                                    <constraint firstAttribute="trailing" secondItem="jZp-vI-7KI" secondAttribute="trailing" constant="2" id="V72-5r-XVw"/>
+                                    <constraint firstAttribute="trailing" secondItem="OKI-Gn-3JM" secondAttribute="trailing" id="c5J-Le-bvc"/>
+                                    <constraint firstAttribute="trailing" secondItem="3lG-BL-Thc" secondAttribute="trailing" id="gNw-Sx-Cn4"/>
+                                    <constraint firstItem="3lG-BL-Thc" firstAttribute="leading" secondItem="z38-Lm-gGi" secondAttribute="leading" id="ggT-ox-TR8"/>
+                                    <constraint firstItem="heY-85-Bud" firstAttribute="leading" secondItem="z38-Lm-gGi" secondAttribute="leading" id="ilD-qB-bd2"/>
+                                    <constraint firstItem="sqR-k0-9ll" firstAttribute="leading" secondItem="z38-Lm-gGi" secondAttribute="leading" id="jgO-Of-Hhm"/>
                                 </constraints>
                                 <visibilityPriorities>
                                     <integer value="1000"/>
@@ -845,77 +1057,76 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="activeLabel" destination="09h-Eb-cuW" id="6Lr-4p-RbY"/>
+                        <outlet property="activeUserTitleLabel" destination="YsV-Gk-O1z" id="Kxz-Qc-4At"/>
+                        <outlet property="activeUserValueLabel" destination="09h-Eb-cuW" id="6Lr-4p-RbY"/>
                         <outlet property="commentAnonymouslyButton" destination="UtQ-bi-lar" id="ugQ-Jr-d3b"/>
                         <outlet property="commentTextField" destination="pml-Sh-s7e" id="JGp-sC-LAL"/>
-                        <outlet property="commentsLabel" destination="vmz-z1-HHp" id="zEw-JV-b7X"/>
+                        <outlet property="commentsTitleLabel" destination="sUO-Tj-pNh" id="nVO-k8-mQ6"/>
+                        <outlet property="commentsValueLabel" destination="vmz-z1-HHp" id="zEw-JV-b7X"/>
                         <outlet property="communityIdLabel" destination="gpJ-ll-AbX" id="SSs-eW-LLR"/>
                         <outlet property="communityImageView" destination="NQm-lE-rVr" id="Vlq-76-e8s"/>
                         <outlet property="communityTitleLabel" destination="mqT-iT-cC6" id="JMh-Lc-OmS"/>
                         <outlet property="connectButton" destination="hii-Mo-bho" id="UHG-jK-W7S"/>
                         <outlet property="debugAuthButton" destination="Sbe-lO-QeP" id="Zrr-j0-bnY"/>
                         <outlet property="debugReconnectButton" destination="IZs-cK-l0Y" id="neM-ub-baA"/>
-                        <outlet property="elapsedLabel" destination="p3A-6s-IKD" id="6T8-le-0s2"/>
-                        <outlet property="liveTextField" destination="gZN-es-bFO" id="vZe-3V-txV"/>
+                        <outlet property="elapsedTimeTitleLabel" destination="N6D-ME-Btf" id="Xnk-i9-26v"/>
+                        <outlet property="elapsedTimeValueLabel" destination="p3A-6s-IKD" id="6T8-le-0s2"/>
+                        <outlet property="grabUrlButton" destination="GRS-m4-7KE" id="WFa-bJ-le5"/>
                         <outlet property="liveTitleLabel" destination="65a-aX-RIL" id="uvT-R4-GZO"/>
+                        <outlet property="liveUrlTextField" destination="gZN-es-bFO" id="vZe-3V-txV"/>
                         <outlet property="menuDelegate" destination="Riw-FG-ugq" id="l3S-iG-Ve5"/>
                         <outlet property="progressIndicator" destination="A3m-ux-Ivm" id="bCp-rD-QNX"/>
                         <outlet property="scrollView" destination="3lG-BL-Thc" id="fKo-Wb-zpM"/>
                         <outlet property="speakButton" destination="QmJ-8z-tPW" id="eZq-p3-ll6"/>
                         <outlet property="tableView" destination="21S-OF-mg3" id="Wty-uQ-xrm"/>
-                        <outlet property="visitorsLabel" destination="8WA-yo-AuZ" id="7FD-gi-kwG"/>
+                        <outlet property="visitorsTitleLabel" destination="tHd-Ot-EY7" id="R56-MS-Zib"/>
+                        <outlet property="visitorsValueLabel" destination="8WA-yo-AuZ" id="7FD-gi-kwG"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <userDefaultsController id="hty-zy-fnb"/>
                 <menu id="gGN-GZ-TZX">
                     <items>
-                        <menuItem title="Copy Commnet" id="CZ2-j4-uTm">
+                        <menuItem title="copy_commnet" id="CZ2-j4-uTm">
                             <modifierMask key="keyEquivalentModifierMask"/>
                             <connections>
                                 <action selector="copyComment:" target="Riw-FG-ugq" id="eGt-6q-XnR"/>
                             </connections>
                         </menuItem>
-                        <menuItem title="Open URL in Comment" id="rwi-Ju-wYL">
+                        <menuItem title="open_url_in_comment" id="rwi-Ju-wYL">
                             <modifierMask key="keyEquivalentModifierMask"/>
                             <connections>
                                 <action selector="openUrl:" target="Riw-FG-ugq" id="jeg-gC-zQl"/>
                             </connections>
                         </menuItem>
-                        <menuItem title="Tweet Comment" hidden="YES" id="LCT-WR-Xfy">
-                            <modifierMask key="keyEquivalentModifierMask"/>
-                            <connections>
-                                <action selector="tweetComment:" target="Riw-FG-ugq" id="sZD-OS-6en"/>
-                            </connections>
-                        </menuItem>
                         <menuItem isSeparatorItem="YES" id="y1N-7S-bEE"/>
-                        <menuItem title="Add Handle Name" id="cOM-FI-15Y">
+                        <menuItem title="add_handle_name" id="cOM-FI-15Y">
                             <modifierMask key="keyEquivalentModifierMask"/>
                             <connections>
                                 <action selector="addHandleName:" target="Riw-FG-ugq" id="hYR-Hd-K2w"/>
                             </connections>
                         </menuItem>
-                        <menuItem title="Remove Handle Name" id="vop-lQ-wo6">
+                        <menuItem title="remove_handle_name" id="vop-lQ-wo6">
                             <modifierMask key="keyEquivalentModifierMask"/>
                             <connections>
                                 <action selector="removeHandleName:" target="Riw-FG-ugq" id="yLO-gr-dGL"/>
                             </connections>
                         </menuItem>
                         <menuItem isSeparatorItem="YES" id="uwl-U0-wdQ"/>
-                        <menuItem title="Add to Mute User" id="vkF-qq-cvh">
+                        <menuItem title="add_to_mute_user" id="vkF-qq-cvh">
                             <modifierMask key="keyEquivalentModifierMask"/>
                             <connections>
                                 <action selector="addToMuteUser:" target="Riw-FG-ugq" id="Q0c-ln-gix"/>
                             </connections>
                         </menuItem>
-                        <menuItem title="Report as NG User" hidden="YES" id="L1C-9u-5sm">
+                        <menuItem title="report_as_ng_user" hidden="YES" id="L1C-9u-5sm">
                             <modifierMask key="keyEquivalentModifierMask"/>
                             <connections>
                                 <action selector="reportAsNgUser:" target="Riw-FG-ugq" id="Yt8-JR-cEe"/>
                             </connections>
                         </menuItem>
                         <menuItem isSeparatorItem="YES" id="FL0-Y6-hxv"/>
-                        <menuItem title="Open User Page" id="9gC-Dv-kyp">
+                        <menuItem title="open_user_page" id="9gC-Dv-kyp">
                             <modifierMask key="keyEquivalentModifierMask"/>
                             <connections>
                                 <action selector="openUserPage:" target="Riw-FG-ugq" id="CV4-aK-NfG"/>
@@ -935,12 +1146,11 @@
                         <outlet property="openUserPageMenuItem" destination="9gC-Dv-kyp" id="Yqk-Mt-JHF"/>
                         <outlet property="removeHandleNameMenuItem" destination="vop-lQ-wo6" id="eKS-r7-dtJ"/>
                         <outlet property="reportAsNgUserMenuItem" destination="L1C-9u-5sm" id="Edy-Ao-CgH"/>
-                        <outlet property="tweetCommentMenuItem" destination="LCT-WR-Xfy" id="CKd-Ww-fkG"/>
                     </connections>
                 </customObject>
                 <userDefaultsController representsSharedInstance="YES" id="TkR-hQ-T5S"/>
             </objects>
-            <point key="canvasLocation" x="75" y="918"/>
+            <point key="canvasLocation" x="44" y="1300"/>
         </scene>
         <!--Handle Name Add View Controller-->
         <scene sceneID="tSQ-kR-qZi">
@@ -1007,7 +1217,7 @@ Gw
                 </viewController>
                 <customObject id="Jz0-En-dM8" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="74" y="1291"/>
+            <point key="canvasLocation" x="-565" y="1619"/>
         </scene>
     </scenes>
     <resources>

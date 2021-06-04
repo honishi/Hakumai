@@ -1,0 +1,125 @@
+/* 
+  Localizable.strings
+  Hakumai
+
+  Created by Hiroyuki Onishi on 2021/06/02.
+  Copyright © 2021 Hiroyuki Onishi. All rights reserved.
+*/
+
+///
+/// Main Menu
+///
+"file" = "File";
+"edit" = "Edit";
+"view" = "View";
+"window" = "Window";
+"help" = "Help";
+
+/// Hakumai Menu
+"about_hakumai" = "About Hakumai";
+"check_for_update" = "Check for Updates...";
+"preferences" = "Preferences...";
+"services" = "Services";
+"hide_hakumai" = "Hide Hakumai";
+"hide_others" = "Hide Others";
+"show_all" = "Show All";
+"quit_hakumai" = "Quit Hakumai";
+
+/// File Menu
+"open_url" = "Open URL";
+"grab_url_from_browser" = "Grab URL from Browser";
+"new_comment" = "New Comment";
+"enable_184" = "Enable 184";
+"speak" = "Speak";
+
+/// Edit Menu
+"cut" = "Cut";
+"copy" = "Copy";
+"paste" = "Paste";
+"delete" = "Delete";
+"select_all" = "Select All";
+"spelling_and_grammar" = "Spelling and Grammar";
+"show_spelling_and_grammar" = "Show Spelling and Grammar";
+"check_document_now" = "Check Document Now";
+"check_spelling_while_typing" = "Check Spelling While Typing";
+"check_grammar_with_spelling" = "Check Grammar With Spelling";
+"correct_spelling_automatically" = "Correct Spelling Automatically";
+"substitutions" = "Substitutions";
+"show_substitutions" = "Show Substitutions";
+"smart_copy_paste" = "Smart Copy/Paste";
+"smart_quotes" = "Smart Quotes";
+"smart_dashes" = "Smart Dashes";
+"smart_links" = "Smart Links";
+"data_detectors" = "Data Detectors";
+"text_replacement" = "Text Replacement";
+"transformations" = "Transformations";
+"make_upper_case" = "Make Upper Case";
+"make_lower_case" = "Make Lower Case";
+"capitalize" = "Capitalize";
+"speech" = "Speech";
+"start_speaking" = "Start Speaking";
+"stop_speaking" = "Stop Speaking";
+
+/// View Menu
+"default_zoom" = "Default Zoom";
+"zoom_in" = "Zoom In";
+"zoom_out" = "Zoom Out";
+
+/// Window Menu
+"minimize" = "Minimize";
+"zoom" = "Zoom";
+"bring_all_to_front" = "Bring All to Front";
+"always_on_top" = "Always On Top";
+
+/// Help Menu
+"hakumai_help" = "Hakumai Help";
+
+///
+/// Main Window
+///
+"active_user" = "Active Users";
+"comment_count" = "Comments";
+"comment_text_field_placeholder" = "⌘N (Empty ⏎ to scroll to bottom)";
+"community_id" = "Community Id";
+"community_name" = "Community Name";
+"elapsed_time" = "Elapsed Time";
+"live_title" = "Live Title";
+"live_url_text_field_placeholder" = "⌘L (Live URL, Live#)";
+"speak_comment" = "Speak";
+"visitor_count" = "Visitors";
+
+///
+/// Comment Menu
+///
+"copy_comment" = "Copy Comment";
+"open_url_in_comment" = "Open URL in Comment";
+"add_handle_name" = "Add Handle Name";
+"remove_handle_name" = "Remove Handle Name";
+"add_to_mute_user" = "Add to Mute User";
+"report_as_ng_user" = "Report as NG User";
+"open_user_page" = "Open User Page";
+
+///
+/// User Window
+///
+"user_id" = "User ID";
+"user_name" = "User Name";
+"handle_name" = "Handle Name";
+
+///
+/// Preference Window
+///
+/// General
+"session_management" = "Session Management";
+"google_chrome" = "Google Chrome";
+"safari" = "Safari";
+"direct_login" = "Direct Login (Not Recommended)";
+"mail_address" = "Mail Address";
+"password" = "Password";
+"check" = "Check";
+"status" = "Status";
+"success" = "Success";
+"failed" = "Failed";
+"comment_speaking" = "Comment Speaking";
+"speak_comments" = "Speak Comments (Requires macOS 10.14-)";
+"speak_volume" = "Speak Volume";

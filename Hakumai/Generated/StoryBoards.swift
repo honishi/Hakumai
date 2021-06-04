@@ -74,11 +74,13 @@ internal struct SceneType<T> {
 
   @available(macOS 10.15, *)
   internal func instantiate(creator block: @escaping (NSCoder) -> T?) -> T where T: NSViewController {
+    let identifier = NSStoryboard.SceneIdentifier(self.identifier)
     return storyboard.storyboard.instantiateController(identifier: identifier, creator: block)
   }
 
   @available(macOS 10.15, *)
   internal func instantiate(creator block: @escaping (NSCoder) -> T?) -> T where T: NSWindowController {
+    let identifier = NSStoryboard.SceneIdentifier(self.identifier)
     return storyboard.storyboard.instantiateController(identifier: identifier, creator: block)
   }
 }
