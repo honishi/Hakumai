@@ -577,14 +577,14 @@
             <objects>
                 <viewController id="XfG-lQ-9wD" customClass="MainViewController" customModule="Hakumai" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="m2S-Jp-Qdl">
-                        <rect key="frame" x="0.0" y="0.0" width="500" height="500"/>
+                        <rect key="frame" x="0.0" y="0.0" width="500" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="z38-Lm-gGi">
-                                <rect key="frame" x="8" y="8" width="484" height="484"/>
+                                <rect key="frame" x="8" y="8" width="484" height="584"/>
                                 <subviews>
                                     <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalCompressionResistancePriority="250" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sqR-k0-9ll">
-                                        <rect key="frame" x="0.0" y="461" width="484" height="23"/>
+                                        <rect key="frame" x="0.0" y="561" width="484" height="23"/>
                                         <subviews>
                                             <button toolTip="Grab URL from Browser (⌘U)" translatesAutoresizingMaskIntoConstraints="NO" id="GRS-m4-7KE">
                                                 <rect key="frame" x="0.0" y="0.0" width="23" height="23"/>
@@ -650,7 +650,7 @@
                                         </customSpacing>
                                     </stackView>
                                     <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalCompressionResistancePriority="250" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jZp-vI-7KI">
-                                        <rect key="frame" x="0.0" y="398" width="484" height="55"/>
+                                        <rect key="frame" x="0.0" y="498" width="484" height="55"/>
                                         <subviews>
                                             <imageView wantsLayer="YES" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="NQm-lE-rVr">
                                                 <rect key="frame" x="0.0" y="0.0" width="55" height="55"/>
@@ -807,13 +807,13 @@
                                         </customSpacing>
                                     </stackView>
                                     <scrollView wantsLayer="YES" horizontalHuggingPriority="249" verticalHuggingPriority="249" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" horizontalScrollElasticity="none" verticalScrollElasticity="allowed" translatesAutoresizingMaskIntoConstraints="NO" id="3lG-BL-Thc" customClass="BottomButtonScrollView" customModule="Hakumai" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="53" width="484" height="337"/>
+                                        <rect key="frame" x="0.0" y="53" width="484" height="437"/>
                                         <clipView key="contentView" id="2u9-qQ-bep">
-                                            <rect key="frame" x="1" y="1" width="482" height="335"/>
+                                            <rect key="frame" x="1" y="1" width="482" height="435"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="none" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveName="MainTableView" rowSizeStyle="automatic" headerView="cl3-1e-Mq0" viewBased="YES" id="21S-OF-mg3">
-                                                    <rect key="frame" x="0.0" y="0.0" width="584" height="312"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="584" height="412"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <size key="intercellSpacing" width="6" height="2"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
