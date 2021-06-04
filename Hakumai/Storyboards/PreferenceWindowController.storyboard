@@ -467,191 +467,277 @@
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xym-eD-8PD">
-                                <rect key="frame" x="20" y="49" width="190" height="208"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <clipView key="contentView" id="pg2-CQ-gXZ">
-                                    <rect key="frame" x="1" y="1" width="188" height="206"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                    <subviews>
-                                        <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="Dpx-k7-j0e" id="3Bz-9H-reP">
-                                            <rect key="frame" x="0.0" y="0.0" width="197" height="183"/>
-                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                            <size key="intercellSpacing" width="3" height="2"/>
-                                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
-                                            <tableColumns>
-                                                <tableColumn identifier="UserIdColumn" width="185" minWidth="185" maxWidth="185" id="IHU-X8-kSV">
-                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Mute UserId">
-                                                        <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
-                                                        <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
-                                                    </tableHeaderCell>
-                                                    <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="wha-vA-BLL">
-                                                        <font key="font" metaFont="system"/>
-                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                    </textFieldCell>
-                                                    <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
-                                                    <connections>
-                                                        <binding destination="vdg-tQ-sRo" name="value" keyPath="arrangedObjects.UserId" id="PsH-60-qMO"/>
-                                                    </connections>
-                                                </tableColumn>
-                                            </tableColumns>
-                                            <connections>
-                                                <binding destination="uvJ-SI-XeK" name="enabled" keyPath="values.EnableMuteUserIds" id="Cyg-dL-gSd"/>
-                                            </connections>
-                                        </tableView>
-                                    </subviews>
-                                </clipView>
-                                <scroller key="horizontalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="cVn-QK-aNM">
-                                    <rect key="frame" x="1" y="191" width="188" height="16"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </scroller>
-                                <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="EXg-j6-RtW">
-                                    <rect key="frame" x="-15" y="23" width="16" height="0.0"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </scroller>
-                                <tableHeaderView key="headerView" wantsLayer="YES" id="Dpx-k7-j0e">
-                                    <rect key="frame" x="0.0" y="0.0" width="197" height="23"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </tableHeaderView>
-                            </scrollView>
-                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UmD-x3-4nJ">
-                                <rect key="frame" x="128" y="17" width="40" height="26"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="bevel" title="+" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="jgg-jG-PQ1">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="addMuteUserId:" target="C7H-PX-KIj" id="GR4-Xg-ZIE"/>
-                                    <binding destination="uvJ-SI-XeK" name="enabled" keyPath="values.EnableMuteUserIds" id="PVS-sb-ehi"/>
-                                </connections>
-                            </button>
-                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uVC-jM-fSS">
-                                <rect key="frame" x="172" y="17" width="40" height="26"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="bevel" title="-" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="J8D-5y-BAe">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="remove:" target="vdg-tQ-sRo" id="XXJ-vj-yxU"/>
-                                    <binding destination="vdg-tQ-sRo" name="enabled2" keyPath="canRemove" previousBinding="DdY-ns-2Xf" id="EsI-67-gza">
-                                        <dictionary key="options">
-                                            <integer key="NSMultipleValuesPlaceholder" value="-1"/>
-                                            <integer key="NSNoSelectionPlaceholder" value="-1"/>
-                                            <integer key="NSNotApplicablePlaceholder" value="-1"/>
-                                            <integer key="NSNullPlaceholder" value="-1"/>
-                                        </dictionary>
-                                    </binding>
-                                    <binding destination="uvJ-SI-XeK" name="enabled" keyPath="values.EnableMuteUserIds" id="DdY-ns-2Xf"/>
-                                </connections>
-                            </button>
-                            <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NrJ-uc-Arl">
-                                <rect key="frame" x="240" y="49" width="190" height="208"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <clipView key="contentView" id="eF0-GR-RiB">
-                                    <rect key="frame" x="1" y="1" width="188" height="206"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                    <subviews>
-                                        <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="pmk-PH-J7i" id="L19-QM-Zcn">
-                                            <rect key="frame" x="0.0" y="0.0" width="197" height="183"/>
-                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                            <size key="intercellSpacing" width="3" height="2"/>
-                                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
-                                            <tableColumns>
-                                                <tableColumn width="185" minWidth="185" maxWidth="185" id="TfD-kz-GLo">
-                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Mute Word">
-                                                        <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
-                                                        <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
-                                                    </tableHeaderCell>
-                                                    <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="2H3-Hf-xX0">
-                                                        <font key="font" metaFont="system"/>
-                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                    </textFieldCell>
-                                                    <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
-                                                    <connections>
-                                                        <binding destination="wEP-6P-JL7" name="value" keyPath="arrangedObjects.Word" id="rgA-id-aBn"/>
-                                                    </connections>
-                                                </tableColumn>
-                                            </tableColumns>
-                                            <connections>
-                                                <binding destination="uvJ-SI-XeK" name="enabled" keyPath="values.EnableMuteWords" id="GTr-oe-QQd"/>
-                                            </connections>
-                                        </tableView>
-                                    </subviews>
-                                </clipView>
-                                <scroller key="horizontalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="nfE-up-bSa">
-                                    <rect key="frame" x="1" y="191" width="188" height="16"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </scroller>
-                                <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="ktc-bS-PIa">
-                                    <rect key="frame" x="-15" y="23" width="16" height="0.0"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </scroller>
-                                <tableHeaderView key="headerView" wantsLayer="YES" id="pmk-PH-J7i">
-                                    <rect key="frame" x="0.0" y="0.0" width="197" height="23"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </tableHeaderView>
-                            </scrollView>
-                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ylQ-SB-Pj2">
-                                <rect key="frame" x="348" y="17" width="40" height="26"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="bevel" title="+" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="vWi-8A-Pvk">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="addMuteWord:" target="C7H-PX-KIj" id="fFH-C8-rB8"/>
-                                    <binding destination="uvJ-SI-XeK" name="enabled" keyPath="values.EnableMuteWords" id="cL7-dW-5uU"/>
-                                </connections>
-                            </button>
-                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AnK-fP-Qbc">
-                                <rect key="frame" x="392" y="17" width="40" height="26"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="bevel" title="-" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="UIR-6m-eh6">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="remove:" target="wEP-6P-JL7" id="gJf-og-LSr"/>
-                                    <binding destination="wEP-6P-JL7" name="enabled2" keyPath="canRemove" previousBinding="zN1-5b-K77" id="VUm-By-i6M">
-                                        <dictionary key="options">
-                                            <integer key="NSMultipleValuesPlaceholder" value="-1"/>
-                                            <integer key="NSNoSelectionPlaceholder" value="-1"/>
-                                            <integer key="NSNotApplicablePlaceholder" value="-1"/>
-                                            <integer key="NSNullPlaceholder" value="-1"/>
-                                        </dictionary>
-                                    </binding>
-                                    <binding destination="uvJ-SI-XeK" name="enabled" keyPath="values.EnableMuteWords" id="zN1-5b-K77"/>
-                                </connections>
-                            </button>
-                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wjy-pZ-e10">
-                                <rect key="frame" x="18" y="264" width="180" height="18"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="check" title="Enable Mute User Ids" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="2LF-VE-RQ9">
-                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <binding destination="uvJ-SI-XeK" name="value" keyPath="values.EnableMuteUserIds" id="iUC-65-Pln"/>
-                                </connections>
-                            </button>
-                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6fH-gd-O2m">
-                                <rect key="frame" x="238" y="264" width="180" height="18"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="check" title="Enable Mute Words" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="t5h-zb-XRl">
-                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <binding destination="uvJ-SI-XeK" name="value" keyPath="values.EnableMuteWords" id="GJH-if-QqG"/>
-                                </connections>
-                            </button>
+                            <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="30" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tPF-wt-v93">
+                                <rect key="frame" x="20" y="22" width="410" height="258"/>
+                                <subviews>
+                                    <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qRU-rW-NZK">
+                                        <rect key="frame" x="0.0" y="0.0" width="190" height="258"/>
+                                        <subviews>
+                                            <button translatesAutoresizingMaskIntoConstraints="NO" id="Wjy-pZ-e10">
+                                                <rect key="frame" x="-2" y="241" width="155" height="18"/>
+                                                <buttonCell key="cell" type="check" title="Enable Mute User Ids" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="2LF-VE-RQ9">
+                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                    <font key="font" metaFont="system"/>
+                                                </buttonCell>
+                                                <connections>
+                                                    <binding destination="uvJ-SI-XeK" name="value" keyPath="values.EnableMuteUserIds" id="iUC-65-Pln"/>
+                                                </connections>
+                                            </button>
+                                            <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xym-eD-8PD">
+                                                <rect key="frame" x="0.0" y="26" width="190" height="208"/>
+                                                <clipView key="contentView" id="pg2-CQ-gXZ">
+                                                    <rect key="frame" x="1" y="1" width="188" height="206"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                    <subviews>
+                                                        <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="Dpx-k7-j0e" id="3Bz-9H-reP">
+                                                            <rect key="frame" x="0.0" y="0.0" width="197" height="183"/>
+                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                            <size key="intercellSpacing" width="3" height="2"/>
+                                                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
+                                                            <tableColumns>
+                                                                <tableColumn identifier="UserIdColumn" width="185" minWidth="185" maxWidth="185" id="IHU-X8-kSV">
+                                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Mute UserId">
+                                                                        <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                                        <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+                                                                    </tableHeaderCell>
+                                                                    <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="wha-vA-BLL">
+                                                                        <font key="font" metaFont="system"/>
+                                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                    </textFieldCell>
+                                                                    <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                                    <connections>
+                                                                        <binding destination="vdg-tQ-sRo" name="value" keyPath="arrangedObjects.UserId" id="PsH-60-qMO"/>
+                                                                    </connections>
+                                                                </tableColumn>
+                                                            </tableColumns>
+                                                            <connections>
+                                                                <binding destination="uvJ-SI-XeK" name="enabled" keyPath="values.EnableMuteUserIds" id="Cyg-dL-gSd"/>
+                                                            </connections>
+                                                        </tableView>
+                                                    </subviews>
+                                                </clipView>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="208" id="e0e-Cp-gwK"/>
+                                                </constraints>
+                                                <scroller key="horizontalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="cVn-QK-aNM">
+                                                    <rect key="frame" x="1" y="191" width="188" height="16"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                </scroller>
+                                                <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="EXg-j6-RtW">
+                                                    <rect key="frame" x="-15" y="23" width="16" height="0.0"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                </scroller>
+                                                <tableHeaderView key="headerView" wantsLayer="YES" id="Dpx-k7-j0e">
+                                                    <rect key="frame" x="0.0" y="0.0" width="197" height="23"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                </tableHeaderView>
+                                            </scrollView>
+                                            <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qaw-mF-rfT">
+                                                <rect key="frame" x="0.0" y="0.0" width="190" height="18"/>
+                                                <subviews>
+                                                    <customView horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="249" translatesAutoresizingMaskIntoConstraints="NO" id="6z6-fS-82m">
+                                                        <rect key="frame" x="0.0" y="0.0" width="122" height="18"/>
+                                                    </customView>
+                                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="UmD-x3-4nJ">
+                                                        <rect key="frame" x="127" y="-4" width="33" height="25"/>
+                                                        <buttonCell key="cell" type="bevel" title="+" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="jgg-jG-PQ1">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="addMuteUserId:" target="C7H-PX-KIj" id="GR4-Xg-ZIE"/>
+                                                            <binding destination="uvJ-SI-XeK" name="enabled" keyPath="values.EnableMuteUserIds" id="PVS-sb-ehi"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="uVC-jM-fSS">
+                                                        <rect key="frame" x="162" y="-4" width="31" height="25"/>
+                                                        <buttonCell key="cell" type="bevel" title="-" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="J8D-5y-BAe">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="remove:" target="vdg-tQ-sRo" id="XXJ-vj-yxU"/>
+                                                            <binding destination="vdg-tQ-sRo" name="enabled2" keyPath="canRemove" previousBinding="DdY-ns-2Xf" id="EsI-67-gza">
+                                                                <dictionary key="options">
+                                                                    <integer key="NSMultipleValuesPlaceholder" value="-1"/>
+                                                                    <integer key="NSNoSelectionPlaceholder" value="-1"/>
+                                                                    <integer key="NSNotApplicablePlaceholder" value="-1"/>
+                                                                    <integer key="NSNullPlaceholder" value="-1"/>
+                                                                </dictionary>
+                                                            </binding>
+                                                            <binding destination="uvJ-SI-XeK" name="enabled" keyPath="values.EnableMuteUserIds" id="DdY-ns-2Xf"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                                <visibilityPriorities>
+                                                    <integer value="1000"/>
+                                                    <integer value="1000"/>
+                                                    <integer value="1000"/>
+                                                </visibilityPriorities>
+                                                <customSpacing>
+                                                    <real value="3.4028234663852886e+38"/>
+                                                    <real value="3.4028234663852886e+38"/>
+                                                    <real value="3.4028234663852886e+38"/>
+                                                </customSpacing>
+                                            </stackView>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="190" id="vLJ-Bf-dj0"/>
+                                        </constraints>
+                                        <visibilityPriorities>
+                                            <integer value="1000"/>
+                                            <integer value="1000"/>
+                                            <integer value="1000"/>
+                                        </visibilityPriorities>
+                                        <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
+                                            <real value="3.4028234663852886e+38"/>
+                                            <real value="3.4028234663852886e+38"/>
+                                        </customSpacing>
+                                    </stackView>
+                                    <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YXe-VD-rsY">
+                                        <rect key="frame" x="220" y="0.0" width="190" height="258"/>
+                                        <subviews>
+                                            <button translatesAutoresizingMaskIntoConstraints="NO" id="6fH-gd-O2m">
+                                                <rect key="frame" x="-2" y="241" width="144" height="18"/>
+                                                <buttonCell key="cell" type="check" title="Enable Mute Words" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="t5h-zb-XRl">
+                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                    <font key="font" metaFont="system"/>
+                                                </buttonCell>
+                                                <connections>
+                                                    <binding destination="uvJ-SI-XeK" name="value" keyPath="values.EnableMuteWords" id="GJH-if-QqG"/>
+                                                </connections>
+                                            </button>
+                                            <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NrJ-uc-Arl">
+                                                <rect key="frame" x="0.0" y="26" width="190" height="208"/>
+                                                <clipView key="contentView" id="eF0-GR-RiB">
+                                                    <rect key="frame" x="1" y="1" width="188" height="206"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                    <subviews>
+                                                        <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="pmk-PH-J7i" id="L19-QM-Zcn">
+                                                            <rect key="frame" x="0.0" y="0.0" width="197" height="183"/>
+                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                            <size key="intercellSpacing" width="3" height="2"/>
+                                                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
+                                                            <tableColumns>
+                                                                <tableColumn width="185" minWidth="185" maxWidth="185" id="TfD-kz-GLo">
+                                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Mute Word">
+                                                                        <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                                        <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+                                                                    </tableHeaderCell>
+                                                                    <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="2H3-Hf-xX0">
+                                                                        <font key="font" metaFont="system"/>
+                                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                    </textFieldCell>
+                                                                    <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                                    <connections>
+                                                                        <binding destination="wEP-6P-JL7" name="value" keyPath="arrangedObjects.Word" id="rgA-id-aBn"/>
+                                                                    </connections>
+                                                                </tableColumn>
+                                                            </tableColumns>
+                                                            <connections>
+                                                                <binding destination="uvJ-SI-XeK" name="enabled" keyPath="values.EnableMuteWords" id="GTr-oe-QQd"/>
+                                                            </connections>
+                                                        </tableView>
+                                                    </subviews>
+                                                </clipView>
+                                                <scroller key="horizontalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="nfE-up-bSa">
+                                                    <rect key="frame" x="1" y="191" width="188" height="16"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                </scroller>
+                                                <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="ktc-bS-PIa">
+                                                    <rect key="frame" x="-15" y="23" width="16" height="0.0"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                </scroller>
+                                                <tableHeaderView key="headerView" wantsLayer="YES" id="pmk-PH-J7i">
+                                                    <rect key="frame" x="0.0" y="0.0" width="197" height="23"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                </tableHeaderView>
+                                            </scrollView>
+                                            <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="QWs-BY-4DV">
+                                                <rect key="frame" x="0.0" y="0.0" width="190" height="18"/>
+                                                <subviews>
+                                                    <customView horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="249" translatesAutoresizingMaskIntoConstraints="NO" id="CMN-op-0LM">
+                                                        <rect key="frame" x="0.0" y="0.0" width="122" height="18"/>
+                                                    </customView>
+                                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="ylQ-SB-Pj2">
+                                                        <rect key="frame" x="127" y="-4" width="33" height="25"/>
+                                                        <buttonCell key="cell" type="bevel" title="+" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="vWi-8A-Pvk">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="addMuteWord:" target="C7H-PX-KIj" id="fFH-C8-rB8"/>
+                                                            <binding destination="uvJ-SI-XeK" name="enabled" keyPath="values.EnableMuteWords" id="cL7-dW-5uU"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="AnK-fP-Qbc">
+                                                        <rect key="frame" x="162" y="-4" width="31" height="25"/>
+                                                        <buttonCell key="cell" type="bevel" title="-" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="UIR-6m-eh6">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="remove:" target="wEP-6P-JL7" id="gJf-og-LSr"/>
+                                                            <binding destination="wEP-6P-JL7" name="enabled2" keyPath="canRemove" previousBinding="zN1-5b-K77" id="VUm-By-i6M">
+                                                                <dictionary key="options">
+                                                                    <integer key="NSMultipleValuesPlaceholder" value="-1"/>
+                                                                    <integer key="NSNoSelectionPlaceholder" value="-1"/>
+                                                                    <integer key="NSNotApplicablePlaceholder" value="-1"/>
+                                                                    <integer key="NSNullPlaceholder" value="-1"/>
+                                                                </dictionary>
+                                                            </binding>
+                                                            <binding destination="uvJ-SI-XeK" name="enabled" keyPath="values.EnableMuteWords" id="zN1-5b-K77"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                                <visibilityPriorities>
+                                                    <integer value="1000"/>
+                                                    <integer value="1000"/>
+                                                    <integer value="1000"/>
+                                                </visibilityPriorities>
+                                                <customSpacing>
+                                                    <real value="3.4028234663852886e+38"/>
+                                                    <real value="3.4028234663852886e+38"/>
+                                                    <real value="3.4028234663852886e+38"/>
+                                                </customSpacing>
+                                            </stackView>
+                                        </subviews>
+                                        <visibilityPriorities>
+                                            <integer value="1000"/>
+                                            <integer value="1000"/>
+                                            <integer value="1000"/>
+                                        </visibilityPriorities>
+                                        <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
+                                            <real value="3.4028234663852886e+38"/>
+                                            <real value="3.4028234663852886e+38"/>
+                                        </customSpacing>
+                                    </stackView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="NrJ-uc-Arl" firstAttribute="height" secondItem="Xym-eD-8PD" secondAttribute="height" id="XaU-CF-G6k"/>
+                                    <constraint firstItem="YXe-VD-rsY" firstAttribute="width" secondItem="qRU-rW-NZK" secondAttribute="width" id="twH-KR-Pqq"/>
+                                </constraints>
+                                <visibilityPriorities>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                </visibilityPriorities>
+                                <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                </customSpacing>
+                            </stackView>
                         </subviews>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="tPF-wt-v93" secondAttribute="trailing" constant="20" symbolic="YES" id="3qf-eE-3qv"/>
+                            <constraint firstItem="tPF-wt-v93" firstAttribute="leading" secondItem="fpp-CK-lL6" secondAttribute="leading" constant="20" symbolic="YES" id="6cz-5o-MLk"/>
+                            <constraint firstItem="tPF-wt-v93" firstAttribute="top" secondItem="fpp-CK-lL6" secondAttribute="top" constant="20" symbolic="YES" id="DG6-Qm-SIB"/>
+                        </constraints>
                     </view>
                     <connections>
                         <outlet property="muteUserIdsArrayController" destination="vdg-tQ-sRo" id="pIZ-lW-liG"/>
