@@ -7,7 +7,7 @@ layout: default
 <a href="https://twitter.com/share" class="twitter-share-button" data-text="Hakumai - Mac用ニコ生コメントビューア">Tweet</a>
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 
-<a href="https://hakumai.s3.amazonaws.com/Hakumai.{{site.binary_version}}.zip" class="button button-primary"><i class="fa fa-download"></i>
+<a href="https://hakumai.s3.amazonaws.com/Hakumai.{{site.binary_version}}.zip" class="button button-primary" onclick="ga('send', 'event', 'app', 'download', 'Hakumai.{{site.binary_version}}.zip');"><i class="fa fa-download"></i>
 Download</a>
 v{{site.binary_version}}, {{site.binary_date}} (for macOS 10.12-)
 
