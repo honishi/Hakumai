@@ -1,0 +1,160 @@
+/* 
+  Localizable.strings
+  Hakumai
+
+  Created by Hiroyuki Onishi on 2021/06/02.
+  Copyright © 2021 Hiroyuki Onishi. All rights reserved.
+*/
+
+///
+/// Main Menu
+///
+"file" = "ファイル";
+"edit" = "編集";
+"view" = "表示";
+"window" = "ウィンドウ";
+"help" = "ヘルプ";
+
+/// Hakumai Menu
+"about_hakumai" = "Hakumai について";
+"check_for_update" = "アップデートを確認...";
+"preferences" = "環境設定...";
+"services" = "サービス";
+"hide_hakumai" = "Hakumai を隠す";
+"hide_others" = "他を隠す";
+"show_all" = "すべてを表示";
+"quit_hakumai" = "Hakumai を終了";
+
+/// File Menu
+"open_url" = "URL を開く";
+"grab_url_from_browser" = "ブラウザから URL をコピーする";
+"new_comment" = "新規コメント";
+"enable_184" = "184コメント";
+"speak" = "コメント読み上げ";
+
+/// Edit Menu
+"cut" = "カット";
+"copy" = "コピー";
+"paste" = "ペースト";
+"delete" = "削除";
+"select_all" = "すべて選択";
+"spelling_and_grammar" = "スペルと文法";
+"show_spelling_and_grammar" = "スペルと文法を表示";
+"check_document_now" = "書類を今すぐチェック";
+"check_spelling_while_typing" = "入力中にスペルチェック";
+"check_grammar_with_spelling" = "スペルと一緒に文法をチェック";
+"correct_spelling_automatically" = "スペルを自動的に修正";
+"substitutions" = "自動置換";
+"show_substitutions" = "自動置換を表示";
+"smart_copy_paste" = "スマートコピー/ペースト";
+"smart_quotes" = "スマート引用符";
+"smart_dashes" = "スマートダッシュ記号";
+"smart_links" = "スマートリンク";
+"data_detectors" = "データ検出";
+"text_replacement" = "テキストの置換";
+"transformations" = "変換";
+"make_upper_case" = "大文字にする";
+"make_lower_case" = "小文字にする";
+"capitalize" = "語頭を大文字にする";
+"speech" = "スピーチ";
+"start_speaking" = "読み上げを開始";
+"stop_speaking" = "読み上げを停止";
+
+/// View Menu
+"default_zoom" = "標準のサイズ";
+"zoom_in" = "拡大";
+"zoom_out" = "縮小";
+
+/// Window Menu
+"minimize" = "しまう";
+"zoom" = "拡大/縮小";
+"bring_all_to_front" = "すべてを手前に移動";
+"always_on_top" = "常に前面に表示";
+
+/// Help Menu
+"hakumai_help" = "Hakumai ヘルプ";
+
+///
+/// Main Window
+///
+"active_user" = "アクティブユーザー";
+"comment_count" = "コメント";
+"comment_text_field_placeholder" = "⌘N (リターンのみで最下行にスクロール)";
+"community_id" = "コミュニティID";
+"community_name" = "コミュニティ名";
+"elapsed_time" = "経過時間";
+"live_title" = "放送タイトル";
+"live_url_text_field_placeholder" = "⌘L (放送URL, 放送番号)";
+"speak_comment" = "読み上げ";
+"visitor_count" = "来場者";
+"safari_cookie_alert_title" = "Safari から Cookie が取得できません";
+"safari_cookie_alert_description" = "Safari から Cookie を取得するには、「システム環境設定」の中から「セキュリティとプライバシー」を開き、「プライバシー」タブの「フルディスクアクセス」の中の Hakumai アプリにチェックを入れてください。";
+"open_security_privacy" = "セキュリティとプライバシーを開く";
+
+/// Message
+"prepared_live" = "\"%@\" で放送情報を取得しました.";
+"failed_to_prepare_live" = "放送への接続に失敗しました. [%@]";
+"connected_to_live" = "放送に接続しました.";
+"live_closed" = "放送から切断しました.";
+"reconnecting" = "再接続します...";
+"failed_to_comment" = "コメントに失敗しました.";
+
+/// Error
+"error_internal" = "内部エラー.";
+"error_no_cookie" = "Cookie が取得できませんでした.";
+"error_no_live_info" = "放送情報の取得に失敗しました.";
+"error_no_message_server_info" = "Message Server の情報が取得できませんでした.";
+"error_failed_to_open_message_server" = "Message Server に接続できませんでした.";
+
+/// Handle Add
+"set_update_handle_name" = "ハンドル名を設定・更新";
+
+///
+/// Comment Menu
+///
+"copy_comment" = "コメントをコピー";
+"open_url_in_comment" = "コメント中のURLを開く";
+"set_handle_name" = "ハンドル名を設定";
+"remove_handle_name" = "ハンドル名を削除";
+"add_to_mute_user" = "ユーザーをミュートに追加";
+"report_as_ng_user" = "NGユーザーとして報告";
+"open_user_page" = "ユーザーページを開く";
+
+///
+/// User Window
+///
+"user_id" = "ユーザーID";
+"user_name" = "ユーザー名";
+"handle_name" = "ハンドル";
+
+///
+/// Preference Window
+///
+/// General
+"session_management" = "セッション管理";
+"google_chrome" = "Google Chrome";
+"safari" = "Safari";
+"direct_login" = "直接ログイン (非推奨)";
+"mail_address" = "メールアドレス";
+"password" = "パスワード";
+"check" = "確認";
+"status" = "状態";
+"success" = "成功";
+"failed" = "失敗";
+"comment_speaking" = "コメント読み上げ";
+"speak_comments" = "コメント読み上げ (macOS 10.14 以降が必要)";
+"speak_volume" = "読み上げボリューム";
+
+/// Mute
+"enable_mute_user_ids" = "ユーザーID指定のミュートを使う";
+"enable_mute_words" = "単語指定のミュートを使う";
+
+/// Mute Add
+"enter_mute_user_id_word" = "ミュートするユーザーID・単語";
+
+///
+/// Common
+///
+"add" = "追加";
+"cancel" = "キャンセル";
+"set" = "設定";

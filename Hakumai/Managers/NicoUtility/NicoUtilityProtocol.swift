@@ -40,7 +40,7 @@ protocol NicoUtilityType {
 protocol NicoUtilityDelegate: AnyObject {
     func nicoUtilityWillPrepareLive(_ nicoUtility: NicoUtilityType)
     func nicoUtilityDidPrepareLive(_ nicoUtility: NicoUtilityType, user: User, live: Live, connectContext: NicoUtility.ConnectContext)
-    func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, reason: String, error: NicoUtility.NicoError?)
+    func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, error: NicoUtility.NicoError)
     func nicoUtilityDidConnectToLive(_ nicoUtility: NicoUtilityType, roomPosition: RoomPosition, connectContext: NicoUtility.ConnectContext)
     func nicoUtilityDidReceiveChat(_ nicoUtility: NicoUtilityType, chat: Chat)
     func nicoUtilityWillReconnectToLive(_ nicoUtility: NicoUtilityType, reason: NicoUtility.ReconnectReason)

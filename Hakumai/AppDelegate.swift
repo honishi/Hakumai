@@ -154,8 +154,8 @@ private extension AppDelegate {
             Parameters.fontSize: kDefaultFontSize,
             Parameters.enableCommentSpeech: false,
             Parameters.commentSpeechVolume: 100,
-            Parameters.enableMuteUserIds: false,
-            Parameters.enableMuteWords: false,
+            Parameters.enableMuteUserIds: true,
+            Parameters.enableMuteWords: true,
             Parameters.alwaysOnTop: false,
             Parameters.commentAnonymously: true]
         UserDefaults.standard.register(defaults: defaults)

@@ -13,12 +13,21 @@ final class MuteViewController: NSViewController {
     // MARK: - Properties
     static let shared = MuteViewController.make()
 
-    @IBOutlet var muteUserIdsArrayController: NSArrayController!
-    @IBOutlet var muteWordsArrayController: NSArrayController!
+    @IBOutlet private weak var enableMuteUserIdButton: NSButton!
+    @IBOutlet private weak var enableMuteWordButton: NSButton!
+    @IBOutlet private var muteUserIdsArrayController: NSArrayController!
+    @IBOutlet private var muteWordsArrayController: NSArrayController!
 
     // MARK: - Object Lifecycle
     static func make() -> MuteViewController {
         return StoryboardScene.PreferenceWindowController.muteViewController.instantiate()
+    }
+}
+
+extension MuteViewController {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        configureView()
     }
 }
 
@@ -38,6 +47,11 @@ extension MuteViewController {
 }
 
 private extension MuteViewController {
+    func configureView() {
+        enableMuteUserIdButton.title = L10n.enableMuteUserIds
+        enableMuteWordButton.title = L10n.enableMuteWords
+    }
+
     func addMute(completion: @escaping (String) -> Void) {
         let muteAddViewController =
             StoryboardScene.PreferenceWindowController.muteAddViewController.instantiate()

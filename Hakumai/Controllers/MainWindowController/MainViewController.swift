@@ -10,15 +10,15 @@ import Foundation
 import AppKit
 import Kingfisher
 
-private let kUserWindowDefautlTopLeftPoint = NSPoint(x: 100, y: 100)
-private let kCalculateActiveInterval: TimeInterval = 5
-private let kMaximumFontSizeForNonMainColumn: CGFloat = 16
-private let kDefaultMinimumRowHeight: CGFloat = 17
+private let userWindowDefautlTopLeftPoint = NSPoint(x: 100, y: 100)
+private let calculateActiveUserInterval: TimeInterval = 5
+private let maximumFontSizeForNonMainColumn: CGFloat = 16
+private let defaultMinimumRowHeight: CGFloat = 17
 
 private let enableDebugReconnectButton = false
 
-private let safariCookieAlertTitle = "No Safari Cookie found"
-private let safariCookieAlertDescription = "To retrieve the cookie from Safari, please open the Security & Privacy section of the System Preference and give the \"Full Disk Access\" right to Hakumai app."
+private let defaultElapsedTimeValue = "--:--:--"
+private let defaultLabelValue = "---"
 
 // swiftlint:disable file_length
 final class MainViewController: NSViewController {
@@ -29,7 +29,8 @@ final class MainViewController: NSViewController {
     static var shared: MainViewController!
 
     // MARK: Main Outlets
-    @IBOutlet private weak var liveTextField: NSTextField!
+    @IBOutlet private weak var grabUrlButton: NSButton!
+    @IBOutlet private weak var liveUrlTextField: NSTextField!
     @IBOutlet private weak var debugReconnectButton: NSButton!
     @IBOutlet private weak var connectButton: NSButton!
 
@@ -38,8 +39,10 @@ final class MainViewController: NSViewController {
     @IBOutlet private weak var communityTitleLabel: NSTextField!
     @IBOutlet private weak var communityIdLabel: NSTextField!
 
-    @IBOutlet private weak var visitorsLabel: NSTextField!
-    @IBOutlet private weak var commentsLabel: NSTextField!
+    @IBOutlet private weak var visitorsTitleLabel: NSTextField!
+    @IBOutlet private weak var visitorsValueLabel: NSTextField!
+    @IBOutlet private weak var commentsTitleLabel: NSTextField!
+    @IBOutlet private weak var commentsValueLabel: NSTextField!
     @IBOutlet private weak var speakButton: NSButton!
 
     @IBOutlet private weak var scrollView: BottomButtonScrollView!
@@ -47,8 +50,11 @@ final class MainViewController: NSViewController {
 
     @IBOutlet private weak var commentTextField: NSTextField!
     @IBOutlet private weak var commentAnonymouslyButton: NSButton!
-    @IBOutlet private weak var elapsedLabel: NSTextField!
-    @IBOutlet private weak var activeLabel: NSTextField!
+
+    @IBOutlet private weak var elapsedTimeTitleLabel: NSTextField!
+    @IBOutlet private weak var elapsedTimeValueLabel: NSTextField!
+    @IBOutlet private weak var activeUserTitleLabel: NSTextField!
+    @IBOutlet private weak var activeUserValueLabel: NSTextField!
     @IBOutlet private weak var progressIndicator: NSProgressIndicator!
 
     // MARK: Menu Delegate
@@ -64,14 +70,14 @@ final class MainViewController: NSViewController {
 
     // row-height cache
     private var rowHeightCacher = [Int: CGFloat]()
-    private var minimumRowHeight: CGFloat = kDefaultMinimumRowHeight
+    private var minimumRowHeight: CGFloat = defaultMinimumRowHeight
     private var tableViewFontSize: CGFloat = CGFloat(kDefaultFontSize)
 
     private var commentHistory = [String]()
     private var commentHistoryIndex: Int = 0
 
-    private var elapsedTimer: Timer?
-    private var activeTimer: Timer?
+    private var elapsedTimeTimer: Timer?
+    private var activeUserTimer: Timer?
 
     private var userWindowControllers = [UserWindowController]()
     private var nextUserWindowTopLeftPoint: NSPoint = NSPoint.zero
@@ -97,6 +103,7 @@ extension MainViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureViews()
+        DispatchQueue.main.async { self.focusLiveTextField() }
     }
 
     override func viewDidAppear() {
@@ -223,11 +230,11 @@ extension MainViewController: NSTableViewDelegate {
             let roomPositionView = view as? RoomPositionTableCellView
             roomPositionView?.roomPosition = chat.roomPosition
             roomPositionView?.commentNo = chat.no
-            roomPositionView?.fontSize = min(tableViewFontSize, kMaximumFontSizeForNonMainColumn)
+            roomPositionView?.fontSize = min(tableViewFontSize, maximumFontSizeForNonMainColumn)
         case kScoreColumnIdentifier:
             let scoreView = view as? ScoreTableCellView
             scoreView?.chat = chat
-            scoreView?.fontSize = min(tableViewFontSize, kMaximumFontSizeForNonMainColumn)
+            scoreView?.fontSize = min(tableViewFontSize, maximumFontSizeForNonMainColumn)
         case kCommentColumnIdentifier:
             let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)
@@ -242,7 +249,7 @@ extension MainViewController: NSTableViewDelegate {
         case kPremiumColumnIdentifier:
             let premiumView = view as? PremiumTableCellView
             premiumView?.premium = chat.premium
-            premiumView?.fontSize = min(tableViewFontSize, kMaximumFontSizeForNonMainColumn)
+            premiumView?.fontSize = min(tableViewFontSize, maximumFontSizeForNonMainColumn)
         default:
             break
         }
@@ -318,14 +325,14 @@ extension MainViewController: NicoUtilityDelegate {
 
         switch connectContext {
         case .normal:
-            logSystemMessageToTableView("Prepared live as user \(user.nickname).")
+            logSystemMessageToTableView(L10n.preparedLive(user.nickname))
         case .reconnect:
             break
         }
     }
 
-    func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, reason: String, error: NicoUtility.NicoError?) {
-        logSystemMessageToTableView("Failed to prepare live.(\(reason))")
+    func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, error: NicoUtility.NicoError) {
+        logSystemMessageToTableView(L10n.failedToPrepareLive(error.toMessage))
         updateMainControlViews(status: .disconnected)
         showCookiePrivilegeAlertIfNeeded(error: error)
     }
@@ -336,7 +343,7 @@ extension MainViewController: NicoUtilityDelegate {
         switch connectContext {
         case .normal:
             liveStartedDate = Date()
-            logSystemMessageToTableView("Connected to live.")
+            logSystemMessageToTableView(L10n.connectedToLive)
         case .reconnect:
             break
         }
@@ -361,7 +368,7 @@ extension MainViewController: NicoUtilityDelegate {
     func nicoUtilityWillReconnectToLive(_ nicoUtility: NicoUtilityType, reason: NicoUtility.ReconnectReason) {
         switch reason {
         case .normal:
-            logSystemMessageToTableView("Reconnecting...")
+            logSystemMessageToTableView(L10n.reconnecting)
         case .noPong, .noTexts:
             break
         }
@@ -370,7 +377,7 @@ extension MainViewController: NicoUtilityDelegate {
     func nicoUtilityDidDisconnect(_ nicoUtility: NicoUtilityType, disconnectContext: NicoUtility.DisconnectContext) {
         switch disconnectContext {
         case .normal:
-            logSystemMessageToTableView("Live closed.")
+            logSystemMessageToTableView(L10n.liveClosed)
         case .reconnect:
             break
         }
@@ -435,7 +442,7 @@ extension MainViewController {
 
     // MARK: Hotkeys
     func focusLiveTextField() {
-        liveTextField.becomeFirstResponder()
+        liveUrlTextField.becomeFirstResponder()
     }
 
     func focusCommentTextField() {
@@ -512,13 +519,30 @@ private extension MainViewController {
         communityImageView.addBorder()
         debugReconnectButton.isHidden = !enableDebugReconnectButton
 
+        liveUrlTextField.placeholderString = L10n.liveUrlTextFieldPlaceholder
+
+        liveTitleLabel.stringValue = "[\(L10n.liveTitle)]"
+        communityIdLabel.stringValue = "[\(L10n.communityId)]"
+        communityTitleLabel.stringValue = "[\(L10n.communityName)]"
+
+        visitorsTitleLabel.stringValue = "\(L10n.visitorCount):"
+        visitorsValueLabel.stringValue = defaultLabelValue
+        commentsTitleLabel.stringValue = "\(L10n.commentCount):"
+        commentsValueLabel.stringValue = defaultLabelValue
+        speakButton.title = L10n.speakComment
+
         if #available(macOS 10.14, *) {
             speakButton.isHidden = false
         } else {
             speakButton.isHidden = true
         }
 
-        commentTextField.placeholderString = "⌘N (empty ⏎ to scroll to bottom)"
+        commentTextField.placeholderString = L10n.commentTextFieldPlaceholder
+
+        elapsedTimeTitleLabel.stringValue = "\(L10n.elapsedTime):"
+        elapsedTimeValueLabel.stringValue = defaultElapsedTimeValue
+        activeUserTitleLabel.stringValue = "\(L10n.activeUser):"
+        activeUserValueLabel.stringValue = defaultLabelValue
 
         scrollView.enableBottomScrollButton()
         configureTableView()
@@ -548,20 +572,18 @@ private extension MainViewController {
     }
 
     func _updateMainControlViews(status connectionStatus: ConnectionStatus) {
+        let controls: [NSControl] = [grabUrlButton, liveUrlTextField, connectButton]
         switch connectionStatus {
         case .disconnected:
-            connectButton.isEnabled = true
+            controls.forEach { $0.isEnabled = true }
             connectButton.image = Asset.startLive.image
-            liveTextField.isEnabled = true
             progressIndicator.stopAnimation(self)
         case .connecting:
-            connectButton.isEnabled = false
-            liveTextField.isEnabled = false
+            controls.forEach { $0.isEnabled = false }
             progressIndicator.startAnimation(self)
         case .connected:
-            connectButton.isEnabled = true
+            controls.forEach { $0.isEnabled = true }
             connectButton.image = Asset.stopLive.image
-            liveTextField.isEnabled = true
             progressIndicator.stopAnimation(self)
         }
     }
@@ -632,10 +654,9 @@ private extension MainViewController {
     func updateLiveStatistics(stat: LiveStatistics) {
         let visitors = String(stat.viewers).numberStringWithSeparatorComma()
         let comments = String(stat.comments).numberStringWithSeparatorComma()
-
         DispatchQueue.main.async {
-            self.visitorsLabel.stringValue = "Visitors: " + visitors
-            self.commentsLabel.stringValue = "Comments: " + comments
+            self.visitorsValueLabel.stringValue = visitors
+            self.commentsValueLabel.stringValue = comments
         }
     }
 }
@@ -647,20 +668,22 @@ extension MainViewController {
                                                     UserDefaults.standard.integer(forKey: Parameters.sessionManagement)) else { return }
         let browser: BrowserHelper.BrowserType = session == .safari ? .safari : .chrome
         if let url = BrowserHelper.extractUrl(fromBrowser: browser) {
-            liveTextField.stringValue = url
+            liveUrlTextField.stringValue = url
             connectLive(self)
         }
     }
 
     @IBAction func reconnectLive(_ sender: Any) {
-        // NicoUtility.shared.reconnect()
-        NicoUtility.shared.reconnect(reason: .noPong)
-        // NicoUtility.shared.reconnect(reason: .noTexts)
+        let reason: NicoUtility.ReconnectReason
+        reason = .normal
+        // reason = .noPong
+        // reason = .noTexts
+        NicoUtility.shared.reconnect(reason: reason)
     }
 
     @IBAction func connectLive(_ sender: AnyObject) {
         initializeHandleNameManager()
-        guard let liveNumber = liveTextField.stringValue.extractLiveNumber() else { return }
+        guard let liveNumber = liveUrlTextField.stringValue.extractLiveNumber() else { return }
 
         clearAllChats()
         communityImageView.image = Asset.defaultCommunityImage.image
@@ -705,7 +728,7 @@ extension MainViewController {
         let anonymously = UserDefaults.standard.bool(forKey: Parameters.commentAnonymously)
         NicoUtility.shared.comment(comment, anonymously: anonymously) { comment in
             if comment == nil {
-                self.logSystemMessageToTableView("Failed to comment.")
+                self.logSystemMessageToTableView(L10n.failedToComment)
             }
         }
         commentTextField.stringValue = ""
@@ -755,7 +778,7 @@ extension MainViewController {
         guard let userWindow = userWindow else { return }
         var topLeftPoint: NSPoint = nextUserWindowTopLeftPoint
         if userWindowControllers.count == 0 {
-            topLeftPoint = kUserWindowDefautlTopLeftPoint
+            topLeftPoint = userWindowDefautlTopLeftPoint
         }
         nextUserWindowTopLeftPoint = userWindow.cascadeTopLeft(from: topLeftPoint)
     }
@@ -764,19 +787,29 @@ extension MainViewController {
 // MARK: Timer Functions
 private extension MainViewController {
     func startTimers() {
-        elapsedTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(MainViewController.displayElapsed(_:)), userInfo: nil, repeats: true)
-        activeTimer = Timer.scheduledTimer(timeInterval: kCalculateActiveInterval, target: self, selector: #selector(MainViewController.calculateActive(_:)), userInfo: nil, repeats: true)
+        elapsedTimeTimer = Timer.scheduledTimer(
+            timeInterval: 1,
+            target: self,
+            selector: #selector(MainViewController.updateElapsedLabelValue),
+            userInfo: nil,
+            repeats: true)
+        activeUserTimer = Timer.scheduledTimer(
+            timeInterval: calculateActiveUserInterval,
+            target: self,
+            selector: #selector(MainViewController.calculateAndUpdateActiveUserLabel),
+            userInfo: nil,
+            repeats: true)
     }
 
     func stopTimers() {
-        elapsedTimer?.invalidate()
-        elapsedTimer = nil
-        activeTimer?.invalidate()
-        activeTimer = nil
+        elapsedTimeTimer?.invalidate()
+        elapsedTimeTimer = nil
+        activeUserTimer?.invalidate()
+        activeUserTimer = nil
     }
 
-    @objc func displayElapsed(_ timer: Timer) {
-        var display = "--:--:--"
+    @objc func updateElapsedLabelValue() {
+        var display = defaultElapsedTimeValue
 
         if let startTime = NicoUtility.shared.live?.startTime {
             var prefix = ""
@@ -791,17 +824,13 @@ private extension MainViewController {
             display = "\(prefix)\(hour):\(minute):\(second)"
         }
 
-        DispatchQueue.main.async {
-            self.elapsedLabel.stringValue = "Elapsed: " + display
-        }
+        DispatchQueue.main.async { self.elapsedTimeValueLabel.stringValue = display }
     }
 
-    @objc func calculateActive(_ timer: Timer) {
+    @objc func calculateAndUpdateActiveUserLabel() {
         MessageContainer.shared.calculateActive { (active: Int?) -> Void in
-            guard let activeCount = active else { return }
-            DispatchQueue.main.async {
-                self.activeLabel.stringValue = "Active: \(activeCount)"
-            }
+            guard let active = active else { return }
+            DispatchQueue.main.async { self.activeUserValueLabel.stringValue = String(active) }
         }
     }
 }
@@ -851,21 +880,21 @@ private extension MainViewController {
 // Alert view for Safari cookie
 private extension MainViewController {
     func showCookiePrivilegeAlertIfNeeded(error: NicoUtility.NicoError?) {
-        guard error == .noCookieFound else { return }
+        guard error == .noCookie else { return }
         let param = UserDefaults.standard.integer(forKey: Parameters.sessionManagement)
         guard let sessionManagementType = SessionManagementType(rawValue: param) else { return }
         switch sessionManagementType {
         case .safari:
             let alert = NSAlert()
-            alert.messageText = safariCookieAlertTitle
-            alert.informativeText = safariCookieAlertDescription
+            alert.messageText = L10n.safariCookieAlertTitle
+            alert.informativeText = L10n.safariCookieAlertDescription
             let imageView = NSImageView(image: Asset.safariCookieAlertImage.image)
             imageView.frame = NSRect.init(x: 0, y: 0, width: 300, height: 300)
             alert.accessoryView = imageView
-            let securityButton = alert.addButton(withTitle: "Open Security & Privacy")
+            let securityButton = alert.addButton(withTitle: L10n.openSecurityPrivacy)
             securityButton.target = self
             securityButton.action = #selector(MainViewController.showSecurityPanel)
-            alert.addButton(withTitle: "Cancel")
+            alert.addButton(withTitle: L10n.cancel)
             alert.runModal()
         default:
             break
@@ -875,6 +904,18 @@ private extension MainViewController {
     @objc func showSecurityPanel() {
         let url = URL(fileURLWithPath: "/System/Library/PreferencePanes/Security.prefPane")
         NSWorkspace.shared.open(url)
+    }
+}
+
+private extension NicoUtility.NicoError {
+    var toMessage: String {
+        switch self {
+        case .internal:                     return L10n.errorInternal
+        case .noCookie:                     return L10n.errorNoCookie
+        case .noLiveInfo:                   return L10n.errorNoLiveInfo
+        case .noMessageServerInfo:          return L10n.errorNoMessageServerInfo
+        case .failedToOpenMessageServer:    return L10n.errorFailedToOpenMessageServer
+        }
     }
 }
 
