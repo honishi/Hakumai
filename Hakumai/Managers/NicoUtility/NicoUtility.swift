@@ -58,10 +58,11 @@ final class NicoUtility: NicoUtilityType {
         case login(mail: String, password: String)
     }
     enum NicoError: Error {
-        case network
         case `internal`
-        case noCookieFound
-        case unknown
+        case noCookie
+        case noLiveInfo
+        case noMessageServerInfo
+        case failedToOpenMessageServer
     }
     enum ConnectContext { case normal, reconnect }
     enum DisconnectContext { case normal, reconnect }
@@ -177,9 +178,8 @@ extension NicoUtility {
         let completion = { (userSessionCookie: String?) -> Void in
             log.debug("Cookie result: [\(sessionType)] [\(userSessionCookie ?? "-")]")
             guard let userSessionCookie = userSessionCookie else {
-                let reason = "No available cookie."
-                log.error(reason)
-                self.delegate?.nicoUtilityDidFailToPrepareLive(self, reason: reason, error: .noCookieFound)
+                log.error("No available cookie.")
+                self.delegate?.nicoUtilityDidFailToPrepareLive(self, error: .noCookie)
                 return
             }
             self.connect(
@@ -336,8 +336,7 @@ private extension NicoUtility {
                     connectContext: connectContext
                 )
             case .failure(_):
-                let reason = "Failed to load live info."
-                me.delegate?.nicoUtilityDidFailToPrepareLive(me, reason: reason, error: nil)
+                me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: .noLiveInfo)
             }
         }
     }
@@ -372,8 +371,7 @@ private extension NicoUtility {
             case .success(let room):
                 me.openMessageSocket(userId: userId, room: room, connectContext: connectContext)
             case .failure(_):
-                let reason = "Failed to load message server info."
-                me.delegate?.nicoUtilityDidFailToPrepareLive(me, reason: reason, error: nil)
+                me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: .noMessageServerInfo)
             }
         }
     }
@@ -389,8 +387,7 @@ private extension NicoUtility {
                 me.isConnected = true
                 me.delegate?.nicoUtilityDidConnectToLive(me, roomPosition: RoomPosition.arena, connectContext: connectContext)
             case .failure(_):
-                let reason = "Failed to open message server."
-                me.delegate?.nicoUtilityDidFailToPrepareLive(me, reason: reason, error: nil)
+                me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: .failedToOpenMessageServer)
             }
         }
     }

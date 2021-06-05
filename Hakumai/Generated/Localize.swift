@@ -14,14 +14,16 @@ internal enum L10n {
   internal static let aboutHakumai = L10n.tr("Localizable", "about_hakumai")
   /// Active Users
   internal static let activeUser = L10n.tr("Localizable", "active_user")
-  /// Add Handle Name
-  internal static let addHandleName = L10n.tr("Localizable", "add_handle_name")
+  /// Add
+  internal static let add = L10n.tr("Localizable", "add")
   /// Add to Mute User
   internal static let addToMuteUser = L10n.tr("Localizable", "add_to_mute_user")
   /// Always On Top
   internal static let alwaysOnTop = L10n.tr("Localizable", "always_on_top")
   /// Bring All to Front
   internal static let bringAllToFront = L10n.tr("Localizable", "bring_all_to_front")
+  /// Cancel
+  internal static let cancel = L10n.tr("Localizable", "cancel")
   /// Capitalize
   internal static let capitalize = L10n.tr("Localizable", "capitalize")
   /// Check
@@ -44,6 +46,8 @@ internal enum L10n {
   internal static let communityId = L10n.tr("Localizable", "community_id")
   /// Community Name
   internal static let communityName = L10n.tr("Localizable", "community_name")
+  /// Connected to the live.
+  internal static let connectedToLive = L10n.tr("Localizable", "connected_to_live")
   /// Copy
   internal static let copy = L10n.tr("Localizable", "copy")
   /// Copy Comment
@@ -66,8 +70,30 @@ internal enum L10n {
   internal static let elapsedTime = L10n.tr("Localizable", "elapsed_time")
   /// Enable 184
   internal static let enable184 = L10n.tr("Localizable", "enable_184")
+  /// Enable Mute User Ids
+  internal static let enableMuteUserIds = L10n.tr("Localizable", "enable_mute_user_ids")
+  /// Enable Mute Words
+  internal static let enableMuteWords = L10n.tr("Localizable", "enable_mute_words")
+  /// Enter Mute User Id / Word
+  internal static let enterMuteUserIdWord = L10n.tr("Localizable", "enter_mute_user_id_word")
+  /// Failed to open message server.
+  internal static let errorFailedToOpenMessageServer = L10n.tr("Localizable", "error_failed_to_open_message_server")
+  /// Internal Error.
+  internal static let errorInternal = L10n.tr("Localizable", "error_internal")
+  /// No available cookie.
+  internal static let errorNoCookie = L10n.tr("Localizable", "error_no_cookie")
+  /// Failed to load live info.
+  internal static let errorNoLiveInfo = L10n.tr("Localizable", "error_no_live_info")
+  /// Failed to load message server info.
+  internal static let errorNoMessageServerInfo = L10n.tr("Localizable", "error_no_message_server_info")
   /// Failed
   internal static let failed = L10n.tr("Localizable", "failed")
+  /// Failed to comment.
+  internal static let failedToComment = L10n.tr("Localizable", "failed_to_comment")
+  /// Failed to connect to the live. [%@]
+  internal static func failedToPrepareLive(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "failed_to_prepare_live", String(describing: p1))
+  }
   /// File
   internal static let file = L10n.tr("Localizable", "file")
   /// Google Chrome
@@ -84,6 +110,8 @@ internal enum L10n {
   internal static let hideHakumai = L10n.tr("Localizable", "hide_hakumai")
   /// Hide Others
   internal static let hideOthers = L10n.tr("Localizable", "hide_others")
+  /// Closed the live.
+  internal static let liveClosed = L10n.tr("Localizable", "live_closed")
   /// Live Title
   internal static let liveTitle = L10n.tr("Localizable", "live_title")
   /// ⌘L (Live URL, Live#)
@@ -98,6 +126,8 @@ internal enum L10n {
   internal static let minimize = L10n.tr("Localizable", "minimize")
   /// New Comment
   internal static let newComment = L10n.tr("Localizable", "new_comment")
+  /// Open Security & Privacy
+  internal static let openSecurityPrivacy = L10n.tr("Localizable", "open_security_privacy")
   /// Open URL
   internal static let openUrl = L10n.tr("Localizable", "open_url")
   /// Open URL in Comment
@@ -110,20 +140,36 @@ internal enum L10n {
   internal static let paste = L10n.tr("Localizable", "paste")
   /// Preferences...
   internal static let preferences = L10n.tr("Localizable", "preferences")
+  /// Retrieved the live info as user "%@".
+  internal static func preparedLive(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "prepared_live", String(describing: p1))
+  }
   /// Quit Hakumai
   internal static let quitHakumai = L10n.tr("Localizable", "quit_hakumai")
+  /// Reconnecting...
+  internal static let reconnecting = L10n.tr("Localizable", "reconnecting")
   /// Remove Handle Name
   internal static let removeHandleName = L10n.tr("Localizable", "remove_handle_name")
   /// Report as NG User
   internal static let reportAsNgUser = L10n.tr("Localizable", "report_as_ng_user")
   /// Safari
   internal static let safari = L10n.tr("Localizable", "safari")
+  /// To retrieve the cookie from Safari, please open the "Security & Privacy" in the "System Preference”, go to the "Privacy" tab and give the "Full Disk Access" right to Hakumai app.
+  internal static let safariCookieAlertDescription = L10n.tr("Localizable", "safari_cookie_alert_description")
+  /// No Safari Cookie found
+  internal static let safariCookieAlertTitle = L10n.tr("Localizable", "safari_cookie_alert_title")
   /// Select All
   internal static let selectAll = L10n.tr("Localizable", "select_all")
   /// Services
   internal static let services = L10n.tr("Localizable", "services")
   /// Session Management
   internal static let sessionManagement = L10n.tr("Localizable", "session_management")
+  /// Set
+  internal static let `set` = L10n.tr("Localizable", "set")
+  /// Set Handle Name
+  internal static let setHandleName = L10n.tr("Localizable", "set_handle_name")
+  /// Set/Update Handle Name
+  internal static let setUpdateHandleName = L10n.tr("Localizable", "set_update_handle_name")
   /// Show All
   internal static let showAll = L10n.tr("Localizable", "show_all")
   /// Show Spelling and Grammar

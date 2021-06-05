@@ -18,9 +18,6 @@ private let defaultMinimumRowHeight: CGFloat = 17
 private let enableDebugAuthButton = true
 private let enableDebugReconnectButton = false
 
-private let safariCookieAlertTitle = "No Safari Cookie found"
-private let safariCookieAlertDescription = "To retrieve the cookie from Safari, please open the Security & Privacy section of the System Preference and give the \"Full Disk Access\" right to Hakumai app."
-
 private let defaultElapsedTimeValue = "--:--:--"
 private let defaultLabelValue = "---"
 
@@ -112,6 +109,7 @@ extension MainViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureViews()
+        DispatchQueue.main.async { self.focusLiveTextField() }
     }
 
     override func viewDidAppear() {
@@ -333,14 +331,14 @@ extension MainViewController: NicoUtilityDelegate {
 
         switch connectContext {
         case .normal:
-            logSystemMessageToTableView("Prepared live as user \(user.nickname).")
+            logSystemMessageToTableView(L10n.preparedLive(user.nickname))
         case .reconnect:
             break
         }
     }
 
-    func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, reason: String, error: NicoUtility.NicoError?) {
-        logSystemMessageToTableView("Failed to prepare live.(\(reason))")
+    func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, error: NicoUtility.NicoError) {
+        logSystemMessageToTableView(L10n.failedToPrepareLive(error.toMessage))
         updateMainControlViews(status: .disconnected)
         showCookiePrivilegeAlertIfNeeded(error: error)
     }
@@ -351,7 +349,7 @@ extension MainViewController: NicoUtilityDelegate {
         switch connectContext {
         case .normal:
             liveStartedDate = Date()
-            logSystemMessageToTableView("Connected to live.")
+            logSystemMessageToTableView(L10n.connectedToLive)
         case .reconnect:
             break
         }
@@ -376,7 +374,7 @@ extension MainViewController: NicoUtilityDelegate {
     func nicoUtilityWillReconnectToLive(_ nicoUtility: NicoUtilityType, reason: NicoUtility.ReconnectReason) {
         switch reason {
         case .normal:
-            logSystemMessageToTableView("Reconnecting...")
+            logSystemMessageToTableView(L10n.reconnecting)
         case .noPong, .noTexts:
             break
         }
@@ -385,7 +383,7 @@ extension MainViewController: NicoUtilityDelegate {
     func nicoUtilityDidDisconnect(_ nicoUtility: NicoUtilityType, disconnectContext: NicoUtility.DisconnectContext) {
         switch disconnectContext {
         case .normal:
-            logSystemMessageToTableView("Live closed.")
+            logSystemMessageToTableView(L10n.liveClosed)
         case .reconnect:
             break
         }
@@ -687,9 +685,11 @@ extension MainViewController {
     }
 
     @IBAction func debugReconnectButtonPressed(_ sender: Any) {
-        // NicoUtility.shared.reconnect()
-        NicoUtility.shared.reconnect(reason: .noPong)
-        // NicoUtility.shared.reconnect(reason: .noTexts)
+        let reason: NicoUtility.ReconnectReason
+        reason = .normal
+        // reason = .noPong
+        // reason = .noTexts
+        NicoUtility.shared.reconnect(reason: reason)
     }
 
     @IBAction func connectLive(_ sender: AnyObject) {
@@ -739,7 +739,7 @@ extension MainViewController {
         let anonymously = UserDefaults.standard.bool(forKey: Parameters.commentAnonymously)
         NicoUtility.shared.comment(comment, anonymously: anonymously) { comment in
             if comment == nil {
-                self.logSystemMessageToTableView("Failed to comment.")
+                self.logSystemMessageToTableView(L10n.failedToComment)
             }
         }
         commentTextField.stringValue = ""
@@ -899,21 +899,21 @@ private extension MainViewController {
 // Alert view for Safari cookie
 private extension MainViewController {
     func showCookiePrivilegeAlertIfNeeded(error: NicoUtility.NicoError?) {
-        guard error == .noCookieFound else { return }
+        guard error == .noCookie else { return }
         let param = UserDefaults.standard.integer(forKey: Parameters.sessionManagement)
         guard let sessionManagementType = SessionManagementType(rawValue: param) else { return }
         switch sessionManagementType {
         case .safari:
             let alert = NSAlert()
-            alert.messageText = safariCookieAlertTitle
-            alert.informativeText = safariCookieAlertDescription
+            alert.messageText = L10n.safariCookieAlertTitle
+            alert.informativeText = L10n.safariCookieAlertDescription
             let imageView = NSImageView(image: Asset.safariCookieAlertImage.image)
             imageView.frame = NSRect.init(x: 0, y: 0, width: 300, height: 300)
             alert.accessoryView = imageView
-            let securityButton = alert.addButton(withTitle: "Open Security & Privacy")
+            let securityButton = alert.addButton(withTitle: L10n.openSecurityPrivacy)
             securityButton.target = self
             securityButton.action = #selector(MainViewController.showSecurityPanel)
-            alert.addButton(withTitle: "Cancel")
+            alert.addButton(withTitle: L10n.cancel)
             alert.runModal()
         default:
             break
@@ -923,6 +923,18 @@ private extension MainViewController {
     @objc func showSecurityPanel() {
         let url = URL(fileURLWithPath: "/System/Library/PreferencePanes/Security.prefPane")
         NSWorkspace.shared.open(url)
+    }
+}
+
+private extension NicoUtility.NicoError {
+    var toMessage: String {
+        switch self {
+        case .internal:                     return L10n.errorInternal
+        case .noCookie:                     return L10n.errorNoCookie
+        case .noLiveInfo:                   return L10n.errorNoLiveInfo
+        case .noMessageServerInfo:          return L10n.errorNoMessageServerInfo
+        case .failedToOpenMessageServer:    return L10n.errorFailedToOpenMessageServer
+        }
     }
 }
 

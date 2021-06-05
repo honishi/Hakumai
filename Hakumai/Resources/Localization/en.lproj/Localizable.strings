@@ -87,13 +87,34 @@
 "live_url_text_field_placeholder" = "⌘L (Live URL, Live#)";
 "speak_comment" = "Speak";
 "visitor_count" = "Visitors";
+"safari_cookie_alert_title" = "No Safari Cookie found";
+"safari_cookie_alert_description" = "To retrieve the cookie from Safari, please open the \"Security & Privacy\" in the \"System Preference\”, go to the \"Privacy\" tab and give the \"Full Disk Access\" right to Hakumai app.";
+"open_security_privacy" = "Open Security & Privacy";
+
+/// Message
+"prepared_live" = "Retrieved the live info as user \"%@\".";
+"failed_to_prepare_live" = "Failed to connect to the live. [%@]";
+"connected_to_live" = "Connected to the live.";
+"live_closed" = "Closed the live.";
+"reconnecting" = "Reconnecting...";
+"failed_to_comment" = "Failed to comment.";
+
+/// Error
+"error_internal" = "Internal Error.";
+"error_no_cookie" = "No available cookie.";
+"error_no_live_info" = "Failed to load live info.";
+"error_no_message_server_info" = "Failed to load message server info.";
+"error_failed_to_open_message_server" = "Failed to open message server.";
+
+/// Handle Add
+"set_update_handle_name" = "Set/Update Handle Name";
 
 ///
 /// Comment Menu
 ///
 "copy_comment" = "Copy Comment";
 "open_url_in_comment" = "Open URL in Comment";
-"add_handle_name" = "Add Handle Name";
+"set_handle_name" = "Set Handle Name";
 "remove_handle_name" = "Remove Handle Name";
 "add_to_mute_user" = "Add to Mute User";
 "report_as_ng_user" = "Report as NG User";
@@ -123,3 +144,17 @@
 "comment_speaking" = "Comment Speaking";
 "speak_comments" = "Speak Comments (Requires macOS 10.14-)";
 "speak_volume" = "Speak Volume";
+
+/// Mute
+"enable_mute_user_ids" = "Enable Mute User Ids";
+"enable_mute_words" = "Enable Mute Words";
+
+/// Mute Add
+"enter_mute_user_id_word" = "Enter Mute User Id / Word";
+
+///
+/// Common
+///
+"add" = "Add";
+"cancel" = "Cancel";
+"set" = "Set";

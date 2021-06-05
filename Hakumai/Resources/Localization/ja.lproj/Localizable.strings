@@ -79,7 +79,7 @@
 ///
 "active_user" = "アクティブユーザー";
 "comment_count" = "コメント";
-"comment_text_field_placeholder" = "⌘N (空リターンで最下行にスクロール)";
+"comment_text_field_placeholder" = "⌘N (リターンのみで最下行にスクロール)";
 "community_id" = "コミュニティID";
 "community_name" = "コミュニティ名";
 "elapsed_time" = "経過時間";
@@ -87,13 +87,34 @@
 "live_url_text_field_placeholder" = "⌘L (放送URL, 放送番号)";
 "speak_comment" = "読み上げ";
 "visitor_count" = "来場者";
+"safari_cookie_alert_title" = "Safari から Cookie が取得できません";
+"safari_cookie_alert_description" = "Safari から Cookie を取得するには、「システム環境設定」の中から「セキュリティとプライバシー」を開き、「プライバシー」タブの「フルディスクアクセス」の中の Hakumai アプリにチェックを入れてください。";
+"open_security_privacy" = "セキュリティとプライバシーを開く";
+
+/// Message
+"prepared_live" = "\"%@\" で放送情報を取得しました.";
+"failed_to_prepare_live" = "放送への接続に失敗しました. [%@]";
+"connected_to_live" = "放送に接続しました.";
+"live_closed" = "放送から切断しました.";
+"reconnecting" = "再接続します...";
+"failed_to_comment" = "コメントに失敗しました.";
+
+/// Error
+"error_internal" = "内部エラー.";
+"error_no_cookie" = "Cookie が取得できませんでした.";
+"error_no_live_info" = "放送情報の取得に失敗しました.";
+"error_no_message_server_info" = "Message Server の情報が取得できませんでした.";
+"error_failed_to_open_message_server" = "Message Server に接続できませんでした.";
+
+/// Handle Add
+"set_update_handle_name" = "ハンドル名を設定・更新";
 
 ///
 /// Comment Menu
 ///
 "copy_comment" = "コメントをコピー";
 "open_url_in_comment" = "コメント中のURLを開く";
-"add_handle_name" = "ハンドル名を追加";
+"set_handle_name" = "ハンドル名を設定";
 "remove_handle_name" = "ハンドル名を削除";
 "add_to_mute_user" = "ユーザーをミュートに追加";
 "report_as_ng_user" = "NGユーザーとして報告";
@@ -123,3 +144,17 @@
 "comment_speaking" = "コメント読み上げ";
 "speak_comments" = "コメント読み上げ (macOS 10.14 以降が必要)";
 "speak_volume" = "読み上げボリューム";
+
+/// Mute
+"enable_mute_user_ids" = "ユーザーID指定のミュートを使う";
+"enable_mute_words" = "単語指定のミュートを使う";
+
+/// Mute Add
+"enter_mute_user_id_word" = "ミュートするユーザーID・単語";
+
+///
+/// Common
+///
+"add" = "追加";
+"cancel" = "キャンセル";
+"set" = "設定";

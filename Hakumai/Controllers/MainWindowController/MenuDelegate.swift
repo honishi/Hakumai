@@ -13,7 +13,7 @@ final class MenuDelegate: NSObject {
     // MARK: Menu Outlets
     @IBOutlet private weak var copyCommentMenuItem: NSMenuItem!
     @IBOutlet private weak var openUrlMenuItem: NSMenuItem!
-    @IBOutlet private weak var addHandleNameMenuItem: NSMenuItem!
+    @IBOutlet private weak var setHandleNameMenuItem: NSMenuItem!
     @IBOutlet private weak var removeHandleNameMenuItem: NSMenuItem!
     @IBOutlet private weak var addToMuteUserMenuItem: NSMenuItem!
     @IBOutlet private weak var reportAsNgUserMenuItem: NSMenuItem!
@@ -44,7 +44,7 @@ extension MenuDelegate: NSMenuItemValidation {
             return true
         case openUrlMenuItem:
             return chat.comment.extractUrlString() != nil ? true : false
-        case addHandleNameMenuItem:
+        case setHandleNameMenuItem:
             guard live != nil else { return false }
             return chat.isUserComment
         case removeHandleNameMenuItem:
@@ -140,7 +140,7 @@ private extension MenuDelegate {
     func configureView() {
         copyCommentMenuItem.title = L10n.copyComment
         openUrlMenuItem.title = L10n.openUrlInComment
-        addHandleNameMenuItem.title = L10n.addHandleName
+        setHandleNameMenuItem.title = L10n.setHandleName
         removeHandleNameMenuItem.title = L10n.removeHandleName
         addToMuteUserMenuItem.title = L10n.addToMuteUser
         reportAsNgUserMenuItem.title = L10n.reportAsNgUser
