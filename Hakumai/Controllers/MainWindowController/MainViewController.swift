@@ -331,8 +331,8 @@ extension MainViewController: NicoUtilityDelegate {
         }
     }
 
-    func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, reason: String, error: NicoUtility.NicoError?) {
-        logSystemMessageToTableView(L10n.failedToPrepareLive(reason))
+    func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, error: NicoUtility.NicoError) {
+        logSystemMessageToTableView(L10n.failedToPrepareLive(error.toMessage))
         updateMainControlViews(status: .disconnected)
         showCookiePrivilegeAlertIfNeeded(error: error)
     }
@@ -880,7 +880,7 @@ private extension MainViewController {
 // Alert view for Safari cookie
 private extension MainViewController {
     func showCookiePrivilegeAlertIfNeeded(error: NicoUtility.NicoError?) {
-        guard error == .noCookieFound else { return }
+        guard error == .noCookie else { return }
         let param = UserDefaults.standard.integer(forKey: Parameters.sessionManagement)
         guard let sessionManagementType = SessionManagementType(rawValue: param) else { return }
         switch sessionManagementType {
@@ -904,6 +904,18 @@ private extension MainViewController {
     @objc func showSecurityPanel() {
         let url = URL(fileURLWithPath: "/System/Library/PreferencePanes/Security.prefPane")
         NSWorkspace.shared.open(url)
+    }
+}
+
+private extension NicoUtility.NicoError {
+    var toMessage: String {
+        switch self {
+        case .internal:                     return L10n.errorInternal
+        case .noCookie:                     return L10n.errorNoCookie
+        case .noLiveInfo:                   return L10n.errorNoLiveInfo
+        case .noMessageServerInfo:          return L10n.errorNoMessageServerInfo
+        case .failedToOpenMessageServer:    return L10n.errorFailedToOpenMessageServer
+        }
     }
 }
 

@@ -46,7 +46,7 @@ internal enum L10n {
   internal static let communityId = L10n.tr("Localizable", "community_id")
   /// Community Name
   internal static let communityName = L10n.tr("Localizable", "community_name")
-  /// Connected to live.
+  /// Connected to the live.
   internal static let connectedToLive = L10n.tr("Localizable", "connected_to_live")
   /// Copy
   internal static let copy = L10n.tr("Localizable", "copy")
@@ -76,11 +76,21 @@ internal enum L10n {
   internal static let enableMuteWords = L10n.tr("Localizable", "enable_mute_words")
   /// Enter Mute User Id / Word
   internal static let enterMuteUserIdWord = L10n.tr("Localizable", "enter_mute_user_id_word")
+  /// Failed to open message server.
+  internal static let errorFailedToOpenMessageServer = L10n.tr("Localizable", "error_failed_to_open_message_server")
+  /// Internal Error.
+  internal static let errorInternal = L10n.tr("Localizable", "error_internal")
+  /// No available cookie.
+  internal static let errorNoCookie = L10n.tr("Localizable", "error_no_cookie")
+  /// Failed to load live info.
+  internal static let errorNoLiveInfo = L10n.tr("Localizable", "error_no_live_info")
+  /// Failed to load message server info.
+  internal static let errorNoMessageServerInfo = L10n.tr("Localizable", "error_no_message_server_info")
   /// Failed
   internal static let failed = L10n.tr("Localizable", "failed")
   /// Failed to comment.
   internal static let failedToComment = L10n.tr("Localizable", "failed_to_comment")
-  /// Failed to prepare live. (%@)
+  /// Failed to connect to the live. [%@]
   internal static func failedToPrepareLive(_ p1: Any) -> String {
     return L10n.tr("Localizable", "failed_to_prepare_live", String(describing: p1))
   }
@@ -100,7 +110,7 @@ internal enum L10n {
   internal static let hideHakumai = L10n.tr("Localizable", "hide_hakumai")
   /// Hide Others
   internal static let hideOthers = L10n.tr("Localizable", "hide_others")
-  /// Live closed.
+  /// Closed the live.
   internal static let liveClosed = L10n.tr("Localizable", "live_closed")
   /// Live Title
   internal static let liveTitle = L10n.tr("Localizable", "live_title")
@@ -130,7 +140,7 @@ internal enum L10n {
   internal static let paste = L10n.tr("Localizable", "paste")
   /// Preferences...
   internal static let preferences = L10n.tr("Localizable", "preferences")
-  /// Prepared live as user %@.
+  /// Retrieved the live info as user "%@".
   internal static func preparedLive(_ p1: Any) -> String {
     return L10n.tr("Localizable", "prepared_live", String(describing: p1))
   }

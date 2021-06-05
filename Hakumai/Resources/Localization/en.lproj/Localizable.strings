@@ -92,12 +92,19 @@
 "open_security_privacy" = "Open Security & Privacy";
 
 /// Message
-"prepared_live" = "Prepared live as user %@.";
-"failed_to_prepare_live" = "Failed to prepare live. (%@)";
-"connected_to_live" = "Connected to live.";
-"live_closed" = "Live closed.";
+"prepared_live" = "Retrieved the live info as user \"%@\".";
+"failed_to_prepare_live" = "Failed to connect to the live. [%@]";
+"connected_to_live" = "Connected to the live.";
+"live_closed" = "Closed the live.";
 "reconnecting" = "Reconnecting...";
 "failed_to_comment" = "Failed to comment.";
+
+/// Error
+"error_internal" = "Internal Error.";
+"error_no_cookie" = "No available cookie.";
+"error_no_live_info" = "Failed to load live info.";
+"error_no_message_server_info" = "Failed to load message server info.";
+"error_failed_to_open_message_server" = "Failed to open message server.";
 
 /// Handle Add
 "set_update_handle_name" = "Set/Update Handle Name";

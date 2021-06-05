@@ -92,12 +92,19 @@
 "open_security_privacy" = "セキュリティとプライバシーを開く";
 
 /// Message
-"prepared_live" = "ユーザー %@ で放送の情報を取得しました.";
-"failed_to_prepare_live" = "放送の情報取得に失敗しました. (%@)";
+"prepared_live" = "\"%@\" で放送情報を取得しました.";
+"failed_to_prepare_live" = "放送への接続に失敗しました. [%@]";
 "connected_to_live" = "放送に接続しました.";
 "live_closed" = "放送から切断しました.";
 "reconnecting" = "再接続します...";
 "failed_to_comment" = "コメントに失敗しました.";
+
+/// Error
+"error_internal" = "内部エラー.";
+"error_no_cookie" = "Cookie が取得できませんでした.";
+"error_no_live_info" = "放送情報の取得に失敗しました.";
+"error_no_message_server_info" = "Message Server の情報が取得できませんでした.";
+"error_failed_to_open_message_server" = "Message Server に接続できませんでした.";
 
 /// Handle Add
 "set_update_handle_name" = "ハンドル名を設定・更新";
