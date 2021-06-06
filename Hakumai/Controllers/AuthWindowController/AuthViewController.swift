@@ -12,11 +12,16 @@ import WebKit
 private let hakumaiAppUrlScheme = "hakumai"
 private let accessTokenParameterName = "response"
 
+protocol AuthViewControllerDelegate: AnyObject {
+    func authViewControllerDidLogin(_ authViewController: AuthViewController)
+}
+
 final class AuthViewController: NSViewController {
     // MARK: - Properties
     @IBOutlet private weak var webView: WKWebView!
 
     private var authManager: AuthManagerProtocol!
+    private weak var delegate: AuthViewControllerDelegate?
 }
 
 extension AuthViewController {
@@ -28,6 +33,10 @@ extension AuthViewController {
 }
 
 extension AuthViewController {
+    func setDelegate(_ delegate: AuthViewControllerDelegate?) {
+        self.delegate = delegate
+    }
+
     func startAuthorization() {
         let request = URLRequest(url: authManager.authWebUrl)
         webView.load(request)
@@ -56,12 +65,12 @@ private extension AuthViewController {
     func extractCallbackResponse(from url: URL) {
         guard let response = url.queryValue(for: accessTokenParameterName) else { return }
         // log.debug(response)
-        authManager.extractCallbackResponseAndSaveToken(response: response) {
+        authManager.extractCallbackResponseAndSaveToken(response: response) { [weak self] in
+            guard let me = self else { return }
             log.debug($0)
             switch $0 {
             case .success(_):
-                // TODO: Notify token completion to caller.
-                break
+                me.delegate?.authViewControllerDidLogin(me)
             case .failure(let error):
                 log.error(error)
             }

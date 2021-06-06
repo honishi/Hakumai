@@ -316,6 +316,14 @@ extension MainViewController: NSControlTextEditingDelegate {
     }
 }
 
+// MARK: - AuthWindowControllerDelegate Functions
+extension MainViewController: AuthWindowControllerDelegate {
+    func authWindowControllerDidLogin(_ authWindowController: AuthWindowController) {
+        // TODO: i18n
+        logSystemMessageToTableView("Login completed.")
+    }
+}
+
 // MARK: - NicoUtilityDelegate Functions
 extension MainViewController: NicoUtilityDelegate {
     func nicoUtilityNeedsLogin(_ nicoUtility: NicoUtilityType) {
@@ -898,7 +906,7 @@ private extension MainViewController {
 
     func showAuthWindowController() {
         if authWindowController == nil {
-            authWindowController = AuthWindowController.make()
+            authWindowController = AuthWindowController.make(delegate: self)
         }
         authWindowController?.startAuthorization()
         authWindowController?.showWindow(self)
