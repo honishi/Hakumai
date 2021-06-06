@@ -124,14 +124,14 @@ private extension AuthManager {
             refreshToken: response.refreshToken,
             idToken: response.idToken
         )
-        tokenStore.saveToken(
+        tokenStore.saveToken(StoredToken(
             accessToken: response.accessToken,
             tokenType: response.tokenType,
             expiresIn: response.expiresIn,
             scope: response.scope,
             refreshToken: response.refreshToken,
             idToken: response.idToken
-        )
+        ))
     }
 
     func loadToken() -> AuthManagerToken? {

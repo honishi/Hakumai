@@ -13,18 +13,27 @@ import Starscream
 import XCGLogger
 
 // MARK: - Constants
-// URLs:
+// General URL:
 private let livePageUrl = "https://live.nicovideo.jp/watch/lv"
 private let _userPageUrl = "https://www.nicovideo.jp/user/"
 private let _userIconUrl = "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/"
+
+// API URL:
+private let userinfoApiUrl = "https://oauth.nicovideo.jp/open_id/userinfo"
+private let wsEndpointApiUrl = "https://api.live2.nicovideo.jp/api/v1/wsendpoint"
 private let userNicknameApiUrl = "https://api.live2.nicovideo.jp/api/v1/user/nickname"
+
+// HTTP Header:
+private let httpHeaderKeyAuthorization = "Authorization"
 
 // Cookies:
 private let userSessionCookieDomain = "nicovideo.jp"
 private let userSessionCookieName = "user_session"
 private let userSessionCookieExpire = TimeInterval(7200)
 private let userSessionCookiePath = "/"
+
 // Misc:
+private let defaultRequestTimeout: TimeInterval = 10
 private let defaultWatchSocketKeepSeatInterval = 30
 private let messageSocketEmptyMessageInterval = 60
 private let pingPongCheckInterval = 10
@@ -98,6 +107,7 @@ final class NicoUtility: NicoUtilityType {
     private(set) var live: Live?
 
     // Private Properties
+    private let authManager: AuthManagerProtocol
     private var isConnected = false
     private var connectRequests: ConnectRequests =
         ConnectRequests(
@@ -130,10 +140,13 @@ final class NicoUtility: NicoUtilityType {
     // App-side Health Check (Text Socket)
     private var textSocketEventCheckTimer: Timer?
 
-    init() {
-        let configuration = URLSessionConfiguration.af.default
-        configuration.headers.add(.userAgent(commonUserAgentValue))
-        self.session = Session(configuration: configuration)
+    init(authManager: AuthManagerProtocol = AuthManager.shared) {
+        self.authManager = authManager
+        self.session = {
+            let configuration = URLSessionConfiguration.af.default
+            configuration.headers.add(.userAgent(commonUserAgentValue))
+            return Session(configuration: configuration)
+        }()
         clearHttpCookieStorage()
         userNameResolvingOperationQueue.maxConcurrentOperationCount = 1
     }
@@ -142,11 +155,25 @@ final class NicoUtility: NicoUtilityType {
 // MARK: - Public Methods (Main)
 extension NicoUtility {
     func connect(liveNumber: Int, sessionType: SessionType, connectContext: NicoUtility.ConnectContext = .normal) {
-        // 1. Save connection request.
-        connectRequests.onGoing = ConnectRequests.Request(
-            liveNumber: liveNumber,
-            sessionType: sessionType
-        )
+        guard let accessToken = authManager.currentToken?.accessToken else {
+            // TODO: Notify no token to caller.
+            return
+        }
+        // TODO: refresh in advance?
+
+        requestUserInfo(accessToken: accessToken)
+
+        /*requestWebSocketEndpoint(
+         accessToken: accessToken,
+         liveProgramId: "lv\(liveNumber)",
+         userId: userId) */
+        return
+
+            // 1. Save connection request.
+            connectRequests.onGoing = ConnectRequests.Request(
+                liveNumber: liveNumber,
+                sessionType: sessionType
+            )
         connectRequests.lastEstablished = nil
 
         // 2. Save chat numbers.
@@ -364,6 +391,53 @@ private extension NicoUtility {
             }
     }
 
+    func requestUserInfo(accessToken: String) {
+        guard let url = URL(string: userinfoApiUrl) else { return }
+        session.request(
+            url,
+            method: .get,
+            headers: [httpHeaderKeyAuthorization: "Bearer \(accessToken)"]
+        )
+        .cURLDescription(calling: { log.debug($0) })
+        .validate()
+        .responseString {
+            log.debug($0)
+            switch $0.result {
+            case .success(let data):
+                // TODO: parse
+                log.debug(data)
+            case .failure(let error):
+                log.error(error)
+            }
+        }
+    }
+
+    // https://github.com/niconamaworkshop/websocket_api_document
+    func requestWebSocketEndpoint(accessToken: String, liveProgramId: String, userId: Int) {
+        guard let url = URL(string: wsEndpointApiUrl) else { return }
+        session.request(
+            url,
+            method: .get,
+            parameters: [
+                "nicoliveProgramId": liveProgramId,
+                "userId": userId
+            ],
+            headers: [httpHeaderKeyAuthorization: "Bearer \(accessToken)"]
+        )
+        .cURLDescription(calling: { log.debug($0) })
+        .validate()
+        .responseString {
+            log.debug($0)
+            switch $0.result {
+            case .success(let data):
+                // TODO: parse
+                log.debug(data)
+            case .failure(let error):
+                log.error(error)
+            }
+        }
+    }
+
     func openWatchSocket(webSocketUrl: String, userId: String, connectContext: ConnectContext) {
         openWatchSocket(webSocketUrl: webSocketUrl) { [weak self] in
             guard let me = self else { return }
@@ -431,7 +505,7 @@ private extension NicoUtility {
         }
         var request = URLRequest(url: url)
         request.headers = [commonUserAgentKey: commonUserAgentValue]
-        request.timeoutInterval = 10
+        request.timeoutInterval = defaultRequestTimeout
         let socket = WebSocket(request: request)
         socket.onEvent = { [weak self] in
             self?.handleWatchSocketEvent(

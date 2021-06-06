@@ -10,9 +10,7 @@ import Foundation
 import SAMKeychain
 
 protocol TokenStoreProtocol {
-    // swiftlint:disable function_parameter_count
-    func saveToken(accessToken: String, tokenType: String, expiresIn: Int, scope: String, refreshToken: String, idToken: String?)
-    // swiftlint:enable function_parameter_count
+    func saveToken(_ storedToken: StoredToken)
     func loadToken() -> StoredToken?
     func clearToken()
 }
@@ -31,16 +29,7 @@ private let keychainAccountName = "token"
 final class TokenStore: TokenStoreProtocol {}
 
 extension TokenStore {
-    // swiftlint:disable function_parameter_count
-    func saveToken(accessToken: String, tokenType: String, expiresIn: Int, scope: String, refreshToken: String, idToken: String?) {
-        let storedToken = StoredToken(
-            accessToken: accessToken,
-            tokenType: tokenType,
-            expiresIn: expiresIn,
-            scope: scope,
-            refreshToken: refreshToken,
-            idToken: idToken
-        )
+    func saveToken(_ storedToken: StoredToken) {
         guard let encoded = try? JSONEncoder().encode(storedToken),
               let jsonString = String(data: encoded, encoding: .utf8) else { return }
         log.debug(jsonString)
@@ -53,7 +42,6 @@ extension TokenStore {
             log.error("Failed to save the token to keychain.")
         }
     }
-    // swiftlint:enable function_parameter_count
 
     func loadToken() -> StoredToken? {
         guard let jsonString = SAMKeychain.password(
