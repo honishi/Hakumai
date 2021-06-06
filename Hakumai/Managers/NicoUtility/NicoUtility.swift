@@ -14,7 +14,9 @@ import XCGLogger
 
 // MARK: - Constants
 // General URL:
+// TODO: remove `livePageUrl`
 private let livePageUrl = "https://live.nicovideo.jp/watch/lv"
+private let _livePageUrl = "https://live.nicovideo.jp/watch/"
 private let _userPageUrl = "https://www.nicovideo.jp/user/"
 private let _userIconUrl = "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/"
 
@@ -104,7 +106,6 @@ final class NicoUtility: NicoUtilityType {
     // Public Properties
     static var shared: NicoUtility = NicoUtility()
     weak var delegate: NicoUtilityDelegate?
-    private(set) var user: User?
     private(set) var live: Live?
 
     // Private Properties
@@ -391,7 +392,7 @@ private extension NicoUtility {
                 me.delegate?.nicoUtilityDidPrepareLive(me, user: user, live: live, connectContext: connectContext)
                 me.openWatchSocket(
                     webSocketUrl: embeddedData.site.relive.webSocketUrl,
-                    userId: embeddedData.user.id,
+                    userId: embeddedData.user.id ?? "0",
                     connectContext: connectContext
                 )
             case .failure(_):
@@ -424,39 +425,34 @@ private extension NicoUtility {
     }
 
     func connect(liveProgramId: String, accessToken: String, connectContext: ConnectContext) {
-        // TODO: create proper live
-        let live = Live(
-            liveId: liveProgramId,
-            title: "program.title",
-            community: Community(
-                communityId: "socialGroup.id",
-                title: "socialGroup.name",
-                level: 0,
-                thumbnailUrl: nil
-            ),
-            baseTime: Date(),
-            openTime: Date(),
-            startTime: Date()
-        )
-        requestUserInfo(accessToken: accessToken) { [weak self] in
+        reqeustLiveInfo(liveProgramId: liveProgramId) { [weak self] in
             guard let me = self else { return }
             switch $0 {
-            case .success(let response):
-                let user = response.toUser()
-                me.user = user
-                me.requestWebSocketEndpoint(
-                    accessToken: accessToken,
-                    liveProgramId: liveProgramId,
-                    userId: user.userId) {
+            case .success(let props):
+                let live = props.toLive()
+                me.requestUserInfo(accessToken: accessToken) {
                     switch $0 {
                     case .success(let response):
-                        me.live = live
-                        me.delegate?.nicoUtilityDidPrepareLive(me, user: user, live: live, connectContext: connectContext)
-                        me.openWatchSocket(
-                            webSocketUrl: response.data.url.absoluteString,
-                            userId: String(user.userId),
-                            connectContext: .normal
-                        )
+                        let user = response.toUser()
+                        me.requestWebSocketEndpoint(
+                            accessToken: accessToken,
+                            liveProgramId: liveProgramId,
+                            userId: user.userId
+                        ) {
+                            switch $0 {
+                            case .success(let response):
+                                me.live = live
+                                me.delegate?.nicoUtilityDidPrepareLive(
+                                    me, user: user, live: live, connectContext: connectContext)
+                                me.openWatchSocket(
+                                    webSocketUrl: response.data.url.absoluteString,
+                                    userId: String(user.userId),
+                                    connectContext: .normal
+                                )
+                            case .failure(let error):
+                                me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: error)
+                            }
+                        }
                     case .failure(let error):
                         me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: error)
                     }
@@ -465,6 +461,27 @@ private extension NicoUtility {
                 me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: error)
             }
         }
+    }
+
+    func reqeustLiveInfo(liveProgramId: String, completion: @escaping (Result<EmbeddedDataProperties, NicoError>) -> Void) {
+        let url = _livePageUrl + liveProgramId
+        session
+            .request(url)
+            .cURLDescription(calling: { log.debug($0) })
+            .validate()
+            .responseData {
+                // log.debug($0.debugDescription)
+                switch $0.result {
+                case .success(let data):
+                    guard let embedded = NicoUtility.extractEmbeddedDataPropertiesFromLivePage(html: data) else {
+                        completion(Result.failure(NicoError.internal))
+                        return
+                    }
+                    completion(Result.success(embedded))
+                case .failure(_):
+                    completion(Result.failure(NicoError.internal))
+                }
+            }
     }
 
     func requestUserInfo(accessToken: String, completion: @escaping (Result<UserInfoResponse, NicoError>) -> Void) {
@@ -575,7 +592,6 @@ private extension NicoUtility {
         watchSocket = nil
         messageSocket = nil
 
-        user = nil
         live = nil
         isConnected = false
     }
@@ -974,10 +990,11 @@ private extension EmbeddedDataProperties {
         )
     }
 
+    // TODO: remove this obsolete method
     func toUser() -> User {
         return User(
-            userId: Int(user.id) ?? 0,
-            nickname: user.nickname
+            userId: Int(user.id ?? "-") ?? 0,
+            nickname: user.nickname ?? "-"
         )
     }
 }

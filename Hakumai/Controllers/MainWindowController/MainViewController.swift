@@ -16,7 +16,7 @@ private let maximumFontSizeForNonMainColumn: CGFloat = 16
 private let defaultMinimumRowHeight: CGFloat = 17
 
 private let enableDebugAuthButton = true
-private let enableDebugReconnectButton = false
+private let enableDebugReconnectButton = true // false
 
 private let defaultElapsedTimeValue = "--:--:--"
 private let defaultLabelValue = "---"
