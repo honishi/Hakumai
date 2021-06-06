@@ -184,22 +184,8 @@ extension NicoUtility {
         }
 
         delegate?.nicoUtilityWillPrepareLive(self)
-
-        authManager.refreshToken {
-            switch $0 {
-            case .success(let token):
-                self.connect(
-                    // TODO: include "lv"
-                    liveProgramId: "lv\(liveNumber)",
-                    accessToken: token.accessToken,
-                    connectContext: connectContext
-                )
-            case .failure(_):
-                // TODO: update error
-                self.delegate?.nicoUtilityDidFailToPrepareLive(self, error: .internal)
-            // TODO: clear useless stored token?
-            }
-        }
+        // TODO: include "lv"
+        refreshToken(liveProgramId: "lv\(liveNumber)", connectContext: connectContext)
     }
 
     // TODO: remove
@@ -380,6 +366,7 @@ extension NicoUtility {
 }
 
 // MARK: - Private Methods
+// Main connect sequence.
 private extension NicoUtility {
     // TODO: remove
     func connect(liveNumber: Int, userSessionCookie: String, connectContext: ConnectContext) {
@@ -428,8 +415,26 @@ private extension NicoUtility {
             }
     }
 
-    // #1/4. Get general live info from live page (no login required).
-    func connect(liveProgramId: String, accessToken: String, connectContext: ConnectContext) {
+    // #1/5. Refresh token before proceeding main sequence.
+    func refreshToken(liveProgramId: String, connectContext: ConnectContext) {
+        authManager.refreshToken {
+            switch $0 {
+            case .success(let token):
+                self.reqeustLiveInfo(
+                    liveProgramId: liveProgramId,
+                    accessToken: token.accessToken,
+                    connectContext: connectContext
+                )
+            case .failure(_):
+                // TODO: update error
+                self.delegate?.nicoUtilityDidFailToPrepareLive(self, error: .internal)
+            // TODO: clear useless stored token?
+            }
+        }
+    }
+
+    // #2/5. Get general live info from live page (no login required).
+    func reqeustLiveInfo(liveProgramId: String, accessToken: String, connectContext: ConnectContext) {
         reqeustLiveInfo(liveProgramId: liveProgramId) { [weak self] in
             guard let me = self else { return }
             switch $0 {
@@ -445,7 +450,7 @@ private extension NicoUtility {
         }
     }
 
-    // #2/4. Get user info.
+    // #3/5. Get user info.
     func requestUserInfo(liveProgramId: String, accessToken: String, connectContext: ConnectContext, live: Live) {
         requestUserInfo(accessToken: accessToken) { [weak self] in
             guard let me = self else { return }
@@ -463,7 +468,7 @@ private extension NicoUtility {
         }
     }
 
-    // #3/4. Get websocket endpoint.
+    // #4/5. Get websocket endpoint.
     func requestWebSocketEndpoint(liveProgramId: String, accessToken: String, connectContext: ConnectContext, live: Live, user: User) {
         requestWebSocketEndpoint(
             accessToken: accessToken,
@@ -476,12 +481,12 @@ private extension NicoUtility {
                 me.live = live
                 me.delegate?.nicoUtilityDidPrepareLive(
                     me, user: user, live: live, connectContext: connectContext)
-                // #4/4. Ok, open the websockets.
+                // #5/5. Ok, open the websockets.
                 me.openWatchSocket(
                     // TODO: String -> URL
                     webSocketUrl: response.data.url.absoluteString,
                     userId: String(user.userId),
-                    connectContext: .normal
+                    connectContext: connectContext
                 )
             case .failure(let error):
                 me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: error)
