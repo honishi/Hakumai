@@ -79,6 +79,8 @@
 		DBB4730B1A35951C002C797E /* LiveStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB4730A1A35951C002C797E /* LiveStatistics.swift */; };
 		DBB952161A8655AB0059850A /* LoggerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB952151A8655AB0059850A /* LoggerHelper.swift */; };
 		DBBE416C266CB939004002F1 /* NicoOAuthApiModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBBE416B266CB939004002F1 /* NicoOAuthApiModel.swift */; };
+		DBBE416E266CCAF5004002F1 /* userinfo_response.json in Resources */ = {isa = PBXBuildFile; fileRef = DBBE416D266CCAF5004002F1 /* userinfo_response.json */; };
+		DBBE4170266CCB83004002F1 /* wsendpoint_response.json in Resources */ = {isa = PBXBuildFile; fileRef = DBBE416F266CCB83004002F1 /* wsendpoint_response.json */; };
 		DBC9A388265FD1BF007B40F1 /* TokenStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC9A387265FD1BF007B40F1 /* TokenStore.swift */; };
 		DBCA2D242642BCF500B6147C /* NicoRestApiModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA2D232642BCF500B6147C /* NicoRestApiModel.swift */; };
 		DBCA40D41A30AD48006299A9 /* MenuDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA40D31A30AD48006299A9 /* MenuDelegate.swift */; };
@@ -206,6 +208,8 @@
 		DBB4730A1A35951C002C797E /* LiveStatistics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveStatistics.swift; sourceTree = "<group>"; };
 		DBB952151A8655AB0059850A /* LoggerHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoggerHelper.swift; sourceTree = "<group>"; };
 		DBBE416B266CB939004002F1 /* NicoOAuthApiModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoOAuthApiModel.swift; sourceTree = "<group>"; };
+		DBBE416D266CCAF5004002F1 /* userinfo_response.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = userinfo_response.json; sourceTree = "<group>"; };
+		DBBE416F266CCB83004002F1 /* wsendpoint_response.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = wsendpoint_response.json; sourceTree = "<group>"; };
 		DBC9A387265FD1BF007B40F1 /* TokenStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenStore.swift; sourceTree = "<group>"; };
 		DBCA2D232642BCF500B6147C /* NicoRestApiModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoRestApiModel.swift; sourceTree = "<group>"; };
 		DBCA40D31A30AD48006299A9 /* MenuDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuDelegate.swift; sourceTree = "<group>"; };
@@ -616,6 +620,8 @@
 				DBFA88901A1CAE85005349AD /* community_user.html */,
 				DBFB26D82642A32300B1FDEB /* embedded-data.json */,
 				DBFB26D42642921900B1FDEB /* live_page.html */,
+				DBBE416D266CCAF5004002F1 /* userinfo_response.json */,
+				DBBE416F266CCB83004002F1 /* wsendpoint_response.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -760,6 +766,8 @@
 				DBFA88911A1CAE85005349AD /* community_user.html in Resources */,
 				DBFB26D92642A32300B1FDEB /* embedded-data.json in Resources */,
 				DBFB26D52642921900B1FDEB /* live_page.html in Resources */,
+				DBBE416E266CCAF5004002F1 /* userinfo_response.json in Resources */,
+				DBBE4170266CCB83004002F1 /* wsendpoint_response.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

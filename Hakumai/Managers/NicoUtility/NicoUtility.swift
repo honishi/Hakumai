@@ -161,14 +161,41 @@ extension NicoUtility {
             return
         }
 
+        // 1. Save connection request.
+        connectRequests.onGoing = ConnectRequests.Request(
+            liveNumber: liveNumber,
+            sessionType: sessionType
+        )
+        connectRequests.lastEstablished = nil
+
+        // 2. Save chat numbers.
+        switch connectContext {
+        case .normal:
+            chatNumbers.latest = 0
+            chatNumbers.maxBeforeReconnect = 0
+        case .reconnect:
+            chatNumbers.maxBeforeReconnect = chatNumbers.latest
+        }
+
+        // 3. Cleanup current connection, if needed.
+        if live != nil {
+            disconnect()
+        }
+
+        delegate?.nicoUtilityWillPrepareLive(self)
+
         authManager.refreshToken {
             switch $0 {
             case .success(let token):
-                self.connect(liveProgramId: "lv\(liveNumber)", accessToken: token.accessToken)
+                self.connect(
+                    liveProgramId: "lv\(liveNumber)",
+                    accessToken: token.accessToken,
+                    connectContext: connectContext
+                )
             case .failure(_):
-                // TODO: notify caller
-                // TODO: clear useless stored token
-                break
+                // TODO: update error
+                self.delegate?.nicoUtilityDidFailToPrepareLive(self, error: .internal)
+            // TODO: clear useless stored token
             }
         }
     }
@@ -396,20 +423,51 @@ private extension NicoUtility {
             }
     }
 
-    func connect(liveProgramId: String, accessToken: String) {
+    func connect(liveProgramId: String, accessToken: String, connectContext: ConnectContext) {
+        // TODO: create proper live
+        let live = Live(
+            liveId: liveProgramId,
+            title: "program.title",
+            community: Community(
+                communityId: "socialGroup.id",
+                title: "socialGroup.name",
+                level: 0,
+                thumbnailUrl: nil
+            ),
+            baseTime: Date(),
+            openTime: Date(),
+            startTime: Date()
+        )
         requestUserInfo(accessToken: accessToken) { [weak self] in
             guard let me = self else { return }
             switch $0 {
-            case .success(let user):
-                // TODO: wsendpoint
-                break
+            case .success(let response):
+                let user = response.toUser()
+                me.user = user
+                me.requestWebSocketEndpoint(
+                    accessToken: accessToken,
+                    liveProgramId: liveProgramId,
+                    userId: user.userId) {
+                    switch $0 {
+                    case .success(let response):
+                        me.live = live
+                        me.delegate?.nicoUtilityDidPrepareLive(me, user: user, live: live, connectContext: connectContext)
+                        me.openWatchSocket(
+                            webSocketUrl: response.data.url.absoluteString,
+                            userId: String(user.userId),
+                            connectContext: .normal
+                        )
+                    case .failure(let error):
+                        me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: error)
+                    }
+                }
             case .failure(let error):
                 me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: error)
             }
         }
     }
 
-    func requestUserInfo(accessToken: String, completion: @escaping (Result<User, NicoError>) -> Void) {
+    func requestUserInfo(accessToken: String, completion: @escaping (Result<UserInfoResponse, NicoError>) -> Void) {
         guard let url = URL(string: userinfoApiUrl) else { return }
         session.request(
             url,
@@ -420,7 +478,6 @@ private extension NicoUtility {
         .validate()
         .responseData { [weak self] in
             guard let me = self else { return }
-            log.debug($0)
             switch $0.result {
             case .success(let data):
                 log.debug(String(data: data, encoding: .utf8))
@@ -429,7 +486,7 @@ private extension NicoUtility {
                     completion(.failure(.internal))
                     return
                 }
-                completion(.success(response.toUser()))
+                completion(.success(response))
             case .failure(let error):
                 log.error(error)
                 // TODO: update error
@@ -439,7 +496,7 @@ private extension NicoUtility {
     }
 
     // https://github.com/niconamaworkshop/websocket_api_document
-    func requestWebSocketEndpoint(accessToken: String, liveProgramId: String, userId: Int) {
+    func requestWebSocketEndpoint(accessToken: String, liveProgramId: String, userId: Int, completion: @escaping (Result<WsEndpointResponse, NicoError>) -> Void) {
         guard let url = URL(string: wsEndpointApiUrl) else { return }
         session.request(
             url,
@@ -452,14 +509,20 @@ private extension NicoUtility {
         )
         .cURLDescription(calling: { log.debug($0) })
         .validate()
-        .responseString {
-            log.debug($0)
+        .responseData { [weak self] in
+            guard let me = self else { return }
             switch $0.result {
             case .success(let data):
-                // TODO: parse
-                log.debug(data)
+                log.debug(String(data: data, encoding: .utf8))
+                guard let response: WsEndpointResponse = me.decodeApiResponse(from: data) else {
+                    // TODO: update error
+                    completion(.failure(.internal))
+                    return
+                }
+                completion(.success(response))
             case .failure(let error):
                 log.error(error)
+                completion(.failure(.internal))
             }
         }
     }

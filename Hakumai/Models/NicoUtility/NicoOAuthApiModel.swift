@@ -17,3 +17,17 @@ struct UserInfoResponse: Codable {
     let zoneinfo: String?
     let updatedAt: Int
 }
+
+struct MetaResponse: Codable {
+    let status: Int
+    let errorCode: String
+}
+
+struct WsEndpointResponse: Codable {
+    struct Data: Codable {
+        let url: URL
+    }
+
+    let meta: MetaResponse
+    let data: Data
+}
