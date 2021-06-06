@@ -189,6 +189,7 @@ extension NicoUtility {
             switch $0 {
             case .success(let token):
                 self.connect(
+                    // TODO: include "lv"
                     liveProgramId: "lv\(liveNumber)",
                     accessToken: token.accessToken,
                     connectContext: connectContext
@@ -196,11 +197,12 @@ extension NicoUtility {
             case .failure(_):
                 // TODO: update error
                 self.delegate?.nicoUtilityDidFailToPrepareLive(self, error: .internal)
-            // TODO: clear useless stored token
+            // TODO: clear useless stored token?
             }
         }
     }
 
+    // TODO: remove
     func x_connect(liveNumber: Int, sessionType: SessionType, connectContext: NicoUtility.ConnectContext = .normal) {
         // 1. Save connection request.
         connectRequests.onGoing = ConnectRequests.Request(
@@ -379,6 +381,7 @@ extension NicoUtility {
 
 // MARK: - Private Methods
 private extension NicoUtility {
+    // TODO: remove
     func connect(liveNumber: Int, userSessionCookie: String, connectContext: ConnectContext) {
         self.userSessionCookie = userSessionCookie
 
@@ -401,6 +404,7 @@ private extension NicoUtility {
         }
     }
 
+    // TODO: remove
     func reqeustLiveInfo(lv: Int, completion: @escaping (Result<EmbeddedDataProperties, NicoError>) -> Void) {
         let urlRequest = urlRequestWithUserSessionCookie(
             urlString: "\(livePageUrl)\(lv)",
@@ -424,45 +428,70 @@ private extension NicoUtility {
             }
     }
 
+    // #1/4. Get general live info from live page (no login required).
     func connect(liveProgramId: String, accessToken: String, connectContext: ConnectContext) {
         reqeustLiveInfo(liveProgramId: liveProgramId) { [weak self] in
             guard let me = self else { return }
             switch $0 {
             case .success(let props):
-                let live = props.toLive()
-                me.requestUserInfo(accessToken: accessToken) {
-                    switch $0 {
-                    case .success(let response):
-                        let user = response.toUser()
-                        me.requestWebSocketEndpoint(
-                            accessToken: accessToken,
-                            liveProgramId: liveProgramId,
-                            userId: user.userId
-                        ) {
-                            switch $0 {
-                            case .success(let response):
-                                me.live = live
-                                me.delegate?.nicoUtilityDidPrepareLive(
-                                    me, user: user, live: live, connectContext: connectContext)
-                                me.openWatchSocket(
-                                    webSocketUrl: response.data.url.absoluteString,
-                                    userId: String(user.userId),
-                                    connectContext: .normal
-                                )
-                            case .failure(let error):
-                                me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: error)
-                            }
-                        }
-                    case .failure(let error):
-                        me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: error)
-                    }
-                }
+                me.requestUserInfo(
+                    liveProgramId: liveProgramId,
+                    accessToken: accessToken,
+                    connectContext: connectContext,
+                    live: props.toLive())
             case .failure(let error):
                 me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: error)
             }
         }
     }
 
+    // #2/4. Get user info.
+    func requestUserInfo(liveProgramId: String, accessToken: String, connectContext: ConnectContext, live: Live) {
+        requestUserInfo(accessToken: accessToken) { [weak self] in
+            guard let me = self else { return }
+            switch $0 {
+            case .success(let response):
+                me.requestWebSocketEndpoint(
+                    liveProgramId: liveProgramId,
+                    accessToken: accessToken,
+                    connectContext: connectContext,
+                    live: live,
+                    user: response.toUser())
+            case .failure(let error):
+                me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: error)
+            }
+        }
+    }
+
+    // #3/4. Get websocket endpoint.
+    func requestWebSocketEndpoint(liveProgramId: String, accessToken: String, connectContext: ConnectContext, live: Live, user: User) {
+        requestWebSocketEndpoint(
+            accessToken: accessToken,
+            liveProgramId: liveProgramId,
+            userId: user.userId
+        ) { [weak self] in
+            guard let me = self else { return }
+            switch $0 {
+            case .success(let response):
+                me.live = live
+                me.delegate?.nicoUtilityDidPrepareLive(
+                    me, user: user, live: live, connectContext: connectContext)
+                // #4/4. Ok, open the websockets.
+                me.openWatchSocket(
+                    // TODO: String -> URL
+                    webSocketUrl: response.data.url.absoluteString,
+                    userId: String(user.userId),
+                    connectContext: .normal
+                )
+            case .failure(let error):
+                me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: error)
+            }
+        }
+    }
+}
+
+// Methods for main connect sequence above.
+private extension NicoUtility {
     func reqeustLiveInfo(liveProgramId: String, completion: @escaping (Result<EmbeddedDataProperties, NicoError>) -> Void) {
         let url = _livePageUrl + liveProgramId
         session
@@ -544,16 +573,6 @@ private extension NicoUtility {
         }
     }
 
-    func authorizationHeader(with: String) -> HTTPHeaders {
-        return [httpHeaderKeyAuthorization: "Bearer \(with)"]
-    }
-
-    func decodeApiResponse<T: Codable>(from data: Data) -> T? {
-        let decoder = JSONDecoder()
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
-        return try? decoder.decode(T.self, from: data)
-    }
-
     func openWatchSocket(webSocketUrl: String, userId: String, connectContext: ConnectContext) {
         openWatchSocket(webSocketUrl: webSocketUrl) { [weak self] in
             guard let me = self else { return }
@@ -581,7 +600,10 @@ private extension NicoUtility {
             }
         }
     }
+}
 
+// Methods for disconnect and timers.
+private extension NicoUtility {
     func disconnectSocketsAndResetState() {
         stopAllTimers()
 
@@ -609,6 +631,19 @@ private extension NicoUtility {
         stopPingPongCheckTimer()
         clearTextSocketEventCheckTimer()
         log.debug("Stopped all timers.")
+    }
+}
+
+// Api Client Utility Methods
+private extension NicoUtility {
+    func authorizationHeader(with: String) -> HTTPHeaders {
+        return [httpHeaderKeyAuthorization: "Bearer \(with)"]
+    }
+
+    func decodeApiResponse<T: Codable>(from data: Data) -> T? {
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        return try? decoder.decode(T.self, from: data)
     }
 }
 

@@ -9,6 +9,7 @@
 import Foundation
 
 final class User: CustomStringConvertible {
+    // TODO: Int -> String
     let userId: Int
     let nickname: String
 
