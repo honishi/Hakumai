@@ -13,10 +13,11 @@ private let hakumaiServerApiBaseUrl = "https://hakumai-app.com"
 private let hakumaiServerApiPathRefreshToken = "/api/v1/refresh-token"
 
 protocol AuthManagerProtocol {
+    var hasToken: Bool { get }
     var currentToken: AuthManagerToken? { get }
 
-    func extractCallbackResponseAndSaveToken(response: String, completion: ((Result<Void, AuthManagerError>) -> Void))
-    func refreshToken(completion: @escaping ((Result<Void, AuthManagerError>) -> Void))
+    func extractCallbackResponseAndSaveToken(response: String, completion: ((Result<AuthManagerToken, AuthManagerError>) -> Void))
+    func refreshToken(completion: @escaping ((Result<AuthManagerToken, AuthManagerError>) -> Void))
     func clearToken()
 }
 
@@ -42,6 +43,7 @@ extension AuthManager {
 
 final class AuthManager: AuthManagerProtocol {
     // MARK: Properties
+    var hasToken: Bool { currentToken != nil }
     private let tokenStore: TokenStoreProtocol
     private(set) var currentToken: AuthManagerToken?
 
@@ -53,17 +55,18 @@ final class AuthManager: AuthManagerProtocol {
 }
 
 extension AuthManager {
-    func extractCallbackResponseAndSaveToken(response: String, completion: ((Result<Void, AuthManagerError>) -> Void)) {
-        guard let tokenResponse = decodeTokenResponse(from: response) else {
+    func extractCallbackResponseAndSaveToken(response: String, completion: ((Result<AuthManagerToken, AuthManagerError>) -> Void)) {
+        guard let response = decodeTokenResponse(from: response) else {
             completion(.failure(.decode))
             return
         }
-        log.debug(tokenResponse)
-        saveToken(from: tokenResponse)
-        completion(.success(()))
+        log.debug(response)
+        let token = response.toAuthManagerToken()
+        saveToken(from: token)
+        completion(.success(token))
     }
 
-    func refreshToken(completion: @escaping ((Result<Void, AuthManagerError>) -> Void)) {
+    func refreshToken(completion: @escaping ((Result<AuthManagerToken, AuthManagerError>) -> Void)) {
         guard let refreshToken = currentToken?.refreshToken else {
             completion(.failure(.noAvailableRefreshToken))
             return
@@ -84,12 +87,13 @@ extension AuthManager {
                 switch $0.result {
                 case .success(let string):
                     log.debug(string)
-                    guard let tokenResponse = me.decodeTokenResponse(from: string) else {
+                    guard let response = me.decodeTokenResponse(from: string) else {
                         completion(.failure(.decode))
                         return
                     }
-                    me.saveToken(from: tokenResponse)
-                    completion(.success(()))
+                    let token = response.toAuthManagerToken()
+                    me.saveToken(from: token)
+                    completion(.success(token))
                 case .failure(let error):
                     log.error(error)
                     completion(.failure(.refreshTokenFailed))
@@ -115,28 +119,40 @@ private extension AuthManager {
         return try? decoder.decode(TokenResponse.self, from: data)
     }
 
-    func saveToken(from response: TokenResponse) {
-        currentToken = AuthManagerToken(
-            accessToken: response.accessToken,
-            tokenType: response.tokenType,
-            expiresIn: response.expiresIn,
-            scope: response.scope,
-            refreshToken: response.refreshToken,
-            idToken: response.idToken
-        )
-        tokenStore.saveToken(StoredToken(
-            accessToken: response.accessToken,
-            tokenType: response.tokenType,
-            expiresIn: response.expiresIn,
-            scope: response.scope,
-            refreshToken: response.refreshToken,
-            idToken: response.idToken
-        ))
+    func saveToken(from token: AuthManagerToken) {
+        currentToken = token
+        tokenStore.saveToken(token.toStoredToken())
     }
 
     func loadToken() -> AuthManagerToken? {
         guard let storedToken = tokenStore.loadToken() else { return nil }
         return storedToken.toAuthManagerToken()
+    }
+}
+
+private extension TokenResponse {
+    func toAuthManagerToken() -> AuthManagerToken {
+        return AuthManagerToken(
+            accessToken: accessToken,
+            tokenType: tokenType,
+            expiresIn: expiresIn,
+            scope: scope,
+            refreshToken: refreshToken,
+            idToken: idToken
+        )
+    }
+}
+
+private extension AuthManagerToken {
+    func toStoredToken() -> StoredToken {
+        return StoredToken(
+            accessToken: accessToken,
+            tokenType: tokenType,
+            expiresIn: expiresIn,
+            scope: scope,
+            refreshToken: refreshToken,
+            idToken: idToken
+        )
     }
 }
 

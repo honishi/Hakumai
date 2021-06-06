@@ -78,6 +78,7 @@
 		DBB473061A35909F002C797E /* NSXMLElement+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB473051A35909F002C797E /* NSXMLElement+Extensions.swift */; };
 		DBB4730B1A35951C002C797E /* LiveStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB4730A1A35951C002C797E /* LiveStatistics.swift */; };
 		DBB952161A8655AB0059850A /* LoggerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB952151A8655AB0059850A /* LoggerHelper.swift */; };
+		DBBE416C266CB939004002F1 /* NicoOAuthApiModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBBE416B266CB939004002F1 /* NicoOAuthApiModel.swift */; };
 		DBC9A388265FD1BF007B40F1 /* TokenStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC9A387265FD1BF007B40F1 /* TokenStore.swift */; };
 		DBCA2D242642BCF500B6147C /* NicoRestApiModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA2D232642BCF500B6147C /* NicoRestApiModel.swift */; };
 		DBCA40D41A30AD48006299A9 /* MenuDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA40D31A30AD48006299A9 /* MenuDelegate.swift */; };
@@ -204,6 +205,7 @@
 		DBB473051A35909F002C797E /* NSXMLElement+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSXMLElement+Extensions.swift"; sourceTree = "<group>"; };
 		DBB4730A1A35951C002C797E /* LiveStatistics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveStatistics.swift; sourceTree = "<group>"; };
 		DBB952151A8655AB0059850A /* LoggerHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoggerHelper.swift; sourceTree = "<group>"; };
+		DBBE416B266CB939004002F1 /* NicoOAuthApiModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoOAuthApiModel.swift; sourceTree = "<group>"; };
 		DBC9A387265FD1BF007B40F1 /* TokenStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenStore.swift; sourceTree = "<group>"; };
 		DBCA2D232642BCF500B6147C /* NicoRestApiModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoRestApiModel.swift; sourceTree = "<group>"; };
 		DBCA40D31A30AD48006299A9 /* MenuDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuDelegate.swift; sourceTree = "<group>"; };
@@ -432,6 +434,7 @@
 		DB6DD2A82650EB95009A9574 /* NicoUtility */ = {
 			isa = PBXGroup;
 			children = (
+				DBBE416B266CB939004002F1 /* NicoOAuthApiModel.swift */,
 				DBCA2D232642BCF500B6147C /* NicoRestApiModel.swift */,
 				DB6DD2AB2650ECD7009A9574 /* NicoWebModel.swift */,
 				DB6DD2A92650EC86009A9574 /* NicoWebSocketModel.swift */,
@@ -946,6 +949,7 @@
 				DB80CA821A256F9A002636E0 /* MessageContainer.swift in Sources */,
 				DB73A38C1A4F43F6008423D0 /* MuteAddViewController.swift in Sources */,
 				DB0E10681A39B6DD00A10E00 /* MuteViewController.swift in Sources */,
+				DBBE416C266CB939004002F1 /* NicoOAuthApiModel.swift in Sources */,
 				DBCA2D242642BCF500B6147C /* NicoRestApiModel.swift in Sources */,
 				DBFB26D3264290A600B1FDEB /* NicoUtility+Extractor.swift in Sources */,
 				DBAAA7511A0FDA4500981004 /* NicoUtility.swift in Sources */,

@@ -104,6 +104,7 @@ final class NicoUtility: NicoUtilityType {
     // Public Properties
     static var shared: NicoUtility = NicoUtility()
     weak var delegate: NicoUtilityDelegate?
+    private(set) var user: User?
     private(set) var live: Live?
 
     // Private Properties
@@ -155,25 +156,29 @@ final class NicoUtility: NicoUtilityType {
 // MARK: - Public Methods (Main)
 extension NicoUtility {
     func connect(liveNumber: Int, sessionType: SessionType, connectContext: NicoUtility.ConnectContext = .normal) {
-        guard let accessToken = authManager.currentToken?.accessToken else {
+        guard authManager.hasToken else {
             // TODO: Notify no token to caller.
             return
         }
-        // TODO: refresh in advance?
 
-        requestUserInfo(accessToken: accessToken)
+        authManager.refreshToken {
+            switch $0 {
+            case .success(let token):
+                self.connect(liveProgramId: "lv\(liveNumber)", accessToken: token.accessToken)
+            case .failure(_):
+                // TODO: notify caller
+                // TODO: clear useless stored token
+                break
+            }
+        }
+    }
 
-        /*requestWebSocketEndpoint(
-         accessToken: accessToken,
-         liveProgramId: "lv\(liveNumber)",
-         userId: userId) */
-        return
-
-            // 1. Save connection request.
-            connectRequests.onGoing = ConnectRequests.Request(
-                liveNumber: liveNumber,
-                sessionType: sessionType
-            )
+    func x_connect(liveNumber: Int, sessionType: SessionType, connectContext: NicoUtility.ConnectContext = .normal) {
+        // 1. Save connection request.
+        connectRequests.onGoing = ConnectRequests.Request(
+            liveNumber: liveNumber,
+            sessionType: sessionType
+        )
         connectRequests.lastEstablished = nil
 
         // 2. Save chat numbers.
@@ -391,12 +396,59 @@ private extension NicoUtility {
             }
     }
 
-    func requestUserInfo(accessToken: String) {
+    func connect(liveProgramId: String, accessToken: String) {
+        requestUserInfo(accessToken: accessToken) { [weak self] in
+            guard let me = self else { return }
+            switch $0 {
+            case .success(let user):
+                // TODO: wsendpoint
+                break
+            case .failure(let error):
+                me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: error)
+            }
+        }
+    }
+
+    func requestUserInfo(accessToken: String, completion: @escaping (Result<User, NicoError>) -> Void) {
         guard let url = URL(string: userinfoApiUrl) else { return }
         session.request(
             url,
             method: .get,
-            headers: [httpHeaderKeyAuthorization: "Bearer \(accessToken)"]
+            headers: authorizationHeader(with: accessToken)
+        )
+        .cURLDescription(calling: { log.debug($0) })
+        .validate()
+        .responseData { [weak self] in
+            guard let me = self else { return }
+            log.debug($0)
+            switch $0.result {
+            case .success(let data):
+                log.debug(String(data: data, encoding: .utf8))
+                guard let response: UserInfoResponse = me.decodeApiResponse(from: data) else {
+                    // TODO: update error
+                    completion(.failure(.internal))
+                    return
+                }
+                completion(.success(response.toUser()))
+            case .failure(let error):
+                log.error(error)
+                // TODO: update error
+                completion(.failure(.internal))
+            }
+        }
+    }
+
+    // https://github.com/niconamaworkshop/websocket_api_document
+    func requestWebSocketEndpoint(accessToken: String, liveProgramId: String, userId: Int) {
+        guard let url = URL(string: wsEndpointApiUrl) else { return }
+        session.request(
+            url,
+            method: .get,
+            parameters: [
+                "nicoliveProgramId": liveProgramId,
+                "userId": userId
+            ],
+            headers: authorizationHeader(with: accessToken)
         )
         .cURLDescription(calling: { log.debug($0) })
         .validate()
@@ -412,30 +464,14 @@ private extension NicoUtility {
         }
     }
 
-    // https://github.com/niconamaworkshop/websocket_api_document
-    func requestWebSocketEndpoint(accessToken: String, liveProgramId: String, userId: Int) {
-        guard let url = URL(string: wsEndpointApiUrl) else { return }
-        session.request(
-            url,
-            method: .get,
-            parameters: [
-                "nicoliveProgramId": liveProgramId,
-                "userId": userId
-            ],
-            headers: [httpHeaderKeyAuthorization: "Bearer \(accessToken)"]
-        )
-        .cURLDescription(calling: { log.debug($0) })
-        .validate()
-        .responseString {
-            log.debug($0)
-            switch $0.result {
-            case .success(let data):
-                // TODO: parse
-                log.debug(data)
-            case .failure(let error):
-                log.error(error)
-            }
-        }
+    func authorizationHeader(with: String) -> HTTPHeaders {
+        return [httpHeaderKeyAuthorization: "Bearer \(with)"]
+    }
+
+    func decodeApiResponse<T: Codable>(from data: Data) -> T? {
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        return try? decoder.decode(T.self, from: data)
     }
 
     func openWatchSocket(webSocketUrl: String, userId: String, connectContext: ConnectContext) {
@@ -476,6 +512,7 @@ private extension NicoUtility {
         watchSocket = nil
         messageSocket = nil
 
+        user = nil
         live = nil
         isConnected = false
     }
@@ -878,6 +915,15 @@ private extension EmbeddedDataProperties {
         return User(
             userId: Int(user.id) ?? 0,
             nickname: user.nickname
+        )
+    }
+}
+
+private extension UserInfoResponse {
+    func toUser() -> User {
+        return User(
+            userId: Int(sub) ?? 0,
+            nickname: nickname
         )
     }
 }

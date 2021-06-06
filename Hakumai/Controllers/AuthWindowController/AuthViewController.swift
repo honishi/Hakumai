@@ -60,11 +60,10 @@ private extension AuthViewController {
     func extractCallbackResponse(from url: URL) {
         guard let response = url.queryValue(for: accessTokenParameterName) else { return }
         // log.debug(response)
-        // TODO: extract response value and store
         authManager.extractCallbackResponseAndSaveToken(response: response) {
             log.debug($0)
             switch $0 {
-            case .success():
+            case .success(_):
                 testRefreshToken()
             case .failure(let error):
                 log.error(error)
@@ -76,7 +75,7 @@ private extension AuthViewController {
         authManager.refreshToken {
             log.debug($0)
             switch $0 {
-            case .success():
+            case .success(_):
                 break
             case .failure(let error):
                 log.error(error)
