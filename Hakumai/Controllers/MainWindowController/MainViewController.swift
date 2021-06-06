@@ -15,8 +15,7 @@ private let calculateActiveUserInterval: TimeInterval = 5
 private let maximumFontSizeForNonMainColumn: CGFloat = 16
 private let defaultMinimumRowHeight: CGFloat = 17
 
-private let enableDebugAuthButton = true
-private let enableDebugReconnectButton = true // false
+private let enableDebugButtons = true
 
 private let defaultElapsedTimeValue = "--:--:--"
 private let defaultLabelValue = "---"
@@ -32,7 +31,8 @@ final class MainViewController: NSViewController {
     // MARK: Main Outlets
     @IBOutlet private weak var grabUrlButton: NSButton!
     @IBOutlet private weak var liveUrlTextField: NSTextField!
-    @IBOutlet private weak var debugAuthButton: NSButton!
+    @IBOutlet private weak var debugLoginButton: NSButton!
+    @IBOutlet private weak var debugLogoutButton: NSButton!
     @IBOutlet private weak var debugReconnectButton: NSButton!
     @IBOutlet private weak var connectButton: NSButton!
 
@@ -318,6 +318,10 @@ extension MainViewController: NSControlTextEditingDelegate {
 
 // MARK: - NicoUtilityDelegate Functions
 extension MainViewController: NicoUtilityDelegate {
+    func nicoUtilityNeedsLogin(_ nicoUtility: NicoUtilityType) {
+        showAuthWindowController()
+    }
+
     func nicoUtilityWillPrepareLive(_ nicoUtility: NicoUtilityType) {
         updateMainControlViews(status: .connecting)
     }
@@ -523,8 +527,9 @@ extension MainViewController {
 private extension MainViewController {
     func configureViews() {
         communityImageView.addBorder()
-        debugAuthButton.isHidden = !enableDebugAuthButton
-        debugReconnectButton.isHidden = !enableDebugReconnectButton
+        [debugLoginButton, debugLogoutButton, debugReconnectButton].forEach {
+            $0?.isHidden = !enableDebugButtons
+        }
 
         liveUrlTextField.placeholderString = L10n.liveUrlTextFieldPlaceholder
 
@@ -680,8 +685,12 @@ extension MainViewController {
         }
     }
 
-    @IBAction func debugAuthButtonPressed(_ sender: Any) {
+    @IBAction func debugLoginButtonPressed(_ sender: Any) {
         showAuthWindowController()
+    }
+
+    @IBAction func debugLogoutButtonPressed(_ sender: Any) {
+        NicoUtility.shared.logout()
     }
 
     @IBAction func debugReconnectButtonPressed(_ sender: Any) {

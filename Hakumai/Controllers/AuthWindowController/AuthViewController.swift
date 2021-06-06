@@ -9,9 +9,6 @@
 import Cocoa
 import WebKit
 
-private let hakumaiClientId = "FYtgnF18kxhSwNY2"
-private let authWebBaseUrl = "https://oauth.nicovideo.jp"
-private let authWebPath = "/oauth2/authorize?response_type=code&client_id=\(hakumaiClientId)"
 private let hakumaiAppUrlScheme = "hakumai"
 private let accessTokenParameterName = "response"
 
@@ -32,8 +29,7 @@ extension AuthViewController {
 
 extension AuthViewController {
     func startAuthorization() {
-        guard let url = URL(string: authWebBaseUrl + authWebPath) else { return }
-        let request = URLRequest(url: url)
+        let request = URLRequest(url: authManager.authWebUrl)
         webView.load(request)
     }
 }
@@ -64,18 +60,7 @@ private extension AuthViewController {
             log.debug($0)
             switch $0 {
             case .success(_):
-                testRefreshToken()
-            case .failure(let error):
-                log.error(error)
-            }
-        }
-    }
-
-    func testRefreshToken() {
-        authManager.refreshToken {
-            log.debug($0)
-            switch $0 {
-            case .success(_):
+                // TODO: Notify token completion to caller.
                 break
             case .failure(let error):
                 log.error(error)

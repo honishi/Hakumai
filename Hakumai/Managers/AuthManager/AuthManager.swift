@@ -9,10 +9,14 @@
 import Foundation
 import Alamofire
 
+private let hakumaiClientId = "FYtgnF18kxhSwNY2"
+private let authWebBaseUrl = "https://oauth.nicovideo.jp"
+private let authWebPath = "/oauth2/authorize?response_type=code&client_id=\(hakumaiClientId)"
 private let hakumaiServerApiBaseUrl = "https://hakumai-app.com"
 private let hakumaiServerApiPathRefreshToken = "/api/v1/refresh-token"
 
 protocol AuthManagerProtocol {
+    var authWebUrl: URL { get }
     var hasToken: Bool { get }
     var currentToken: AuthManagerToken? { get }
 
@@ -43,6 +47,9 @@ extension AuthManager {
 
 final class AuthManager: AuthManagerProtocol {
     // MARK: Properties
+    // swiftlint:disable force_unwrapping
+    var authWebUrl: URL { URL(string: authWebBaseUrl + authWebPath)! }
+    // swiftlint:enable force_unwrapping
     var hasToken: Bool { currentToken != nil }
     private let tokenStore: TokenStoreProtocol
     private(set) var currentToken: AuthManagerToken?

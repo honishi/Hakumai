@@ -16,10 +16,7 @@ extension AuthWindowController {
 }
 
 final class AuthWindowController: NSWindowController {
-
-    deinit {
-        log.debug("deinit")
-    }
+    deinit { log.debug("deinit") }
 
     override func windowDidLoad() {
         super.windowDidLoad()

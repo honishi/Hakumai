@@ -601,7 +601,7 @@
                                                 </connections>
                                             </button>
                                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="gZN-es-bFO">
-                                                <rect key="frame" x="31" y="1" width="329" height="21"/>
+                                                <rect key="frame" x="31" y="1" width="196" height="21"/>
                                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="iDS-0h-Uje">
                                                     <font key="font" metaFont="system"/>
                                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -612,13 +612,23 @@
                                                 </connections>
                                             </textField>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Sbe-lO-QeP" userLabel="Debug Auth Button">
-                                                <rect key="frame" x="743" y="-5" width="63" height="32"/>
-                                                <buttonCell key="cell" type="push" title="Auth" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kaj-AX-tP7">
+                                                <rect key="frame" x="228" y="-5" width="68" height="32"/>
+                                                <buttonCell key="cell" type="push" title="Login" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kaj-AX-tP7">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="system"/>
                                                 </buttonCell>
                                                 <connections>
-                                                    <action selector="debugAuthButtonPressed:" target="XfG-lQ-9wD" id="CR1-Jn-7St"/>
+                                                    <action selector="debugLoginButtonPressed:" target="XfG-lQ-9wD" id="CR1-Jn-7St"/>
+                                                </connections>
+                                            </button>
+                                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="yWD-Pb-QRR">
+                                                <rect key="frame" x="290" y="-5" width="77" height="32"/>
+                                                <buttonCell key="cell" type="push" title="Logout" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Qwo-te-kPI">
+                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                    <font key="font" metaFont="system"/>
+                                                </buttonCell>
+                                                <connections>
+                                                    <action selector="debugLogoutButtonPressed:" target="XfG-lQ-9wD" id="5TE-0E-uIR"/>
                                                 </connections>
                                             </button>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="IZs-cK-l0Y">
@@ -652,8 +662,10 @@
                                             <integer value="1000"/>
                                             <integer value="1000"/>
                                             <integer value="1000"/>
+                                            <integer value="1000"/>
                                         </visibilityPriorities>
                                         <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
                                             <real value="3.4028234663852886e+38"/>
                                             <real value="3.4028234663852886e+38"/>
                                             <real value="3.4028234663852886e+38"/>
@@ -1067,7 +1079,8 @@
                         <outlet property="communityImageView" destination="NQm-lE-rVr" id="Vlq-76-e8s"/>
                         <outlet property="communityTitleLabel" destination="mqT-iT-cC6" id="JMh-Lc-OmS"/>
                         <outlet property="connectButton" destination="hii-Mo-bho" id="UHG-jK-W7S"/>
-                        <outlet property="debugAuthButton" destination="Sbe-lO-QeP" id="Zrr-j0-bnY"/>
+                        <outlet property="debugLoginButton" destination="Sbe-lO-QeP" id="Zrr-j0-bnY"/>
+                        <outlet property="debugLogoutButton" destination="yWD-Pb-QRR" id="PLW-G8-wfm"/>
                         <outlet property="debugReconnectButton" destination="IZs-cK-l0Y" id="neM-ub-baA"/>
                         <outlet property="elapsedTimeTitleLabel" destination="N6D-ME-Btf" id="Xnk-i9-26v"/>
                         <outlet property="elapsedTimeValueLabel" destination="p3A-6s-IKD" id="6T8-le-0s2"/>

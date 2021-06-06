@@ -158,7 +158,7 @@ final class NicoUtility: NicoUtilityType {
 extension NicoUtility {
     func connect(liveNumber: Int, sessionType: SessionType, connectContext: NicoUtility.ConnectContext = .normal) {
         guard authManager.hasToken else {
-            // TODO: Notify no token to caller.
+            delegate?.nicoUtilityNeedsLogin(self)
             return
         }
 
@@ -291,6 +291,10 @@ extension NicoUtility {
         watchSocket?.write(string: message)
     }
 
+    func logout() {
+        authManager.clearToken()
+    }
+
     func userPageUrl(for userId: String) -> URL? {
         return URL(string: _userPageUrl + userId)
     }
@@ -417,18 +421,20 @@ private extension NicoUtility {
 
     // #1/5. Refresh token before proceeding main sequence.
     func refreshToken(liveProgramId: String, connectContext: ConnectContext) {
-        authManager.refreshToken {
+        authManager.refreshToken { [weak self] in
+            guard let me = self else { return }
             switch $0 {
             case .success(let token):
-                self.reqeustLiveInfo(
+                me.reqeustLiveInfo(
                     liveProgramId: liveProgramId,
                     accessToken: token.accessToken,
                     connectContext: connectContext
                 )
             case .failure(_):
-                // TODO: update error
-                self.delegate?.nicoUtilityDidFailToPrepareLive(self, error: .internal)
-            // TODO: clear useless stored token?
+                // TODO: Update error
+                me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: .internal)
+                // TODO: Clear useless stored token? logout?
+                me.logout()
             }
         }
     }
@@ -533,14 +539,14 @@ private extension NicoUtility {
             case .success(let data):
                 log.debug(String(data: data, encoding: .utf8))
                 guard let response: UserInfoResponse = me.decodeApiResponse(from: data) else {
-                    // TODO: update error
+                    // TODO: Update error
                     completion(.failure(.internal))
                     return
                 }
                 completion(.success(response))
             case .failure(let error):
                 log.error(error)
-                // TODO: update error
+                // TODO: Update error
                 completion(.failure(.internal))
             }
         }
@@ -566,7 +572,7 @@ private extension NicoUtility {
             case .success(let data):
                 log.debug(String(data: data, encoding: .utf8))
                 guard let response: WsEndpointResponse = me.decodeApiResponse(from: data) else {
-                    // TODO: update error
+                    // TODO: Update error
                     completion(.failure(.internal))
                     return
                 }

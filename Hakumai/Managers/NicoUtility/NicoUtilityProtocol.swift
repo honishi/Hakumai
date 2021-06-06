@@ -20,6 +20,7 @@ protocol NicoUtilityType {
     func disconnect(disconnectContext: NicoUtility.DisconnectContext)
     func reconnect(reason: NicoUtility.ReconnectReason)
     func comment(_ comment: String, anonymously: Bool, completion: @escaping (_ comment: String?) -> Void)
+    func logout()
 
     // Methods for User Accounts
     func cachedUserName(forChat chat: Chat) -> String?
@@ -38,6 +39,7 @@ protocol NicoUtilityType {
 // note these functions are called in background thread, not main thread.
 // so use explicit main thread for updating ui in these callbacks.
 protocol NicoUtilityDelegate: AnyObject {
+    func nicoUtilityNeedsLogin(_ nicoUtility: NicoUtilityType)
     func nicoUtilityWillPrepareLive(_ nicoUtility: NicoUtilityType)
     func nicoUtilityDidPrepareLive(_ nicoUtility: NicoUtilityType, user: User, live: Live, connectContext: NicoUtility.ConnectContext)
     func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, error: NicoUtility.NicoError)
