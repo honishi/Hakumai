@@ -28,12 +28,6 @@ private let userNicknameApiUrl = "https://api.live2.nicovideo.jp/api/v1/user/nic
 // HTTP Header:
 private let httpHeaderKeyAuthorization = "Authorization"
 
-// Cookies:
-private let userSessionCookieDomain = "nicovideo.jp"
-private let userSessionCookieName = "user_session"
-private let userSessionCookieExpire = TimeInterval(7200)
-private let userSessionCookiePath = "/"
-
 // Misc:
 private let defaultRequestTimeout: TimeInterval = 10
 private let defaultWatchSocketKeepSeatInterval = 30
@@ -70,7 +64,6 @@ final class NicoUtility: NicoUtilityType {
     }
     enum NicoError: Error {
         case `internal`
-        case noCookie
         case noLiveInfo
         case noMessageServerInfo
         case failedToOpenMessageServer
@@ -116,11 +109,9 @@ final class NicoUtility: NicoUtilityType {
             onGoing: nil,
             lastEstablished: nil
         )
-    private var userSessionCookie: String?
     private let session: Session
     private var watchSocket: WebSocket?
     private var messageSocket: WebSocket?
-    private var shouldClearUserSessionCookie = true
 
     // Timers for WebSockets
     private var watchSocketKeepSeatInterval = 30
@@ -149,7 +140,6 @@ final class NicoUtility: NicoUtilityType {
             configuration.headers.add(.userAgent(commonUserAgentValue))
             return Session(configuration: configuration)
         }()
-        clearHttpCookieStorage()
         userNameResolvingOperationQueue.maxConcurrentOperationCount = 1
     }
 }
@@ -183,66 +173,10 @@ extension NicoUtility {
             disconnect()
         }
 
+        // 4. Ok, start to establish connection from refreshing token.
         delegate?.nicoUtilityWillPrepareLive(self)
         // TODO: include "lv"
         refreshToken(liveProgramId: "lv\(liveNumber)", connectContext: connectContext)
-    }
-
-    // TODO: remove
-    func x_connect(liveNumber: Int, sessionType: SessionType, connectContext: NicoUtility.ConnectContext = .normal) {
-        // 1. Save connection request.
-        connectRequests.onGoing = ConnectRequests.Request(
-            liveNumber: liveNumber,
-            sessionType: sessionType
-        )
-        connectRequests.lastEstablished = nil
-
-        // 2. Save chat numbers.
-        switch connectContext {
-        case .normal:
-            chatNumbers.latest = 0
-            chatNumbers.maxBeforeReconnect = 0
-        case .reconnect:
-            chatNumbers.maxBeforeReconnect = chatNumbers.latest
-        }
-
-        // 3. Cleanup current connection, if needed.
-        if live != nil {
-            disconnect()
-        }
-
-        // 4. Go direct to `connect()` IF the user session cookie is availale.
-        clearUserSessionCookieIfReserved()
-        delegate?.nicoUtilityWillPrepareLive(self)
-        if let userSessionCookie = userSessionCookie {
-            connect(
-                liveNumber: liveNumber,
-                userSessionCookie: userSessionCookie,
-                connectContext: connectContext)
-            return
-        }
-
-        // 5. Ok, there's no cookie available, go get it..
-        let completion = { (userSessionCookie: String?) -> Void in
-            log.debug("Cookie result: [\(sessionType)] [\(userSessionCookie ?? "-")]")
-            guard let userSessionCookie = userSessionCookie else {
-                log.error("No available cookie.")
-                self.delegate?.nicoUtilityDidFailToPrepareLive(self, error: .noCookie)
-                return
-            }
-            self.connect(
-                liveNumber: liveNumber,
-                userSessionCookie: userSessionCookie,
-                connectContext: connectContext)
-        }
-        switch sessionType {
-        case .chrome:
-            CookieUtility.requestBrowserCookie(browserType: .chrome, completion: completion)
-        case .safari:
-            CookieUtility.requestBrowserCookie(browserType: .safari, completion: completion)
-        case .login(let mail, let password):
-            CookieUtility.requestLoginCookie(mailAddress: mail, password: password, completion: completion)
-        }
     }
 
     func disconnect(disconnectContext: NicoUtility.DisconnectContext = .normal) {
@@ -303,11 +237,6 @@ extension NicoUtility {
         guard let number = Int(userId) else { return nil }
         let path = number / 10000
         return URL(string: "\(_userIconUrl)\(path)/\(userId).jpg")
-    }
-
-    func reserveToClearUserSessionCookie() {
-        shouldClearUserSessionCookie = true
-        log.debug("reserved to clear user session cookie")
     }
 
     func reportAsNgUser(chat: Chat, completion: @escaping (String?) -> Void) {}
@@ -372,53 +301,6 @@ extension NicoUtility {
 // MARK: - Private Methods
 // Main connect sequence.
 private extension NicoUtility {
-    // TODO: remove
-    func connect(liveNumber: Int, userSessionCookie: String, connectContext: ConnectContext) {
-        self.userSessionCookie = userSessionCookie
-
-        reqeustLiveInfo(lv: liveNumber) { [weak self] in
-            guard let me = self else { return }
-            switch $0 {
-            case .success(let embeddedData):
-                let live = embeddedData.toLive()
-                let user = embeddedData.toUser()
-                self?.live = live
-                me.delegate?.nicoUtilityDidPrepareLive(me, user: user, live: live, connectContext: connectContext)
-                me.openWatchSocket(
-                    webSocketUrl: embeddedData.site.relive.webSocketUrl,
-                    userId: embeddedData.user.id ?? "0",
-                    connectContext: connectContext
-                )
-            case .failure(_):
-                me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: .noLiveInfo)
-            }
-        }
-    }
-
-    // TODO: remove
-    func reqeustLiveInfo(lv: Int, completion: @escaping (Result<EmbeddedDataProperties, NicoError>) -> Void) {
-        let urlRequest = urlRequestWithUserSessionCookie(
-            urlString: "\(livePageUrl)\(lv)",
-            userSession: userSessionCookie
-        )
-        session.request(urlRequest)
-            .cURLDescription(calling: { log.debug($0) })
-            .validate()
-            .responseData {
-                // log.debug($0.debugDescription)
-                switch $0.result {
-                case .success(let data):
-                    guard let embedded = NicoUtility.extractEmbeddedDataPropertiesFromLivePage(html: data) else {
-                        completion(Result.failure(NicoError.internal))
-                        return
-                    }
-                    completion(Result.success(embedded))
-                case .failure(_):
-                    completion(Result.failure(NicoError.internal))
-                }
-            }
-    }
-
     // #1/5. Refresh token before proceeding main sequence.
     func refreshToken(liveProgramId: String, connectContext: ConnectContext) {
         authManager.refreshToken { [weak self] in
@@ -976,45 +858,6 @@ private extension NicoUtility {
     @objc func textSocketEventCheckTimerFired() {
         log.debug("Seems no comments for a while. Reconnecting...")
         reconnect(reason: .noTexts)
-    }
-}
-
-// MARK: - Private Utility Methods
-private extension NicoUtility {
-    func clearHttpCookieStorage() {
-        HTTPCookieStorage.shared.cookies?.forEach(HTTPCookieStorage.shared.deleteCookie)
-    }
-
-    func clearUserSessionCookieIfReserved() {
-        guard shouldClearUserSessionCookie else { return }
-        shouldClearUserSessionCookie = false
-        userSessionCookie = nil
-        log.debug("cleared user session cookie")
-    }
-
-    func urlRequestWithUserSessionCookie(urlString: String, userSession: String?) -> URLRequest {
-        guard let url = URL(string: urlString) else {
-            fatalError("This is NOT going to be happened.")
-        }
-        var urlRequest = URLRequest(url: url)
-        if let _httpCookies = httpCookies(userSession: userSession) {
-            urlRequest.allHTTPHeaderFields = HTTPCookie.requestHeaderFields(with: _httpCookies)
-        }
-        return urlRequest
-    }
-
-    func httpCookies(userSession: String?) -> [HTTPCookie]? {
-        guard let userSession = userSession,
-              let sessionCookie = HTTPCookie(
-                properties: [
-                    HTTPCookiePropertyKey.domain: userSessionCookieDomain,
-                    HTTPCookiePropertyKey.name: userSessionCookieName,
-                    HTTPCookiePropertyKey.value: userSession,
-                    HTTPCookiePropertyKey.expires: Date().addingTimeInterval(userSessionCookieExpire),
-                    HTTPCookiePropertyKey.path: userSessionCookiePath
-                ]
-              ) else { return nil }
-        return [sessionCookie]
     }
 }
 

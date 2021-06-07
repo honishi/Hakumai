@@ -11,7 +11,6 @@
 		A7F49743094E5F56137600E8 /* Pods_HakumaiTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 624C843B0BCD6D9BBCFABC5C /* Pods_HakumaiTests.framework */; };
 		DB0E10641A39B6C200A10E00 /* GeneralViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0E10631A39B6C200A10E00 /* GeneralViewController.swift */; };
 		DB0E10681A39B6DD00A10E00 /* MuteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0E10671A39B6DD00A10E00 /* MuteViewController.swift */; };
-		DB0ED6521A20B0A7007E9318 /* ChromeCookie.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0ED6511A20B0A7007E9318 /* ChromeCookie.swift */; };
 		DB0F0ECD1A16441D00F8BDC5 /* NicoUtilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0F0ECC1A16441D00F8BDC5 /* NicoUtilityTests.swift */; };
 		DB15AF9626567A18009DACBE /* AuthWindowController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DB15AF9526567A18009DACBE /* AuthWindowController.storyboard */; };
 		DB15AF9826567A9D009DACBE /* AuthWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB15AF9726567A9D009DACBE /* AuthWindowController.swift */; };
@@ -65,9 +64,7 @@
 		DBA541E31A4821D4005FF218 /* UserWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA541E21A4821D4005FF218 /* UserWindow.swift */; };
 		DBA541E81A483710005FF218 /* UserWindowController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DBA541E71A483710005FF218 /* UserWindowController.storyboard */; };
 		DBA541EA1A4838F4005FF218 /* PreferenceWindowController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DBA541E91A4838F4005FF218 /* PreferenceWindowController.storyboard */; };
-		DBAAA7321A0F43BB00981004 /* CookieUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7311A0F43BB00981004 /* CookieUtility.swift */; };
 		DBAAA7511A0FDA4500981004 /* NicoUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAAA7501A0FDA4500981004 /* NicoUtility.swift */; };
-		DBAB695C1A5B70A5002FCD95 /* LoginCookie.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAB695B1A5B70A5002FCD95 /* LoginCookie.swift */; };
 		DBAB69621A5C1A70002FCD95 /* KeychainUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAB69611A5C1A70002FCD95 /* KeychainUtility.swift */; };
 		DBAC3D3321C55E4C00B09673 /* MainWindowController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DBAC3D3221C55E4C00B09673 /* MainWindowController.storyboard */; };
 		DBAC3D3921C568B500B09673 /* Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBAC3D3821C568B500B09673 /* Images.swift */; };
@@ -88,7 +85,6 @@
 		DBD7A1E9265D5863001C87E0 /* NSView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD7A1E8265D5863001C87E0 /* NSView+Extensions.swift */; };
 		DBE093FF1A5869A2004554FD /* HandleNameManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE093FE1A5869A2004554FD /* HandleNameManagerTests.swift */; };
 		DBE094021A586FFC004554FD /* HandleNameManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE094011A586FFC004554FD /* HandleNameManager.swift */; };
-		DBF88AEB1D68AEB00047B412 /* SafariCookie.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF88AEA1D68AEB00047B412 /* SafariCookie.swift */; };
 		DBFA887B1A1BC25A005349AD /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA887A1A1BC25A005349AD /* Chat.swift */; };
 		DBFA88821A1BC8C9005349AD /* Enum.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA88811A1BC8C9005349AD /* Enum.swift */; };
 		DBFA888B1A1C9A56005349AD /* Live.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA888A1A1C9A56005349AD /* Live.swift */; };
@@ -130,7 +126,6 @@
 		C64D90E7D7263B8BAA24E4EB /* Pods-HakumaiTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HakumaiTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-HakumaiTests/Pods-HakumaiTests.release.xcconfig"; sourceTree = "<group>"; };
 		DB0E10631A39B6C200A10E00 /* GeneralViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralViewController.swift; sourceTree = "<group>"; };
 		DB0E10671A39B6DD00A10E00 /* MuteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MuteViewController.swift; sourceTree = "<group>"; };
-		DB0ED6511A20B0A7007E9318 /* ChromeCookie.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChromeCookie.swift; sourceTree = "<group>"; };
 		DB0F0ECC1A16441D00F8BDC5 /* NicoUtilityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicoUtilityTests.swift; sourceTree = "<group>"; };
 		DB15AF9526567A18009DACBE /* AuthWindowController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = AuthWindowController.storyboard; sourceTree = "<group>"; };
 		DB15AF9726567A9D009DACBE /* AuthWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthWindowController.swift; sourceTree = "<group>"; };
@@ -192,9 +187,7 @@
 		DBA541E21A4821D4005FF218 /* UserWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserWindow.swift; sourceTree = "<group>"; };
 		DBA541E71A483710005FF218 /* UserWindowController.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = UserWindowController.storyboard; sourceTree = "<group>"; };
 		DBA541E91A4838F4005FF218 /* PreferenceWindowController.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = PreferenceWindowController.storyboard; sourceTree = "<group>"; };
-		DBAAA7311A0F43BB00981004 /* CookieUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CookieUtility.swift; sourceTree = "<group>"; };
 		DBAAA7501A0FDA4500981004 /* NicoUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicoUtility.swift; sourceTree = "<group>"; };
-		DBAB695B1A5B70A5002FCD95 /* LoginCookie.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginCookie.swift; sourceTree = "<group>"; };
 		DBAB69611A5C1A70002FCD95 /* KeychainUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainUtility.swift; sourceTree = "<group>"; };
 		DBAC3D2D21C411E900B09673 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		DBAC3D2E21C411E900B09673 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -217,7 +210,6 @@
 		DBD7A1E8265D5863001C87E0 /* NSView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSView+Extensions.swift"; sourceTree = "<group>"; };
 		DBE093FE1A5869A2004554FD /* HandleNameManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HandleNameManagerTests.swift; sourceTree = "<group>"; };
 		DBE094011A586FFC004554FD /* HandleNameManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HandleNameManager.swift; sourceTree = "<group>"; };
-		DBF88AEA1D68AEB00047B412 /* SafariCookie.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SafariCookie.swift; sourceTree = "<group>"; };
 		DBFA887A1A1BC25A005349AD /* Chat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
 		DBFA88811A1BC8C9005349AD /* Enum.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enum.swift; sourceTree = "<group>"; };
 		DBFA888A1A1C9A56005349AD /* Live.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Live.swift; sourceTree = "<group>"; };
@@ -258,26 +250,6 @@
 				DBAC3D2D21C411E900B09673 /* SystemConfiguration.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		DB0ED64E1A20B07E007E9318 /* Cookie */ = {
-			isa = PBXGroup;
-			children = (
-				DB0ED6541A20B0AD007E9318 /* Browsers */,
-				DBAAA7311A0F43BB00981004 /* CookieUtility.swift */,
-			);
-			path = Cookie;
-			sourceTree = "<group>";
-		};
-		DB0ED6541A20B0AD007E9318 /* Browsers */ = {
-			isa = PBXGroup;
-			children = (
-				DB0ED6511A20B0A7007E9318 /* ChromeCookie.swift */,
-				DBAB695B1A5B70A5002FCD95 /* LoginCookie.swift */,
-				DBF88AEA1D68AEB00047B412 /* SafariCookie.swift */,
-			);
-			name = Browsers;
-			path = Browser;
 			sourceTree = "<group>";
 		};
 		DB15AF94265679E4009DACBE /* AuthWindowController */ = {
@@ -428,7 +400,6 @@
 		DB6DD2A72650E984009A9574 /* Infrastructures */ = {
 			isa = PBXGroup;
 			children = (
-				DB0ED64E1A20B07E007E9318 /* Cookie */,
 				DBAB69601A5C1A2F002FCD95 /* Keychain */,
 				DBB952151A8655AB0059850A /* LoggerHelper.swift */,
 			);
@@ -930,11 +901,9 @@
 				DB74B86C1A6E790C0064AC28 /* BrowserHelper.swift in Sources */,
 				DBB473001A358FFC002C797E /* Character+Extensions.swift in Sources */,
 				DBFA887B1A1BC25A005349AD /* Chat.swift in Sources */,
-				DB0ED6521A20B0A7007E9318 /* ChromeCookie.swift in Sources */,
 				DB7B3DDC1A23B35300205470 /* ColoredView.swift in Sources */,
 				DB5164FC264E662100F809B3 /* CommentTableCellView.swift in Sources */,
 				DB7F21B01A210017008D17E0 /* Community.swift in Sources */,
-				DBAAA7321A0F43BB00981004 /* CookieUtility.swift in Sources */,
 				DBFA88821A1BC8C9005349AD /* Enum.swift in Sources */,
 				DB0E10641A39B6C200A10E00 /* GeneralViewController.swift in Sources */,
 				DB414C0B1A4811C4008D2F40 /* Global.swift in Sources */,
@@ -948,7 +917,6 @@
 				DBB4730B1A35951C002C797E /* LiveStatistics.swift in Sources */,
 				DB2F516726669B3E000A1C58 /* Localize.swift in Sources */,
 				DBB952161A8655AB0059850A /* LoggerHelper.swift in Sources */,
-				DBAB695C1A5B70A5002FCD95 /* LoginCookie.swift in Sources */,
 				DB2AE0C61A0EE2FD00B1CE4D /* MainViewController.swift in Sources */,
 				DB80CA871A2575A0002636E0 /* MainViewControllerExtensions.swift in Sources */,
 				DBADF3311A5EFA4D00A3A037 /* MainWindowController.swift in Sources */,
@@ -973,7 +941,6 @@
 				DBFB81511A36B52E00294934 /* PreferenceWindowController.swift in Sources */,
 				DB55AC681A33908300CFAD99 /* PremiumTableCellView.swift in Sources */,
 				DB7EB8A21A24AA5100C3BFB5 /* RoomPositionTableCellView.swift in Sources */,
-				DBF88AEB1D68AEB00047B412 /* SafariCookie.swift in Sources */,
 				DB7B3DE51A2434FB00205470 /* ScoreTableCellView.swift in Sources */,
 				DB82B3A11C0724C000EFE3D9 /* SpeechManager.swift in Sources */,
 				DBAC3D3B21C569A900B09673 /* StoryBoards.swift in Sources */,

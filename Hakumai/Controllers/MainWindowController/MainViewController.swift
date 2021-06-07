@@ -349,7 +349,6 @@ extension MainViewController: NicoUtilityDelegate {
     func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, error: NicoUtility.NicoError) {
         logSystemMessageToTableView(L10n.failedToPrepareLive(error.toMessage))
         updateMainControlViews(status: .disconnected)
-        showCookiePrivilegeAlertIfNeeded(error: error)
     }
 
     func nicoUtilityDidConnectToLive(_ nicoUtility: NicoUtilityType, roomPosition: RoomPosition, connectContext: NicoUtility.ConnectContext) {
@@ -914,41 +913,10 @@ private extension MainViewController {
     }
 }
 
-// Alert view for Safari cookie
-private extension MainViewController {
-    func showCookiePrivilegeAlertIfNeeded(error: NicoUtility.NicoError?) {
-        guard error == .noCookie else { return }
-        let param = UserDefaults.standard.integer(forKey: Parameters.sessionManagement)
-        guard let sessionManagementType = SessionManagementType(rawValue: param) else { return }
-        switch sessionManagementType {
-        case .safari:
-            let alert = NSAlert()
-            alert.messageText = L10n.safariCookieAlertTitle
-            alert.informativeText = L10n.safariCookieAlertDescription
-            let imageView = NSImageView(image: Asset.safariCookieAlertImage.image)
-            imageView.frame = NSRect.init(x: 0, y: 0, width: 300, height: 300)
-            alert.accessoryView = imageView
-            let securityButton = alert.addButton(withTitle: L10n.openSecurityPrivacy)
-            securityButton.target = self
-            securityButton.action = #selector(MainViewController.showSecurityPanel)
-            alert.addButton(withTitle: L10n.cancel)
-            alert.runModal()
-        default:
-            break
-        }
-    }
-
-    @objc func showSecurityPanel() {
-        let url = URL(fileURLWithPath: "/System/Library/PreferencePanes/Security.prefPane")
-        NSWorkspace.shared.open(url)
-    }
-}
-
 private extension NicoUtility.NicoError {
     var toMessage: String {
         switch self {
         case .internal:                     return L10n.errorInternal
-        case .noCookie:                     return L10n.errorNoCookie
         case .noLiveInfo:                   return L10n.errorNoLiveInfo
         case .noMessageServerInfo:          return L10n.errorNoMessageServerInfo
         case .failedToOpenMessageServer:    return L10n.errorFailedToOpenMessageServer

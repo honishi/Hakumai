@@ -29,9 +29,6 @@ protocol NicoUtilityType {
     func userPageUrl(for userId: String) -> URL?
     func userIconUrl(for userId: String) -> URL?
 
-    // Utility Methods
-    func reserveToClearUserSessionCookie()
-
     // Miscellaneous Methods
     func reportAsNgUser(chat: Chat, completion: @escaping (_ userId: String?) -> Void)
 }

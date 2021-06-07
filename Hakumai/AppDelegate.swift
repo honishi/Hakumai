@@ -79,7 +79,8 @@ extension AppDelegate {
 
         switch (keyPath, change[.newKey]) {
         case (Parameters.sessionManagement, _):
-            NicoUtility.shared.reserveToClearUserSessionCookie()
+            // TODO: remove this case?
+            break
 
         case (Parameters.enableCommentSpeech, let changed as Bool):
             MainViewController.shared.changeEnableCommentSpeech(changed)

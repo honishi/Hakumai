@@ -89,9 +89,6 @@
 "live_url_text_field_placeholder" = "⌘L (Live URL, Live#)";
 "speak_comment" = "Speak";
 "visitor_count" = "Visitors";
-"safari_cookie_alert_title" = "No Safari Cookie found";
-"safari_cookie_alert_description" = "To retrieve the cookie from Safari, please open the \"Security & Privacy\" in the \"System Preference\”, go to the \"Privacy\" tab and give the \"Full Disk Access\" right to Hakumai app.";
-"open_security_privacy" = "Open Security & Privacy";
 "login_completed" = "Login completed.";
 "logout_completed" = "Logout completed.";
 
@@ -105,7 +102,6 @@
 
 /// Error
 "error_internal" = "Internal Error.";
-"error_no_cookie" = "No available cookie.";
 "error_no_live_info" = "Failed to load live info.";
 "error_no_message_server_info" = "Failed to load message server info.";
 "error_failed_to_open_message_server" = "Failed to open message server.";

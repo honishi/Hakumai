@@ -74,6 +74,7 @@ extension GeneralViewController {
     }
 }
 
+// TODO: remove
 extension GeneralViewController {
     @IBAction func detectedChangeInSessionManagementMatrix(_ sender: AnyObject) {
         guard let matrix = sender as? NSMatrix else { return }
@@ -104,7 +105,7 @@ extension GeneralViewController {
             }
         }
         progressIndicator.startAnimation(self)
-        CookieUtility.requestLoginCookie(mailAddress: mailAddress as String, password: password as String, completion: completion)
+        // CookieUtility.requestLoginCookie(mailAddress: mailAddress as String, password: password as String, completion: completion)
     }
 }
 
