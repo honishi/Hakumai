@@ -22,6 +22,8 @@ internal enum L10n {
   internal static let alwaysOnTop = L10n.tr("Localizable", "always_on_top")
   /// Bring All to Front
   internal static let bringAllToFront = L10n.tr("Localizable", "bring_all_to_front")
+  /// Browser Used for "Grab URL from Browser" feature (⌘U)
+  internal static let browserInUse = L10n.tr("Localizable", "browser_in_use")
   /// Cancel
   internal static let cancel = L10n.tr("Localizable", "cancel")
   /// Capitalize
@@ -146,14 +148,12 @@ internal enum L10n {
   internal static let removeHandleName = L10n.tr("Localizable", "remove_handle_name")
   /// Report as NG User
   internal static let reportAsNgUser = L10n.tr("Localizable", "report_as_ng_user")
-  /// Safari
+  /// Safari (Not supported yet…)
   internal static let safari = L10n.tr("Localizable", "safari")
   /// Select All
   internal static let selectAll = L10n.tr("Localizable", "select_all")
   /// Services
   internal static let services = L10n.tr("Localizable", "services")
-  /// Session Management
-  internal static let sessionManagement = L10n.tr("Localizable", "session_management")
   /// Set
   internal static let `set` = L10n.tr("Localizable", "set")
   /// Set Handle Name

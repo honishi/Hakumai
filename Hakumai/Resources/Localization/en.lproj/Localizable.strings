@@ -131,9 +131,9 @@
 /// Preference Window
 ///
 /// General
-"session_management" = "Session Management";
+"browser_in_use" = "Browser Used for \"Grab URL from Browser\" feature (⌘U)";
 "google_chrome" = "Google Chrome";
-"safari" = "Safari";
+"safari" = "Safari (Not supported yet…)";
 "comment_speaking" = "Comment Speaking";
 "speak_comments" = "Speak Comments (Requires macOS 10.14-)";
 "speak_volume" = "Speak Volume";

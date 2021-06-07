@@ -13,8 +13,8 @@ final class GeneralViewController: NSViewController {
     // MARK: - Properties
     static let shared = GeneralViewController.make()
 
-    @IBOutlet private weak var sessionManagementBox: NSBox!
-    @IBOutlet private weak var sessionManagementMatrix: NSMatrix!
+    @IBOutlet private weak var browserInUseBox: NSBox!
+    @IBOutlet private weak var browserInUseMatrix: NSMatrix!
     @IBOutlet private weak var chromeButtonCell: NSButtonCell!
     @IBOutlet private weak var safariButtonCell: NSButtonCell!
 
@@ -46,7 +46,7 @@ extension GeneralViewController {
 // MARK: - Internal Functions
 private extension GeneralViewController {
     func configureView() {
-        sessionManagementBox.title = L10n.sessionManagement
+        browserInUseBox.title = L10n.browserInUse
         chromeButtonCell.title = L10n.googleChrome
         safariButtonCell.title = L10n.safari
 

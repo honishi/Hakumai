@@ -67,13 +67,13 @@
             <objects>
                 <viewController storyboardIdentifier="GeneralViewController" id="wCA-UG-k48" customClass="GeneralViewController" customModule="Hakumai" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="yCS-uV-ZpM">
-                        <rect key="frame" x="0.0" y="0.0" width="500" height="320"/>
+                        <rect key="frame" x="0.0" y="0.0" width="500" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="16" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="msl-tt-je4">
-                                <rect key="frame" x="20" y="54" width="460" height="246"/>
+                                <rect key="frame" x="20" y="34" width="460" height="246"/>
                                 <subviews>
-                                    <box autoresizesSubviews="NO" borderType="line" title="session_management" translatesAutoresizingMaskIntoConstraints="NO" id="MWm-if-ayO">
+                                    <box autoresizesSubviews="NO" borderType="line" title="browser_in_use" translatesAutoresizingMaskIntoConstraints="NO" id="MWm-if-ayO">
                                         <rect key="frame" x="-3" y="142" width="466" height="104"/>
                                         <view key="contentView" id="rtk-61-lXP">
                                             <rect key="frame" x="3" y="3" width="460" height="86"/>
@@ -235,11 +235,11 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="browserInUseBox" destination="MWm-if-ayO" id="5hf-gR-Fw3"/>
+                        <outlet property="browserInUseMatrix" destination="y0n-lu-hbG" id="Dee-Od-G0x"/>
                         <outlet property="chromeButtonCell" destination="Ici-yj-KuI" id="ZIX-rJ-KYV"/>
                         <outlet property="commentSpeakingBox" destination="ICr-HG-iyb" id="6y6-k7-mqr"/>
                         <outlet property="safariButtonCell" destination="wGq-x5-Aua" id="lb1-w9-hCF"/>
-                        <outlet property="sessionManagementBox" destination="MWm-if-ayO" id="MhO-co-gdr"/>
-                        <outlet property="sessionManagementMatrix" destination="y0n-lu-hbG" id="Dee-Od-G0x"/>
                         <outlet property="speakCommentButton" destination="MZf-F3-ma6" id="9fp-wX-etw"/>
                         <outlet property="speakVolumeSlider" destination="NBg-Gf-rw0" id="gzQ-f2-Xwi"/>
                         <outlet property="speakVolumeTitleTextField" destination="lhl-Ab-vvj" id="STj-TK-3lB"/>
