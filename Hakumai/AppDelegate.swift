@@ -78,9 +78,9 @@ extension AppDelegate {
         guard let keyPath = keyPath, let change = change else { return }
 
         switch (keyPath, change[.newKey]) {
-        case (Parameters.browserInUse, let changed as Int):
-            // TODO: remove this case?
-            log.debug("browserInUse -> \(changed)")
+        case (Parameters.browserInUse, _):
+            // log.debug("browserInUse -> \(changed)")
+            break
 
         case (Parameters.enableCommentSpeech, let changed as Bool):
             MainViewController.shared.changeEnableCommentSpeech(changed)
