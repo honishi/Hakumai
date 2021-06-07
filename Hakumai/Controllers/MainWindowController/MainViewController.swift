@@ -319,8 +319,11 @@ extension MainViewController: NSControlTextEditingDelegate {
 // MARK: - AuthWindowControllerDelegate Functions
 extension MainViewController: AuthWindowControllerDelegate {
     func authWindowControllerDidLogin(_ authWindowController: AuthWindowController) {
-        // TODO: i18n
-        logSystemMessageToTableView("Login completed.")
+        logSystemMessageToTableView(L10n.loginCompleted)
+    }
+
+    func authWindowControllerDidLogout(_ authWindowController: AuthWindowController) {
+        logSystemMessageToTableView(L10n.logoutCompleted)
     }
 }
 
@@ -426,6 +429,16 @@ extension MainViewController: UserWindowControllerDelegate {
 
 // MARK: - Public Functions
 extension MainViewController {
+    func login() {
+        showAuthWindowController()
+    }
+
+    func logout() {
+        NicoUtility.shared.logout()
+        authWindowController?.logout()
+        authWindowController = nil
+    }
+
     func showHandleNameAddViewController(live: Live, chat: Chat) {
         let handleNameAddViewController =
             StoryboardScene.MainWindowController.handleNameAddViewController.instantiate()
@@ -910,12 +923,6 @@ private extension MainViewController {
         }
         authWindowController?.startAuthorization()
         authWindowController?.showWindow(self)
-    }
-    
-    func logout() {
-        NicoUtility.shared.logout()
-        authWindowController?.clearAllCookies()
-        authWindowController = nil
     }
 }
 

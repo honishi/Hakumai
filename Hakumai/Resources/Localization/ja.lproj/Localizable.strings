@@ -26,6 +26,8 @@
 "quit_hakumai" = "Hakumai を終了";
 
 /// File Menu
+"login" = "ログイン";
+"logout" = "ログアウト";
 "open_url" = "URL を開く";
 "grab_url_from_browser" = "ブラウザから URL をコピーする";
 "new_comment" = "新規コメント";
@@ -90,6 +92,8 @@
 "safari_cookie_alert_title" = "Safari から Cookie が取得できません";
 "safari_cookie_alert_description" = "Safari から Cookie を取得するには、「システム環境設定」の中から「セキュリティとプライバシー」を開き、「プライバシー」タブの「フルディスクアクセス」の中の Hakumai アプリにチェックを入れてください。";
 "open_security_privacy" = "セキュリティとプライバシーを開く";
+"login_completed" = "ログインしました.";
+"logout_completed" = "ログアウトしました.";
 
 /// Message
 "prepared_live" = "\"%@\" で放送情報を取得しました.";

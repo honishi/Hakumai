@@ -10,6 +10,7 @@ import Cocoa
 
 protocol AuthWindowControllerDelegate: AnyObject {
     func authWindowControllerDidLogin(_ authWindowController: AuthWindowController)
+    func authWindowControllerDidLogout(_ authWindowController: AuthWindowController)
 }
 
 extension AuthWindowController {
@@ -49,11 +50,12 @@ extension AuthWindowController: AuthViewControllerDelegate {
 }
 
 extension AuthWindowController {
-    func clearAllCookies() {
-        authViewController?.clearAllCookies()
-    }
-
     func startAuthorization() {
         authViewController?.startAuthorization()
+    }
+
+    func logout() {
+        authViewController?.clearAllCookies()
+        delegate?.authWindowControllerDidLogout(self)
     }
 }

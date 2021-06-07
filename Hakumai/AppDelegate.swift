@@ -30,6 +30,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
 // MARK: Menu Handlers
 extension AppDelegate {
+    @IBAction func login(_ sender: Any) {
+        MainViewController.shared.login()
+    }
+
+    @IBAction func logout(_ sender: Any) {
+        MainViewController.shared.logout()
+    }
+
     @IBAction func openPreferences(_ sender: AnyObject) {
         PreferenceWindowController.shared.showWindow(self)
     }

@@ -116,6 +116,14 @@ internal enum L10n {
   internal static let liveTitle = L10n.tr("Localizable", "live_title")
   /// ⌘L (Live URL, Live#)
   internal static let liveUrlTextFieldPlaceholder = L10n.tr("Localizable", "live_url_text_field_placeholder")
+  /// Login
+  internal static let login = L10n.tr("Localizable", "login")
+  /// Login completed.
+  internal static let loginCompleted = L10n.tr("Localizable", "login_completed")
+  /// Logout
+  internal static let logout = L10n.tr("Localizable", "logout")
+  /// Logout completed.
+  internal static let logoutCompleted = L10n.tr("Localizable", "logout_completed")
   /// Mail Address
   internal static let mailAddress = L10n.tr("Localizable", "mail_address")
   /// Make Lower Case

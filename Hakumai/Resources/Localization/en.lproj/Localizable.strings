@@ -26,6 +26,8 @@
 "quit_hakumai" = "Quit Hakumai";
 
 /// File Menu
+"login" = "Login";
+"logout" = "Logout";
 "open_url" = "Open URL";
 "grab_url_from_browser" = "Grab URL from Browser";
 "new_comment" = "New Comment";
@@ -90,6 +92,8 @@
 "safari_cookie_alert_title" = "No Safari Cookie found";
 "safari_cookie_alert_description" = "To retrieve the cookie from Safari, please open the \"Security & Privacy\" in the \"System Preference\”, go to the \"Privacy\" tab and give the \"Full Disk Access\" right to Hakumai app.";
 "open_security_privacy" = "Open Security & Privacy";
+"login_completed" = "Login completed.";
+"logout_completed" = "Logout completed.";
 
 /// Message
 "prepared_live" = "Retrieved the live info as user \"%@\".";
