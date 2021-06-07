@@ -14,6 +14,10 @@ private let authWebBaseUrl = "https://oauth.nicovideo.jp"
 private let authWebPath = "/oauth2/authorize?response_type=code&client_id=\(hakumaiClientId)"
 private let hakumaiServerApiBaseUrl = "https://hakumai-app.com"
 private let hakumaiServerApiPathRefreshToken = "/api/v1/refresh-token"
+private let devAuthCallbackUrl = "https://dev.hakumai-app.com/oauth-callback"
+private let devHakumaiServerApiBaseUrl = "https://dev.hakumai-app.com"
+
+private let useDevServer = false
 
 protocol AuthManagerProtocol {
     var authWebUrl: URL { get }
@@ -47,12 +51,11 @@ extension AuthManager {
 
 final class AuthManager: AuthManagerProtocol {
     // MARK: Properties
-    // swiftlint:disable force_unwrapping
-    var authWebUrl: URL { URL(string: authWebBaseUrl + authWebPath)! }
-    // swiftlint:enable force_unwrapping
+    lazy var authWebUrl: URL = makeAuthWebUrl(useDevServer: useDevServer)
     var hasToken: Bool { currentToken != nil }
     private let tokenStore: TokenStoreProtocol
     private(set) var currentToken: AuthManagerToken?
+    private lazy var refreshTokenApiUrl: URL = makeRefreshTokenApiUrl(useDevServer: useDevServer)
 
     init(tokenStore: TokenStoreProtocol) {
         self.tokenStore = tokenStore
@@ -78,11 +81,7 @@ extension AuthManager {
             completion(.failure(.noAvailableRefreshToken))
             return
         }
-        guard let url = URL(string: hakumaiServerApiBaseUrl + hakumaiServerApiPathRefreshToken) else {
-            completion(.failure(.internal))
-            return
-        }
-        var request = URLRequest(url: url)
+        var request = URLRequest(url: refreshTokenApiUrl)
         request.method = .post
         request.httpBody = "refresh_token=\(refreshToken)".data(using: .utf8)
         AF.request(request)
@@ -115,6 +114,24 @@ extension AuthManager {
 }
 
 private extension AuthManager {
+    func makeAuthWebUrl(useDevServer: Bool = false) -> URL {
+        // swiftlint:disable force_unwrapping
+        let devCallback = devAuthCallbackUrl.addingPercentEncoding(withAllowedCharacters: .alphanumerics)!
+        let url = authWebBaseUrl
+            + authWebPath
+            + (useDevServer ? "&redirect_uri=\(devCallback)" : "")
+        return URL(string: url)!
+        // swiftlint:enable force_unwrapping
+    }
+
+    func makeRefreshTokenApiUrl(useDevServer: Bool = false) -> URL {
+        // swiftlint:disable force_unwrapping
+        let url = (useDevServer ? devHakumaiServerApiBaseUrl : hakumaiServerApiBaseUrl)
+            + hakumaiServerApiPathRefreshToken
+        return URL(string: url)!
+        // swiftlint:enable force_unwrapping
+    }
+
     func decodeTokenResponse(from string: String) -> TokenResponse? {
         guard let data = string.data(using: .utf8) else { return nil }
         return decodeTokenResponse(from: data)
