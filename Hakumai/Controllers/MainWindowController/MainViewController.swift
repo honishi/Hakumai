@@ -698,7 +698,7 @@ extension MainViewController {
     }
 
     @IBAction func debugLogoutButtonPressed(_ sender: Any) {
-        NicoUtility.shared.logout()
+        logout()
     }
 
     @IBAction func debugReconnectButtonPressed(_ sender: Any) {
@@ -910,6 +910,12 @@ private extension MainViewController {
         }
         authWindowController?.startAuthorization()
         authWindowController?.showWindow(self)
+    }
+    
+    func logout() {
+        NicoUtility.shared.logout()
+        authWindowController?.clearAllCookies()
+        authWindowController = nil
     }
 }
 

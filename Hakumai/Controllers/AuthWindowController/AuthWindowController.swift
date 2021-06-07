@@ -49,6 +49,10 @@ extension AuthWindowController: AuthViewControllerDelegate {
 }
 
 extension AuthWindowController {
+    func clearAllCookies() {
+        authViewController?.clearAllCookies()
+    }
+
     func startAuthorization() {
         authViewController?.startAuthorization()
     }
