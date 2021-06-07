@@ -134,13 +134,6 @@
 "session_management" = "セッション管理";
 "google_chrome" = "Google Chrome";
 "safari" = "Safari";
-"direct_login" = "直接ログイン (非推奨)";
-"mail_address" = "メールアドレス";
-"password" = "パスワード";
-"check" = "確認";
-"status" = "状態";
-"success" = "成功";
-"failed" = "失敗";
 "comment_speaking" = "コメント読み上げ";
 "speak_comments" = "コメント読み上げ (macOS 10.14 以降が必要)";
 "speak_volume" = "読み上げボリューム";

@@ -26,8 +26,6 @@ internal enum L10n {
   internal static let cancel = L10n.tr("Localizable", "cancel")
   /// Capitalize
   internal static let capitalize = L10n.tr("Localizable", "capitalize")
-  /// Check
-  internal static let check = L10n.tr("Localizable", "check")
   /// Check Document Now
   internal static let checkDocumentNow = L10n.tr("Localizable", "check_document_now")
   /// Check for Updates...
@@ -62,8 +60,6 @@ internal enum L10n {
   internal static let defaultZoom = L10n.tr("Localizable", "default_zoom")
   /// Delete
   internal static let delete = L10n.tr("Localizable", "delete")
-  /// Direct Login (Not Recommended)
-  internal static let directLogin = L10n.tr("Localizable", "direct_login")
   /// Edit
   internal static let edit = L10n.tr("Localizable", "edit")
   /// Elapsed Time
@@ -84,8 +80,6 @@ internal enum L10n {
   internal static let errorNoLiveInfo = L10n.tr("Localizable", "error_no_live_info")
   /// Failed to load message server info.
   internal static let errorNoMessageServerInfo = L10n.tr("Localizable", "error_no_message_server_info")
-  /// Failed
-  internal static let failed = L10n.tr("Localizable", "failed")
   /// Failed to comment.
   internal static let failedToComment = L10n.tr("Localizable", "failed_to_comment")
   /// Failed to connect to the live. [%@]
@@ -122,8 +116,6 @@ internal enum L10n {
   internal static let logout = L10n.tr("Localizable", "logout")
   /// Logout completed.
   internal static let logoutCompleted = L10n.tr("Localizable", "logout_completed")
-  /// Mail Address
-  internal static let mailAddress = L10n.tr("Localizable", "mail_address")
   /// Make Lower Case
   internal static let makeLowerCase = L10n.tr("Localizable", "make_lower_case")
   /// Make Upper Case
@@ -138,8 +130,6 @@ internal enum L10n {
   internal static let openUrlInComment = L10n.tr("Localizable", "open_url_in_comment")
   /// Open User Page
   internal static let openUserPage = L10n.tr("Localizable", "open_user_page")
-  /// Password
-  internal static let password = L10n.tr("Localizable", "password")
   /// Paste
   internal static let paste = L10n.tr("Localizable", "paste")
   /// Preferences...
@@ -198,14 +188,10 @@ internal enum L10n {
   internal static let spellingAndGrammar = L10n.tr("Localizable", "spelling_and_grammar")
   /// Start Speaking
   internal static let startSpeaking = L10n.tr("Localizable", "start_speaking")
-  /// Status
-  internal static let status = L10n.tr("Localizable", "status")
   /// Stop Speaking
   internal static let stopSpeaking = L10n.tr("Localizable", "stop_speaking")
   /// Substitutions
   internal static let substitutions = L10n.tr("Localizable", "substitutions")
-  /// Success
-  internal static let success = L10n.tr("Localizable", "success")
   /// Text Replacement
   internal static let textReplacement = L10n.tr("Localizable", "text_replacement")
   /// Transformations

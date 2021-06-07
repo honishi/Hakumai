@@ -134,13 +134,6 @@
 "session_management" = "Session Management";
 "google_chrome" = "Google Chrome";
 "safari" = "Safari";
-"direct_login" = "Direct Login (Not Recommended)";
-"mail_address" = "Mail Address";
-"password" = "Password";
-"check" = "Check";
-"status" = "Status";
-"success" = "Success";
-"failed" = "Failed";
 "comment_speaking" = "Comment Speaking";
 "speak_comments" = "Speak Comments (Requires macOS 10.14-)";
 "speak_volume" = "Speak Volume";
