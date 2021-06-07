@@ -57,11 +57,6 @@ private let postCommentMessage = """
 // MARK: - Class
 final class NicoUtility: NicoUtilityType {
     // MARK: - Types
-    enum SessionType {
-        case chrome
-        case safari
-        case login(mail: String, password: String)
-    }
     enum NicoError: Error {
         case `internal`
         case noLiveInfo
@@ -76,7 +71,6 @@ final class NicoUtility: NicoUtilityType {
         // swiftlint:disable nesting
         struct Request {
             let liveNumber: Int
-            let sessionType: SessionType
         }
         // swiftlint:enable nesting
         var onGoing: Request?
@@ -146,17 +140,14 @@ final class NicoUtility: NicoUtilityType {
 
 // MARK: - Public Methods (Main)
 extension NicoUtility {
-    func connect(liveNumber: Int, sessionType: SessionType, connectContext: NicoUtility.ConnectContext = .normal) {
+    func connect(liveNumber: Int, connectContext: NicoUtility.ConnectContext = .normal) {
         guard authManager.hasToken else {
             delegate?.nicoUtilityNeedsLogin(self)
             return
         }
 
         // 1. Save connection request.
-        connectRequests.onGoing = ConnectRequests.Request(
-            liveNumber: liveNumber,
-            sessionType: sessionType
-        )
+        connectRequests.onGoing = ConnectRequests.Request(liveNumber: liveNumber)
         connectRequests.lastEstablished = nil
 
         // 2. Save chat numbers.
@@ -209,7 +200,6 @@ extension NicoUtility {
         DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 2) {
             self.connect(
                 liveNumber: lastConnection.liveNumber,
-                sessionType: lastConnection.sessionType,
                 connectContext: .reconnect)
         }
     }

@@ -43,17 +43,6 @@ extension GeneralViewController {
     }
 }
 
-// TODO: remove
-extension GeneralViewController {
-    @IBAction func detectedChangeInSessionManagementMatrix(_ sender: AnyObject) {
-        guard let matrix = sender as? NSMatrix else { return }
-        // log.debug("\(matrix.selectedTag())")
-        if matrix.selectedTag() == SessionManagementType.login.rawValue {
-            // mailAddressValueTextField.becomeFirstResponder()
-        }
-    }
-}
-
 // MARK: - Internal Functions
 private extension GeneralViewController {
     func configureView() {

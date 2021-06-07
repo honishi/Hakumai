@@ -692,13 +692,17 @@ private extension MainViewController {
 // MARK: Control Handlers
 extension MainViewController {
     @IBAction func grabUrlFromBrowser(_ sender: AnyObject) {
-        guard let session = SessionManagementType(rawValue:
-                                                    UserDefaults.standard.integer(forKey: Parameters.sessionManagement)) else { return }
-        let browser: BrowserHelper.BrowserType = session == .safari ? .safari : .chrome
-        if let url = BrowserHelper.extractUrl(fromBrowser: browser) {
-            liveUrlTextField.stringValue = url
-            connectLive(self)
-        }
+        let rawValue = UserDefaults.standard.integer(forKey: Parameters.browserInUse)
+        guard let _browser = BrowserInUseType(rawValue: rawValue) else { return }
+        let browser: BrowserHelper.BrowserType = {
+            switch _browser {
+            case .chrome:   return .chrome
+            case .safari:   return .safari
+            }
+        }()
+        guard let url = BrowserHelper.extractUrl(fromBrowser: browser) else { return }
+        liveUrlTextField.stringValue = url
+        connectLive(self)
     }
 
     @IBAction func debugReconnectButtonPressed(_ sender: Any) {
@@ -717,23 +721,7 @@ extension MainViewController {
         communityImageView.image = Asset.defaultCommunityImage.image
         NicoUtility.shared.delegate = self
 
-        guard let sessionManagementType = SessionManagementType(
-                rawValue: UserDefaults.standard.integer(forKey: Parameters.sessionManagement)) else { return }
-
-        let sessionType = { () -> NicoUtility.SessionType? in
-            switch sessionManagementType {
-            case .login:
-                guard let account = KeychainUtility.accountInKeychain() else { return nil }
-                return .login(mail: account.mailAddress, password: account.password)
-            case .chrome:
-                return .chrome
-            case .safari:
-                return .safari
-            }
-        }()
-
-        guard let sessionType = sessionType else { return }
-        NicoUtility.shared.connect(liveNumber: liveNumber, sessionType: sessionType)
+        NicoUtility.shared.connect(liveNumber: liveNumber)
     }
 
     @IBAction func connectButtonPressed(_ sender: AnyObject) {

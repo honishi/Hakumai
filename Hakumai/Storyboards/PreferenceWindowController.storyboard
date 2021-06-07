@@ -104,8 +104,7 @@
                                                                 </column>
                                                             </cells>
                                                             <connections>
-                                                                <action selector="detectedChangeInSessionManagementMatrix:" target="wCA-UG-k48" id="vog-sR-JFO"/>
-                                                                <binding destination="Ex8-3g-KNv" name="selectedTag" keyPath="values.SessionManagement" id="PID-AQ-o5h"/>
+                                                                <binding destination="Ex8-3g-KNv" name="selectedTag" keyPath="values.BrowserInUse" id="PGf-Ji-Wsw"/>
                                                             </connections>
                                                         </matrix>
                                                     </subviews>

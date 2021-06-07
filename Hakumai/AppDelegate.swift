@@ -78,9 +78,9 @@ extension AppDelegate {
         guard let keyPath = keyPath, let change = change else { return }
 
         switch (keyPath, change[.newKey]) {
-        case (Parameters.sessionManagement, _):
+        case (Parameters.browserInUse, let changed as Int):
             // TODO: remove this case?
-            break
+            log.debug("browserInUse -> \(changed)")
 
         case (Parameters.enableCommentSpeech, let changed as Bool):
             MainViewController.shared.changeEnableCommentSpeech(changed)
@@ -160,7 +160,7 @@ private extension AppDelegate {
 
     func initializeUserDefaults() {
         let defaults: [String: Any] = [
-            Parameters.sessionManagement: SessionManagementType.chrome.rawValue,
+            Parameters.browserInUse: BrowserInUseType.chrome.rawValue,
             Parameters.fontSize: kDefaultFontSize,
             Parameters.enableCommentSpeech: false,
             Parameters.commentSpeechVolume: 100,
@@ -174,7 +174,7 @@ private extension AppDelegate {
     func addObserverForUserDefaults() {
         let keyPaths = [
             // general
-            Parameters.sessionManagement,
+            Parameters.browserInUse,
             Parameters.enableCommentSpeech,
             Parameters.commentSpeechVolume,
             // mute
