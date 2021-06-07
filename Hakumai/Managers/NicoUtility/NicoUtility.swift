@@ -425,7 +425,7 @@ private extension NicoUtility {
     }
 
     // https://github.com/niconamaworkshop/websocket_api_document
-    func requestWebSocketEndpoint(accessToken: String, liveProgramId: String, userId: Int, completion: @escaping (Result<WsEndpointResponse, NicoError>) -> Void) {
+    func requestWebSocketEndpoint(accessToken: String, liveProgramId: String, userId: String, completion: @escaping (Result<WsEndpointResponse, NicoError>) -> Void) {
         guard let url = URL(string: wsEndpointApiUrl) else { return }
         session.request(
             url,
@@ -873,7 +873,7 @@ private extension EmbeddedDataProperties {
 private extension UserInfoResponse {
     func toUser() -> User {
         return User(
-            userId: Int(sub) ?? 0,
+            userId: sub,
             nickname: nickname
         )
     }
