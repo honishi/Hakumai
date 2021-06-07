@@ -52,15 +52,7 @@ struct EmbeddedDataProperties: Codable {
         let level: Int?
     }
 
-    struct EmbeddedDataUser: Codable {
-        // The following fieleds are optional since they will be retrieved only for logged-in user.
-        let id: String?
-        let nickname: String?
-    }
-
     let site: Site
     let program: Program
     let socialGroup: SocialGroup
-    // TODO: remove `user` since it will be retrieved through oauth api now.
-    let user: EmbeddedDataUser
 }

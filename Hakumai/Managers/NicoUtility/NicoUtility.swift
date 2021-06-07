@@ -868,14 +868,6 @@ private extension EmbeddedDataProperties {
             startTime: program.beginTime.toDateAsTimeIntervalSince1970()
         )
     }
-
-    // TODO: remove this obsolete method
-    func toUser() -> User {
-        return User(
-            userId: Int(user.id ?? "-") ?? 0,
-            nickname: user.nickname ?? "-"
-        )
-    }
 }
 
 private extension UserInfoResponse {
