@@ -321,10 +321,6 @@ extension MainViewController: AuthWindowControllerDelegate {
     func authWindowControllerDidLogin(_ authWindowController: AuthWindowController) {
         logSystemMessageToTableView(L10n.loginCompleted)
     }
-
-    func authWindowControllerDidLogout(_ authWindowController: AuthWindowController) {
-        logSystemMessageToTableView(L10n.logoutCompleted)
-    }
 }
 
 // MARK: - NicoUtilityDelegate Functions
@@ -431,12 +427,14 @@ extension MainViewController: UserWindowControllerDelegate {
 extension MainViewController {
     func login() {
         showAuthWindowController()
+        // login message will be displayed from `authWindowControllerDidLogin()` delegate method.
     }
 
     func logout() {
         NicoUtility.shared.logout()
         authWindowController?.logout()
         authWindowController = nil
+        logSystemMessageToTableView(L10n.logoutCompleted)
     }
 
     func showHandleNameAddViewController(live: Live, chat: Chat) {
