@@ -14,8 +14,6 @@ import XCGLogger
 
 // MARK: - Constants
 // General URL:
-// TODO: remove `livePageUrl`
-private let livePageUrl = "https://live.nicovideo.jp/watch/lv"
 private let _livePageUrl = "https://live.nicovideo.jp/watch/"
 private let _userPageUrl = "https://www.nicovideo.jp/user/"
 private let _userIconUrl = "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/"
@@ -70,7 +68,7 @@ final class NicoUtility: NicoUtilityType {
     struct ConnectRequests {
         // swiftlint:disable nesting
         struct Request {
-            let liveNumber: Int
+            let liveProgramId: String
         }
         // swiftlint:enable nesting
         var onGoing: Request?
@@ -140,14 +138,14 @@ final class NicoUtility: NicoUtilityType {
 
 // MARK: - Public Methods (Main)
 extension NicoUtility {
-    func connect(liveNumber: Int, connectContext: NicoUtility.ConnectContext = .normal) {
+    func connect(liveProgramId: String, connectContext: NicoUtility.ConnectContext = .normal) {
         guard authManager.hasToken else {
             delegate?.nicoUtilityNeedsLogin(self)
             return
         }
 
         // 1. Save connection request.
-        connectRequests.onGoing = ConnectRequests.Request(liveNumber: liveNumber)
+        connectRequests.onGoing = ConnectRequests.Request(liveProgramId: liveProgramId)
         connectRequests.lastEstablished = nil
 
         // 2. Save chat numbers.
@@ -166,8 +164,7 @@ extension NicoUtility {
 
         // 4. Ok, start to establish connection from refreshing token.
         delegate?.nicoUtilityWillPrepareLive(self)
-        // TODO: include "lv"
-        refreshToken(liveProgramId: "lv\(liveNumber)", connectContext: connectContext)
+        refreshToken(liveProgramId: liveProgramId, connectContext: connectContext)
     }
 
     func disconnect(disconnectContext: NicoUtility.DisconnectContext = .normal) {
@@ -199,7 +196,7 @@ extension NicoUtility {
         // Just in case, make some delay to invoke the connect method.
         DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 2) {
             self.connect(
-                liveNumber: lastConnection.liveNumber,
+                liveProgramId: lastConnection.liveProgramId,
                 connectContext: .reconnect)
         }
     }
@@ -361,8 +358,7 @@ private extension NicoUtility {
                     me, user: user, live: live, connectContext: connectContext)
                 // #5/5. Ok, open the websockets.
                 me.openWatchSocket(
-                    // TODO: String -> URL
-                    webSocketUrl: response.data.url.absoluteString,
+                    webSocketUrl: response.data.url,
                     userId: String(user.userId),
                     connectContext: connectContext
                 )
@@ -456,7 +452,7 @@ private extension NicoUtility {
         }
     }
 
-    func openWatchSocket(webSocketUrl: String, userId: String, connectContext: ConnectContext) {
+    func openWatchSocket(webSocketUrl: URL, userId: String, connectContext: ConnectContext) {
         openWatchSocket(webSocketUrl: webSocketUrl) { [weak self] in
             guard let me = self else { return }
             switch $0 {
@@ -532,12 +528,8 @@ private extension NicoUtility {
 
 // MARK: Private Methods (Watch Socket)
 private extension NicoUtility {
-    func openWatchSocket(webSocketUrl: String, completion: @escaping (Result<WebSocketRoomData, NicoError>) -> Void) {
-        guard let url = URL(string: webSocketUrl) else {
-            completion(Result.failure(NicoError.internal))
-            return
-        }
-        var request = URLRequest(url: url)
+    func openWatchSocket(webSocketUrl: URL, completion: @escaping (Result<WebSocketRoomData, NicoError>) -> Void) {
+        var request = URLRequest(url: webSocketUrl)
         request.headers = [commonUserAgentKey: commonUserAgentValue]
         request.timeoutInterval = defaultRequestTimeout
         let socket = WebSocket(request: request)

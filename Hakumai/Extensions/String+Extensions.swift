@@ -70,16 +70,15 @@ extension String {
 }
 
 extension String {
-    func extractLiveNumber() -> Int? {
-        let liveNumberPattern = "\\d{9,}"
+    func extractLiveProgramId() -> String? {
+        let liveProgramIdPattern = "lv\\d{9,}"
         let patterns = [
-            "http:\\/\\/live\\.nicovideo\\.jp\\/watch\\/lv(" + liveNumberPattern + ").*",
-            "lv(" + liveNumberPattern + ")",
-            "(" + liveNumberPattern + ")"
+            "http:\\/\\/live\\.nicovideo\\.jp\\/watch\\/(" + liveProgramIdPattern + ").*",
+            "(" + liveProgramIdPattern + ")"
         ]
         for pattern in patterns {
-            if let extracted = extractRegexp(pattern: pattern), let number = Int(extracted) {
-                return number
+            if let extracted = extractRegexp(pattern: pattern) {
+                return extracted
             }
         }
         return nil

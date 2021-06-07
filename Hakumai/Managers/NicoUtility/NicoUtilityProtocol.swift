@@ -16,7 +16,7 @@ protocol NicoUtilityType {
     var live: Live? { get }
 
     // Main Methods
-    func connect(liveNumber: Int, connectContext: NicoUtility.ConnectContext)
+    func connect(liveProgramId: String, connectContext: NicoUtility.ConnectContext)
     func disconnect(disconnectContext: NicoUtility.DisconnectContext)
     func reconnect(reason: NicoUtility.ReconnectReason)
     func comment(_ comment: String, anonymously: Bool, completion: @escaping (_ comment: String?) -> Void)

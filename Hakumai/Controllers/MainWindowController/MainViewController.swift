@@ -718,13 +718,13 @@ extension MainViewController {
 
     @IBAction func connectLive(_ sender: AnyObject) {
         initializeHandleNameManager()
-        guard let liveNumber = liveUrlTextField.stringValue.extractLiveNumber() else { return }
+        guard let liveProgramId = liveUrlTextField.stringValue.extractLiveProgramId() else { return }
 
         clearAllChats()
         communityImageView.image = Asset.defaultCommunityImage.image
         NicoUtility.shared.delegate = self
 
-        NicoUtility.shared.connect(liveNumber: liveNumber)
+        NicoUtility.shared.connect(liveProgramId: liveProgramId)
     }
 
     @IBAction func connectButtonPressed(_ sender: AnyObject) {
