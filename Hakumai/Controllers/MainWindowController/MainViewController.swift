@@ -31,8 +31,6 @@ final class MainViewController: NSViewController {
     // MARK: Main Outlets
     @IBOutlet private weak var grabUrlButton: NSButton!
     @IBOutlet private weak var liveUrlTextField: NSTextField!
-    @IBOutlet private weak var debugLoginButton: NSButton!
-    @IBOutlet private weak var debugLogoutButton: NSButton!
     @IBOutlet private weak var debugReconnectButton: NSButton!
     @IBOutlet private weak var connectButton: NSButton!
 
@@ -546,7 +544,7 @@ extension MainViewController {
 private extension MainViewController {
     func configureViews() {
         communityImageView.addBorder()
-        [debugLoginButton, debugLogoutButton, debugReconnectButton].forEach {
+        [debugReconnectButton].forEach {
             $0?.isHidden = !enableDebugButtons
         }
 
@@ -702,14 +700,6 @@ extension MainViewController {
             liveUrlTextField.stringValue = url
             connectLive(self)
         }
-    }
-
-    @IBAction func debugLoginButtonPressed(_ sender: Any) {
-        showAuthWindowController()
-    }
-
-    @IBAction func debugLogoutButtonPressed(_ sender: Any) {
-        logout()
     }
 
     @IBAction func debugReconnectButtonPressed(_ sender: Any) {
