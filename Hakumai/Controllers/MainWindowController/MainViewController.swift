@@ -428,6 +428,9 @@ extension MainViewController {
     }
 
     func logout() {
+        if connectedToLive {
+            NicoUtility.shared.disconnect()
+        }
         NicoUtility.shared.logout()
         authWindowController?.logout()
         authWindowController = nil
