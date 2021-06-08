@@ -139,16 +139,18 @@ final class NicoUtility: NicoUtilityType {
 // MARK: - Public Methods (Main)
 extension NicoUtility {
     func connect(liveProgramId: String, connectContext: NicoUtility.ConnectContext = .normal) {
+        // 1. Check if the token is existing.
         guard authManager.hasToken else {
-            delegate?.nicoUtilityNeedsLogin(self)
+            delegate?.nicoUtilityNeedsToken(self)
             return
         }
+        delegate?.nicoUtilityDidConfirmTokenExistence(self)
 
-        // 1. Save connection request.
+        // 2. Save connection request.
         connectRequests.onGoing = ConnectRequests.Request(liveProgramId: liveProgramId)
         connectRequests.lastEstablished = nil
 
-        // 2. Save chat numbers.
+        // 3. Save chat numbers.
         switch connectContext {
         case .normal:
             chatNumbers.latest = 0
@@ -157,12 +159,12 @@ extension NicoUtility {
             chatNumbers.maxBeforeReconnect = chatNumbers.latest
         }
 
-        // 3. Cleanup current connection, if needed.
+        // 4. Cleanup current connection, if needed.
         if live != nil {
             disconnect()
         }
 
-        // 4. Ok, start to establish connection from refreshing token.
+        // 5. Ok, start to establish connection from refreshing token.
         delegate?.nicoUtilityWillPrepareLive(self)
         refreshToken(liveProgramId: liveProgramId, connectContext: connectContext)
     }

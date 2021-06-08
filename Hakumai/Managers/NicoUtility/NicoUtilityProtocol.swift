@@ -33,16 +33,24 @@ protocol NicoUtilityType {
     func reportAsNgUser(chat: Chat, completion: @escaping (_ userId: String?) -> Void)
 }
 
-// note these functions are called in background thread, not main thread.
-// so use explicit main thread for updating ui in these callbacks.
+// Note these functions are called in background thread, not main thread.
+// So use explicit main thread for updating UI components from these callbacks.
 protocol NicoUtilityDelegate: AnyObject {
-    func nicoUtilityNeedsLogin(_ nicoUtility: NicoUtilityType)
+    // Token check results before proceeding to main connection sequence.
+    func nicoUtilityNeedsToken(_ nicoUtility: NicoUtilityType)
+    func nicoUtilityDidConfirmTokenExistence(_ nicoUtility: NicoUtilityType)
+
+    // Main connection sequence.
     func nicoUtilityWillPrepareLive(_ nicoUtility: NicoUtilityType)
     func nicoUtilityDidPrepareLive(_ nicoUtility: NicoUtilityType, user: User, live: Live, connectContext: NicoUtility.ConnectContext)
     func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, error: NicoUtility.NicoError)
     func nicoUtilityDidConnectToLive(_ nicoUtility: NicoUtilityType, roomPosition: RoomPosition, connectContext: NicoUtility.ConnectContext)
+
+    // Events after connection establishment.
     func nicoUtilityDidReceiveChat(_ nicoUtility: NicoUtilityType, chat: Chat)
     func nicoUtilityWillReconnectToLive(_ nicoUtility: NicoUtilityType, reason: NicoUtility.ReconnectReason)
-    func nicoUtilityDidDisconnect(_ nicoUtility: NicoUtilityType, disconnectContext: NicoUtility.DisconnectContext)
     func nicoUtilityDidReceiveStatistics(_ nicoUtility: NicoUtilityType, stat: LiveStatistics)
+
+    // Disconnect.
+    func nicoUtilityDidDisconnect(_ nicoUtility: NicoUtilityType, disconnectContext: NicoUtility.DisconnectContext)
 }

@@ -323,8 +323,12 @@ extension MainViewController: AuthWindowControllerDelegate {
 
 // MARK: - NicoUtilityDelegate Functions
 extension MainViewController: NicoUtilityDelegate {
-    func nicoUtilityNeedsLogin(_ nicoUtility: NicoUtilityType) {
+    func nicoUtilityNeedsToken(_ nicoUtility: NicoUtilityType) {
         showAuthWindowController()
+    }
+
+    func nicoUtilityDidConfirmTokenExistence(_ nicoUtility: NicoUtilityType) {
+        // nop
     }
 
     func nicoUtilityWillPrepareLive(_ nicoUtility: NicoUtilityType) {
