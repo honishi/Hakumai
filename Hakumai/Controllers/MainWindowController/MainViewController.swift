@@ -15,7 +15,7 @@ private let calculateActiveUserInterval: TimeInterval = 5
 private let maximumFontSizeForNonMainColumn: CGFloat = 16
 private let defaultMinimumRowHeight: CGFloat = 17
 
-private let enableDebugButtons = false
+private let enableDebugButtons = true // false
 
 private let defaultElapsedTimeValue = "--:--:--"
 private let defaultLabelValue = "---"
@@ -32,6 +32,7 @@ final class MainViewController: NSViewController {
     @IBOutlet private weak var grabUrlButton: NSButton!
     @IBOutlet private weak var liveUrlTextField: NSTextField!
     @IBOutlet private weak var debugReconnectButton: NSButton!
+    @IBOutlet private weak var debugExpireTokenButton: NSButton!
     @IBOutlet private weak var connectButton: NSButton!
 
     @IBOutlet private weak var communityImageView: NSImageView!
@@ -550,7 +551,7 @@ extension MainViewController {
 private extension MainViewController {
     func configureViews() {
         communityImageView.addBorder()
-        [debugReconnectButton].forEach {
+        [debugReconnectButton, debugExpireTokenButton].forEach {
             $0?.isHidden = !enableDebugButtons
         }
 
@@ -718,6 +719,11 @@ extension MainViewController {
         // reason = .noPong
         // reason = .noTexts
         NicoUtility.shared.reconnect(reason: reason)
+    }
+
+    @IBAction func debugExpireTokenButtonPressed(_ sender: Any) {
+        NicoUtility.shared.injectExpiredAccessToken()
+        logSystemMessageToTableView("Injected expired access token.")
     }
 
     @IBAction func connectLive(_ sender: AnyObject) {
@@ -911,10 +917,14 @@ private extension MainViewController {
 private extension NicoUtility.NicoError {
     var toMessage: String {
         switch self {
-        case .internal:                 return L10n.errorInternal
-        case .noLiveInfo:               return L10n.errorNoLiveInfo
-        case .noMessageServerInfo:      return L10n.errorNoMessageServerInfo
-        case .openMessageServerFailed:  return L10n.errorFailedToOpenMessageServer
+        case .internal, .invalidToken:
+            return L10n.errorInternal
+        case .noLiveInfo:
+            return L10n.errorNoLiveInfo
+        case .noMessageServerInfo:
+            return L10n.errorNoMessageServerInfo
+        case .openMessageServerFailed:
+            return L10n.errorFailedToOpenMessageServer
         }
     }
 }

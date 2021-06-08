@@ -10,6 +10,21 @@ import Foundation
 import Alamofire
 
 extension AFError {
+    var isInvalidToken: Bool {
+        switch self {
+        case .responseValidationFailed(reason: let reason):
+            switch reason {
+            case .unacceptableStatusCode(code: let code):
+                return code == 401
+            default:
+                break
+            }
+        default:
+            break
+        }
+        return false
+    }
+
     var isNetworkError: Bool {
         switch self {
         case .sessionTaskFailed(let error as NSError):

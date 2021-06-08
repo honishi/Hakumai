@@ -57,6 +57,7 @@ final class NicoUtility: NicoUtilityType {
     // MARK: - Types
     enum NicoError: Error {
         case `internal`
+        case invalidToken
         case noLiveInfo
         case noMessageServerInfo
         case openMessageServerFailed
@@ -164,9 +165,9 @@ extension NicoUtility {
             disconnect()
         }
 
-        // 5. Ok, start to establish connection from refreshing token.
+        // 5. Ok, start to establish connection from retrieving general live info.
         delegate?.nicoUtilityWillPrepareLive(self)
-        refreshToken(liveProgramId: liveProgramId, connectContext: connectContext)
+        requestLiveInfo(liveProgramId: liveProgramId, connectContext: connectContext)
     }
 
     func disconnect(disconnectContext: NicoUtility.DisconnectContext = .normal) {
@@ -229,6 +230,10 @@ extension NicoUtility {
     }
 
     func reportAsNgUser(chat: Chat, completion: @escaping (String?) -> Void) {}
+
+    func injectExpiredAccessToken() {
+        authManager.injectExpiredAccessToken()
+    }
 }
 
 // MARK: - Public Methods (Username)
@@ -290,43 +295,14 @@ extension NicoUtility {
 // MARK: - Private Methods
 // Main connect sequence.
 private extension NicoUtility {
-    // #1/5. Refresh token before proceeding main sequence.
-    func refreshToken(liveProgramId: String, connectContext: ConnectContext) {
-        authManager.refreshToken { [weak self] in
-            guard let me = self else { return }
-            switch $0 {
-            case .success(let token):
-                me.requestLiveInfo(
-                    liveProgramId: liveProgramId,
-                    accessToken: token.accessToken,
-                    connectContext: connectContext
-                )
-            case .failure(let error):
-                // TODO: Update error
-                me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: .internal)
-                log.error(error)
-                switch error {
-                case .noRefreshToken, .networkUnavailable:
-                    // For the `.networkUnavailable` case, it might be temporary
-                    // situation. So skip clearing the tokens.
-                    break
-                case .refreshTokenFailed, .internal:
-                    // Clear possible "useless" stored token..
-                    me.logout()
-                }
-            }
-        }
-    }
-
-    // #2/5. Get general live info from live page (no login required).
-    func requestLiveInfo(liveProgramId: String, accessToken: String, connectContext: ConnectContext) {
+    // #1/4. Get general live info from live page (no login required).
+    func requestLiveInfo(liveProgramId: String, connectContext: ConnectContext) {
         requestLiveInfo(liveProgramId: liveProgramId) { [weak self] in
             guard let me = self else { return }
             switch $0 {
             case .success(let props):
                 me.requestUserInfo(
                     liveProgramId: liveProgramId,
-                    accessToken: accessToken,
                     connectContext: connectContext,
                     live: props.toLive())
             case .failure(let error):
@@ -335,26 +311,55 @@ private extension NicoUtility {
         }
     }
 
-    // #3/5. Get user info.
-    func requestUserInfo(liveProgramId: String, accessToken: String, connectContext: ConnectContext, live: Live) {
+    // #2/4. Get user info.
+    func requestUserInfo(liveProgramId: String, connectContext: ConnectContext, live: Live, allowRefreshToken: Bool = true) {
+        guard let accessToken = authManager.currentToken?.accessToken else {
+            // This will never be happened.
+            delegate?.nicoUtilityDidFailToPrepareLive(self, error: .internal)
+            return
+        }
         requestUserInfo(accessToken: accessToken) { [weak self] in
             guard let me = self else { return }
             switch $0 {
             case .success(let response):
                 me.requestWebSocketEndpoint(
                     liveProgramId: liveProgramId,
-                    accessToken: accessToken,
                     connectContext: connectContext,
                     live: live,
                     user: response.toUser())
             case .failure(let error):
+                log.error(error)
+                // Is access token expired?
+                if error == .invalidToken, allowRefreshToken {
+                    // Access token is expired, so refresh tokens..
+                    me.refreshToken {
+                        switch $0 {
+                        case .success():
+                            // Refresh token successfully completed, retry the call.
+                            me.requestUserInfo(
+                                liveProgramId: liveProgramId,
+                                connectContext: connectContext,
+                                live: live,
+                                allowRefreshToken: false)
+                        case .failure(_):
+                            // Refresh token failed, finish to establish connection here.
+                            me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: error)
+                        }
+                    }
+                    return
+                }
                 me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: error)
             }
         }
     }
 
-    // #4/5. Get websocket endpoint.
-    func requestWebSocketEndpoint(liveProgramId: String, accessToken: String, connectContext: ConnectContext, live: Live, user: User) {
+    // #3/4. Get websocket endpoint.
+    func requestWebSocketEndpoint(liveProgramId: String, connectContext: ConnectContext, live: Live, user: User) {
+        guard let accessToken = authManager.currentToken?.accessToken else {
+            // This will never be happened.
+            delegate?.nicoUtilityDidFailToPrepareLive(self, error: .internal)
+            return
+        }
         requestWebSocketEndpoint(
             accessToken: accessToken,
             liveProgramId: liveProgramId,
@@ -366,7 +371,7 @@ private extension NicoUtility {
                 me.live = live
                 me.delegate?.nicoUtilityDidPrepareLive(
                     me, user: user, live: live, connectContext: connectContext)
-                // #5/5. Ok, open the websockets.
+                // #4/4. Ok, open the websockets.
                 me.openWatchSocket(
                     webSocketUrl: response.data.url,
                     userId: String(user.userId),
@@ -381,6 +386,28 @@ private extension NicoUtility {
 
 // Methods for main connect sequence above.
 private extension NicoUtility {
+    func refreshToken(completion: @escaping (Result<Void, AuthManagerError>) -> Void) {
+        authManager.refreshToken { [weak self] in
+            guard let me = self else { return }
+            switch $0 {
+            case .success(_):
+                completion(.success(()))
+            case .failure(let error):
+                log.error(error)
+                switch error {
+                case .noRefreshToken, .networkUnavailable:
+                    // For the `.networkUnavailable` case, it might be temporary
+                    // situation. So skip clearing the tokens.
+                    break
+                case .refreshTokenFailed, .internal:
+                    // Clear possible "useless" stored token..
+                    me.logout()
+                }
+                completion(.failure(.internal))
+            }
+        }
+    }
+
     func requestLiveInfo(liveProgramId: String, completion: @escaping (Result<EmbeddedDataProperties, NicoError>) -> Void) {
         let url = _livePageUrl + liveProgramId
         session
@@ -425,7 +452,7 @@ private extension NicoUtility {
             case .failure(let error):
                 log.error(error)
                 // TODO: Update error
-                completion(.failure(.internal))
+                completion(.failure(error.isInvalidToken ? .invalidToken : .internal))
             }
         }
     }

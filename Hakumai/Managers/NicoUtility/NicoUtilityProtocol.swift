@@ -31,6 +31,9 @@ protocol NicoUtilityType {
 
     // Miscellaneous Methods
     func reportAsNgUser(chat: Chat, completion: @escaping (_ userId: String?) -> Void)
+
+    // Debug Methods
+    func injectExpiredAccessToken()
 }
 
 // Note these functions are called in background thread, not main thread.

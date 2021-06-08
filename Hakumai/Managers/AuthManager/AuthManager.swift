@@ -19,6 +19,10 @@ private let devHakumaiServerApiBaseUrl = "https://dev.hakumai-app.com"
 
 private let useDevServer = false
 
+// swiftlint:disable line_length
+private let debugExpiredAccessToken = "at.39039085.eyJ0eXAiOiJKT1NFK0pTT04iLCJhbGciOiJSUzI1NiJ9.eyJjbGllbnRJZCI6IkZZdGduRjE4a3hoU3dOWTIiLCJ1c2VySWQiOiI3OTU5NSIsInNjb3BlIjpbIm9mZmxpbmVfYWNjZXNzIiwib3BlbmlkIiwicHJvZmlsZSIsInVzZXIuYXV0aG9yaXRpZXMucmVsaXZlcy5icm9hZGNhc3QiLCJ1c2VyLmF1dGhvcml0aWVzLnJlbGl2ZXMud2F0Y2guZ2V0IiwidXNlci5hdXRob3JpdGllcy5yZWxpdmVzLndhdGNoLmludGVyYWN0IiwidXNlci5jaGFubmVscyIsInVzZXIucHJlbWl1bSJdLCJpc3N1ZURhdGUiOjE2MjMxNDA1MzIsIm1heEFnZSI6MzYwMH0.BkNPYCXMtR7wGxcwRCwwUzbaWIja3Ii-CkJVWVgE8Eu55WOm9MNRYxbSB-nJQsnPCOOPvK6IcPrJfQpUipqEX5PnKT89Aan6nwUtYDlkzvjqvMmVcNq87rNqKbMqYlEtBtoKtWRDE73nDxFq4HKNtC43UiDYoEHVu_l0TcxuNnc"
+// swiftlint:enable line_length
+
 protocol AuthManagerProtocol {
     var authWebUrl: URL { get }
     var hasToken: Bool { get }
@@ -27,6 +31,9 @@ protocol AuthManagerProtocol {
     func extractCallbackResponseAndSaveToken(response: String, completion: (Result<AuthManagerToken, AuthManagerError>) -> Void)
     func refreshToken(completion: @escaping (Result<AuthManagerToken, AuthManagerError>) -> Void)
     func clearToken()
+
+    // debug function
+    func injectExpiredAccessToken()
 }
 
 struct AuthManagerToken: Codable {
@@ -117,6 +124,21 @@ extension AuthManager {
     func clearToken() {
         currentToken = nil
         tokenStore.clearToken()
+    }
+}
+
+extension AuthManager {
+    func injectExpiredAccessToken() {
+        guard let token = currentToken else { return }
+        currentToken = AuthManagerToken(
+            accessToken: debugExpiredAccessToken,
+            tokenType: token.tokenType,
+            expiresIn: token.expiresIn,
+            scope: token.scope,
+            refreshToken: token.refreshToken,
+            idToken: token.idToken
+        )
+        tokenStore.saveToken(token.toStoredToken())
     }
 }
 
