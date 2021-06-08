@@ -127,7 +127,7 @@ final class NicoUtility: NicoUtilityType {
 
     init(authManager: AuthManagerProtocol = AuthManager.shared) {
         self.authManager = authManager
-        self.session = {
+        session = {
             let configuration = URLSessionConfiguration.af.default
             configuration.headers.add(.userAgent(commonUserAgentValue))
             return Session(configuration: configuration)
@@ -217,7 +217,7 @@ extension NicoUtility {
     }
 
     func userPageUrl(for userId: String) -> URL? {
-        return URL(string: _userPageUrl + userId)
+        URL(string: _userPageUrl + userId)
     }
 
     func userIconUrl(for userId: String) -> URL? {
@@ -232,7 +232,7 @@ extension NicoUtility {
 // MARK: - Public Methods (Username)
 extension NicoUtility {
     func cachedUserName(forChat chat: Chat) -> String? {
-        return cachedUserName(forUserId: chat.userId)
+        cachedUserName(forUserId: chat.userId)
     }
 
     func cachedUserName(forUserId userId: String) -> String? {
@@ -294,7 +294,7 @@ private extension NicoUtility {
             guard let me = self else { return }
             switch $0 {
             case .success(let token):
-                me.reqeustLiveInfo(
+                me.requestLiveInfo(
                     liveProgramId: liveProgramId,
                     accessToken: token.accessToken,
                     connectContext: connectContext
@@ -317,8 +317,8 @@ private extension NicoUtility {
     }
 
     // #2/5. Get general live info from live page (no login required).
-    func reqeustLiveInfo(liveProgramId: String, accessToken: String, connectContext: ConnectContext) {
-        reqeustLiveInfo(liveProgramId: liveProgramId) { [weak self] in
+    func requestLiveInfo(liveProgramId: String, accessToken: String, connectContext: ConnectContext) {
+        requestLiveInfo(liveProgramId: liveProgramId) { [weak self] in
             guard let me = self else { return }
             switch $0 {
             case .success(let props):
@@ -379,7 +379,7 @@ private extension NicoUtility {
 
 // Methods for main connect sequence above.
 private extension NicoUtility {
-    func reqeustLiveInfo(liveProgramId: String, completion: @escaping (Result<EmbeddedDataProperties, NicoError>) -> Void) {
+    func requestLiveInfo(liveProgramId: String, completion: @escaping (Result<EmbeddedDataProperties, NicoError>) -> Void) {
         let url = _livePageUrl + liveProgramId
         session
             .request(url)
@@ -473,7 +473,7 @@ private extension NicoUtility {
     }
 
     func openMessageSocket(userId: String, room: WebSocketRoomData, connectContext: ConnectContext) {
-        openMessageSocket(userId: userId, room: room, connectContex: connectContext) { [weak self] in
+        openMessageSocket(userId: userId, room: room, connectContext: connectContext) { [weak self] in
             guard let me = self else { return }
             switch $0 {
             case .success():
@@ -524,7 +524,7 @@ private extension NicoUtility {
 // Api Client Utility Methods
 private extension NicoUtility {
     func authorizationHeader(with: String) -> HTTPHeaders {
-        return [httpHeaderKeyAuthorization: "Bearer \(with)"]
+        [httpHeaderKeyAuthorization: "Bearer \(with)"]
     }
 
     func decodeApiResponse<T: Codable>(from data: Data) -> T? {
@@ -628,7 +628,7 @@ private extension NicoUtility {
 
 // MARK: - Private Methods (Message Socket)
 private extension NicoUtility {
-    func openMessageSocket(userId: String, room: WebSocketRoomData, connectContex: ConnectContext, completion: @escaping (Result<Void, NicoError>) -> Void) {
+    func openMessageSocket(userId: String, room: WebSocketRoomData, connectContext: ConnectContext, completion: @escaping (Result<Void, NicoError>) -> Void) {
         guard let url = URL(string: room.data.messageServer.uri) else {
             completion(Result.failure(NicoError.internal))
             return
@@ -648,7 +648,7 @@ private extension NicoUtility {
                 userId: userId,
                 threadId: room.data.threadId,
                 resFrom: {
-                    switch connectContex {
+                    switch connectContext {
                     case .normal:       return -150
                     case .reconnect:    return -100
                     }
@@ -854,7 +854,7 @@ private extension NicoUtility {
 // MARK: - Private Extensions
 private extension EmbeddedDataProperties {
     func toLive() -> Live {
-        return Live(
+        Live(
             liveId: program.nicoliveProgramId,
             title: program.title,
             community: Community(
@@ -872,7 +872,7 @@ private extension EmbeddedDataProperties {
 
 private extension UserInfoResponse {
     func toUser() -> User {
-        return User(
+        User(
             userId: sub,
             nickname: nickname
         )
@@ -881,7 +881,7 @@ private extension UserInfoResponse {
 
 private extension WebSocketChatData {
     func toChat() -> Chat {
-        return Chat(
+        Chat(
             no: chat.no,
             date: chat.date.toDateAsTimeIntervalSince1970(),
             dateUsec: chat.dateUsec,
@@ -904,7 +904,7 @@ private extension WebSocketChatData {
 
 private extension WebSocketStatisticsData {
     func toLiveStatistics() -> LiveStatistics {
-        return LiveStatistics(
+        LiveStatistics(
             viewers: data.viewers,
             comments: data.comments,
             adPoints: data.adPoints,
