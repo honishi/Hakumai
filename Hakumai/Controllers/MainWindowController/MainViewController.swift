@@ -907,10 +907,10 @@ private extension MainViewController {
 private extension NicoUtility.NicoError {
     var toMessage: String {
         switch self {
-        case .internal:                     return L10n.errorInternal
-        case .noLiveInfo:                   return L10n.errorNoLiveInfo
-        case .noMessageServerInfo:          return L10n.errorNoMessageServerInfo
-        case .failedToOpenMessageServer:    return L10n.errorFailedToOpenMessageServer
+        case .internal:                 return L10n.errorInternal
+        case .noLiveInfo:               return L10n.errorNoLiveInfo
+        case .noMessageServerInfo:      return L10n.errorNoMessageServerInfo
+        case .openMessageServerFailed:  return L10n.errorFailedToOpenMessageServer
         }
     }
 }

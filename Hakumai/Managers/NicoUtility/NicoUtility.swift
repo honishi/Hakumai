@@ -59,7 +59,7 @@ final class NicoUtility: NicoUtilityType {
         case `internal`
         case noLiveInfo
         case noMessageServerInfo
-        case failedToOpenMessageServer
+        case openMessageServerFailed
     }
     enum ConnectContext { case normal, reconnect }
     enum DisconnectContext { case normal, reconnect }
@@ -299,11 +299,19 @@ private extension NicoUtility {
                     accessToken: token.accessToken,
                     connectContext: connectContext
                 )
-            case .failure(_):
+            case .failure(let error):
                 // TODO: Update error
                 me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: .internal)
-                // TODO: Clear useless stored token? logout?
-                me.logout()
+                log.error(error)
+                switch error {
+                case .noRefreshToken, .networkUnavailable:
+                    // For the `.networkUnavailable` case, it might be temporary
+                    // situation. So skip clearing the tokens.
+                    break
+                case .refreshTokenFailed, .internal:
+                    // Clear possible "useless" stored token..
+                    me.logout()
+                }
             }
         }
     }
@@ -475,7 +483,7 @@ private extension NicoUtility {
                 me.isConnected = true
                 me.delegate?.nicoUtilityDidConnectToLive(me, roomPosition: RoomPosition.arena, connectContext: connectContext)
             case .failure(_):
-                me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: .failedToOpenMessageServer)
+                me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: .openMessageServerFailed)
             }
         }
     }

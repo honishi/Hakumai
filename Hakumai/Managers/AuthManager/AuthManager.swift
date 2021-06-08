@@ -24,8 +24,8 @@ protocol AuthManagerProtocol {
     var hasToken: Bool { get }
     var currentToken: AuthManagerToken? { get }
 
-    func extractCallbackResponseAndSaveToken(response: String, completion: ((Result<AuthManagerToken, AuthManagerError>) -> Void))
-    func refreshToken(completion: @escaping ((Result<AuthManagerToken, AuthManagerError>) -> Void))
+    func extractCallbackResponseAndSaveToken(response: String, completion: (Result<AuthManagerToken, AuthManagerError>) -> Void)
+    func refreshToken(completion: @escaping (Result<AuthManagerToken, AuthManagerError>) -> Void)
     func clearToken()
 }
 
@@ -39,9 +39,9 @@ struct AuthManagerToken: Codable {
 }
 
 enum AuthManagerError: Error {
-    case noAvailableRefreshToken
+    case noRefreshToken
     case refreshTokenFailed
-    case decode
+    case networkUnavailable
     case `internal`
 }
 
@@ -53,11 +53,18 @@ final class AuthManager: AuthManagerProtocol {
     // MARK: Properties
     lazy var authWebUrl: URL = makeAuthWebUrl(useDevServer: useDevServer)
     var hasToken: Bool { currentToken != nil }
+
+    private let session: Session
     private let tokenStore: TokenStoreProtocol
     private(set) var currentToken: AuthManagerToken?
     private lazy var refreshTokenApiUrl: URL = makeRefreshTokenApiUrl(useDevServer: useDevServer)
 
     init(tokenStore: TokenStoreProtocol) {
+        session = {
+            let configuration = URLSessionConfiguration.af.default
+            // XXX: Configure the `configuration` if needed.
+            return Session(configuration: configuration)
+        }()
         self.tokenStore = tokenStore
         currentToken = loadToken()
         log.debug("")
@@ -65,9 +72,9 @@ final class AuthManager: AuthManagerProtocol {
 }
 
 extension AuthManager {
-    func extractCallbackResponseAndSaveToken(response: String, completion: ((Result<AuthManagerToken, AuthManagerError>) -> Void)) {
+    func extractCallbackResponseAndSaveToken(response: String, completion: (Result<AuthManagerToken, AuthManagerError>) -> Void) {
         guard let response = decodeTokenResponse(from: response) else {
-            completion(.failure(.decode))
+            completion(.failure(.internal))
             return
         }
         log.debug(response)
@@ -76,15 +83,15 @@ extension AuthManager {
         completion(.success(token))
     }
 
-    func refreshToken(completion: @escaping ((Result<AuthManagerToken, AuthManagerError>) -> Void)) {
+    func refreshToken(completion: @escaping (Result<AuthManagerToken, AuthManagerError>) -> Void) {
         guard let refreshToken = currentToken?.refreshToken else {
-            completion(.failure(.noAvailableRefreshToken))
+            completion(.failure(.noRefreshToken))
             return
         }
         var request = URLRequest(url: refreshTokenApiUrl)
         request.method = .post
         request.httpBody = "refresh_token=\(refreshToken)".data(using: .utf8)
-        AF.request(request)
+        session.request(request)
             .cURLDescription { log.debug($0) }
             .validate()
             .responseString { [weak self] in
@@ -94,7 +101,7 @@ extension AuthManager {
                 case .success(let string):
                     log.debug(string)
                     guard let response = me.decodeTokenResponse(from: string) else {
-                        completion(.failure(.decode))
+                        completion(.failure(.internal))
                         return
                     }
                     let token = response.toAuthManagerToken()
@@ -102,7 +109,7 @@ extension AuthManager {
                     completion(.success(token))
                 case .failure(let error):
                     log.error(error)
-                    completion(.failure(.refreshTokenFailed))
+                    completion(.failure(error.isNetworkError ? .networkUnavailable : .refreshTokenFailed))
                 }
             }
     }
@@ -156,7 +163,7 @@ private extension AuthManager {
 
 private extension TokenResponse {
     func toAuthManagerToken() -> AuthManagerToken {
-        return AuthManagerToken(
+        AuthManagerToken(
             accessToken: accessToken,
             tokenType: tokenType,
             expiresIn: expiresIn,
@@ -169,7 +176,7 @@ private extension TokenResponse {
 
 private extension AuthManagerToken {
     func toStoredToken() -> StoredToken {
-        return StoredToken(
+        StoredToken(
             accessToken: accessToken,
             tokenType: tokenType,
             expiresIn: expiresIn,
@@ -182,7 +189,7 @@ private extension AuthManagerToken {
 
 private extension StoredToken {
     func toAuthManagerToken() -> AuthManagerToken {
-        return AuthManagerToken(
+        AuthManagerToken(
             accessToken: accessToken,
             tokenType: tokenType,
             expiresIn: expiresIn,
