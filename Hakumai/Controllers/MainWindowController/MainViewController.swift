@@ -10,7 +10,7 @@ import Foundation
 import AppKit
 import Kingfisher
 
-private let userWindowDefautlTopLeftPoint = NSPoint(x: 100, y: 100)
+private let userWindowDefaultTopLeftPoint = NSPoint(x: 100, y: 100)
 private let calculateActiveUserInterval: TimeInterval = 5
 private let maximumFontSizeForNonMainColumn: CGFloat = 16
 private let defaultMinimumRowHeight: CGFloat = 17
@@ -69,7 +69,7 @@ final class MainViewController: NSViewController {
     private var liveStartedDate: Date?
 
     // row-height cache
-    private var rowHeightCacher = [Int: CGFloat]()
+    private var rowHeightCache = [Int: CGFloat]()
     private var minimumRowHeight: CGFloat = defaultMinimumRowHeight
     private var tableViewFontSize: CGFloat = CGFloat(kDefaultFontSize)
 
@@ -119,7 +119,7 @@ extension MainViewController {
 // MARK: - NSTableViewDataSource Functions
 extension MainViewController: NSTableViewDataSource {
     func numberOfRows(in tableView: NSTableView) -> Int {
-        return MessageContainer.shared.count()
+        MessageContainer.shared.count()
     }
 }
 
@@ -128,7 +128,7 @@ extension MainViewController: NSTableViewDelegate {
     func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
         let message = MessageContainer.shared[row]
 
-        if let cached = rowHeightCacher[message.messageNo] {
+        if let cached = rowHeightCache[message.messageNo] {
             return cached
         }
 
@@ -138,7 +138,7 @@ extension MainViewController: NSTableViewDelegate {
         let commentColumnWidth = commentTableColumn.width
         rowHeight = commentColumnHeight(forMessage: message, width: commentColumnWidth)
 
-        rowHeightCacher[message.messageNo] = rowHeight
+        rowHeightCache[message.messageNo] = rowHeight
 
         return rowHeight
     }
@@ -171,7 +171,7 @@ extension MainViewController: NSTableViewDelegate {
             return
         }
         if convertFromNSUserInterfaceItemIdentifier(column.identifier) == kCommentColumnIdentifier {
-            rowHeightCacher.removeAll(keepingCapacity: false)
+            rowHeightCache.removeAll(keepingCapacity: false)
             tableView.reloadData()
         }
     }
@@ -491,31 +491,31 @@ extension MainViewController {
 
         minimumRowHeight = calculateMinimumRowHeight(fontSize: tableViewFontSize)
         tableView.rowHeight = minimumRowHeight
-        rowHeightCacher.removeAll(keepingCapacity: false)
+        rowHeightCache.removeAll(keepingCapacity: false)
         tableView.reloadData()
     }
 
     func changeEnableMuteUserIds(_ enabled: Bool) {
         MessageContainer.shared.enableMuteUserIds = enabled
-        log.debug("changed enable mute userids: \(enabled)")
+        log.debug("Changed enable mute user ids: \(enabled)")
         rebuildFilteredMessages()
     }
 
     func changeMuteUserIds(_ muteUserIds: [[String: String]]) {
         MessageContainer.shared.muteUserIds = muteUserIds
-        log.debug("changed mute userids: \(muteUserIds)")
+        log.debug("Changed mute user ids: \(muteUserIds)")
         rebuildFilteredMessages()
     }
 
     func changeEnableMuteWords(_ enabled: Bool) {
         MessageContainer.shared.enableMuteWords = enabled
-        log.debug("changed enable mute words: \(enabled)")
+        log.debug("Changed enable mute words: \(enabled)")
         rebuildFilteredMessages()
     }
 
     func changeMuteWords(_ muteWords: [[String: String]]) {
         MessageContainer.shared.muteWords = muteWords
-        log.debug("changed mute words: \(muteWords)")
+        log.debug("Changed mute words: \(muteWords)")
         rebuildFilteredMessages()
     }
 
@@ -771,7 +771,7 @@ extension MainViewController {
         // check if user window exists?
         for existing in userWindowControllers where chat.userId == existing.userId {
             userWindowController = existing
-            log.debug("existing userwc found, use it:\(userWindowController?.description ?? "")")
+            log.debug("existing user-wc found, use it:\(userWindowController?.description ?? "")")
             break
         }
 
@@ -786,7 +786,7 @@ extension MainViewController {
                 delegate: self, userId: chat.userId, handleName: handleName)
             if let uwc = userWindowController {
                 positionUserWindow(uwc.window)
-                log.debug("no existing userwc found, create it:\(uwc.description)")
+                log.debug("no existing user-wc found, create it:\(uwc.description)")
                 userWindowControllers.append(uwc)
             }
         }
@@ -797,7 +797,7 @@ extension MainViewController {
         guard let userWindow = userWindow else { return }
         var topLeftPoint: NSPoint = nextUserWindowTopLeftPoint
         if userWindowControllers.count == 0 {
-            topLeftPoint = userWindowDefautlTopLeftPoint
+            topLeftPoint = userWindowDefaultTopLeftPoint
         }
         nextUserWindowTopLeftPoint = userWindow.cascadeTopLeft(from: topLeftPoint)
     }
@@ -891,7 +891,7 @@ private extension MainViewController {
 private extension MainViewController {
     func clearAllChats() {
         MessageContainer.shared.removeAll()
-        rowHeightCacher.removeAll(keepingCapacity: false)
+        rowHeightCache.removeAll(keepingCapacity: false)
         tableView.reloadData()
     }
 
@@ -917,7 +917,7 @@ private extension NicoUtility.NicoError {
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToNSUserInterfaceItemIdentifier(_ input: String) -> NSUserInterfaceItemIdentifier {
-    return NSUserInterfaceItemIdentifier(rawValue: input)
+    NSUserInterfaceItemIdentifier(rawValue: input)
 }
 
 // Helper function inserted by Swift 4.2 migrator.
@@ -928,6 +928,6 @@ private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: 
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertFromNSUserInterfaceItemIdentifier(_ input: NSUserInterfaceItemIdentifier) -> String {
-    return input.rawValue
+    input.rawValue
 }
 // swiftlint:enable file_length
