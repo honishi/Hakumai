@@ -444,15 +444,13 @@ private extension NicoUtility {
             case .success(let data):
                 log.debug(String(data: data, encoding: .utf8))
                 guard let response: UserInfoResponse = me.decodeApiResponse(from: data) else {
-                    // TODO: Update error
                     completion(.failure(.internal))
                     return
                 }
                 completion(.success(response))
             case .failure(let error):
                 log.error(error)
-                // TODO: Update error
-                completion(.failure(error.isInvalidToken ? .invalidToken : .internal))
+                completion(.failure(error.toNicoError()))
             }
         }
     }
@@ -477,14 +475,13 @@ private extension NicoUtility {
             case .success(let data):
                 log.debug(String(data: data, encoding: .utf8))
                 guard let response: WsEndpointResponse = me.decodeApiResponse(from: data) else {
-                    // TODO: Update error
                     completion(.failure(.internal))
                     return
                 }
                 completion(.success(response))
             case .failure(let error):
                 log.error(error)
-                completion(.failure(.internal))
+                completion(.failure(error.toNicoError()))
             }
         }
     }
@@ -881,6 +878,15 @@ private extension NicoUtility {
 }
 
 // MARK: - Private Extensions
+private extension AFError {
+    func toNicoError() -> NicoUtility.NicoError {
+        if isInvalidToken {
+            return .invalidToken
+        }
+        return .internal
+    }
+}
+
 private extension EmbeddedDataProperties {
     func toLive() -> Live {
         Live(
