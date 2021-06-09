@@ -517,22 +517,12 @@ private extension NicoUtility {
     }
 
     func refreshToken(completion: @escaping (Result<Void, AuthManagerError>) -> Void) {
-        authManager.refreshToken { [weak self] in
-            guard let me = self else { return }
+        authManager.refreshToken {
             switch $0 {
             case .success(_):
                 completion(.success(()))
             case .failure(let error):
                 log.error(error)
-                switch error {
-                case .noRefreshToken, .networkUnavailable:
-                    // For the `.networkUnavailable` case, it might be temporary
-                    // situation. So skip clearing the tokens.
-                    break
-                case .refreshTokenFailed, .internal:
-                    // Clear possible "useless" stored token..
-                    me.logout()
-                }
                 completion(.failure(.internal))
             }
         }

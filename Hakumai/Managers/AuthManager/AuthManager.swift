@@ -48,7 +48,6 @@ struct AuthManagerToken: Codable {
 enum AuthManagerError: Error {
     case noRefreshToken
     case refreshTokenFailed
-    case networkUnavailable
     case `internal`
 }
 
@@ -116,7 +115,15 @@ extension AuthManager {
                     completion(.success(token))
                 case .failure(let error):
                     log.error(error)
-                    completion(.failure(error.isNetworkError ? .networkUnavailable : .refreshTokenFailed))
+                    if error.isNetworkError {
+                        // Do nothing for this case. This might be temporary situation.
+                        log.debug("Failed to refresh token, but skip to clear token since it's by network error.")
+                    } else {
+                        // Clearing possible "useless" stored token.
+                        log.debug("Failed to refresh token, so clearing the token since it's possibly unusable one.")
+                        me.clearToken()
+                    }
+                    completion(.failure(.refreshTokenFailed))
                 }
             }
     }
