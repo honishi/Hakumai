@@ -20,7 +20,7 @@ v{{site.binary_version}}, {{site.binary_date}} (for macOS 10.12-)
 ### Requirements
 
 * macOS 10.12 Sierra 以降が必要
-* Google Chrome と Safari に対応
+* コメント読み上げを使うには macOS 10.14 Mojave 以降が必要
 
 <img src="./image/food_kome_masu.png" width="160px">
 
