@@ -12,7 +12,7 @@ import Foundation
 // http://stackoverflow.com/a/26252377
 struct Parameters {
     // general
-    static let sessionManagement = "SessionManagement"
+    static let browserInUse = "BrowserInUse"
     static let enableCommentSpeech = "EnableCommentSpeech"
     static let commentSpeechVolume = "CommentSpeechVolume"
 
@@ -30,16 +30,9 @@ struct Parameters {
 }
 
 // session management
-enum SessionManagementType: Int {
-    case login = 1000
+enum BrowserInUseType: Int {
     case chrome = 1001
     case safari = 1002
-}
-
-// keychain
-struct KeyChainLoginName {
-    static let mailAddress = "MailAddress"
-    static let password = "Password"
 }
 
 // dictionary keys in MuteUserIds array objects

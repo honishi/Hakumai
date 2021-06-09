@@ -26,6 +26,8 @@
 "quit_hakumai" = "Hakumai を終了";
 
 /// File Menu
+"login" = "ログイン";
+"logout" = "ログアウト";
 "open_url" = "URL を開く";
 "grab_url_from_browser" = "ブラウザから URL をコピーする";
 "new_comment" = "新規コメント";
@@ -87,9 +89,8 @@
 "live_url_text_field_placeholder" = "⌘L (放送URL, 放送番号)";
 "speak_comment" = "読み上げ";
 "visitor_count" = "来場者";
-"safari_cookie_alert_title" = "Safari から Cookie が取得できません";
-"safari_cookie_alert_description" = "Safari から Cookie を取得するには、「システム環境設定」の中から「セキュリティとプライバシー」を開き、「プライバシー」タブの「フルディスクアクセス」の中の Hakumai アプリにチェックを入れてください。";
-"open_security_privacy" = "セキュリティとプライバシーを開く";
+"login_completed" = "ログインしました.";
+"logout_completed" = "ログアウトしました.";
 
 /// Message
 "prepared_live" = "\"%@\" で放送情報を取得しました.";
@@ -101,7 +102,6 @@
 
 /// Error
 "error_internal" = "内部エラー.";
-"error_no_cookie" = "Cookie が取得できませんでした.";
 "error_no_live_info" = "放送情報の取得に失敗しました.";
 "error_no_message_server_info" = "Message Server の情報が取得できませんでした.";
 "error_failed_to_open_message_server" = "Message Server に接続できませんでした.";
@@ -131,16 +131,9 @@
 /// Preference Window
 ///
 /// General
-"session_management" = "セッション管理";
+"browser_in_use" = "\"ブラウザから URL をコピーする\" 機能 (⌘U) で使用するブラウザ";
 "google_chrome" = "Google Chrome";
-"safari" = "Safari";
-"direct_login" = "直接ログイン (非推奨)";
-"mail_address" = "メールアドレス";
-"password" = "パスワード";
-"check" = "確認";
-"status" = "状態";
-"success" = "成功";
-"failed" = "失敗";
+"safari" = "Safari (まだ未サポート…)";
 "comment_speaking" = "コメント読み上げ";
 "speak_comments" = "コメント読み上げ (macOS 10.14 以降が必要)";
 "speak_volume" = "読み上げボリューム";

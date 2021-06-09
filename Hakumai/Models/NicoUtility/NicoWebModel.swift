@@ -52,13 +52,7 @@ struct EmbeddedDataProperties: Codable {
         let level: Int?
     }
 
-    struct EmbeddedDataUser: Codable {
-        let id: String
-        let nickname: String
-    }
-
     let site: Site
     let program: Program
     let socialGroup: SocialGroup
-    let user: EmbeddedDataUser
 }

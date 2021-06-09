@@ -13,18 +13,21 @@ import Starscream
 import XCGLogger
 
 // MARK: - Constants
-// URLs:
-private let livePageUrl = "https://live.nicovideo.jp/watch/lv"
+// General URL:
+private let _livePageUrl = "https://live.nicovideo.jp/watch/"
 private let _userPageUrl = "https://www.nicovideo.jp/user/"
 private let _userIconUrl = "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/"
+
+// API URL:
+private let userinfoApiUrl = "https://oauth.nicovideo.jp/open_id/userinfo"
+private let wsEndpointApiUrl = "https://api.live2.nicovideo.jp/api/v1/wsendpoint"
 private let userNicknameApiUrl = "https://api.live2.nicovideo.jp/api/v1/user/nickname"
 
-// Cookies:
-private let userSessionCookieDomain = "nicovideo.jp"
-private let userSessionCookieName = "user_session"
-private let userSessionCookieExpire = TimeInterval(7200)
-private let userSessionCookiePath = "/"
+// HTTP Header:
+private let httpHeaderKeyAuthorization = "Authorization"
+
 // Misc:
+private let defaultRequestTimeout: TimeInterval = 10
 private let defaultWatchSocketKeepSeatInterval = 30
 private let messageSocketEmptyMessageInterval = 60
 private let pingPongCheckInterval = 10
@@ -52,17 +55,11 @@ private let postCommentMessage = """
 // MARK: - Class
 final class NicoUtility: NicoUtilityType {
     // MARK: - Types
-    enum SessionType {
-        case chrome
-        case safari
-        case login(mail: String, password: String)
-    }
     enum NicoError: Error {
         case `internal`
-        case noCookie
         case noLiveInfo
         case noMessageServerInfo
-        case failedToOpenMessageServer
+        case openMessageServerFailed
     }
     enum ConnectContext { case normal, reconnect }
     enum DisconnectContext { case normal, reconnect }
@@ -71,8 +68,7 @@ final class NicoUtility: NicoUtilityType {
     struct ConnectRequests {
         // swiftlint:disable nesting
         struct Request {
-            let liveNumber: Int
-            let sessionType: SessionType
+            let liveProgramId: String
         }
         // swiftlint:enable nesting
         var onGoing: Request?
@@ -98,17 +94,16 @@ final class NicoUtility: NicoUtilityType {
     private(set) var live: Live?
 
     // Private Properties
+    private let authManager: AuthManagerProtocol
     private var isConnected = false
     private var connectRequests: ConnectRequests =
         ConnectRequests(
             onGoing: nil,
             lastEstablished: nil
         )
-    private var userSessionCookie: String?
     private let session: Session
     private var watchSocket: WebSocket?
     private var messageSocket: WebSocket?
-    private var shouldClearUserSessionCookie = true
 
     // Timers for WebSockets
     private var watchSocketKeepSeatInterval = 30
@@ -130,26 +125,32 @@ final class NicoUtility: NicoUtilityType {
     // App-side Health Check (Text Socket)
     private var textSocketEventCheckTimer: Timer?
 
-    init() {
-        let configuration = URLSessionConfiguration.af.default
-        configuration.headers.add(.userAgent(commonUserAgentValue))
-        self.session = Session(configuration: configuration)
-        clearHttpCookieStorage()
+    init(authManager: AuthManagerProtocol = AuthManager.shared) {
+        self.authManager = authManager
+        session = {
+            let configuration = URLSessionConfiguration.af.default
+            configuration.headers.add(.userAgent(commonUserAgentValue))
+            return Session(configuration: configuration)
+        }()
         userNameResolvingOperationQueue.maxConcurrentOperationCount = 1
     }
 }
 
 // MARK: - Public Methods (Main)
 extension NicoUtility {
-    func connect(liveNumber: Int, sessionType: SessionType, connectContext: NicoUtility.ConnectContext = .normal) {
-        // 1. Save connection request.
-        connectRequests.onGoing = ConnectRequests.Request(
-            liveNumber: liveNumber,
-            sessionType: sessionType
-        )
+    func connect(liveProgramId: String, connectContext: NicoUtility.ConnectContext = .normal) {
+        // 1. Check if the token is existing.
+        guard authManager.hasToken else {
+            delegate?.nicoUtilityNeedsToken(self)
+            return
+        }
+        delegate?.nicoUtilityDidConfirmTokenExistence(self)
+
+        // 2. Save connection request.
+        connectRequests.onGoing = ConnectRequests.Request(liveProgramId: liveProgramId)
         connectRequests.lastEstablished = nil
 
-        // 2. Save chat numbers.
+        // 3. Save chat numbers.
         switch connectContext {
         case .normal:
             chatNumbers.latest = 0
@@ -158,43 +159,14 @@ extension NicoUtility {
             chatNumbers.maxBeforeReconnect = chatNumbers.latest
         }
 
-        // 3. Cleanup current connection, if needed.
+        // 4. Cleanup current connection, if needed.
         if live != nil {
             disconnect()
         }
 
-        // 4. Go direct to `connect()` IF the user session cookie is availale.
-        clearUserSessionCookieIfReserved()
+        // 5. Ok, start to establish connection from retrieving general live info.
         delegate?.nicoUtilityWillPrepareLive(self)
-        if let userSessionCookie = userSessionCookie {
-            connect(
-                liveNumber: liveNumber,
-                userSessionCookie: userSessionCookie,
-                connectContext: connectContext)
-            return
-        }
-
-        // 5. Ok, there's no cookie available, go get it..
-        let completion = { (userSessionCookie: String?) -> Void in
-            log.debug("Cookie result: [\(sessionType)] [\(userSessionCookie ?? "-")]")
-            guard let userSessionCookie = userSessionCookie else {
-                log.error("No available cookie.")
-                self.delegate?.nicoUtilityDidFailToPrepareLive(self, error: .noCookie)
-                return
-            }
-            self.connect(
-                liveNumber: liveNumber,
-                userSessionCookie: userSessionCookie,
-                connectContext: connectContext)
-        }
-        switch sessionType {
-        case .chrome:
-            CookieUtility.requestBrowserCookie(browserType: .chrome, completion: completion)
-        case .safari:
-            CookieUtility.requestBrowserCookie(browserType: .safari, completion: completion)
-        case .login(let mail, let password):
-            CookieUtility.requestLoginCookie(mailAddress: mail, password: password, completion: completion)
-        }
+        requestLiveInfo(liveProgramId: liveProgramId, connectContext: connectContext)
     }
 
     func disconnect(disconnectContext: NicoUtility.DisconnectContext = .normal) {
@@ -226,8 +198,7 @@ extension NicoUtility {
         // Just in case, make some delay to invoke the connect method.
         DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 2) {
             self.connect(
-                liveNumber: lastConnection.liveNumber,
-                sessionType: lastConnection.sessionType,
+                liveProgramId: lastConnection.liveProgramId,
                 connectContext: .reconnect)
         }
     }
@@ -243,8 +214,12 @@ extension NicoUtility {
         watchSocket?.write(string: message)
     }
 
+    func logout() {
+        authManager.clearToken()
+    }
+
     func userPageUrl(for userId: String) -> URL? {
-        return URL(string: _userPageUrl + userId)
+        URL(string: _userPageUrl + userId)
     }
 
     func userIconUrl(for userId: String) -> URL? {
@@ -253,18 +228,17 @@ extension NicoUtility {
         return URL(string: "\(_userIconUrl)\(path)/\(userId).jpg")
     }
 
-    func reserveToClearUserSessionCookie() {
-        shouldClearUserSessionCookie = true
-        log.debug("reserved to clear user session cookie")
-    }
-
     func reportAsNgUser(chat: Chat, completion: @escaping (String?) -> Void) {}
+
+    func injectExpiredAccessToken() {
+        authManager.injectExpiredAccessToken()
+    }
 }
 
 // MARK: - Public Methods (Username)
 extension NicoUtility {
     func cachedUserName(forChat chat: Chat) -> String? {
-        return cachedUserName(forUserId: chat.userId)
+        cachedUserName(forUserId: chat.userId)
     }
 
     func cachedUserName(forUserId userId: String) -> String? {
@@ -295,6 +269,7 @@ extension NicoUtility {
                 method: .get,
                 parameters: ["userId": userId]
             )
+            .validate()
             .syncResponseData {
                 switch $0.result {
                 case .success(let data):
@@ -317,52 +292,86 @@ extension NicoUtility {
 }
 
 // MARK: - Private Methods
+// Main connect sequence.
 private extension NicoUtility {
-    func connect(liveNumber: Int, userSessionCookie: String, connectContext: ConnectContext) {
-        self.userSessionCookie = userSessionCookie
+    // #1/5. Get general live info from live page (no login required).
+    func requestLiveInfo(liveProgramId: String, connectContext: ConnectContext) {
+        let url = _livePageUrl + liveProgramId
+        session
+            .request(url)
+            .cURLDescription(calling: { log.debug($0) })
+            .validate()
+            .responseData { [weak self] in
+                guard let me = self else { return }
+                // log.debug($0.debugDescription)
+                switch $0.result {
+                case .success(let data):
+                    guard let props = NicoUtility.extractEmbeddedDataPropertiesFromLivePage(html: data) else {
+                        me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: .internal)
+                        return
+                    }
+                    me.requestUserInfo(
+                        liveProgramId: liveProgramId,
+                        connectContext: connectContext,
+                        live: props.toLive())
+                case .failure(let error):
+                    log.error(error)
+                    me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: .internal)
+                }
+            }
+    }
 
-        reqeustLiveInfo(lv: liveNumber) { [weak self] in
+    // #2/5. Get user info.
+    func requestUserInfo(liveProgramId: String, connectContext: ConnectContext, live: Live, allowRefreshToken: Bool = true) {
+        callOAuthEndpoint(
+            url: userinfoApiUrl
+        ) { [weak self] (result: Result<UserInfoResponse, NicoError>) in
             guard let me = self else { return }
-            switch $0 {
-            case .success(let embeddedData):
-                let live = embeddedData.toLive()
-                let user = embeddedData.toUser()
-                self?.live = live
-                me.delegate?.nicoUtilityDidPrepareLive(me, user: user, live: live, connectContext: connectContext)
+            switch result {
+            case .success(let response):
+                me.requestWebSocketEndpoint(
+                    liveProgramId: liveProgramId,
+                    connectContext: connectContext,
+                    live: live,
+                    user: response.toUser())
+            case .failure(let error):
+                log.error(error)
+                me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: .internal)
+            }
+        }
+    }
+
+    // #3/5. Get websocket endpoint.
+    func requestWebSocketEndpoint(liveProgramId: String, connectContext: ConnectContext, live: Live, user: User) {
+        // https://github.com/niconamaworkshop/websocket_api_document
+        callOAuthEndpoint(
+            url: wsEndpointApiUrl,
+            parameters: [
+                "nicoliveProgramId": liveProgramId,
+                "userId": user.userId
+            ]
+        ) { [weak self] (result: Result<WsEndpointResponse, NicoError>) in
+            guard let me = self else { return }
+            switch result {
+            case .success(let response):
+                me.live = live
+                me.delegate?.nicoUtilityDidPrepareLive(
+                    me, user: user, live: live, connectContext: connectContext)
+                // Ok, proceed to websocket calls..
                 me.openWatchSocket(
-                    webSocketUrl: embeddedData.site.relive.webSocketUrl,
-                    userId: embeddedData.user.id,
+                    webSocketUrl: response.data.url,
+                    userId: String(user.userId),
                     connectContext: connectContext
                 )
-            case .failure(_):
-                me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: .noLiveInfo)
+            case .failure(let error):
+                log.error(error)
+                me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: .internal)
             }
         }
     }
 
-    func reqeustLiveInfo(lv: Int, completion: @escaping (Result<EmbeddedDataProperties, NicoError>) -> Void) {
-        let urlRequest = urlRequestWithUserSessionCookie(
-            urlString: "\(livePageUrl)\(lv)",
-            userSession: userSessionCookie
-        )
-        let request = session.request(urlRequest)
-        request.cURLDescription(calling: { log.debug($0) })
-        request.responseData {
-            // log.debug($0.debugDescription)
-            switch $0.result {
-            case .success(let data):
-                guard let embedded = NicoUtility.extractEmbeddedDataPropertiesFromLivePage(html: data) else {
-                    completion(Result.failure(NicoError.internal))
-                    return
-                }
-                completion(Result.success(embedded))
-            case .failure(_):
-                completion(Result.failure(NicoError.internal))
-            }
-        }
-    }
-
-    func openWatchSocket(webSocketUrl: String, userId: String, connectContext: ConnectContext) {
+    // #4/5. Open watch socket.
+    func openWatchSocket(webSocketUrl: URL, userId: String, connectContext: ConnectContext) {
         openWatchSocket(webSocketUrl: webSocketUrl) { [weak self] in
             guard let me = self else { return }
             switch $0 {
@@ -374,8 +383,9 @@ private extension NicoUtility {
         }
     }
 
+    // #5/5. Finally, open message socket.
     func openMessageSocket(userId: String, room: WebSocketRoomData, connectContext: ConnectContext) {
-        openMessageSocket(userId: userId, room: room, connectContex: connectContext) { [weak self] in
+        openMessageSocket(userId: userId, room: room, connectContext: connectContext) { [weak self] in
             guard let me = self else { return }
             switch $0 {
             case .success():
@@ -383,11 +393,32 @@ private extension NicoUtility {
                 me.connectRequests.lastEstablished = me.connectRequests.onGoing
                 me.connectRequests.onGoing = nil
                 me.isConnected = true
-                me.delegate?.nicoUtilityDidConnectToLive(me, roomPosition: RoomPosition.arena, connectContext: connectContext)
+                me.delegate?.nicoUtilityDidConnectToLive(
+                    me,
+                    roomPosition: RoomPosition.arena,
+                    connectContext: connectContext)
             case .failure(_):
-                me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: .failedToOpenMessageServer)
+                me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: .openMessageServerFailed)
             }
         }
+    }
+}
+
+// Methods for disconnect and timers.
+private extension NicoUtility {
+    func startAllTimers() {
+        startWatchSocketKeepSeatTimer(interval: watchSocketKeepSeatInterval)
+        startMessageSocketEmptyMessageTimer(interval: messageSocketEmptyMessageInterval)
+        startPingPongCheckTimer()
+        log.debug("Started all timers.")
+    }
+
+    func stopAllTimers() {
+        stopWatchSocketKeepSeatTimer()
+        stopMessageSocketEmptyMessageTimer()
+        stopPingPongCheckTimer()
+        clearTextSocketEventCheckTimer()
+        log.debug("Stopped all timers.")
     }
 
     func disconnectSocketsAndResetState() {
@@ -403,33 +434,96 @@ private extension NicoUtility {
         live = nil
         isConnected = false
     }
+}
 
-    func startAllTimers() {
-        startWatchSocketKeepSeatTimer(interval: watchSocketKeepSeatInterval)
-        startMessageSocketEmptyMessageTimer(interval: messageSocketEmptyMessageInterval)
-        startPingPongCheckTimer()
-        log.debug("Started all timers.")
+// Methods for OAuth endpoint calls.
+private extension NicoUtility {
+    func callOAuthEndpoint<T: Codable>(url: String,
+                                       parameters: Alamofire.Parameters? = nil,
+                                       allowRefreshToken: Bool = true,
+                                       completion: @escaping (Result<T, NicoError>) -> Void) {
+        guard let url = URL(string: url) else {
+            completion(.failure(.internal))
+            return
+        }
+        callOAuthEndpoint(
+            url: url,
+            parameters: parameters,
+            allowRefreshToken: allowRefreshToken,
+            completion: completion)
     }
 
-    func stopAllTimers() {
-        stopWatchSocketKeepSeatTimer()
-        stopMessageSocketEmptyMessageTimer()
-        stopPingPongCheckTimer()
-        clearTextSocketEventCheckTimer()
-        log.debug("Stopped all timers.")
+    func callOAuthEndpoint<T: Codable>(url: URL,
+                                       parameters: Alamofire.Parameters?,
+                                       allowRefreshToken: Bool,
+                                       completion: @escaping (Result<T, NicoError>) -> Void) {
+        guard let accessToken = authManager.currentToken?.accessToken else {
+            completion(.failure(.internal))
+            return
+        }
+        session.request(
+            url,
+            method: .get,
+            parameters: parameters,
+            headers: authorizationHeader(with: accessToken)
+        )
+        .cURLDescription(calling: { log.debug($0) })
+        .validate()
+        .responseData { [weak self] in
+            guard let me = self else { return }
+            switch $0.result {
+            case .success(let data):
+                log.debug(String(data: data, encoding: .utf8))
+                guard let response: T = me.decodeApiResponse(from: data) else {
+                    completion(.failure(.internal))
+                    return
+                }
+                completion(.success(response))
+            case .failure(let error):
+                log.error(error)
+                // Is access token expired?
+                if error.isInvalidToken, allowRefreshToken {
+                    // Access token is expired, so refresh tokens..
+                    me.authManager.refreshToken {
+                        switch $0 {
+                        case .success(_):
+                            // Refresh token successfully completed, retry the call.
+                            me.callOAuthEndpoint(
+                                url: url,
+                                parameters: parameters,
+                                allowRefreshToken: false,   // Do NOT allow repeated refresh token.
+                                completion: completion)
+                        case .failure(let error):
+                            log.error(error)
+                            // Refresh token failed, finish to establish connection here.
+                            completion(.failure(.internal))
+                        }
+                    }
+                    return
+                }
+                // For normal error case, returning the error immediately.
+                completion(.failure(.internal))
+            }
+        }
+    }
+
+    func authorizationHeader(with: String) -> HTTPHeaders {
+        [httpHeaderKeyAuthorization: "Bearer \(with)"]
+    }
+
+    func decodeApiResponse<T: Codable>(from data: Data) -> T? {
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        return try? decoder.decode(T.self, from: data)
     }
 }
 
 // MARK: Private Methods (Watch Socket)
 private extension NicoUtility {
-    func openWatchSocket(webSocketUrl: String, completion: @escaping (Result<WebSocketRoomData, NicoError>) -> Void) {
-        guard let url = URL(string: webSocketUrl) else {
-            completion(Result.failure(NicoError.internal))
-            return
-        }
-        var request = URLRequest(url: url)
+    func openWatchSocket(webSocketUrl: URL, completion: @escaping (Result<WebSocketRoomData, NicoError>) -> Void) {
+        var request = URLRequest(url: webSocketUrl)
         request.headers = [commonUserAgentKey: commonUserAgentValue]
-        request.timeoutInterval = 10
+        request.timeoutInterval = defaultRequestTimeout
         let socket = WebSocket(request: request)
         socket.onEvent = { [weak self] in
             self?.handleWatchSocketEvent(
@@ -518,7 +612,7 @@ private extension NicoUtility {
 
 // MARK: - Private Methods (Message Socket)
 private extension NicoUtility {
-    func openMessageSocket(userId: String, room: WebSocketRoomData, connectContex: ConnectContext, completion: @escaping (Result<Void, NicoError>) -> Void) {
+    func openMessageSocket(userId: String, room: WebSocketRoomData, connectContext: ConnectContext, completion: @escaping (Result<Void, NicoError>) -> Void) {
         guard let url = URL(string: room.data.messageServer.uri) else {
             completion(Result.failure(NicoError.internal))
             return
@@ -538,7 +632,7 @@ private extension NicoUtility {
                 userId: userId,
                 threadId: room.data.threadId,
                 resFrom: {
-                    switch connectContex {
+                    switch connectContext {
                     case .normal:       return -150
                     case .reconnect:    return -100
                     }
@@ -741,49 +835,10 @@ private extension NicoUtility {
     }
 }
 
-// MARK: - Private Utility Methods
-private extension NicoUtility {
-    func clearHttpCookieStorage() {
-        HTTPCookieStorage.shared.cookies?.forEach(HTTPCookieStorage.shared.deleteCookie)
-    }
-
-    func clearUserSessionCookieIfReserved() {
-        guard shouldClearUserSessionCookie else { return }
-        shouldClearUserSessionCookie = false
-        userSessionCookie = nil
-        log.debug("cleared user session cookie")
-    }
-
-    func urlRequestWithUserSessionCookie(urlString: String, userSession: String?) -> URLRequest {
-        guard let url = URL(string: urlString) else {
-            fatalError("This is NOT going to be happened.")
-        }
-        var urlRequest = URLRequest(url: url)
-        if let _httpCookies = httpCookies(userSession: userSession) {
-            urlRequest.allHTTPHeaderFields = HTTPCookie.requestHeaderFields(with: _httpCookies)
-        }
-        return urlRequest
-    }
-
-    func httpCookies(userSession: String?) -> [HTTPCookie]? {
-        guard let userSession = userSession,
-              let sessionCookie = HTTPCookie(
-                properties: [
-                    HTTPCookiePropertyKey.domain: userSessionCookieDomain,
-                    HTTPCookiePropertyKey.name: userSessionCookieName,
-                    HTTPCookiePropertyKey.value: userSession,
-                    HTTPCookiePropertyKey.expires: Date().addingTimeInterval(userSessionCookieExpire),
-                    HTTPCookiePropertyKey.path: userSessionCookiePath
-                ]
-              ) else { return nil }
-        return [sessionCookie]
-    }
-}
-
 // MARK: - Private Extensions
 private extension EmbeddedDataProperties {
     func toLive() -> Live {
-        return Live(
+        Live(
             liveId: program.nicoliveProgramId,
             title: program.title,
             community: Community(
@@ -797,18 +852,20 @@ private extension EmbeddedDataProperties {
             startTime: program.beginTime.toDateAsTimeIntervalSince1970()
         )
     }
+}
 
+private extension UserInfoResponse {
     func toUser() -> User {
-        return User(
-            userId: Int(user.id) ?? 0,
-            nickname: user.nickname
+        User(
+            userId: sub,
+            nickname: nickname
         )
     }
 }
 
 private extension WebSocketChatData {
     func toChat() -> Chat {
-        return Chat(
+        Chat(
             no: chat.no,
             date: chat.date.toDateAsTimeIntervalSince1970(),
             dateUsec: chat.dateUsec,
@@ -831,7 +888,7 @@ private extension WebSocketChatData {
 
 private extension WebSocketStatisticsData {
     func toLiveStatistics() -> LiveStatistics {
-        return LiveStatistics(
+        LiveStatistics(
             viewers: data.viewers,
             comments: data.comments,
             adPoints: data.adPoints,

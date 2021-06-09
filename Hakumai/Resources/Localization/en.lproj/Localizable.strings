@@ -26,6 +26,8 @@
 "quit_hakumai" = "Quit Hakumai";
 
 /// File Menu
+"login" = "Login";
+"logout" = "Logout";
 "open_url" = "Open URL";
 "grab_url_from_browser" = "Grab URL from Browser";
 "new_comment" = "New Comment";
@@ -87,9 +89,8 @@
 "live_url_text_field_placeholder" = "⌘L (Live URL, Live#)";
 "speak_comment" = "Speak";
 "visitor_count" = "Visitors";
-"safari_cookie_alert_title" = "No Safari Cookie found";
-"safari_cookie_alert_description" = "To retrieve the cookie from Safari, please open the \"Security & Privacy\" in the \"System Preference\”, go to the \"Privacy\" tab and give the \"Full Disk Access\" right to Hakumai app.";
-"open_security_privacy" = "Open Security & Privacy";
+"login_completed" = "Login completed.";
+"logout_completed" = "Logout completed.";
 
 /// Message
 "prepared_live" = "Retrieved the live info as user \"%@\".";
@@ -101,7 +102,6 @@
 
 /// Error
 "error_internal" = "Internal Error.";
-"error_no_cookie" = "No available cookie.";
 "error_no_live_info" = "Failed to load live info.";
 "error_no_message_server_info" = "Failed to load message server info.";
 "error_failed_to_open_message_server" = "Failed to open message server.";
@@ -131,16 +131,9 @@
 /// Preference Window
 ///
 /// General
-"session_management" = "Session Management";
+"browser_in_use" = "Browser Used for \"Grab URL from Browser\" feature (⌘U)";
 "google_chrome" = "Google Chrome";
-"safari" = "Safari";
-"direct_login" = "Direct Login (Not Recommended)";
-"mail_address" = "Mail Address";
-"password" = "Password";
-"check" = "Check";
-"status" = "Status";
-"success" = "Success";
-"failed" = "Failed";
+"safari" = "Safari (Not supported yet…)";
 "comment_speaking" = "Comment Speaking";
 "speak_comments" = "Speak Comments (Requires macOS 10.14-)";
 "speak_volume" = "Speak Volume";
