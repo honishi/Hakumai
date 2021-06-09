@@ -15,7 +15,7 @@ private let calculateActiveUserInterval: TimeInterval = 5
 private let maximumFontSizeForNonMainColumn: CGFloat = 16
 private let defaultMinimumRowHeight: CGFloat = 17
 
-private let enableDebugButtons = true // false
+private let enableDebugButtons = false
 
 private let defaultElapsedTimeValue = "--:--:--"
 private let defaultLabelValue = "---"
