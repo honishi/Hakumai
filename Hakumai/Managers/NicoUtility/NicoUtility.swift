@@ -484,16 +484,17 @@ private extension NicoUtility {
                 // Is access token expired?
                 if error.isInvalidToken, allowRefreshToken {
                     // Access token is expired, so refresh tokens..
-                    me.refreshToken {
+                    me.authManager.refreshToken {
                         switch $0 {
-                        case .success():
+                        case .success(_):
                             // Refresh token successfully completed, retry the call.
                             me.callOAuthEndpoint(
                                 url: url,
                                 parameters: parameters,
                                 allowRefreshToken: false,   // Do NOT allow repeated refresh token.
                                 completion: completion)
-                        case .failure(_):
+                        case .failure(let error):
+                            log.error(error)
                             // Refresh token failed, finish to establish connection here.
                             completion(.failure(.internal))
                         }
@@ -514,18 +515,6 @@ private extension NicoUtility {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         return try? decoder.decode(T.self, from: data)
-    }
-
-    func refreshToken(completion: @escaping (Result<Void, AuthManagerError>) -> Void) {
-        authManager.refreshToken {
-            switch $0 {
-            case .success(_):
-                completion(.success(()))
-            case .failure(let error):
-                log.error(error)
-                completion(.failure(.internal))
-            }
-        }
     }
 }
 
