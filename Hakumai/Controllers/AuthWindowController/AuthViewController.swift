@@ -52,7 +52,7 @@ extension AuthViewController {
             )
         }
         // https://stackoverflow.com/a/54573361/13220031
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
+        DispatchQueue.main.async {
             self.webView.configuration.processPool = WKProcessPool()
         }
     }
@@ -93,6 +93,7 @@ private extension AuthViewController {
     }
 
     func closeWindow() {
+        webView.loadHTMLString("", baseURL: nil)
         view.window?.close()
     }
 }

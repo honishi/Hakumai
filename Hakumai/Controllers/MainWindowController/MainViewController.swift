@@ -81,7 +81,9 @@ final class MainViewController: NSViewController {
     private var activeUserTimer: Timer?
 
     // AuthWindowController
-    private var authWindowController: AuthWindowController?
+    private lazy var authWindowController: AuthWindowController = {
+        AuthWindowController.make(delegate: self)
+    }()
 
     // UserWindowControllers
     private var userWindowControllers = [UserWindowController]()
@@ -437,8 +439,7 @@ extension MainViewController {
             NicoUtility.shared.disconnect()
         }
         NicoUtility.shared.logout()
-        authWindowController?.logout()
-        authWindowController = nil
+        authWindowController.logout()
         logSystemMessageToTableView(L10n.logoutCompleted)
     }
 
@@ -906,11 +907,8 @@ private extension MainViewController {
     }
 
     func showAuthWindowController() {
-        if authWindowController == nil {
-            authWindowController = AuthWindowController.make(delegate: self)
-        }
-        authWindowController?.startAuthorization()
-        authWindowController?.showWindow(self)
+        authWindowController.startAuthorization()
+        authWindowController.showWindow(self)
     }
 }
 
