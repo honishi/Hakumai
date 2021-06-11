@@ -20,6 +20,12 @@ private let kVoiceSpeedMap: [(queuCountRange: CountableRange<Int>, speed: Float)
 ]
 private let kRefreshChatQueueThreshold = 30
 
+// https://stackoverflow.com/a/38409026/13220031
+// See unicode list at https://0g0.org/ or https://0g0.org/unicode-list/
+// See unicode search at https://www.marbacka.net/msearch/tool.php#chr2enc
+private let emojiPattern = "[\\U0001F000-\\U0001F9FF]"
+private let lineBreakPattern = "\n"
+
 private let kCleanCommentPatterns = [
     ("https?://[\\w!?/+\\-_~;.,*&@#$%()'\\[\\]=]+", " URL "),
     ("(w|ｗ){2,}", " わらわら"),
@@ -37,6 +43,9 @@ final class SpeechManager: NSObject {
     private var voiceVolume = 100
     private var timer: Timer?
     private let synthesizer = AVSpeechSynthesizer()
+
+    private let emojiRegexp = try? NSRegularExpression(pattern: emojiPattern, options: [])
+    private let lineBreakRegexp = try? NSRegularExpression(pattern: lineBreakPattern, options: [])
 
     // MARK: - Object Lifecycle
     override init() {
@@ -79,6 +88,7 @@ final class SpeechManager: NSObject {
 
     func enqueue(chat: Chat) {
         guard chat.premium == .ippan || chat.premium == .premium else { return }
+        guard isAcceptableComment(chat.comment) else { return }
 
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
@@ -135,11 +145,27 @@ final class SpeechManager: NSObject {
     }
 
     // define as 'internal' for test
+    func isAcceptableComment(_ comment: String) -> Bool {
+        guard let emojiRexexp = emojiRegexp, let newLineRegexp = lineBreakRegexp else {
+            return false
+        }
+        return comment.count < 100 &&
+            emojiRexexp.matchCount(in: comment) < 5 &&
+            newLineRegexp.matchCount(in: comment) < 3
+    }
+
+    // define as 'internal' for test
     func cleanComment(from comment: String) -> String {
         var cleaned = comment
         kCleanCommentPatterns.forEach {
             cleaned = cleaned.stringByReplacingRegexp(pattern: $0.0, with: $0.1)
         }
         return cleaned
+    }
+}
+
+private extension NSRegularExpression {
+    func matchCount(in text: String) -> Int {
+        return numberOfMatches(in: text, options: [], range: NSRange(0..<text.count))
     }
 }
