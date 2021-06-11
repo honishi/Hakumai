@@ -51,6 +51,10 @@ extension AuthViewController {
                 completionHandler: {}
             )
         }
+        // https://stackoverflow.com/a/54573361/13220031
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
+            self.webView.configuration.processPool = WKProcessPool()
+        }
     }
 }
 
