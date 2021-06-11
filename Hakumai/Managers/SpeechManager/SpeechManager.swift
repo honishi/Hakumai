@@ -9,16 +9,16 @@
 import Foundation
 import AVFoundation
 
-private let kDequeuChatTimerInterval: TimeInterval = 0.5
+private let dequeuChatTimerInterval: TimeInterval = 0.5
 
-private let kVoiceSpeedMap: [(queuCountRange: CountableRange<Int>, speed: Float)] = [
+private let voiceSpeedMap: [(queuCountRange: CountableRange<Int>, speed: Float)] = [
     (0..<2, 0.50),
     (2..<4, 0.55),
     (4..<7, 0.60),
     (7..<10, 0.65),
     (10..<100, 0.75)
 ]
-private let kRefreshChatQueueThreshold = 30
+private let refreshChatQueueThreshold = 30
 
 // https://stackoverflow.com/a/38409026/13220031
 // See unicode list at https://0g0.org/ or https://0g0.org/unicode-list/
@@ -26,7 +26,7 @@ private let kRefreshChatQueueThreshold = 30
 private let emojiPattern = "[\\U0001F000-\\U0001F9FF]"
 private let lineBreakPattern = "\n"
 
-private let kCleanCommentPatterns = [
+private let cleanCommentPatterns = [
     ("https?://[\\w!?/+\\-_~;.,*&@#$%()'\\[\\]=]+", " URL "),
     ("(w|ｗ){2,}", " わらわら"),
     ("(w|ｗ)$", " わら"),
@@ -39,7 +39,7 @@ final class SpeechManager: NSObject {
     static let shared = SpeechManager()
 
     private var chatQueue: [Chat] = []
-    private var voiceSpeed = kVoiceSpeedMap[0].speed
+    private var voiceSpeed = voiceSpeedMap[0].speed
     private var voiceVolume = 100
     private var timer: Timer?
     private let synthesizer = AVSpeechSynthesizer()
@@ -58,7 +58,7 @@ final class SpeechManager: NSObject {
         // use explicit main queue to ensure that the timer continues to run even when caller thread ends.
         DispatchQueue.main.async {
             self.timer = Timer.scheduledTimer(
-                timeInterval: kDequeuChatTimerInterval,
+                timeInterval: dequeuChatTimerInterval,
                 target: self,
                 selector: #selector(SpeechManager.dequeue(_:)),
                 userInfo: nil,
@@ -118,7 +118,7 @@ final class SpeechManager: NSObject {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
 
-        if kRefreshChatQueueThreshold < chatQueue.count {
+        if refreshChatQueueThreshold < chatQueue.count {
             chatQueue.removeAll()
             return true
         }
@@ -128,13 +128,13 @@ final class SpeechManager: NSObject {
 
     // MARK: - Private Functions
     private func adjustedVoiceSpeed(chatQueueCount count: Int, currentVoiceSpeed: Float) -> Float {
-        var candidateSpeed = kVoiceSpeedMap[0].speed
+        var candidateSpeed = voiceSpeedMap[0].speed
 
         if count == 0 {
             return candidateSpeed
         }
 
-        for (queueCountRange, speed) in kVoiceSpeedMap {
+        for (queueCountRange, speed) in voiceSpeedMap {
             if queueCountRange.contains(count) {
                 candidateSpeed = speed
                 break
@@ -147,7 +147,7 @@ final class SpeechManager: NSObject {
     // define as 'internal' for test
     func isAcceptableComment(_ comment: String) -> Bool {
         guard let emojiRexexp = emojiRegexp, let newLineRegexp = lineBreakRegexp else {
-            return false
+            return true
         }
         return comment.count < 100 &&
             emojiRexexp.matchCount(in: comment) < 5 &&
@@ -157,7 +157,7 @@ final class SpeechManager: NSObject {
     // define as 'internal' for test
     func cleanComment(from comment: String) -> String {
         var cleaned = comment
-        kCleanCommentPatterns.forEach {
+        cleanCommentPatterns.forEach {
             cleaned = cleaned.stringByReplacingRegexp(pattern: $0.0, with: $0.1)
         }
         return cleaned
