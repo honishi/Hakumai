@@ -25,6 +25,8 @@ private let refreshChatQueueThreshold = 30
 // See unicode search at https://www.marbacka.net/msearch/tool.php#chr2enc
 private let emojiPattern = "[\\U0001F000-\\U0001F9FF]"
 private let lineBreakPattern = "\n"
+// https://stackoverflow.com/a/1660739/13220031
+private let repeatedCharPattern = "(.)\\1{9,}"
 
 private let cleanCommentPatterns = [
     ("https?://[\\w!?/+\\-_~;.,*&@#$%()'\\[\\]=]+", " URL "),
@@ -44,8 +46,11 @@ final class SpeechManager: NSObject {
     private var timer: Timer?
     private let synthesizer = AVSpeechSynthesizer()
 
-    private let emojiRegexp = try? NSRegularExpression(pattern: emojiPattern, options: [])
-    private let lineBreakRegexp = try? NSRegularExpression(pattern: lineBreakPattern, options: [])
+    // swiftlint:disable force_try
+    private let emojiRegexp = try! NSRegularExpression(pattern: emojiPattern, options: [])
+    private let lineBreakRegexp = try! NSRegularExpression(pattern: lineBreakPattern, options: [])
+    private let repeatedCharRegexp = try! NSRegularExpression(pattern: repeatedCharPattern, options: [])
+    // swiftlint:enable force_try
 
     // MARK: - Object Lifecycle
     override init() {
@@ -146,12 +151,10 @@ final class SpeechManager: NSObject {
 
     // define as 'internal' for test
     func isAcceptableComment(_ comment: String) -> Bool {
-        guard let emojiRexexp = emojiRegexp, let newLineRegexp = lineBreakRegexp else {
-            return true
-        }
         return comment.count < 100 &&
-            emojiRexexp.matchCount(in: comment) < 5 &&
-            newLineRegexp.matchCount(in: comment) < 3
+            emojiRegexp.matchCount(in: comment) < 5 &&
+            lineBreakRegexp.matchCount(in: comment) < 3 &&
+            repeatedCharRegexp.matchCount(in: comment) == 0
     }
 
     // define as 'internal' for test
