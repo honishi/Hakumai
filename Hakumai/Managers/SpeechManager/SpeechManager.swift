@@ -19,6 +19,7 @@ private let voiceSpeedMap: [(commentLengthRange: CountableRange<Int>, speed: Flo
     (100..<Int.max, 0.75)
 ]
 private let refreshChatQueueThreshold = 30
+private let recentChatsThreshold = 50
 
 // https://stackoverflow.com/a/38409026/13220031
 // See unicode list at https://0g0.org/ or https://0g0.org/unicode-list/
@@ -41,6 +42,7 @@ final class SpeechManager: NSObject {
     static let shared = SpeechManager()
 
     private var chatQueue: [Chat] = []
+    private var recentChats: [Chat] = []
     private var voiceSpeed = voiceSpeedMap[0].speed
     private var voiceVolume = 100
     private var timer: Timer?
@@ -82,6 +84,7 @@ final class SpeechManager: NSObject {
         defer { objc_sync_exit(self) }
 
         chatQueue.removeAll()
+        recentChats.removeAll()
         log.debug("stopped speech manager.")
     }
 
@@ -99,6 +102,11 @@ final class SpeechManager: NSObject {
         defer { objc_sync_exit(self) }
 
         chatQueue.append(chat)
+
+        recentChats.append(chat)
+        if recentChats.count > recentChatsThreshold {
+            recentChats.remove(at: 0)
+        }
     }
 
     @objc func dequeue(_ timer: Timer?) {
@@ -109,6 +117,12 @@ final class SpeechManager: NSObject {
 
         guard let chat = chatQueue.first else { return }
         chatQueue.removeFirst()
+
+        let uniqueCount = recentChats.filter { $0.comment == chat.comment }.count
+        guard uniqueCount == 1 else {
+            log.debug("skip duplicate speech comment. [\(chat.comment)]")
+            return
+        }
 
         let utterance = AVSpeechUtterance.init(string: cleanComment(from: chat.comment))
         voiceSpeed = adjustedVoiceSpeed(
