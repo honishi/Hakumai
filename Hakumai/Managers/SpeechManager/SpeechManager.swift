@@ -27,7 +27,9 @@ private let recentChatsThreshold = 50
 private let emojiPattern = "[\\U0001F000-\\U0001F9FF]"
 private let lineBreakPattern = "\n"
 // https://stackoverflow.com/a/1660739/13220031
-private let repeatedCharPattern = "(.)\\1{9,}"
+// private let repeatedCharPattern = "(.)\\1{9,}"
+// https://so-zou.jp/software/tech/programming/tech/regular-expression/meta-character/variable-width-encoding.htm#no1
+private let repeatedKanjiPattern = "(\\p{Han})\\1{9,}"
 
 private let cleanCommentPatterns = [
     ("https?://[\\w!?/+\\-_~;.,*&@#$%()'\\[\\]=]+", " URL "),
@@ -51,7 +53,7 @@ final class SpeechManager: NSObject {
     // swiftlint:disable force_try
     private let emojiRegexp = try! NSRegularExpression(pattern: emojiPattern, options: [])
     private let lineBreakRegexp = try! NSRegularExpression(pattern: lineBreakPattern, options: [])
-    private let repeatedCharRegexp = try! NSRegularExpression(pattern: repeatedCharPattern, options: [])
+    private let repeatedKanjiRegexp = try! NSRegularExpression(pattern: repeatedKanjiPattern, options: [])
     // swiftlint:enable force_try
 
     // MARK: - Object Lifecycle
@@ -168,7 +170,7 @@ final class SpeechManager: NSObject {
         return comment.count < 100 &&
             emojiRegexp.matchCount(in: comment) < 5 &&
             lineBreakRegexp.matchCount(in: comment) < 3 &&
-            repeatedCharRegexp.matchCount(in: comment) == 0
+            repeatedKanjiRegexp.matchCount(in: comment) == 0
     }
 
     // define as 'internal' for test

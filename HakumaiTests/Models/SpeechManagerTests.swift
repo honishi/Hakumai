@@ -68,6 +68,18 @@ final class SpeechManagerTests: XCTestCase {
         comment = "鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅"
         result = SpeechManager.shared.isAcceptableComment(comment)
         XCTAssert(result == false)
+
+        comment = "えええええええええええええええええええええええええええええええええええｗｗｗｗｗｗｗｗｗｗｗｗ"
+        result = SpeechManager.shared.isAcceptableComment(comment)
+        XCTAssert(result == true)
+
+        comment = "ｗｗｗｗｗｗｗｗｗｗｗｗ"
+        result = SpeechManager.shared.isAcceptableComment(comment)
+        XCTAssert(result == true)
+
+        comment = "えええええええええええええええええええええええええええええええええええ"
+        result = SpeechManager.shared.isAcceptableComment(comment)
+        XCTAssert(result == true)
     }
 
     // swiftlint:disable function_body_length
