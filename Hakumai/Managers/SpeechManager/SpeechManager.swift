@@ -12,11 +12,11 @@ import AVFoundation
 private let dequeuChatTimerInterval: TimeInterval = 0.5
 
 private let voiceSpeedMap: [(commentLengthRange: CountableRange<Int>, speed: Float)] = [
-    (0..<20, 0.50),
-    (20..<40, 0.55),
-    (40..<70, 0.60),
-    (70..<100, 0.65),
-    (100..<Int.max, 0.75)
+    (0..<40, 0.50),
+    (40..<80, 0.55),
+    (80..<120, 0.60),
+    (120..<160, 0.65),
+    (160..<Int.max, 0.75)
 ]
 private let refreshChatQueueThreshold = 30
 private let recentChatsThreshold = 50
