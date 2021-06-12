@@ -11,12 +11,12 @@ import AVFoundation
 
 private let dequeuChatTimerInterval: TimeInterval = 0.5
 
-private let voiceSpeedMap: [(queuCountRange: CountableRange<Int>, speed: Float)] = [
-    (0..<2, 0.50),
-    (2..<4, 0.55),
-    (4..<7, 0.60),
-    (7..<10, 0.65),
-    (10..<100, 0.75)
+private let voiceSpeedMap: [(commentLengthRange: CountableRange<Int>, speed: Float)] = [
+    (0..<20, 0.50),
+    (20..<40, 0.55),
+    (40..<70, 0.60),
+    (70..<100, 0.65),
+    (100..<Int.max, 0.75)
 ]
 private let refreshChatQueueThreshold = 30
 
@@ -106,7 +106,10 @@ final class SpeechManager: NSObject {
         chatQueue.removeFirst()
 
         let utterance = AVSpeechUtterance.init(string: cleanComment(from: chat.comment))
-        voiceSpeed = adjustedVoiceSpeed(chatQueueCount: chatQueue.count, currentVoiceSpeed: voiceSpeed)
+        voiceSpeed = adjustedVoiceSpeed(
+            currentCommentLength: chat.comment.count,
+            remainingCommentLength: chatQueue.map { $0.comment.count }.reduce(0, +),
+            currentVoiceSpeed: voiceSpeed)
         utterance.rate = voiceSpeed
         utterance.volume = Float(voiceVolume) / 100.0
         let voice = AVSpeechSynthesisVoice.init(language: "ja-JP")
@@ -127,21 +130,18 @@ final class SpeechManager: NSObject {
     }
 
     // MARK: - Private Functions
-    private func adjustedVoiceSpeed(chatQueueCount count: Int, currentVoiceSpeed: Float) -> Float {
+    private func adjustedVoiceSpeed(currentCommentLength current: Int, remainingCommentLength remaining: Int, currentVoiceSpeed: Float) -> Float {
+        let total = current + remaining
         var candidateSpeed = voiceSpeedMap[0].speed
-
-        if count == 0 {
-            return candidateSpeed
-        }
-
-        for (queueCountRange, speed) in voiceSpeedMap {
-            if queueCountRange.contains(count) {
+        for (commentLengthRange, speed) in voiceSpeedMap {
+            if commentLengthRange.contains(total) {
                 candidateSpeed = speed
                 break
             }
         }
-
-        return currentVoiceSpeed < candidateSpeed ? candidateSpeed : currentVoiceSpeed
+        let adjusted = remaining == 0 ? candidateSpeed : max(currentVoiceSpeed, candidateSpeed)
+        log.debug("current: \(current) remaining: \(remaining) total: \(total) candidate: \(candidateSpeed) adjusted: \(adjusted)")
+        return adjusted
     }
 
     // define as 'internal' for test
