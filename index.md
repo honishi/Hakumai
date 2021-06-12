@@ -13,25 +13,25 @@ v{{site.binary_version}}, {{site.binary_date}} (for macOS 10.12-)
 
 ## About Hakumai
 
-<img src="./image/main.png" width="550px">
+Hakumai は macOS で動作するニコニコ生放送用のコメントビューア (コメビュ) です。
 
-* Hakumai は macOS で動作するニコニコ生放送用のコメントビューア (コメビュ) です。
+<img src="./image/main.png" width="550px">
 
 ### Requirements
 
-* macOS 10.12 Sierra 以降が必要
-* コメント読み上げを使うには macOS 10.14 Mojave 以降が必要
+* macOS 10.12 Sierra 以降
+* (コメント読み上げには macOS 10.14 Mojave 以降が必要)
 
 <img src="./image/food_kome_masu.png" width="160px">
 
-## How to Uninstall Hakumai completely
+## Uninstall Hakumai, Completely
 
-~~~
-rm /path/to/Hakumai.app
-rm ~/Library/Preferences/com.honishi.Hakumai.plist
-rm -r ~/Library/Application\ Support/com.honishi.Hakumai/
-Keychain Accessで"com.honishi.Hakumai.account"のエントリを削除(あれば)
-~~~
+```
+1. rm /path/to/Hakumai.app
+2. rm ~/Library/Preferences/com.honishi.Hakumai.plist
+3. rm -r ~/Library/Application\ Support/com.honishi.Hakumai/
+4. Keychain Access アプリで "com.honishi.Hakumai.token" を削除
+```
 
 <img src="./image/imfull.png" width="160px">
 
