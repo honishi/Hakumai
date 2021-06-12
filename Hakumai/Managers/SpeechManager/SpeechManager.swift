@@ -120,8 +120,9 @@ final class SpeechManager: NSObject {
         guard let chat = chatQueue.first else { return }
         chatQueue.removeFirst()
 
-        let uniqueCount = recentChats.filter { $0.comment == chat.comment }.count
-        guard uniqueCount == 1 else {
+        let isUniqueComment = recentChats.filter { $0.comment == chat.comment }.count == 1
+        let isShortComment = chat.comment.count < 10
+        guard isUniqueComment || isShortComment else {
             log.debug("skip duplicate speech comment. [\(chat.comment)]")
             return
         }
