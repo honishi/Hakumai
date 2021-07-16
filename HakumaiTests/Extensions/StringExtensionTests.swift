@@ -56,19 +56,16 @@ extension StringExtensionTests {
 
 extension StringExtensionTests {
     func testExtractLiveNumber() {
-        var extracted: Int?
-        let expected = 200433812
+        var extracted: String?
+        let expected = "lv200433812"
 
-        extracted = "http://live.nicovideo.jp/watch/lv200433812?ref=zero_mynicorepo".extractLiveNumber()
+        extracted = "http://live.nicovideo.jp/watch/lv200433812?ref=zero_mynicorepo".extractLiveProgramId()
         XCTAssert(extracted == expected, "")
 
-        extracted = "http://live.nicovideo.jp/watch/lv200433812".extractLiveNumber()
+        extracted = "http://live.nicovideo.jp/watch/lv200433812".extractLiveProgramId()
         XCTAssert(extracted == expected, "")
 
-        extracted = "lv200433812".extractLiveNumber()
-        XCTAssert(extracted == expected, "")
-
-        extracted = "200433812".extractLiveNumber()
+        extracted = "lv200433812".extractLiveProgramId()
         XCTAssert(extracted == expected, "")
     }
 

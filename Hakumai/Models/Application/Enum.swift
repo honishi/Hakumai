@@ -8,6 +8,10 @@
 
 import Foundation
 
+enum BrowserType {
+    case chrome, safari
+}
+
 enum RoomPosition: Int, CustomStringConvertible {
     case arena = 0
     case standA, standB, standC, standD, standE, standF, standG, standH, standI, standJ

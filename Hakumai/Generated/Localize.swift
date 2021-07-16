@@ -22,12 +22,12 @@ internal enum L10n {
   internal static let alwaysOnTop = L10n.tr("Localizable", "always_on_top")
   /// Bring All to Front
   internal static let bringAllToFront = L10n.tr("Localizable", "bring_all_to_front")
+  /// Browser Used for "Grab URL from Browser" feature (⌘U)
+  internal static let browserInUse = L10n.tr("Localizable", "browser_in_use")
   /// Cancel
   internal static let cancel = L10n.tr("Localizable", "cancel")
   /// Capitalize
   internal static let capitalize = L10n.tr("Localizable", "capitalize")
-  /// Check
-  internal static let check = L10n.tr("Localizable", "check")
   /// Check Document Now
   internal static let checkDocumentNow = L10n.tr("Localizable", "check_document_now")
   /// Check for Updates...
@@ -62,8 +62,6 @@ internal enum L10n {
   internal static let defaultZoom = L10n.tr("Localizable", "default_zoom")
   /// Delete
   internal static let delete = L10n.tr("Localizable", "delete")
-  /// Direct Login (Not Recommended)
-  internal static let directLogin = L10n.tr("Localizable", "direct_login")
   /// Edit
   internal static let edit = L10n.tr("Localizable", "edit")
   /// Elapsed Time
@@ -80,14 +78,10 @@ internal enum L10n {
   internal static let errorFailedToOpenMessageServer = L10n.tr("Localizable", "error_failed_to_open_message_server")
   /// Internal Error.
   internal static let errorInternal = L10n.tr("Localizable", "error_internal")
-  /// No available cookie.
-  internal static let errorNoCookie = L10n.tr("Localizable", "error_no_cookie")
   /// Failed to load live info.
   internal static let errorNoLiveInfo = L10n.tr("Localizable", "error_no_live_info")
   /// Failed to load message server info.
   internal static let errorNoMessageServerInfo = L10n.tr("Localizable", "error_no_message_server_info")
-  /// Failed
-  internal static let failed = L10n.tr("Localizable", "failed")
   /// Failed to comment.
   internal static let failedToComment = L10n.tr("Localizable", "failed_to_comment")
   /// Failed to connect to the live. [%@]
@@ -116,8 +110,14 @@ internal enum L10n {
   internal static let liveTitle = L10n.tr("Localizable", "live_title")
   /// ⌘L (Live URL, Live#)
   internal static let liveUrlTextFieldPlaceholder = L10n.tr("Localizable", "live_url_text_field_placeholder")
-  /// Mail Address
-  internal static let mailAddress = L10n.tr("Localizable", "mail_address")
+  /// Login
+  internal static let login = L10n.tr("Localizable", "login")
+  /// Login completed.
+  internal static let loginCompleted = L10n.tr("Localizable", "login_completed")
+  /// Logout
+  internal static let logout = L10n.tr("Localizable", "logout")
+  /// Logout completed.
+  internal static let logoutCompleted = L10n.tr("Localizable", "logout_completed")
   /// Make Lower Case
   internal static let makeLowerCase = L10n.tr("Localizable", "make_lower_case")
   /// Make Upper Case
@@ -126,16 +126,12 @@ internal enum L10n {
   internal static let minimize = L10n.tr("Localizable", "minimize")
   /// New Comment
   internal static let newComment = L10n.tr("Localizable", "new_comment")
-  /// Open Security & Privacy
-  internal static let openSecurityPrivacy = L10n.tr("Localizable", "open_security_privacy")
   /// Open URL
   internal static let openUrl = L10n.tr("Localizable", "open_url")
   /// Open URL in Comment
   internal static let openUrlInComment = L10n.tr("Localizable", "open_url_in_comment")
   /// Open User Page
   internal static let openUserPage = L10n.tr("Localizable", "open_user_page")
-  /// Password
-  internal static let password = L10n.tr("Localizable", "password")
   /// Paste
   internal static let paste = L10n.tr("Localizable", "paste")
   /// Preferences...
@@ -152,18 +148,12 @@ internal enum L10n {
   internal static let removeHandleName = L10n.tr("Localizable", "remove_handle_name")
   /// Report as NG User
   internal static let reportAsNgUser = L10n.tr("Localizable", "report_as_ng_user")
-  /// Safari
+  /// Safari (Not supported yet…)
   internal static let safari = L10n.tr("Localizable", "safari")
-  /// To retrieve the cookie from Safari, please open the "Security & Privacy" in the "System Preference”, go to the "Privacy" tab and give the "Full Disk Access" right to Hakumai app.
-  internal static let safariCookieAlertDescription = L10n.tr("Localizable", "safari_cookie_alert_description")
-  /// No Safari Cookie found
-  internal static let safariCookieAlertTitle = L10n.tr("Localizable", "safari_cookie_alert_title")
   /// Select All
   internal static let selectAll = L10n.tr("Localizable", "select_all")
   /// Services
   internal static let services = L10n.tr("Localizable", "services")
-  /// Session Management
-  internal static let sessionManagement = L10n.tr("Localizable", "session_management")
   /// Set
   internal static let `set` = L10n.tr("Localizable", "set")
   /// Set Handle Name
@@ -198,14 +188,10 @@ internal enum L10n {
   internal static let spellingAndGrammar = L10n.tr("Localizable", "spelling_and_grammar")
   /// Start Speaking
   internal static let startSpeaking = L10n.tr("Localizable", "start_speaking")
-  /// Status
-  internal static let status = L10n.tr("Localizable", "status")
   /// Stop Speaking
   internal static let stopSpeaking = L10n.tr("Localizable", "stop_speaking")
   /// Substitutions
   internal static let substitutions = L10n.tr("Localizable", "substitutions")
-  /// Success
-  internal static let success = L10n.tr("Localizable", "success")
   /// Text Replacement
   internal static let textReplacement = L10n.tr("Localizable", "text_replacement")
   /// Transformations

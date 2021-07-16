@@ -67,25 +67,25 @@
             <objects>
                 <viewController storyboardIdentifier="GeneralViewController" id="wCA-UG-k48" customClass="GeneralViewController" customModule="Hakumai" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="yCS-uV-ZpM">
-                        <rect key="frame" x="0.0" y="0.0" width="500" height="400"/>
+                        <rect key="frame" x="0.0" y="0.0" width="500" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="16" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="msl-tt-je4">
-                                <rect key="frame" x="20" y="54" width="460" height="326"/>
+                                <rect key="frame" x="20" y="34" width="460" height="246"/>
                                 <subviews>
-                                    <box autoresizesSubviews="NO" borderType="line" title="session_management" translatesAutoresizingMaskIntoConstraints="NO" id="MWm-if-ayO">
-                                        <rect key="frame" x="-3" y="142" width="466" height="184"/>
+                                    <box autoresizesSubviews="NO" borderType="line" title="browser_in_use" translatesAutoresizingMaskIntoConstraints="NO" id="MWm-if-ayO">
+                                        <rect key="frame" x="-3" y="142" width="466" height="104"/>
                                         <view key="contentView" id="rtk-61-lXP">
-                                            <rect key="frame" x="3" y="3" width="460" height="166"/>
+                                            <rect key="frame" x="3" y="3" width="460" height="86"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZNT-9Y-kyD">
-                                                    <rect key="frame" x="20" y="30" width="420" height="116"/>
+                                                    <rect key="frame" x="20" y="28" width="420" height="38"/>
                                                     <subviews>
                                                         <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" autorecalculatesCellSize="YES" translatesAutoresizingMaskIntoConstraints="NO" id="y0n-lu-hbG">
-                                                            <rect key="frame" x="0.0" y="58" width="229" height="58"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="121" height="38"/>
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                            <size key="cellSize" width="229" height="18"/>
+                                                            <size key="cellSize" width="121" height="18"/>
                                                             <size key="intercellSpacing" width="4" height="2"/>
                                                             <buttonCell key="prototype" type="radio" title="Radio" imagePosition="left" alignment="left" inset="2" id="bth-a6-brE">
                                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -101,230 +101,29 @@
                                                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                                         <font key="font" metaFont="system"/>
                                                                     </buttonCell>
-                                                                    <buttonCell type="radio" title="Direct Login (Not Recommended)" imagePosition="left" alignment="left" tag="1000" inset="2" id="fBE-E6-cig">
-                                                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                                        <font key="font" metaFont="system"/>
-                                                                    </buttonCell>
                                                                 </column>
                                                             </cells>
                                                             <connections>
-                                                                <action selector="detectedChangeInSessionManagementMatrix:" target="wCA-UG-k48" id="vog-sR-JFO"/>
-                                                                <binding destination="Ex8-3g-KNv" name="selectedTag" keyPath="values.SessionManagement" id="PID-AQ-o5h"/>
+                                                                <binding destination="Ex8-3g-KNv" name="selectedTag" keyPath="values.BrowserInUse" id="PGf-Ji-Wsw"/>
                                                             </connections>
                                                         </matrix>
-                                                        <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="16" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tLx-g2-hkU">
-                                                            <rect key="frame" x="0.0" y="0.0" width="334" height="50"/>
-                                                            <subviews>
-                                                                <customView verticalCompressionResistancePriority="249" translatesAutoresizingMaskIntoConstraints="NO" id="dzC-wY-uiP">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="8" height="50"/>
-                                                                    <constraints>
-                                                                        <constraint firstAttribute="width" constant="8" id="OTu-fF-YFX"/>
-                                                                    </constraints>
-                                                                </customView>
-                                                                <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="s2T-PL-HwN">
-                                                                    <rect key="frame" x="24" y="0.0" width="221" height="50"/>
-                                                                    <subviews>
-                                                                        <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7Tj-iR-kxC">
-                                                                            <rect key="frame" x="0.0" y="29" width="221" height="21"/>
-                                                                            <subviews>
-                                                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="EXx-bO-Ndv">
-                                                                                    <rect key="frame" x="-2" y="3" width="37" height="16"/>
-                                                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Label" id="721-5w-6vS">
-                                                                                        <font key="font" metaFont="system"/>
-                                                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                                                    </textFieldCell>
-                                                                                </textField>
-                                                                                <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="RF4-gC-rH4">
-                                                                                    <rect key="frame" x="41" y="0.0" width="180" height="21"/>
-                                                                                    <constraints>
-                                                                                        <constraint firstAttribute="width" constant="180" id="9DR-tc-dqE"/>
-                                                                                    </constraints>
-                                                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" placeholderString="place holder is set at null placeholder in binding" drawsBackground="YES" id="amz-FZ-x9r">
-                                                                                        <font key="font" metaFont="system"/>
-                                                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                                                    </textFieldCell>
-                                                                                    <connections>
-                                                                                        <action selector="detectedEnterInTextField:" target="wCA-UG-k48" id="5tb-tW-8li"/>
-                                                                                        <binding destination="wCA-UG-k48" name="value" keyPath="self.mailAddress" id="TP2-eC-BXX">
-                                                                                            <dictionary key="options">
-                                                                                                <bool key="NSContinuouslyUpdatesValue" value="YES"/>
-                                                                                                <string key="NSNullPlaceholder">inakou@is.god</string>
-                                                                                            </dictionary>
-                                                                                        </binding>
-                                                                                        <binding destination="Ex8-3g-KNv" name="enabled" keyPath="values.SessionManagement" id="Oqf-lb-evU">
-                                                                                            <dictionary key="options">
-                                                                                                <string key="NSValueTransformerName">IsLoginSessionManagementTransformer</string>
-                                                                                            </dictionary>
-                                                                                        </binding>
-                                                                                    </connections>
-                                                                                </textField>
-                                                                            </subviews>
-                                                                            <visibilityPriorities>
-                                                                                <integer value="1000"/>
-                                                                                <integer value="1000"/>
-                                                                            </visibilityPriorities>
-                                                                            <customSpacing>
-                                                                                <real value="3.4028234663852886e+38"/>
-                                                                                <real value="3.4028234663852886e+38"/>
-                                                                            </customSpacing>
-                                                                        </stackView>
-                                                                        <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cDf-iq-M9n">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="221" height="21"/>
-                                                                            <subviews>
-                                                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7zQ-8n-W5G">
-                                                                                    <rect key="frame" x="-2" y="3" width="37" height="16"/>
-                                                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Label" id="rLD-L3-vRk">
-                                                                                        <font key="font" metaFont="system"/>
-                                                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                                                    </textFieldCell>
-                                                                                </textField>
-                                                                                <secureTextField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Gxu-j7-bHc">
-                                                                                    <rect key="frame" x="41" y="0.0" width="180" height="21"/>
-                                                                                    <secureTextFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" placeholderString="place holder is set at null placeholder in binding" drawsBackground="YES" usesSingleLineMode="YES" id="8o9-Ca-ajc">
-                                                                                        <font key="font" metaFont="system"/>
-                                                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                                                        <allowedInputSourceLocales>
-                                                                                            <string>NSAllRomanInputSourcesLocaleIdentifier</string>
-                                                                                        </allowedInputSourceLocales>
-                                                                                    </secureTextFieldCell>
-                                                                                    <connections>
-                                                                                        <action selector="detectedEnterInTextField:" target="wCA-UG-k48" id="90S-cH-YSX"/>
-                                                                                        <binding destination="wCA-UG-k48" name="value" keyPath="self.password" id="1fM-Y4-UyO">
-                                                                                            <dictionary key="options">
-                                                                                                <bool key="NSContinuouslyUpdatesValue" value="YES"/>
-                                                                                                <string key="NSNullPlaceholder">p@ssw0rd</string>
-                                                                                            </dictionary>
-                                                                                        </binding>
-                                                                                        <binding destination="Ex8-3g-KNv" name="enabled" keyPath="values.SessionManagement" id="OB4-Vb-KBg">
-                                                                                            <dictionary key="options">
-                                                                                                <string key="NSValueTransformerName">IsLoginSessionManagementTransformer</string>
-                                                                                            </dictionary>
-                                                                                        </binding>
-                                                                                    </connections>
-                                                                                </secureTextField>
-                                                                            </subviews>
-                                                                            <visibilityPriorities>
-                                                                                <integer value="1000"/>
-                                                                                <integer value="1000"/>
-                                                                            </visibilityPriorities>
-                                                                            <customSpacing>
-                                                                                <real value="3.4028234663852886e+38"/>
-                                                                                <real value="3.4028234663852886e+38"/>
-                                                                            </customSpacing>
-                                                                        </stackView>
-                                                                    </subviews>
-                                                                    <constraints>
-                                                                        <constraint firstItem="Gxu-j7-bHc" firstAttribute="width" secondItem="RF4-gC-rH4" secondAttribute="width" id="MJU-ca-NIH"/>
-                                                                        <constraint firstItem="7zQ-8n-W5G" firstAttribute="width" secondItem="EXx-bO-Ndv" secondAttribute="width" id="s70-Wl-mL4"/>
-                                                                    </constraints>
-                                                                    <visibilityPriorities>
-                                                                        <integer value="1000"/>
-                                                                        <integer value="1000"/>
-                                                                    </visibilityPriorities>
-                                                                    <customSpacing>
-                                                                        <real value="3.4028234663852886e+38"/>
-                                                                        <real value="3.4028234663852886e+38"/>
-                                                                    </customSpacing>
-                                                                </stackView>
-                                                                <customView verticalCompressionResistancePriority="249" translatesAutoresizingMaskIntoConstraints="NO" id="FVG-vO-CKl">
-                                                                    <rect key="frame" x="261" y="0.0" width="73" height="50"/>
-                                                                    <subviews>
-                                                                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="QxL-35-zQB">
-                                                                            <rect key="frame" x="-1" y="28" width="55" height="23"/>
-                                                                            <buttonCell key="cell" type="roundTextured" title="Check" bezelStyle="texturedRounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="yXT-a3-sE5">
-                                                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                                                <font key="font" metaFont="system"/>
-                                                                            </buttonCell>
-                                                                            <connections>
-                                                                                <action selector="checkAccount:" target="wCA-UG-k48" id="Ie4-Sa-iLx"/>
-                                                                                <binding destination="Ex8-3g-KNv" name="enabled" keyPath="values.SessionManagement" id="uJv-7A-HXg">
-                                                                                    <dictionary key="options">
-                                                                                        <string key="NSValueTransformerName">IsLoginSessionManagementTransformer</string>
-                                                                                    </dictionary>
-                                                                                </binding>
-                                                                            </connections>
-                                                                        </button>
-                                                                        <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="S6U-py-ZeX">
-                                                                            <rect key="frame" x="0.0" y="3" width="70" height="15"/>
-                                                                            <subviews>
-                                                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8Ol-wh-34C">
-                                                                                    <rect key="frame" x="-2" y="0.0" width="35" height="15"/>
-                                                                                    <textFieldCell key="cell" lineBreakMode="clipping" title="Label" id="vbg-Vv-qO6">
-                                                                                        <font key="font" metaFont="cellTitle"/>
-                                                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                                                    </textFieldCell>
-                                                                                </textField>
-                                                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7ho-fM-1a0">
-                                                                                    <rect key="frame" x="37" y="0.0" width="35" height="15"/>
-                                                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="QGc-tt-ZFI">
-                                                                                        <font key="font" metaFont="cellTitle"/>
-                                                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                                                    </textFieldCell>
-                                                                                </textField>
-                                                                            </subviews>
-                                                                            <visibilityPriorities>
-                                                                                <integer value="1000"/>
-                                                                                <integer value="1000"/>
-                                                                            </visibilityPriorities>
-                                                                            <customSpacing>
-                                                                                <real value="3.4028234663852886e+38"/>
-                                                                                <real value="3.4028234663852886e+38"/>
-                                                                            </customSpacing>
-                                                                        </stackView>
-                                                                    </subviews>
-                                                                    <constraints>
-                                                                        <constraint firstItem="QxL-35-zQB" firstAttribute="leading" secondItem="FVG-vO-CKl" secondAttribute="leading" id="8Wc-Zs-NtD"/>
-                                                                        <constraint firstItem="S6U-py-ZeX" firstAttribute="leading" secondItem="FVG-vO-CKl" secondAttribute="leading" id="M01-Fy-9DS"/>
-                                                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="S6U-py-ZeX" secondAttribute="trailing" id="VCo-M6-ubi"/>
-                                                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="QxL-35-zQB" secondAttribute="trailing" id="tMR-u4-z1K"/>
-                                                                    </constraints>
-                                                                </customView>
-                                                            </subviews>
-                                                            <constraints>
-                                                                <constraint firstItem="QxL-35-zQB" firstAttribute="centerY" secondItem="7Tj-iR-kxC" secondAttribute="centerY" id="dCo-8w-x5K"/>
-                                                                <constraint firstItem="S6U-py-ZeX" firstAttribute="centerY" secondItem="cDf-iq-M9n" secondAttribute="centerY" id="qcu-KB-cMT"/>
-                                                            </constraints>
-                                                            <visibilityPriorities>
-                                                                <integer value="1000"/>
-                                                                <integer value="1000"/>
-                                                                <integer value="1000"/>
-                                                            </visibilityPriorities>
-                                                            <customSpacing>
-                                                                <real value="3.4028234663852886e+38"/>
-                                                                <real value="3.4028234663852886e+38"/>
-                                                                <real value="3.4028234663852886e+38"/>
-                                                            </customSpacing>
-                                                        </stackView>
                                                     </subviews>
                                                     <visibilityPriorities>
-                                                        <integer value="1000"/>
                                                         <integer value="1000"/>
                                                     </visibilityPriorities>
                                                     <customSpacing>
                                                         <real value="3.4028234663852886e+38"/>
-                                                        <real value="3.4028234663852886e+38"/>
                                                     </customSpacing>
                                                 </stackView>
-                                                <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="VTy-07-rfw">
-                                                    <rect key="frame" x="436" y="142" width="16" height="16"/>
-                                                </progressIndicator>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="ZNT-9Y-kyD" firstAttribute="top" secondItem="rtk-61-lXP" secondAttribute="top" constant="20" symbolic="YES" id="16x-SV-BG9"/>
-                                                <constraint firstItem="VTy-07-rfw" firstAttribute="top" secondItem="rtk-61-lXP" secondAttribute="top" constant="8" id="93l-yc-0e4"/>
                                                 <constraint firstItem="ZNT-9Y-kyD" firstAttribute="leading" secondItem="rtk-61-lXP" secondAttribute="leading" constant="20" symbolic="YES" id="BU1-PC-IWg"/>
-                                                <constraint firstAttribute="trailing" secondItem="VTy-07-rfw" secondAttribute="trailing" constant="8" id="gc4-R3-qtI"/>
                                                 <constraint firstAttribute="trailing" secondItem="ZNT-9Y-kyD" secondAttribute="trailing" constant="20" symbolic="YES" id="mxI-JU-6Yf"/>
                                             </constraints>
                                         </view>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="180" id="VMQ-2n-Vua"/>
+                                            <constraint firstAttribute="height" constant="100" id="VMQ-2n-Vua"/>
                                         </constraints>
                                     </box>
                                     <box borderType="line" title="comment_speaking" translatesAutoresizingMaskIntoConstraints="NO" id="ICr-HG-iyb">
@@ -436,19 +235,11 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="checkAccountButton" destination="QxL-35-zQB" id="Ys6-42-qov"/>
-                        <outlet property="checkAccountStatusTitleLabel" destination="8Ol-wh-34C" id="nRm-vU-HdN"/>
-                        <outlet property="checkAccountStatusValueLabel" destination="7ho-fM-1a0" id="iUM-zU-vwp"/>
+                        <outlet property="browserInUseBox" destination="MWm-if-ayO" id="5hf-gR-Fw3"/>
+                        <outlet property="browserInUseMatrix" destination="y0n-lu-hbG" id="Dee-Od-G0x"/>
                         <outlet property="chromeButtonCell" destination="Ici-yj-KuI" id="ZIX-rJ-KYV"/>
                         <outlet property="commentSpeakingBox" destination="ICr-HG-iyb" id="6y6-k7-mqr"/>
-                        <outlet property="loginButtonCell" destination="fBE-E6-cig" id="IGt-TM-Q7e"/>
-                        <outlet property="mailAddressTitleTextField" destination="EXx-bO-Ndv" id="k6F-qC-a5A"/>
-                        <outlet property="mailAddressValueTextField" destination="RF4-gC-rH4" id="9L7-b0-tL6"/>
-                        <outlet property="passwordTitleTextField" destination="7zQ-8n-W5G" id="014-eJ-l2N"/>
-                        <outlet property="progressIndicator" destination="VTy-07-rfw" id="Zrv-pi-fy0"/>
                         <outlet property="safariButtonCell" destination="wGq-x5-Aua" id="lb1-w9-hCF"/>
-                        <outlet property="sessionManagementBox" destination="MWm-if-ayO" id="MhO-co-gdr"/>
-                        <outlet property="sessionManagementMatrix" destination="y0n-lu-hbG" id="Dee-Od-G0x"/>
                         <outlet property="speakCommentButton" destination="MZf-F3-ma6" id="9fp-wX-etw"/>
                         <outlet property="speakVolumeSlider" destination="NBg-Gf-rw0" id="gzQ-f2-Xwi"/>
                         <outlet property="speakVolumeTitleTextField" destination="lhl-Ab-vvj" id="STj-TK-3lB"/>

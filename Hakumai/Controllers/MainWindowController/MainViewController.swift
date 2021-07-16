@@ -10,12 +10,12 @@ import Foundation
 import AppKit
 import Kingfisher
 
-private let userWindowDefautlTopLeftPoint = NSPoint(x: 100, y: 100)
+private let userWindowDefaultTopLeftPoint = NSPoint(x: 100, y: 100)
 private let calculateActiveUserInterval: TimeInterval = 5
 private let maximumFontSizeForNonMainColumn: CGFloat = 16
 private let defaultMinimumRowHeight: CGFloat = 17
 
-private let enableDebugReconnectButton = false
+private let enableDebugButtons = false
 
 private let defaultElapsedTimeValue = "--:--:--"
 private let defaultLabelValue = "---"
@@ -32,6 +32,7 @@ final class MainViewController: NSViewController {
     @IBOutlet private weak var grabUrlButton: NSButton!
     @IBOutlet private weak var liveUrlTextField: NSTextField!
     @IBOutlet private weak var debugReconnectButton: NSButton!
+    @IBOutlet private weak var debugExpireTokenButton: NSButton!
     @IBOutlet private weak var connectButton: NSButton!
 
     @IBOutlet private weak var communityImageView: NSImageView!
@@ -69,7 +70,7 @@ final class MainViewController: NSViewController {
     private var liveStartedDate: Date?
 
     // row-height cache
-    private var rowHeightCacher = [Int: CGFloat]()
+    private var rowHeightCache = [Int: CGFloat]()
     private var minimumRowHeight: CGFloat = defaultMinimumRowHeight
     private var tableViewFontSize: CGFloat = CGFloat(kDefaultFontSize)
 
@@ -79,6 +80,12 @@ final class MainViewController: NSViewController {
     private var elapsedTimeTimer: Timer?
     private var activeUserTimer: Timer?
 
+    // AuthWindowController
+    private lazy var authWindowController: AuthWindowController = {
+        AuthWindowController.make(delegate: self)
+    }()
+
+    // UserWindowControllers
     private var userWindowControllers = [UserWindowController]()
     private var nextUserWindowTopLeftPoint: NSPoint = NSPoint.zero
 }
@@ -115,7 +122,7 @@ extension MainViewController {
 // MARK: - NSTableViewDataSource Functions
 extension MainViewController: NSTableViewDataSource {
     func numberOfRows(in tableView: NSTableView) -> Int {
-        return MessageContainer.shared.count()
+        MessageContainer.shared.count()
     }
 }
 
@@ -124,7 +131,7 @@ extension MainViewController: NSTableViewDelegate {
     func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
         let message = MessageContainer.shared[row]
 
-        if let cached = rowHeightCacher[message.messageNo] {
+        if let cached = rowHeightCache[message.messageNo] {
             return cached
         }
 
@@ -134,7 +141,7 @@ extension MainViewController: NSTableViewDelegate {
         let commentColumnWidth = commentTableColumn.width
         rowHeight = commentColumnHeight(forMessage: message, width: commentColumnWidth)
 
-        rowHeightCacher[message.messageNo] = rowHeight
+        rowHeightCache[message.messageNo] = rowHeight
 
         return rowHeight
     }
@@ -167,7 +174,7 @@ extension MainViewController: NSTableViewDelegate {
             return
         }
         if convertFromNSUserInterfaceItemIdentifier(column.identifier) == kCommentColumnIdentifier {
-            rowHeightCacher.removeAll(keepingCapacity: false)
+            rowHeightCache.removeAll(keepingCapacity: false)
             tableView.reloadData()
         }
     }
@@ -310,8 +317,23 @@ extension MainViewController: NSControlTextEditingDelegate {
     }
 }
 
+// MARK: - AuthWindowControllerDelegate Functions
+extension MainViewController: AuthWindowControllerDelegate {
+    func authWindowControllerDidLogin(_ authWindowController: AuthWindowController) {
+        logSystemMessageToTableView(L10n.loginCompleted)
+    }
+}
+
 // MARK: - NicoUtilityDelegate Functions
 extension MainViewController: NicoUtilityDelegate {
+    func nicoUtilityNeedsToken(_ nicoUtility: NicoUtilityType) {
+        showAuthWindowController()
+    }
+
+    func nicoUtilityDidConfirmTokenExistence(_ nicoUtility: NicoUtilityType) {
+        // nop
+    }
+
     func nicoUtilityWillPrepareLive(_ nicoUtility: NicoUtilityType) {
         updateMainControlViews(status: .connecting)
     }
@@ -334,7 +356,6 @@ extension MainViewController: NicoUtilityDelegate {
     func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, error: NicoUtility.NicoError) {
         logSystemMessageToTableView(L10n.failedToPrepareLive(error.toMessage))
         updateMainControlViews(status: .disconnected)
-        showCookiePrivilegeAlertIfNeeded(error: error)
     }
 
     func nicoUtilityDidConnectToLive(_ nicoUtility: NicoUtilityType, roomPosition: RoomPosition, connectContext: NicoUtility.ConnectContext) {
@@ -408,6 +429,20 @@ extension MainViewController: UserWindowControllerDelegate {
 
 // MARK: - Public Functions
 extension MainViewController {
+    func login() {
+        showAuthWindowController()
+        // login message will be displayed from `authWindowControllerDidLogin()` delegate method.
+    }
+
+    func logout() {
+        if connectedToLive {
+            NicoUtility.shared.disconnect()
+        }
+        NicoUtility.shared.logout()
+        authWindowController.logout()
+        logSystemMessageToTableView(L10n.logoutCompleted)
+    }
+
     func showHandleNameAddViewController(live: Live, chat: Chat) {
         let handleNameAddViewController =
             StoryboardScene.MainWindowController.handleNameAddViewController.instantiate()
@@ -462,31 +497,31 @@ extension MainViewController {
 
         minimumRowHeight = calculateMinimumRowHeight(fontSize: tableViewFontSize)
         tableView.rowHeight = minimumRowHeight
-        rowHeightCacher.removeAll(keepingCapacity: false)
+        rowHeightCache.removeAll(keepingCapacity: false)
         tableView.reloadData()
     }
 
     func changeEnableMuteUserIds(_ enabled: Bool) {
         MessageContainer.shared.enableMuteUserIds = enabled
-        log.debug("changed enable mute userids: \(enabled)")
+        log.debug("Changed enable mute user ids: \(enabled)")
         rebuildFilteredMessages()
     }
 
     func changeMuteUserIds(_ muteUserIds: [[String: String]]) {
         MessageContainer.shared.muteUserIds = muteUserIds
-        log.debug("changed mute userids: \(muteUserIds)")
+        log.debug("Changed mute user ids: \(muteUserIds)")
         rebuildFilteredMessages()
     }
 
     func changeEnableMuteWords(_ enabled: Bool) {
         MessageContainer.shared.enableMuteWords = enabled
-        log.debug("changed enable mute words: \(enabled)")
+        log.debug("Changed enable mute words: \(enabled)")
         rebuildFilteredMessages()
     }
 
     func changeMuteWords(_ muteWords: [[String: String]]) {
         MessageContainer.shared.muteWords = muteWords
-        log.debug("changed mute words: \(muteWords)")
+        log.debug("Changed mute words: \(muteWords)")
         rebuildFilteredMessages()
     }
 
@@ -517,7 +552,9 @@ extension MainViewController {
 private extension MainViewController {
     func configureViews() {
         communityImageView.addBorder()
-        debugReconnectButton.isHidden = !enableDebugReconnectButton
+        [debugReconnectButton, debugExpireTokenButton].forEach {
+            $0?.isHidden = !enableDebugButtons
+        }
 
         liveUrlTextField.placeholderString = L10n.liveUrlTextFieldPlaceholder
 
@@ -664,16 +701,20 @@ private extension MainViewController {
 // MARK: Control Handlers
 extension MainViewController {
     @IBAction func grabUrlFromBrowser(_ sender: AnyObject) {
-        guard let session = SessionManagementType(rawValue:
-                                                    UserDefaults.standard.integer(forKey: Parameters.sessionManagement)) else { return }
-        let browser: BrowserHelper.BrowserType = session == .safari ? .safari : .chrome
-        if let url = BrowserHelper.extractUrl(fromBrowser: browser) {
-            liveUrlTextField.stringValue = url
-            connectLive(self)
-        }
+        let rawValue = UserDefaults.standard.integer(forKey: Parameters.browserInUse)
+        guard let _browser = BrowserInUseType(rawValue: rawValue) else { return }
+        let browser: BrowserHelper.BrowserType = {
+            switch _browser {
+            case .chrome:   return .chrome
+            case .safari:   return .safari
+            }
+        }()
+        guard let url = BrowserHelper.extractUrl(fromBrowser: browser) else { return }
+        liveUrlTextField.stringValue = url
+        connectLive(self)
     }
 
-    @IBAction func reconnectLive(_ sender: Any) {
+    @IBAction func debugReconnectButtonPressed(_ sender: Any) {
         let reason: NicoUtility.ReconnectReason
         reason = .normal
         // reason = .noPong
@@ -681,31 +722,20 @@ extension MainViewController {
         NicoUtility.shared.reconnect(reason: reason)
     }
 
+    @IBAction func debugExpireTokenButtonPressed(_ sender: Any) {
+        NicoUtility.shared.injectExpiredAccessToken()
+        logSystemMessageToTableView("Injected expired access token.")
+    }
+
     @IBAction func connectLive(_ sender: AnyObject) {
         initializeHandleNameManager()
-        guard let liveNumber = liveUrlTextField.stringValue.extractLiveNumber() else { return }
+        guard let liveProgramId = liveUrlTextField.stringValue.extractLiveProgramId() else { return }
 
         clearAllChats()
         communityImageView.image = Asset.defaultCommunityImage.image
         NicoUtility.shared.delegate = self
 
-        guard let sessionManagementType = SessionManagementType(
-                rawValue: UserDefaults.standard.integer(forKey: Parameters.sessionManagement)) else { return }
-
-        let sessionType = { () -> NicoUtility.SessionType? in
-            switch sessionManagementType {
-            case .login:
-                guard let account = KeychainUtility.accountInKeychain() else { return nil }
-                return .login(mail: account.mailAddress, password: account.password)
-            case .chrome:
-                return .chrome
-            case .safari:
-                return .safari
-            }
-        }()
-
-        guard let sessionType = sessionType else { return }
-        NicoUtility.shared.connect(liveNumber: liveNumber, sessionType: sessionType)
+        NicoUtility.shared.connect(liveProgramId: liveProgramId)
     }
 
     @IBAction func connectButtonPressed(_ sender: AnyObject) {
@@ -752,7 +782,7 @@ extension MainViewController {
         // check if user window exists?
         for existing in userWindowControllers where chat.userId == existing.userId {
             userWindowController = existing
-            log.debug("existing userwc found, use it:\(userWindowController?.description ?? "")")
+            log.debug("existing user-wc found, use it:\(userWindowController?.description ?? "")")
             break
         }
 
@@ -767,7 +797,7 @@ extension MainViewController {
                 delegate: self, userId: chat.userId, handleName: handleName)
             if let uwc = userWindowController {
                 positionUserWindow(uwc.window)
-                log.debug("no existing userwc found, create it:\(uwc.description)")
+                log.debug("no existing user-wc found, create it:\(uwc.description)")
                 userWindowControllers.append(uwc)
             }
         }
@@ -778,7 +808,7 @@ extension MainViewController {
         guard let userWindow = userWindow else { return }
         var topLeftPoint: NSPoint = nextUserWindowTopLeftPoint
         if userWindowControllers.count == 0 {
-            topLeftPoint = userWindowDefautlTopLeftPoint
+            topLeftPoint = userWindowDefaultTopLeftPoint
         }
         nextUserWindowTopLeftPoint = userWindow.cascadeTopLeft(from: topLeftPoint)
     }
@@ -872,56 +902,30 @@ private extension MainViewController {
 private extension MainViewController {
     func clearAllChats() {
         MessageContainer.shared.removeAll()
-        rowHeightCacher.removeAll(keepingCapacity: false)
+        rowHeightCache.removeAll(keepingCapacity: false)
         tableView.reloadData()
     }
-}
 
-// Alert view for Safari cookie
-private extension MainViewController {
-    func showCookiePrivilegeAlertIfNeeded(error: NicoUtility.NicoError?) {
-        guard error == .noCookie else { return }
-        let param = UserDefaults.standard.integer(forKey: Parameters.sessionManagement)
-        guard let sessionManagementType = SessionManagementType(rawValue: param) else { return }
-        switch sessionManagementType {
-        case .safari:
-            let alert = NSAlert()
-            alert.messageText = L10n.safariCookieAlertTitle
-            alert.informativeText = L10n.safariCookieAlertDescription
-            let imageView = NSImageView(image: Asset.safariCookieAlertImage.image)
-            imageView.frame = NSRect.init(x: 0, y: 0, width: 300, height: 300)
-            alert.accessoryView = imageView
-            let securityButton = alert.addButton(withTitle: L10n.openSecurityPrivacy)
-            securityButton.target = self
-            securityButton.action = #selector(MainViewController.showSecurityPanel)
-            alert.addButton(withTitle: L10n.cancel)
-            alert.runModal()
-        default:
-            break
-        }
-    }
-
-    @objc func showSecurityPanel() {
-        let url = URL(fileURLWithPath: "/System/Library/PreferencePanes/Security.prefPane")
-        NSWorkspace.shared.open(url)
+    func showAuthWindowController() {
+        authWindowController.startAuthorization()
+        authWindowController.showWindow(self)
     }
 }
 
 private extension NicoUtility.NicoError {
     var toMessage: String {
         switch self {
-        case .internal:                     return L10n.errorInternal
-        case .noCookie:                     return L10n.errorNoCookie
-        case .noLiveInfo:                   return L10n.errorNoLiveInfo
-        case .noMessageServerInfo:          return L10n.errorNoMessageServerInfo
-        case .failedToOpenMessageServer:    return L10n.errorFailedToOpenMessageServer
+        case .internal:                 return L10n.errorInternal
+        case .noLiveInfo:               return L10n.errorNoLiveInfo
+        case .noMessageServerInfo:      return L10n.errorNoMessageServerInfo
+        case .openMessageServerFailed:  return L10n.errorFailedToOpenMessageServer
         }
     }
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToNSUserInterfaceItemIdentifier(_ input: String) -> NSUserInterfaceItemIdentifier {
-    return NSUserInterfaceItemIdentifier(rawValue: input)
+    NSUserInterfaceItemIdentifier(rawValue: input)
 }
 
 // Helper function inserted by Swift 4.2 migrator.
@@ -932,6 +936,6 @@ private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: 
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertFromNSUserInterfaceItemIdentifier(_ input: NSUserInterfaceItemIdentifier) -> String {
-    return input.rawValue
+    input.rawValue
 }
 // swiftlint:enable file_length

@@ -1,0 +1,9 @@
+{
+  "meta": {
+    "status": 200,
+    "errorCode": "OK"
+  },
+  "data": {
+    "url": "wss://a.live2.nicovideo.jp/unama/wsapi/v2/watch/11111?audience_token=22222_33333_44444_abcdef"
+  }
+}

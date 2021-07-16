@@ -20,6 +20,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         initializeUserDefaults()
         addObserverForUserDefaults()
         configureMenuItems()
+        debugPrintToken()
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
@@ -29,6 +30,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
 // MARK: Menu Handlers
 extension AppDelegate {
+    @IBAction func login(_ sender: Any) {
+        MainViewController.shared.login()
+    }
+
+    @IBAction func logout(_ sender: Any) {
+        MainViewController.shared.logout()
+    }
+
     @IBAction func openPreferences(_ sender: AnyObject) {
         PreferenceWindowController.shared.showWindow(self)
     }
@@ -69,8 +78,9 @@ extension AppDelegate {
         guard let keyPath = keyPath, let change = change else { return }
 
         switch (keyPath, change[.newKey]) {
-        case (Parameters.sessionManagement, _):
-            NicoUtility.shared.reserveToClearUserSessionCookie()
+        case (Parameters.browserInUse, _):
+            // log.debug("browserInUse -> \(changed)")
+            break
 
         case (Parameters.enableCommentSpeech, let changed as Bool):
             MainViewController.shared.changeEnableCommentSpeech(changed)
@@ -150,7 +160,7 @@ private extension AppDelegate {
 
     func initializeUserDefaults() {
         let defaults: [String: Any] = [
-            Parameters.sessionManagement: SessionManagementType.chrome.rawValue,
+            Parameters.browserInUse: BrowserInUseType.chrome.rawValue,
             Parameters.fontSize: kDefaultFontSize,
             Parameters.enableCommentSpeech: false,
             Parameters.commentSpeechVolume: 100,
@@ -164,7 +174,7 @@ private extension AppDelegate {
     func addObserverForUserDefaults() {
         let keyPaths = [
             // general
-            Parameters.sessionManagement,
+            Parameters.browserInUse,
             Parameters.enableCommentSpeech,
             Parameters.commentSpeechVolume,
             // mute
@@ -204,5 +214,14 @@ private extension AppDelegate {
         guard kMinimumFontSize...kMaximumFontSize ~= fontSize else { return }
         UserDefaults.standard.set(fontSize, forKey: Parameters.fontSize)
         UserDefaults.standard.synchronize()
+    }
+}
+
+// MARK: Debug Methods
+private extension AppDelegate {
+    func debugPrintToken() {
+        log.debug("accessToken: " + (AuthManager.shared.currentToken?.accessToken ?? "-"))
+        log.debug("expireIn: " + String((AuthManager.shared.currentToken?.expiresIn ?? 0)))
+        log.debug("refreshToken: " + (AuthManager.shared.currentToken?.refreshToken ?? "-"))
     }
 }

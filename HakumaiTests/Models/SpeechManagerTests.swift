@@ -20,6 +20,72 @@ final class SpeechManagerTests: XCTestCase {
 
     // swiftlint:disable function_body_length
     @available(macOS 10.14, *)
+    func testIsAcceptableComment() {
+        var comment = ""
+        var result: Bool
+
+        comment = "無職なのになんでカフェいくの？？？？？？？"
+        result = SpeechManager.shared.isAcceptableComment(comment)
+        XCTAssert(result == true)
+
+        // length: 71
+        comment = "初見です。骨皮筋bsゲス出っ歯人中ロングお未婚お下劣目尻ほうれい線口元シワシワ髪質ゴワゴワ体型貧相性格底辺人間力マイナスのむらマコさんわこつ。"
+        result = SpeechManager.shared.isAcceptableComment(comment)
+        XCTAssert(result == true)
+
+        // length: 110
+        comment = "初見です。骨皮筋bsゲス出っ歯人中ロングお未婚お下劣目尻ほうれい線口元シワシワ髪質ゴワゴワ体型貧相性格底辺人間力マイナスのむらマコさんわこつ。初見です。骨皮筋bsゲス出っ歯人中ロングお未婚お下劣目尻ほうれい線口元シワシワ"
+        result = SpeechManager.shared.isAcceptableComment(comment)
+        XCTAssert(result == false)
+
+        comment = "👄👈🏻💗💗💗"
+        result = SpeechManager.shared.isAcceptableComment(comment)
+        XCTAssert(result == true)
+
+        comment = """
+            🟥🟧🟨🟩🟦🟪🟥🟧🟨🟩🟦🟪🟥🟧🟨🟩
+            🟥🟧🟨🟩🟦🟪(⌒,_ゝ⌒)🟩🟦🟪🟥🟧🟨🟩
+            🟥🟧🟨🟩🟦🟪もこレインボー🟪🟥🟧🟨🟩
+            🟥🟧🟨🟩🟦🟪🟥🟧🟨🟩🟦🟪🟥🟧🟨🟩
+            """
+        result = SpeechManager.shared.isAcceptableComment(comment)
+        XCTAssert(result == false)
+
+        comment = """
+            .　　 ヾヽ
+            .　 (o⌒,_ゝ⌒) ネオもこバード
+            　　ﾉ\"\"\"\" )　 )
+            　 彡ノ,,,,ノ
+            ―〃-〃―――
+            　　ﾚ,,/
+            """
+        result = SpeechManager.shared.isAcceptableComment(comment)
+        XCTAssert(result == false)
+
+        comment = "粨粨粨粨粨粨粨粨粨粨粨粨粨粨粨粨粨粨"
+        result = SpeechManager.shared.isAcceptableComment(comment)
+        XCTAssert(result == false)
+
+        comment = "鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅"
+        result = SpeechManager.shared.isAcceptableComment(comment)
+        XCTAssert(result == false)
+
+        comment = "えええええええええええええええええええええええええええええええええええｗｗｗｗｗｗｗｗｗｗｗｗ"
+        result = SpeechManager.shared.isAcceptableComment(comment)
+        XCTAssert(result == true)
+
+        comment = "ｗｗｗｗｗｗｗｗｗｗｗｗ"
+        result = SpeechManager.shared.isAcceptableComment(comment)
+        XCTAssert(result == true)
+
+        comment = "えええええええええええええええええええええええええええええええええええ"
+        result = SpeechManager.shared.isAcceptableComment(comment)
+        XCTAssert(result == true)
+    }
+    // swiftlint:enable function_body_length
+
+    // swiftlint:disable function_body_length
+    @available(macOS 10.14, *)
     func testCleanComment() {
         var comment = ""
         var expected = ""

@@ -41,3 +41,5 @@ DerivedData
 #
 Pods/
 
+# Credential
+OAuthCredential.swift

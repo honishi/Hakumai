@@ -9,13 +9,13 @@
 import Foundation
 
 final class User: CustomStringConvertible {
-    let userId: Int
+    let userId: String
     let nickname: String
 
     var description: String { "User: userId[\(userId)] nickname[\(nickname)]" }
 
     // MARK: - Object Lifecycle
-    init(userId: Int, nickname: String) {
+    init(userId: String, nickname: String) {
         self.userId = userId
         self.nickname = nickname
     }

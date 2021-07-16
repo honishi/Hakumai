@@ -28,7 +28,6 @@ let kPremiumColumnIdentifier = "PremiumColumn"
 // MARK: Common regular expressions
 // mail address regular expression based on http://qiita.com/sakuro/items/1eaa307609ceaaf51123
 let kRegexpMailAddress = "[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*"
-let kRegexpPassword = ".{4,}"
 
 // MARK: font size
 let kDefaultFontSize: Float = 13

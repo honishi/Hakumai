@@ -9,18 +9,29 @@
 import Foundation
 import AVFoundation
 
-private let kDequeuChatTimerInterval: TimeInterval = 0.5
+private let dequeuChatTimerInterval: TimeInterval = 0.5
 
-private let kVoiceSpeedMap: [(queuCountRange: CountableRange<Int>, speed: Float)] = [
-    (0..<2, 0.50),
-    (2..<4, 0.55),
-    (4..<7, 0.60),
-    (7..<10, 0.65),
-    (10..<100, 0.75)
+private let voiceSpeedMap: [(commentLengthRange: CountableRange<Int>, speed: Float)] = [
+    (0..<40, 0.50),
+    (40..<80, 0.55),
+    (80..<120, 0.60),
+    (120..<160, 0.65),
+    (160..<Int.max, 0.75)
 ]
-private let kRefreshChatQueueThreshold = 30
+private let refreshChatQueueThreshold = 30
+private let recentChatsThreshold = 50
 
-private let kCleanCommentPatterns = [
+// https://stackoverflow.com/a/38409026/13220031
+// See unicode list at https://0g0.org/ or https://0g0.org/unicode-list/
+// See unicode search at https://www.marbacka.net/msearch/tool.php#chr2enc
+private let emojiPattern = "[\\U0001F000-\\U0001F9FF]"
+private let lineBreakPattern = "\n"
+// https://stackoverflow.com/a/1660739/13220031
+// private let repeatedCharPattern = "(.)\\1{9,}"
+// https://so-zou.jp/software/tech/programming/tech/regular-expression/meta-character/variable-width-encoding.htm#no1
+private let repeatedKanjiPattern = "(\\p{Han})\\1{9,}"
+
+private let cleanCommentPatterns = [
     ("https?://[\\w!?/+\\-_~;.,*&@#$%()'\\[\\]=]+", " URL "),
     ("(w|ｗ){2,}", " わらわら"),
     ("(w|ｗ)$", " わら"),
@@ -33,10 +44,17 @@ final class SpeechManager: NSObject {
     static let shared = SpeechManager()
 
     private var chatQueue: [Chat] = []
-    private var voiceSpeed = kVoiceSpeedMap[0].speed
+    private var recentChats: [Chat] = []
+    private var voiceSpeed = voiceSpeedMap[0].speed
     private var voiceVolume = 100
     private var timer: Timer?
     private let synthesizer = AVSpeechSynthesizer()
+
+    // swiftlint:disable force_try
+    private let emojiRegexp = try! NSRegularExpression(pattern: emojiPattern, options: [])
+    private let lineBreakRegexp = try! NSRegularExpression(pattern: lineBreakPattern, options: [])
+    private let repeatedKanjiRegexp = try! NSRegularExpression(pattern: repeatedKanjiPattern, options: [])
+    // swiftlint:enable force_try
 
     // MARK: - Object Lifecycle
     override init() {
@@ -49,7 +67,7 @@ final class SpeechManager: NSObject {
         // use explicit main queue to ensure that the timer continues to run even when caller thread ends.
         DispatchQueue.main.async {
             self.timer = Timer.scheduledTimer(
-                timeInterval: kDequeuChatTimerInterval,
+                timeInterval: dequeuChatTimerInterval,
                 target: self,
                 selector: #selector(SpeechManager.dequeue(_:)),
                 userInfo: nil,
@@ -68,6 +86,7 @@ final class SpeechManager: NSObject {
         defer { objc_sync_exit(self) }
 
         chatQueue.removeAll()
+        recentChats.removeAll()
         log.debug("stopped speech manager.")
     }
 
@@ -79,11 +98,17 @@ final class SpeechManager: NSObject {
 
     func enqueue(chat: Chat) {
         guard chat.premium == .ippan || chat.premium == .premium else { return }
+        guard isAcceptableComment(chat.comment) else { return }
 
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
 
         chatQueue.append(chat)
+
+        recentChats.append(chat)
+        if recentChats.count > recentChatsThreshold {
+            recentChats.remove(at: 0)
+        }
     }
 
     @objc func dequeue(_ timer: Timer?) {
@@ -95,8 +120,18 @@ final class SpeechManager: NSObject {
         guard let chat = chatQueue.first else { return }
         chatQueue.removeFirst()
 
+        let isUniqueComment = recentChats.filter { $0.comment == chat.comment }.count == 1
+        let isShortComment = chat.comment.count < 10
+        guard isUniqueComment || isShortComment else {
+            log.debug("skip duplicate speech comment. [\(chat.comment)]")
+            return
+        }
+
         let utterance = AVSpeechUtterance.init(string: cleanComment(from: chat.comment))
-        voiceSpeed = adjustedVoiceSpeed(chatQueueCount: chatQueue.count, currentVoiceSpeed: voiceSpeed)
+        voiceSpeed = adjustedVoiceSpeed(
+            currentCommentLength: chat.comment.count,
+            remainingCommentLength: chatQueue.map { $0.comment.count }.reduce(0, +),
+            currentVoiceSpeed: voiceSpeed)
         utterance.rate = voiceSpeed
         utterance.volume = Float(voiceVolume) / 100.0
         let voice = AVSpeechSynthesisVoice.init(language: "ja-JP")
@@ -108,7 +143,7 @@ final class SpeechManager: NSObject {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
 
-        if kRefreshChatQueueThreshold < chatQueue.count {
+        if refreshChatQueueThreshold < chatQueue.count {
             chatQueue.removeAll()
             return true
         }
@@ -117,29 +152,40 @@ final class SpeechManager: NSObject {
     }
 
     // MARK: - Private Functions
-    private func adjustedVoiceSpeed(chatQueueCount count: Int, currentVoiceSpeed: Float) -> Float {
-        var candidateSpeed = kVoiceSpeedMap[0].speed
-
-        if count == 0 {
-            return candidateSpeed
-        }
-
-        for (queueCountRange, speed) in kVoiceSpeedMap {
-            if queueCountRange.contains(count) {
+    private func adjustedVoiceSpeed(currentCommentLength current: Int, remainingCommentLength remaining: Int, currentVoiceSpeed: Float) -> Float {
+        let total = current + remaining
+        var candidateSpeed = voiceSpeedMap[0].speed
+        for (commentLengthRange, speed) in voiceSpeedMap {
+            if commentLengthRange.contains(total) {
                 candidateSpeed = speed
                 break
             }
         }
+        let adjusted = remaining == 0 ? candidateSpeed : max(currentVoiceSpeed, candidateSpeed)
+        log.debug("current: \(current) remaining: \(remaining) total: \(total) candidate: \(candidateSpeed) adjusted: \(adjusted)")
+        return adjusted
+    }
 
-        return currentVoiceSpeed < candidateSpeed ? candidateSpeed : currentVoiceSpeed
+    // define as 'internal' for test
+    func isAcceptableComment(_ comment: String) -> Bool {
+        return comment.count < 100 &&
+            emojiRegexp.matchCount(in: comment) < 5 &&
+            lineBreakRegexp.matchCount(in: comment) < 3 &&
+            repeatedKanjiRegexp.matchCount(in: comment) == 0
     }
 
     // define as 'internal' for test
     func cleanComment(from comment: String) -> String {
         var cleaned = comment
-        kCleanCommentPatterns.forEach {
+        cleanCommentPatterns.forEach {
             cleaned = cleaned.stringByReplacingRegexp(pattern: $0.0, with: $0.1)
         }
         return cleaned
+    }
+}
+
+private extension NSRegularExpression {
+    func matchCount(in text: String) -> Int {
+        return numberOfMatches(in: text, options: [], range: NSRange(0..<text.count))
     }
 }

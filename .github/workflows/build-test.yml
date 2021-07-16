@@ -7,7 +7,8 @@ jobs:
     # TODO: Activate this `macos-11.0` image.
     # So far, seems the `macos-11.0` image is not available for everyone.
     # See details at: https://github.com/actions/virtual-environments/issues/2486
-    runs-on: macos-11.0
+    # runs-on: macos-11.0
+    runs-on: macos-10.15
 
     # checkout
     steps:
@@ -48,7 +49,8 @@ jobs:
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '12.5'
+          xcode-version: '12.4'
+          # xcode-version: '12.5'
 
       # setup xcode project
       - name: Setup cache for Pods
@@ -66,6 +68,8 @@ jobs:
       # before test
       - name: Disable Sparkle
         run: ./script/disable_sparkle.sh
+      - name: Copy sample credential file
+        run: cp ./Hakumai/OAuthCredential.sample.swift ./Hakumai/OAuthCredential.swift
 
       # build and run tests
       # XXX: remove the work around for cocoapods bug (EXPANDED_CODE_SIGN_IDENTITY)
