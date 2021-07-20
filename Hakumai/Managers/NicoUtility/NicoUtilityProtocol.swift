@@ -65,6 +65,9 @@ enum NicoError: Error {
     case openMessageServerFailed
 }
 
-enum NicoConnectContext { case normal, reconnect }
-enum NicoDisconnectContext { case normal, reconnect }
+enum NicoConnectContext {
+    case normal
+    case reconnect(NicoReconnectReason)
+}
 enum NicoReconnectReason { case normal, noPong, noTexts }
+enum NicoDisconnectContext { case normal, reconnect }

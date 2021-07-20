@@ -365,8 +365,13 @@ extension MainViewController: NicoUtilityDelegate {
         case .normal:
             liveStartedDate = Date()
             logSystemMessageToTableView(L10n.connectedToLive)
-        case .reconnect:
-            break
+        case .reconnect(let reason):
+            switch reason {
+            case .normal:
+                logSystemMessageToTableView(L10n.reconnected)
+            case .noPong, .noTexts:
+                break
+            }
         }
         updateMainControlViews(status: .connected)
         updateSpeechManagerState()
@@ -389,7 +394,8 @@ extension MainViewController: NicoUtilityDelegate {
     func nicoUtilityWillReconnectToLive(_ nicoUtility: NicoUtilityType, reason: NicoReconnectReason) {
         switch reason {
         case .normal:
-            logSystemMessageToTableView(L10n.reconnecting)
+            // logSystemMessageToTableView(L10n.reconnecting)
+            break
         case .noPong, .noTexts:
             break
         }

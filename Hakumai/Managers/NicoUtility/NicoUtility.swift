@@ -197,7 +197,7 @@ extension NicoUtility {
         DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 2) {
             self.connect(
                 liveProgramId: lastConnection.liveProgramId,
-                connectContext: .reconnect)
+                connectContext: .reconnect(reason))
         }
     }
 
