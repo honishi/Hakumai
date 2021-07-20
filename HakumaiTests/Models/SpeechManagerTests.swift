@@ -155,6 +155,26 @@ final class SpeechManagerTests: XCTestCase {
         expected = "これ見て URL "
         actual = SpeechManager.shared.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
+
+        comment = "ニコニコ生放送"
+        expected = "ニコニコ生放送"
+        actual = SpeechManager.shared.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
+
+        comment = "私はニコニコ生放送を見てる"
+        expected = "私はニコニコ生放送を見てる"
+        actual = SpeechManager.shared.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
+
+        comment = "ニコ生"
+        expected = "ニコなま"
+        actual = SpeechManager.shared.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
+
+        comment = "私はニコ生を見てる"
+        expected = "私はニコなまを見てる"
+        actual = SpeechManager.shared.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
     }
     // swiftlint:enable function_body_length
 }
