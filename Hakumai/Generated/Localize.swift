@@ -142,6 +142,8 @@ internal enum L10n {
   }
   /// Quit Hakumai
   internal static let quitHakumai = L10n.tr("Localizable", "quit_hakumai")
+  /// Reconnected.
+  internal static let reconnected = L10n.tr("Localizable", "reconnected")
   /// Reconnecting...
   internal static let reconnecting = L10n.tr("Localizable", "reconnecting")
   /// Remove Handle Name

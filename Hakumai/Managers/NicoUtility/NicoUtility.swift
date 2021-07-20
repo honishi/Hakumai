@@ -55,16 +55,6 @@ private let postCommentMessage = """
 // MARK: - Class
 final class NicoUtility: NicoUtilityType {
     // MARK: - Types
-    enum NicoError: Error {
-        case `internal`
-        case noLiveInfo
-        case noMessageServerInfo
-        case openMessageServerFailed
-    }
-    enum ConnectContext { case normal, reconnect }
-    enum DisconnectContext { case normal, reconnect }
-    enum ReconnectReason { case normal, noPong, noTexts }
-
     struct ConnectRequests {
         // swiftlint:disable nesting
         struct Request {
@@ -142,7 +132,7 @@ extension NicoUtility {
         connect(liveProgramId: liveProgramId, connectContext: .normal)
     }
 
-    func connect(liveProgramId: String, connectContext: NicoUtility.ConnectContext) {
+    func connect(liveProgramId: String, connectContext: NicoConnectContext) {
         // 1. Check if the token is existing.
         guard authManager.hasToken else {
             delegate?.nicoUtilityNeedsToken(self)
@@ -177,12 +167,12 @@ extension NicoUtility {
         disconnect(disconnectContext: .normal)
     }
 
-    func disconnect(disconnectContext: NicoUtility.DisconnectContext) {
+    func disconnect(disconnectContext: NicoDisconnectContext) {
         disconnectSocketsAndResetState()
         delegate?.nicoUtilityDidDisconnect(self, disconnectContext: disconnectContext)
     }
 
-    func reconnect(reason: ReconnectReason = .normal) {
+    func reconnect(reason: NicoReconnectReason = .normal) {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
 
@@ -195,19 +185,14 @@ extension NicoUtility {
         // method from being called multiple times from multiple thread.
         connectRequests.lastEstablished = nil
 
-        disconnect(disconnectContext: {
-            switch reason {
-            case .normal:           return .normal
-            case .noPong, .noTexts: return .reconnect
-            }
-        }())
+        disconnect(disconnectContext: .reconnect(reason))
         delegate?.nicoUtilityWillReconnectToLive(self, reason: reason)
 
         // Just in case, make some delay to invoke the connect method.
         DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 2) {
             self.connect(
                 liveProgramId: lastConnection.liveProgramId,
-                connectContext: .reconnect)
+                connectContext: .reconnect(reason))
         }
     }
 
@@ -303,7 +288,7 @@ extension NicoUtility {
 // Main connect sequence.
 private extension NicoUtility {
     // #1/5. Get general live info from live page (no login required).
-    func requestLiveInfo(liveProgramId: String, connectContext: ConnectContext) {
+    func requestLiveInfo(liveProgramId: String, connectContext: NicoConnectContext) {
         let url = _livePageUrl + liveProgramId
         session
             .request(url)
@@ -330,7 +315,7 @@ private extension NicoUtility {
     }
 
     // #2/5. Get user info.
-    func requestUserInfo(liveProgramId: String, connectContext: ConnectContext, live: Live, allowRefreshToken: Bool = true) {
+    func requestUserInfo(liveProgramId: String, connectContext: NicoConnectContext, live: Live, allowRefreshToken: Bool = true) {
         callOAuthEndpoint(
             url: userinfoApiUrl
         ) { [weak self] (result: Result<UserInfoResponse, NicoError>) in
@@ -350,7 +335,7 @@ private extension NicoUtility {
     }
 
     // #3/5. Get websocket endpoint.
-    func requestWebSocketEndpoint(liveProgramId: String, connectContext: ConnectContext, live: Live, user: User) {
+    func requestWebSocketEndpoint(liveProgramId: String, connectContext: NicoConnectContext, live: Live, user: User) {
         // https://github.com/niconamaworkshop/websocket_api_document
         callOAuthEndpoint(
             url: wsEndpointApiUrl,
@@ -379,7 +364,7 @@ private extension NicoUtility {
     }
 
     // #4/5. Open watch socket.
-    func openWatchSocket(webSocketUrl: URL, userId: String, connectContext: ConnectContext) {
+    func openWatchSocket(webSocketUrl: URL, userId: String, connectContext: NicoConnectContext) {
         openWatchSocket(webSocketUrl: webSocketUrl) { [weak self] in
             guard let me = self else { return }
             switch $0 {
@@ -392,7 +377,7 @@ private extension NicoUtility {
     }
 
     // #5/5. Finally, open message socket.
-    func openMessageSocket(userId: String, room: WebSocketRoomData, connectContext: ConnectContext) {
+    func openMessageSocket(userId: String, room: WebSocketRoomData, connectContext: NicoConnectContext) {
         openMessageSocket(userId: userId, room: room, connectContext: connectContext) { [weak self] in
             guard let me = self else { return }
             switch $0 {
@@ -620,7 +605,7 @@ private extension NicoUtility {
 
 // MARK: - Private Methods (Message Socket)
 private extension NicoUtility {
-    func openMessageSocket(userId: String, room: WebSocketRoomData, connectContext: ConnectContext, completion: @escaping (Result<Void, NicoError>) -> Void) {
+    func openMessageSocket(userId: String, room: WebSocketRoomData, connectContext: NicoConnectContext, completion: @escaping (Result<Void, NicoError>) -> Void) {
         guard let url = URL(string: room.data.messageServer.uri) else {
             completion(Result.failure(NicoError.internal))
             return

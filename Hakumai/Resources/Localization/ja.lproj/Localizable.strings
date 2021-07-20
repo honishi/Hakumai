@@ -98,6 +98,7 @@
 "connected_to_live" = "放送に接続しました.";
 "live_closed" = "放送から切断しました.";
 "reconnecting" = "再接続します...";
+"reconnected" = "再接続しました.";
 "failed_to_comment" = "コメントに失敗しました.";
 
 /// Error
