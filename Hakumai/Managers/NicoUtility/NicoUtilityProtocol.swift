@@ -69,5 +69,10 @@ enum NicoConnectContext {
     case normal
     case reconnect(NicoReconnectReason)
 }
+
+enum NicoDisconnectContext {
+    case normal
+    case reconnect(NicoReconnectReason)
+}
+
 enum NicoReconnectReason { case normal, noPong, noTexts }
-enum NicoDisconnectContext { case normal, reconnect }

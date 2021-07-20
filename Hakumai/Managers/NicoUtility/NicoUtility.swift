@@ -185,12 +185,7 @@ extension NicoUtility {
         // method from being called multiple times from multiple thread.
         connectRequests.lastEstablished = nil
 
-        disconnect(disconnectContext: {
-            switch reason {
-            case .normal:           return .normal
-            case .noPong, .noTexts: return .reconnect
-            }
-        }())
+        disconnect(disconnectContext: .reconnect(reason))
         delegate?.nicoUtilityWillReconnectToLive(self, reason: reason)
 
         // Just in case, make some delay to invoke the connect method.

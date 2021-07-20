@@ -405,8 +405,13 @@ extension MainViewController: NicoUtilityDelegate {
         switch disconnectContext {
         case .normal:
             logSystemMessageToTableView(L10n.liveClosed)
-        case .reconnect:
-            break
+        case .reconnect(let reason):
+            switch reason {
+            case .normal:
+                logSystemMessageToTableView(L10n.liveClosed)
+            case .noPong, .noTexts:
+                break
+            }
         }
         stopTimers()
         connectedToLive = false
