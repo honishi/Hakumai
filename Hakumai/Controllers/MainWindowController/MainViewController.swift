@@ -338,7 +338,7 @@ extension MainViewController: NicoUtilityDelegate {
         updateMainControlViews(status: .connecting)
     }
 
-    func nicoUtilityDidPrepareLive(_ nicoUtility: NicoUtilityType, user: User, live: Live, connectContext: NicoUtility.ConnectContext) {
+    func nicoUtilityDidPrepareLive(_ nicoUtility: NicoUtilityType, user: User, live: Live, connectContext: NicoConnectContext) {
         self.live = live
 
         updateCommunityViews(for: live)
@@ -353,12 +353,12 @@ extension MainViewController: NicoUtilityDelegate {
         }
     }
 
-    func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, error: NicoUtility.NicoError) {
+    func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, error: NicoError) {
         logSystemMessageToTableView(L10n.failedToPrepareLive(error.toMessage))
         updateMainControlViews(status: .disconnected)
     }
 
-    func nicoUtilityDidConnectToLive(_ nicoUtility: NicoUtilityType, roomPosition: RoomPosition, connectContext: NicoUtility.ConnectContext) {
+    func nicoUtilityDidConnectToLive(_ nicoUtility: NicoUtilityType, roomPosition: RoomPosition, connectContext: NicoConnectContext) {
         guard connectedToLive == false else { return }
         connectedToLive = true
         switch connectContext {
@@ -386,7 +386,7 @@ extension MainViewController: NicoUtilityDelegate {
         }
     }
 
-    func nicoUtilityWillReconnectToLive(_ nicoUtility: NicoUtilityType, reason: NicoUtility.ReconnectReason) {
+    func nicoUtilityWillReconnectToLive(_ nicoUtility: NicoUtilityType, reason: NicoReconnectReason) {
         switch reason {
         case .normal:
             logSystemMessageToTableView(L10n.reconnecting)
@@ -395,7 +395,7 @@ extension MainViewController: NicoUtilityDelegate {
         }
     }
 
-    func nicoUtilityDidDisconnect(_ nicoUtility: NicoUtilityType, disconnectContext: NicoUtility.DisconnectContext) {
+    func nicoUtilityDidDisconnect(_ nicoUtility: NicoUtilityType, disconnectContext: NicoDisconnectContext) {
         switch disconnectContext {
         case .normal:
             logSystemMessageToTableView(L10n.liveClosed)
@@ -715,7 +715,7 @@ extension MainViewController {
     }
 
     @IBAction func debugReconnectButtonPressed(_ sender: Any) {
-        let reason: NicoUtility.ReconnectReason
+        let reason: NicoReconnectReason
         reason = .normal
         // reason = .noPong
         // reason = .noTexts
@@ -912,7 +912,7 @@ private extension MainViewController {
     }
 }
 
-private extension NicoUtility.NicoError {
+private extension NicoError {
     var toMessage: String {
         switch self {
         case .internal:                 return L10n.errorInternal

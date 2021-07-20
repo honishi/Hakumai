@@ -18,7 +18,7 @@ protocol NicoUtilityType {
     // Main Methods
     func connect(liveProgramId: String)
     func disconnect()
-    func reconnect(reason: NicoUtility.ReconnectReason)
+    func reconnect(reason: NicoReconnectReason)
     func comment(_ comment: String, anonymously: Bool, completion: @escaping (_ comment: String?) -> Void)
     func logout()
 
@@ -45,15 +45,26 @@ protocol NicoUtilityDelegate: AnyObject {
 
     // Main connection sequence.
     func nicoUtilityWillPrepareLive(_ nicoUtility: NicoUtilityType)
-    func nicoUtilityDidPrepareLive(_ nicoUtility: NicoUtilityType, user: User, live: Live, connectContext: NicoUtility.ConnectContext)
-    func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, error: NicoUtility.NicoError)
-    func nicoUtilityDidConnectToLive(_ nicoUtility: NicoUtilityType, roomPosition: RoomPosition, connectContext: NicoUtility.ConnectContext)
+    func nicoUtilityDidPrepareLive(_ nicoUtility: NicoUtilityType, user: User, live: Live, connectContext: NicoConnectContext)
+    func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, error: NicoError)
+    func nicoUtilityDidConnectToLive(_ nicoUtility: NicoUtilityType, roomPosition: RoomPosition, connectContext: NicoConnectContext)
 
     // Events after connection establishment.
     func nicoUtilityDidReceiveChat(_ nicoUtility: NicoUtilityType, chat: Chat)
-    func nicoUtilityWillReconnectToLive(_ nicoUtility: NicoUtilityType, reason: NicoUtility.ReconnectReason)
+    func nicoUtilityWillReconnectToLive(_ nicoUtility: NicoUtilityType, reason: NicoReconnectReason)
     func nicoUtilityDidReceiveStatistics(_ nicoUtility: NicoUtilityType, stat: LiveStatistics)
 
     // Disconnect.
-    func nicoUtilityDidDisconnect(_ nicoUtility: NicoUtilityType, disconnectContext: NicoUtility.DisconnectContext)
+    func nicoUtilityDidDisconnect(_ nicoUtility: NicoUtilityType, disconnectContext: NicoDisconnectContext)
 }
+
+enum NicoError: Error {
+    case `internal`
+    case noLiveInfo
+    case noMessageServerInfo
+    case openMessageServerFailed
+}
+
+enum NicoConnectContext { case normal, reconnect }
+enum NicoDisconnectContext { case normal, reconnect }
+enum NicoReconnectReason { case normal, noPong, noTexts }
