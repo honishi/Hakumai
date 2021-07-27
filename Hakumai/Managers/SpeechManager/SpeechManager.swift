@@ -98,7 +98,7 @@ final class SpeechManager: NSObject {
     }
 
     func enqueue(chat: Chat) {
-        guard chat.premium == .ippan || chat.premium == .premium else { return }
+        guard [.ippan, .premium, .ippanTransparent].contains(chat.premium) else { return }
         guard isAcceptableComment(chat.comment) else { return }
 
         objc_sync_enter(self)
