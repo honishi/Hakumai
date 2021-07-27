@@ -128,16 +128,13 @@ final class SpeechManager: NSObject {
             return
         }
 
-        let utterance = AVSpeechUtterance.init(string: cleanComment(from: chat.comment))
         voiceSpeed = adjustedVoiceSpeed(
             currentCommentLength: chat.comment.count,
             remainingCommentLength: chatQueue.map { $0.comment.count }.reduce(0, +),
             currentVoiceSpeed: voiceSpeed)
-        utterance.rate = voiceSpeed
-        utterance.volume = Float(voiceVolume) / 100.0
-        let voice = AVSpeechSynthesisVoice.init(language: "ja-JP")
-        utterance.voice = voice
-        synthesizer.speak(utterance)
+        speak(comment: chat.comment,
+              speed: voiceSpeed,
+              volume: Float(voiceVolume) / 100.0)
     }
 
     func refreshChatQueueIfQueuedTooMuch() -> Bool {
@@ -165,6 +162,15 @@ final class SpeechManager: NSObject {
         let adjusted = remaining == 0 ? candidateSpeed : max(currentVoiceSpeed, candidateSpeed)
         log.debug("current: \(current) remaining: \(remaining) total: \(total) candidate: \(candidateSpeed) adjusted: \(adjusted)")
         return adjusted
+    }
+
+    private func speak(comment: String, speed: Float, volume: Float) {
+        let utterance = AVSpeechUtterance.init(string: cleanComment(from: comment))
+        utterance.rate = speed
+        utterance.volume = volume
+        let voice = AVSpeechSynthesisVoice.init(language: "ja-JP")
+        utterance.voice = voice
+        synthesizer.speak(utterance)
     }
 
     // define as 'internal' for test
