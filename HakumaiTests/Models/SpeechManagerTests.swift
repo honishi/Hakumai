@@ -175,6 +175,11 @@ final class SpeechManagerTests: XCTestCase {
         expected = "私はニコなまを見てる"
         actual = SpeechManager.shared.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
+
+        comment = "初見"
+        expected = "しょけん"
+        actual = SpeechManager.shared.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
     }
     // swiftlint:enable function_body_length
 }
