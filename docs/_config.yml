@@ -1,0 +1,14 @@
+# Site settings
+title: Hakumai - Mac用ニコ生コメントビューア(コメビュ)
+tag_text: Hakumai
+description: Hakumaiは Mac 用のニコニコ生放送用のコメントビューア(コメビュ)です。
+canonical_url: https://honishi.github.io/Hakumai/
+
+# Build settings
+markdown: kramdown
+
+exclude: ["README.md"]
+
+# Binary version
+binary_version: 0.79.0
+binary_date: 2021/7/30
