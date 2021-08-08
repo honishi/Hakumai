@@ -8,6 +8,46 @@
 
 import Foundation
 
+struct MetaResponse: Codable {
+    let status: Int
+    let errorCode: String
+}
+
+struct WatchProgramsResponse: Codable {
+    struct Data: Codable {
+        let program: Program
+        let socialGroup: SocialGroup
+    }
+
+    struct Schedule: Codable {
+        let beginTime: Date
+        let endTime: Date
+        let openTime: Date
+        let scheduledEndTime: Date
+        let status: String
+        let vposBaseTime: Date
+    }
+
+    struct Program: Codable {
+        let title: String
+        let description: String
+        let schedule: Schedule
+    }
+
+    struct SocialGroup: Codable {
+        let type: String
+        let socialGroupId: String
+        let description: String
+        let name: String
+        let thumbnail: URL
+        let thumbnailSmall: URL
+        let level: Int?
+    }
+
+    let meta: MetaResponse
+    let data: Data
+}
+
 struct UserInfoResponse: Codable {
     let sub: String
     let nickname: String
@@ -16,11 +56,6 @@ struct UserInfoResponse: Codable {
     let gender: String?
     let zoneinfo: String?
     let updatedAt: Int
-}
-
-struct MetaResponse: Codable {
-    let status: Int
-    let errorCode: String
 }
 
 struct WsEndpointResponse: Codable {

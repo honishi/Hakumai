@@ -10,7 +10,6 @@ target 'Hakumai' do
 
   pod 'Sparkle', '~> 1.26.0'
   pod 'FMDB', '~> 2.7.5'
-  pod 'Ono', '~> 2.1.2'
   pod 'SAMKeychain', '~> 1.5.3'
   pod 'Alamofire', '~> 5.4.3'
   pod 'Starscream', '~> 4.0.4'
