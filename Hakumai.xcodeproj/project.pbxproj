@@ -24,7 +24,6 @@
 		DB2AE0D71A0EE2FD00B1CE4D /* HakumaiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0D61A0EE2FD00B1CE4D /* HakumaiTests.swift */; };
 		DB2F516126669675000A1C58 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DB2F516326669675000A1C58 /* Localizable.strings */; };
 		DB2F516726669B3E000A1C58 /* Localize.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2F516626669B3E000A1C58 /* Localize.swift */; };
-		DB346B9A1A54648100137639 /* community_channel.html in Resources */ = {isa = PBXBuildFile; fileRef = DB346B991A54648100137639 /* community_channel.html */; };
 		DB346B9C1A548C3B00137639 /* CommunityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB346B9B1A548C3B00137639 /* CommunityTests.swift */; };
 		DB3AE44226A1ABCF001681E9 /* OAuthCredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB3AE44126A1ABCF001681E9 /* OAuthCredential.swift */; };
 		DB414C071A4810A5008D2F40 /* UserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB414C061A4810A5008D2F40 /* UserViewController.swift */; };
@@ -88,10 +87,6 @@
 		DBFA887B1A1BC25A005349AD /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA887A1A1BC25A005349AD /* Chat.swift */; };
 		DBFA88821A1BC8C9005349AD /* Enum.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA88811A1BC8C9005349AD /* Enum.swift */; };
 		DBFA888B1A1C9A56005349AD /* Live.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA888A1A1C9A56005349AD /* Live.swift */; };
-		DBFA88911A1CAE85005349AD /* community_user.html in Resources */ = {isa = PBXBuildFile; fileRef = DBFA88901A1CAE85005349AD /* community_user.html */; };
-		DBFB26D3264290A600B1FDEB /* NicoUtility+Extractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB26D2264290A600B1FDEB /* NicoUtility+Extractor.swift */; };
-		DBFB26D52642921900B1FDEB /* live_page.html in Resources */ = {isa = PBXBuildFile; fileRef = DBFB26D42642921900B1FDEB /* live_page.html */; };
-		DBFB26D92642A32300B1FDEB /* embedded-data.json in Resources */ = {isa = PBXBuildFile; fileRef = DBFB26D82642A32300B1FDEB /* embedded-data.json */; };
 		DBFB81511A36B52E00294934 /* PreferenceWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFB81501A36B52E00294934 /* PreferenceWindowController.swift */; };
 /* End PBXBuildFile section */
 
@@ -146,7 +141,6 @@
 		DB2F516226669675000A1C58 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		DB2F5164266696FD000A1C58 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		DB2F516626669B3E000A1C58 /* Localize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Localize.swift; sourceTree = "<group>"; };
-		DB346B991A54648100137639 /* community_channel.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = community_channel.html; sourceTree = "<group>"; };
 		DB346B9B1A548C3B00137639 /* CommunityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommunityTests.swift; sourceTree = "<group>"; };
 		DB3AE44126A1ABCF001681E9 /* OAuthCredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthCredential.swift; sourceTree = "<group>"; };
 		DB3AE44526A1ACB9001681E9 /* OAuthCredential.sample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthCredential.sample.swift; sourceTree = "<group>"; };
@@ -214,10 +208,6 @@
 		DBFA887A1A1BC25A005349AD /* Chat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
 		DBFA88811A1BC8C9005349AD /* Enum.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enum.swift; sourceTree = "<group>"; };
 		DBFA888A1A1C9A56005349AD /* Live.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Live.swift; sourceTree = "<group>"; };
-		DBFA88901A1CAE85005349AD /* community_user.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = community_user.html; sourceTree = "<group>"; };
-		DBFB26D2264290A600B1FDEB /* NicoUtility+Extractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NicoUtility+Extractor.swift"; sourceTree = "<group>"; };
-		DBFB26D42642921900B1FDEB /* live_page.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = live_page.html; sourceTree = "<group>"; };
-		DBFB26D82642A32300B1FDEB /* embedded-data.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "embedded-data.json"; sourceTree = "<group>"; };
 		DBFB81501A36B52E00294934 /* PreferenceWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferenceWindowController.swift; sourceTree = "<group>"; };
 		E7BB54305BC1250CD75E68A4 /* Pods-HakumaiTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HakumaiTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-HakumaiTests/Pods-HakumaiTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -544,7 +534,6 @@
 		DBE093F61A585EC5004554FD /* NicoUtility */ = {
 			isa = PBXGroup;
 			children = (
-				DBFB26D2264290A600B1FDEB /* NicoUtility+Extractor.swift */,
 				DBAAA7501A0FDA4500981004 /* NicoUtility.swift */,
 				DB6DD2AD2650F1B0009A9574 /* NicoUtilityProtocol.swift */,
 			);
@@ -589,10 +578,6 @@
 		DBFA88921A1CAE8B005349AD /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				DB346B991A54648100137639 /* community_channel.html */,
-				DBFA88901A1CAE85005349AD /* community_user.html */,
-				DBFB26D82642A32300B1FDEB /* embedded-data.json */,
-				DBFB26D42642921900B1FDEB /* live_page.html */,
 				DBBE416D266CCAF5004002F1 /* userinfo_response.json */,
 				DBBE416F266CCB83004002F1 /* wsendpoint_response.json */,
 			);
@@ -736,10 +721,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DB346B9A1A54648100137639 /* community_channel.html in Resources */,
-				DBFA88911A1CAE85005349AD /* community_user.html in Resources */,
-				DBFB26D92642A32300B1FDEB /* embedded-data.json in Resources */,
-				DBFB26D52642921900B1FDEB /* live_page.html in Resources */,
 				DBBE416E266CCAF5004002F1 /* userinfo_response.json in Resources */,
 				DBBE4170266CCB83004002F1 /* wsendpoint_response.json in Resources */,
 			);
@@ -759,7 +740,6 @@
 				"${BUILT_PRODUCTS_DIR}/FMDB/FMDB.framework",
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
 				"${BUILT_PRODUCTS_DIR}/ObjcExceptionBridging/ObjcExceptionBridging.framework",
-				"${BUILT_PRODUCTS_DIR}/Ono/Ono.framework",
 				"${BUILT_PRODUCTS_DIR}/SAMKeychain/SAMKeychain.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
 				"${PODS_ROOT}/Sparkle/Sparkle.framework",
@@ -772,7 +752,6 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FMDB.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjcExceptionBridging.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Ono.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SAMKeychain.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Sparkle.framework",
@@ -930,7 +909,6 @@
 				DB0E10681A39B6DD00A10E00 /* MuteViewController.swift in Sources */,
 				DBBE416C266CB939004002F1 /* NicoOAuthApiModel.swift in Sources */,
 				DBCA2D242642BCF500B6147C /* NicoRestApiModel.swift in Sources */,
-				DBFB26D3264290A600B1FDEB /* NicoUtility+Extractor.swift in Sources */,
 				DBAAA7511A0FDA4500981004 /* NicoUtility.swift in Sources */,
 				DB6DD2AE2650F1B0009A9574 /* NicoUtilityProtocol.swift in Sources */,
 				DB6DD2AC2650ECD7009A9574 /* NicoWebModel.swift in Sources */,

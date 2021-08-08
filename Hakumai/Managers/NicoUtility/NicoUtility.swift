@@ -14,11 +14,11 @@ import XCGLogger
 
 // MARK: - Constants
 // General URL:
-private let _livePageUrl = "https://live.nicovideo.jp/watch/"
 private let _userPageUrl = "https://www.nicovideo.jp/user/"
 private let _userIconUrl = "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/"
 
 // API URL:
+private let watchProgramsApiUrl = "https://api.live2.nicovideo.jp/api/v1/watch/programs"
 private let userinfoApiUrl = "https://oauth.nicovideo.jp/open_id/userinfo"
 private let wsEndpointApiUrl = "https://api.live2.nicovideo.jp/api/v1/wsendpoint"
 private let userNicknameApiUrl = "https://api.live2.nicovideo.jp/api/v1/user/nickname"
@@ -287,31 +287,27 @@ extension NicoUtility {
 // MARK: - Private Methods
 // Main connect sequence.
 private extension NicoUtility {
-    // #1/5. Get general live info from live page (no login required).
+    // #1/5. Get general live info.
     func requestLiveInfo(liveProgramId: String, connectContext: NicoConnectContext) {
-        let url = _livePageUrl + liveProgramId
-        session
-            .request(url)
-            .cURLDescription(calling: { log.debug($0) })
-            .validate()
-            .responseData { [weak self] in
-                guard let me = self else { return }
-                // log.debug($0.debugDescription)
-                switch $0.result {
-                case .success(let data):
-                    guard let props = NicoUtility.extractEmbeddedDataPropertiesFromLivePage(html: data) else {
-                        me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: .internal)
-                        return
-                    }
-                    me.requestUserInfo(
-                        liveProgramId: liveProgramId,
-                        connectContext: connectContext,
-                        live: props.toLive())
-                case .failure(let error):
-                    log.error(error)
-                    me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: .internal)
-                }
+        callOAuthEndpoint(
+            url: watchProgramsApiUrl,
+            parameters: [
+                "nicoliveProgramId": liveProgramId,
+                "fields": "program,socialGroup"
+            ]
+        ) { [weak self] (result: Result<WatchProgramsResponse, NicoError>) in
+            guard let me = self else { return }
+            switch result {
+            case .success(let data):
+                me.requestUserInfo(
+                    liveProgramId: liveProgramId,
+                    connectContext: connectContext,
+                    live: data.toLive(with: liveProgramId))
+            case .failure(let error):
+                log.error(error)
+                me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: .internal)
             }
+        }
     }
 
     // #2/5. Get user info.
@@ -507,6 +503,7 @@ private extension NicoUtility {
     func decodeApiResponse<T: Codable>(from data: Data) -> T? {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
+        decoder.dateDecodingStrategy = .iso8601
         return try? decoder.decode(T.self, from: data)
     }
 }
@@ -829,20 +826,20 @@ private extension NicoUtility {
 }
 
 // MARK: - Private Extensions
-private extension EmbeddedDataProperties {
-    func toLive() -> Live {
+private extension WatchProgramsResponse {
+    func toLive(with nicoliveProgramId: String) -> Live {
         Live(
-            liveId: program.nicoliveProgramId,
-            title: program.title,
+            liveId: nicoliveProgramId,
+            title: data.program.title,
             community: Community(
-                communityId: socialGroup.id,
-                title: socialGroup.name,
-                level: socialGroup.level ?? 0,
-                thumbnailUrl: URL(string: socialGroup.thumbnailImageUrl)
+                communityId: data.socialGroup.socialGroupId,
+                title: data.socialGroup.name,
+                level: data.socialGroup.level ?? 0,
+                thumbnailUrl: data.socialGroup.thumbnail
             ),
-            baseTime: program.vposBaseTime.toDateAsTimeIntervalSince1970(),
-            openTime: program.openTime.toDateAsTimeIntervalSince1970(),
-            startTime: program.beginTime.toDateAsTimeIntervalSince1970()
+            baseTime: data.program.schedule.vposBaseTime,
+            openTime: data.program.schedule.openTime,
+            startTime: data.program.schedule.beginTime
         )
     }
 }
