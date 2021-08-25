@@ -20,3 +20,10 @@ final class MainWindowController: NSWindowController {
         windowFrameAutosaveName = "MainWindow"
     }
 }
+
+extension MainWindowController {
+    static func make() -> MainWindowController {
+        let wc = StoryboardScene.MainWindowController.mainWindowController.instantiate()
+        return wc
+    }
+}

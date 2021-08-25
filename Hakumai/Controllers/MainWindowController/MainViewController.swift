@@ -64,6 +64,10 @@ final class MainViewController: NSViewController {
     // swiftlint:enable weak_delegate
 
     // MARK: General Properties
+    private let nicoUtility = NicoUtility()
+    private let messageContainer = MessageContainer()
+    // TODO: handle name manager?
+
     private(set) var live: Live?
     private var connectedToLive = false
     private var chats = [Chat]()
@@ -110,6 +114,7 @@ extension MainViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureViews()
+        configureManagers()
         DispatchQueue.main.async { self.focusLiveTextField() }
     }
 
@@ -122,14 +127,14 @@ extension MainViewController {
 // MARK: - NSTableViewDataSource Functions
 extension MainViewController: NSTableViewDataSource {
     func numberOfRows(in tableView: NSTableView) -> Int {
-        MessageContainer.shared.count()
+        messageContainer.count()
     }
 }
 
 // MARK: - NSTableViewDelegate Functions
 extension MainViewController: NSTableViewDelegate {
     func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
-        let message = MessageContainer.shared[row]
+        let message = messageContainer[row]
 
         if let cached = rowHeightCache[message.messageNo] {
             return cached
@@ -187,7 +192,7 @@ extension MainViewController: NSTableViewDelegate {
             view?.textField?.stringValue = ""
         }
 
-        let message = MessageContainer.shared[row]
+        let message = messageContainer[row]
 
         guard let _view = view, let tableColumn = tableColumn else { return nil }
 
@@ -447,9 +452,9 @@ extension MainViewController {
 
     func logout() {
         if connectedToLive {
-            NicoUtility.shared.disconnect()
+            nicoUtility.disconnect()
         }
-        NicoUtility.shared.logout()
+        nicoUtility.logout()
         authWindowController.logout()
         logSystemMessageToTableView(L10n.logoutCompleted)
     }
@@ -475,7 +480,7 @@ extension MainViewController {
         var defaultHandleName: String?
         if let handleName = HandleNameManager.shared.handleName(forLive: live, chat: chat) {
             defaultHandleName = handleName
-        } else if let userName = NicoUtility.shared.cachedUserName(forChat: chat) {
+        } else if let userName = nicoUtility.cachedUserName(forChat: chat) {
             defaultHandleName = userName
         }
         return defaultHandleName
@@ -513,25 +518,26 @@ extension MainViewController {
     }
 
     func changeEnableMuteUserIds(_ enabled: Bool) {
-        MessageContainer.shared.enableMuteUserIds = enabled
+        // TODO: Consider multiple message container
+        messageContainer.enableMuteUserIds = enabled
         log.debug("Changed enable mute user ids: \(enabled)")
         rebuildFilteredMessages()
     }
 
     func changeMuteUserIds(_ muteUserIds: [[String: String]]) {
-        MessageContainer.shared.muteUserIds = muteUserIds
+        messageContainer.muteUserIds = muteUserIds
         log.debug("Changed mute user ids: \(muteUserIds)")
         rebuildFilteredMessages()
     }
 
     func changeEnableMuteWords(_ enabled: Bool) {
-        MessageContainer.shared.enableMuteWords = enabled
+        messageContainer.enableMuteWords = enabled
         log.debug("Changed enable mute words: \(enabled)")
         rebuildFilteredMessages()
     }
 
     func changeMuteWords(_ muteWords: [[String: String]]) {
-        MessageContainer.shared.muteWords = muteWords
+        messageContainer.muteWords = muteWords
         log.debug("Changed mute words: \(muteWords)")
         rebuildFilteredMessages()
     }
@@ -540,7 +546,7 @@ extension MainViewController {
         DispatchQueue.main.async {
             self.progressIndicator.startAnimation(self)
             let shouldScroll = self.scrollView.isReachedToBottom
-            MessageContainer.shared.rebuildFilteredMessages {
+            self.messageContainer.rebuildFilteredMessages {
                 self.tableView.reloadData()
                 if shouldScroll {
                     self.scrollView.scrollToBottom()
@@ -615,6 +621,10 @@ private extension MainViewController {
         }
     }
 
+    func configureManagers() {
+        nicoUtility.delegate = self
+    }
+
     func updateMainControlViews(status connectionStatus: ConnectionStatus) {
         DispatchQueue.main.async { self._updateMainControlViews(status: connectionStatus) }
     }
@@ -662,10 +672,10 @@ private extension MainViewController {
     func appendTableView(_ chatOrSystemMessage: Any) {
         DispatchQueue.main.async {
             let shouldScroll = self.scrollView.isReachedToBottom
-            let (appended, count) = MessageContainer.shared.append(chatOrSystemMessage: chatOrSystemMessage)
+            let (appended, count) = self.messageContainer.append(chatOrSystemMessage: chatOrSystemMessage)
             guard appended else { return }
             let rowIndex = count - 1
-            let message = MessageContainer.shared[rowIndex]
+            let message = self.messageContainer[rowIndex]
             self.tableView.insertRows(at: IndexSet(integer: rowIndex), withAnimation: NSTableView.AnimationOptions())
             // self.logChat(chatOrSystemMessage)
             if shouldScroll {
@@ -730,11 +740,11 @@ extension MainViewController {
         reason = .normal
         // reason = .noPong
         // reason = .noTexts
-        NicoUtility.shared.reconnect(reason: reason)
+        nicoUtility.reconnect(reason: reason)
     }
 
     @IBAction func debugExpireTokenButtonPressed(_ sender: Any) {
-        NicoUtility.shared.injectExpiredAccessToken()
+        nicoUtility.injectExpiredAccessToken()
         logSystemMessageToTableView("Injected expired access token.")
     }
 
@@ -744,14 +754,13 @@ extension MainViewController {
 
         clearAllChats()
         communityImageView.image = Asset.defaultCommunityImage.image
-        NicoUtility.shared.delegate = self
 
-        NicoUtility.shared.connect(liveProgramId: liveProgramId)
+        nicoUtility.connect(liveProgramId: liveProgramId)
     }
 
     @IBAction func connectButtonPressed(_ sender: AnyObject) {
         if connectedToLive {
-            NicoUtility.shared.disconnect()
+            nicoUtility.disconnect()
         } else {
             connectLive(self)
         }
@@ -767,7 +776,7 @@ extension MainViewController {
         }
 
         let anonymously = UserDefaults.standard.bool(forKey: Parameters.commentAnonymously)
-        NicoUtility.shared.comment(comment, anonymously: anonymously) { comment in
+        nicoUtility.comment(comment, anonymously: anonymously) { comment in
             if comment == nil {
                 self.logSystemMessageToTableView(L10n.failedToComment)
             }
@@ -786,7 +795,7 @@ extension MainViewController {
             return
         }
 
-        let message = MessageContainer.shared[clickedRow]
+        let message = messageContainer[clickedRow]
         guard message.messageType == .chat, let chat = message.chat else { return }
         var userWindowController: UserWindowController?
 
@@ -852,7 +861,7 @@ private extension MainViewController {
     @objc func updateElapsedLabelValue() {
         var display = defaultElapsedTimeValue
 
-        if let startTime = NicoUtility.shared.live?.startTime {
+        if let startTime = nicoUtility.live?.startTime {
             var prefix = ""
             var elapsed = Date().timeIntervalSince(startTime as Date)
             if elapsed < 0 {
@@ -869,7 +878,7 @@ private extension MainViewController {
     }
 
     @objc func calculateAndUpdateActiveUserLabel() {
-        MessageContainer.shared.calculateActive { (active: Int?) -> Void in
+        messageContainer.calculateActive { (active: Int?) -> Void in
             guard let active = active else { return }
             DispatchQueue.main.async { self.activeUserValueLabel.stringValue = String(active) }
         }
@@ -912,7 +921,7 @@ private extension MainViewController {
 // MARK: Misc Utility
 private extension MainViewController {
     func clearAllChats() {
-        MessageContainer.shared.removeAll()
+        messageContainer.removeAll()
         rowHeightCache.removeAll(keepingCapacity: false)
         tableView.reloadData()
     }

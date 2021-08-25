@@ -38,6 +38,17 @@ extension AppDelegate {
         MainViewController.shared.logout()
     }
 
+    @IBAction func openNewWindow(_ sender: Any) {
+        // TODO:
+        let wc = MainWindowController.make()
+        wc.showWindow(self)
+    }
+
+    @IBAction func closeWindow(_ sender: Any) {
+        // TODO:
+        log.debug("")
+    }
+
     @IBAction func openPreferences(_ sender: AnyObject) {
         PreferenceWindowController.shared.showWindow(self)
     }
