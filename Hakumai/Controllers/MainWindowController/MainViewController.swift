@@ -499,6 +499,11 @@ extension MainViewController {
     func focusCommentTextField() {
         commentTextField.becomeFirstResponder()
     }
+
+    func disconnect() {
+        guard connectedToLive else { return }
+        nicoUtility.disconnect()
+    }
 }
 
 // MARK: Utility

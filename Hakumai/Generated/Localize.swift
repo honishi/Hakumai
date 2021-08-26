@@ -36,11 +36,13 @@ internal enum L10n {
   internal static let checkGrammarWithSpelling = L10n.tr("Localizable", "check_grammar_with_spelling")
   /// Check Spelling While Typing
   internal static let checkSpellingWhileTyping = L10n.tr("Localizable", "check_spelling_while_typing")
+  /// Close Window
+  internal static let closeWindow = L10n.tr("Localizable", "close_window")
   /// Comments
   internal static let commentCount = L10n.tr("Localizable", "comment_count")
   /// Comment Speaking
   internal static let commentSpeaking = L10n.tr("Localizable", "comment_speaking")
-  /// ⌘N (Empty ⏎ to scroll to bottom)
+  /// ⌘O (Empty ⏎ to scroll to bottom)
   internal static let commentTextFieldPlaceholder = L10n.tr("Localizable", "comment_text_field_placeholder")
   /// Community Id
   internal static let communityId = L10n.tr("Localizable", "community_id")
@@ -126,6 +128,8 @@ internal enum L10n {
   internal static let minimize = L10n.tr("Localizable", "minimize")
   /// New Comment
   internal static let newComment = L10n.tr("Localizable", "new_comment")
+  /// Open New Window
+  internal static let openNewWindow = L10n.tr("Localizable", "open_new_window")
   /// Open URL
   internal static let openUrl = L10n.tr("Localizable", "open_url")
   /// Open URL in Comment

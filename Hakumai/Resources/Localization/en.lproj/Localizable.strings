@@ -28,6 +28,8 @@
 /// File Menu
 "login" = "Login";
 "logout" = "Logout";
+"open_new_window" = "Open New Window";
+"close_window" = "Close Window";
 "open_url" = "Open URL";
 "grab_url_from_browser" = "Grab URL from Browser";
 "new_comment" = "New Comment";
@@ -81,7 +83,7 @@
 ///
 "active_user" = "Active Users";
 "comment_count" = "Comments";
-"comment_text_field_placeholder" = "⌘N (Empty ⏎ to scroll to bottom)";
+"comment_text_field_placeholder" = "⌘O (Empty ⏎ to scroll to bottom)";
 "community_id" = "Community Id";
 "community_name" = "Community Name";
 "elapsed_time" = "Elapsed Time";

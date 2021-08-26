@@ -13,6 +13,8 @@ import AppKit
 final class AppDelegate: NSObject, NSApplicationDelegate {
     @IBOutlet weak var speakMenuItem: NSMenuItem!
 
+    private var mainWindowControllers: [MainWindowController] = []
+
     // MARK: - NSApplicationDelegate Functions
     func applicationDidFinishLaunching(_ notification: Notification) {
         LoggerHelper.setupLogger(log)
@@ -41,6 +43,8 @@ extension AppDelegate {
     @IBAction func openNewWindow(_ sender: Any) {
         // TODO:
         let wc = MainWindowController.make()
+        // TODO: remove wc when window closed
+        mainWindowControllers.append(wc)
         wc.showWindow(self)
     }
 

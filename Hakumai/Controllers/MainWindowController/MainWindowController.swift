@@ -21,6 +21,14 @@ final class MainWindowController: NSWindowController {
     }
 }
 
+extension MainWindowController: NSWindowDelegate {
+    func windowWillClose(_ notification: Notification) {
+        // TODO: Consider whther we should call disconnect call at deinit in NicoUtility?
+        guard let mainViewController = contentViewController as? MainViewController else { return }
+        mainViewController.disconnect()
+    }
+}
+
 extension MainWindowController {
     static func make() -> MainWindowController {
         let wc = StoryboardScene.MainWindowController.mainWindowController.instantiate()
