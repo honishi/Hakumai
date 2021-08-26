@@ -79,6 +79,10 @@ extension AuthManager {
     }
 
     func refreshToken(completion: @escaping (Result<AuthManagerToken, AuthManagerError>) -> Void) {
+        // TODO: Is the following sync way is right?
+        objc_sync_enter(self)
+        defer { objc_sync_exit(self) }
+
         guard let refreshToken = currentToken?.refreshToken else {
             completion(.failure(.noRefreshToken))
             return
