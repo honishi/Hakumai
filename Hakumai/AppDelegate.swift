@@ -51,6 +51,14 @@ extension AppDelegate {
     @IBAction func closeWindow(_ sender: Any) {
         // TODO:
         log.debug("")
+        let window = mainWindowControllers
+            .map { $0.window }
+            .filter { $0?.isKeyWindow == true }
+            .compactMap { $0 }
+            .first
+        window?.close()
+        // TODO: discard main wc
+        // let wc = mainWindowControllers.filter { $0.window == window }
     }
 
     @IBAction func openPreferences(_ sender: AnyObject) {
