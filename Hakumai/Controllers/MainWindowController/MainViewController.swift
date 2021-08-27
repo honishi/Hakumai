@@ -98,7 +98,6 @@ final class MainViewController: NSViewController {
 extension MainViewController {
     override func awakeFromNib() {
         super.awakeFromNib()
-
         MainViewController.shared = self
     }
 }
@@ -504,6 +503,8 @@ extension MainViewController {
         guard connectedToLive else { return }
         nicoUtility.disconnect()
     }
+
+    var clickedRow: Int { tableView.clickedRow }
 }
 
 // MARK: Utility
