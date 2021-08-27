@@ -35,3 +35,12 @@ extension MainWindowController {
         return wc
     }
 }
+
+extension MainWindowController {
+    // swiftlint:disable force_cast
+    var mainViewController: MainViewController { contentViewController as! MainViewController }
+    // swiftlint:enable force_cast
+    var messageContainer: MessageContainer { mainViewController.messageContainer }
+    var tableView: NSTableView { mainViewController.tableView }
+    var live: Live? { mainViewController.live }
+}

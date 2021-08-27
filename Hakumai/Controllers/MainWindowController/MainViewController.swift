@@ -64,8 +64,8 @@ final class MainViewController: NSViewController {
     // swiftlint:enable weak_delegate
 
     // MARK: General Properties
-    private let nicoUtility = NicoUtility()
-    private let messageContainer = MessageContainer()
+    let nicoUtility = NicoUtility()
+    let messageContainer = MessageContainer()
     // TODO: handle name manager?
 
     private(set) var live: Live?

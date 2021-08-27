@@ -20,8 +20,18 @@ final class MenuDelegate: NSObject {
     @IBOutlet private weak var openUserPageMenuItem: NSMenuItem!
 
     // MARK: Computed Properties
-    var tableView: NSTableView { return MainViewController.shared.tableView }
-    var live: Live? { return MainViewController.shared.live }
+    // var tableView: NSTableView { return MainViewController.shared.tableView }
+    // var live: Live? { return MainViewController.shared.live }
+
+    // swiftlint:disable force_cast
+    private var appDelegate: AppDelegate { NSApplication.shared.delegate as! AppDelegate }
+    private var mainWindowController: MainWindowController { appDelegate.activeMainWindowController! }
+    // swiftlint:enable force_cast
+    private var mainViewController: MainViewController { mainWindowController.mainViewController }
+    private var nicoUtility: NicoUtility { mainViewController.nicoUtility }
+    private var messageContainer: MessageContainer { mainWindowController.messageContainer }
+    private var tableView: NSTableView! { mainViewController.tableView }
+    private var live: Live? { mainViewController.live }
 
     // MARK: - Object Lifecycle
     override func awakeFromNib() {
@@ -36,7 +46,7 @@ extension MenuDelegate: NSMenuItemValidation {
         let clickedRow = tableView.clickedRow
         guard clickedRow != -1 else { return false }
 
-        let message = MessageContainer.shared[clickedRow]
+        let message = messageContainer[clickedRow]
         guard message.messageType == .chat, let chat = message.chat else { return false }
 
         switch menuItem {
@@ -68,7 +78,7 @@ extension MenuDelegate: NSMenuDelegate {
     func menuWillOpen(_ menu: NSMenu) {
         resetMenu()
         guard tableView.clickedRow != -1 else { return }
-        let message = MessageContainer.shared[tableView.clickedRow]
+        let message = messageContainer[tableView.clickedRow]
         guard message.messageType == .chat, let chat = message.chat else { return }
         configureMenu(chat)
     }
@@ -79,34 +89,34 @@ extension MenuDelegate: NSSharingServiceDelegate {}
 extension MenuDelegate {
     // MARK: - Context Menu Handlers
     @IBAction func copyComment(_ sender: AnyObject) {
-        guard let chat = MessageContainer.shared[tableView.clickedRow].chat else { return }
+        guard let chat = messageContainer[tableView.clickedRow].chat else { return }
         _ = copyStringToPasteBoard(chat.comment)
     }
 
     @IBAction func openUrl(_ sender: AnyObject) {
-        guard let chat = MessageContainer.shared[tableView.clickedRow].chat,
+        guard let chat = messageContainer[tableView.clickedRow].chat,
               let urlString = chat.comment.extractUrlString(),
               let urlObject = URL(string: urlString) else { return }
         NSWorkspace.shared.open(urlObject)
     }
 
     @IBAction func addHandleName(_ sender: AnyObject) {
-        guard let live = live, let chat = MessageContainer.shared[tableView.clickedRow].chat else {
+        guard let live = live, let chat = messageContainer[tableView.clickedRow].chat else {
             return
         }
-        MainViewController.shared.showHandleNameAddViewController(live: live, chat: chat)
+        mainViewController.showHandleNameAddViewController(live: live, chat: chat)
     }
 
     @IBAction func removeHandleName(_ sender: AnyObject) {
-        guard let live = live, let chat = MessageContainer.shared[tableView.clickedRow].chat else {
+        guard let live = live, let chat = messageContainer[tableView.clickedRow].chat else {
             return
         }
         HandleNameManager.shared.removeHandleName(live: live, chat: chat)
-        MainViewController.shared.refreshHandleName()
+        mainViewController.refreshHandleName()
     }
 
     @IBAction func addToMuteUser(_ sender: AnyObject) {
-        guard let chat = MessageContainer.shared[tableView.clickedRow].chat else { return }
+        guard let chat = messageContainer[tableView.clickedRow].chat else { return }
         let defaults = UserDefaults.standard
         var muteUserIds = defaults.object(forKey: Parameters.muteUserIds) as? [[String: String]] ?? [[String: String]]()
         for muteUserId in muteUserIds where chat.userId == muteUserId[MuteUserIdKey.userId] {
@@ -118,6 +128,7 @@ extension MenuDelegate {
         defaults.synchronize()
     }
 
+    // TODO: remove
     @IBAction func reportAsNgUser(_ sender: AnyObject) {
         guard let chat = MessageContainer.shared[tableView.clickedRow].chat else { return }
         NicoUtility.shared.reportAsNgUser(chat: chat) { userId in
@@ -130,8 +141,8 @@ extension MenuDelegate {
     }
 
     @IBAction func openUserPage(_ sender: AnyObject) {
-        guard let userId = MessageContainer.shared[tableView.clickedRow].chat?.userId,
-              let url = NicoUtility.shared.userPageUrl(for: userId) else { return }
+        guard let userId = messageContainer[tableView.clickedRow].chat?.userId,
+              let url = nicoUtility.userPageUrl(for: userId) else { return }
         NSWorkspace.shared.open(url)
     }
 }

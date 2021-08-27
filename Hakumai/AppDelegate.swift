@@ -240,6 +240,12 @@ private extension AppDelegate {
     }
 }
 
+extension AppDelegate {
+    var activeMainWindowController: MainWindowController? {
+        mainWindowControllers.filter { $0.window?.isKeyWindow == true }.first
+    }
+}
+
 // MARK: Debug Methods
 private extension AppDelegate {
     func debugPrintToken() {
