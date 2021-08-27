@@ -26,6 +26,8 @@ final class UserViewController: NSViewController {
     @IBOutlet private weak var scrollView: BottomButtonScrollView!
 
     // MARK: Basics
+    private var nicoUtility: NicoUtility!
+    private var messageContainer: MessageContainer!
     private var userId: String = ""
     private var handleName: String?
     private var messages = [Message]()
@@ -118,14 +120,16 @@ extension UserViewController: NSTableViewDataSource, NSTableViewDelegate {
 }
 
 extension UserViewController {
-    func set(userId: String, handleName: String?) {
+    func set(nicoUtility: NicoUtility, messageContainer: MessageContainer, userId: String, handleName: String?) {
         reset()
 
+        self.nicoUtility = nicoUtility
+        self.messageContainer = messageContainer
         self.userId = userId
         self.handleName = handleName
 
         // User Icon
-        if let userIconUrl = NicoUtility.shared.userIconUrl(for: userId) {
+        if let userIconUrl = nicoUtility.userIconUrl(for: userId) {
             userIconImageView.kf.setImage(
                 with: userIconUrl,
                 placeholder: Asset.defaultUserImage.image
@@ -134,7 +138,7 @@ extension UserViewController {
         // User ID
         userIdButton.title = userId
         // UserName
-        if let userName = NicoUtility.shared.cachedUserName(forUserId: userId) {
+        if let userName = nicoUtility.cachedUserName(forUserId: userId) {
             userNameValueLabel.stringValue = userName
         } else {
             userNameValueLabel.stringValue = defaultLabelValue
@@ -147,7 +151,7 @@ extension UserViewController {
     }
 
     func reloadMessages() {
-        messages = MessageContainer.shared.messages(fromUserId: userId)
+        messages = messageContainer.messages(fromUserId: userId)
         let shouldScroll = scrollView.isReachedToBottom
         tableView.reloadData()
         if shouldScroll {
@@ -164,7 +168,7 @@ extension UserViewController {
 
     @IBAction func userIdButtonPressed(_ sender: Any) {
         guard Chat.isRawUserId(userId),
-              let url = NicoUtility.shared.userPageUrl(for: userId) else { return }
+              let url = nicoUtility.userPageUrl(for: userId) else { return }
         NSWorkspace.shared.open(url)
     }
 }
@@ -207,7 +211,7 @@ private extension UserViewController {
 
     func resolveUserName(for userId: String?) {
         guard let userId = userId else { return }
-        NicoUtility.shared.resolveUsername(forUserId: userId) { [weak self] in
+        nicoUtility.resolveUsername(forUserId: userId) { [weak self] in
             guard let resolved = $0 else { return }
             DispatchQueue.main.async { self?.userNameValueLabel.stringValue = resolved }
         }

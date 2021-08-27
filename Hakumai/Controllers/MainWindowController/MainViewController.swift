@@ -819,7 +819,11 @@ extension MainViewController {
                 handleName = _handleName
             }
             userWindowController = UserWindowController.make(
-                delegate: self, userId: chat.userId, handleName: handleName)
+                delegate: self,
+                nicoUtility: nicoUtility,
+                messageContainer: messageContainer,
+                userId: chat.userId,
+                handleName: handleName)
             if let uwc = userWindowController {
                 positionUserWindow(uwc.window)
                 log.debug("no existing user-wc found, create it:\(uwc.description)")
