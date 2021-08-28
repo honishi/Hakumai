@@ -117,6 +117,7 @@ extension MainViewController {
         configureManagers()
         configureMute()
         configureFontSize()
+        configureAnonymouslyButton()
         DispatchQueue.main.async { self.focusLiveTextField() }
     }
 
@@ -502,6 +503,12 @@ extension MainViewController {
         commentTextField.becomeFirstResponder()
     }
 
+    func toggleCommentAnonymouslyButtonState() {
+        let isOn = commentAnonymouslyButton.state == .on
+        commentAnonymouslyButton.state = isOn ? .off : .on  // set "toggled" state
+        commentAnonymouslyButtonStateChanged(self)
+    }
+
     func disconnect() {
         guard connectedToLive else { return }
         nicoUtility.disconnect()
@@ -657,6 +664,11 @@ private extension MainViewController {
         changeFontSize(fontSize)
     }
 
+    func configureAnonymouslyButton() {
+        let anonymous = UserDefaults.standard.bool(forKey: Parameters.commentAnonymously)
+        commentAnonymouslyButton.state = anonymous ? .on : .off
+    }
+
     func updateMainControlViews(status connectionStatus: ConnectionStatus) {
         DispatchQueue.main.async { self._updateMainControlViews(status: connectionStatus) }
     }
@@ -807,7 +819,7 @@ extension MainViewController {
             return
         }
 
-        let anonymously = UserDefaults.standard.bool(forKey: Parameters.commentAnonymously)
+        let anonymously = commentAnonymouslyButton.state == .on
         nicoUtility.comment(comment, anonymously: anonymously) { comment in
             if comment == nil {
                 self.logSystemMessageToTableView(L10n.failedToComment)
@@ -819,6 +831,11 @@ extension MainViewController {
             commentHistory.append(comment)
             commentHistoryIndex = commentHistory.count
         }
+    }
+
+    @IBAction func commentAnonymouslyButtonStateChanged(_ sender: Any) {
+        let isOn = commentAnonymouslyButton.state == .on
+        UserDefaults.standard.setValue(isOn, forKey: Parameters.commentAnonymously)
     }
 
     @objc func openUserWindow(_ sender: AnyObject?) {

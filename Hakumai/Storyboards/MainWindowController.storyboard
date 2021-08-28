@@ -160,7 +160,7 @@
                                                 <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="enable_184"/>
                                             </userDefinedRuntimeAttributes>
                                             <connections>
-                                                <binding destination="Qbm-2t-1Py" name="value" keyPath="values.CommentAnonymously" id="hJB-zU-DOM"/>
+                                                <action selector="toggleCommentAnonymously:" target="Voe-Tx-rLC" id="kaw-tM-9VB"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="Cmf-8h-m6S"/>
@@ -969,10 +969,10 @@
                                                 <buttonCell key="cell" type="check" title="184" bezelStyle="regularSquare" imagePosition="left" alignment="right" state="on" inset="2" id="XOy-JF-DaI">
                                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                     <font key="font" metaFont="system"/>
+                                                    <connections>
+                                                        <action selector="commentAnonymouslyButtonStateChanged:" target="XfG-lQ-9wD" id="BTh-hg-h6I"/>
+                                                    </connections>
                                                 </buttonCell>
-                                                <connections>
-                                                    <binding destination="hty-zy-fnb" name="value" keyPath="values.CommentAnonymously" id="fX6-nA-8cx"/>
-                                                </connections>
                                             </button>
                                         </subviews>
                                         <visibilityPriorities>

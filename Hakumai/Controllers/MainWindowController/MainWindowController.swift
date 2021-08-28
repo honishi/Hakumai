@@ -59,6 +59,10 @@ extension MainWindowController {
         mainViewController.focusCommentTextField()
     }
 
+    func toggleCommentAnonymouslyButtonState() {
+        mainViewController.toggleCommentAnonymouslyButtonState()
+    }
+
     func changeEnableMuteUserIds(_ enabled: Bool) {
         mainViewController.changeEnableMuteUserIds(enabled)
     }

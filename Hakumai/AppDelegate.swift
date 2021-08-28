@@ -65,6 +65,10 @@ extension AppDelegate {
         activeMainWindowController?.focusCommentTextField()
     }
 
+    @IBAction func toggleCommentAnonymously(_ sender: Any) {
+        activeMainWindowController?.toggleCommentAnonymouslyButtonState()
+    }
+
     @IBAction func zoomDefault(_ sender: AnyObject) {
         setFontSize(kDefaultFontSize)
     }
