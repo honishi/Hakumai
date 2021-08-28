@@ -37,10 +37,6 @@ extension MainWindowController {
 }
 
 extension MainWindowController {
-    var messageContainer: MessageContainer { mainViewController.messageContainer }
-    var clickedRow: Int { mainViewController.clickedRow }
-    var live: Live? { mainViewController.live }
-
     func login() {
         mainViewController.login()
     }
@@ -59,18 +55,6 @@ extension MainWindowController {
 
     func focusCommentTextField() {
         mainViewController.focusCommentTextField()
-    }
-
-    func showHandleNameAddViewController(live: Live, chat: Chat) {
-        mainViewController.showHandleNameAddViewController(live: live, chat: chat)
-    }
-
-    func refreshHandleName() {
-        mainViewController.refreshHandleName()
-    }
-
-    func userPageUrl(for userId: String) -> URL? {
-        return mainViewController.nicoUtility.userPageUrl(for: userId)
     }
 }
 

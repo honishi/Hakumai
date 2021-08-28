@@ -505,7 +505,14 @@ extension MainViewController {
         nicoUtility.disconnect()
     }
 
-    var clickedRow: Int { tableView.clickedRow }
+    var clickedMessage: Message? {
+        guard tableView.clickedRow != -1 else { return nil }
+        return messageContainer[tableView.clickedRow]
+    }
+
+    func userPageUrl(for userId: String) -> URL? {
+        return nicoUtility.userPageUrl(for: userId)
+    }
 }
 
 // MARK: Utility
