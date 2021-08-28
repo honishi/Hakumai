@@ -18,6 +18,8 @@ final class MainWindowController: NSWindowController {
         // - https://sites.google.com/site/xcodecodingmemo/home/mac-app-memo/resume-window-size-and-position
         // - http://d.hatena.ne.jp/RNatori/20070913
         windowFrameAutosaveName = "MainWindow"
+
+        applyAlwaysOnTop()
     }
 }
 
@@ -62,4 +64,9 @@ private extension MainWindowController {
     // swiftlint:disable force_cast
     var mainViewController: MainViewController { contentViewController as! MainViewController }
     // swiftlint:enable force_cast
+
+    func applyAlwaysOnTop() {
+        let alwaysOnTop = UserDefaults.standard.bool(forKey: Parameters.alwaysOnTop)
+        window?.alwaysOnTop = alwaysOnTop
+    }
 }

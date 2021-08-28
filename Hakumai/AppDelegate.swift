@@ -20,8 +20,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         LoggerHelper.setupLogger(log)
         migrateApplicationVersion()
         initializeUserDefaults()
-        // TODO: reactivate
-        // addObserverForUserDefaults()
+        addObserverForUserDefaults()
         configureMenuItems()
         debugPrintToken()
         openNewWindow()
@@ -130,8 +129,7 @@ extension AppDelegate {
             break
 
         case (Parameters.alwaysOnTop, let newValue as Bool):
-            // TODO: apply to all window
-            makeWindowAlwaysOnTop(newValue)
+            makeWindowsAlwaysOnTop(newValue)
 
         default:
             break
@@ -254,9 +252,10 @@ private extension AppDelegate {
 
 // MARK: Misc
 private extension AppDelegate {
-    func makeWindowAlwaysOnTop(_ alwaysOnTop: Bool) {
-        let window = NSApplication.shared.windows[0]
-        window.alwaysOnTop = alwaysOnTop
+    func makeWindowsAlwaysOnTop(_ alwaysOnTop: Bool) {
+        mainWindowControllers.forEach {
+            $0.window?.alwaysOnTop = alwaysOnTop
+        }
         log.debug("changed always on top: \(alwaysOnTop)")
     }
 
