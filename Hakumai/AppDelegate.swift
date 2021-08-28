@@ -20,9 +20,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         LoggerHelper.setupLogger(log)
         migrateApplicationVersion()
         initializeUserDefaults()
-        addObserverForUserDefaults()
+        // TODO: reactivate
+        // addObserverForUserDefaults()
         configureMenuItems()
         debugPrintToken()
+        openNewWindow()
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
@@ -33,32 +35,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 // MARK: Menu Handlers
 extension AppDelegate {
     @IBAction func login(_ sender: Any) {
-        MainViewController.shared.login()
+        activeMainWindowController?.login()
     }
 
     @IBAction func logout(_ sender: Any) {
-        MainViewController.shared.logout()
+        activeMainWindowController?.logout()
     }
 
     @IBAction func openNewWindow(_ sender: Any) {
-        // TODO:
-        let wc = MainWindowController.make()
-        // TODO: remove wc when window closed
-        mainWindowControllers.append(wc)
-        wc.showWindow(self)
+        openNewWindow()
     }
 
     @IBAction func closeWindow(_ sender: Any) {
-        // TODO:
-        log.debug("")
-        let window = mainWindowControllers
-            .map { $0.window }
-            .filter { $0?.isKeyWindow == true }
-            .compactMap { $0 }
-            .first
-        window?.close()
-        // TODO: discard main wc
-        // let wc = mainWindowControllers.filter { $0.window == window }
+        closeWindow()
     }
 
     @IBAction func openPreferences(_ sender: AnyObject) {
@@ -66,15 +55,15 @@ extension AppDelegate {
     }
 
     @IBAction func openUrl(_ sender: AnyObject) {
-        MainViewController.shared.focusLiveTextField()
+        activeMainWindowController?.focusLiveTextField()
     }
 
     @IBAction func grabUrlFromChrome(_ sender: AnyObject) {
-        MainViewController.shared.grabUrlFromBrowser(self)
+        activeMainWindowController?.grabUrlFromBrowser()
     }
 
     @IBAction func newComment(_ sender: AnyObject) {
-        MainViewController.shared.focusCommentTextField()
+        activeMainWindowController?.focusCommentTextField()
     }
 
     @IBAction func zoomDefault(_ sender: AnyObject) {
@@ -106,28 +95,41 @@ extension AppDelegate {
             break
 
         case (Parameters.enableCommentSpeech, let changed as Bool):
-            MainViewController.shared.changeEnableCommentSpeech(changed)
+            // TODO:
+            // MainViewController.shared.changeEnableCommentSpeech(changed)
+            break
 
         case (Parameters.commentSpeechVolume, let changed as Int):
             guard #available(macOS 10.14, *) else { return }
             SpeechManager.shared.setVoiceVolume(changed)
 
         case (Parameters.enableMuteUserIds, let changed as Bool):
-            MainViewController.shared.changeEnableMuteUserIds(changed)
+            // TODO:
+            // MainViewController.shared.changeEnableMuteUserIds(changed)
+            break
 
         case (Parameters.muteUserIds, let changed as [[String: String]]):
-            MainViewController.shared.changeMuteUserIds(changed)
+            // TODO:
+            // MainViewController.shared.changeMuteUserIds(changed)
+            break
 
         case (Parameters.enableMuteWords, let changed as Bool):
-            MainViewController.shared.changeEnableMuteWords(changed)
+            // TODO:
+            // MainViewController.shared.changeEnableMuteWords(changed)
+            break
 
         case (Parameters.muteWords, let changed as [[String: String]]):
-            MainViewController.shared.changeMuteWords(changed)
+            // TODO:
+            // MainViewController.shared.changeMuteWords(changed)
+            break
 
         case (Parameters.fontSize, let changed as Float):
-            MainViewController.shared.changeFontSize(CGFloat(changed))
+            // TODO:
+            // MainViewController.shared.changeFontSize(CGFloat(changed))
+            break
 
         case (Parameters.alwaysOnTop, let newValue as Bool):
+            // TODO: apply to all window
             makeWindowAlwaysOnTop(newValue)
 
         default:
@@ -221,6 +223,34 @@ private extension AppDelegate {
     }
 }
 
+// MARK: Multi-Window Management
+extension AppDelegate {
+    var activeMainWindowController: MainWindowController? {
+        mainWindowControllers.filter { $0.window?.isKeyWindow == true }.first
+    }
+}
+
+private extension AppDelegate {
+    func openNewWindow() {
+        let wc = MainWindowController.make()
+        // TODO: remove wc when window closed
+        mainWindowControllers.append(wc)
+        wc.showWindow(self)
+    }
+
+    func closeWindow() {
+        log.debug("")
+        let window = mainWindowControllers
+            .map { $0.window }
+            .filter { $0?.isKeyWindow == true }
+            .compactMap { $0 }
+            .first
+        window?.close()
+        // TODO: discard main wc
+        // let wc = mainWindowControllers.filter { $0.window == window }
+    }
+}
+
 // MARK: Misc
 private extension AppDelegate {
     func makeWindowAlwaysOnTop(_ alwaysOnTop: Bool) {
@@ -237,12 +267,6 @@ private extension AppDelegate {
         guard kMinimumFontSize...kMaximumFontSize ~= fontSize else { return }
         UserDefaults.standard.set(fontSize, forKey: Parameters.fontSize)
         UserDefaults.standard.synchronize()
-    }
-}
-
-extension AppDelegate {
-    var activeMainWindowController: MainWindowController? {
-        mainWindowControllers.filter { $0.window?.isKeyWindow == true }.first
     }
 }
 

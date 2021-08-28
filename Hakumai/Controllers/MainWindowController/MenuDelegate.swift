@@ -16,20 +16,16 @@ final class MenuDelegate: NSObject {
     @IBOutlet private weak var setHandleNameMenuItem: NSMenuItem!
     @IBOutlet private weak var removeHandleNameMenuItem: NSMenuItem!
     @IBOutlet private weak var addToMuteUserMenuItem: NSMenuItem!
-    @IBOutlet private weak var reportAsNgUserMenuItem: NSMenuItem!
     @IBOutlet private weak var openUserPageMenuItem: NSMenuItem!
 
     // MARK: Computed Properties
-    // var tableView: NSTableView { return MainViewController.shared.tableView }
-    // var live: Live? { return MainViewController.shared.live }
-
-    // swiftlint:disable force_cast
+    // swiftlint:disable force_cast force_unwrapping
     private var appDelegate: AppDelegate { NSApplication.shared.delegate as! AppDelegate }
     private var mainWindowController: MainWindowController { appDelegate.activeMainWindowController! }
-    // swiftlint:enable force_cast
-    private var mainViewController: MainViewController { mainWindowController.mainViewController }
-    private var nicoUtility: NicoUtility { mainWindowController.nicoUtility }
+    // swiftlint:enable force_cast force_unwrapping
+    // TODO: refactor to `clickedChat`
     private var messageContainer: MessageContainer { mainWindowController.messageContainer }
+    // TODO: integrate to `clickedChat`
     private var clickedRow: Int { mainWindowController.clickedRow }
     private var live: Live? { mainWindowController.live }
 
@@ -60,7 +56,7 @@ extension MenuDelegate: NSMenuItemValidation {
             guard let live = live else { return false }
             let hasHandleName = (HandleNameManager.shared.handleName(forLive: live, chat: chat) != nil)
             return hasHandleName
-        case addToMuteUserMenuItem, reportAsNgUserMenuItem:
+        case addToMuteUserMenuItem:
             return chat.isUserComment
         case openUserPageMenuItem:
             return (chat.isRawUserId && chat.isUserComment) ? true : false
@@ -103,7 +99,7 @@ extension MenuDelegate {
         guard let live = live, let chat = messageContainer[clickedRow].chat else {
             return
         }
-        mainViewController.showHandleNameAddViewController(live: live, chat: chat)
+        mainWindowController.showHandleNameAddViewController(live: live, chat: chat)
     }
 
     @IBAction func removeHandleName(_ sender: AnyObject) {
@@ -111,7 +107,7 @@ extension MenuDelegate {
             return
         }
         HandleNameManager.shared.removeHandleName(live: live, chat: chat)
-        mainViewController.refreshHandleName()
+        mainWindowController.refreshHandleName()
     }
 
     @IBAction func addToMuteUser(_ sender: AnyObject) {
@@ -127,21 +123,9 @@ extension MenuDelegate {
         defaults.synchronize()
     }
 
-    // TODO: remove
-    @IBAction func reportAsNgUser(_ sender: AnyObject) {
-        guard let chat = MessageContainer.shared[clickedRow].chat else { return }
-        NicoUtility.shared.reportAsNgUser(chat: chat) { userId in
-            if userId == nil {
-                MainViewController.shared.logSystemMessageToTableView("Failed to report NG user.")
-                return
-            }
-            MainViewController.shared.logSystemMessageToTableView("Completed to report NG user.")
-        }
-    }
-
     @IBAction func openUserPage(_ sender: AnyObject) {
         guard let userId = messageContainer[clickedRow].chat?.userId,
-              let url = nicoUtility.userPageUrl(for: userId) else { return }
+              let url = mainWindowController.userPageUrl(for: userId) else { return }
         NSWorkspace.shared.open(url)
     }
 }
@@ -153,7 +137,6 @@ private extension MenuDelegate {
         setHandleNameMenuItem.title = L10n.setHandleName
         removeHandleNameMenuItem.title = L10n.removeHandleName
         addToMuteUserMenuItem.title = L10n.addToMuteUser
-        reportAsNgUserMenuItem.title = L10n.reportAsNgUser
         openUserPageMenuItem.title = L10n.openUserPage
     }
 

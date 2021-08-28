@@ -74,6 +74,7 @@ final class MainViewController: NSViewController {
     private var liveStartedDate: Date?
 
     // row-height cache
+    // TODO: fix incorrect row height issue
     private var rowHeightCache = [Int: CGFloat]()
     private var minimumRowHeight: CGFloat = defaultMinimumRowHeight
     private var tableViewFontSize: CGFloat = CGFloat(kDefaultFontSize)

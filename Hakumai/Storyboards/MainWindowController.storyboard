@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
@@ -1155,12 +1155,6 @@
                                 <action selector="addToMuteUser:" target="Riw-FG-ugq" id="Q0c-ln-gix"/>
                             </connections>
                         </menuItem>
-                        <menuItem title="report_as_ng_user" hidden="YES" id="L1C-9u-5sm">
-                            <modifierMask key="keyEquivalentModifierMask"/>
-                            <connections>
-                                <action selector="reportAsNgUser:" target="Riw-FG-ugq" id="Yt8-JR-cEe"/>
-                            </connections>
-                        </menuItem>
                         <menuItem isSeparatorItem="YES" id="FL0-Y6-hxv"/>
                         <menuItem title="open_user_page" id="9gC-Dv-kyp">
                             <modifierMask key="keyEquivalentModifierMask"/>
@@ -1180,7 +1174,6 @@
                         <outlet property="openUrlMenuItem" destination="rwi-Ju-wYL" id="4ds-0I-koO"/>
                         <outlet property="openUserPageMenuItem" destination="9gC-Dv-kyp" id="Yqk-Mt-JHF"/>
                         <outlet property="removeHandleNameMenuItem" destination="vop-lQ-wo6" id="eKS-r7-dtJ"/>
-                        <outlet property="reportAsNgUserMenuItem" destination="L1C-9u-5sm" id="Edy-Ao-CgH"/>
                         <outlet property="setHandleNameMenuItem" destination="cOM-FI-15Y" id="gbs-UV-eRI"/>
                     </connections>
                 </customObject>

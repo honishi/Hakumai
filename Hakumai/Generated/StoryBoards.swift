@@ -20,8 +20,6 @@ internal enum StoryboardScene {
   internal enum MainWindowController: StoryboardType {
     internal static let storyboardName = "MainWindowController"
 
-    internal static let initialScene = InitialSceneType<Hakumai.MainWindowController>(storyboard: MainWindowController.self)
-
     internal static let handleNameAddViewController = SceneType<Hakumai.HandleNameAddViewController>(storyboard: MainWindowController.self, identifier: "HandleNameAddViewController")
 
     internal static let mainWindowController = SceneType<Hakumai.MainWindowController>(storyboard: MainWindowController.self, identifier: "MainWindowController")

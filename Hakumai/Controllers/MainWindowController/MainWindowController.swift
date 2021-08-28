@@ -37,11 +37,45 @@ extension MainWindowController {
 }
 
 extension MainWindowController {
-    // swiftlint:disable force_cast
-    var mainViewController: MainViewController { contentViewController as! MainViewController }
-    // swiftlint:enable force_cast
-    var nicoUtility: NicoUtility { mainViewController.nicoUtility }
     var messageContainer: MessageContainer { mainViewController.messageContainer }
     var clickedRow: Int { mainViewController.clickedRow }
     var live: Live? { mainViewController.live }
+
+    func login() {
+        mainViewController.login()
+    }
+
+    func logout() {
+        mainViewController.logout()
+    }
+
+    func focusLiveTextField() {
+        mainViewController.focusLiveTextField()
+    }
+
+    func grabUrlFromBrowser() {
+        mainViewController.grabUrlFromBrowser(self)
+    }
+
+    func focusCommentTextField() {
+        mainViewController.focusCommentTextField()
+    }
+
+    func showHandleNameAddViewController(live: Live, chat: Chat) {
+        mainViewController.showHandleNameAddViewController(live: live, chat: chat)
+    }
+
+    func refreshHandleName() {
+        mainViewController.refreshHandleName()
+    }
+
+    func userPageUrl(for userId: String) -> URL? {
+        return mainViewController.nicoUtility.userPageUrl(for: userId)
+    }
+}
+
+private extension MainWindowController {
+    // swiftlint:disable force_cast
+    var mainViewController: MainViewController { contentViewController as! MainViewController }
+    // swiftlint:enable force_cast
 }

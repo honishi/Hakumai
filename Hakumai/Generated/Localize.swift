@@ -152,8 +152,6 @@ internal enum L10n {
   internal static let reconnecting = L10n.tr("Localizable", "reconnecting")
   /// Remove Handle Name
   internal static let removeHandleName = L10n.tr("Localizable", "remove_handle_name")
-  /// Report as NG User
-  internal static let reportAsNgUser = L10n.tr("Localizable", "report_as_ng_user")
   /// Safari (Not supported yet…)
   internal static let safari = L10n.tr("Localizable", "safari")
   /// Select All
