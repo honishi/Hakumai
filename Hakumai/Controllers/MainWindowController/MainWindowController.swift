@@ -58,6 +58,26 @@ extension MainWindowController {
     func focusCommentTextField() {
         mainViewController.focusCommentTextField()
     }
+
+    func changeEnableMuteUserIds(_ enabled: Bool) {
+        mainViewController.changeEnableMuteUserIds(enabled)
+    }
+
+    func changeMuteUserIds(_ muteUserIds: [[String: String]]) {
+        mainViewController.changeMuteUserIds(muteUserIds)
+    }
+
+    func changeEnableMuteWords(_ enabled: Bool) {
+        mainViewController.changeEnableMuteWords(enabled)
+    }
+
+    func changeMuteWords(_ muteWords: [[String: String]]) {
+        mainViewController.changeMuteWords(muteWords)
+    }
+
+    func changeFontSize(_ fontSize: Float) {
+        mainViewController.changeFontSize(fontSize)
+    }
 }
 
 private extension MainWindowController {

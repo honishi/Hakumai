@@ -115,6 +115,8 @@ extension MainViewController {
         super.viewDidLoad()
         configureViews()
         configureManagers()
+        configureMute()
+        configureFontSize()
         DispatchQueue.main.async { self.focusLiveTextField() }
     }
 
@@ -522,8 +524,8 @@ extension MainViewController {
         updateSpeechManagerState()
     }
 
-    func changeFontSize(_ fontSize: CGFloat) {
-        tableViewFontSize = fontSize
+    func changeFontSize(_ fontSize: Float) {
+        tableViewFontSize = CGFloat(fontSize)
 
         minimumRowHeight = calculateMinimumRowHeight(fontSize: tableViewFontSize)
         tableView.rowHeight = minimumRowHeight
@@ -532,7 +534,6 @@ extension MainViewController {
     }
 
     func changeEnableMuteUserIds(_ enabled: Bool) {
-        // TODO: Consider multiple message container
         messageContainer.enableMuteUserIds = enabled
         log.debug("Changed enable mute user ids: \(enabled)")
         rebuildFilteredMessages()
@@ -637,6 +638,23 @@ private extension MainViewController {
 
     func configureManagers() {
         nicoUtility.delegate = self
+    }
+
+    func configureMute() {
+        let enableMuteUserIds = UserDefaults.standard.bool(forKey: Parameters.enableMuteUserIds)
+        let muteUserIds = UserDefaults.standard.array(forKey: Parameters.muteUserIds) as? [[String: String]]
+        let enableMuteWords = UserDefaults.standard.bool(forKey: Parameters.enableMuteWords)
+        let muteWords = UserDefaults.standard.array(forKey: Parameters.muteWords) as? [[String: String]]
+
+        changeEnableMuteUserIds(enableMuteUserIds)
+        if let muteUserIds = muteUserIds { changeMuteUserIds(muteUserIds) }
+        changeEnableMuteWords(enableMuteWords)
+        if let muteWords = muteWords { changeMuteWords(muteWords) }
+    }
+
+    func configureFontSize() {
+        let fontSize = UserDefaults.standard.float(forKey: Parameters.fontSize)
+        changeFontSize(fontSize)
     }
 
     func updateMainControlViews(status connectionStatus: ConnectionStatus) {

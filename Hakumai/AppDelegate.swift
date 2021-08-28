@@ -103,30 +103,19 @@ extension AppDelegate {
             SpeechManager.shared.setVoiceVolume(changed)
 
         case (Parameters.enableMuteUserIds, let changed as Bool):
-            // TODO:
-            // MainViewController.shared.changeEnableMuteUserIds(changed)
-            break
+            mainWindowControllers.forEach { $0.changeEnableMuteUserIds(changed) }
 
-        // TODO: fix mute user id feature is not working
         case (Parameters.muteUserIds, let changed as [[String: String]]):
-            // TODO:
-            // MainViewController.shared.changeMuteUserIds(changed)
-            break
+            mainWindowControllers.forEach { $0.changeMuteUserIds(changed) }
 
         case (Parameters.enableMuteWords, let changed as Bool):
-            // TODO:
-            // MainViewController.shared.changeEnableMuteWords(changed)
-            break
+            mainWindowControllers.forEach { $0.changeEnableMuteWords(changed) }
 
         case (Parameters.muteWords, let changed as [[String: String]]):
-            // TODO:
-            // MainViewController.shared.changeMuteWords(changed)
-            break
+            mainWindowControllers.forEach { $0.changeMuteWords(changed) }
 
         case (Parameters.fontSize, let changed as Float):
-            // TODO:
-            // MainViewController.shared.changeFontSize(CGFloat(changed))
-            break
+            mainWindowControllers.forEach { $0.changeFontSize(changed) }
 
         case (Parameters.alwaysOnTop, let newValue as Bool):
             makeWindowsAlwaysOnTop(newValue)
