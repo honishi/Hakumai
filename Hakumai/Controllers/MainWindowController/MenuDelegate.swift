@@ -17,17 +17,14 @@ final class MenuDelegate: NSObject {
     @IBOutlet private weak var removeHandleNameMenuItem: NSMenuItem!
     @IBOutlet private weak var addToMuteUserMenuItem: NSMenuItem!
     @IBOutlet private weak var openUserPageMenuItem: NSMenuItem!
+    @IBOutlet private weak var mainViewController: MainViewController!
 
     // MARK: Computed Properties
-    // swiftlint:disable force_cast force_unwrapping
-    private var appDelegate: AppDelegate { NSApplication.shared.delegate as! AppDelegate }
-    private var mainWindowController: MainWindowController { appDelegate.activeMainWindowController! }
-    // swiftlint:enable force_cast force_unwrapping
     // TODO: refactor to `clickedChat`
-    private var messageContainer: MessageContainer { mainWindowController.messageContainer }
+    private var messageContainer: MessageContainer { mainViewController.messageContainer }
     // TODO: integrate to `clickedChat`
-    private var clickedRow: Int { mainWindowController.clickedRow }
-    private var live: Live? { mainWindowController.live }
+    private var clickedRow: Int { mainViewController.clickedRow }
+    private var live: Live? { mainViewController.live }
 
     // MARK: - Object Lifecycle
     override func awakeFromNib() {
@@ -99,7 +96,7 @@ extension MenuDelegate {
         guard let live = live, let chat = messageContainer[clickedRow].chat else {
             return
         }
-        mainWindowController.showHandleNameAddViewController(live: live, chat: chat)
+        mainViewController.showHandleNameAddViewController(live: live, chat: chat)
     }
 
     @IBAction func removeHandleName(_ sender: AnyObject) {
@@ -107,7 +104,7 @@ extension MenuDelegate {
             return
         }
         HandleNameManager.shared.removeHandleName(live: live, chat: chat)
-        mainWindowController.refreshHandleName()
+        mainViewController.refreshHandleName()
     }
 
     @IBAction func addToMuteUser(_ sender: AnyObject) {
@@ -125,7 +122,7 @@ extension MenuDelegate {
 
     @IBAction func openUserPage(_ sender: AnyObject) {
         guard let userId = messageContainer[clickedRow].chat?.userId,
-              let url = mainWindowController.userPageUrl(for: userId) else { return }
+              let url = mainViewController.nicoUtility.userPageUrl(for: userId) else { return }
         NSWorkspace.shared.open(url)
     }
 }
