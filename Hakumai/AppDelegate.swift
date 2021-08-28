@@ -108,6 +108,7 @@ extension AppDelegate {
             // MainViewController.shared.changeEnableMuteUserIds(changed)
             break
 
+        // TODO: fix mute user id feature is not working
         case (Parameters.muteUserIds, let changed as [[String: String]]):
             // TODO:
             // MainViewController.shared.changeMuteUserIds(changed)

@@ -56,11 +56,13 @@ private extension UserIdTableCellView {
             return
         }
 
+        // TODO: remove shared
         if let userName = NicoUtility.shared.cachedUserName(forUserId: userId) {
             userIdTextField.stringValue = concatUserName(userId: userId, userName: userName, handleName: handleName)
             return
         }
 
+        // TODO: remove shared
         NicoUtility.shared.resolveUsername(forUserId: userId) { [weak self] in
             guard let me = self else { return }
             guard me.currentUserId == userId else {
