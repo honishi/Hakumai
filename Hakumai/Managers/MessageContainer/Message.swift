@@ -9,11 +9,6 @@
 import Foundation
 
 final class Message {
-    // workaround for non-supported class variable
-    struct Static {
-        static var messageNo: Int = 0
-    }
-
     enum MessageType: Int {
         case system = 0
         case chat
@@ -32,37 +27,20 @@ final class Message {
     let firstChat: Bool?
 
     // MARK: - Object Lifecycle
-    init(messageType: MessageType, message: String?, chat: Chat?, firstChat: Bool?) {
+    init(messageNo: Int, messageType: MessageType, message: String?, chat: Chat?, firstChat: Bool?) {
+        self.messageNo = messageNo
         self.messageType = messageType
-        self.messageNo = Static.messageNo
-        Static.messageNo += 1
         self.message = message
         self.chat = chat
         self.firstChat = firstChat
         self.date = Date()
     }
 
-    convenience init(message: String) {
-        self.init(messageType: .system, message: message, chat: nil, firstChat: nil)
+    convenience init(messageNo: Int, message: String) {
+        self.init(messageNo: messageNo, messageType: .system, message: message, chat: nil, firstChat: nil)
     }
 
-    convenience init(chat: Chat, firstChat: Bool = false) {
-        self.init(messageType: .chat, message: nil, chat: chat, firstChat: firstChat)
-    }
-
-    // MARK: - Public Functions
-    static func resetMessageNo() {
-        Static.messageNo = 0
-    }
-}
-
-// Debug Functions
-extension Message {
-    static func makeDummyMessage() -> Message {
-        return Message(message: "dummy message.")
-    }
-
-    static func makeDummyMessages(count: Int) -> [Message] {
-        return (1...count).map { _ in makeDummyMessage() }
+    convenience init(messageNo: Int, chat: Chat, firstChat: Bool = false) {
+        self.init(messageNo: messageNo, messageType: .chat, message: nil, chat: chat, firstChat: firstChat)
     }
 }

@@ -20,6 +20,7 @@ final class MessageContainer {
     var muteWords = [[String: String]]()
 
     // MARK: Private
+    private var messageNo = 0
     private var sourceMessages = [Message]()
     private var filteredMessages = [Message]()
 
@@ -38,7 +39,7 @@ extension MessageContainer {
         var message: Message!
 
         if let systemMessage = object as? String {
-            message = Message(message: systemMessage)
+            message = Message(messageNo: messageNo, message: systemMessage)
         } else if let chat = object as? Chat {
             var isFirstChat = false
             if chat.isUserComment {
@@ -47,10 +48,11 @@ extension MessageContainer {
                     firstChat[chat.userId] = true
                 }
             }
-            message = Message(chat: chat, firstChat: isFirstChat)
+            message = Message(messageNo: messageNo, chat: chat, firstChat: isFirstChat)
         } else {
             assert(false, "appending unexpected object")
         }
+        messageNo += 1
 
         sourceMessages.append(message)
 
@@ -96,7 +98,7 @@ extension MessageContainer {
         sourceMessages.removeAll(keepingCapacity: false)
         filteredMessages.removeAll(keepingCapacity: false)
         firstChat.removeAll(keepingCapacity: false)
-        Message.resetMessageNo()
+        messageNo = 0
         objc_sync_exit(self)
     }
 
