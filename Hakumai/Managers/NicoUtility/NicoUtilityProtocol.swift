@@ -11,7 +11,6 @@ import Foundation
 // MARK: - Protocol
 protocol NicoUtilityType {
     // Properties
-    static var shared: NicoUtilityType { get }
     var delegate: NicoUtilityDelegate? { get set }
     var live: Live? { get }
 
@@ -28,9 +27,6 @@ protocol NicoUtilityType {
     func resolveUsername(forUserId userId: String, completion: @escaping (String?) -> Void)
     func userPageUrl(for userId: String) -> URL?
     func userIconUrl(for userId: String) -> URL?
-
-    // Miscellaneous Methods
-    func reportAsNgUser(chat: Chat, completion: @escaping (_ userId: String?) -> Void)
 
     // Debug Methods
     func injectExpiredAccessToken()

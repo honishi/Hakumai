@@ -64,6 +64,10 @@ final class MainViewController: NSViewController {
     // swiftlint:enable weak_delegate
 
     // MARK: General Properties
+    let nicoUtility = NicoUtility()
+    let messageContainer = MessageContainer()
+    let speechManager = SpeechManager()
+
     private(set) var live: Live?
     private var connectedToLive = false
     private var chats = [Chat]()
@@ -94,7 +98,6 @@ final class MainViewController: NSViewController {
 extension MainViewController {
     override func awakeFromNib() {
         super.awakeFromNib()
-
         MainViewController.shared = self
     }
 }
@@ -110,6 +113,10 @@ extension MainViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureViews()
+        configureManagers()
+        configureMute()
+        configureFontSize()
+        configureAnonymouslyButton()
         DispatchQueue.main.async { self.focusLiveTextField() }
     }
 
@@ -122,14 +129,14 @@ extension MainViewController {
 // MARK: - NSTableViewDataSource Functions
 extension MainViewController: NSTableViewDataSource {
     func numberOfRows(in tableView: NSTableView) -> Int {
-        MessageContainer.shared.count()
+        messageContainer.count()
     }
 }
 
 // MARK: - NSTableViewDelegate Functions
 extension MainViewController: NSTableViewDelegate {
     func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
-        let message = MessageContainer.shared[row]
+        let message = messageContainer[row]
 
         if let cached = rowHeightCache[message.messageNo] {
             return cached
@@ -187,7 +194,7 @@ extension MainViewController: NSTableViewDelegate {
             view?.textField?.stringValue = ""
         }
 
-        let message = MessageContainer.shared[row]
+        let message = messageContainer[row]
 
         guard let _view = view, let tableColumn = tableColumn else { return nil }
 
@@ -251,7 +258,12 @@ extension MainViewController: NSTableViewDelegate {
             guard let live = live else { return }
             let userIdView = view as? UserIdTableCellView
             let handleName = HandleNameManager.shared.handleName(forLive: live, chat: chat)
-            userIdView?.info = (handleName: handleName, userId: chat.userId, premium: chat.premium, comment: chat.comment)
+            userIdView?.info = (
+                nicoUtility: nicoUtility,
+                handleName: handleName,
+                userId: chat.userId,
+                premium: chat.premium,
+                comment: chat.comment)
             userIdView?.fontSize = tableViewFontSize
         case kPremiumColumnIdentifier:
             let premiumView = view as? PremiumTableCellView
@@ -430,7 +442,7 @@ extension MainViewController: NicoUtilityDelegate {
 
 // MARK: - UserWindowControllerDelegate Functions
 extension MainViewController: UserWindowControllerDelegate {
-    func userWindowControllerDidClose(_ userWindowController: UserWindowController) {
+    func userWindowControllerWillClose(_ userWindowController: UserWindowController) {
         log.debug("")
         if let index = userWindowControllers.firstIndex(of: userWindowController) {
             userWindowControllers.remove(at: index)
@@ -447,9 +459,9 @@ extension MainViewController {
 
     func logout() {
         if connectedToLive {
-            NicoUtility.shared.disconnect()
+            nicoUtility.disconnect()
         }
-        NicoUtility.shared.logout()
+        nicoUtility.logout()
         authWindowController.logout()
         logSystemMessageToTableView(L10n.logoutCompleted)
     }
@@ -475,7 +487,7 @@ extension MainViewController {
         var defaultHandleName: String?
         if let handleName = HandleNameManager.shared.handleName(forLive: live, chat: chat) {
             defaultHandleName = handleName
-        } else if let userName = NicoUtility.shared.cachedUserName(forChat: chat) {
+        } else if let userName = nicoUtility.cachedUserName(forChat: chat) {
             defaultHandleName = userName
         }
         return defaultHandleName
@@ -494,6 +506,34 @@ extension MainViewController {
     func focusCommentTextField() {
         commentTextField.becomeFirstResponder()
     }
+
+    func toggleSpeech() {
+        speakButton.state = speakButton.isOn ? .off : .on   // set "toggled" state
+        speakButtonStateChanged(self)
+    }
+
+    func toggleCommentAnonymouslyButtonState() {
+        commentAnonymouslyButton.state = commentAnonymouslyButton.isOn ? .off : .on  // set "toggled" state
+        commentAnonymouslyButtonStateChanged(self)
+    }
+
+    func disconnect() {
+        guard connectedToLive else { return }
+        nicoUtility.disconnect()
+    }
+
+    var clickedMessage: Message? {
+        guard tableView.clickedRow != -1 else { return nil }
+        return messageContainer[tableView.clickedRow]
+    }
+
+    func userPageUrl(for userId: String) -> URL? {
+        return nicoUtility.userPageUrl(for: userId)
+    }
+
+    func setVoiceVolume(_ volume: Int) {
+        speechManager.setVoiceVolume(volume)
+    }
 }
 
 // MARK: Utility
@@ -503,8 +543,8 @@ extension MainViewController {
         updateSpeechManagerState()
     }
 
-    func changeFontSize(_ fontSize: CGFloat) {
-        tableViewFontSize = fontSize
+    func changeFontSize(_ fontSize: Float) {
+        tableViewFontSize = CGFloat(fontSize)
 
         minimumRowHeight = calculateMinimumRowHeight(fontSize: tableViewFontSize)
         tableView.rowHeight = minimumRowHeight
@@ -513,25 +553,25 @@ extension MainViewController {
     }
 
     func changeEnableMuteUserIds(_ enabled: Bool) {
-        MessageContainer.shared.enableMuteUserIds = enabled
+        messageContainer.enableMuteUserIds = enabled
         log.debug("Changed enable mute user ids: \(enabled)")
         rebuildFilteredMessages()
     }
 
     func changeMuteUserIds(_ muteUserIds: [[String: String]]) {
-        MessageContainer.shared.muteUserIds = muteUserIds
+        messageContainer.muteUserIds = muteUserIds
         log.debug("Changed mute user ids: \(muteUserIds)")
         rebuildFilteredMessages()
     }
 
     func changeEnableMuteWords(_ enabled: Bool) {
-        MessageContainer.shared.enableMuteWords = enabled
+        messageContainer.enableMuteWords = enabled
         log.debug("Changed enable mute words: \(enabled)")
         rebuildFilteredMessages()
     }
 
     func changeMuteWords(_ muteWords: [[String: String]]) {
-        MessageContainer.shared.muteWords = muteWords
+        messageContainer.muteWords = muteWords
         log.debug("Changed mute words: \(muteWords)")
         rebuildFilteredMessages()
     }
@@ -540,7 +580,7 @@ extension MainViewController {
         DispatchQueue.main.async {
             self.progressIndicator.startAnimation(self)
             let shouldScroll = self.scrollView.isReachedToBottom
-            MessageContainer.shared.rebuildFilteredMessages {
+            self.messageContainer.rebuildFilteredMessages {
                 self.tableView.reloadData()
                 if shouldScroll {
                     self.scrollView.scrollToBottom()
@@ -615,6 +655,32 @@ private extension MainViewController {
         }
     }
 
+    func configureManagers() {
+        nicoUtility.delegate = self
+    }
+
+    func configureMute() {
+        let enableMuteUserIds = UserDefaults.standard.bool(forKey: Parameters.enableMuteUserIds)
+        let muteUserIds = UserDefaults.standard.array(forKey: Parameters.muteUserIds) as? [[String: String]]
+        let enableMuteWords = UserDefaults.standard.bool(forKey: Parameters.enableMuteWords)
+        let muteWords = UserDefaults.standard.array(forKey: Parameters.muteWords) as? [[String: String]]
+
+        changeEnableMuteUserIds(enableMuteUserIds)
+        if let muteUserIds = muteUserIds { changeMuteUserIds(muteUserIds) }
+        changeEnableMuteWords(enableMuteWords)
+        if let muteWords = muteWords { changeMuteWords(muteWords) }
+    }
+
+    func configureFontSize() {
+        let fontSize = UserDefaults.standard.float(forKey: Parameters.fontSize)
+        changeFontSize(fontSize)
+    }
+
+    func configureAnonymouslyButton() {
+        let anonymous = UserDefaults.standard.bool(forKey: Parameters.commentAnonymously)
+        commentAnonymouslyButton.state = anonymous ? .on : .off
+    }
+
     func updateMainControlViews(status connectionStatus: ConnectionStatus) {
         DispatchQueue.main.async { self._updateMainControlViews(status: connectionStatus) }
     }
@@ -662,10 +728,10 @@ private extension MainViewController {
     func appendTableView(_ chatOrSystemMessage: Any) {
         DispatchQueue.main.async {
             let shouldScroll = self.scrollView.isReachedToBottom
-            let (appended, count) = MessageContainer.shared.append(chatOrSystemMessage: chatOrSystemMessage)
+            let (appended, count) = self.messageContainer.append(chatOrSystemMessage: chatOrSystemMessage)
             guard appended else { return }
             let rowIndex = count - 1
-            let message = MessageContainer.shared[rowIndex]
+            let message = self.messageContainer[rowIndex]
             self.tableView.insertRows(at: IndexSet(integer: rowIndex), withAnimation: NSTableView.AnimationOptions())
             // self.logChat(chatOrSystemMessage)
             if shouldScroll {
@@ -730,11 +796,11 @@ extension MainViewController {
         reason = .normal
         // reason = .noPong
         // reason = .noTexts
-        NicoUtility.shared.reconnect(reason: reason)
+        nicoUtility.reconnect(reason: reason)
     }
 
     @IBAction func debugExpireTokenButtonPressed(_ sender: Any) {
-        NicoUtility.shared.injectExpiredAccessToken()
+        nicoUtility.injectExpiredAccessToken()
         logSystemMessageToTableView("Injected expired access token.")
     }
 
@@ -744,14 +810,13 @@ extension MainViewController {
 
         clearAllChats()
         communityImageView.image = Asset.defaultCommunityImage.image
-        NicoUtility.shared.delegate = self
 
-        NicoUtility.shared.connect(liveProgramId: liveProgramId)
+        nicoUtility.connect(liveProgramId: liveProgramId)
     }
 
     @IBAction func connectButtonPressed(_ sender: AnyObject) {
         if connectedToLive {
-            NicoUtility.shared.disconnect()
+            nicoUtility.disconnect()
         } else {
             connectLive(self)
         }
@@ -766,8 +831,7 @@ extension MainViewController {
             return
         }
 
-        let anonymously = UserDefaults.standard.bool(forKey: Parameters.commentAnonymously)
-        NicoUtility.shared.comment(comment, anonymously: anonymously) { comment in
+        nicoUtility.comment(comment, anonymously: commentAnonymouslyButton.isOn) { comment in
             if comment == nil {
                 self.logSystemMessageToTableView(L10n.failedToComment)
             }
@@ -780,13 +844,22 @@ extension MainViewController {
         }
     }
 
+    @IBAction func speakButtonStateChanged(_ sender: Any) {
+        updateSpeechManagerState()
+    }
+
+    @IBAction func commentAnonymouslyButtonStateChanged(_ sender: Any) {
+        let isOn = commentAnonymouslyButton.state == .on
+        UserDefaults.standard.setValue(isOn, forKey: Parameters.commentAnonymously)
+    }
+
     @objc func openUserWindow(_ sender: AnyObject?) {
         let clickedRow = tableView.clickedRow
         if clickedRow == -1 {
             return
         }
 
-        let message = MessageContainer.shared[clickedRow]
+        let message = messageContainer[clickedRow]
         guard message.messageType == .chat, let chat = message.chat else { return }
         var userWindowController: UserWindowController?
 
@@ -805,7 +878,11 @@ extension MainViewController {
                 handleName = _handleName
             }
             userWindowController = UserWindowController.make(
-                delegate: self, userId: chat.userId, handleName: handleName)
+                delegate: self,
+                nicoUtility: nicoUtility,
+                messageContainer: messageContainer,
+                userId: chat.userId,
+                handleName: handleName)
             if let uwc = userWindowController {
                 positionUserWindow(uwc.window)
                 log.debug("no existing user-wc found, create it:\(uwc.description)")
@@ -852,7 +929,7 @@ private extension MainViewController {
     @objc func updateElapsedLabelValue() {
         var display = defaultElapsedTimeValue
 
-        if let startTime = NicoUtility.shared.live?.startTime {
+        if let startTime = nicoUtility.live?.startTime {
             var prefix = ""
             var elapsed = Date().timeIntervalSince(startTime as Date)
             if elapsed < 0 {
@@ -869,7 +946,7 @@ private extension MainViewController {
     }
 
     @objc func calculateAndUpdateActiveUserLabel() {
-        MessageContainer.shared.calculateActive { (active: Int?) -> Void in
+        messageContainer.calculateActive { (active: Int?) -> Void in
             guard let active = active else { return }
             DispatchQueue.main.async { self.activeUserValueLabel.stringValue = String(active) }
         }
@@ -880,19 +957,16 @@ private extension MainViewController {
 private extension MainViewController {
     func updateSpeechManagerState() {
         guard #available(macOS 10.14, *) else { return }
-        let enabled = UserDefaults.standard.bool(forKey: Parameters.enableCommentSpeech)
-
-        if enabled && connectedToLive {
-            SpeechManager.shared.startManager()
+        if speakButton.isOn && connectedToLive {
+            speechManager.startManager()
         } else {
-            SpeechManager.shared.stopManager()
+            speechManager.stopManager()
         }
     }
 
     func handleSpeech(chat: Chat) {
         guard #available(macOS 10.14, *) else { return }
-        let enabled = UserDefaults.standard.bool(forKey: Parameters.enableCommentSpeech)
-        guard enabled else { return }
+        guard speakButton.isOn else { return }
         guard let started = liveStartedDate,
               Date().timeIntervalSince(started) > 5 else {
             // Skip enqueuing since there's possibility that we receive lots of
@@ -901,8 +975,8 @@ private extension MainViewController {
             return
         }
         DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async {
-            SpeechManager.shared.enqueue(chat: chat)
-            if SpeechManager.shared.refreshChatQueueIfQueuedTooMuch() {
+            self.speechManager.enqueue(chat: chat)
+            if self.speechManager.refreshChatQueueIfQueuedTooMuch() {
                 // logSystemMessageToTableView("Refreshed speech queue.")
             }
         }
@@ -912,7 +986,7 @@ private extension MainViewController {
 // MARK: Misc Utility
 private extension MainViewController {
     func clearAllChats() {
-        MessageContainer.shared.removeAll()
+        messageContainer.removeAll()
         rowHeightCache.removeAll(keepingCapacity: false)
         tableView.reloadData()
     }
@@ -932,6 +1006,10 @@ private extension NicoError {
         case .openMessageServerFailed:  return L10n.errorFailedToOpenMessageServer
         }
     }
+}
+
+private extension NSButton {
+    var isOn: Bool { self.state == .on }
 }
 
 // Helper function inserted by Swift 4.2 migrator.

@@ -21,25 +21,26 @@ final class SpeechManagerTests: XCTestCase {
     // swiftlint:disable function_body_length
     @available(macOS 10.14, *)
     func testIsAcceptableComment() {
+        let manager = SpeechManager()
         var comment = ""
         var result: Bool
 
         comment = "無職なのになんでカフェいくの？？？？？？？"
-        result = SpeechManager.shared.isAcceptableComment(comment)
+        result = manager.isAcceptableComment(comment)
         XCTAssert(result == true)
 
         // length: 71
         comment = "初見です。骨皮筋bsゲス出っ歯人中ロングお未婚お下劣目尻ほうれい線口元シワシワ髪質ゴワゴワ体型貧相性格底辺人間力マイナスのむらマコさんわこつ。"
-        result = SpeechManager.shared.isAcceptableComment(comment)
+        result = manager.isAcceptableComment(comment)
         XCTAssert(result == true)
 
         // length: 110
         comment = "初見です。骨皮筋bsゲス出っ歯人中ロングお未婚お下劣目尻ほうれい線口元シワシワ髪質ゴワゴワ体型貧相性格底辺人間力マイナスのむらマコさんわこつ。初見です。骨皮筋bsゲス出っ歯人中ロングお未婚お下劣目尻ほうれい線口元シワシワ"
-        result = SpeechManager.shared.isAcceptableComment(comment)
+        result = manager.isAcceptableComment(comment)
         XCTAssert(result == false)
 
         comment = "👄👈🏻💗💗💗"
-        result = SpeechManager.shared.isAcceptableComment(comment)
+        result = manager.isAcceptableComment(comment)
         XCTAssert(result == true)
 
         comment = """
@@ -48,7 +49,7 @@ final class SpeechManagerTests: XCTestCase {
             🟥🟧🟨🟩🟦🟪もこレインボー🟪🟥🟧🟨🟩
             🟥🟧🟨🟩🟦🟪🟥🟧🟨🟩🟦🟪🟥🟧🟨🟩
             """
-        result = SpeechManager.shared.isAcceptableComment(comment)
+        result = manager.isAcceptableComment(comment)
         XCTAssert(result == false)
 
         comment = """
@@ -59,27 +60,27 @@ final class SpeechManagerTests: XCTestCase {
             ―〃-〃―――
             　　ﾚ,,/
             """
-        result = SpeechManager.shared.isAcceptableComment(comment)
+        result = manager.isAcceptableComment(comment)
         XCTAssert(result == false)
 
         comment = "粨粨粨粨粨粨粨粨粨粨粨粨粨粨粨粨粨粨"
-        result = SpeechManager.shared.isAcceptableComment(comment)
+        result = manager.isAcceptableComment(comment)
         XCTAssert(result == false)
 
         comment = "鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅"
-        result = SpeechManager.shared.isAcceptableComment(comment)
+        result = manager.isAcceptableComment(comment)
         XCTAssert(result == false)
 
         comment = "えええええええええええええええええええええええええええええええええええｗｗｗｗｗｗｗｗｗｗｗｗ"
-        result = SpeechManager.shared.isAcceptableComment(comment)
+        result = manager.isAcceptableComment(comment)
         XCTAssert(result == true)
 
         comment = "ｗｗｗｗｗｗｗｗｗｗｗｗ"
-        result = SpeechManager.shared.isAcceptableComment(comment)
+        result = manager.isAcceptableComment(comment)
         XCTAssert(result == true)
 
         comment = "えええええええええええええええええええええええええええええええええええ"
-        result = SpeechManager.shared.isAcceptableComment(comment)
+        result = manager.isAcceptableComment(comment)
         XCTAssert(result == true)
     }
     // swiftlint:enable function_body_length
@@ -87,98 +88,99 @@ final class SpeechManagerTests: XCTestCase {
     // swiftlint:disable function_body_length
     @available(macOS 10.14, *)
     func testCleanComment() {
+        let manager = SpeechManager()
         var comment = ""
         var expected = ""
         var actual = ""
 
         comment = "母親を殴っていた自分が恥ずかしくなりました"
         expected = "母親を殴っていた自分が恥ずかしくなりました"
-        actual = SpeechManager.shared.cleanComment(from: comment)
+        actual = manager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
 
         comment = "w"
         expected = " わら"
-        actual = SpeechManager.shared.cleanComment(from: comment)
+        actual = manager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
 
         comment = "ｗ"
         expected = " わら"
-        actual = SpeechManager.shared.cleanComment(from: comment)
+        actual = manager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
 
         comment = "www"
         expected = " わらわら"
-        actual = SpeechManager.shared.cleanComment(from: comment)
+        actual = manager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
 
         comment = "ｗｗｗ"
         expected = " わらわら"
-        actual = SpeechManager.shared.cleanComment(from: comment)
+        actual = manager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
 
         comment = "こんにちはｗ"
         expected = "こんにちは わら"
-        actual = SpeechManager.shared.cleanComment(from: comment)
+        actual = manager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
 
         comment = "こんにちはｗｗｗ"
         expected = "こんにちは わらわら"
-        actual = SpeechManager.shared.cleanComment(from: comment)
+        actual = manager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
 
         comment = "誰も共感してくれなくて可哀想wwwぶた"
         expected = "誰も共感してくれなくて可哀想 わらわらぶた"
-        actual = SpeechManager.shared.cleanComment(from: comment)
+        actual = manager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
 
         comment = "いよいよ就寝か。。　(ﾟ∀ﾟ)"
         expected = "いよいよ就寝か。。　"
-        actual = SpeechManager.shared.cleanComment(from: comment)
+        actual = manager.cleanComment(from: comment)
         // XCTAssert(expected == actual, "")
 
         comment = "8888888888888888888888888888888888888888888888888"
         expected = "ぱちぱち"
-        actual = SpeechManager.shared.cleanComment(from: comment)
+        actual = manager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
 
         comment = "これ見てhttps://example.com/aaa"
         expected = "これ見て URL "
-        actual = SpeechManager.shared.cleanComment(from: comment)
+        actual = manager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
 
         comment = "これ見てhttps://example.com/aaaこれ"
         expected = "これ見て URL "
-        actual = SpeechManager.shared.cleanComment(from: comment)
+        actual = manager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
 
         comment = "これ見てhttps://www.youtube.com/watch?v=9Pg2CDCm34w"
         expected = "これ見て URL "
-        actual = SpeechManager.shared.cleanComment(from: comment)
+        actual = manager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
 
         comment = "ニコニコ生放送"
         expected = "ニコニコ生放送"
-        actual = SpeechManager.shared.cleanComment(from: comment)
+        actual = manager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
 
         comment = "私はニコニコ生放送を見てる"
         expected = "私はニコニコ生放送を見てる"
-        actual = SpeechManager.shared.cleanComment(from: comment)
+        actual = manager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
 
         comment = "ニコ生"
         expected = "ニコなま"
-        actual = SpeechManager.shared.cleanComment(from: comment)
+        actual = manager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
 
         comment = "私はニコ生を見てる"
         expected = "私はニコなまを見てる"
-        actual = SpeechManager.shared.cleanComment(from: comment)
+        actual = manager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
 
         comment = "初見"
         expected = "しょけん"
-        actual = SpeechManager.shared.cleanComment(from: comment)
+        actual = manager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
     }
     // swiftlint:enable function_body_length

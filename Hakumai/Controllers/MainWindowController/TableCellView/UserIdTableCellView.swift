@@ -15,8 +15,9 @@ final class UserIdTableCellView: NSTableCellView {
     @IBOutlet weak var userIdTextField: NSTextField!
     @IBOutlet weak var userIdImageView: NSImageView!
 
-    var info: (handleName: String?, userId: String?, premium: Premium?, comment: String?)? = nil {
+    var info: (nicoUtility: NicoUtility, handleName: String?, userId: String?, premium: Premium?, comment: String?)? = nil {
         didSet {
+            self.nicoUtility = info?.nicoUtility
             self.currentUserId = info?.userId
             guard let userId = info?.userId, let premium = info?.premium else {
                 userIdImageView.image = nil
@@ -30,6 +31,8 @@ final class UserIdTableCellView: NSTableCellView {
 
     var fontSize: CGFloat? { didSet { set(fontSize: fontSize) } }
 
+    // XXX: remove this non presentation layer instance..
+    private var nicoUtility: NicoUtility?
     private var currentUserId: String?
 }
 
@@ -56,12 +59,12 @@ private extension UserIdTableCellView {
             return
         }
 
-        if let userName = NicoUtility.shared.cachedUserName(forUserId: userId) {
+        if let userName = nicoUtility?.cachedUserName(forUserId: userId) {
             userIdTextField.stringValue = concatUserName(userId: userId, userName: userName, handleName: handleName)
             return
         }
 
-        NicoUtility.shared.resolveUsername(forUserId: userId) { [weak self] in
+        nicoUtility?.resolveUsername(forUserId: userId) { [weak self] in
             guard let me = self else { return }
             guard me.currentUserId == userId else {
                 // Seems the view is reused before the previous async username

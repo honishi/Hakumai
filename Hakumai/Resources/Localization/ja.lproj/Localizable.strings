@@ -28,6 +28,8 @@
 /// File Menu
 "login" = "ログイン";
 "logout" = "ログアウト";
+"open_new_window" = "新規ウィンドウを開く";
+"close_window" = "ウィンドウを閉じる";
 "open_url" = "URL を開く";
 "grab_url_from_browser" = "ブラウザから URL をコピーする";
 "new_comment" = "新規コメント";
@@ -81,7 +83,7 @@
 ///
 "active_user" = "アクティブユーザー";
 "comment_count" = "コメント";
-"comment_text_field_placeholder" = "⌘N (リターンのみで最下行にスクロール)";
+"comment_text_field_placeholder" = "⌘O (リターンのみで最下行にスクロール)";
 "community_id" = "コミュニティID";
 "community_name" = "コミュニティ名";
 "elapsed_time" = "経過時間";
@@ -118,7 +120,6 @@
 "set_handle_name" = "ハンドル名を設定";
 "remove_handle_name" = "ハンドル名を削除";
 "add_to_mute_user" = "ユーザーをミュートに追加";
-"report_as_ng_user" = "NGユーザーとして報告";
 "open_user_page" = "ユーザーページを開く";
 
 ///

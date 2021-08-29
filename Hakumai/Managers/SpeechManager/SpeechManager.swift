@@ -41,16 +41,18 @@ private let cleanCommentPatterns = [
 ]
 
 @available(macOS 10.14, *)
+final class _Synthesizer {
+    static let shared = _Synthesizer()
+    let synthesizer = AVSpeechSynthesizer()
+}
+
 final class SpeechManager: NSObject {
     // MARK: - Properties
-    static let shared = SpeechManager()
-
     private var chatQueue: [Chat] = []
     private var recentChats: [Chat] = []
     private var voiceSpeed = voiceSpeedMap[0].speed
     private var voiceVolume = 100
     private var timer: Timer?
-    private let synthesizer = AVSpeechSynthesizer()
 
     // swiftlint:disable force_try
     private let emojiRegexp = try! NSRegularExpression(pattern: emojiPattern, options: [])
@@ -61,9 +63,11 @@ final class SpeechManager: NSObject {
     // MARK: - Object Lifecycle
     override init() {
         super.init()
+        configure()
     }
+}
 
-    // MARK: - Public Functions
+extension SpeechManager {
     func startManager() {
         guard timer == nil else { return }
         // use explicit main queue to ensure that the timer continues to run even when caller thread ends.
@@ -114,10 +118,13 @@ final class SpeechManager: NSObject {
     }
 
     @objc func dequeue(_ timer: Timer?) {
+        guard #available(macOS 10.14, *) else { return }
+
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
 
-        guard !synthesizer.isSpeaking, 0 < chatQueue.count else { return }
+        guard !_Synthesizer.shared.synthesizer.isSpeaking,
+              0 < chatQueue.count else { return }
 
         guard let chat = chatQueue.first else { return }
         chatQueue.removeFirst()
@@ -150,30 +157,6 @@ final class SpeechManager: NSObject {
         return false
     }
 
-    // MARK: - Private Functions
-    private func adjustedVoiceSpeed(currentCommentLength current: Int, remainingCommentLength remaining: Int, currentVoiceSpeed: Float) -> Float {
-        let total = current + remaining
-        var candidateSpeed = voiceSpeedMap[0].speed
-        for (commentLengthRange, speed) in voiceSpeedMap {
-            if commentLengthRange.contains(total) {
-                candidateSpeed = speed
-                break
-            }
-        }
-        let adjusted = remaining == 0 ? candidateSpeed : max(currentVoiceSpeed, candidateSpeed)
-        log.debug("current: \(current) remaining: \(remaining) total: \(total) candidate: \(candidateSpeed) adjusted: \(adjusted)")
-        return adjusted
-    }
-
-    private func speak(comment: String, speed: Float, volume: Float) {
-        let utterance = AVSpeechUtterance.init(string: cleanComment(from: comment))
-        utterance.rate = speed
-        utterance.volume = volume
-        let voice = AVSpeechSynthesisVoice.init(language: "ja-JP")
-        utterance.voice = voice
-        synthesizer.speak(utterance)
-    }
-
     // define as 'internal' for test
     func isAcceptableComment(_ comment: String) -> Bool {
         return comment.count < 100 &&
@@ -189,6 +172,37 @@ final class SpeechManager: NSObject {
             cleaned = cleaned.stringByReplacingRegexp(pattern: $0.0, with: $0.1)
         }
         return cleaned
+    }
+}
+
+private extension SpeechManager {
+    func configure() {
+        let volume = UserDefaults.standard.integer(forKey: Parameters.commentSpeechVolume)
+        setVoiceVolume(volume)
+    }
+
+    func adjustedVoiceSpeed(currentCommentLength current: Int, remainingCommentLength remaining: Int, currentVoiceSpeed: Float) -> Float {
+        let total = current + remaining
+        var candidateSpeed = voiceSpeedMap[0].speed
+        for (commentLengthRange, speed) in voiceSpeedMap {
+            if commentLengthRange.contains(total) {
+                candidateSpeed = speed
+                break
+            }
+        }
+        let adjusted = remaining == 0 ? candidateSpeed : max(currentVoiceSpeed, candidateSpeed)
+        log.debug("current: \(current) remaining: \(remaining) total: \(total) candidate: \(candidateSpeed) adjusted: \(adjusted)")
+        return adjusted
+    }
+
+    func speak(comment: String, speed: Float, volume: Float) {
+        guard #available(macOS 10.14, *) else { return }
+        let utterance = AVSpeechUtterance.init(string: cleanComment(from: comment))
+        utterance.rate = speed
+        utterance.volume = volume
+        let voice = AVSpeechSynthesisVoice.init(language: "ja-JP")
+        utterance.voice = voice
+        _Synthesizer.shared.synthesizer.speak(utterance)
     }
 }
 

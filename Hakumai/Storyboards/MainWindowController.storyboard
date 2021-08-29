@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
@@ -113,6 +113,23 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="C9q-ir-ijX"/>
+                                        <menuItem title="open_new_window" keyEquivalent="n" id="1tJ-z9-omX">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="open_new_window"/>
+                                            </userDefinedRuntimeAttributes>
+                                            <connections>
+                                                <action selector="openNewWindow:" target="Voe-Tx-rLC" id="hNl-ZU-lMo"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="close_window" keyEquivalent="w" id="asr-nM-iXE">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="close_window"/>
+                                            </userDefinedRuntimeAttributes>
+                                            <connections>
+                                                <action selector="closeWindow:" target="Voe-Tx-rLC" id="Rpv-eb-6hx"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="jDW-Ca-K2x"/>
                                         <menuItem title="open_url" keyEquivalent="l" id="Ywy-4g-xSA">
                                             <userDefinedRuntimeAttributes>
                                                 <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="open_url"/>
@@ -130,7 +147,7 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="m54-Is-iLE"/>
-                                        <menuItem title="new_comment" keyEquivalent="n" id="Ev7-F1-Fdp">
+                                        <menuItem title="new_comment" keyEquivalent="o" id="Ev7-F1-Fdp">
                                             <userDefinedRuntimeAttributes>
                                                 <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="new_comment"/>
                                             </userDefinedRuntimeAttributes>
@@ -143,7 +160,7 @@
                                                 <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="enable_184"/>
                                             </userDefinedRuntimeAttributes>
                                             <connections>
-                                                <binding destination="Qbm-2t-1Py" name="value" keyPath="values.CommentAnonymously" id="hJB-zU-DOM"/>
+                                                <action selector="toggleCommentAnonymously:" target="Voe-Tx-rLC" id="kaw-tM-9VB"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="Cmf-8h-m6S"/>
@@ -152,7 +169,7 @@
                                                 <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="speak"/>
                                             </userDefinedRuntimeAttributes>
                                             <connections>
-                                                <binding destination="Qbm-2t-1Py" name="value" keyPath="values.EnableCommentSpeech" id="N3u-GY-btT"/>
+                                                <action selector="toggleSpeech:" target="Voe-Tx-rLC" id="tCM-Hn-AdM"/>
                                             </connections>
                                         </menuItem>
                                     </items>
@@ -573,7 +590,7 @@
         <!--Window Controller-->
         <scene sceneID="R2V-B0-nI4">
             <objects>
-                <windowController id="B8D-0N-5wS" customClass="MainWindowController" customModule="Hakumai" customModuleProvider="target" sceneMemberID="viewController">
+                <windowController storyboardIdentifier="MainWindowController" id="B8D-0N-5wS" customClass="MainWindowController" customModule="Hakumai" customModuleProvider="target" sceneMemberID="viewController">
                     <window key="window" title="Hakumai" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
@@ -802,12 +819,12 @@
                                                     </stackView>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="QmJ-8z-tPW">
                                                         <rect key="frame" x="56" y="-1" width="64" height="18"/>
-                                                        <buttonCell key="cell" type="check" title="Speak" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="EpQ-m0-lHg">
+                                                        <buttonCell key="cell" type="check" title="Speak" bezelStyle="regularSquare" imagePosition="left" inset="2" id="EpQ-m0-lHg">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
                                                         <connections>
-                                                            <binding destination="hty-zy-fnb" name="value" keyPath="values.EnableCommentSpeech" id="qEO-QE-Lir"/>
+                                                            <action selector="speakButtonStateChanged:" target="XfG-lQ-9wD" id="4vO-Lu-0Uz"/>
                                                         </connections>
                                                     </button>
                                                 </subviews>
@@ -952,10 +969,10 @@
                                                 <buttonCell key="cell" type="check" title="184" bezelStyle="regularSquare" imagePosition="left" alignment="right" state="on" inset="2" id="XOy-JF-DaI">
                                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                     <font key="font" metaFont="system"/>
+                                                    <connections>
+                                                        <action selector="commentAnonymouslyButtonStateChanged:" target="XfG-lQ-9wD" id="BTh-hg-h6I"/>
+                                                    </connections>
                                                 </buttonCell>
-                                                <connections>
-                                                    <binding destination="hty-zy-fnb" name="value" keyPath="values.CommentAnonymously" id="fX6-nA-8cx"/>
-                                                </connections>
                                             </button>
                                         </subviews>
                                         <visibilityPriorities>
@@ -1138,12 +1155,6 @@
                                 <action selector="addToMuteUser:" target="Riw-FG-ugq" id="Q0c-ln-gix"/>
                             </connections>
                         </menuItem>
-                        <menuItem title="report_as_ng_user" hidden="YES" id="L1C-9u-5sm">
-                            <modifierMask key="keyEquivalentModifierMask"/>
-                            <connections>
-                                <action selector="reportAsNgUser:" target="Riw-FG-ugq" id="Yt8-JR-cEe"/>
-                            </connections>
-                        </menuItem>
                         <menuItem isSeparatorItem="YES" id="FL0-Y6-hxv"/>
                         <menuItem title="open_user_page" id="9gC-Dv-kyp">
                             <modifierMask key="keyEquivalentModifierMask"/>
@@ -1160,10 +1171,10 @@
                     <connections>
                         <outlet property="addToMuteUserMenuItem" destination="vkF-qq-cvh" id="lRE-o7-CNO"/>
                         <outlet property="copyCommentMenuItem" destination="CZ2-j4-uTm" id="FO6-qx-8DC"/>
+                        <outlet property="mainViewController" destination="XfG-lQ-9wD" id="F8k-HS-diK"/>
                         <outlet property="openUrlMenuItem" destination="rwi-Ju-wYL" id="4ds-0I-koO"/>
                         <outlet property="openUserPageMenuItem" destination="9gC-Dv-kyp" id="Yqk-Mt-JHF"/>
                         <outlet property="removeHandleNameMenuItem" destination="vop-lQ-wo6" id="eKS-r7-dtJ"/>
-                        <outlet property="reportAsNgUserMenuItem" destination="L1C-9u-5sm" id="Edy-Ao-CgH"/>
                         <outlet property="setHandleNameMenuItem" destination="cOM-FI-15Y" id="gbs-UV-eRI"/>
                     </connections>
                 </customObject>

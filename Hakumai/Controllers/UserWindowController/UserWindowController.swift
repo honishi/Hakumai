@@ -10,7 +10,7 @@ import Foundation
 import AppKit
 
 protocol UserWindowControllerDelegate: AnyObject {
-    func userWindowControllerDidClose(_ userWindowController: UserWindowController)
+    func userWindowControllerWillClose(_ userWindowController: UserWindowController)
 }
 
 final class UserWindowController: NSWindowController {
@@ -25,10 +25,10 @@ final class UserWindowController: NSWindowController {
 }
 
 extension UserWindowController {
-    static func make(delegate: UserWindowControllerDelegate?, userId: String, handleName: String?) -> UserWindowController {
+    static func make(delegate: UserWindowControllerDelegate?, nicoUtility: NicoUtility, messageContainer: MessageContainer, userId: String, handleName: String?) -> UserWindowController {
         let wc = StoryboardScene.UserWindowController.userWindowController.instantiate()
         wc.delegate = delegate
-        wc.set(userId: userId, handleName: handleName)
+        wc.set(nicoUtility: nicoUtility, messageContainer: messageContainer, userId: userId, handleName: handleName)
         return wc
     }
 }
@@ -37,17 +37,17 @@ extension UserWindowController: NSWindowDelegate {
     func windowWillClose(_ notification: Notification) {
         let window: Any? = notification.object
         if window is UserWindow {
-            delegate?.userWindowControllerDidClose(self)
+            delegate?.userWindowControllerWillClose(self)
         }
     }
 }
 
 // MARK: - Public Functions
 extension UserWindowController {
-    func set(userId: String, handleName: String?) {
+    func set(nicoUtility: NicoUtility, messageContainer: MessageContainer, userId: String, handleName: String?) {
         self.userId = userId
         guard let userViewController = contentViewController as? UserViewController else { return }
-        userViewController.set(userId: userId, handleName: handleName)
+        userViewController.set(nicoUtility: nicoUtility, messageContainer: messageContainer, userId: userId, handleName: handleName)
     }
 
     func reloadMessages() {

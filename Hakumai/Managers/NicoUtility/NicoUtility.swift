@@ -79,7 +79,6 @@ final class NicoUtility: NicoUtilityType {
     }
 
     // Public Properties
-    static var shared: NicoUtilityType = NicoUtility()
     weak var delegate: NicoUtilityDelegate?
     private(set) var live: Live?
 
@@ -220,8 +219,6 @@ extension NicoUtility {
         let path = number / 10000
         return URL(string: "\(_userIconUrl)\(path)/\(userId).jpg")
     }
-
-    func reportAsNgUser(chat: Chat, completion: @escaping (String?) -> Void) {}
 
     func injectExpiredAccessToken() {
         authManager.injectExpiredAccessToken()

@@ -23,31 +23,32 @@ final class NicoUtilityTests: XCTestCase {
 
     // MARK: - User Account
     func testUserIcon() {
+        let nicoUtility = NicoUtility()
         var expected: String? = ""
         var actual: String? = ""
 
         expected = nil
-        actual = NicoUtility.shared.userIconUrl(for: "XXX")?.absoluteString
+        actual = nicoUtility.userIconUrl(for: "XXX")?.absoluteString
         XCTAssert(actual == expected)
 
         expected = "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/0/2.jpg"
-        actual = NicoUtility.shared.userIconUrl(for: "2")?.absoluteString
+        actual = nicoUtility.userIconUrl(for: "2")?.absoluteString
         XCTAssert(actual == expected)
 
         expected = "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/0/9005.jpg"
-        actual = NicoUtility.shared.userIconUrl(for: "9005")?.absoluteString
+        actual = nicoUtility.userIconUrl(for: "9005")?.absoluteString
         XCTAssert(actual == expected)
 
         expected = "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/9/99998.jpg"
-        actual = NicoUtility.shared.userIconUrl(for: "99998")?.absoluteString
+        actual = nicoUtility.userIconUrl(for: "99998")?.absoluteString
         XCTAssert(actual == expected)
 
         expected = "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/1/12346.jpg"
-        actual = NicoUtility.shared.userIconUrl(for: "12346")?.absoluteString
+        actual = nicoUtility.userIconUrl(for: "12346")?.absoluteString
         XCTAssert(actual == expected)
 
         expected = "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/25/252346.jpg"
-        actual = NicoUtility.shared.userIconUrl(for: "252346")?.absoluteString
+        actual = nicoUtility.userIconUrl(for: "252346")?.absoluteString
         XCTAssert(actual == expected)
     }
 
