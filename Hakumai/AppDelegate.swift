@@ -14,6 +14,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @IBOutlet weak var speakMenuItem: NSMenuItem!
 
     private var mainWindowControllers: [MainWindowController] = []
+    private var nextMainWindowTopLeftPoint: NSPoint = NSPoint.zero
 
     // MARK: - NSApplicationDelegate Functions
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -228,8 +229,10 @@ extension AppDelegate: MainWindowControllerDelegate {
 private extension AppDelegate {
     func openNewWindow() {
         let wc = MainWindowController.make(delegate: self)
-        // TODO: adjust window frame
         mainWindowControllers.append(wc)
+        if mainWindowControllers.count > 1, let window = wc.window {
+            nextMainWindowTopLeftPoint = window.cascadeTopLeft(from: nextMainWindowTopLeftPoint)
+        }
         wc.showWindow(self)
         log.debug(mainWindowControllers)
     }
