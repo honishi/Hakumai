@@ -9,6 +9,8 @@
 import Foundation
 import AppKit
 
+private let mainWindowDefaultTopLeftPoint = NSPoint(x: 100, y: 100)
+
 @NSApplicationMain
 final class AppDelegate: NSObject, NSApplicationDelegate {
     @IBOutlet weak var speakMenuItem: NSMenuItem!
@@ -229,10 +231,13 @@ extension AppDelegate: MainWindowControllerDelegate {
 private extension AppDelegate {
     func openNewWindow() {
         let wc = MainWindowController.make(delegate: self)
-        mainWindowControllers.append(wc)
-        if mainWindowControllers.count > 1, let window = wc.window {
-            nextMainWindowTopLeftPoint = window.cascadeTopLeft(from: nextMainWindowTopLeftPoint)
+        // If the window is NOT first one, then adjust position and size based on first one.
+        if let firstWindow = mainWindowControllers.first?.window, let newWindow = wc.window {
+            let rect = NSRect(origin: mainWindowDefaultTopLeftPoint, size: firstWindow.frame.size)
+            newWindow.setFrame(rect, display: false)
+            nextMainWindowTopLeftPoint = newWindow.cascadeTopLeft(from: nextMainWindowTopLeftPoint)
         }
+        mainWindowControllers.append(wc)
         wc.showWindow(self)
         log.debug(mainWindowControllers)
     }
