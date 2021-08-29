@@ -259,7 +259,12 @@ extension MainViewController: NSTableViewDelegate {
             guard let live = live else { return }
             let userIdView = view as? UserIdTableCellView
             let handleName = HandleNameManager.shared.handleName(forLive: live, chat: chat)
-            userIdView?.info = (handleName: handleName, userId: chat.userId, premium: chat.premium, comment: chat.comment)
+            userIdView?.info = (
+                nicoUtility: nicoUtility,
+                handleName: handleName,
+                userId: chat.userId,
+                premium: chat.premium,
+                comment: chat.comment)
             userIdView?.fontSize = tableViewFontSize
         case kPremiumColumnIdentifier:
             let premiumView = view as? PremiumTableCellView

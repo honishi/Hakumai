@@ -11,8 +11,6 @@ import Foundation
 // MARK: - Protocol
 protocol NicoUtilityType {
     // Properties
-    // TODO: remove shared
-    static var shared: NicoUtilityType { get }
     var delegate: NicoUtilityDelegate? { get set }
     var live: Live? { get }
 

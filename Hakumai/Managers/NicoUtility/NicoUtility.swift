@@ -79,8 +79,6 @@ final class NicoUtility: NicoUtilityType {
     }
 
     // Public Properties
-    // TODO: remove shared
-    static var shared: NicoUtilityType = NicoUtility()
     weak var delegate: NicoUtilityDelegate?
     private(set) var live: Live?
 
