@@ -67,7 +67,6 @@ final class MainViewController: NSViewController {
     let nicoUtility = NicoUtility()
     let messageContainer = MessageContainer()
     let speechManager = SpeechManager()
-    // TODO: handle name manager?
 
     private(set) var live: Live?
     private var connectedToLive = false

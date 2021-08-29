@@ -45,7 +45,6 @@ extension UserWindowController: NSWindowDelegate {
 // MARK: - Public Functions
 extension UserWindowController {
     func set(nicoUtility: NicoUtility, messageContainer: MessageContainer, userId: String, handleName: String?) {
-        // todo: live number
         self.userId = userId
         guard let userViewController = contentViewController as? UserViewController else { return }
         userViewController.set(nicoUtility: nicoUtility, messageContainer: messageContainer, userId: userId, handleName: handleName)
