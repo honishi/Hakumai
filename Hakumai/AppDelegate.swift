@@ -218,24 +218,25 @@ extension AppDelegate {
     }
 }
 
+extension AppDelegate: MainWindowControllerDelegate {
+    func mainWindowControllerWillClose(_ mainWindowController: MainWindowController) {
+        mainWindowControllers.removeAll { $0 == mainWindowController }
+        log.debug(mainWindowControllers)
+    }
+}
+
 private extension AppDelegate {
     func openNewWindow() {
-        let wc = MainWindowController.make()
-        // TODO: remove wc when window closed
+        let wc = MainWindowController.make(delegate: self)
+        // TODO: adjust window frame
         mainWindowControllers.append(wc)
         wc.showWindow(self)
+        log.debug(mainWindowControllers)
     }
 
     func closeWindow() {
-        log.debug("")
-        let window = mainWindowControllers
-            .map { $0.window }
-            .filter { $0?.isKeyWindow == true }
-            .compactMap { $0 }
-            .first
-        window?.close()
-        // TODO: discard main wc
-        // let wc = mainWindowControllers.filter { $0.window == window }
+        guard let wc = activeMainWindowController else { return }
+        wc.window?.close()
     }
 }
 

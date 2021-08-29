@@ -10,7 +10,7 @@ import Foundation
 import AppKit
 
 protocol UserWindowControllerDelegate: AnyObject {
-    func userWindowControllerDidClose(_ userWindowController: UserWindowController)
+    func userWindowControllerWillClose(_ userWindowController: UserWindowController)
 }
 
 final class UserWindowController: NSWindowController {
@@ -37,7 +37,7 @@ extension UserWindowController: NSWindowDelegate {
     func windowWillClose(_ notification: Notification) {
         let window: Any? = notification.object
         if window is UserWindow {
-            delegate?.userWindowControllerDidClose(self)
+            delegate?.userWindowControllerWillClose(self)
         }
     }
 }

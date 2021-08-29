@@ -9,7 +9,14 @@
 import Foundation
 import AppKit
 
+protocol MainWindowControllerDelegate: AnyObject {
+    func mainWindowControllerWillClose(_ mainWindowController: MainWindowController)
+}
+
 final class MainWindowController: NSWindowController {
+    // MARK: - Properties
+    private weak var delegate: MainWindowControllerDelegate?
+
     // MARK: - NSWindowController Overrides
     override func windowDidLoad() {
         super.windowDidLoad()
@@ -26,14 +33,15 @@ final class MainWindowController: NSWindowController {
 extension MainWindowController: NSWindowDelegate {
     func windowWillClose(_ notification: Notification) {
         // XXX: Consider whther we should call disconnect call at deinit in NicoUtility?
-        guard let mainViewController = contentViewController as? MainViewController else { return }
         mainViewController.disconnect()
+        delegate?.mainWindowControllerWillClose(self)
     }
 }
 
 extension MainWindowController {
-    static func make() -> MainWindowController {
+    static func make(delegate: MainWindowControllerDelegate?) -> MainWindowController {
         let wc = StoryboardScene.MainWindowController.mainWindowController.instantiate()
+        wc.delegate = delegate
         return wc
     }
 }

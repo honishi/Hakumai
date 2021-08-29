@@ -442,7 +442,7 @@ extension MainViewController: NicoUtilityDelegate {
 
 // MARK: - UserWindowControllerDelegate Functions
 extension MainViewController: UserWindowControllerDelegate {
-    func userWindowControllerDidClose(_ userWindowController: UserWindowController) {
+    func userWindowControllerWillClose(_ userWindowController: UserWindowController) {
         log.debug("")
         if let index = userWindowControllers.firstIndex(of: userWindowController) {
             userWindowControllers.remove(at: index)
