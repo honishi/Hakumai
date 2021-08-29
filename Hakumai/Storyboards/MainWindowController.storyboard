@@ -169,7 +169,7 @@
                                                 <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="speak"/>
                                             </userDefinedRuntimeAttributes>
                                             <connections>
-                                                <binding destination="Qbm-2t-1Py" name="value" keyPath="values.EnableCommentSpeech" id="N3u-GY-btT"/>
+                                                <action selector="toggleSpeech:" target="Voe-Tx-rLC" id="tCM-Hn-AdM"/>
                                             </connections>
                                         </menuItem>
                                     </items>
@@ -819,12 +819,12 @@
                                                     </stackView>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="QmJ-8z-tPW">
                                                         <rect key="frame" x="56" y="-1" width="64" height="18"/>
-                                                        <buttonCell key="cell" type="check" title="Speak" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="EpQ-m0-lHg">
+                                                        <buttonCell key="cell" type="check" title="Speak" bezelStyle="regularSquare" imagePosition="left" inset="2" id="EpQ-m0-lHg">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
                                                         <connections>
-                                                            <binding destination="hty-zy-fnb" name="value" keyPath="values.EnableCommentSpeech" id="qEO-QE-Lir"/>
+                                                            <action selector="speakButtonStateChanged:" target="XfG-lQ-9wD" id="4vO-Lu-0Uz"/>
                                                         </connections>
                                                     </button>
                                                 </subviews>

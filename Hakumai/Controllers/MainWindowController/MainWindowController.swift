@@ -59,8 +59,16 @@ extension MainWindowController {
         mainViewController.focusCommentTextField()
     }
 
+    func toggleSpeech() {
+        mainViewController.toggleSpeech()
+    }
+
     func toggleCommentAnonymouslyButtonState() {
         mainViewController.toggleCommentAnonymouslyButtonState()
+    }
+
+    func setVoiceVolume(_ volume: Int) {
+        mainViewController.setVoiceVolume(volume)
     }
 
     func changeEnableMuteUserIds(_ enabled: Bool) {

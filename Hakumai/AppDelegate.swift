@@ -69,6 +69,10 @@ extension AppDelegate {
         activeMainWindowController?.toggleCommentAnonymouslyButtonState()
     }
 
+    @IBAction func toggleSpeech(_ sender: Any) {
+        activeMainWindowController?.toggleSpeech()
+    }
+
     @IBAction func zoomDefault(_ sender: AnyObject) {
         setFontSize(kDefaultFontSize)
     }
@@ -87,7 +91,7 @@ extension AppDelegate {
 
 // MARK: KVO Functions
 extension AppDelegate {
-    // swiftlint:disable cyclomatic_complexity block_based_kvo
+    // swiftlint:disable block_based_kvo
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
         // log.debug("detected observing value changed: key[\(keyPath)]")
         guard let keyPath = keyPath, let change = change else { return }
@@ -97,14 +101,8 @@ extension AppDelegate {
             // log.debug("browserInUse -> \(changed)")
             break
 
-        case (Parameters.enableCommentSpeech, let changed as Bool):
-            // TODO:
-            // MainViewController.shared.changeEnableCommentSpeech(changed)
-            break
-
         case (Parameters.commentSpeechVolume, let changed as Int):
-            guard #available(macOS 10.14, *) else { return }
-            SpeechManager.shared.setVoiceVolume(changed)
+            mainWindowControllers.forEach { $0.setVoiceVolume(changed) }
 
         case (Parameters.enableMuteUserIds, let changed as Bool):
             mainWindowControllers.forEach { $0.changeEnableMuteUserIds(changed) }
@@ -128,7 +126,7 @@ extension AppDelegate {
             break
         }
     }
-    // swiftlint:enable cyclomatic_complexity block_based_kvo
+    // swiftlint:enable block_based_kvo
 }
 
 // MARK: Application Initialize Utility
@@ -179,7 +177,6 @@ private extension AppDelegate {
         let defaults: [String: Any] = [
             Parameters.browserInUse: BrowserInUseType.chrome.rawValue,
             Parameters.fontSize: kDefaultFontSize,
-            Parameters.enableCommentSpeech: false,
             Parameters.commentSpeechVolume: 100,
             Parameters.enableMuteUserIds: true,
             Parameters.enableMuteWords: true,
@@ -192,7 +189,6 @@ private extension AppDelegate {
         let keyPaths = [
             // general
             Parameters.browserInUse,
-            Parameters.enableCommentSpeech,
             Parameters.commentSpeechVolume,
             // mute
             Parameters.enableMuteUserIds, Parameters.muteUserIds,

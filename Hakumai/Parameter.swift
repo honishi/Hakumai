@@ -13,7 +13,6 @@ import Foundation
 struct Parameters {
     // general
     static let browserInUse = "BrowserInUse"
-    static let enableCommentSpeech = "EnableCommentSpeech"
     static let commentSpeechVolume = "CommentSpeechVolume"
 
     // mute

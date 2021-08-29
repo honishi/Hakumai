@@ -66,6 +66,7 @@ final class MainViewController: NSViewController {
     // MARK: General Properties
     let nicoUtility = NicoUtility()
     let messageContainer = MessageContainer()
+    let speechManager = SpeechManager()
     // TODO: handle name manager?
 
     private(set) var live: Live?
@@ -74,7 +75,6 @@ final class MainViewController: NSViewController {
     private var liveStartedDate: Date?
 
     // row-height cache
-    // TODO: fix incorrect row height issue
     private var rowHeightCache = [Int: CGFloat]()
     private var minimumRowHeight: CGFloat = defaultMinimumRowHeight
     private var tableViewFontSize: CGFloat = CGFloat(kDefaultFontSize)
@@ -503,9 +503,13 @@ extension MainViewController {
         commentTextField.becomeFirstResponder()
     }
 
+    func toggleSpeech() {
+        speakButton.state = speakButton.isOn ? .off : .on   // set "toggled" state
+        speakButtonStateChanged(self)
+    }
+
     func toggleCommentAnonymouslyButtonState() {
-        let isOn = commentAnonymouslyButton.state == .on
-        commentAnonymouslyButton.state = isOn ? .off : .on  // set "toggled" state
+        commentAnonymouslyButton.state = commentAnonymouslyButton.isOn ? .off : .on  // set "toggled" state
         commentAnonymouslyButtonStateChanged(self)
     }
 
@@ -521,6 +525,10 @@ extension MainViewController {
 
     func userPageUrl(for userId: String) -> URL? {
         return nicoUtility.userPageUrl(for: userId)
+    }
+
+    func setVoiceVolume(_ volume: Int) {
+        speechManager.setVoiceVolume(volume)
     }
 }
 
@@ -819,8 +827,7 @@ extension MainViewController {
             return
         }
 
-        let anonymously = commentAnonymouslyButton.state == .on
-        nicoUtility.comment(comment, anonymously: anonymously) { comment in
+        nicoUtility.comment(comment, anonymously: commentAnonymouslyButton.isOn) { comment in
             if comment == nil {
                 self.logSystemMessageToTableView(L10n.failedToComment)
             }
@@ -831,6 +838,10 @@ extension MainViewController {
             commentHistory.append(comment)
             commentHistoryIndex = commentHistory.count
         }
+    }
+
+    @IBAction func speakButtonStateChanged(_ sender: Any) {
+        updateSpeechManagerState()
     }
 
     @IBAction func commentAnonymouslyButtonStateChanged(_ sender: Any) {
@@ -942,19 +953,16 @@ private extension MainViewController {
 private extension MainViewController {
     func updateSpeechManagerState() {
         guard #available(macOS 10.14, *) else { return }
-        let enabled = UserDefaults.standard.bool(forKey: Parameters.enableCommentSpeech)
-
-        if enabled && connectedToLive {
-            SpeechManager.shared.startManager()
+        if speakButton.isOn && connectedToLive {
+            speechManager.startManager()
         } else {
-            SpeechManager.shared.stopManager()
+            speechManager.stopManager()
         }
     }
 
     func handleSpeech(chat: Chat) {
         guard #available(macOS 10.14, *) else { return }
-        let enabled = UserDefaults.standard.bool(forKey: Parameters.enableCommentSpeech)
-        guard enabled else { return }
+        guard speakButton.isOn else { return }
         guard let started = liveStartedDate,
               Date().timeIntervalSince(started) > 5 else {
             // Skip enqueuing since there's possibility that we receive lots of
@@ -963,8 +971,8 @@ private extension MainViewController {
             return
         }
         DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async {
-            SpeechManager.shared.enqueue(chat: chat)
-            if SpeechManager.shared.refreshChatQueueIfQueuedTooMuch() {
+            self.speechManager.enqueue(chat: chat)
+            if self.speechManager.refreshChatQueueIfQueuedTooMuch() {
                 // logSystemMessageToTableView("Refreshed speech queue.")
             }
         }
@@ -994,6 +1002,10 @@ private extension NicoError {
         case .openMessageServerFailed:  return L10n.errorFailedToOpenMessageServer
         }
     }
+}
+
+private extension NSButton {
+    var isOn: Bool { self.state == .on }
 }
 
 // Helper function inserted by Swift 4.2 migrator.

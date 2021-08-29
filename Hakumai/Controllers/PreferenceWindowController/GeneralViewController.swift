@@ -19,7 +19,6 @@ final class GeneralViewController: NSViewController {
     @IBOutlet private weak var safariButtonCell: NSButtonCell!
 
     @IBOutlet private weak var commentSpeakingBox: NSBox!
-    @IBOutlet private weak var speakCommentButton: NSButton!
     @IBOutlet private weak var speakVolumeTitleTextField: NSTextField!
     @IBOutlet private weak var speakVolumeValueTextField: NSTextField!
     @IBOutlet private weak var speakVolumeSlider: NSSlider!
@@ -51,13 +50,11 @@ private extension GeneralViewController {
         safariButtonCell.title = L10n.safari
 
         commentSpeakingBox.title = L10n.commentSpeaking
-        speakCommentButton.title = L10n.speakComments
         speakVolumeTitleTextField.stringValue = "\(L10n.speakVolume):"
     }
 
     func disableSpeakComponentsIfNeeded() {
         if #available(macOS 10.14, *) { return }
-        speakCommentButton.isEnabled = false
         speakVolumeTitleTextField.isEnabled = false
         speakVolumeValueTextField.isEnabled = false
         speakVolumeSlider.isEnabled = false
