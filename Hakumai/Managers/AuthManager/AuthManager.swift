@@ -53,6 +53,7 @@ final class AuthManager: AuthManagerProtocol {
     private let tokenStore: TokenStoreProtocol
     private(set) var currentToken: AuthManagerToken?
     private lazy var refreshTokenApiUrl: URL = makeRefreshTokenApiUrl(useDevServer: useDevServer)
+    private var refreshTokenCompletions: [(Result<AuthManagerToken, AuthManagerError>) -> Void] = []
 
     init(tokenStore: TokenStoreProtocol) {
         session = {
@@ -79,7 +80,7 @@ extension AuthManager {
     }
 
     func refreshToken(completion: @escaping (Result<AuthManagerToken, AuthManagerError>) -> Void) {
-        // TODO: Is the following sync way is right?
+        // XXX: Check if the following implementation is valid for multi-thread.
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
 
@@ -87,6 +88,17 @@ extension AuthManager {
             completion(.failure(.noRefreshToken))
             return
         }
+
+        // If the refresh token request has already invoked by another thread,
+        // just store the completion and skip the request.
+        let isRefreshing = !refreshTokenCompletions.isEmpty
+        refreshTokenCompletions.append(completion)
+        log.debug(refreshTokenCompletions)
+        if isRefreshing {
+            log.debug("Skipped the refresh token request since it has already requested.")
+            return
+        }
+
         var request = URLRequest(url: refreshTokenApiUrl)
         request.method = .post
         request.httpBody = "refresh_token=\(refreshToken)".data(using: .utf8)
@@ -94,18 +106,23 @@ extension AuthManager {
             .cURLDescription { log.debug($0) }
             .validate()
             .responseString { [weak self] in
+                defer {
+                    self?.refreshTokenCompletions.removeAll()
+                    log.debug(self?.refreshTokenCompletions)
+                }
                 guard let me = self else { return }
                 // log.debug($0)
                 switch $0.result {
                 case .success(let string):
+                    log.debug("Refresh token successfully completed.")
                     log.debug(string)
                     guard let response = me.decodeTokenResponse(from: string) else {
-                        completion(.failure(.internal))
+                        self?.refreshTokenCompletions.forEach { $0(.failure(.internal)) }
                         return
                     }
                     let token = response.toAuthManagerToken()
                     me.saveToken(from: token)
-                    completion(.success(token))
+                    self?.refreshTokenCompletions.forEach { $0(.success(token)) }
                 case .failure(let error):
                     log.error(error)
                     if error.isNetworkError {
@@ -116,7 +133,7 @@ extension AuthManager {
                         log.debug("Failed to refresh token, so clearing the token since it's possibly unusable one.")
                         me.clearToken()
                     }
-                    completion(.failure(.refreshTokenFailed))
+                    self?.refreshTokenCompletions.forEach { $0(.failure(.refreshTokenFailed)) }
                 }
             }
     }
