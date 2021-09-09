@@ -123,7 +123,10 @@ private extension MainWindowController {
     }
 
     func setWindowTabTitle(_ title: String) {
-        guard #available(macOS 10.13, *) else { return }
-        window?.tab.title = title
+        if #available(macOS 10.13, *) {
+            window?.tab.title = title
+        } else {
+            window?.title = title
+        }
     }
 }
