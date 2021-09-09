@@ -48,6 +48,10 @@ extension AppDelegate {
         openNewWindow()
     }
 
+    @IBAction func openNewTab(_ sender: Any) {
+        openNewTab()
+    }
+
     @IBAction func closeWindow(_ sender: Any) {
         closeWindow()
     }
@@ -239,6 +243,16 @@ private extension AppDelegate {
         }
         mainWindowControllers.append(wc)
         wc.showWindow(self)
+        log.debug(mainWindowControllers)
+    }
+
+    func openNewTab() {
+        let wc = MainWindowController.make(delegate: self)
+        guard let activeWindow = activeMainWindowController?.window,
+              let newWindow = wc.window else { return }
+        activeWindow.addTabbedWindow(newWindow, ordered: .above)
+        activeWindow.selectNextTab(self)
+        mainWindowControllers.append(wc)
         log.debug(mainWindowControllers)
     }
 

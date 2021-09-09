@@ -121,6 +121,14 @@
                                                 <action selector="openNewWindow:" target="Voe-Tx-rLC" id="hNl-ZU-lMo"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="open_new_tab" keyEquivalent="t" id="rjz-PU-WoX">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="open_new_tab"/>
+                                            </userDefinedRuntimeAttributes>
+                                            <connections>
+                                                <action selector="openNewTab:" target="Voe-Tx-rLC" id="cbR-Wf-Pf0"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="close_window" keyEquivalent="w" id="asr-nM-iXE">
                                             <userDefinedRuntimeAttributes>
                                                 <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="close_window"/>

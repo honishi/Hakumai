@@ -26,6 +26,7 @@ final class MainWindowController: NSWindowController {
         // - http://d.hatena.ne.jp/RNatori/20070913
         windowFrameAutosaveName = "MainWindow"
 
+        setInitialWindowTabTitle()
         applyAlwaysOnTop()
     }
 }
@@ -38,10 +39,17 @@ extension MainWindowController: NSWindowDelegate {
     }
 }
 
+extension MainWindowController: MainViewControllerDelegate {
+    func mainViewControllerDidPrepareLive(_ mainViewController: MainViewController, title: String) {
+        setWindowTabTitle(title)
+    }
+}
+
 extension MainWindowController {
     static func make(delegate: MainWindowControllerDelegate?) -> MainWindowController {
         let wc = StoryboardScene.MainWindowController.mainWindowController.instantiate()
         wc.delegate = delegate
+        wc.mainViewController.delegate = wc
         return wc
     }
 }
@@ -105,8 +113,17 @@ private extension MainWindowController {
     var mainViewController: MainViewController { contentViewController as! MainViewController }
     // swiftlint:enable force_cast
 
+    func setInitialWindowTabTitle() {
+        setWindowTabTitle("---")
+    }
+
     func applyAlwaysOnTop() {
         let alwaysOnTop = UserDefaults.standard.bool(forKey: Parameters.alwaysOnTop)
         window?.alwaysOnTop = alwaysOnTop
+    }
+
+    func setWindowTabTitle(_ title: String) {
+        guard #available(macOS 10.13, *) else { return }
+        window?.tab.title = title
     }
 }

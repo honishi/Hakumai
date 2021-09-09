@@ -36,7 +36,7 @@ internal enum L10n {
   internal static let checkGrammarWithSpelling = L10n.tr("Localizable", "check_grammar_with_spelling")
   /// Check Spelling While Typing
   internal static let checkSpellingWhileTyping = L10n.tr("Localizable", "check_spelling_while_typing")
-  /// Close Window
+  /// Close Window/Tab
   internal static let closeWindow = L10n.tr("Localizable", "close_window")
   /// Comments
   internal static let commentCount = L10n.tr("Localizable", "comment_count")
@@ -128,6 +128,8 @@ internal enum L10n {
   internal static let minimize = L10n.tr("Localizable", "minimize")
   /// New Comment
   internal static let newComment = L10n.tr("Localizable", "new_comment")
+  /// Open New Tab
+  internal static let openNewTab = L10n.tr("Localizable", "open_new_tab")
   /// Open New Window
   internal static let openNewWindow = L10n.tr("Localizable", "open_new_window")
   /// Open URL
