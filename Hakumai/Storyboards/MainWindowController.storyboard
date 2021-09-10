@@ -546,7 +546,7 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="fSq-dG-fr2"/>
-                                        <menuItem title="always_on_top" keyEquivalent="t" id="Imh-AC-vGA">
+                                        <menuItem title="always_on_top" keyEquivalent="p" id="Imh-AC-vGA">
                                             <userDefinedRuntimeAttributes>
                                                 <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="always_on_top"/>
                                             </userDefinedRuntimeAttributes>
