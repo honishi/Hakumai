@@ -21,12 +21,17 @@ private let defaultElapsedTimeValue = "--:--:--"
 private let defaultLabelValue = "---"
 
 // swiftlint:disable file_length
+protocol MainViewControllerDelegate: AnyObject {
+    func mainViewControllerDidPrepareLive(_ mainViewController: MainViewController, title: String)
+}
+
 final class MainViewController: NSViewController {
     // MARK: Types
     enum ConnectionStatus { case disconnected, connecting, connected }
 
     // MARK: Properties
     static var shared: MainViewController!
+    weak var delegate: MainViewControllerDelegate?
 
     // MARK: Main Outlets
     @IBOutlet private weak var grabUrlButton: NSButton!
@@ -363,6 +368,8 @@ extension MainViewController: NicoUtilityDelegate {
         case .reconnect:
             break
         }
+
+        delegate?.mainViewControllerDidPrepareLive(self, title: live.title)
     }
 
     func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, error: NicoError) {

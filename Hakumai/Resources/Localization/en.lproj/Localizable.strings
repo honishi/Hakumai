@@ -29,12 +29,13 @@
 "login" = "Login";
 "logout" = "Logout";
 "open_new_window" = "Open New Window";
-"close_window" = "Close Window";
+"open_new_tab" = "Open New Tab";
+"close_window" = "Close Window/Tab";
 "open_url" = "Open URL";
 "grab_url_from_browser" = "Grab URL from Browser";
 "new_comment" = "New Comment";
 "enable_184" = "Enable 184";
-"speak" = "Speak";
+"speak" = "Comment Speech";
 
 /// Edit Menu
 "cut" = "Cut";
@@ -89,7 +90,7 @@
 "elapsed_time" = "Elapsed Time";
 "live_title" = "Live Title";
 "live_url_text_field_placeholder" = "⌘L (Live URL, Live#)";
-"speak_comment" = "Speak";
+"speak_comment" = "Speech";
 "visitor_count" = "Visitors";
 "login_completed" = "Login completed.";
 "logout_completed" = "Logout completed.";
@@ -136,9 +137,9 @@
 "browser_in_use" = "Browser Used for \"Grab URL from Browser\" feature (⌘U)";
 "google_chrome" = "Google Chrome";
 "safari" = "Safari (Not supported yet…)";
-"comment_speaking" = "Comment Speaking";
-"speak_comments" = "Speak Comments (Requires macOS 10.14-)";
-"speak_volume" = "Speak Volume";
+"comment_speaking" = "Comment Speech";
+"speak_comments" = "Speech Comments (Requires macOS 10.14-)";
+"speak_volume" = "Speech Volume";
 
 /// Mute
 "enable_mute_user_ids" = "Enable Mute User Ids";
