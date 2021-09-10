@@ -40,7 +40,7 @@ internal enum L10n {
   internal static let closeWindow = L10n.tr("Localizable", "close_window")
   /// Comments
   internal static let commentCount = L10n.tr("Localizable", "comment_count")
-  /// Comment Speaking
+  /// Comment Speech
   internal static let commentSpeaking = L10n.tr("Localizable", "comment_speaking")
   /// ⌘O (Empty ⏎ to scroll to bottom)
   internal static let commentTextFieldPlaceholder = L10n.tr("Localizable", "comment_text_field_placeholder")
@@ -180,13 +180,13 @@ internal enum L10n {
   internal static let smartLinks = L10n.tr("Localizable", "smart_links")
   /// Smart Quotes
   internal static let smartQuotes = L10n.tr("Localizable", "smart_quotes")
-  /// Speak
+  /// Comment Speech
   internal static let speak = L10n.tr("Localizable", "speak")
-  /// Speak
+  /// Speech
   internal static let speakComment = L10n.tr("Localizable", "speak_comment")
-  /// Speak Comments (Requires macOS 10.14-)
+  /// Speech Comments (Requires macOS 10.14-)
   internal static let speakComments = L10n.tr("Localizable", "speak_comments")
-  /// Speak Volume
+  /// Speech Volume
   internal static let speakVolume = L10n.tr("Localizable", "speak_volume")
   /// Speech
   internal static let speech = L10n.tr("Localizable", "speech")
