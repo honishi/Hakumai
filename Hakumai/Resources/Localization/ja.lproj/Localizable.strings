@@ -94,6 +94,7 @@
 "visitor_count" = "来場者";
 "login_completed" = "ログインしました.";
 "logout_completed" = "ログアウトしました.";
+"new_live" = "新規放送";
 
 /// Message
 "prepared_live" = "\"%@\" で放送情報を取得しました.";

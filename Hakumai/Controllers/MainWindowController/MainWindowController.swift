@@ -114,7 +114,7 @@ private extension MainWindowController {
     // swiftlint:enable force_cast
 
     func setInitialWindowTabTitle() {
-        setWindowTabTitle("---")
+        setWindowTabTitle(L10n.newLive)
     }
 
     func applyAlwaysOnTop() {
