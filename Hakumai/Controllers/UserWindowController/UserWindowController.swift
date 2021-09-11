@@ -22,6 +22,11 @@ final class UserWindowController: NSWindowController {
     deinit {
         log.debug("")
     }
+
+    override func windowDidLoad() {
+        super.windowDidLoad()
+        window?.isMovableByWindowBackground = true
+    }
 }
 
 extension UserWindowController {

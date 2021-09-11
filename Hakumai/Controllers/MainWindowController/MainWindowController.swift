@@ -28,6 +28,7 @@ final class MainWindowController: NSWindowController {
 
         setInitialWindowTabTitle()
         applyAlwaysOnTop()
+        window?.isMovableByWindowBackground = true
     }
 }
 
