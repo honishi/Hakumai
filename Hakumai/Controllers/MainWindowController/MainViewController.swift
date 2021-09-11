@@ -22,7 +22,7 @@ private let defaultLabelValue = "---"
 
 // swiftlint:disable file_length
 protocol MainViewControllerDelegate: AnyObject {
-    func mainViewControllerDidPrepareLive(_ mainViewController: MainViewController, title: String)
+    func mainViewControllerDidPrepareLive(_ mainViewController: MainViewController, title: String, community: String)
 }
 
 final class MainViewController: NSViewController {
@@ -369,7 +369,10 @@ extension MainViewController: NicoUtilityDelegate {
             break
         }
 
-        delegate?.mainViewControllerDidPrepareLive(self, title: live.title)
+        delegate?.mainViewControllerDidPrepareLive(
+            self,
+            title: live.title,
+            community: live.community?.title ?? "-")
     }
 
     func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, error: NicoError) {
