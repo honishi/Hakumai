@@ -609,31 +609,10 @@
                         </connections>
                     </window>
                     <connections>
-                        <outlet property="accessoryView" destination="q2Q-0E-eBQ" id="hgD-1F-Aaj"/>
                         <segue destination="XfG-lQ-9wD" kind="relationship" relationship="window.shadowedContentViewController" id="cq2-FE-JQM"/>
                     </connections>
                 </windowController>
                 <customObject id="Oky-zY-oP4" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-                <customView id="q2Q-0E-eBQ">
-                    <rect key="frame" x="0.0" y="0.0" width="40" height="100"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <subviews>
-                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rpt-B0-ZhV">
-                            <rect key="frame" x="6" y="40" width="28" height="19"/>
-                            <buttonCell key="cell" type="recessed" bezelStyle="recessed" image="AddTab" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="cnh-N2-n7M">
-                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                <font key="font" metaFont="system" size="15"/>
-                            </buttonCell>
-                            <connections>
-                                <action selector="addTab:" target="B8D-0N-5wS" id="VAo-0z-GsU"/>
-                            </connections>
-                        </button>
-                    </subviews>
-                    <constraints>
-                        <constraint firstItem="rpt-B0-ZhV" firstAttribute="centerX" secondItem="q2Q-0E-eBQ" secondAttribute="centerX" id="WzJ-Dj-G65"/>
-                        <constraint firstItem="rpt-B0-ZhV" firstAttribute="centerY" secondItem="q2Q-0E-eBQ" secondAttribute="centerY" id="iVB-AH-SN2"/>
-                    </constraints>
-                </customView>
             </objects>
             <point key="canvasLocation" x="-580" y="1300"/>
         </scene>
@@ -1330,7 +1309,6 @@ Gw
         </scene>
     </scenes>
     <resources>
-        <image name="AddTab" width="24" height="24"/>
         <image name="DefaultCommunityImage" width="128" height="128"/>
         <image name="ImportLink" width="110" height="110"/>
         <image name="StartLive" width="110" height="110"/>

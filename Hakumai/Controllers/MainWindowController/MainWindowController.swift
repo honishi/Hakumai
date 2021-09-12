@@ -16,9 +16,6 @@ protocol MainWindowControllerDelegate: AnyObject {
 
 final class MainWindowController: NSWindowController {
     // MARK: - Properties
-    @IBOutlet private var accessoryView: NSView!
-
-    private var accessoryViewController: NSTitlebarAccessoryViewController?
     private weak var delegate: MainWindowControllerDelegate?
 
     // MARK: - NSWindowController Overrides
@@ -32,8 +29,11 @@ final class MainWindowController: NSWindowController {
 
         setInitialWindowTabTitle()
         applyAlwaysOnTop()
-        configureAccessoryView()
         window?.isMovableByWindowBackground = true
+    }
+
+    override func newWindowForTab(_ sender: Any?) {
+        delegate?.mainWindowControllerRequestNewTab(self)
     }
 }
 
@@ -61,10 +61,6 @@ extension MainWindowController {
 }
 
 extension MainWindowController {
-    @IBAction func addTab(_ sender: Any) {
-        delegate?.mainWindowControllerRequestNewTab(self)
-    }
-
     func login() {
         mainViewController.login()
     }
@@ -130,15 +126,6 @@ private extension MainWindowController {
     func applyAlwaysOnTop() {
         let alwaysOnTop = UserDefaults.standard.bool(forKey: Parameters.alwaysOnTop)
         window?.alwaysOnTop = alwaysOnTop
-    }
-
-    func configureAccessoryView() {
-        guard accessoryViewController == nil else { return }
-        let avc = NSTitlebarAccessoryViewController()
-        avc.view = accessoryView
-        avc.layoutAttribute = .right
-        window?.addTitlebarAccessoryViewController(avc)
-        accessoryViewController = avc
     }
 
     func setWindowTabTitle(_ title: String, toolTip: String? = nil) {
