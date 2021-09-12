@@ -609,10 +609,31 @@
                         </connections>
                     </window>
                     <connections>
+                        <outlet property="accessoryView" destination="q2Q-0E-eBQ" id="hgD-1F-Aaj"/>
                         <segue destination="XfG-lQ-9wD" kind="relationship" relationship="window.shadowedContentViewController" id="cq2-FE-JQM"/>
                     </connections>
                 </windowController>
                 <customObject id="Oky-zY-oP4" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <customView id="q2Q-0E-eBQ">
+                    <rect key="frame" x="0.0" y="0.0" width="32" height="100"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <subviews>
+                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rpt-B0-ZhV">
+                            <rect key="frame" x="8" y="42" width="17" height="16"/>
+                            <buttonCell key="cell" type="roundTextured" title="＋" bezelStyle="texturedRounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="cnh-N2-n7M">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="addTab:" target="B8D-0N-5wS" id="VAo-0z-GsU"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <constraints>
+                        <constraint firstItem="rpt-B0-ZhV" firstAttribute="centerX" secondItem="q2Q-0E-eBQ" secondAttribute="centerX" id="WzJ-Dj-G65"/>
+                        <constraint firstItem="rpt-B0-ZhV" firstAttribute="centerY" secondItem="q2Q-0E-eBQ" secondAttribute="centerY" id="iVB-AH-SN2"/>
+                    </constraints>
+                </customView>
             </objects>
             <point key="canvasLocation" x="-581" y="1310"/>
         </scene>

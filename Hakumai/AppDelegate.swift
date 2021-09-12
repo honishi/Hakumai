@@ -226,6 +226,10 @@ extension AppDelegate {
 }
 
 extension AppDelegate: MainWindowControllerDelegate {
+    func mainWindowControllerRequestNewTab(_ mainWindowController: MainWindowController) {
+        openNewTab()
+    }
+
     func mainWindowControllerWillClose(_ mainWindowController: MainWindowController) {
         mainWindowControllers.removeAll { $0 == mainWindowController }
         log.debug(mainWindowControllers)
