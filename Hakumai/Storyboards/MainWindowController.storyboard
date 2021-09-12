@@ -593,7 +593,7 @@
                 <userDefaultsController id="Qbm-2t-1Py"/>
                 <customObject id="zCO-sh-zt2" customClass="SUUpdater"/>
             </objects>
-            <point key="canvasLocation" x="18" y="-89"/>
+            <point key="canvasLocation" x="-469" y="630"/>
         </scene>
         <!--Window Controller-->
         <scene sceneID="R2V-B0-nI4">
@@ -615,14 +615,14 @@
                 </windowController>
                 <customObject id="Oky-zY-oP4" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <customView id="q2Q-0E-eBQ">
-                    <rect key="frame" x="0.0" y="0.0" width="32" height="100"/>
+                    <rect key="frame" x="0.0" y="0.0" width="40" height="100"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <subviews>
                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rpt-B0-ZhV">
-                            <rect key="frame" x="8" y="42" width="17" height="16"/>
-                            <buttonCell key="cell" type="roundTextured" title="＋" bezelStyle="texturedRounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="cnh-N2-n7M">
+                            <rect key="frame" x="6" y="40" width="28" height="19"/>
+                            <buttonCell key="cell" type="recessed" bezelStyle="recessed" image="AddTab" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="cnh-N2-n7M">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                <font key="font" metaFont="system"/>
+                                <font key="font" metaFont="system" size="15"/>
                             </buttonCell>
                             <connections>
                                 <action selector="addTab:" target="B8D-0N-5wS" id="VAo-0z-GsU"/>
@@ -635,7 +635,7 @@
                     </constraints>
                 </customView>
             </objects>
-            <point key="canvasLocation" x="-581" y="1310"/>
+            <point key="canvasLocation" x="-580" y="1300"/>
         </scene>
         <!--Main View Controller-->
         <scene sceneID="hIz-AP-VOD">
@@ -1330,6 +1330,7 @@ Gw
         </scene>
     </scenes>
     <resources>
+        <image name="AddTab" width="24" height="24"/>
         <image name="DefaultCommunityImage" width="128" height="128"/>
         <image name="ImportLink" width="110" height="110"/>
         <image name="StartLive" width="110" height="110"/>

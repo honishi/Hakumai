@@ -21,6 +21,7 @@ internal typealias AssetImageTypeAlias = ImageAsset.Image
 internal enum Asset {
   internal static let defaultCommunityImage = ImageAsset(name: "DefaultCommunityImage")
   internal static let defaultUserImage = ImageAsset(name: "DefaultUserImage")
+  internal static let addTab = ImageAsset(name: "AddTab")
   internal static let importLink = ImageAsset(name: "ImportLink")
   internal static let startLive = ImageAsset(name: "StartLive")
   internal static let stopLive = ImageAsset(name: "StopLive")
