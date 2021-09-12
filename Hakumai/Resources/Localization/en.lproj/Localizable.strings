@@ -94,6 +94,7 @@
 "visitor_count" = "Visitors";
 "login_completed" = "Login completed.";
 "logout_completed" = "Logout completed.";
+"new_live" = "New Live";
 
 /// Message
 "prepared_live" = "Retrieved the live info as user \"%@\".";

@@ -593,7 +593,7 @@
                 <userDefaultsController id="Qbm-2t-1Py"/>
                 <customObject id="zCO-sh-zt2" customClass="SUUpdater"/>
             </objects>
-            <point key="canvasLocation" x="18" y="-89"/>
+            <point key="canvasLocation" x="-469" y="630"/>
         </scene>
         <!--Window Controller-->
         <scene sceneID="R2V-B0-nI4">
@@ -614,7 +614,7 @@
                 </windowController>
                 <customObject id="Oky-zY-oP4" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-581" y="1310"/>
+            <point key="canvasLocation" x="-580" y="1300"/>
         </scene>
         <!--Main View Controller-->
         <scene sceneID="hIz-AP-VOD">

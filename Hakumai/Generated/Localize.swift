@@ -128,6 +128,8 @@ internal enum L10n {
   internal static let minimize = L10n.tr("Localizable", "minimize")
   /// New Comment
   internal static let newComment = L10n.tr("Localizable", "new_comment")
+  /// New Live
+  internal static let newLive = L10n.tr("Localizable", "new_live")
   /// Open New Tab
   internal static let openNewTab = L10n.tr("Localizable", "open_new_tab")
   /// Open New Window

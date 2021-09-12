@@ -10,6 +10,7 @@ import Foundation
 import AppKit
 
 protocol MainWindowControllerDelegate: AnyObject {
+    func mainWindowControllerRequestNewTab(_ mainWindowController: MainWindowController)
     func mainWindowControllerWillClose(_ mainWindowController: MainWindowController)
 }
 
@@ -28,6 +29,11 @@ final class MainWindowController: NSWindowController {
 
         setInitialWindowTabTitle()
         applyAlwaysOnTop()
+        window?.isMovableByWindowBackground = true
+    }
+
+    override func newWindowForTab(_ sender: Any?) {
+        delegate?.mainWindowControllerRequestNewTab(self)
     }
 }
 
@@ -40,8 +46,8 @@ extension MainWindowController: NSWindowDelegate {
 }
 
 extension MainWindowController: MainViewControllerDelegate {
-    func mainViewControllerDidPrepareLive(_ mainViewController: MainViewController, title: String) {
-        setWindowTabTitle(title)
+    func mainViewControllerDidPrepareLive(_ mainViewController: MainViewController, title: String, community: String) {
+        setWindowTabTitle(title, toolTip: "\(title) (\(community))")
     }
 }
 
@@ -114,7 +120,7 @@ private extension MainWindowController {
     // swiftlint:enable force_cast
 
     func setInitialWindowTabTitle() {
-        setWindowTabTitle("---")
+        setWindowTabTitle(L10n.newLive)
     }
 
     func applyAlwaysOnTop() {
@@ -122,9 +128,10 @@ private extension MainWindowController {
         window?.alwaysOnTop = alwaysOnTop
     }
 
-    func setWindowTabTitle(_ title: String) {
+    func setWindowTabTitle(_ title: String, toolTip: String? = nil) {
         if #available(macOS 10.13, *) {
             window?.tab.title = title
+            window?.tab.toolTip = toolTip
         } else {
             window?.title = title
         }
