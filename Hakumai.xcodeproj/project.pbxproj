@@ -18,6 +18,7 @@
 		DB1DBD8F2668FB1900435D85 /* L10n+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1DBD8E2668FB1900435D85 /* L10n+Extensions.swift */; };
 		DB1E32C91A2CC85C00CD874A /* UserIdTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1E32C81A2CC85C00CD874A /* UserIdTableCellView.swift */; };
 		DB1E32CB1A2CC87200CD874A /* UserIdTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB1E32CA1A2CC87200CD874A /* UserIdTableCellView.xib */; };
+		DB1E737026F237F600A6F4C0 /* ClickableTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1E736F26F237F600A6F4C0 /* ClickableTableView.swift */; };
 		DB2AE0C41A0EE2FD00B1CE4D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0C31A0EE2FD00B1CE4D /* AppDelegate.swift */; };
 		DB2AE0C61A0EE2FD00B1CE4D /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0C51A0EE2FD00B1CE4D /* MainViewController.swift */; };
 		DB2AE0C81A0EE2FD00B1CE4D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB2AE0C71A0EE2FD00B1CE4D /* Images.xcassets */; };
@@ -127,6 +128,7 @@
 		DB1DBD8E2668FB1900435D85 /* L10n+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "L10n+Extensions.swift"; sourceTree = "<group>"; };
 		DB1E32C81A2CC85C00CD874A /* UserIdTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserIdTableCellView.swift; sourceTree = "<group>"; };
 		DB1E32CA1A2CC87200CD874A /* UserIdTableCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UserIdTableCellView.xib; sourceTree = "<group>"; };
+		DB1E736F26F237F600A6F4C0 /* ClickableTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickableTableView.swift; sourceTree = "<group>"; };
 		DB2AE0BE1A0EE2FD00B1CE4D /* Hakumai.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hakumai.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB2AE0C21A0EE2FD00B1CE4D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DB2AE0C31A0EE2FD00B1CE4D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -372,6 +374,7 @@
 			isa = PBXGroup;
 			children = (
 				DB690972266372230081F24F /* BottomButtonScrollView.swift */,
+				DB1E736F26F237F600A6F4C0 /* ClickableTableView.swift */,
 			);
 			path = CustomView;
 			sourceTree = "<group>";
@@ -880,6 +883,7 @@
 				DB690973266372230081F24F /* BottomButtonScrollView.swift in Sources */,
 				DB74B86C1A6E790C0064AC28 /* BrowserHelper.swift in Sources */,
 				DBFA887B1A1BC25A005349AD /* Chat.swift in Sources */,
+				DB1E737026F237F600A6F4C0 /* ClickableTableView.swift in Sources */,
 				DB7B3DDC1A23B35300205470 /* ColoredView.swift in Sources */,
 				DB5164FC264E662100F809B3 /* CommentTableCellView.swift in Sources */,
 				DB7F21B01A210017008D17E0 /* Community.swift in Sources */,
