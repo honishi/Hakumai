@@ -52,7 +52,7 @@ final class MainViewController: NSViewController {
     @IBOutlet private weak var speakButton: NSButton!
 
     @IBOutlet private weak var scrollView: BottomButtonScrollView!
-    @IBOutlet private(set) weak var tableView: ClickableTableView!
+    @IBOutlet private(set) weak var tableView: ClickTableView!
 
     @IBOutlet private weak var commentTextField: NSTextField!
     @IBOutlet private weak var commentAnonymouslyButton: NSButton!
@@ -649,8 +649,8 @@ private extension MainViewController {
 
     func configureTableView() {
         tableView.setClickAction(
-            onClick: nil,
-            onDoubleClick: { [weak self] in self?.openUserWindow() }
+            clickHandler: nil,
+            doubleClickHandler: { [weak self] in self?.openUserWindow() }
         )
     }
 

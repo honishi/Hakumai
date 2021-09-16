@@ -9,40 +9,43 @@
 import Foundation
 import AppKit
 
-final class ClickableTableView: NSTableView {
-    private var onClick: (() -> Void)?
-    private var onDoubleClick: (() -> Void)?
+final class ClickTableView: NSTableView {
+    private var clickHandler: (() -> Void)?
+    private var doubleClickHandler: (() -> Void)?
     private var lastClickedRow = -1
 }
 
-extension ClickableTableView {
-    func setClickAction(onClick: (() -> Void)? = nil, onDoubleClick: (() -> Void)? = nil) {
-        self.onClick = onClick
-        self.onDoubleClick = onDoubleClick
+extension ClickTableView {
+    override func awakeFromNib() {
         configure()
+    }
+
+    func setClickAction(clickHandler: (() -> Void)? = nil, doubleClickHandler: (() -> Void)? = nil) {
+        self.clickHandler = clickHandler
+        self.doubleClickHandler = doubleClickHandler
     }
 
     @objc func rowClicked(_ sender: AnyObject?) {
         // log.debug("\(clickedRow), \(selectedRow)")
-        guard let onClick = onClick else {
+        guard let clickHandler = clickHandler else {
             unclickRow()
             return
         }
-        onClick()
+        clickHandler()
     }
 
     @objc func rowDoubleClicked(_ sender: AnyObject?) {
         // log.debug("\(clickedRow), \(selectedRow)")
-        guard let onDoubleClick = onDoubleClick else { return }
-        onDoubleClick()
+        guard let doubleClickHandler = doubleClickHandler else { return }
+        doubleClickHandler()
     }
 }
 
-private extension ClickableTableView {
+private extension ClickTableView {
     func configure() {
         target = self
-        action = #selector(ClickableTableView.rowClicked(_:))
-        doubleAction = #selector(ClickableTableView.rowDoubleClicked(_:))
+        action = #selector(ClickTableView.rowClicked(_:))
+        doubleAction = #selector(ClickTableView.rowDoubleClicked(_:))
     }
 
     func unclickRow() {
