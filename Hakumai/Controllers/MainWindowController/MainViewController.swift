@@ -52,7 +52,7 @@ final class MainViewController: NSViewController {
     @IBOutlet private weak var speakButton: NSButton!
 
     @IBOutlet private weak var scrollView: BottomButtonScrollView!
-    @IBOutlet private(set) weak var tableView: NSTableView!
+    @IBOutlet private(set) weak var tableView: ClickTableView!
 
     @IBOutlet private weak var commentTextField: NSTextField!
     @IBOutlet private weak var commentAnonymouslyButton: NSButton!
@@ -640,7 +640,9 @@ private extension MainViewController {
         elapsedTimeTitleLabel.stringValue = "\(L10n.elapsedTime):"
         elapsedTimeValueLabel.stringValue = defaultElapsedTimeValue
         activeUserTitleLabel.stringValue = "\(L10n.activeUser):"
+        activeUserTitleLabel.toolTip = L10n.activeUserDescription
         activeUserValueLabel.stringValue = defaultLabelValue
+        activeUserValueLabel.toolTip = L10n.activeUserDescription
 
         scrollView.enableBottomScrollButton()
         configureTableView()
@@ -648,7 +650,10 @@ private extension MainViewController {
     }
 
     func configureTableView() {
-        tableView.doubleAction = #selector(MainViewController.openUserWindow(_:))
+        tableView.setClickAction(
+            clickHandler: nil,
+            doubleClickHandler: { [weak self] in self?.openUserWindow() }
+        )
     }
 
     func registerNibs() {
@@ -862,12 +867,13 @@ extension MainViewController {
         let isOn = commentAnonymouslyButton.state == .on
         UserDefaults.standard.setValue(isOn, forKey: Parameters.commentAnonymously)
     }
+}
 
-    @objc func openUserWindow(_ sender: AnyObject?) {
+// MARK: User Window Functions
+private extension MainViewController {
+    func openUserWindow() {
         let clickedRow = tableView.clickedRow
-        if clickedRow == -1 {
-            return
-        }
+        guard clickedRow != -1 else { return }
 
         let message = messageContainer[clickedRow]
         guard message.messageType == .chat, let chat = message.chat else { return }
@@ -902,7 +908,7 @@ extension MainViewController {
         userWindowController?.showWindow(self)
     }
 
-    private func positionUserWindow(_ userWindow: NSWindow?) {
+    func positionUserWindow(_ userWindow: NSWindow?) {
         guard let userWindow = userWindow else { return }
         var topLeftPoint: NSPoint = nextUserWindowTopLeftPoint
         if userWindowControllers.count == 0 {
