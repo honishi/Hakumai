@@ -261,8 +261,8 @@ private extension AppDelegate {
     }
 
     func closeWindow() {
-        guard let wc = activeMainWindowController else { return }
-        wc.window?.close()
+        guard let window = NSApplication.shared.keyWindow else { return }
+        window.close()
     }
 }
 
