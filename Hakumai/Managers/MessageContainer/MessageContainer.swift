@@ -125,7 +125,7 @@ extension MessageContainer {
         // swift way to use background gcd, http://stackoverflow.com/a/25070476
         DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async {
             var activeUsers = [String: Bool]()
-            let tenMinutesAgo = Date(timeIntervalSinceNow: (Double)(-10 * 60))
+            let fiveMinutesAgo = Date(timeIntervalSinceNow: (Double)(-5 * 60))
 
             // log.debug("start counting active")
 
@@ -146,8 +146,8 @@ extension MessageContainer {
                 if !chat.isUserComment {
                     continue
                 }
-                // is "chat.date < tenMinutesAgo" ?
-                if chat.date.compare(tenMinutesAgo) == .orderedAscending {
+                // is "chat.date < fiveMinutesAgo" ?
+                if chat.date.compare(fiveMinutesAgo) == .orderedAscending {
                     break
                 }
                 activeUsers[chat.userId] = true

@@ -640,7 +640,9 @@ private extension MainViewController {
         elapsedTimeTitleLabel.stringValue = "\(L10n.elapsedTime):"
         elapsedTimeValueLabel.stringValue = defaultElapsedTimeValue
         activeUserTitleLabel.stringValue = "\(L10n.activeUser):"
+        activeUserTitleLabel.toolTip = L10n.activeUserDescription
         activeUserValueLabel.stringValue = defaultLabelValue
+        activeUserValueLabel.toolTip = L10n.activeUserDescription
 
         scrollView.enableBottomScrollButton()
         configureTableView()
