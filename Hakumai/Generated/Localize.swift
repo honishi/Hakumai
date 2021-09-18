@@ -56,6 +56,8 @@ internal enum L10n {
   internal static let copy = L10n.tr("Localizable", "copy")
   /// Copy Comment
   internal static let copyComment = L10n.tr("Localizable", "copy_comment")
+  /// Copy URL in Comment
+  internal static let copyUrlInComment = L10n.tr("Localizable", "copy_url_in_comment")
   /// Correct Spelling Automatically
   internal static let correctSpellingAutomatically = L10n.tr("Localizable", "correct_spelling_automatically")
   /// Cut

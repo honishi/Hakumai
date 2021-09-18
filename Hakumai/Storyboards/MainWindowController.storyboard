@@ -1137,6 +1137,12 @@
                                 <action selector="copyComment:" target="Riw-FG-ugq" id="eGt-6q-XnR"/>
                             </connections>
                         </menuItem>
+                        <menuItem title="copy_url_in_comment" id="Fjd-HC-amk">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="copyUrl:" target="Riw-FG-ugq" id="Of7-I0-9oT"/>
+                            </connections>
+                        </menuItem>
                         <menuItem title="open_url_in_comment" id="rwi-Ju-wYL">
                             <modifierMask key="keyEquivalentModifierMask"/>
                             <connections>
@@ -1163,7 +1169,7 @@
                                 <action selector="addToMuteUser:" target="Riw-FG-ugq" id="Q0c-ln-gix"/>
                             </connections>
                         </menuItem>
-                        <menuItem isSeparatorItem="YES" id="FL0-Y6-hxv"/>
+                        <menuItem isSeparatorItem="YES" id="ojI-Yh-Ld8"/>
                         <menuItem title="open_user_page" id="9gC-Dv-kyp">
                             <modifierMask key="keyEquivalentModifierMask"/>
                             <connections>
@@ -1179,6 +1185,7 @@
                     <connections>
                         <outlet property="addToMuteUserMenuItem" destination="vkF-qq-cvh" id="lRE-o7-CNO"/>
                         <outlet property="copyCommentMenuItem" destination="CZ2-j4-uTm" id="FO6-qx-8DC"/>
+                        <outlet property="copyUrlMenuItem" destination="Fjd-HC-amk" id="aT3-RN-FOs"/>
                         <outlet property="mainViewController" destination="XfG-lQ-9wD" id="F8k-HS-diK"/>
                         <outlet property="openUrlMenuItem" destination="rwi-Ju-wYL" id="4ds-0I-koO"/>
                         <outlet property="openUserPageMenuItem" destination="9gC-Dv-kyp" id="Yqk-Mt-JHF"/>

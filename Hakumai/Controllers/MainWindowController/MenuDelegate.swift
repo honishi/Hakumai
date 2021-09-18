@@ -13,6 +13,7 @@ final class MenuDelegate: NSObject {
     // MARK: Menu Outlets
     @IBOutlet private weak var mainViewController: MainViewController!
     @IBOutlet private weak var copyCommentMenuItem: NSMenuItem!
+    @IBOutlet private weak var copyUrlMenuItem: NSMenuItem!
     @IBOutlet private weak var openUrlMenuItem: NSMenuItem!
     @IBOutlet private weak var setHandleNameMenuItem: NSMenuItem!
     @IBOutlet private weak var removeHandleNameMenuItem: NSMenuItem!
@@ -38,7 +39,7 @@ extension MenuDelegate: NSMenuItemValidation {
         switch menuItem {
         case copyCommentMenuItem:
             return true
-        case openUrlMenuItem:
+        case copyUrlMenuItem, openUrlMenuItem:
             return chat.comment.extractUrlString() != nil ? true : false
         case setHandleNameMenuItem:
             guard currentLive != nil else { return false }
@@ -62,7 +63,13 @@ extension MenuDelegate {
     // MARK: - Context Menu Handlers
     @IBAction func copyComment(_ sender: AnyObject) {
         guard let chat = clickedMessage?.chat else { return }
-        _ = copyStringToPasteBoard(chat.comment)
+        copyStringToPasteBoard(chat.comment)
+    }
+
+    @IBAction func copyUrl(_ sender: Any) {
+        guard let chat = clickedMessage?.chat,
+              let urlString = chat.comment.extractUrlString() else { return }
+        copyStringToPasteBoard(urlString)
     }
 
     @IBAction func openUrl(_ sender: AnyObject) {
@@ -106,6 +113,7 @@ extension MenuDelegate {
 private extension MenuDelegate {
     func configureView() {
         copyCommentMenuItem.title = L10n.copyComment
+        copyUrlMenuItem.title = L10n.copyUrlInComment
         openUrlMenuItem.title = L10n.openUrlInComment
         setHandleNameMenuItem.title = L10n.setHandleName
         removeHandleNameMenuItem.title = L10n.removeHandleName
@@ -113,6 +121,7 @@ private extension MenuDelegate {
         openUserPageMenuItem.title = L10n.openUserPage
     }
 
+    @discardableResult
     func copyStringToPasteBoard(_ string: String) -> Bool {
         let pasteBoard = NSPasteboard.general
         pasteBoard.clearContents()
