@@ -18,6 +18,7 @@ final class UserViewController: NSViewController {
     @IBOutlet private weak var userIconImageView: NSImageView!
     @IBOutlet private weak var userIdTitleLabel: NSTextField!
     @IBOutlet private weak var userIdButton: NSButton!
+    @IBOutlet private weak var userIdCopyButton: NSButton!
     @IBOutlet private weak var userNameTitleLabel: NSTextField!
     @IBOutlet private weak var userNameValueLabel: NSTextField!
     @IBOutlet private weak var handleNameTitleLabel: NSTextField!
@@ -171,12 +172,17 @@ extension UserViewController {
               let url = nicoUtility.userPageUrl(for: userId) else { return }
         NSWorkspace.shared.open(url)
     }
+
+    @IBAction func userIdCopyButtonPressed(_ sender: Any) {
+        userId.copyToPasteBoard()
+    }
 }
 
 private extension UserViewController {
     func configureView() {
         userIconImageView.addBorder()
         userIdTitleLabel.stringValue = "\(L10n.userId):"
+        userIdCopyButton.title = L10n.copyUserId
         userNameTitleLabel.stringValue = "\(L10n.userName):"
         handleNameTitleLabel.stringValue = "\(L10n.handleName):"
         scrollView.enableBottomScrollButton()

@@ -63,13 +63,13 @@ extension MenuDelegate {
     // MARK: - Context Menu Handlers
     @IBAction func copyComment(_ sender: AnyObject) {
         guard let chat = clickedMessage?.chat else { return }
-        copyStringToPasteBoard(chat.comment)
+        chat.comment.copyToPasteBoard()
     }
 
     @IBAction func copyUrl(_ sender: Any) {
         guard let chat = clickedMessage?.chat,
               let urlString = chat.comment.extractUrlString() else { return }
-        copyStringToPasteBoard(urlString)
+        urlString.copyToPasteBoard()
     }
 
     @IBAction func openUrl(_ sender: AnyObject) {
@@ -119,14 +119,5 @@ private extension MenuDelegate {
         removeHandleNameMenuItem.title = L10n.removeHandleName
         addToMuteUserMenuItem.title = L10n.addToMuteUser
         openUserPageMenuItem.title = L10n.openUserPage
-    }
-
-    @discardableResult
-    func copyStringToPasteBoard(_ string: String) -> Bool {
-        let pasteBoard = NSPasteboard.general
-        pasteBoard.clearContents()
-        let result = pasteBoard.setString(string, forType: .string)
-        log.debug("copied \(string) w/ result \(result)")
-        return result
     }
 }

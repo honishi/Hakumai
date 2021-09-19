@@ -130,6 +130,7 @@
 /// User Window
 ///
 "user_id" = "ユーザーID";
+"copy_user_id" = "コピー";
 "user_name" = "ユーザー名";
 "handle_name" = "ハンドル";
 

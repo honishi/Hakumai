@@ -130,6 +130,7 @@
 /// User Window
 ///
 "user_id" = "User ID";
+"copy_user_id" = "Copy";
 "user_name" = "User Name";
 "handle_name" = "Handle Name";
 

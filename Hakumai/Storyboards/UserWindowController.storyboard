@@ -53,7 +53,7 @@
                                                 <rect key="frame" x="63" y="0.0" width="517" height="64"/>
                                                 <subviews>
                                                     <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uhY-DO-X88">
-                                                        <rect key="frame" x="0.0" y="44" width="99" height="20"/>
+                                                        <rect key="frame" x="0.0" y="44" width="162" height="20"/>
                                                         <subviews>
                                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="djL-Ot-r3k">
                                                                 <rect key="frame" x="-2" y="2" width="37" height="17"/>
@@ -76,12 +76,24 @@
                                                                     <action selector="userIdButtonPressed:" target="JAf-Qg-MGY" id="Rl7-bV-z2z"/>
                                                                 </connections>
                                                             </button>
+                                                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ekf-i4-V4F">
+                                                                <rect key="frame" x="106" y="-2" width="57" height="23"/>
+                                                                <buttonCell key="cell" type="roundTextured" title="Button" bezelStyle="texturedRounded" alignment="center" borderStyle="border" inset="2" id="NnW-tD-6Pl">
+                                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                                <connections>
+                                                                    <action selector="userIdCopyButtonPressed:" target="JAf-Qg-MGY" id="nmy-if-CIY"/>
+                                                                </connections>
+                                                            </button>
                                                         </subviews>
                                                         <visibilityPriorities>
                                                             <integer value="1000"/>
                                                             <integer value="1000"/>
+                                                            <integer value="1000"/>
                                                         </visibilityPriorities>
                                                         <customSpacing>
+                                                            <real value="3.4028234663852886e+38"/>
                                                             <real value="3.4028234663852886e+38"/>
                                                             <real value="3.4028234663852886e+38"/>
                                                         </customSpacing>
@@ -276,6 +288,7 @@
                         <outlet property="tableView" destination="2W3-fv-MQQ" id="829-Ty-khQ"/>
                         <outlet property="userIconImageView" destination="PrD-Pq-Hm2" id="cdZ-qC-8Wl"/>
                         <outlet property="userIdButton" destination="S5c-Yh-gfA" id="pYV-aM-Ylc"/>
+                        <outlet property="userIdCopyButton" destination="ekf-i4-V4F" id="8R2-VT-4I9"/>
                         <outlet property="userIdTitleLabel" destination="djL-Ot-r3k" id="VZ5-eW-bGm"/>
                         <outlet property="userNameTitleLabel" destination="CjM-Yf-m63" id="ncA-O0-XgK"/>
                         <outlet property="userNameValueLabel" destination="zHC-Ce-g3h" id="qYf-AY-BhB"/>
