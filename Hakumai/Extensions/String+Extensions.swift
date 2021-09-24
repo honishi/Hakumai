@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import AppKit
 
 // MARK: - String
 
@@ -89,16 +90,13 @@ extension String {
     }
 }
 
-func * (left: String, right: Int) -> String {
-    if right == 0 {
-        return ""
+extension String {
+    @discardableResult
+    func copyToPasteBoard() -> Bool {
+        let pasteBoard = NSPasteboard.general
+        pasteBoard.clearContents()
+        let result = pasteBoard.setString(self, forType: .string)
+        log.debug("copied \(self) w/ result \(result)")
+        return result
     }
-
-    var multiplied = ""
-
-    for _ in 1...right {
-        multiplied += left
-    }
-
-    return multiplied
 }

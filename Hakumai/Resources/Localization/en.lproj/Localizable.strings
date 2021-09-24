@@ -119,6 +119,7 @@
 /// Comment Menu
 ///
 "copy_comment" = "Copy Comment";
+"copy_url_in_comment" = "Copy URL in Comment";
 "open_url_in_comment" = "Open URL in Comment";
 "set_handle_name" = "Set Handle Name";
 "remove_handle_name" = "Remove Handle Name";
@@ -129,6 +130,7 @@
 /// User Window
 ///
 "user_id" = "User ID";
+"copy_user_id" = "Copy";
 "user_name" = "User Name";
 "handle_name" = "Handle Name";
 
