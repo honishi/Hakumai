@@ -8,6 +8,7 @@
 
 import Foundation
 import AppKit
+import Charts
 import Kingfisher
 
 private let userWindowDefaultTopLeftPoint = NSPoint(x: 100, y: 100)
@@ -61,6 +62,7 @@ final class MainViewController: NSViewController {
     @IBOutlet private weak var elapsedTimeValueLabel: NSTextField!
     @IBOutlet private weak var activeUserTitleLabel: NSTextField!
     @IBOutlet private weak var activeUserValueLabel: NSTextField!
+    @IBOutlet private weak var activeUserChartView: LineChartView!
     @IBOutlet private weak var progressIndicator: NSProgressIndicator!
 
     // MARK: Menu Delegate
@@ -88,6 +90,8 @@ final class MainViewController: NSViewController {
 
     private var elapsedTimeTimer: Timer?
     private var activeUserTimer: Timer?
+
+    private var activeUserHistory: [(Date, Int)] = []
 
     // AuthWindowController
     private lazy var authWindowController: AuthWindowController = {
@@ -364,6 +368,7 @@ extension MainViewController: NicoUtilityDelegate {
 
         switch connectContext {
         case .normal:
+            resetActiveUserChart()
             logSystemMessageToTableView(L10n.preparedLive(user.nickname))
         case .reconnect:
             break
@@ -647,6 +652,9 @@ private extension MainViewController {
         scrollView.enableBottomScrollButton()
         configureTableView()
         registerNibs()
+
+        configureActiveUserChart()
+        resetActiveUserChart()
     }
 
     func configureTableView() {
@@ -964,7 +972,10 @@ private extension MainViewController {
     @objc func calculateAndUpdateActiveUserLabel() {
         messageContainer.calculateActive { (active: Int?) -> Void in
             guard let active = active else { return }
-            DispatchQueue.main.async { self.activeUserValueLabel.stringValue = String(active) }
+            DispatchQueue.main.async {
+                self.activeUserValueLabel.stringValue = String(active)
+                self.updateActiveUserChart(active: active)
+            }
         }
     }
 }
@@ -996,6 +1007,63 @@ private extension MainViewController {
                 // logSystemMessageToTableView("Refreshed speech queue.")
             }
         }
+    }
+}
+
+// MARK: Chart Functions
+private extension MainViewController {
+    var chartDuration: TimeInterval { 15 * 60 } // 15 min
+
+    func configureActiveUserChart() {
+        // https://stackoverflow.com/a/41241795/13220031
+        activeUserChartView.minOffset = 0
+        activeUserChartView.toolTip = L10n.activeUserHistoryDescription
+
+        activeUserChartView.leftAxis.drawAxisLineEnabled = false
+        activeUserChartView.leftAxis.drawLabelsEnabled = false
+        activeUserChartView.leftAxis.axisMinimum = 0
+
+        activeUserChartView.rightAxis.enabled = false
+
+        activeUserChartView.xAxis.drawLabelsEnabled = false
+        activeUserChartView.xAxis.drawGridLinesEnabled = false
+
+        activeUserChartView.legend.enabled = false
+    }
+
+    func updateActiveUserChart(active: Int) {
+        activeUserHistory.append((Date(), active))
+        let currentDate = Date()
+        activeUserHistory = activeUserHistory.filter { currentDate.timeIntervalSince($0.0) < chartDuration }
+        if activeUserHistory.count > Int((TimeInterval(5 * 60) / calculateActiveUserInterval)) {
+            activeUserHistory.removeFirst()
+        }
+        _updateActiveUserChart()
+    }
+
+    func resetActiveUserChart() {
+        activeUserHistory.removeAll()
+        let originDate = Date().addingTimeInterval(chartDuration * -1)
+        for i in 0...Int(chartDuration / calculateActiveUserInterval) {
+            let date = originDate.addingTimeInterval(calculateActiveUserInterval * Double(i))
+            activeUserHistory.append((date, 0))
+        }
+        _updateActiveUserChart()
+    }
+
+    func _updateActiveUserChart() {
+        let entries = activeUserHistory
+            .map { $0.1 }   // extract only active count
+            .enumerated()
+            .map { (Double($0.0), Double($0.1))}
+            .map { ChartDataEntry(x: $0.0, y: $0.1) }
+        let data = LineChartData()
+        let ds = LineChartDataSet(entries: entries, label: "")
+        ds.colors = [NSColor.controlTextColor]
+        ds.drawCirclesEnabled = false
+        ds.drawValuesEnabled = false
+        data.append(ds)
+        activeUserChartView.data = data
     }
 }
 
