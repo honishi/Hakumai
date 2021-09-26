@@ -1015,16 +1015,20 @@ private extension MainViewController {
     var chartDuration: TimeInterval { 15 * 60 } // 15 min
 
     func configureActiveUserChart() {
-        activeUserChartView.gridBackgroundColor = NSColor.controlBackgroundColor
-        activeUserChartView.drawGridBackgroundEnabled = false
-        activeUserChartView.leftAxis.drawLabelsEnabled = false
-        activeUserChartView.leftAxis.axisMinimum = 0
-        activeUserChartView.rightAxis.drawLabelsEnabled = false
-        activeUserChartView.xAxis.drawLabelsEnabled = false
-        activeUserChartView.legend.enabled = false
         // https://stackoverflow.com/a/41241795/13220031
         activeUserChartView.minOffset = 0
         activeUserChartView.toolTip = L10n.activeUserHistoryDescription
+
+        activeUserChartView.leftAxis.drawAxisLineEnabled = false
+        activeUserChartView.leftAxis.drawLabelsEnabled = false
+        activeUserChartView.leftAxis.axisMinimum = 0
+
+        activeUserChartView.rightAxis.enabled = false
+
+        activeUserChartView.xAxis.drawLabelsEnabled = false
+        activeUserChartView.xAxis.drawGridLinesEnabled = false
+
+        activeUserChartView.legend.enabled = false
     }
 
     func updateActiveUserChart(active: Int) {
