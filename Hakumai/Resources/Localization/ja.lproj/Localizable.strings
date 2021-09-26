@@ -84,6 +84,7 @@
 ///
 "active_user" = "アクティブユーザー";
 "active_user_description" = "直近5分間にコメントをしたユニークユーザー数";
+"active_user_history_description" = "直近15分間のユニークユーザー数の履歴";
 "comment_count" = "コメント";
 "comment_text_field_placeholder" = "⌘O (リターンのみで最下行にスクロール)";
 "community_id" = "コミュニティID";

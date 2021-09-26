@@ -1024,7 +1024,7 @@ private extension MainViewController {
         activeUserChartView.legend.enabled = false
         // https://stackoverflow.com/a/41241795/13220031
         activeUserChartView.minOffset = 0
-        activeUserChartView.toolTip = "Active user count history in last 15 minutes"
+        activeUserChartView.toolTip = L10n.activeUserHistoryDescription
     }
 
     func updateActiveUserChart(active: Int) {

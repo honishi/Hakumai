@@ -84,6 +84,7 @@
 ///
 "active_user" = "Active Users";
 "active_user_description" = "Active unique users in last 5 minutes";
+"active_user_history_description" = "History of active unique users in last 15 minutes";
 "comment_count" = "Comments";
 "comment_text_field_placeholder" = "⌘O (Empty ⏎ to scroll to bottom)";
 "community_id" = "Community Id";
