@@ -15,6 +15,12 @@ target 'Hakumai' do
   pod 'Starscream', '~> 4.0.4'
   pod 'Kingfisher', '~> 6.3.0'
   pod 'SnapKit', '~> 5.0.1'
+  pod 'Charts',
+    :git => 'https://github.com/danielgindi/Charts.git',
+    # Use commit instead of tag.
+    # https://github.com/danielgindi/Charts/issues/4572
+    # :tag => 'v4.0.1'
+    :commit => '857db248f8eab9293e7845a53900ad109dc5cade'
 
   target 'HakumaiTests' do
     inherit! :search_paths
