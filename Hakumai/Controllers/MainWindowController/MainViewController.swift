@@ -92,6 +92,7 @@ final class MainViewController: NSViewController {
     private var activeUserTimer: Timer?
 
     private var activeUserHistory: [(Date, Int)] = []
+    private var maxActiveUserCount = 0
 
     // AuthWindowController
     private lazy var authWindowController: AuthWindowController = {
@@ -1038,6 +1039,7 @@ private extension MainViewController {
         if activeUserHistory.count > Int((TimeInterval(5 * 60) / calculateActiveUserInterval)) {
             activeUserHistory.removeFirst()
         }
+        maxActiveUserCount = max(maxActiveUserCount, active)
         _updateActiveUserChart()
     }
 
@@ -1048,6 +1050,7 @@ private extension MainViewController {
             let date = originDate.addingTimeInterval(calculateActiveUserInterval * Double(i))
             activeUserHistory.append((date, 0))
         }
+        maxActiveUserCount = 0
         _updateActiveUserChart()
     }
 
@@ -1062,8 +1065,20 @@ private extension MainViewController {
         ds.colors = [NSColor.controlTextColor]
         ds.drawCirclesEnabled = false
         ds.drawValuesEnabled = false
+        ds.highlightEnabled = false
+
         data.append(ds)
         activeUserChartView.data = data
+        if maxActiveUserCount == 0 {
+            activeUserChartView.leftAxis.resetCustomAxisMax()
+        } else {
+            activeUserChartView.leftAxis.axisMaximum = Double(maxActiveUserCount)
+        }
+
+        activeUserChartView.toolTip = [
+            L10n.activeUserHistoryDescription,
+            "\(L10n.maxActiveUserCount): \(maxActiveUserCount)"
+        ].joined(separator: "\n")
     }
 }
 

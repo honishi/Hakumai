@@ -132,6 +132,8 @@ internal enum L10n {
   internal static let makeLowerCase = L10n.tr("Localizable", "make_lower_case")
   /// Make Upper Case
   internal static let makeUpperCase = L10n.tr("Localizable", "make_upper_case")
+  /// Max Active Users
+  internal static let maxActiveUserCount = L10n.tr("Localizable", "max_active_user_count")
   /// Minimize
   internal static let minimize = L10n.tr("Localizable", "minimize")
   /// New Comment
