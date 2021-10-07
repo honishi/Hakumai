@@ -1092,7 +1092,9 @@ private extension MainViewController {
         ds.highlightEnabled = false
         data.append(ds)
         if 0 < maxActiveUserCount {
-            activeUserChartView.leftAxis.axisMaximum = Double(maxActiveUserCount) * 1.05
+            let padding = Double(maxActiveUserCount) * 0.05
+            activeUserChartView.leftAxis.axisMinimum = -1 * padding
+            activeUserChartView.leftAxis.axisMaximum = Double(maxActiveUserCount) + padding
         }
         activeUserChartView.data = data
     }
