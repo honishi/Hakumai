@@ -1073,7 +1073,7 @@ private extension MainViewController {
             .map { ChartDataEntry(x: $0.0, y: $0.1) }
         let data = LineChartData()
         let ds = LineChartDataSet(entries: entries, label: "")
-        ds.lineWidth = 1.5
+        ds.lineWidth = 1.25
         ds.colors = [NSColor.controlTextColor]
         ds.drawCirclesEnabled = false
         ds.drawValuesEnabled = false
