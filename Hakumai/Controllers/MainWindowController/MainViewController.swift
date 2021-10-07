@@ -993,6 +993,13 @@ private extension MainViewController {
     func updateActiveUser(active: Int) {
         activeUserCount = active
         maxActiveUserCount = max(maxActiveUserCount, active)
+        if activeUserHistory.isEmpty {
+            let originDate = Date().addingTimeInterval(chartDuration * -1)
+            for i in 0...Int(chartDuration / calculateActiveUserInterval) {
+                let date = originDate.addingTimeInterval(calculateActiveUserInterval * Double(i))
+                activeUserHistory.append((date, 0))
+            }
+        }
         activeUserHistory.append((Date(), active))
         activeUserHistory = activeUserHistory.filter { Date().timeIntervalSince($0.0) < chartDuration }
     }
@@ -1001,16 +1008,16 @@ private extension MainViewController {
         activeUserCount = 0
         maxActiveUserCount = 0
         activeUserHistory.removeAll()
-        let originDate = Date().addingTimeInterval(chartDuration * -1)
-        for i in 0...Int(chartDuration / calculateActiveUserInterval) {
-            let date = originDate.addingTimeInterval(calculateActiveUserInterval * Double(i))
-            activeUserHistory.append((date, 0))
-        }
-        // updateActiveUserLabels()
-        // updateActiveUserChart()
+        updateActiveUserLabels()
+        updateActiveUserChart()
     }
 
     func updateActiveUserLabels() {
+        if activeUserHistory.isEmpty {
+            activeUserValueLabel.stringValue = defaultLabelValue
+            maxActiveUserValueLabel.stringValue = defaultLabelValue
+            return
+        }
         activeUserValueLabel.stringValue = String(activeUserCount)
         maxActiveUserValueLabel.stringValue = String(maxActiveUserCount)
     }
@@ -1068,6 +1075,11 @@ private extension MainViewController {
     }
 
     func updateActiveUserChart() {
+        guard !activeUserHistory.isEmpty else {
+            activeUserChartView.clear()
+            return
+        }
+
         let entries = activeUserHistory
             .map { ($0.0.timeIntervalSince1970, Double($0.1))}
             .map { ChartDataEntry(x: $0.0, y: $0.1) }
@@ -1078,12 +1090,11 @@ private extension MainViewController {
         ds.drawCirclesEnabled = false
         ds.drawValuesEnabled = false
         ds.highlightEnabled = false
-
         data.append(ds)
+        if 0 < maxActiveUserCount {
+            activeUserChartView.leftAxis.axisMaximum = Double(maxActiveUserCount) * 1.05
+        }
         activeUserChartView.data = data
-
-        guard 0 < maxActiveUserCount else { return }
-        activeUserChartView.leftAxis.axisMaximum = Double(maxActiveUserCount) * 1.05
     }
 }
 
