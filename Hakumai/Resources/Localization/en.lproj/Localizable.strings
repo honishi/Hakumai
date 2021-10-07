@@ -83,7 +83,7 @@
 /// Main Window
 ///
 "active_user" = "Active Users";
-"active_user_description" = "Active unique users in last 5 minutes";
+"active_user_description" = "Active unique users in last 5 minutes / Max active unique users in the live";
 "active_user_history_description" = "History of active unique users in last 15 minutes";
 "max_active_user_count" = "Max Active Users";
 "comment_count" = "Comments";

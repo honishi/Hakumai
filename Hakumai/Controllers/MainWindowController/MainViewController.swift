@@ -62,6 +62,7 @@ final class MainViewController: NSViewController {
     @IBOutlet private weak var elapsedTimeValueLabel: NSTextField!
     @IBOutlet private weak var activeUserTitleLabel: NSTextField!
     @IBOutlet private weak var activeUserValueLabel: NSTextField!
+    @IBOutlet private weak var maxActiveUserValueLabel: NSTextField!
     @IBOutlet private weak var activeUserChartView: LineChartView!
     @IBOutlet private weak var progressIndicator: NSProgressIndicator!
 
@@ -91,8 +92,9 @@ final class MainViewController: NSViewController {
     private var elapsedTimeTimer: Timer?
     private var activeUserTimer: Timer?
 
-    private var activeUserHistory: [(Date, Int)] = []
+    private var activeUserCount = 0
     private var maxActiveUserCount = 0
+    private var activeUserHistory: [(Date, Int)] = []
 
     // AuthWindowController
     private lazy var authWindowController: AuthWindowController = {
@@ -369,7 +371,7 @@ extension MainViewController: NicoUtilityDelegate {
 
         switch connectContext {
         case .normal:
-            resetActiveUserChart()
+            resetActiveUser()
             logSystemMessageToTableView(L10n.preparedLive(user.nickname))
         case .reconnect:
             break
@@ -649,13 +651,16 @@ private extension MainViewController {
         activeUserTitleLabel.toolTip = L10n.activeUserDescription
         activeUserValueLabel.stringValue = defaultLabelValue
         activeUserValueLabel.toolTip = L10n.activeUserDescription
+        maxActiveUserValueLabel.stringValue = defaultLabelValue
+        maxActiveUserValueLabel.toolTip = L10n.activeUserDescription
+        activeUserChartView.toolTip = L10n.activeUserHistoryDescription
 
         scrollView.enableBottomScrollButton()
         configureTableView()
         registerNibs()
 
         configureActiveUserChart()
-        resetActiveUserChart()
+        resetActiveUser()
     }
 
     func configureTableView() {
@@ -939,7 +944,7 @@ private extension MainViewController {
         activeUserTimer = Timer.scheduledTimer(
             timeInterval: calculateActiveUserInterval,
             target: self,
-            selector: #selector(MainViewController.calculateAndUpdateActiveUserLabel),
+            selector: #selector(MainViewController.calculateAndUpdateActiveUser),
             userInfo: nil,
             repeats: true)
     }
@@ -970,14 +975,42 @@ private extension MainViewController {
         DispatchQueue.main.async { self.elapsedTimeValueLabel.stringValue = display }
     }
 
-    @objc func calculateAndUpdateActiveUserLabel() {
+    @objc func calculateAndUpdateActiveUser() {
         messageContainer.calculateActive { (active: Int?) -> Void in
             guard let active = active else { return }
+            self.updateActiveUser(active: active)
             DispatchQueue.main.async {
-                self.activeUserValueLabel.stringValue = String(active)
-                self.updateActiveUserChart(active: active)
+                self.updateActiveUserLabels()
+                self.updateActiveUserChart()
             }
         }
+    }
+}
+
+// MARK: Active User
+private extension MainViewController {
+    func updateActiveUser(active: Int) {
+        activeUserCount = active
+        maxActiveUserCount = max(maxActiveUserCount, active)
+        activeUserHistory.append((Date(), active))
+    }
+
+    func resetActiveUser() {
+        activeUserCount = 0
+        maxActiveUserCount = 0
+        activeUserHistory.removeAll()
+        let originDate = Date().addingTimeInterval(chartDuration * -1)
+        for i in 0...Int(chartDuration / calculateActiveUserInterval) {
+            let date = originDate.addingTimeInterval(calculateActiveUserInterval * Double(i))
+            activeUserHistory.append((date, 0))
+        }
+        // updateActiveUserLabels()
+        updateActiveUserChart()
+    }
+
+    func updateActiveUserLabels() {
+        activeUserValueLabel.stringValue = String(activeUserCount)
+        maxActiveUserValueLabel.stringValue = String(maxActiveUserCount)
     }
 }
 
@@ -1032,36 +1065,14 @@ private extension MainViewController {
         activeUserChartView.legend.enabled = false
     }
 
-    func updateActiveUserChart(active: Int) {
-        activeUserHistory.append((Date(), active))
-        let currentDate = Date()
-        activeUserHistory = activeUserHistory.filter { currentDate.timeIntervalSince($0.0) < chartDuration }
-        if activeUserHistory.count > Int((TimeInterval(5 * 60) / calculateActiveUserInterval)) {
-            activeUserHistory.removeFirst()
-        }
-        maxActiveUserCount = max(maxActiveUserCount, active)
-        _updateActiveUserChart()
-    }
-
-    func resetActiveUserChart() {
-        activeUserHistory.removeAll()
-        let originDate = Date().addingTimeInterval(chartDuration * -1)
-        for i in 0...Int(chartDuration / calculateActiveUserInterval) {
-            let date = originDate.addingTimeInterval(calculateActiveUserInterval * Double(i))
-            activeUserHistory.append((date, 0))
-        }
-        maxActiveUserCount = 0
-        _updateActiveUserChart()
-    }
-
-    func _updateActiveUserChart() {
+    func updateActiveUserChart() {
         let entries = activeUserHistory
-            .map { $0.1 }   // extract only active count
-            .enumerated()
-            .map { (Double($0.0), Double($0.1))}
+            .filter { Date().timeIntervalSince($0.0) < chartDuration }
+            .map { ($0.0.timeIntervalSince1970, Double($0.1))}
             .map { ChartDataEntry(x: $0.0, y: $0.1) }
         let data = LineChartData()
         let ds = LineChartDataSet(entries: entries, label: "")
+        // ds.lineWidth = 2
         ds.colors = [NSColor.controlTextColor]
         ds.drawCirclesEnabled = false
         ds.drawValuesEnabled = false
@@ -1069,16 +1080,10 @@ private extension MainViewController {
 
         data.append(ds)
         activeUserChartView.data = data
-        if maxActiveUserCount == 0 {
-            activeUserChartView.leftAxis.resetCustomAxisMax()
-        } else {
+
+        if 0 < maxActiveUserCount {
             activeUserChartView.leftAxis.axisMaximum = Double(maxActiveUserCount)
         }
-
-        activeUserChartView.toolTip = [
-            L10n.activeUserHistoryDescription,
-            "\(L10n.maxActiveUserCount): \(maxActiveUserCount)"
-        ].joined(separator: "\n")
     }
 }
 
