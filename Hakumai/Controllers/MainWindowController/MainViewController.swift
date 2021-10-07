@@ -20,6 +20,7 @@ private let enableDebugButtons = false
 
 private let defaultElapsedTimeValue = "--:--:--"
 private let defaultLabelValue = "---"
+private let defaultChartText = "-----"
 
 // swiftlint:disable file_length
 protocol MainViewControllerDelegate: AnyObject {
@@ -993,6 +994,7 @@ private extension MainViewController {
         activeUserCount = active
         maxActiveUserCount = max(maxActiveUserCount, active)
         activeUserHistory.append((Date(), active))
+        activeUserHistory = activeUserHistory.filter { Date().timeIntervalSince($0.0) < chartDuration }
     }
 
     func resetActiveUser() {
@@ -1005,7 +1007,7 @@ private extension MainViewController {
             activeUserHistory.append((date, 0))
         }
         // updateActiveUserLabels()
-        updateActiveUserChart()
+        // updateActiveUserChart()
     }
 
     func updateActiveUserLabels() {
@@ -1051,11 +1053,11 @@ private extension MainViewController {
     func configureActiveUserChart() {
         // https://stackoverflow.com/a/41241795/13220031
         activeUserChartView.minOffset = 0
+        activeUserChartView.noDataText = defaultChartText
         activeUserChartView.toolTip = L10n.activeUserHistoryDescription
 
         activeUserChartView.leftAxis.drawAxisLineEnabled = false
         activeUserChartView.leftAxis.drawLabelsEnabled = false
-        activeUserChartView.leftAxis.axisMinimum = 0
 
         activeUserChartView.rightAxis.enabled = false
 
@@ -1067,12 +1069,11 @@ private extension MainViewController {
 
     func updateActiveUserChart() {
         let entries = activeUserHistory
-            .filter { Date().timeIntervalSince($0.0) < chartDuration }
             .map { ($0.0.timeIntervalSince1970, Double($0.1))}
             .map { ChartDataEntry(x: $0.0, y: $0.1) }
         let data = LineChartData()
         let ds = LineChartDataSet(entries: entries, label: "")
-        // ds.lineWidth = 2
+        ds.lineWidth = 1.5
         ds.colors = [NSColor.controlTextColor]
         ds.drawCirclesEnabled = false
         ds.drawValuesEnabled = false
@@ -1081,9 +1082,8 @@ private extension MainViewController {
         data.append(ds)
         activeUserChartView.data = data
 
-        if 0 < maxActiveUserCount {
-            activeUserChartView.leftAxis.axisMaximum = Double(maxActiveUserCount)
-        }
+        guard 0 < maxActiveUserCount else { return }
+        activeUserChartView.leftAxis.axisMaximum = Double(maxActiveUserCount) * 1.05
     }
 }
 
