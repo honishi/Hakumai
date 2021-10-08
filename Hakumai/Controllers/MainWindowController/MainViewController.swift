@@ -650,9 +650,7 @@ private extension MainViewController {
         elapsedTimeValueLabel.stringValue = defaultElapsedTimeValue
         activeUserTitleLabel.stringValue = "\(L10n.activeUser):"
         activeUserTitleLabel.toolTip = L10n.activeUserDescription
-        activeUserValueLabel.stringValue = defaultLabelValue
         activeUserValueLabel.toolTip = L10n.activeUserDescription
-        maxActiveUserValueLabel.stringValue = defaultLabelValue
         maxActiveUserValueLabel.toolTip = L10n.activeUserDescription
         activeUserChartView.toolTip = L10n.activeUserHistoryDescription
 
@@ -1055,7 +1053,7 @@ private extension MainViewController {
 
 // MARK: Chart Functions
 private extension MainViewController {
-    var chartDuration: TimeInterval { 15 * 60 } // 15 min
+    var chartDuration: TimeInterval { 20 * 60 } // 20 min
 
     func configureActiveUserChart() {
         // https://stackoverflow.com/a/41241795/13220031
