@@ -14,9 +14,9 @@ internal enum L10n {
   internal static let aboutHakumai = L10n.tr("Localizable", "about_hakumai")
   /// Active Users
   internal static let activeUser = L10n.tr("Localizable", "active_user")
-  /// Active unique users in last 5 minutes
+  /// Active unique users in last 5 minutes / Max active unique users
   internal static let activeUserDescription = L10n.tr("Localizable", "active_user_description")
-  /// History of active unique users in last 15 minutes
+  /// History of active unique users in last 20 minutes
   internal static let activeUserHistoryDescription = L10n.tr("Localizable", "active_user_history_description")
   /// Add
   internal static let add = L10n.tr("Localizable", "add")
@@ -132,6 +132,8 @@ internal enum L10n {
   internal static let makeLowerCase = L10n.tr("Localizable", "make_lower_case")
   /// Make Upper Case
   internal static let makeUpperCase = L10n.tr("Localizable", "make_upper_case")
+  /// Max Active Users
+  internal static let maxActiveUserCount = L10n.tr("Localizable", "max_active_user_count")
   /// Minimize
   internal static let minimize = L10n.tr("Localizable", "minimize")
   /// New Comment
