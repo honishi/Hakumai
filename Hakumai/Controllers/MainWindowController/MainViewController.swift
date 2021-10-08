@@ -1083,18 +1083,20 @@ private extension MainViewController {
             .map { ChartDataEntry(x: $0.0, y: $0.1) }
         let data = LineChartData()
         let ds = LineChartDataSet(entries: entries, label: "")
-        ds.lineWidth = 1.25
         ds.colors = [NSColor.controlTextColor]
         ds.drawCirclesEnabled = false
         ds.drawValuesEnabled = false
         ds.highlightEnabled = false
         data.append(ds)
-        if 0 < maxActiveUserCount {
-            let padding = Double(maxActiveUserCount) * 0.05
-            activeUserChartView.leftAxis.axisMinimum = -1 * padding
-            activeUserChartView.leftAxis.axisMaximum = Double(maxActiveUserCount) + padding
-        }
+        adjustChartLeftAxis(max: maxActiveUserCount)
         activeUserChartView.data = data
+    }
+
+    func adjustChartLeftAxis(max: Int) {
+        let _max = max == 0 ? 10 : max  // `10` is temporary axis max value for no data case
+        let padding = Double(_max) * 0.05
+        activeUserChartView.leftAxis.axisMinimum = -1 * padding
+        activeUserChartView.leftAxis.axisMaximum = Double(_max) + padding
     }
 }
 
