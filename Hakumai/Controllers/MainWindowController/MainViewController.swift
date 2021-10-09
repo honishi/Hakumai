@@ -260,6 +260,7 @@ extension MainViewController: NSTableViewDelegate {
         }
     }
 
+    // swiftlint:disable cyclomatic_complexity
     private func configure(view: NSTableCellView, forChat message: Message, withTableColumn tableColumn: NSTableColumn) {
         guard let chat = message.chat else { return }
 
@@ -305,6 +306,7 @@ extension MainViewController: NSTableViewDelegate {
             break
         }
     }
+    // swiftlint:enable cyclomatic_complexity
 
     // MARK: Utility
     private func contentAndAttributes(forMessage message: Message) -> (String, [String: Any]) {
