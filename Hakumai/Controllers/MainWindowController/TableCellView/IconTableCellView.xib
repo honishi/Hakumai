@@ -14,17 +14,15 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Vhu-kL-fsN">
-                    <rect key="frame" x="231" y="254" width="18" height="18"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="18" id="Txj-l9-Xy7"/>
-                        <constraint firstAttribute="width" constant="18" id="bmC-hc-X9M"/>
-                    </constraints>
-                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageAlignment="top" imageScaling="proportionallyDown" id="MEU-yn-6dZ"/>
+                    <rect key="frame" x="0.0" y="0.0" width="480" height="272"/>
+                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="MEU-yn-6dZ"/>
                 </imageView>
             </subviews>
             <constraints>
-                <constraint firstItem="Vhu-kL-fsN" firstAttribute="centerX" secondItem="c22-O7-iKe" secondAttribute="centerX" id="OKa-LJ-r7D"/>
+                <constraint firstAttribute="bottom" secondItem="Vhu-kL-fsN" secondAttribute="bottom" id="BYy-Zy-Jqf"/>
+                <constraint firstAttribute="trailing" secondItem="Vhu-kL-fsN" secondAttribute="trailing" id="fcX-Qe-rSx"/>
                 <constraint firstItem="Vhu-kL-fsN" firstAttribute="top" secondItem="c22-O7-iKe" secondAttribute="top" id="itW-B7-TjI"/>
+                <constraint firstItem="Vhu-kL-fsN" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" id="u1A-RZ-yif"/>
             </constraints>
             <connections>
                 <outlet property="iconImageView" destination="Vhu-kL-fsN" id="8E9-Rw-jgO"/>

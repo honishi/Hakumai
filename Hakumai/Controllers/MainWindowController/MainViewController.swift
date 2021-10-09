@@ -178,7 +178,12 @@ extension MainViewController: NSTableViewDelegate {
             attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
         // log.debug("\(commentRect.size.width),\(commentRect.size.height)")
 
-        return max(commentRect.size.height, minimumRowHeight)
+        return max(iconColumnWidth, max(commentRect.size.height, minimumRowHeight))
+    }
+
+    private var iconColumnWidth: CGFloat {
+        let iconColumnId = NSUserInterfaceItemIdentifier(kIconColumnIdentifier)
+        return tableView.tableColumn(withIdentifier: iconColumnId)?.width ?? 0
     }
 
     private func calculateMinimumRowHeight(fontSize: CGFloat) -> CGFloat {
@@ -193,9 +198,12 @@ extension MainViewController: NSTableViewDelegate {
         guard let column = (aNotification as NSNotification).userInfo?["NSTableColumn"] as? NSTableColumn else {
             return
         }
-        if convertFromNSUserInterfaceItemIdentifier(column.identifier) == kCommentColumnIdentifier {
+        switch column.identifier.rawValue {
+        case kIconColumnIdentifier, kCommentColumnIdentifier:
             rowHeightCache.removeAll(keepingCapacity: false)
             tableView.reloadData()
+        default:
+            break
         }
     }
 
