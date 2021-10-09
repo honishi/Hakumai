@@ -9,55 +9,41 @@
 import Foundation
 import AppKit
 
-private let kScoreThresholdGreen = 0
-private let kScoreThresholdLightGreen = -1000
-private let kScoreThresholdYellow = -4800
-private let kScoreThresholdOrange = -10000
-
 final class ScoreTableCellView: NSTableCellView {
     @IBOutlet weak var coloredView: ColoredView!
     @IBOutlet weak var scoreLabel: NSTextField!
-
-    var chat: Chat? = nil {
-        didSet {
-            coloredView.fillColor = color(forChatScore: chat)
-            scoreLabel.stringValue = string(forChatScore: chat)
-        }
-    }
 
     var fontSize: CGFloat? { didSet { set(fontSize: fontSize) } }
 }
 
 extension ScoreTableCellView {
+    func configure(live: Live?, chat: Chat?) {
+        coloredView.fillColor = color(forChatScore: chat)
+        scoreLabel.stringValue = time(live: live, chat: chat)
+    }
+}
+
+private extension ScoreTableCellView {
     func color(forChatScore chat: Chat?) -> NSColor {
         // println("\(score)")
-        guard let chat = chat, let score = chat.score else { return UIHelper.systemMessageColorBackground() }
-
-        if chat.isSystemComment {
-            return UIHelper.systemMessageColorBackground()
-        }
-
-        switch score {
-        case kScoreThresholdGreen:
-            return UIHelper.scoreColorGreen()
-        case kScoreThresholdLightGreen + 1 ... kScoreThresholdGreen:
-            return UIHelper.scoreColorLightGreen()
-        case kScoreThresholdYellow + 1 ... kScoreThresholdLightGreen:
-            return UIHelper.scoreColorYellow()
-        case kScoreThresholdOrange + 1 ... kScoreThresholdYellow:
-            return UIHelper.scoreColorOrange()
-        default:
-            return UIHelper.scoreColorRed()
-        }
+        guard let chat = chat else { return UIHelper.systemMessageColorBackground() }
+        return chat.isSystemComment ? UIHelper.systemMessageColorBackground() : UIHelper.scoreColorGreen()
     }
 
-    func string(forChatScore chat: Chat?) -> String {
-        guard let score = chat?.score else { return "" }
-        return String(score).numberStringWithSeparatorComma()
+    func time(live: Live?, chat: Chat?) -> String {
+        guard let beginDate = live?.startTime, let chatDate = chat?.date else { return "-" }
+        let comps = Calendar.current.dateComponents(
+            [.hour, .minute, .second], from: beginDate, to: chatDate)
+        guard let h = comps.hour, let m = comps.minute, let s = comps.second else { return "-" }
+        return "\(h):\(m.zeroPadded):\(s.zeroPadded)"
     }
 
     func set(fontSize: CGFloat?) {
         let size = fontSize ?? CGFloat(kDefaultFontSize)
         scoreLabel.font = NSFont.systemFont(ofSize: size)
     }
+}
+
+private extension Int {
+    var zeroPadded: String { String(format: "%02d", self) }
 }

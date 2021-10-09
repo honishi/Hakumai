@@ -212,7 +212,7 @@
                                                             </textFieldCell>
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                         </tableColumn>
-                                                        <tableColumn identifier="ScoreColumn" width="10" minWidth="10" maxWidth="64" id="GFX-CN-eBq">
+                                                        <tableColumn identifier="ScoreColumn" width="6" minWidth="6" maxWidth="80" id="GFX-CN-eBq">
                                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Score">
                                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                 <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>

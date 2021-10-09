@@ -56,65 +56,9 @@ final class UIHelper {
         return NSColor(rgba: "#24cf20")
     }
 
-    static func scoreColorLightGreen() -> NSColor {
-        return NSColor(rgba: "#abff00")
-    }
-
-    static func scoreColorYellow() -> NSColor {
-        return NSColor(rgba: "#ffd900")
-    }
-
-    static func scoreColorOrange() -> NSColor {
-        return NSColor(rgba: "#ff8c00")
-    }
-
-    static func scoreColorRed() -> NSColor {
-        return NSColor(rgba: "#ff0000")
-    }
-
     // MARK: - Room Colors
     static func roomColorArena() -> NSColor {
         return NSColor(rgba: "#3c49ff")
-    }
-
-    static func roomColorStandA() -> NSColor {
-        return NSColor(rgba: "#ff3c37")
-    }
-
-    static func roomColorStandB() -> NSColor {
-        return NSColor(rgba: "#b2ae00")
-    }
-
-    static func roomColorStandC() -> NSColor {
-        return NSColor(rgba: "#24c10e")
-    }
-
-    static func roomColorStandD() -> NSColor {
-        return NSColor(rgba: "#f577cd")
-    }
-
-    static func roomColorStandE() -> NSColor {
-        return NSColor(rgba: "#2eb9c8")
-    }
-
-    static func roomColorStandF() -> NSColor {
-        return NSColor(rgba: "#f97900")
-    }
-
-    static func roomColorStandG() -> NSColor {
-        return NSColor(rgba: "#8600d8")
-    }
-
-    static func roomColorStandH() -> NSColor {
-        return NSColor(rgba: "#006b42")
-    }
-
-    static func roomColorStandI() -> NSColor {
-        return NSColor(rgba: "#ac1200")
-    }
-
-    static func roomColorStandJ() -> NSColor {
-        return NSColor(rgba: "#ababab")
     }
 
     // MARK: - Font Attributes
@@ -123,8 +67,8 @@ final class UIHelper {
     }
 
     static func normalCommentAttributes(fontSize: CGFloat) -> [String: Any] {
-        let attributes = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): NSFont.systemFont(ofSize: fontSize),
-                          convertFromNSAttributedStringKey(NSAttributedString.Key.paragraphStyle): NSParagraphStyle.default]
+        let attributes = [NSAttributedString.Key.font.rawValue: NSFont.systemFont(ofSize: fontSize),
+                          NSAttributedString.Key.paragraphStyle.rawValue: NSParagraphStyle.default]
         return attributes
     }
 
@@ -133,8 +77,8 @@ final class UIHelper {
     }
 
     static func boldCommentAttributes(fontSize: CGFloat) -> [String: Any] {
-        let attributes = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): NSFont.boldSystemFont(ofSize: fontSize),
-                          convertFromNSAttributedStringKey(NSAttributedString.Key.paragraphStyle): NSParagraphStyle.default]
+        let attributes = [NSAttributedString.Key.font.rawValue: NSFont.boldSystemFont(ofSize: fontSize),
+                          NSAttributedString.Key.paragraphStyle.rawValue: NSParagraphStyle.default]
         return attributes
     }
 
@@ -143,9 +87,4 @@ final class UIHelper {
         style.maximumLineHeight = fontSize * 1.2
         return style
     }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-    return input.rawValue
 }

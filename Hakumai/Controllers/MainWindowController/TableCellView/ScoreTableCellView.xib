@@ -20,10 +20,7 @@
                     </constraints>
                 </customView>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dH9-2I-2zy">
-                    <rect key="frame" x="2" y="17" width="90" height="16"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="86" id="lQD-yG-phZ"/>
-                    </constraints>
+                    <rect key="frame" x="51" y="17" width="37" height="16"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Label" id="Rbv-4W-eyi">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -36,7 +33,7 @@
                 <constraint firstAttribute="bottom" secondItem="Vu3-Tp-uTq" secondAttribute="bottom" id="4XL-Zd-hSa"/>
                 <constraint firstAttribute="trailing" secondItem="Vu3-Tp-uTq" secondAttribute="trailing" id="j0u-7R-DNh"/>
                 <constraint firstItem="Vu3-Tp-uTq" firstAttribute="top" secondItem="c22-O7-iKe" secondAttribute="top" id="pY8-mb-hMe"/>
-                <constraint firstItem="Vu3-Tp-uTq" firstAttribute="leading" secondItem="dH9-2I-2zy" secondAttribute="trailing" constant="4" id="xEt-L3-ykS"/>
+                <constraint firstItem="Vu3-Tp-uTq" firstAttribute="leading" secondItem="dH9-2I-2zy" secondAttribute="trailing" constant="8" id="xEt-L3-ykS"/>
             </constraints>
             <connections>
                 <outlet property="coloredView" destination="Vu3-Tp-uTq" id="vhj-lr-IG8"/>

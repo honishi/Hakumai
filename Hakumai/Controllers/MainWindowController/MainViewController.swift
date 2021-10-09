@@ -239,7 +239,7 @@ extension MainViewController: NSTableViewDelegate {
             roomPositionView?.fontSize = nil
         case kScoreColumnIdentifier:
             let scoreView = view as? ScoreTableCellView
-            scoreView?.chat = nil
+            scoreView?.configure(live: nil, chat: nil)
             scoreView?.fontSize = nil
         case kIconColumnIdentifier:
             let iconView = view as? IconTableCellView
@@ -273,7 +273,7 @@ extension MainViewController: NSTableViewDelegate {
             roomPositionView?.fontSize = min(tableViewFontSize, maximumFontSizeForNonMainColumn)
         case kScoreColumnIdentifier:
             let scoreView = view as? ScoreTableCellView
-            scoreView?.chat = chat
+            scoreView?.configure(live: live, chat: chat)
             scoreView?.fontSize = min(tableViewFontSize, maximumFontSizeForNonMainColumn)
         case kIconColumnIdentifier:
             let iconView = view as? IconTableCellView
