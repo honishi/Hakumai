@@ -157,7 +157,7 @@ extension MainViewController: NSTableViewDelegate {
 
         var rowHeight: CGFloat = 0
 
-        guard let commentTableColumn = tableView.tableColumn(withIdentifier: convertToNSUserInterfaceItemIdentifier(kCommentColumnIdentifier)) else { return rowHeight }
+        guard let commentTableColumn = tableView.tableColumn(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: kCommentColumnIdentifier)) else { return rowHeight }
         let commentColumnWidth = commentTableColumn.width
         rowHeight = commentColumnHeight(forMessage: message, width: commentColumnWidth)
 
@@ -178,8 +178,7 @@ extension MainViewController: NSTableViewDelegate {
             attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
         // log.debug("\(commentRect.size.width),\(commentRect.size.height)")
 
-        let hasIcon = message.chat?.isUserComment == true && message.chat?.isRawUserId == true
-        let iconHeight = hasIcon ? iconColumnWidth : 0
+        let iconHeight = message.chat?.hasUserIcon == true ? iconColumnWidth : 0
         return max(iconHeight, max(commentRect.size.height, minimumRowHeight))
     }
 
@@ -231,7 +230,7 @@ extension MainViewController: NSTableViewDelegate {
     }
 
     private func configure(view: NSTableCellView, forSystemMessage message: Message, withTableColumn tableColumn: NSTableColumn) {
-        switch convertFromNSUserInterfaceItemIdentifier(tableColumn.identifier) {
+        switch tableColumn.identifier.rawValue {
         case kRoomPositionColumnIdentifier:
             let roomPositionView = view as? RoomPositionTableCellView
             roomPositionView?.roomPosition = nil
@@ -701,7 +700,7 @@ private extension MainViewController {
 
         for (nibName, identifier) in nibs {
             guard let nib = NSNib(nibNamed: nibName, bundle: Bundle.main) else { continue }
-            tableView.register(nib, forIdentifier: convertToNSUserInterfaceItemIdentifier(identifier))
+            tableView.register(nib, forIdentifier: NSUserInterfaceItemIdentifier(rawValue: identifier))
         }
     }
 
@@ -1152,18 +1151,9 @@ private extension NSButton {
 }
 
 // Helper function inserted by Swift 4.2 migrator.
-private func convertToNSUserInterfaceItemIdentifier(_ input: String) -> NSUserInterfaceItemIdentifier {
-    NSUserInterfaceItemIdentifier(rawValue: input)
-}
-
-// Helper function inserted by Swift 4.2 migrator.
 private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
     guard let input = input else { return nil }
     return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
 }
 
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSUserInterfaceItemIdentifier(_ input: NSUserInterfaceItemIdentifier) -> String {
-    input.rawValue
-}
 // swiftlint:enable file_length

@@ -21,6 +21,7 @@ final class Chat: CustomStringConvertible {
     var isRawUserId: Bool { Chat.isRawUserId(userId) }
     var isUserComment: Bool { Chat.isUserComment(premium) }
     var isSystemComment: Bool { Chat.isSystemComment(premium) }
+    var hasUserIcon: Bool { isUserComment && isRawUserId }
 
     var description: String {
         return (
