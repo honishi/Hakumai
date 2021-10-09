@@ -178,7 +178,9 @@ extension MainViewController: NSTableViewDelegate {
             attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
         // log.debug("\(commentRect.size.width),\(commentRect.size.height)")
 
-        return max(iconColumnWidth, max(commentRect.size.height, minimumRowHeight))
+        let hasIcon = message.chat?.isUserComment == true && message.chat?.isRawUserId == true
+        let iconHeight = hasIcon ? iconColumnWidth : 0
+        return max(iconHeight, max(commentRect.size.height, minimumRowHeight))
     }
 
     private var iconColumnWidth: CGFloat {
