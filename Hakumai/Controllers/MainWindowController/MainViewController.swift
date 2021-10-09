@@ -276,8 +276,11 @@ extension MainViewController: NSTableViewDelegate {
         case kIconColumnIdentifier:
             guard chat.isUserComment else { return }
             let iconView = view as? IconTableCellView
-            let iconUrl = nicoUtility.userIconUrl(for: chat.userId)
-            iconView?.configure(iconType: .chat(iconUrl))
+            iconView?.configure(iconType: {
+                if chat.isSystemComment { return .system }
+                let iconUrl = nicoUtility.userIconUrl(for: chat.userId)
+                return .user(iconUrl)
+            }())
         case kCommentColumnIdentifier:
             let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)

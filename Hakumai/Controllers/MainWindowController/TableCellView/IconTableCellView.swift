@@ -11,24 +11,24 @@ import Kingfisher
 
 enum IconType {
     case system
-    case chat(URL?)
+    case user(URL?)
 }
 
 final class IconTableCellView: NSTableCellView {
     @IBOutlet weak var iconImageView: NSImageView!
 
-    override func prepareForReuse() {
-        iconImageView.kf.cancelDownloadTask()
-        iconImageView.image = nil
-    }
+    override func prepareForReuse() {}
 }
 
 extension IconTableCellView {
     func configure(iconType: IconType) {
+        reset()
+
         switch iconType {
         case .system:
-            iconImageView.image = nil
-        case .chat(let iconUrl):
+            // no-op.
+            break
+        case .user(let iconUrl):
             if let iconUrl = iconUrl {
                 iconImageView.kf.setImage(
                     with: iconUrl,
@@ -40,4 +40,9 @@ extension IconTableCellView {
     }
 }
 
-private extension IconTableCellView {}
+private extension IconTableCellView {
+    func reset() {
+        iconImageView.kf.cancelDownloadTask()
+        iconImageView.image = nil
+    }
+}
