@@ -199,8 +199,7 @@ private extension UserViewController {
             roomPositionView?.roomPosition = chat.roomPosition
             roomPositionView?.commentNo = chat.no
         case kScoreColumnIdentifier:
-            // TODO: live
-            (view as? ScoreTableCellView)?.configure(live: nil, chat: chat)
+            (view as? ScoreTableCellView)?.configure(live: nicoUtility.live, chat: chat)
         case kCommentColumnIdentifier:
             let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)

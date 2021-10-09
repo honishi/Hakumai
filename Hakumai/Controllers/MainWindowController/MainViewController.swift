@@ -980,9 +980,9 @@ private extension MainViewController {
     @objc func updateElapsedLabelValue() {
         var display = defaultElapsedTimeValue
 
-        if let startTime = nicoUtility.live?.startTime {
+        if let beginTime = nicoUtility.live?.beginTime {
             var prefix = ""
-            var elapsed = Date().timeIntervalSince(startTime as Date)
+            var elapsed = Date().timeIntervalSince(beginTime as Date)
             if elapsed < 0 {
                 prefix = "-"
                 elapsed = abs(elapsed)

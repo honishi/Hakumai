@@ -31,16 +31,22 @@ private extension ScoreTableCellView {
     }
 
     func time(live: Live?, chat: Chat?) -> String {
-        guard let beginDate = live?.startTime, let chatDate = chat?.date else { return "-" }
-        let comps = Calendar.current.dateComponents(
-            [.hour, .minute, .second], from: beginDate, to: chatDate)
-        guard let h = comps.hour, let m = comps.minute, let s = comps.second else { return "-" }
-        return "\(h):\(m.zeroPadded):\(s.zeroPadded)"
+        guard let beginDate = live?.beginTime, let chatDate = chat?.date else { return "-" }
+        return chatDate.toElapsedTimeString(from: beginDate)
     }
 
     func set(fontSize: CGFloat?) {
         let size = fontSize ?? CGFloat(kDefaultFontSize)
         scoreLabel.font = NSFont.systemFont(ofSize: size)
+    }
+}
+
+private extension Date {
+    func toElapsedTimeString(from fromDate: Date) -> String {
+        let comps = Calendar.current.dateComponents(
+            [.hour, .minute, .second], from: fromDate, to: self)
+        guard let h = comps.hour, let m = comps.minute, let s = comps.second else { return "-" }
+        return "\(h):\(m.zeroPadded):\(s.zeroPadded)"
     }
 }
 
