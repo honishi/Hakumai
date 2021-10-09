@@ -231,9 +231,9 @@ extension MainViewController: NSTableViewDelegate {
             let scoreView = view as? ScoreTableCellView
             scoreView?.chat = nil
             scoreView?.fontSize = nil
-        case kThumbnailColumnIdentifier:
-            let thumbnailView = view as? ThumbnailTableCellView
-        // TODO: configure
+        case kIconColumnIdentifier:
+            let iconView = view as? IconTableCellView
+            iconView?.configure(iconType: .system)
         case kCommentColumnIdentifier:
             let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)
@@ -265,9 +265,11 @@ extension MainViewController: NSTableViewDelegate {
             let scoreView = view as? ScoreTableCellView
             scoreView?.chat = chat
             scoreView?.fontSize = min(tableViewFontSize, maximumFontSizeForNonMainColumn)
-        case kThumbnailColumnIdentifier:
-            let thumbnailView = view as? ThumbnailTableCellView
-        // TODO: configure
+        case kIconColumnIdentifier:
+            guard chat.isUserComment else { return }
+            let iconView = view as? IconTableCellView
+            let iconUrl = nicoUtility.userIconUrl(for: chat.userId)
+            iconView?.configure(iconType: .chat(iconUrl))
         case kCommentColumnIdentifier:
             let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)
@@ -679,7 +681,7 @@ private extension MainViewController {
         let nibs = [
             (kNibNameRoomPositionTableCellView, kRoomPositionColumnIdentifier),
             (kNibNameScoreTableCellView, kScoreColumnIdentifier),
-            (kNibNameThumbnailTableCellView, kThumbnailColumnIdentifier),
+            (kNibNameIconTableCellView, kIconColumnIdentifier),
             (kNibNameCommentTableCellView, kCommentColumnIdentifier),
             (kNibNameUserIdTableCellView, kUserIdColumnIdentifier),
             (kNibNamePremiumTableCellView, kPremiumColumnIdentifier)]

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19162" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19162"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner"/>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="c22-O7-iKe" customClass="IconTableCellView" customModule="Hakumai" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="480" height="272"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Vhu-kL-fsN">
+                    <rect key="frame" x="231" y="254" width="18" height="18"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="18" id="Txj-l9-Xy7"/>
+                        <constraint firstAttribute="width" constant="18" id="bmC-hc-X9M"/>
+                    </constraints>
+                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageAlignment="top" imageScaling="proportionallyDown" id="MEU-yn-6dZ"/>
+                </imageView>
+            </subviews>
+            <constraints>
+                <constraint firstItem="Vhu-kL-fsN" firstAttribute="centerX" secondItem="c22-O7-iKe" secondAttribute="centerX" id="OKa-LJ-r7D"/>
+                <constraint firstItem="Vhu-kL-fsN" firstAttribute="top" secondItem="c22-O7-iKe" secondAttribute="top" id="itW-B7-TjI"/>
+            </constraints>
+            <connections>
+                <outlet property="iconImageView" destination="Vhu-kL-fsN" id="8E9-Rw-jgO"/>
+            </connections>
+            <point key="canvasLocation" x="139" y="149"/>
+        </customView>
+    </objects>
+</document>

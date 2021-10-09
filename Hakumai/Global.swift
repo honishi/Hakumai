@@ -15,14 +15,14 @@ let log = XCGLogger.default
 // MARK: Constant value for storyboard contents
 let kNibNameRoomPositionTableCellView = "RoomPositionTableCellView"
 let kNibNameScoreTableCellView = "ScoreTableCellView"
-let kNibNameThumbnailTableCellView = "ThumbnailTableCellView"
+let kNibNameIconTableCellView = "IconTableCellView"
 let kNibNameUserIdTableCellView = "UserIdTableCellView"
 let kNibNameCommentTableCellView = "CommentTableCellView"
 let kNibNamePremiumTableCellView = "PremiumTableCellView"
 
 let kRoomPositionColumnIdentifier = "RoomPositionColumn"
 let kScoreColumnIdentifier = "ScoreColumn"
-let kThumbnailColumnIdentifier = "ThumbnailColumn"
+let kIconColumnIdentifier = "IconColumn"
 let kCommentColumnIdentifier = "CommentColumn"
 let kUserIdColumnIdentifier = "UserIdColumn"
 let kPremiumColumnIdentifier = "PremiumColumn"
