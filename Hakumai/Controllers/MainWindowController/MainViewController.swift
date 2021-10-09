@@ -237,10 +237,10 @@ extension MainViewController: NSTableViewDelegate {
             roomPositionView?.roomPosition = nil
             roomPositionView?.commentNo = nil
             roomPositionView?.fontSize = nil
-        case kScoreColumnIdentifier:
-            let scoreView = view as? ScoreTableCellView
-            scoreView?.configure(live: nil, chat: nil)
-            scoreView?.fontSize = nil
+        case kTimeColumnIdentifier:
+            let timeView = view as? TimeTableCellView
+            timeView?.configure(live: nil, chat: nil)
+            timeView?.fontSize = nil
         case kIconColumnIdentifier:
             let iconView = view as? IconTableCellView
             iconView?.configure(iconType: .none)
@@ -271,10 +271,10 @@ extension MainViewController: NSTableViewDelegate {
             roomPositionView?.roomPosition = chat.roomPosition
             roomPositionView?.commentNo = chat.no
             roomPositionView?.fontSize = min(tableViewFontSize, maximumFontSizeForNonMainColumn)
-        case kScoreColumnIdentifier:
-            let scoreView = view as? ScoreTableCellView
-            scoreView?.configure(live: live, chat: chat)
-            scoreView?.fontSize = min(tableViewFontSize, maximumFontSizeForNonMainColumn)
+        case kTimeColumnIdentifier:
+            let timeView = view as? TimeTableCellView
+            timeView?.configure(live: live, chat: chat)
+            timeView?.fontSize = min(tableViewFontSize, maximumFontSizeForNonMainColumn)
         case kIconColumnIdentifier:
             let iconView = view as? IconTableCellView
             let iconType = { () -> IconType in
@@ -693,7 +693,7 @@ private extension MainViewController {
     func registerNibs() {
         let nibs = [
             (kNibNameRoomPositionTableCellView, kRoomPositionColumnIdentifier),
-            (kNibNameScoreTableCellView, kScoreColumnIdentifier),
+            (kNibNameTimeTableCellView, kTimeColumnIdentifier),
             (kNibNameIconTableCellView, kIconColumnIdentifier),
             (kNibNameCommentTableCellView, kCommentColumnIdentifier),
             (kNibNameUserIdTableCellView, kUserIdColumnIdentifier),

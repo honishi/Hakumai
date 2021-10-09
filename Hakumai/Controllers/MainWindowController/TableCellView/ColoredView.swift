@@ -1,5 +1,5 @@
 //
-//  ScoreView.swift
+//  ColoredView.swift
 //  Hakumai
 //
 //  Created by Hiroyuki Onishi on 11/25/14.

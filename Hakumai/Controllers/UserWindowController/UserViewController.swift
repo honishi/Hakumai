@@ -51,7 +51,7 @@ extension UserViewController {
     private func registerNibs() {
         let nibs = [
             (kNibNameRoomPositionTableCellView, kRoomPositionColumnIdentifier),
-            (kNibNameScoreTableCellView, kScoreColumnIdentifier),
+            (kNibNameTimeTableCellView, kTimeColumnIdentifier),
             (kNibNameCommentTableCellView, kCommentColumnIdentifier)]
         for (nibName, identifier) in nibs {
             guard let nib = NSNib(nibNamed: nibName, bundle: Bundle.main) else { continue }
@@ -198,8 +198,8 @@ private extension UserViewController {
             let roomPositionView = view as? RoomPositionTableCellView
             roomPositionView?.roomPosition = chat.roomPosition
             roomPositionView?.commentNo = chat.no
-        case kScoreColumnIdentifier:
-            (view as? ScoreTableCellView)?.configure(live: nicoUtility.live, chat: chat)
+        case kTimeColumnIdentifier:
+            (view as? TimeTableCellView)?.configure(live: nicoUtility.live, chat: chat)
         case kCommentColumnIdentifier:
             let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)

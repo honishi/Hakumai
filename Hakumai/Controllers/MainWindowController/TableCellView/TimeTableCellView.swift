@@ -1,5 +1,5 @@
 //
-//  ScoreTableCellView.swift
+//  TimeTableCellView.swift
 //  Hakumai
 //
 //  Created by Hiroyuki Onishi on 11/25/14.
@@ -9,23 +9,22 @@
 import Foundation
 import AppKit
 
-final class ScoreTableCellView: NSTableCellView {
+final class TimeTableCellView: NSTableCellView {
     @IBOutlet weak var coloredView: ColoredView!
-    @IBOutlet weak var scoreLabel: NSTextField!
+    @IBOutlet weak var timeLabel: NSTextField!
 
     var fontSize: CGFloat? { didSet { set(fontSize: fontSize) } }
 }
 
-extension ScoreTableCellView {
+extension TimeTableCellView {
     func configure(live: Live?, chat: Chat?) {
-        coloredView.fillColor = color(forChatScore: chat)
-        scoreLabel.stringValue = time(live: live, chat: chat)
+        coloredView.fillColor = color(chat: chat)
+        timeLabel.stringValue = time(live: live, chat: chat)
     }
 }
 
-private extension ScoreTableCellView {
-    func color(forChatScore chat: Chat?) -> NSColor {
-        // println("\(score)")
+private extension TimeTableCellView {
+    func color(chat: Chat?) -> NSColor {
         guard let chat = chat else { return UIHelper.systemMessageColorBackground() }
         return chat.isSystemComment ? UIHelper.systemMessageColorBackground() : UIHelper.scoreColorGreen()
     }
@@ -37,7 +36,7 @@ private extension ScoreTableCellView {
 
     func set(fontSize: CGFloat?) {
         let size = fontSize ?? CGFloat(kDefaultFontSize)
-        scoreLabel.font = NSFont.systemFont(ofSize: size)
+        timeLabel.font = NSFont.systemFont(ofSize: size)
     }
 }
 
