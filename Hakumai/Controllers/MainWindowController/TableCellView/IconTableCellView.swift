@@ -10,7 +10,7 @@ import Cocoa
 import Kingfisher
 
 enum IconType {
-    case system
+    case none
     case user(URL?)
 }
 
@@ -23,9 +23,8 @@ final class IconTableCellView: NSTableCellView {
 extension IconTableCellView {
     func configure(iconType: IconType) {
         reset()
-
         switch iconType {
-        case .system:
+        case .none:
             // no-op.
             break
         case .user(let iconUrl):

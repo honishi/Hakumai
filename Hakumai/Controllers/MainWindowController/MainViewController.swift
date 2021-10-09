@@ -241,7 +241,7 @@ extension MainViewController: NSTableViewDelegate {
             scoreView?.fontSize = nil
         case kIconColumnIdentifier:
             let iconView = view as? IconTableCellView
-            iconView?.configure(iconType: .system)
+            iconView?.configure(iconType: .none)
         case kCommentColumnIdentifier:
             let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)
@@ -276,7 +276,7 @@ extension MainViewController: NSTableViewDelegate {
         case kIconColumnIdentifier:
             let iconView = view as? IconTableCellView
             let iconType = { () -> IconType in
-                if chat.isSystemComment { return .system }
+                if chat.isSystemComment { return .none }
                 let iconUrl = nicoUtility.userIconUrl(for: chat.userId)
                 return .user(iconUrl)
             }()
