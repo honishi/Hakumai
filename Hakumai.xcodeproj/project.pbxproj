@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		9A3A22960489C07A1AB8A317 /* Pods_Hakumai.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84A41989D935D7A03EBFCB87 /* Pods_Hakumai.framework */; };
 		A7F49743094E5F56137600E8 /* Pods_HakumaiTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 624C843B0BCD6D9BBCFABC5C /* Pods_HakumaiTests.framework */; };
+		DB022ED1271144CF003DC12A /* ThumbnailTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB022ED0271144CF003DC12A /* ThumbnailTableCellView.swift */; };
+		DB022ED3271144F8003DC12A /* ThumbnailTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB022ED2271144F8003DC12A /* ThumbnailTableCellView.xib */; };
 		DB0E10641A39B6C200A10E00 /* GeneralViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0E10631A39B6C200A10E00 /* GeneralViewController.swift */; };
 		DB0E10681A39B6DD00A10E00 /* MuteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0E10671A39B6DD00A10E00 /* MuteViewController.swift */; };
 		DB0F0ECD1A16441D00F8BDC5 /* NicoUtilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0F0ECC1A16441D00F8BDC5 /* NicoUtilityTests.swift */; };
@@ -119,6 +121,8 @@
 		624C843B0BCD6D9BBCFABC5C /* Pods_HakumaiTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_HakumaiTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		84A41989D935D7A03EBFCB87 /* Pods_Hakumai.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Hakumai.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C64D90E7D7263B8BAA24E4EB /* Pods-HakumaiTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HakumaiTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-HakumaiTests/Pods-HakumaiTests.release.xcconfig"; sourceTree = "<group>"; };
+		DB022ED0271144CF003DC12A /* ThumbnailTableCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailTableCellView.swift; sourceTree = "<group>"; };
+		DB022ED2271144F8003DC12A /* ThumbnailTableCellView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ThumbnailTableCellView.xib; sourceTree = "<group>"; };
 		DB0E10631A39B6C200A10E00 /* GeneralViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralViewController.swift; sourceTree = "<group>"; };
 		DB0E10671A39B6DD00A10E00 /* MuteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MuteViewController.swift; sourceTree = "<group>"; };
 		DB0F0ECC1A16441D00F8BDC5 /* NicoUtilityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicoUtilityTests.swift; sourceTree = "<group>"; };
@@ -423,6 +427,8 @@
 				DB7EB89B1A24AA3700C3BFB5 /* RoomPositionTableCellView.xib */,
 				DB7B3DE41A2434FB00205470 /* ScoreTableCellView.swift */,
 				DB7B3DE11A242D7B00205470 /* ScoreTableCellView.xib */,
+				DB022ED0271144CF003DC12A /* ThumbnailTableCellView.swift */,
+				DB022ED2271144F8003DC12A /* ThumbnailTableCellView.xib */,
 				DB1E32C81A2CC85C00CD874A /* UserIdTableCellView.swift */,
 				DB1E32CA1A2CC87200CD874A /* UserIdTableCellView.xib */,
 			);
@@ -712,6 +718,7 @@
 				DB55AC641A33905200CFAD99 /* PremiumTableCellView.xib in Resources */,
 				DB7EB89C1A24AA3700C3BFB5 /* RoomPositionTableCellView.xib in Resources */,
 				DB7B3DE21A242D7B00205470 /* ScoreTableCellView.xib in Resources */,
+				DB022ED3271144F8003DC12A /* ThumbnailTableCellView.xib in Resources */,
 				DB1E32CB1A2CC87200CD874A /* UserIdTableCellView.xib in Resources */,
 				DBA541E81A483710005FF218 /* UserWindowController.storyboard in Resources */,
 			);
@@ -928,6 +935,7 @@
 				DB82B3A11C0724C000EFE3D9 /* SpeechManager.swift in Sources */,
 				DBAC3D3B21C569A900B09673 /* StoryBoards.swift in Sources */,
 				DBA414CC1A1A16F300E0CAD3 /* String+Extensions.swift in Sources */,
+				DB022ED1271144CF003DC12A /* ThumbnailTableCellView.swift in Sources */,
 				DBC9A388265FD1BF007B40F1 /* TokenStore.swift in Sources */,
 				DB7B3DE81A246EE200205470 /* UIHelper.swift in Sources */,
 				DB52B0AD1A2102C700E78C6A /* User.swift in Sources */,

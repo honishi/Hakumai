@@ -231,6 +231,9 @@ extension MainViewController: NSTableViewDelegate {
             let scoreView = view as? ScoreTableCellView
             scoreView?.chat = nil
             scoreView?.fontSize = nil
+        case kThumbnailColumnIdentifier:
+            let thumbnailView = view as? ThumbnailTableCellView
+        // TODO: configure
         case kCommentColumnIdentifier:
             let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)
@@ -262,6 +265,9 @@ extension MainViewController: NSTableViewDelegate {
             let scoreView = view as? ScoreTableCellView
             scoreView?.chat = chat
             scoreView?.fontSize = min(tableViewFontSize, maximumFontSizeForNonMainColumn)
+        case kThumbnailColumnIdentifier:
+            let thumbnailView = view as? ThumbnailTableCellView
+        // TODO: configure
         case kCommentColumnIdentifier:
             let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)
@@ -673,6 +679,7 @@ private extension MainViewController {
         let nibs = [
             (kNibNameRoomPositionTableCellView, kRoomPositionColumnIdentifier),
             (kNibNameScoreTableCellView, kScoreColumnIdentifier),
+            (kNibNameThumbnailTableCellView, kThumbnailColumnIdentifier),
             (kNibNameCommentTableCellView, kCommentColumnIdentifier),
             (kNibNameUserIdTableCellView, kUserIdColumnIdentifier),
             (kNibNamePremiumTableCellView, kPremiumColumnIdentifier)]
