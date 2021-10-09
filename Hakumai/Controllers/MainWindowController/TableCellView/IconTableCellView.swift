@@ -22,28 +22,25 @@ final class IconTableCellView: NSTableCellView {
 
 extension IconTableCellView {
     func configure(iconType: IconType) {
-        DispatchQueue.main.async { self._configure(iconType: iconType) }
-    }
-}
-
-private extension IconTableCellView {
-    func reset() {
-        iconImageView.kf.cancelDownloadTask()
-        iconImageView.image = NSImage()
-    }
-
-    func _configure(iconType: IconType) {
         reset()
         switch iconType {
         case .none:
             // no-op.
             break
         case .user(let iconUrl):
-            if let iconUrl = iconUrl {
-                iconImageView.kf.setImage(
-                    with: iconUrl,
-                    placeholder: Asset.defaultUserImage.image)
-            }
+            guard let iconUrl = iconUrl else { return }
+            iconImageView.kf.setImage(
+                with: iconUrl,
+                placeholder: Asset.defaultUserImage.image)
         }
+    }
+}
+
+private extension IconTableCellView {
+    func reset() {
+        // https://stackoverflow.com/a/62006790/13220031
+        iconImageView.kf.cancelDownloadTask()
+        iconImageView.kf.setImage(with: URL(string: ""))
+        iconImageView.image = nil
     }
 }
