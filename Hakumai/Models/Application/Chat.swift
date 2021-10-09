@@ -17,11 +17,11 @@ final class Chat: CustomStringConvertible {
     let userId: String
     let comment: String
     let premium: Premium
-    let score: Int? = 0
 
     var isRawUserId: Bool { Chat.isRawUserId(userId) }
     var isUserComment: Bool { Chat.isUserComment(premium) }
     var isSystemComment: Bool { Chat.isSystemComment(premium) }
+    var hasUserIcon: Bool { isUserComment && isRawUserId }
 
     var description: String {
         return (

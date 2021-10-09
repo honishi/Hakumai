@@ -25,26 +25,9 @@ final class RoomPositionTableCellView: NSTableCellView {
 }
 
 private extension RoomPositionTableCellView {
-    // swiftlint:disable cyclomatic_complexity
     func color(forRoomPosition roomPosition: RoomPosition?) -> NSColor {
-        guard let roomPosition = roomPosition else {
-            return UIHelper.systemMessageColorBackground()
-        }
-        switch roomPosition {
-        case .arena:    return UIHelper.roomColorArena()
-        case .standA:   return UIHelper.roomColorStandA()
-        case .standB:   return UIHelper.roomColorStandB()
-        case .standC:   return UIHelper.roomColorStandC()
-        case .standD:   return UIHelper.roomColorStandD()
-        case .standE:   return UIHelper.roomColorStandE()
-        case .standF:   return UIHelper.roomColorStandF()
-        case .standG:   return UIHelper.roomColorStandG()
-        case .standH:   return UIHelper.roomColorStandH()
-        case .standI:   return UIHelper.roomColorStandI()
-        case .standJ:   return UIHelper.roomColorStandJ()
-        }
+        return roomPosition == nil ? UIHelper.systemMessageColorBackground() : UIHelper.roomColorArena()
     }
-    // swiftlint:enable cyclomatic_complexity
 
     func string(forRoomPosition roomPosition: RoomPosition?) -> String {
         guard let roomPosition = roomPosition else { return "" }

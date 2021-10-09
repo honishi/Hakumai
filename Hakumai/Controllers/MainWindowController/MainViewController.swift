@@ -157,7 +157,7 @@ extension MainViewController: NSTableViewDelegate {
 
         var rowHeight: CGFloat = 0
 
-        guard let commentTableColumn = tableView.tableColumn(withIdentifier: convertToNSUserInterfaceItemIdentifier(kCommentColumnIdentifier)) else { return rowHeight }
+        guard let commentTableColumn = tableView.tableColumn(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: kCommentColumnIdentifier)) else { return rowHeight }
         let commentColumnWidth = commentTableColumn.width
         rowHeight = commentColumnHeight(forMessage: message, width: commentColumnWidth)
 
@@ -178,7 +178,13 @@ extension MainViewController: NSTableViewDelegate {
             attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
         // log.debug("\(commentRect.size.width),\(commentRect.size.height)")
 
-        return max(commentRect.size.height, minimumRowHeight)
+        let iconHeight = message.chat?.hasUserIcon == true ? iconColumnWidth : 0
+        return max(iconHeight, max(commentRect.size.height, minimumRowHeight))
+    }
+
+    private var iconColumnWidth: CGFloat {
+        let iconColumnId = NSUserInterfaceItemIdentifier(kIconColumnIdentifier)
+        return tableView.tableColumn(withIdentifier: iconColumnId)?.width ?? 0
     }
 
     private func calculateMinimumRowHeight(fontSize: CGFloat) -> CGFloat {
@@ -193,9 +199,12 @@ extension MainViewController: NSTableViewDelegate {
         guard let column = (aNotification as NSNotification).userInfo?["NSTableColumn"] as? NSTableColumn else {
             return
         }
-        if convertFromNSUserInterfaceItemIdentifier(column.identifier) == kCommentColumnIdentifier {
+        switch column.identifier.rawValue {
+        case kIconColumnIdentifier, kCommentColumnIdentifier:
             rowHeightCache.removeAll(keepingCapacity: false)
             tableView.reloadData()
+        default:
+            break
         }
     }
 
@@ -221,16 +230,19 @@ extension MainViewController: NSTableViewDelegate {
     }
 
     private func configure(view: NSTableCellView, forSystemMessage message: Message, withTableColumn tableColumn: NSTableColumn) {
-        switch convertFromNSUserInterfaceItemIdentifier(tableColumn.identifier) {
+        switch tableColumn.identifier.rawValue {
         case kRoomPositionColumnIdentifier:
             let roomPositionView = view as? RoomPositionTableCellView
             roomPositionView?.roomPosition = nil
             roomPositionView?.commentNo = nil
             roomPositionView?.fontSize = nil
-        case kScoreColumnIdentifier:
-            let scoreView = view as? ScoreTableCellView
-            scoreView?.chat = nil
-            scoreView?.fontSize = nil
+        case kTimeColumnIdentifier:
+            let timeView = view as? TimeTableCellView
+            timeView?.configure(live: nil, chat: nil)
+            timeView?.fontSize = nil
+        case kIconColumnIdentifier:
+            let iconView = view as? IconTableCellView
+            iconView?.configure(iconType: .none)
         case kCommentColumnIdentifier:
             let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)
@@ -252,16 +264,24 @@ extension MainViewController: NSTableViewDelegate {
     private func configure(view: NSTableCellView, forChat message: Message, withTableColumn tableColumn: NSTableColumn) {
         guard let chat = message.chat else { return }
 
-        switch convertFromNSUserInterfaceItemIdentifier(tableColumn.identifier) {
+        switch tableColumn.identifier.rawValue {
         case kRoomPositionColumnIdentifier:
             let roomPositionView = view as? RoomPositionTableCellView
             roomPositionView?.roomPosition = chat.roomPosition
             roomPositionView?.commentNo = chat.no
             roomPositionView?.fontSize = min(tableViewFontSize, maximumFontSizeForNonMainColumn)
-        case kScoreColumnIdentifier:
-            let scoreView = view as? ScoreTableCellView
-            scoreView?.chat = chat
-            scoreView?.fontSize = min(tableViewFontSize, maximumFontSizeForNonMainColumn)
+        case kTimeColumnIdentifier:
+            let timeView = view as? TimeTableCellView
+            timeView?.configure(live: live, chat: chat)
+            timeView?.fontSize = min(tableViewFontSize, maximumFontSizeForNonMainColumn)
+        case kIconColumnIdentifier:
+            let iconView = view as? IconTableCellView
+            let iconType = { () -> IconType in
+                if chat.isSystemComment { return .none }
+                let iconUrl = nicoUtility.userIconUrl(for: chat.userId)
+                return .user(iconUrl)
+            }()
+            iconView?.configure(iconType: iconType)
         case kCommentColumnIdentifier:
             let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)
@@ -672,14 +692,15 @@ private extension MainViewController {
     func registerNibs() {
         let nibs = [
             (kNibNameRoomPositionTableCellView, kRoomPositionColumnIdentifier),
-            (kNibNameScoreTableCellView, kScoreColumnIdentifier),
+            (kNibNameTimeTableCellView, kTimeColumnIdentifier),
+            (kNibNameIconTableCellView, kIconColumnIdentifier),
             (kNibNameCommentTableCellView, kCommentColumnIdentifier),
             (kNibNameUserIdTableCellView, kUserIdColumnIdentifier),
             (kNibNamePremiumTableCellView, kPremiumColumnIdentifier)]
 
         for (nibName, identifier) in nibs {
             guard let nib = NSNib(nibNamed: nibName, bundle: Bundle.main) else { continue }
-            tableView.register(nib, forIdentifier: convertToNSUserInterfaceItemIdentifier(identifier))
+            tableView.register(nib, forIdentifier: NSUserInterfaceItemIdentifier(rawValue: identifier))
         }
     }
 
@@ -958,9 +979,9 @@ private extension MainViewController {
     @objc func updateElapsedLabelValue() {
         var display = defaultElapsedTimeValue
 
-        if let startTime = nicoUtility.live?.startTime {
+        if let beginTime = nicoUtility.live?.beginTime {
             var prefix = ""
-            var elapsed = Date().timeIntervalSince(startTime as Date)
+            var elapsed = Date().timeIntervalSince(beginTime as Date)
             if elapsed < 0 {
                 prefix = "-"
                 elapsed = abs(elapsed)
@@ -1130,18 +1151,9 @@ private extension NSButton {
 }
 
 // Helper function inserted by Swift 4.2 migrator.
-private func convertToNSUserInterfaceItemIdentifier(_ input: String) -> NSUserInterfaceItemIdentifier {
-    NSUserInterfaceItemIdentifier(rawValue: input)
-}
-
-// Helper function inserted by Swift 4.2 migrator.
 private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
     guard let input = input else { return nil }
     return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
 }
 
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSUserInterfaceItemIdentifier(_ input: NSUserInterfaceItemIdentifier) -> String {
-    input.rawValue
-}
 // swiftlint:enable file_length

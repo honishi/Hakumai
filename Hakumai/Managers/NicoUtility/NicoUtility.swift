@@ -836,7 +836,7 @@ private extension WatchProgramsResponse {
             ),
             baseTime: data.program.schedule.vposBaseTime,
             openTime: data.program.schedule.openTime,
-            startTime: data.program.schedule.beginTime
+            beginTime: data.program.schedule.beginTime
         )
     }
 }

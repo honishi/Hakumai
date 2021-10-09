@@ -10,5 +10,5 @@ markdown: kramdown
 exclude: ["README.md"]
 
 # Binary version
-binary_version: 0.87.0
-binary_date: 2021/10/8
+binary_version: 0.88.0
+binary_date: 2021/10/9

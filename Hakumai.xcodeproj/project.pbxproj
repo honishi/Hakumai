@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		9A3A22960489C07A1AB8A317 /* Pods_Hakumai.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84A41989D935D7A03EBFCB87 /* Pods_Hakumai.framework */; };
 		A7F49743094E5F56137600E8 /* Pods_HakumaiTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 624C843B0BCD6D9BBCFABC5C /* Pods_HakumaiTests.framework */; };
+		DB022ED1271144CF003DC12A /* IconTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB022ED0271144CF003DC12A /* IconTableCellView.swift */; };
+		DB022ED3271144F8003DC12A /* IconTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB022ED2271144F8003DC12A /* IconTableCellView.xib */; };
 		DB0E10641A39B6C200A10E00 /* GeneralViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0E10631A39B6C200A10E00 /* GeneralViewController.swift */; };
 		DB0E10681A39B6DD00A10E00 /* MuteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0E10671A39B6DD00A10E00 /* MuteViewController.swift */; };
 		DB0F0ECD1A16441D00F8BDC5 /* NicoUtilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0F0ECC1A16441D00F8BDC5 /* NicoUtilityTests.swift */; };
@@ -46,8 +48,8 @@
 		DB73A38C1A4F43F6008423D0 /* MuteAddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB73A38B1A4F43F6008423D0 /* MuteAddViewController.swift */; };
 		DB74B86C1A6E790C0064AC28 /* BrowserHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB74B86B1A6E790C0064AC28 /* BrowserHelper.swift */; };
 		DB7B3DDC1A23B35300205470 /* ColoredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B3DDB1A23B35300205470 /* ColoredView.swift */; };
-		DB7B3DE21A242D7B00205470 /* ScoreTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB7B3DE11A242D7B00205470 /* ScoreTableCellView.xib */; };
-		DB7B3DE51A2434FB00205470 /* ScoreTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B3DE41A2434FB00205470 /* ScoreTableCellView.swift */; };
+		DB7B3DE21A242D7B00205470 /* TimeTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB7B3DE11A242D7B00205470 /* TimeTableCellView.xib */; };
+		DB7B3DE51A2434FB00205470 /* TimeTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B3DE41A2434FB00205470 /* TimeTableCellView.swift */; };
 		DB7B3DE81A246EE200205470 /* UIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B3DE71A246EE200205470 /* UIHelper.swift */; };
 		DB7BA06E1A58B6B7000778CF /* ChatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA06D1A58B6B7000778CF /* ChatTests.swift */; };
 		DB7BA0721A58C021000778CF /* HandleNameAddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7BA0711A58C021000778CF /* HandleNameAddViewController.swift */; };
@@ -119,6 +121,8 @@
 		624C843B0BCD6D9BBCFABC5C /* Pods_HakumaiTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_HakumaiTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		84A41989D935D7A03EBFCB87 /* Pods_Hakumai.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Hakumai.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C64D90E7D7263B8BAA24E4EB /* Pods-HakumaiTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HakumaiTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-HakumaiTests/Pods-HakumaiTests.release.xcconfig"; sourceTree = "<group>"; };
+		DB022ED0271144CF003DC12A /* IconTableCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconTableCellView.swift; sourceTree = "<group>"; };
+		DB022ED2271144F8003DC12A /* IconTableCellView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = IconTableCellView.xib; sourceTree = "<group>"; };
 		DB0E10631A39B6C200A10E00 /* GeneralViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralViewController.swift; sourceTree = "<group>"; };
 		DB0E10671A39B6DD00A10E00 /* MuteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MuteViewController.swift; sourceTree = "<group>"; };
 		DB0F0ECC1A16441D00F8BDC5 /* NicoUtilityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicoUtilityTests.swift; sourceTree = "<group>"; };
@@ -165,8 +169,8 @@
 		DB73A38B1A4F43F6008423D0 /* MuteAddViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MuteAddViewController.swift; sourceTree = "<group>"; };
 		DB74B86B1A6E790C0064AC28 /* BrowserHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrowserHelper.swift; sourceTree = "<group>"; };
 		DB7B3DDB1A23B35300205470 /* ColoredView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColoredView.swift; sourceTree = "<group>"; };
-		DB7B3DE11A242D7B00205470 /* ScoreTableCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ScoreTableCellView.xib; sourceTree = "<group>"; };
-		DB7B3DE41A2434FB00205470 /* ScoreTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScoreTableCellView.swift; sourceTree = "<group>"; };
+		DB7B3DE11A242D7B00205470 /* TimeTableCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TimeTableCellView.xib; sourceTree = "<group>"; };
+		DB7B3DE41A2434FB00205470 /* TimeTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeTableCellView.swift; sourceTree = "<group>"; };
 		DB7B3DE71A246EE200205470 /* UIHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIHelper.swift; sourceTree = "<group>"; };
 		DB7BA06D1A58B6B7000778CF /* ChatTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatTests.swift; sourceTree = "<group>"; };
 		DB7BA0711A58C021000778CF /* HandleNameAddViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HandleNameAddViewController.swift; sourceTree = "<group>"; };
@@ -417,12 +421,14 @@
 				DB7B3DDB1A23B35300205470 /* ColoredView.swift */,
 				DB5164FB264E662100F809B3 /* CommentTableCellView.swift */,
 				DB5164FD264E664500F809B3 /* CommentTableCellView.xib */,
+				DB022ED0271144CF003DC12A /* IconTableCellView.swift */,
+				DB022ED2271144F8003DC12A /* IconTableCellView.xib */,
 				DB55AC671A33908300CFAD99 /* PremiumTableCellView.swift */,
 				DB55AC631A33905200CFAD99 /* PremiumTableCellView.xib */,
 				DB7EB8A11A24AA5100C3BFB5 /* RoomPositionTableCellView.swift */,
 				DB7EB89B1A24AA3700C3BFB5 /* RoomPositionTableCellView.xib */,
-				DB7B3DE41A2434FB00205470 /* ScoreTableCellView.swift */,
-				DB7B3DE11A242D7B00205470 /* ScoreTableCellView.xib */,
+				DB7B3DE41A2434FB00205470 /* TimeTableCellView.swift */,
+				DB7B3DE11A242D7B00205470 /* TimeTableCellView.xib */,
 				DB1E32C81A2CC85C00CD874A /* UserIdTableCellView.swift */,
 				DB1E32CA1A2CC87200CD874A /* UserIdTableCellView.xib */,
 			);
@@ -705,13 +711,14 @@
 			files = (
 				DB15AF9626567A18009DACBE /* AuthWindowController.storyboard in Resources */,
 				DB5164FE264E664500F809B3 /* CommentTableCellView.xib in Resources */,
+				DB022ED3271144F8003DC12A /* IconTableCellView.xib in Resources */,
 				DB2AE0C81A0EE2FD00B1CE4D /* Images.xcassets in Resources */,
 				DB2F516126669675000A1C58 /* Localizable.strings in Resources */,
 				DBAC3D3321C55E4C00B09673 /* MainWindowController.storyboard in Resources */,
 				DBA541EA1A4838F4005FF218 /* PreferenceWindowController.storyboard in Resources */,
 				DB55AC641A33905200CFAD99 /* PremiumTableCellView.xib in Resources */,
 				DB7EB89C1A24AA3700C3BFB5 /* RoomPositionTableCellView.xib in Resources */,
-				DB7B3DE21A242D7B00205470 /* ScoreTableCellView.xib in Resources */,
+				DB7B3DE21A242D7B00205470 /* TimeTableCellView.xib in Resources */,
 				DB1E32CB1A2CC87200CD874A /* UserIdTableCellView.xib in Resources */,
 				DBA541E81A483710005FF218 /* UserWindowController.storyboard in Resources */,
 			);
@@ -894,6 +901,7 @@
 				DB414C0B1A4811C4008D2F40 /* Global.swift in Sources */,
 				DB7BA0721A58C021000778CF /* HandleNameAddViewController.swift in Sources */,
 				DBE094021A586FFC004554FD /* HandleNameManager.swift in Sources */,
+				DB022ED1271144CF003DC12A /* IconTableCellView.swift in Sources */,
 				DBAC3D3921C568B500B09673 /* Images.swift in Sources */,
 				DBB473041A359082002C797E /* Int+Extensions.swift in Sources */,
 				DBAB69621A5C1A70002FCD95 /* KeychainUtility.swift in Sources */,
@@ -924,10 +932,10 @@
 				DBFB81511A36B52E00294934 /* PreferenceWindowController.swift in Sources */,
 				DB55AC681A33908300CFAD99 /* PremiumTableCellView.swift in Sources */,
 				DB7EB8A21A24AA5100C3BFB5 /* RoomPositionTableCellView.swift in Sources */,
-				DB7B3DE51A2434FB00205470 /* ScoreTableCellView.swift in Sources */,
 				DB82B3A11C0724C000EFE3D9 /* SpeechManager.swift in Sources */,
 				DBAC3D3B21C569A900B09673 /* StoryBoards.swift in Sources */,
 				DBA414CC1A1A16F300E0CAD3 /* String+Extensions.swift in Sources */,
+				DB7B3DE51A2434FB00205470 /* TimeTableCellView.swift in Sources */,
 				DBC9A388265FD1BF007B40F1 /* TokenStore.swift in Sources */,
 				DB7B3DE81A246EE200205470 /* UIHelper.swift in Sources */,
 				DB52B0AD1A2102C700E78C6A /* User.swift in Sources */,
@@ -1098,7 +1106,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hakumai/Hakumai.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1087;
+				CURRENT_PROJECT_VERSION = 1088;
 				DEVELOPMENT_TEAM = N4SRN3NAQ3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Hakumai/Info.plist;
@@ -1107,7 +1115,7 @@
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
 				);
-				MARKETING_VERSION = 0.87.0;
+				MARKETING_VERSION = 0.88.0;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1131,7 +1139,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hakumai/Hakumai.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1087;
+				CURRENT_PROJECT_VERSION = 1088;
 				DEVELOPMENT_TEAM = N4SRN3NAQ3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Hakumai/Info.plist;
@@ -1140,7 +1148,7 @@
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
 				);
-				MARKETING_VERSION = 0.87.0;
+				MARKETING_VERSION = 0.88.0;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
