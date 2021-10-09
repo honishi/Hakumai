@@ -260,11 +260,10 @@ extension MainViewController: NSTableViewDelegate {
         }
     }
 
-    // swiftlint:disable cyclomatic_complexity
     private func configure(view: NSTableCellView, forChat message: Message, withTableColumn tableColumn: NSTableColumn) {
         guard let chat = message.chat else { return }
 
-        switch convertFromNSUserInterfaceItemIdentifier(tableColumn.identifier) {
+        switch tableColumn.identifier.rawValue {
         case kRoomPositionColumnIdentifier:
             let roomPositionView = view as? RoomPositionTableCellView
             roomPositionView?.roomPosition = chat.roomPosition
@@ -275,13 +274,13 @@ extension MainViewController: NSTableViewDelegate {
             scoreView?.chat = chat
             scoreView?.fontSize = min(tableViewFontSize, maximumFontSizeForNonMainColumn)
         case kIconColumnIdentifier:
-            guard chat.isUserComment else { return }
             let iconView = view as? IconTableCellView
-            iconView?.configure(iconType: {
+            let iconType = { () -> IconType in
                 if chat.isSystemComment { return .system }
                 let iconUrl = nicoUtility.userIconUrl(for: chat.userId)
                 return .user(iconUrl)
-            }())
+            }()
+            iconView?.configure(iconType: iconType)
         case kCommentColumnIdentifier:
             let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)
@@ -306,7 +305,6 @@ extension MainViewController: NSTableViewDelegate {
             break
         }
     }
-    // swiftlint:enable cyclomatic_complexity
 
     // MARK: Utility
     private func contentAndAttributes(forMessage message: Message) -> (String, [String: Any]) {
