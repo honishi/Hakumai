@@ -29,9 +29,12 @@ extension IconTableCellView {
             break
         case .user(let iconUrl):
             guard let iconUrl = iconUrl else { return }
+            let retry = DelayRetryStrategy(maxRetryCount: 3, retryInterval: .seconds(1))
             iconImageView.kf.setImage(
                 with: iconUrl,
-                placeholder: Asset.defaultUserImage.image)
+                placeholder: Asset.defaultUserImage.image,
+                options: [.retryStrategy(retry)]
+            )
         }
     }
 }
