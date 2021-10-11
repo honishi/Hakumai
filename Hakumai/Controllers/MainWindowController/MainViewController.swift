@@ -737,14 +737,14 @@ private extension MainViewController {
         switch connectionStatus {
         case .disconnected:
             controls.forEach { $0.isEnabled = true }
-            connectButton.image = Asset.playCircleBlack.image
+            connectButton.image = Asset.playArrowBlack.image
             progressIndicator.stopAnimation(self)
         case .connecting:
             controls.forEach { $0.isEnabled = false }
             progressIndicator.startAnimation(self)
         case .connected:
             controls.forEach { $0.isEnabled = true }
-            connectButton.image = Asset.cancelBlack.image
+            connectButton.image = Asset.stopBlack.image
             progressIndicator.stopAnimation(self)
         }
     }

@@ -682,7 +682,7 @@
                                                     <constraint firstAttribute="width" constant="23" id="sHU-9D-NQq"/>
                                                     <constraint firstAttribute="height" constant="23" id="tRB-ro-kon"/>
                                                 </constraints>
-                                                <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="play_circle_black" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="WjB-ei-g5l">
+                                                <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="play_arrow_black" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="WjB-ei-g5l">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="cellTitle"/>
                                                 </buttonCell>
@@ -1396,7 +1396,7 @@ Gw
         <image name="DefaultCommunityImage" width="128" height="128"/>
         <image name="link_black" width="48" height="48"/>
         <image name="people_black" width="72" height="72"/>
-        <image name="play_circle_black" width="48" height="48"/>
+        <image name="play_arrow_black" width="48" height="48"/>
         <image name="schedule_black" width="72" height="72"/>
     </resources>
 </document>
