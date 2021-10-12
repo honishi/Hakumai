@@ -17,6 +17,7 @@
                     <rect key="frame" x="0.0" y="17" width="17" height="17"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="17" id="Dsg-rV-h29"/>
+                        <constraint firstAttribute="height" constant="17" id="EWz-nf-QtD"/>
                     </constraints>
                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="UserIdRawId" id="mw3-QE-7jV"/>
                 </imageView>
@@ -44,6 +45,6 @@
         </customView>
     </objects>
     <resources>
-        <image name="UserIdRawId" width="17" height="17"/>
+        <image name="UserIdRawId" width="48" height="48"/>
     </resources>
 </document>
