@@ -1,15 +1,17 @@
 {
   "images" : [
     {
+      "filename" : "user_id_raw_dark.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "UserIdRawId@2x.png",
+      "filename" : "user_id_raw_dark@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "user_id_raw_dark@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

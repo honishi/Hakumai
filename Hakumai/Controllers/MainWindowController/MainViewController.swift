@@ -59,9 +59,9 @@ final class MainViewController: NSViewController {
     @IBOutlet private weak var commentTextField: NSTextField!
     @IBOutlet private weak var commentAnonymouslyButton: NSButton!
 
-    @IBOutlet private weak var elapsedTimeTitleLabel: NSTextField!
+    @IBOutlet private weak var elapsedTimeIconImageView: NSImageView!
     @IBOutlet private weak var elapsedTimeValueLabel: NSTextField!
-    @IBOutlet private weak var activeUserTitleLabel: NSTextField!
+    @IBOutlet private weak var activeUserIconImageView: NSImageView!
     @IBOutlet private weak var activeUserValueLabel: NSTextField!
     @IBOutlet private weak var maxActiveUserValueLabel: NSTextField!
     @IBOutlet private weak var activeUserChartView: LineChartView!
@@ -666,10 +666,8 @@ private extension MainViewController {
 
         commentTextField.placeholderString = L10n.commentTextFieldPlaceholder
 
-        elapsedTimeTitleLabel.stringValue = "\(L10n.elapsedTime):"
         elapsedTimeValueLabel.stringValue = defaultElapsedTimeValue
-        activeUserTitleLabel.stringValue = "\(L10n.activeUser):"
-        activeUserTitleLabel.toolTip = L10n.activeUserDescription
+        activeUserIconImageView.toolTip = L10n.activeUserDescription
         activeUserValueLabel.toolTip = L10n.activeUserDescription
         maxActiveUserValueLabel.toolTip = L10n.activeUserDescription
         activeUserChartView.toolTip = L10n.activeUserHistoryDescription
@@ -739,14 +737,14 @@ private extension MainViewController {
         switch connectionStatus {
         case .disconnected:
             controls.forEach { $0.isEnabled = true }
-            connectButton.image = Asset.startLive.image
+            connectButton.image = Asset.playArrowBlack.image
             progressIndicator.stopAnimation(self)
         case .connecting:
             controls.forEach { $0.isEnabled = false }
             progressIndicator.startAnimation(self)
         case .connected:
             controls.forEach { $0.isEnabled = true }
-            connectButton.image = Asset.stopLive.image
+            connectButton.image = Asset.stopBlack.image
             progressIndicator.stopAnimation(self)
         }
     }
