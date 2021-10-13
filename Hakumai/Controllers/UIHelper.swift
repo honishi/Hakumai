@@ -53,7 +53,7 @@ final class UIHelper {
 
     // MARK: - Score Colors
     static func scoreColorGreen() -> NSColor {
-        return NSColor(rgba: "#24cf20")
+        return NSColor(rgba: "#0EA50B")
     }
 
     // MARK: - Room Colors

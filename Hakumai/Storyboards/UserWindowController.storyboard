@@ -212,7 +212,7 @@
                                                             </textFieldCell>
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                         </tableColumn>
-                                                        <tableColumn identifier="TimeColumn" width="8" minWidth="8" maxWidth="80" id="GFX-CN-eBq">
+                                                        <tableColumn identifier="TimeColumn" width="10" minWidth="8" maxWidth="80" id="GFX-CN-eBq">
                                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Time">
                                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                 <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
