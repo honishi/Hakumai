@@ -48,7 +48,7 @@ extension NSColor {
 final class UIHelper {
     // MARK: - System Message Colors
     static func systemMessageColorBackground() -> NSColor {
-        return NSColor.lightGray
+        return NSColor(rgba: "#808080")
     }
 
     // MARK: - Score Colors
