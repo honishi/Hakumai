@@ -15,7 +15,7 @@ enum IconType {
 }
 
 final class IconTableCellView: NSTableCellView {
-    @IBOutlet weak var iconImageView: NSImageView!
+    @IBOutlet weak var iconImageView: CircleImageView!
 
     override func prepareForReuse() {}
 }

@@ -180,7 +180,6 @@ extension UserViewController {
 
 private extension UserViewController {
     func configureView() {
-        userIconImageView.addBorder()
         userIdTitleLabel.stringValue = "\(L10n.userId):"
         userIdCopyButton.title = L10n.copyUserId
         userNameTitleLabel.stringValue = "\(L10n.userName):"
