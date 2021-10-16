@@ -39,6 +39,7 @@
 		DB55AC681A33908300CFAD99 /* PremiumTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB55AC671A33908300CFAD99 /* PremiumTableCellView.swift */; };
 		DB576ED02657A4980041050A /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB576ECF2657A4980041050A /* AuthManager.swift */; };
 		DB576ED32657A5BC0041050A /* AuthModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB576ED22657A5BC0041050A /* AuthModel.swift */; };
+		DB61AD82271B18DA001656F5 /* CircleImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB61AD81271B18DA001656F5 /* CircleImageView.swift */; };
 		DB682D421A36E6AE00499C72 /* Parameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB682D411A36E6AE00499C72 /* Parameter.swift */; };
 		DB690973266372230081F24F /* BottomButtonScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB690972266372230081F24F /* BottomButtonScrollView.swift */; };
 		DB6C73142662894B0026A8C0 /* NSScrollView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6C73132662894B0026A8C0 /* NSScrollView+Extensions.swift */; };
@@ -160,6 +161,7 @@
 		DB55AC671A33908300CFAD99 /* PremiumTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PremiumTableCellView.swift; sourceTree = "<group>"; };
 		DB576ECF2657A4980041050A /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
 		DB576ED22657A5BC0041050A /* AuthModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthModel.swift; sourceTree = "<group>"; };
+		DB61AD81271B18DA001656F5 /* CircleImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleImageView.swift; sourceTree = "<group>"; };
 		DB682D411A36E6AE00499C72 /* Parameter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Parameter.swift; sourceTree = "<group>"; };
 		DB690972266372230081F24F /* BottomButtonScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomButtonScrollView.swift; sourceTree = "<group>"; };
 		DB6C73132662894B0026A8C0 /* NSScrollView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSScrollView+Extensions.swift"; sourceTree = "<group>"; };
@@ -378,6 +380,7 @@
 			isa = PBXGroup;
 			children = (
 				DB690972266372230081F24F /* BottomButtonScrollView.swift */,
+				DB61AD81271B18DA001656F5 /* CircleImageView.swift */,
 				DB1E736F26F237F600A6F4C0 /* ClickTableView.swift */,
 			);
 			path = CustomView;
@@ -892,6 +895,7 @@
 				DB690973266372230081F24F /* BottomButtonScrollView.swift in Sources */,
 				DB74B86C1A6E790C0064AC28 /* BrowserHelper.swift in Sources */,
 				DBFA887B1A1BC25A005349AD /* Chat.swift in Sources */,
+				DB61AD82271B18DA001656F5 /* CircleImageView.swift in Sources */,
 				DB1E737026F237F600A6F4C0 /* ClickTableView.swift in Sources */,
 				DB7B3DDC1A23B35300205470 /* ColoredView.swift in Sources */,
 				DB5164FC264E662100F809B3 /* CommentTableCellView.swift in Sources */,
@@ -1106,7 +1110,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hakumai/Hakumai.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1091;
+				CURRENT_PROJECT_VERSION = 1092;
 				DEVELOPMENT_TEAM = N4SRN3NAQ3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Hakumai/Info.plist;
@@ -1115,7 +1119,7 @@
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
 				);
-				MARKETING_VERSION = 0.91.0;
+				MARKETING_VERSION = 0.92.0;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1139,7 +1143,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hakumai/Hakumai.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1091;
+				CURRENT_PROJECT_VERSION = 1092;
 				DEVELOPMENT_TEAM = N4SRN3NAQ3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Hakumai/Info.plist;
@@ -1148,7 +1152,7 @@
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
 				);
-				MARKETING_VERSION = 0.91.0;
+				MARKETING_VERSION = 0.92.0;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = (
 					"$(inherited)",

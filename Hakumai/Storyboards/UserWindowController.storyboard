@@ -41,7 +41,7 @@
                                     <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vN0-rY-5xL">
                                         <rect key="frame" x="2" y="520" width="580" height="64"/>
                                         <subviews>
-                                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="PrD-Pq-Hm2">
+                                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="PrD-Pq-Hm2" customClass="CircleImageView" customModule="Hakumai" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="5" width="55" height="55"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="55" id="2XU-CJ-fD7"/>
