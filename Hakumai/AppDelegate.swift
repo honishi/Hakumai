@@ -8,6 +8,7 @@
 
 import Foundation
 import AppKit
+import Kingfisher
 
 private let mainWindowDefaultTopLeftPoint = NSPoint(x: 100, y: 100)
 
@@ -25,6 +26,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         initializeUserDefaults()
         addObserverForUserDefaults()
         configureMenuItems()
+        clearImageCache()
         debugPrintToken()
         openNewWindow()
     }
@@ -214,6 +216,12 @@ private extension AppDelegate {
             speakMenuItem.isHidden = false
         } else {
             speakMenuItem.isHidden = true
+        }
+    }
+
+    func clearImageCache() {
+        KingfisherManager.shared.cache.clearCache {
+            log.debug("Disk cache for images has been cleared.")
         }
     }
 }
