@@ -413,6 +413,7 @@ extension MainViewController: NicoUtilityDelegate {
     func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, error: NicoError) {
         logSystemMessageToTableView(L10n.failedToPrepareLive(error.toMessage))
         updateMainControlViews(status: .disconnected)
+        stopRankingTimer()
     }
 
     func nicoUtilityDidConnectToLive(_ nicoUtility: NicoUtilityType, roomPosition: RoomPosition, connectContext: NicoConnectContext) {
