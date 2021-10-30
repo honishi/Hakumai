@@ -13,7 +13,9 @@ import Kanna
 private let chikuranUrl = "http://www.chikuwachan.com/live/"
 private let maxPage = 5
 
-final class RankingManager {}
+final class RankingManager {
+    private var isRequesting = false
+}
 
 extension RankingManager: RankingManagerType {
     func queryRank(liveId: String, completion: @escaping (Int?) -> Void) {
@@ -23,11 +25,20 @@ extension RankingManager: RankingManagerType {
 
 private extension RankingManager {
     func queryRank(liveId: String, page: Int, completion: @escaping (Int?) -> Void) {
-        guard let urlString = rankingUrlString(for: page),
-              let url = URL(string: urlString) else {
+        guard !isRequesting else {
+            // Previous request is still in progress, reject the query.
             completion(nil)
             return
         }
+        guard let urlString = rankingUrlString(for: page),
+              let url = URL(string: urlString)
+        else {
+            // Query reached to max page, quit to further requesting.
+            completion(nil)
+            isRequesting = false
+            return
+        }
+        isRequesting = true
         var request = URLRequest(url: url)
         request.headers = [commonUserAgentKey: commonUserAgentValue]
         AF.request(request)
@@ -38,8 +49,9 @@ private extension RankingManager {
                 case .success(let html):
                     if let rank = self?.extractRank(from: html, liveId: liveId) {
                         completion(rank)
+                        self?.isRequesting = false
                     } else {
-                        // Continue fetching further page recursively.
+                        // Continue to request further page recursively.
                         self?.queryRank(
                             liveId: liveId,
                             page: page + 1,
@@ -48,6 +60,7 @@ private extension RankingManager {
                 case .failure(let error):
                     log.error(error)
                     completion(nil)
+                    self?.isRequesting = false
                 }
             }
     }
