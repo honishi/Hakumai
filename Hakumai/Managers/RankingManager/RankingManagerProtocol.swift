@@ -9,5 +9,5 @@
 import Foundation
 
 protocol RankingManagerType {
-    func queryRank(liveNumber: String, completion: @escaping (Int?) -> Void)
+    func queryRank(liveId: String, completion: @escaping (Int?) -> Void)
 }

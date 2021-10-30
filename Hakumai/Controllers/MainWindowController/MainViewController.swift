@@ -13,6 +13,7 @@ import Kingfisher
 
 private let userWindowDefaultTopLeftPoint = NSPoint(x: 100, y: 100)
 private let calculateActiveUserInterval: TimeInterval = 5
+private let checkRankingInterval: TimeInterval = 60
 private let maximumFontSizeForNonMainColumn: CGFloat = 16
 private let defaultMinimumRowHeight: CGFloat = 17
 
@@ -65,6 +66,8 @@ final class MainViewController: NSViewController {
     @IBOutlet private weak var activeUserValueLabel: NSTextField!
     @IBOutlet private weak var maxActiveUserValueLabel: NSTextField!
     @IBOutlet private weak var activeUserChartView: LineChartView!
+    @IBOutlet private weak var rankingIconImageView: NSImageView!
+    @IBOutlet private weak var rankingValueLabel: NSTextField!
     @IBOutlet private weak var progressIndicator: NSProgressIndicator!
 
     // MARK: Menu Delegate
@@ -673,6 +676,9 @@ private extension MainViewController {
         activeUserValueLabel.toolTip = L10n.activeUserDescription
         maxActiveUserValueLabel.toolTip = L10n.activeUserDescription
         activeUserChartView.toolTip = L10n.activeUserHistoryDescription
+        rankingIconImageView.toolTip = L10n.rankingDescription
+        rankingValueLabel.stringValue = defaultLabelValue
+        rankingValueLabel.toolTip = L10n.rankingDescription
 
         scrollView.enableBottomScrollButton()
         configureTableView()
@@ -961,18 +967,21 @@ private extension MainViewController {
             selector: #selector(MainViewController.updateElapsedLabelValue),
             userInfo: nil,
             repeats: true)
+        elapsedTimeTimer?.fire()
         activeUserTimer = Timer.scheduledTimer(
             timeInterval: calculateActiveUserInterval,
             target: self,
             selector: #selector(MainViewController.calculateAndUpdateActiveUser),
             userInfo: nil,
             repeats: true)
+        activeUserTimer?.fire()
         rankingTimer = Timer.scheduledTimer(
-            timeInterval: 30,
+            timeInterval: checkRankingInterval,
             target: self,
             selector: #selector(MainViewController.checkAndUpdateRanking),
             userInfo: nil,
             repeats: true)
+        rankingTimer?.fire()
     }
 
     func stopTimers() {
@@ -1132,8 +1141,18 @@ private extension MainViewController {
 // MARK: Ranking Methods
 private extension MainViewController {
     @objc func checkAndUpdateRanking() {
-        rankingManager.queryRank(liveNumber: "1") {
-            log.debug($0)
+        guard let liveId = live?.liveId else { return }
+        rankingManager.queryRank(liveId: liveId) { [weak self] in
+            self?.updateRanking(rank: $0)
+        }
+    }
+
+    func updateRanking(rank: Int?) {
+        DispatchQueue.main.async {
+            self.rankingValueLabel.stringValue = {
+                guard let rank = rank else { return defaultLabelValue }
+                return "#\(rank)"
+            }()
         }
     }
 }

@@ -86,6 +86,7 @@
 "active_user_description" = "直近5分間にコメントをしたユニークユーザー数 / 最大ユニークユーザー数";
 "active_user_history_description" = "直近20分間のユニークユーザー数の履歴";
 "max_active_user_count" = "最大アクティブユーザー数";
+"ranking_description" = "ちくらんの順位 (100位以内に入っている場合のみ表示)";
 "comment_count" = "コメント";
 "comment_text_field_placeholder" = "⌘O (リターンのみで最下行にスクロール)";
 "community_id" = "コミュニティID";

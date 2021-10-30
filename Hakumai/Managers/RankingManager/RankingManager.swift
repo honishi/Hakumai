@@ -8,16 +8,14 @@
 
 import Foundation
 import Alamofire
+import Kanna
 
 private let chikuranUrl = "http://www.chikuwachan.com/live/"
-private let userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36"
 
-final class RankingManager {
-    //
-}
+final class RankingManager {}
 
 extension RankingManager: RankingManagerType {
-    func queryRank(liveNumber: String, completion: @escaping (Int?) -> Void) {
+    func queryRank(liveId: String, completion: @escaping (Int?) -> Void) {
         guard let url = URL(string: chikuranUrl) else {
             completion(nil)
             return
@@ -30,12 +28,26 @@ extension RankingManager: RankingManagerType {
             .responseString {
                 switch $0.result {
                 case .success(let html):
-                    log.debug(html)
-                    completion(123)
+                    let rank = self.extractRank(from: html, liveId: liveId)
+                    completion(rank)
                 case .failure(let error):
                     log.error(error)
                     completion(nil)
                 }
             }
+    }
+
+    func extractRank(from html: String, liveId: String) -> Int? {
+        guard let doc = try? HTML(html: html, encoding: .utf8) else { return nil }
+        for live in doc.xpath("//div[contains(@class, \"live\")]") {
+            guard let rankText = live.xpath("//div[@class=\"rank\"]").first?.text,
+                  let rank = Int(rankText),
+                  let linkText = live.xpath("//div[@class=\"title\"]/a").first?["href"],
+                  let _liveId = linkText.extractLiveProgramId() else { continue }
+            if liveId == _liveId {
+                return rank
+            }
+        }
+        return nil
     }
 }
