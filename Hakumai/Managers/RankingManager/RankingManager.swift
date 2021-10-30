@@ -19,26 +19,29 @@ final class RankingManager {
 
 extension RankingManager: RankingManagerType {
     func queryRank(liveId: String, completion: @escaping (Int?) -> Void) {
+        log.info("Starting rank query for (\(liveId)")
+        guard !isRequesting else {
+            log.error("Previous request is still in progress, reject the query request.")
+            completion(nil)
+            return
+        }
         queryRank(liveId: liveId, page: 1, completion: completion)
     }
 }
 
 private extension RankingManager {
     func queryRank(liveId: String, page: Int, completion: @escaping (Int?) -> Void) {
-        guard !isRequesting else {
-            // Previous request is still in progress, reject the query.
-            completion(nil)
-            return
-        }
+        log.debug("Processing page \(page) for (\(liveId)")
         guard let urlString = rankingUrlString(for: page),
               let url = URL(string: urlString)
         else {
-            // Query reached to max page, quit to further requesting.
+            log.debug("Query page reached to max, quit to further requesting.")
             completion(nil)
             isRequesting = false
             return
         }
         isRequesting = true
+        log.debug("Start page request...")
         var request = URLRequest(url: url)
         request.headers = [commonUserAgentKey: commonUserAgentValue]
         AF.request(request)
@@ -48,16 +51,20 @@ private extension RankingManager {
                 switch $0.result {
                 case .success(let html):
                     if let rank = self?.extractRank(from: html, liveId: liveId) {
+                        log.debug("Rank found -> \(rank), query finished.")
                         completion(rank)
                         self?.isRequesting = false
                     } else {
                         // Continue to request further page recursively.
+                        let nextPage = page + 1
+                        log.debug("Rank not found, go further page -> \(nextPage)")
                         self?.queryRank(
                             liveId: liveId,
-                            page: page + 1,
+                            page: nextPage,
                             completion: completion)
                     }
                 case .failure(let error):
+                    log.error("Error.")
                     log.error(error)
                     completion(nil)
                     self?.isRequesting = false

@@ -392,12 +392,13 @@ extension MainViewController: NicoUtilityDelegate {
         self.live = live
 
         updateCommunityViews(for: live)
-        startTimers()
         focusCommentTextField()
+        startElapsedTimeAndActiveUserTimer()
 
         switch connectContext {
         case .normal:
             resetActiveUser()
+            startRankingTimer()
             logSystemMessageToTableView(L10n.preparedLive(user.nickname))
         case .reconnect:
             break
@@ -469,13 +470,16 @@ extension MainViewController: NicoUtilityDelegate {
                 break
             }
         }
-        stopTimers()
+        stopElapsedTimeAndActiveUserTimer()
         connectedToLive = false
         updateSpeechManagerState()
 
         switch disconnectContext {
-        case .normal:       updateMainControlViews(status: .disconnected)
-        case .reconnect:    updateMainControlViews(status: .connecting)
+        case .normal:
+            updateMainControlViews(status: .disconnected)
+            stopRankingTimer()
+        case .reconnect:
+            updateMainControlViews(status: .connecting)
         }
     }
 
@@ -960,31 +964,22 @@ private extension MainViewController {
 
 // MARK: Timer Functions
 private extension MainViewController {
-    func startTimers() {
+    func startElapsedTimeAndActiveUserTimer() {
         elapsedTimeTimer = Timer.scheduledTimer(
             timeInterval: 1,
             target: self,
             selector: #selector(MainViewController.updateElapsedLabelValue),
             userInfo: nil,
             repeats: true)
-        elapsedTimeTimer?.fire()
         activeUserTimer = Timer.scheduledTimer(
             timeInterval: calculateActiveUserInterval,
             target: self,
             selector: #selector(MainViewController.calculateAndUpdateActiveUser),
             userInfo: nil,
             repeats: true)
-        activeUserTimer?.fire()
-        rankingTimer = Timer.scheduledTimer(
-            timeInterval: checkRankingInterval,
-            target: self,
-            selector: #selector(MainViewController.checkAndUpdateRanking),
-            userInfo: nil,
-            repeats: true)
-        rankingTimer?.fire()
     }
 
-    func stopTimers() {
+    func stopElapsedTimeAndActiveUserTimer() {
         elapsedTimeTimer?.invalidate()
         elapsedTimeTimer = nil
         activeUserTimer?.invalidate()
@@ -1140,6 +1135,21 @@ private extension MainViewController {
 
 // MARK: Ranking Methods
 private extension MainViewController {
+    func startRankingTimer() {
+        rankingTimer = Timer.scheduledTimer(
+            timeInterval: checkRankingInterval,
+            target: self,
+            selector: #selector(MainViewController.checkAndUpdateRanking),
+            userInfo: nil,
+            repeats: true)
+        rankingTimer?.fire()
+    }
+
+    func stopRankingTimer() {
+        rankingTimer?.invalidate()
+        rankingTimer = nil
+    }
+
     @objc func checkAndUpdateRanking() {
         guard let liveId = live?.liveId else { return }
         rankingManager.queryRank(liveId: liveId) { [weak self] in
