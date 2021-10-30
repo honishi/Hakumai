@@ -160,7 +160,7 @@ internal enum L10n {
   }
   /// Quit Hakumai
   internal static let quitHakumai = L10n.tr("Localizable", "quit_hakumai")
-  /// Chikuran Rank (Show only when ranked in top 100)
+  /// Chikuran Rank (Show only when ranked in top 500)
   internal static let rankingDescription = L10n.tr("Localizable", "ranking_description")
   /// Reconnected.
   internal static let reconnected = L10n.tr("Localizable", "reconnected")

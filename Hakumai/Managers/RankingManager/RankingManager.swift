@@ -11,12 +11,20 @@ import Alamofire
 import Kanna
 
 private let chikuranUrl = "http://www.chikuwachan.com/live/"
+private let maxPage = 5
 
 final class RankingManager {}
 
 extension RankingManager: RankingManagerType {
     func queryRank(liveId: String, completion: @escaping (Int?) -> Void) {
-        guard let url = URL(string: chikuranUrl) else {
+        queryRank(liveId: liveId, page: 1, completion: completion)
+    }
+}
+
+private extension RankingManager {
+    func queryRank(liveId: String, page: Int, completion: @escaping (Int?) -> Void) {
+        guard let urlString = rankingUrlString(for: page),
+              let url = URL(string: urlString) else {
             completion(nil)
             return
         }
@@ -25,16 +33,32 @@ extension RankingManager: RankingManagerType {
         AF.request(request)
             .cURLDescription { log.debug($0) }
             .validate()
-            .responseString {
+            .responseString { [weak self] in
                 switch $0.result {
                 case .success(let html):
-                    let rank = self.extractRank(from: html, liveId: liveId)
-                    completion(rank)
+                    if let rank = self?.extractRank(from: html, liveId: liveId) {
+                        completion(rank)
+                    } else {
+                        // Continue fetching further page recursively.
+                        self?.queryRank(
+                            liveId: liveId,
+                            page: page + 1,
+                            completion: completion)
+                    }
                 case .failure(let error):
                     log.error(error)
                     completion(nil)
                 }
             }
+    }
+
+    func rankingUrlString(for page: Int) -> String? {
+        if page == 1 {
+            return chikuranUrl
+        } else if page <= maxPage {
+            return chikuranUrl + "index.cgi?page=\(page)"
+        }
+        return nil
     }
 
     func extractRank(from html: String, liveId: String) -> Int? {

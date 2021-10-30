@@ -86,7 +86,7 @@
 "active_user_description" = "Active unique users in last 5 minutes / Max active unique users";
 "active_user_history_description" = "History of active unique users in last 20 minutes";
 "max_active_user_count" = "Max Active Users";
-"ranking_description" = "Chikuran Rank (Show only when ranked in top 100)";
+"ranking_description" = "Chikuran Rank (Show only when ranked in top 500)";
 "comment_count" = "Comments";
 "comment_text_field_placeholder" = "⌘O (Empty ⏎ to scroll to bottom)";
 "community_id" = "Community Id";
