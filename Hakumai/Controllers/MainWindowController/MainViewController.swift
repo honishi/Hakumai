@@ -76,6 +76,7 @@ final class MainViewController: NSViewController {
     let nicoUtility = NicoUtility()
     let messageContainer = MessageContainer()
     let speechManager = SpeechManager()
+    let rankingManager: RankingManagerType = RankingManager()
 
     private(set) var live: Live?
     private var connectedToLive = false
@@ -92,6 +93,7 @@ final class MainViewController: NSViewController {
 
     private var elapsedTimeTimer: Timer?
     private var activeUserTimer: Timer?
+    private var rankingTimer: Timer?
 
     private var activeUserCount = 0
     private var maxActiveUserCount = 0
@@ -965,6 +967,12 @@ private extension MainViewController {
             selector: #selector(MainViewController.calculateAndUpdateActiveUser),
             userInfo: nil,
             repeats: true)
+        rankingTimer = Timer.scheduledTimer(
+            timeInterval: 30,
+            target: self,
+            selector: #selector(MainViewController.checkAndUpdateRanking),
+            userInfo: nil,
+            repeats: true)
     }
 
     func stopTimers() {
@@ -972,6 +980,8 @@ private extension MainViewController {
         elapsedTimeTimer = nil
         activeUserTimer?.invalidate()
         activeUserTimer = nil
+        rankingTimer?.invalidate()
+        rankingTimer = nil
     }
 
     @objc func updateElapsedLabelValue() {
@@ -1116,6 +1126,15 @@ private extension MainViewController {
         let padding = Double(_max) * 0.05
         activeUserChartView.leftAxis.axisMinimum = -1 * padding
         activeUserChartView.leftAxis.axisMaximum = Double(_max) + padding
+    }
+}
+
+// MARK: Ranking Methods
+private extension MainViewController {
+    @objc func checkAndUpdateRanking() {
+        rankingManager.queryRank(liveNumber: "1") {
+            log.debug($0)
+        }
     }
 }
 
