@@ -19,7 +19,7 @@ final class RankingManager {
 
 extension RankingManager: RankingManagerType {
     func queryRank(liveId: String, completion: @escaping (Int?) -> Void) {
-        log.info("Starting rank query for (\(liveId)")
+        log.info("Starting rank query for (\(liveId))")
         guard !isRequesting else {
             log.error("Previous request is still in progress, reject the query request.")
             completion(nil)
@@ -31,7 +31,7 @@ extension RankingManager: RankingManagerType {
 
 private extension RankingManager {
     func queryRank(liveId: String, page: Int, completion: @escaping (Int?) -> Void) {
-        log.debug("Processing page \(page) for (\(liveId)")
+        log.debug("Processing page \(page) for (\(liveId))")
         guard let urlString = rankingUrlString(for: page),
               let url = URL(string: urlString)
         else {
@@ -51,7 +51,7 @@ private extension RankingManager {
                 switch $0.result {
                 case .success(let html):
                     if let rank = self?.extractRank(from: html, liveId: liveId) {
-                        log.debug("Rank found -> \(rank), query finished.")
+                        log.debug("Rank found -> #\(rank), query finished.")
                         completion(rank)
                         self?.isRequesting = false
                     } else {

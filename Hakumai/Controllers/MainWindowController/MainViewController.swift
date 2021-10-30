@@ -984,8 +984,6 @@ private extension MainViewController {
         elapsedTimeTimer = nil
         activeUserTimer?.invalidate()
         activeUserTimer = nil
-        rankingTimer?.invalidate()
-        rankingTimer = nil
     }
 
     @objc func updateElapsedLabelValue() {
