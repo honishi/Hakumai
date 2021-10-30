@@ -32,17 +32,8 @@ extension RankingManager: RankingManagerType {
 private extension RankingManager {
     func queryRank(liveId: String, page: Int, completion: @escaping (Int?) -> Void) {
         log.debug("Processing page \(page) for (\(liveId))")
-        guard let urlString = rankingUrlString(for: page),
-              let url = URL(string: urlString)
-        else {
-            log.debug("Query page reached to max, quit to further requesting.")
-            completion(nil)
-            isRequesting = false
-            return
-        }
         isRequesting = true
-        log.debug("Start page request...")
-        var request = URLRequest(url: url)
+        var request = URLRequest(url: rankingUrl(for: page))
         request.headers = [commonUserAgentKey: commonUserAgentValue]
         AF.request(request)
             .cURLDescription { log.debug($0) }
@@ -55,13 +46,21 @@ private extension RankingManager {
                         completion(rank)
                         self?.isRequesting = false
                     } else {
-                        // Continue to request further page recursively.
-                        let nextPage = page + 1
-                        log.debug("Rank not found, go further page -> \(nextPage)")
-                        self?.queryRank(
-                            liveId: liveId,
-                            page: nextPage,
-                            completion: completion)
+                        log.debug("Rank not found.")
+                        if page < maxPage {
+                            // Continue to request further page recursively.
+                            let nextPage = page + 1
+                            log.debug("Continue further query, page -> \(nextPage)")
+                            self?.queryRank(
+                                liveId: liveId,
+                                page: nextPage,
+                                completion: completion
+                            )
+                        } else {
+                            log.debug("Exceeded max page attemption, stop further query.")
+                            completion(nil)
+                            self?.isRequesting = false
+                        }
                     }
                 case .failure(let error):
                     log.error("Error.")
@@ -72,13 +71,17 @@ private extension RankingManager {
             }
     }
 
-    func rankingUrlString(for page: Int) -> String? {
+    func rankingUrl(for page: Int) -> URL {
+        let urlString: String
         if page == 1 {
-            return chikuranUrl
-        } else if page <= maxPage {
-            return chikuranUrl + "index.cgi?page=\(page)"
+            urlString = chikuranUrl
+        } else {
+            urlString = chikuranUrl + "index.cgi?page=\(page)"
         }
-        return nil
+        guard let url = URL(string: urlString) else {
+            fatalError("This case is not going to be happened.")
+        }
+        return url
     }
 
     func extractRank(from html: String, liveId: String) -> Int? {
