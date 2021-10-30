@@ -6,6 +6,7 @@ PODS:
   - FMDB (2.7.5):
     - FMDB/standard (= 2.7.5)
   - FMDB/standard (2.7.5)
+  - Kanna (5.2.7)
   - Kingfisher (6.3.0)
   - ObjcExceptionBridging (1.0.1):
     - ObjcExceptionBridging/ObjcExceptionBridging (= 1.0.1)
@@ -25,6 +26,7 @@ DEPENDENCIES:
   - Alamofire (~> 5.4.3)
   - Charts (from `https://github.com/danielgindi/Charts.git`, commit `857db248f8eab9293e7845a53900ad109dc5cade`)
   - FMDB (~> 2.7.5)
+  - Kanna (~> 5.2.7)
   - Kingfisher (~> 6.3.0)
   - SAMKeychain (~> 1.5.3)
   - SnapKit (~> 5.0.1)
@@ -38,6 +40,7 @@ SPEC REPOS:
   trunk:
     - Alamofire
     - FMDB
+    - Kanna
     - Kingfisher
     - ObjcExceptionBridging
     - SAMKeychain
@@ -62,6 +65,7 @@ SPEC CHECKSUMS:
   Alamofire: e447a2774a40c996748296fa2c55112fdbbc42f9
   Charts: 22f3a1f5993f0769aa5ad380ccb242a1500d6b95
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
+  Kanna: 01cfbddc127f5ff0963692f285fcbc8a9d62d234
   Kingfisher: 6c3df386db71d82c0817a429d2c9421a77396529
   ObjcExceptionBridging: c30e00eb3700467e695faeea30e26e18bd445001
   SAMKeychain: 483e1c9f32984d50ca961e26818a534283b4cd5c
@@ -72,6 +76,6 @@ SPEC CHECKSUMS:
   SwiftLint: 99f82d07b837b942dd563c668de129a03fc3fb52
   XCGLogger: 1943831ef907df55108b0b18657953f868de973b
 
-PODFILE CHECKSUM: e4ebaa07943f79d2bd0791860361b5a2983d4043
+PODFILE CHECKSUM: 96e9be43d123b988f1cb7e35024889aa9f47290e
 
 COCOAPODS: 1.10.1

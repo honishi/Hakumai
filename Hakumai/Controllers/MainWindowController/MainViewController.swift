@@ -13,6 +13,7 @@ import Kingfisher
 
 private let userWindowDefaultTopLeftPoint = NSPoint(x: 100, y: 100)
 private let calculateActiveUserInterval: TimeInterval = 5
+private let checkRankingInterval: TimeInterval = 60
 private let maximumFontSizeForNonMainColumn: CGFloat = 16
 private let defaultMinimumRowHeight: CGFloat = 17
 
@@ -65,6 +66,8 @@ final class MainViewController: NSViewController {
     @IBOutlet private weak var activeUserValueLabel: NSTextField!
     @IBOutlet private weak var maxActiveUserValueLabel: NSTextField!
     @IBOutlet private weak var activeUserChartView: LineChartView!
+    @IBOutlet private weak var rankingIconImageView: NSImageView!
+    @IBOutlet private weak var rankingValueLabel: NSTextField!
     @IBOutlet private weak var progressIndicator: NSProgressIndicator!
 
     // MARK: Menu Delegate
@@ -76,6 +79,7 @@ final class MainViewController: NSViewController {
     let nicoUtility = NicoUtility()
     let messageContainer = MessageContainer()
     let speechManager = SpeechManager()
+    let rankingManager: RankingManagerType = RankingManager()
 
     private(set) var live: Live?
     private var connectedToLive = false
@@ -92,6 +96,7 @@ final class MainViewController: NSViewController {
 
     private var elapsedTimeTimer: Timer?
     private var activeUserTimer: Timer?
+    private var rankingTimer: Timer?
 
     private var activeUserCount = 0
     private var maxActiveUserCount = 0
@@ -387,12 +392,13 @@ extension MainViewController: NicoUtilityDelegate {
         self.live = live
 
         updateCommunityViews(for: live)
-        startTimers()
         focusCommentTextField()
+        startElapsedTimeAndActiveUserTimer()
 
         switch connectContext {
         case .normal:
             resetActiveUser()
+            startRankingTimer()
             logSystemMessageToTableView(L10n.preparedLive(user.nickname))
         case .reconnect:
             break
@@ -407,6 +413,7 @@ extension MainViewController: NicoUtilityDelegate {
     func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, error: NicoError) {
         logSystemMessageToTableView(L10n.failedToPrepareLive(error.toMessage))
         updateMainControlViews(status: .disconnected)
+        stopRankingTimer()
     }
 
     func nicoUtilityDidConnectToLive(_ nicoUtility: NicoUtilityType, roomPosition: RoomPosition, connectContext: NicoConnectContext) {
@@ -464,13 +471,16 @@ extension MainViewController: NicoUtilityDelegate {
                 break
             }
         }
-        stopTimers()
+        stopElapsedTimeAndActiveUserTimer()
         connectedToLive = false
         updateSpeechManagerState()
 
         switch disconnectContext {
-        case .normal:       updateMainControlViews(status: .disconnected)
-        case .reconnect:    updateMainControlViews(status: .connecting)
+        case .normal:
+            updateMainControlViews(status: .disconnected)
+            stopRankingTimer()
+        case .reconnect:
+            updateMainControlViews(status: .connecting)
         }
     }
 
@@ -671,6 +681,9 @@ private extension MainViewController {
         activeUserValueLabel.toolTip = L10n.activeUserDescription
         maxActiveUserValueLabel.toolTip = L10n.activeUserDescription
         activeUserChartView.toolTip = L10n.activeUserHistoryDescription
+        rankingIconImageView.toolTip = L10n.rankingDescription
+        rankingValueLabel.stringValue = defaultLabelValue
+        rankingValueLabel.toolTip = L10n.rankingDescription
 
         scrollView.enableBottomScrollButton()
         configureTableView()
@@ -952,7 +965,7 @@ private extension MainViewController {
 
 // MARK: Timer Functions
 private extension MainViewController {
-    func startTimers() {
+    func startElapsedTimeAndActiveUserTimer() {
         elapsedTimeTimer = Timer.scheduledTimer(
             timeInterval: 1,
             target: self,
@@ -967,7 +980,7 @@ private extension MainViewController {
             repeats: true)
     }
 
-    func stopTimers() {
+    func stopElapsedTimeAndActiveUserTimer() {
         elapsedTimeTimer?.invalidate()
         elapsedTimeTimer = nil
         activeUserTimer?.invalidate()
@@ -1116,6 +1129,40 @@ private extension MainViewController {
         let padding = Double(_max) * 0.05
         activeUserChartView.leftAxis.axisMinimum = -1 * padding
         activeUserChartView.leftAxis.axisMaximum = Double(_max) + padding
+    }
+}
+
+// MARK: Ranking Methods
+private extension MainViewController {
+    func startRankingTimer() {
+        rankingTimer = Timer.scheduledTimer(
+            timeInterval: checkRankingInterval,
+            target: self,
+            selector: #selector(MainViewController.checkAndUpdateRanking),
+            userInfo: nil,
+            repeats: true)
+        rankingTimer?.fire()
+    }
+
+    func stopRankingTimer() {
+        rankingTimer?.invalidate()
+        rankingTimer = nil
+    }
+
+    @objc func checkAndUpdateRanking() {
+        guard let liveId = live?.liveId else { return }
+        rankingManager.queryRank(liveId: liveId) { [weak self] in
+            self?.updateRanking(rank: $0)
+        }
+    }
+
+    func updateRanking(rank: Int?) {
+        DispatchQueue.main.async {
+            self.rankingValueLabel.stringValue = {
+                guard let rank = rank else { return defaultLabelValue }
+                return "#\(rank)"
+            }()
+        }
     }
 }
 

@@ -21,6 +21,7 @@ target 'Hakumai' do
     # https://github.com/danielgindi/Charts/issues/4572
     # :tag => 'v4.0.1'
     :commit => '857db248f8eab9293e7845a53900ad109dc5cade'
+  pod 'Kanna', '~> 5.2.7'
 
   target 'HakumaiTests' do
     inherit! :search_paths

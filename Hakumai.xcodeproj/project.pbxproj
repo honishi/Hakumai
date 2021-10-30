@@ -21,6 +21,8 @@
 		DB1E32C91A2CC85C00CD874A /* UserIdTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1E32C81A2CC85C00CD874A /* UserIdTableCellView.swift */; };
 		DB1E32CB1A2CC87200CD874A /* UserIdTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB1E32CA1A2CC87200CD874A /* UserIdTableCellView.xib */; };
 		DB1E737026F237F600A6F4C0 /* ClickTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1E736F26F237F600A6F4C0 /* ClickTableView.swift */; };
+		DB22A638272D006900E2177D /* RankingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB22A637272D006900E2177D /* RankingManager.swift */; };
+		DB22A63A272D011000E2177D /* RankingManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB22A639272D011000E2177D /* RankingManagerProtocol.swift */; };
 		DB2AE0C41A0EE2FD00B1CE4D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0C31A0EE2FD00B1CE4D /* AppDelegate.swift */; };
 		DB2AE0C61A0EE2FD00B1CE4D /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0C51A0EE2FD00B1CE4D /* MainViewController.swift */; };
 		DB2AE0C81A0EE2FD00B1CE4D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB2AE0C71A0EE2FD00B1CE4D /* Images.xcassets */; };
@@ -134,6 +136,8 @@
 		DB1E32C81A2CC85C00CD874A /* UserIdTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserIdTableCellView.swift; sourceTree = "<group>"; };
 		DB1E32CA1A2CC87200CD874A /* UserIdTableCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UserIdTableCellView.xib; sourceTree = "<group>"; };
 		DB1E736F26F237F600A6F4C0 /* ClickTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickTableView.swift; sourceTree = "<group>"; };
+		DB22A637272D006900E2177D /* RankingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RankingManager.swift; sourceTree = "<group>"; };
+		DB22A639272D011000E2177D /* RankingManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RankingManagerProtocol.swift; sourceTree = "<group>"; };
 		DB2AE0BE1A0EE2FD00B1CE4D /* Hakumai.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hakumai.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB2AE0C21A0EE2FD00B1CE4D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DB2AE0C31A0EE2FD00B1CE4D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -267,6 +271,15 @@
 			path = MessageContainer;
 			sourceTree = "<group>";
 		};
+		DB22A636272D005700E2177D /* RankingManager */ = {
+			isa = PBXGroup;
+			children = (
+				DB22A637272D006900E2177D /* RankingManager.swift */,
+				DB22A639272D011000E2177D /* RankingManagerProtocol.swift */,
+			);
+			path = RankingManager;
+			sourceTree = "<group>";
+		};
 		DB2AE0B51A0EE2FD00B1CE4D = {
 			isa = PBXGroup;
 			children = (
@@ -393,6 +406,7 @@
 				DBE093F91A5867A7004554FD /* HandleNameManager */,
 				DB1E32C41A2C0CCE00CD874A /* MessageContainer */,
 				DBE093F61A585EC5004554FD /* NicoUtility */,
+				DB22A636272D005700E2177D /* RankingManager */,
 				DB82B39F1C07248700EFE3D9 /* SpeechManager */,
 			);
 			path = Managers;
@@ -749,6 +763,7 @@
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/Charts/Charts.framework",
 				"${BUILT_PRODUCTS_DIR}/FMDB/FMDB.framework",
+				"${BUILT_PRODUCTS_DIR}/Kanna/Kanna.framework",
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
 				"${BUILT_PRODUCTS_DIR}/ObjcExceptionBridging/ObjcExceptionBridging.framework",
 				"${BUILT_PRODUCTS_DIR}/SAMKeychain/SAMKeychain.framework",
@@ -762,6 +777,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Charts.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FMDB.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kanna.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjcExceptionBridging.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SAMKeychain.framework",
@@ -935,6 +951,8 @@
 				DB9EFC781A3E9EB10087D302 /* PreferenceWindow.swift in Sources */,
 				DBFB81511A36B52E00294934 /* PreferenceWindowController.swift in Sources */,
 				DB55AC681A33908300CFAD99 /* PremiumTableCellView.swift in Sources */,
+				DB22A638272D006900E2177D /* RankingManager.swift in Sources */,
+				DB22A63A272D011000E2177D /* RankingManagerProtocol.swift in Sources */,
 				DB7EB8A21A24AA5100C3BFB5 /* RoomPositionTableCellView.swift in Sources */,
 				DB82B3A11C0724C000EFE3D9 /* SpeechManager.swift in Sources */,
 				DBAC3D3B21C569A900B09673 /* StoryBoards.swift in Sources */,
@@ -1110,7 +1128,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hakumai/Hakumai.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1093;
+				CURRENT_PROJECT_VERSION = 1094;
 				DEVELOPMENT_TEAM = N4SRN3NAQ3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Hakumai/Info.plist;
@@ -1119,7 +1137,7 @@
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
 				);
-				MARKETING_VERSION = 0.93.0;
+				MARKETING_VERSION = 0.94.0;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1143,7 +1161,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hakumai/Hakumai.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1093;
+				CURRENT_PROJECT_VERSION = 1094;
 				DEVELOPMENT_TEAM = N4SRN3NAQ3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Hakumai/Info.plist;
@@ -1152,7 +1170,7 @@
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
 				);
-				MARKETING_VERSION = 0.93.0;
+				MARKETING_VERSION = 0.94.0;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
