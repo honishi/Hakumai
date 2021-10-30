@@ -1119,7 +1119,7 @@
                                                             <constraint firstAttribute="height" constant="16" id="Y66-ED-DEk"/>
                                                             <constraint firstAttribute="width" constant="16" id="nzY-Xl-25o"/>
                                                         </constraints>
-                                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="people_black" id="s2o-rn-Smp"/>
+                                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="military_tech_black" id="s2o-rn-Smp"/>
                                                         <color key="contentTintColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                     </imageView>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oF2-Tt-DUQ">
@@ -1429,6 +1429,7 @@ Gw
     <resources>
         <image name="DefaultCommunityImage" width="128" height="128"/>
         <image name="link_black" width="48" height="48"/>
+        <image name="military_tech_black" width="48" height="48"/>
         <image name="people_black" width="72" height="72"/>
         <image name="play_arrow_black" width="48" height="48"/>
         <image name="schedule_black" width="72" height="72"/>

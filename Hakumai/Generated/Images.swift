@@ -22,6 +22,7 @@ internal enum Asset {
   internal static let defaultCommunityImage = ImageAsset(name: "DefaultCommunityImage")
   internal static let defaultUserImage = ImageAsset(name: "DefaultUserImage")
   internal static let linkBlack = ImageAsset(name: "link_black")
+  internal static let militaryTechBlack = ImageAsset(name: "military_tech_black")
   internal static let peopleBlack = ImageAsset(name: "people_black")
   internal static let playArrowBlack = ImageAsset(name: "play_arrow_black")
   internal static let scheduleBlack = ImageAsset(name: "schedule_black")
