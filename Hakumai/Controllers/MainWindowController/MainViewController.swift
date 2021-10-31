@@ -13,7 +13,6 @@ import Kingfisher
 
 private let userWindowDefaultTopLeftPoint = NSPoint(x: 100, y: 100)
 private let calculateActiveUserInterval: TimeInterval = 5
-private let checkRankingInterval: TimeInterval = 60
 private let maximumFontSizeForNonMainColumn: CGFloat = 16
 private let defaultMinimumRowHeight: CGFloat = 17
 
@@ -79,7 +78,7 @@ final class MainViewController: NSViewController {
     let nicoUtility = NicoUtility()
     let messageContainer = MessageContainer()
     let speechManager = SpeechManager()
-    let rankingManager: RankingManagerType = RankingManager()
+    let rankingManager: RankingManagerType = RankingManager.shared
 
     private(set) var live: Live?
     private var connectedToLive = false
@@ -110,6 +109,8 @@ final class MainViewController: NSViewController {
     // UserWindowControllers
     private var userWindowControllers = [UserWindowController]()
     private var nextUserWindowTopLeftPoint: NSPoint = NSPoint.zero
+
+    deinit { log.debug("deinit") }
 }
 
 // MARK: - Object Lifecycle
@@ -398,7 +399,7 @@ extension MainViewController: NicoUtilityDelegate {
         switch connectContext {
         case .normal:
             resetActiveUser()
-            startRankingTimer()
+            rankingManager.addDelegate(delegate: self, for: live.liveId)
             logSystemMessageToTableView(L10n.preparedLive(user.nickname))
         case .reconnect:
             break
@@ -413,7 +414,7 @@ extension MainViewController: NicoUtilityDelegate {
     func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, error: NicoError) {
         logSystemMessageToTableView(L10n.failedToPrepareLive(error.toMessage))
         updateMainControlViews(status: .disconnected)
-        stopRankingTimer()
+        rankingManager.removeDelegate(delegate: self)
     }
 
     func nicoUtilityDidConnectToLive(_ nicoUtility: NicoUtilityType, roomPosition: RoomPosition, connectContext: NicoConnectContext) {
@@ -478,7 +479,7 @@ extension MainViewController: NicoUtilityDelegate {
         switch disconnectContext {
         case .normal:
             updateMainControlViews(status: .disconnected)
-            stopRankingTimer()
+            rankingManager.removeDelegate(delegate: self)
         case .reconnect:
             updateMainControlViews(status: .connecting)
         }
@@ -486,6 +487,23 @@ extension MainViewController: NicoUtilityDelegate {
 
     func nicoUtilityDidReceiveStatistics(_ nicoUtility: NicoUtilityType, stat: LiveStatistics) {
         updateLiveStatistics(stat: stat)
+    }
+}
+
+extension MainViewController: RankingManagerDelegate {
+    func rankingManager(_ rankingManager: RankingManagerType, didUpdateRank rank: Int?, for liveId: String) {
+        let _rank = { () -> String in
+            guard let rank = rank else { return "-" }
+            return String(rank)
+        }()
+        let message = "Rank updated #\(_rank) for \(liveId)"
+        log.debug(message)
+        logSystemMessageToTableView(message)
+        updateRanking(rank: rank)
+    }
+
+    func rankingManager(_ rankingManager: RankingManagerType, hasDebugMessage message: String) {
+        logSystemMessageToTableView(message)
     }
 }
 
@@ -1134,28 +1152,6 @@ private extension MainViewController {
 
 // MARK: Ranking Methods
 private extension MainViewController {
-    func startRankingTimer() {
-        rankingTimer = Timer.scheduledTimer(
-            timeInterval: checkRankingInterval,
-            target: self,
-            selector: #selector(MainViewController.checkAndUpdateRanking),
-            userInfo: nil,
-            repeats: true)
-        rankingTimer?.fire()
-    }
-
-    func stopRankingTimer() {
-        rankingTimer?.invalidate()
-        rankingTimer = nil
-    }
-
-    @objc func checkAndUpdateRanking() {
-        guard let liveId = live?.liveId else { return }
-        rankingManager.queryRank(liveId: liveId) { [weak self] in
-            self?.updateRanking(rank: $0)
-        }
-    }
-
     func updateRanking(rank: Int?) {
         DispatchQueue.main.async {
             self.rankingValueLabel.stringValue = {

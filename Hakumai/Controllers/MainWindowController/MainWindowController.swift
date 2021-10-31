@@ -35,6 +35,8 @@ final class MainWindowController: NSWindowController {
     override func newWindowForTab(_ sender: Any?) {
         delegate?.mainWindowControllerRequestNewTab(self)
     }
+
+    deinit { log.debug("deinit") }
 }
 
 extension MainWindowController: NSWindowDelegate {
