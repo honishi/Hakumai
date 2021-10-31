@@ -9,5 +9,16 @@
 import Foundation
 
 protocol RankingManagerType {
-    func queryRank(liveId: String, completion: @escaping (Int?) -> Void)
+    func addDelegate(_ delegate: RankingManagerDelegate, for liveId: String)
+    func removeDelegate(_ delegate: RankingManagerDelegate)
+    var isRunning: Bool { get }
+}
+
+protocol RankingManagerDelegate: AnyObject {
+    func rankingManager(_ rankingManager: RankingManagerType, didUpdateRank rank: Int?, for liveId: String)
+    func rankingManager(_ rankingManager: RankingManagerType, hasDebugMessage message: String)
+}
+
+extension RankingManagerDelegate {
+    func rankingManager(_ rankingManager: RankingManagerType, hasDebugMessage message: String) {}
 }
