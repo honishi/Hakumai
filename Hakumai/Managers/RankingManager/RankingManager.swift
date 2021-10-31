@@ -28,7 +28,7 @@ final class RankingManager {
 }
 
 extension RankingManager: RankingManagerType {
-    func addDelegate(delegate: RankingManagerDelegate, for liveId: String) {
+    func addDelegate(_ delegate: RankingManagerDelegate, for liveId: String) {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
         delegates[liveId] = WeakDelegateReference(delegate: delegate)
@@ -38,7 +38,7 @@ extension RankingManager: RankingManagerType {
         notifyUpdatedRankToDelegates()
     }
 
-    func removeDelegate(delegate: RankingManagerDelegate) {
+    func removeDelegate(_ delegate: RankingManagerDelegate) {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
         delegates = delegates.filter { $0.value.delegate !== delegate }

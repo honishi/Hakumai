@@ -9,8 +9,8 @@
 import Foundation
 
 protocol RankingManagerType {
-    func addDelegate(delegate: RankingManagerDelegate, for liveId: String)
-    func removeDelegate(delegate: RankingManagerDelegate)
+    func addDelegate(_ delegate: RankingManagerDelegate, for liveId: String)
+    func removeDelegate(_ delegate: RankingManagerDelegate)
     var isRunning: Bool { get }
 }
 

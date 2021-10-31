@@ -400,7 +400,7 @@ extension MainViewController: NicoUtilityDelegate {
         switch connectContext {
         case .normal:
             resetActiveUser()
-            rankingManager.addDelegate(delegate: self, for: live.liveId)
+            rankingManager.addDelegate(self, for: live.liveId)
             logSystemMessageToTableView(L10n.preparedLive(user.nickname))
         case .reconnect:
             break
@@ -417,7 +417,7 @@ extension MainViewController: NicoUtilityDelegate {
     func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, error: NicoError) {
         logSystemMessageToTableView(L10n.failedToPrepareLive(error.toMessage))
         updateMainControlViews(status: .disconnected)
-        rankingManager.removeDelegate(delegate: self)
+        rankingManager.removeDelegate(self)
         logRankingManagerDebugMessageIfEnabled()
     }
 
@@ -483,7 +483,7 @@ extension MainViewController: NicoUtilityDelegate {
         switch disconnectContext {
         case .normal:
             updateMainControlViews(status: .disconnected)
-            rankingManager.removeDelegate(delegate: self)
+            rankingManager.removeDelegate(self)
         case .reconnect:
             updateMainControlViews(status: .connecting)
         }
