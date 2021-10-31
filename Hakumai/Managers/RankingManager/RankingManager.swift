@@ -17,6 +17,8 @@ private let maxPage = 5
 final class RankingManager {
     static let shared = RankingManager()
 
+    var isRunning: Bool { queryTimer != nil && queryTimer?.isValid == true }
+
     // Key: [liveId] -> Value: [weak reference to delegate object]
     private var delegates: [String: WeakDelegateReference] = [:]
     // Key: [liveId] -> Value: [ranking value]
@@ -102,7 +104,7 @@ private extension RankingManager {
                     if page < maxPage {
                         // Continue to request further page recursively.
                         let nextPage = page + 1
-                        me.logDebugMessage("Continue further query, page -> \(nextPage)")
+                        // me.logDebugMessage("Continue further query, page -> \(nextPage)")
                         me._queryRank(page: nextPage)
                         return
                     }
@@ -146,6 +148,7 @@ private extension RankingManager {
         // log.debug(rankMap)
         delegates.forEach { liveId, reference in
             let rank = self.rankMap[liveId]
+            logDebug(rank: rank, delegate: reference.delegate)
             reference.delegate?.rankingManager(self, didUpdateRank: rank, for: liveId)
         }
     }
@@ -165,6 +168,15 @@ private extension RankingManager {
     func notifyDebugMessageToDelegates(_ message: String) {
         let _message = "Rank: " + message
         delegates.forEach { $0.value.delegate?.rankingManager(self, hasDebugMessage: _message) }
+    }
+
+    func logDebug(rank: Int?, delegate: RankingManagerDelegate?) {
+        let _rank = { () -> String in
+            guard let rank = rank else { return "-" }
+            return String(rank)
+        }()
+        let _delegate: String = delegate.debugDescription
+        self.notifyDebugMessageToDelegates("Will notify rank #\(_rank) -> \(_delegate)")
     }
 }
 

@@ -11,6 +11,7 @@ import Foundation
 protocol RankingManagerType {
     func addDelegate(delegate: RankingManagerDelegate, for liveId: String)
     func removeDelegate(delegate: RankingManagerDelegate)
+    var isRunning: Bool { get }
 }
 
 protocol RankingManagerDelegate: AnyObject {

@@ -17,6 +17,7 @@ private let maximumFontSizeForNonMainColumn: CGFloat = 16
 private let defaultMinimumRowHeight: CGFloat = 17
 
 private let enableDebugButtons = false
+private let enableRankingManagerDebugMessage = false
 
 private let defaultElapsedTimeValue = "--:--:--"
 private let defaultLabelValue = "---"
@@ -483,6 +484,10 @@ extension MainViewController: NicoUtilityDelegate {
         case .reconnect:
             updateMainControlViews(status: .connecting)
         }
+
+        if enableRankingManagerDebugMessage {
+            logSystemMessageToTableView("isRankingManagerRunning: \(rankingManager.isRunning)")
+        }
     }
 
     func nicoUtilityDidReceiveStatistics(_ nicoUtility: NicoUtilityType, stat: LiveStatistics) {
@@ -492,17 +497,11 @@ extension MainViewController: NicoUtilityDelegate {
 
 extension MainViewController: RankingManagerDelegate {
     func rankingManager(_ rankingManager: RankingManagerType, didUpdateRank rank: Int?, for liveId: String) {
-        let _rank = { () -> String in
-            guard let rank = rank else { return "-" }
-            return String(rank)
-        }()
-        let message = "Rank updated #\(_rank) for \(liveId)"
-        log.debug(message)
-        logSystemMessageToTableView(message)
         updateRanking(rank: rank)
     }
 
     func rankingManager(_ rankingManager: RankingManagerType, hasDebugMessage message: String) {
+        guard enableRankingManagerDebugMessage else { return }
         logSystemMessageToTableView(message)
     }
 }
