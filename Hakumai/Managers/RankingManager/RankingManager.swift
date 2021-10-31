@@ -19,8 +19,8 @@ final class RankingManager {
 
     var isRunning: Bool { queryTimer != nil && queryTimer?.isValid == true }
 
-    // Key: [liveId] -> Value: [weak reference to delegate object]
-    private var delegates: [String: WeakDelegateReference] = [:]
+    // [(liveId, weak reference to delegate object)]
+    private var delegates: [(String, WeakDelegateReference)] = []
     // Key: [liveId] -> Value: [ranking value]
     private var rankMap: [String: Int] = [:]
     private var queryTimer: Timer?
@@ -31,7 +31,9 @@ extension RankingManager: RankingManagerType {
     func addDelegate(_ delegate: RankingManagerDelegate, for liveId: String) {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
-        delegates[liveId] = WeakDelegateReference(delegate: delegate)
+        // De-register the delegate before registering, just in case.
+        delegates = delegates.filter { $0.1.delegate !== delegate }
+        delegates.append((liveId, WeakDelegateReference(delegate: delegate)))
         logDelegates()
         scheduleQueryTimerIfNeeded()
         // Just in case, notify rank immediately with latest rank map.
@@ -41,7 +43,7 @@ extension RankingManager: RankingManagerType {
     func removeDelegate(_ delegate: RankingManagerDelegate) {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
-        delegates = delegates.filter { $0.value.delegate !== delegate }
+        delegates = delegates.filter { $0.1.delegate !== delegate }
         logDelegates()
         invalidateQueryTimerIfNeeded()
     }
@@ -167,7 +169,7 @@ private extension RankingManager {
 
     func notifyDebugMessageToDelegates(_ message: String) {
         let _message = "Rank: " + message
-        delegates.forEach { $0.value.delegate?.rankingManager(self, hasDebugMessage: _message) }
+        delegates.forEach { $0.1.delegate?.rankingManager(self, hasDebugMessage: _message) }
     }
 
     func logDebug(rank: Int?, liveId: String, delegate: RankingManagerDelegate?) {
