@@ -148,7 +148,7 @@ private extension RankingManager {
         // log.debug(rankMap)
         delegates.forEach { liveId, reference in
             let rank = self.rankMap[liveId]
-            logDebug(rank: rank, delegate: reference.delegate)
+            logDebug(rank: rank, liveId: liveId, delegate: reference.delegate)
             reference.delegate?.rankingManager(self, didUpdateRank: rank, for: liveId)
         }
     }
@@ -170,13 +170,13 @@ private extension RankingManager {
         delegates.forEach { $0.value.delegate?.rankingManager(self, hasDebugMessage: _message) }
     }
 
-    func logDebug(rank: Int?, delegate: RankingManagerDelegate?) {
+    func logDebug(rank: Int?, liveId: String, delegate: RankingManagerDelegate?) {
         let _rank = { () -> String in
             guard let rank = rank else { return "-" }
             return String(rank)
         }()
         let _delegate: String = delegate.debugDescription
-        self.notifyDebugMessageToDelegates("Will notify rank #\(_rank) -> \(_delegate)")
+        self.notifyDebugMessageToDelegates("Will notify rank #\(_rank) for \(liveId) -> \(_delegate)")
     }
 }
 

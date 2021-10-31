@@ -410,12 +410,15 @@ extension MainViewController: NicoUtilityDelegate {
             self,
             title: live.title,
             community: live.community?.title ?? "-")
+
+        logRankingManagerDebugMessageIfEnabled()
     }
 
     func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, error: NicoError) {
         logSystemMessageToTableView(L10n.failedToPrepareLive(error.toMessage))
         updateMainControlViews(status: .disconnected)
         rankingManager.removeDelegate(delegate: self)
+        logRankingManagerDebugMessageIfEnabled()
     }
 
     func nicoUtilityDidConnectToLive(_ nicoUtility: NicoUtilityType, roomPosition: RoomPosition, connectContext: NicoConnectContext) {
@@ -485,9 +488,7 @@ extension MainViewController: NicoUtilityDelegate {
             updateMainControlViews(status: .connecting)
         }
 
-        if enableRankingManagerDebugMessage {
-            logSystemMessageToTableView("isRankingManagerRunning: \(rankingManager.isRunning)")
-        }
+        logRankingManagerDebugMessageIfEnabled()
     }
 
     func nicoUtilityDidReceiveStatistics(_ nicoUtility: NicoUtilityType, stat: LiveStatistics) {
@@ -1172,6 +1173,14 @@ private extension MainViewController {
     func showAuthWindowController() {
         authWindowController.startAuthorization()
         authWindowController.showWindow(self)
+    }
+}
+
+// MARK: Debug Methods
+private extension MainViewController {
+    func logRankingManagerDebugMessageIfEnabled() {
+        guard enableRankingManagerDebugMessage else { return }
+        logSystemMessageToTableView("isRankingManagerRunning: \(rankingManager.isRunning)")
     }
 }
 
