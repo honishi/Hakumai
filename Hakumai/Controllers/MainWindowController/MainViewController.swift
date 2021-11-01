@@ -22,7 +22,7 @@ private let enableRankingManagerDebugMessage = false
 private let defaultElapsedTimeValue = "--:--:--"
 private let defaultLabelValue = "---"
 private let defaultChartText = "-----"
-private let defaultRankDateText = "--:--:--"
+private let defaultRankDateText = "--:--"
 
 // swiftlint:disable file_length
 protocol MainViewControllerDelegate: AnyObject {
@@ -1161,14 +1161,14 @@ private extension MainViewController {
             return "#\(rank)"
         }()
         let _date: String = {
-            guard let date = date else { return defaultRankDateText }
+            guard let date = date else { return "[\(defaultRankDateText)]" }
             let formatter = DateFormatter()
-            formatter.dateFormat = "H:mm:ss"
-            return formatter.string(from: date)
+            formatter.dateFormat = "H:mm"
+            return "[\(formatter.string(from: date))]"
         }()
         DispatchQueue.main.async {
             self.rankingValueLabel.stringValue = _rank
-            self.rankingDateLabel.stringValue = "[\(_date)]"
+            self.rankingDateLabel.stringValue = _date
         }
     }
 }
