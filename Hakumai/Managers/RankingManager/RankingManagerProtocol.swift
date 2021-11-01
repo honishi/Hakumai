@@ -15,7 +15,7 @@ protocol RankingManagerType {
 }
 
 protocol RankingManagerDelegate: AnyObject {
-    func rankingManager(_ rankingManager: RankingManagerType, didUpdateRank rank: Int?, for liveId: String)
+    func rankingManager(_ rankingManager: RankingManagerType, didUpdateRank rank: Int?, for liveId: String, at date: Date?)
     func rankingManager(_ rankingManager: RankingManagerType, hasDebugMessage message: String)
 }
 
