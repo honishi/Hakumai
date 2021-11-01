@@ -22,6 +22,7 @@ private let enableRankingManagerDebugMessage = false
 private let defaultElapsedTimeValue = "--:--:--"
 private let defaultLabelValue = "---"
 private let defaultChartText = "-----"
+private let defaultRankDateText = "--:--:--"
 
 // swiftlint:disable file_length
 protocol MainViewControllerDelegate: AnyObject {
@@ -68,6 +69,7 @@ final class MainViewController: NSViewController {
     @IBOutlet private weak var activeUserChartView: LineChartView!
     @IBOutlet private weak var rankingIconImageView: NSImageView!
     @IBOutlet private weak var rankingValueLabel: NSTextField!
+    @IBOutlet private weak var rankingDateLabel: NSTextField!
     @IBOutlet private weak var progressIndicator: NSProgressIndicator!
 
     // MARK: Menu Delegate
@@ -497,8 +499,8 @@ extension MainViewController: NicoUtilityDelegate {
 }
 
 extension MainViewController: RankingManagerDelegate {
-    func rankingManager(_ rankingManager: RankingManagerType, didUpdateRank rank: Int?, for liveId: String) {
-        updateRanking(rank: rank)
+    func rankingManager(_ rankingManager: RankingManagerType, didUpdateRank rank: Int?, for liveId: String, at date: Date?) {
+        updateRanking(rank: rank, date: date)
     }
 
     func rankingManager(_ rankingManager: RankingManagerType, hasDebugMessage message: String) {
@@ -700,8 +702,9 @@ private extension MainViewController {
         maxActiveUserValueLabel.toolTip = L10n.activeUserDescription
         activeUserChartView.toolTip = L10n.activeUserHistoryDescription
         rankingIconImageView.toolTip = L10n.rankingDescription
-        rankingValueLabel.stringValue = defaultLabelValue
         rankingValueLabel.toolTip = L10n.rankingDescription
+        rankingDateLabel.toolTip = L10n.rankingDescription
+        updateRanking(rank: nil, date: nil)
 
         scrollView.enableBottomScrollButton()
         configureTableView()
@@ -1152,12 +1155,20 @@ private extension MainViewController {
 
 // MARK: Ranking Methods
 private extension MainViewController {
-    func updateRanking(rank: Int?) {
+    func updateRanking(rank: Int?, date: Date?) {
+        let _rank: String = {
+            guard let rank = rank else { return defaultLabelValue }
+            return "#\(rank)"
+        }()
+        let _date: String = {
+            guard let date = date else { return defaultRankDateText }
+            let formatter = DateFormatter()
+            formatter.dateFormat = "H:mm:ss"
+            return formatter.string(from: date)
+        }()
         DispatchQueue.main.async {
-            self.rankingValueLabel.stringValue = {
-                guard let rank = rank else { return defaultLabelValue }
-                return "#\(rank)"
-            }()
+            self.rankingValueLabel.stringValue = _rank
+            self.rankingDateLabel.stringValue = "[\(_date)]"
         }
     }
 }

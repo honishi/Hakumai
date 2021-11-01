@@ -23,6 +23,7 @@ final class RankingManager {
     private var delegates: [(String, WeakDelegateReference)] = []
     // Key: [liveId] -> Value: [ranking value]
     private var rankMap: [String: Int] = [:]
+    private var rankUpdatedDate: Date?
     private var queryTimer: Timer?
     private var isQuerying = false
 }
@@ -85,6 +86,7 @@ private extension RankingManager {
             return
         }
         rankMap.removeAll()
+        rankUpdatedDate = nil
         isQuerying = true
         notifyDebugMessageToDelegates("Started query... (\(Date().description))")
         _queryRank(page: 1)
@@ -110,6 +112,7 @@ private extension RankingManager {
                         me._queryRank(page: nextPage)
                         return
                     }
+                    me.rankUpdatedDate = Date()
                     me.notifyUpdatedRankToDelegates()
                 case .failure(let error):
                     // No-op.
@@ -151,7 +154,7 @@ private extension RankingManager {
         delegates.forEach { liveId, reference in
             let rank = self.rankMap[liveId]
             logDebug(rank: rank, liveId: liveId, delegate: reference.delegate)
-            reference.delegate?.rankingManager(self, didUpdateRank: rank, for: liveId)
+            reference.delegate?.rankingManager(self, didUpdateRank: rank, for: liveId, at: rankUpdatedDate)
         }
     }
 }
