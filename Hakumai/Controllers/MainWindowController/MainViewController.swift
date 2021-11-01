@@ -1158,7 +1158,7 @@ private extension MainViewController {
     func updateRanking(rank: Int?, date: Date?) {
         let _rank: String = {
             guard let rank = rank else { return defaultLabelValue }
-            return String(rank)
+            return "#\(rank)"
         }()
         let _date: String = {
             guard let date = date else { return defaultRankDateText }
@@ -1167,7 +1167,7 @@ private extension MainViewController {
             return formatter.string(from: date)
         }()
         DispatchQueue.main.async {
-            self.rankingValueLabel.stringValue = "#\(_rank)"
+            self.rankingValueLabel.stringValue = _rank
             self.rankingDateLabel.stringValue = "[\(_date)]"
         }
     }
