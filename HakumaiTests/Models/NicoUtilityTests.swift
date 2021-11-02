@@ -51,15 +51,4 @@ final class NicoUtilityTests: XCTestCase {
         actual = nicoUtility.userIconUrl(for: "252346")?.absoluteString
         XCTAssert(actual == expected)
     }
-
-    // MARK: - Test Utility
-    // swiftlint:disable force_unwrapping
-    func dataForResource(_ fileName: String) -> Data {
-        let bundle = Bundle(for: NicoUtilityTests.self)
-        let path = bundle.path(forResource: fileName, ofType: nil)
-        let fileHandle = FileHandle(forReadingAtPath: path!)
-        let data = fileHandle?.readDataToEndOfFile()
-        return data!
-    }
-    // swiftlint:enable force_unwrapping
 }

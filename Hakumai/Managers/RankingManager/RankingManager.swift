@@ -193,3 +193,11 @@ private final class WeakDelegateReference {
         self.delegate = delegate
     }
 }
+
+// Extension for unit testing.
+// https://stackoverflow.com/a/50136916/13220031
+extension RankingManager {
+    func exposedExtractRankMap(from html: String) -> [String: Int] {
+        return extractRankMap(from: html)
+    }
+}
