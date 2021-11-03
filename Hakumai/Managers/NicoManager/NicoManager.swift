@@ -117,11 +117,11 @@ final class NicoManager: NicoManagerType {
     // App-side Health Check (Text Socket)
     private var textSocketEventCheckTimer: Timer?
 
-    // TODO: refactor
-    private var earliestChatDate: Date = .distantFuture
-    private var chatGoBackCount = 0
-    private var chatCountInThreadRequest = 0
-    private var goBackChats: [Chat] = []
+    // Timeshift Comments
+    private var earliestTimeShiftChatDate: Date = .distantFuture
+    private var timeShiftThreadRequestCount = 0
+    private var timeShiftChatCountIn1ThreadRequest = 0
+    private var timeShiftChats: [Chat] = []
 
     init(authManager: AuthManagerProtocol = AuthManager.shared) {
         self.authManager = authManager
@@ -633,12 +633,7 @@ private extension NicoManager {
             return
         }
         var request = URLRequest(url: url)
-        request.headers = [
-            commonUserAgentKey: commonUserAgentValue,
-            "Sec-WebSocket-Extensions": "permessage-deflate; client_max_window_bits",
-            "Sec-WebSocket-Protocol": "msg.nicovideo.jp#json"
-        ]
-        request.timeoutInterval = 10
+        request.applyDefaultMessageSocketSetting()
         let socket = WebSocket(request: request)
         socket.onEvent = { [weak self] in
             self?.handleMessageSocketEvent(
@@ -711,6 +706,17 @@ private extension NicoManager {
     }
 }
 
+private extension URLRequest {
+    mutating func applyDefaultMessageSocketSetting() {
+        headers = [
+            commonUserAgentKey: commonUserAgentValue,
+            "Sec-WebSocket-Extensions": "permessage-deflate; client_max_window_bits",
+            "Sec-WebSocket-Protocol": "msg.nicovideo.jp#json"
+        ]
+        timeoutInterval = 10
+    }
+}
+
 // MARK: - Private Methods (Message Socket, TimeShifted)
 private extension NicoManager {
     func openTimeShiftMessageSocket(userId: String, room: WebSocketRoomData, connectContext: NicoConnectContext, completion: @escaping (Result<Void, NicoError>) -> Void) {
@@ -719,16 +725,9 @@ private extension NicoManager {
             return
         }
         var request = URLRequest(url: url)
-        request.headers = [
-            commonUserAgentKey: commonUserAgentValue,
-            // TODO: refactor
-            "Sec-WebSocket-Extensions": "permessage-deflate; client_max_window_bits",
-            "Sec-WebSocket-Protocol": "msg.nicovideo.jp#json"
-        ]
-        // TODO: refactor
-        request.timeoutInterval = 10
+        request.applyDefaultMessageSocketSetting()
         let socket = WebSocket(request: request)
-        resetGoBack()
+        resetTimeShiftVariables()
         socket.onEvent = { [weak self] in
             self?.handleMessageSocketEventForTimeShift(
                 socket: socket,
@@ -742,16 +741,16 @@ private extension NicoManager {
         messageSocket = socket
     }
 
-    func resetGoBack() {
-        earliestChatDate = .distantFuture
-        chatGoBackCount = 0
-        chatCountInThreadRequest = 0
-        goBackChats.removeAll()
+    func resetTimeShiftVariables() {
+        earliestTimeShiftChatDate = .distantFuture
+        timeShiftThreadRequestCount = 0
+        timeShiftChatCountIn1ThreadRequest = 0
+        timeShiftChats.removeAll()
     }
 
     // swiftlint:disable function_parameter_count function_body_length
     func handleMessageSocketEventForTimeShift(socket: WebSocket, event: WebSocketEvent, userId: String, threadId: String, threadKey: String, completion: (Result<Void, NicoError>) -> Void) {
-        log.debug(event)
+        // log.debug(event)
         switch event {
         case .connected:
             completion(Result.success(()))
@@ -765,21 +764,24 @@ private extension NicoManager {
             let result = processMessageSocketTimeShiftTextEvent(text: text)
             switch result {
             case .pingContentStart:
-                chatCountInThreadRequest = 0
+                timeShiftChatCountIn1ThreadRequest = 0
             case .chat(let chat):
-                earliestChatDate = min(earliestChatDate, chat.date)
-                goBackChats.append(chat)
-                chatCountInThreadRequest += 1
+                earliestTimeShiftChatDate = min(earliestTimeShiftChatDate, chat.date)
+                timeShiftChats.append(chat)
+                timeShiftChatCountIn1ThreadRequest += 1
             case .pingContentFinish:
-                if chatCountInThreadRequest > 0 {
+                let receivedAnyChats = timeShiftChatCountIn1ThreadRequest > 0
+                if receivedAnyChats {
                     delegate?.nicoManagerReceivingTimeShiftChats(
-                        self, totalChatCount: goBackChats.count)
+                        self, totalChatCount: timeShiftChats.count)
                 }
-                if chatCountInThreadRequest == 0 || 1000 < chatGoBackCount {
+                let receivedAllChats = timeShiftChatCountIn1ThreadRequest == 0
+                let tooManyRequest = 1000 < timeShiftThreadRequestCount
+                if receivedAllChats || tooManyRequest {
                     delegate?.nicoManagerDidReceiveTimeShiftChats(
-                        self, totalChatCount: goBackChats.count)
-                    goBackChats.sort(by: { a, b in a.date < b.date })
-                    goBackChats.forEach {
+                        self, totalChatCount: timeShiftChats.count)
+                    timeShiftChats.sort(by: { a, b in a.date < b.date })
+                    timeShiftChats.forEach {
                         delegate?.nicoManagerDidReceiveChat(self, chat: $0)
                     }
                     disconnect()
@@ -790,8 +792,8 @@ private extension NicoManager {
                     userId: userId,
                     threadId: threadId,
                     resFrom: -200,
-                    when: earliestChatDate)
-                chatGoBackCount += 1
+                    when: earliestTimeShiftChatDate)
+                timeShiftThreadRequestCount += 1
             case .unknown:
                 break
             }
