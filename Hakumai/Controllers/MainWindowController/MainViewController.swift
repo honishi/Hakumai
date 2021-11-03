@@ -396,6 +396,15 @@ extension MainViewController: NicoManagerDelegate {
         self.live = live
 
         updateCommunityViews(for: live)
+
+        if live.isTimeShift {
+            resetElapsedLabel()
+            resetActiveUser()
+            updateRankingLabel(rank: nil, date: nil)
+            logSystemMessageToTableView(L10n.preparedLive(user.nickname))
+            return
+        }
+
         focusCommentTextField()
         startElapsedTimeAndActiveUserTimer()
 
@@ -508,7 +517,7 @@ extension MainViewController: NicoManagerDelegate {
 
 extension MainViewController: RankingManagerDelegate {
     func rankingManager(_ rankingManager: RankingManagerType, didUpdateRank rank: Int?, for liveId: String, at date: Date?) {
-        updateRanking(rank: rank, date: date)
+        updateRankingLabel(rank: rank, date: date)
     }
 
     func rankingManager(_ rankingManager: RankingManagerType, hasDebugMessage message: String) {
@@ -712,7 +721,7 @@ private extension MainViewController {
         rankingIconImageView.toolTip = L10n.rankingDescription
         rankingValueLabel.toolTip = L10n.rankingDescription
         rankingDateLabel.toolTip = L10n.rankingDescription
-        updateRanking(rank: nil, date: nil)
+        updateRankingLabel(rank: nil, date: nil)
 
         scrollView.enableBottomScrollButton()
         configureTableView()
@@ -1035,6 +1044,12 @@ private extension MainViewController {
         DispatchQueue.main.async { self.elapsedTimeValueLabel.stringValue = display }
     }
 
+    func resetElapsedLabel() {
+        DispatchQueue.main.async {
+            self.elapsedTimeValueLabel.stringValue = defaultElapsedTimeValue
+        }
+    }
+
     @objc func calculateAndUpdateActiveUser() {
         messageContainer.calculateActive { (active: Int?) -> Void in
             guard let active = active else { return }
@@ -1086,7 +1101,7 @@ private extension MainViewController {
 private extension MainViewController {
     func updateSpeechManagerState() {
         guard #available(macOS 10.14, *) else { return }
-        if speakButton.isOn && connectedToLive {
+        if speakButton.isOn && connectedToLive && live?.isTimeShift == false {
             speechManager.startManager()
         } else {
             speechManager.stopManager()
@@ -1167,7 +1182,7 @@ private extension MainViewController {
 
 // MARK: Ranking Methods
 private extension MainViewController {
-    func updateRanking(rank: Int?, date: Date?) {
+    func updateRankingLabel(rank: Int?, date: Date?) {
         let _rank: String = {
             guard let rank = rank else { return defaultLabelValue }
             return "#\(rank)"
