@@ -1,5 +1,5 @@
 //
-//  NicoUtilityProtocol.swift
+//  NicoManagerProtocol.swift
 //  Hakumai
 //
 //  Created by Hiroyuki Onishi on 2021/05/16.
@@ -9,9 +9,9 @@
 import Foundation
 
 // MARK: - Protocol
-protocol NicoUtilityType {
+protocol NicoManagerType: AnyObject {
     // Properties
-    var delegate: NicoUtilityDelegate? { get set }
+    var delegate: NicoManagerDelegate? { get set }
     var live: Live? { get }
 
     // Main Methods
@@ -34,24 +34,28 @@ protocol NicoUtilityType {
 
 // Note these functions are called in background thread, not main thread.
 // So use explicit main thread for updating UI components from these callbacks.
-protocol NicoUtilityDelegate: AnyObject {
+protocol NicoManagerDelegate: AnyObject {
     // Token check results before proceeding to main connection sequence.
-    func nicoUtilityNeedsToken(_ nicoUtility: NicoUtilityType)
-    func nicoUtilityDidConfirmTokenExistence(_ nicoUtility: NicoUtilityType)
+    func nicoManagerNeedsToken(_ nicoManager: NicoManagerType)
+    func nicoManagerDidConfirmTokenExistence(_ nicoManager: NicoManagerType)
 
     // Main connection sequence.
-    func nicoUtilityWillPrepareLive(_ nicoUtility: NicoUtilityType)
-    func nicoUtilityDidPrepareLive(_ nicoUtility: NicoUtilityType, user: User, live: Live, connectContext: NicoConnectContext)
-    func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, error: NicoError)
-    func nicoUtilityDidConnectToLive(_ nicoUtility: NicoUtilityType, roomPosition: RoomPosition, connectContext: NicoConnectContext)
+    func nicoManagerWillPrepareLive(_ nicoManager: NicoManagerType)
+    func nicoManagerDidPrepareLive(_ nicoManager: NicoManagerType, user: User, live: Live, connectContext: NicoConnectContext)
+    func nicoManagerDidFailToPrepareLive(_ nicoManager: NicoManagerType, error: NicoError)
+    func nicoManagerDidConnectToLive(_ nicoManager: NicoManagerType, roomPosition: RoomPosition, connectContext: NicoConnectContext)
 
     // Events after connection establishment.
-    func nicoUtilityDidReceiveChat(_ nicoUtility: NicoUtilityType, chat: Chat)
-    func nicoUtilityWillReconnectToLive(_ nicoUtility: NicoUtilityType, reason: NicoReconnectReason)
-    func nicoUtilityDidReceiveStatistics(_ nicoUtility: NicoUtilityType, stat: LiveStatistics)
+    func nicoManagerDidReceiveChat(_ nicoManager: NicoManagerType, chat: Chat)
+    func nicoManagerWillReconnectToLive(_ nicoManager: NicoManagerType, reason: NicoReconnectReason)
+    func nicoManagerDidReceiveStatistics(_ nicoManager: NicoManagerType, stat: LiveStatistics)
+
+    // Timeshift.
+    func nicoManagerReceivingTimeShiftChats(_ nicoManager: NicoManagerType, totalChatCount: Int)
+    func nicoManagerDidFinishReceivingTimeShiftChats(_ nicoManager: NicoManagerType, totalChatCount: Int)
 
     // Disconnect.
-    func nicoUtilityDidDisconnect(_ nicoUtility: NicoUtilityType, disconnectContext: NicoDisconnectContext)
+    func nicoManagerDidDisconnect(_ nicoManager: NicoManagerType, disconnectContext: NicoDisconnectContext)
 }
 
 enum NicoError: Error {

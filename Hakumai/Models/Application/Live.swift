@@ -18,23 +18,26 @@ final class Live: CustomStringConvertible {
     let baseTime: Date
     let openTime: Date
     let beginTime: Date
+    let isTimeShift: Bool
 
     var liveUrlString: String { liveBaseUrl + liveId }
 
     var description: String {
         return (
             "Live: liveId[\(liveId)] title[\(title)] community[\(community?.description ?? "-")] " +
-                "baseTime[\(baseTime.description)] openTime[\(openTime.description)] beginTime[\(beginTime.description)]"
+                "baseTime[\(baseTime.description)] openTime[\(openTime.description)] " +
+                "beginTime[\(beginTime.description)] isTimeShift[\(isTimeShift)]"
         )
     }
 
     // MARK: - Object Lifecycle
-    init(liveId: String, title: String, community: Community?, baseTime: Date, openTime: Date, beginTime: Date) {
+    init(liveId: String, title: String, community: Community?, baseTime: Date, openTime: Date, beginTime: Date, isTimeShift: Bool) {
         self.liveId = liveId
         self.title = title
         self.community = community
         self.baseTime = baseTime
         self.openTime = openTime
         self.beginTime = beginTime
+        self.isTimeShift = isTimeShift
     }
 }

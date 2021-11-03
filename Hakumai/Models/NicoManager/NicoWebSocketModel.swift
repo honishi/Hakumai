@@ -92,3 +92,11 @@ struct WebSocketChatData: Codable {
 
     let chat: WebSocketChat
 }
+
+struct WebSocketPingContentData: Codable {
+    struct Ping: Codable {
+        let content: String
+    }
+
+    let ping: Ping
+}

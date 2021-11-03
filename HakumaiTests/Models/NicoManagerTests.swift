@@ -1,5 +1,5 @@
 //
-//  NicoUtilityTests.swift
+//  NicoManagerTests.swift
 //  Hakumai
 //
 //  Created by Hiroyuki Onishi on 11/14/14.
@@ -12,7 +12,7 @@ import XCTest
 
 private let kAsyncTimeout: TimeInterval = 3
 
-final class NicoUtilityTests: XCTestCase {
+final class NicoManagerTests: XCTestCase {
     override func setUp() {
         super.setUp()
     }
@@ -23,43 +23,32 @@ final class NicoUtilityTests: XCTestCase {
 
     // MARK: - User Account
     func testUserIcon() {
-        let nicoUtility = NicoUtility()
+        let nicoManager: NicoManagerType = NicoManager()
         var expected: String? = ""
         var actual: String? = ""
 
         expected = nil
-        actual = nicoUtility.userIconUrl(for: "XXX")?.absoluteString
+        actual = nicoManager.userIconUrl(for: "XXX")?.absoluteString
         XCTAssert(actual == expected)
 
         expected = "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/0/2.jpg"
-        actual = nicoUtility.userIconUrl(for: "2")?.absoluteString
+        actual = nicoManager.userIconUrl(for: "2")?.absoluteString
         XCTAssert(actual == expected)
 
         expected = "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/0/9005.jpg"
-        actual = nicoUtility.userIconUrl(for: "9005")?.absoluteString
+        actual = nicoManager.userIconUrl(for: "9005")?.absoluteString
         XCTAssert(actual == expected)
 
         expected = "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/9/99998.jpg"
-        actual = nicoUtility.userIconUrl(for: "99998")?.absoluteString
+        actual = nicoManager.userIconUrl(for: "99998")?.absoluteString
         XCTAssert(actual == expected)
 
         expected = "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/1/12346.jpg"
-        actual = nicoUtility.userIconUrl(for: "12346")?.absoluteString
+        actual = nicoManager.userIconUrl(for: "12346")?.absoluteString
         XCTAssert(actual == expected)
 
         expected = "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/25/252346.jpg"
-        actual = nicoUtility.userIconUrl(for: "252346")?.absoluteString
+        actual = nicoManager.userIconUrl(for: "252346")?.absoluteString
         XCTAssert(actual == expected)
     }
-
-    // MARK: - Test Utility
-    // swiftlint:disable force_unwrapping
-    func dataForResource(_ fileName: String) -> Data {
-        let bundle = Bundle(for: NicoUtilityTests.self)
-        let path = bundle.path(forResource: fileName, ofType: nil)
-        let fileHandle = FileHandle(forReadingAtPath: path!)
-        let data = fileHandle?.readDataToEndOfFile()
-        return data!
-    }
-    // swiftlint:enable force_unwrapping
 }

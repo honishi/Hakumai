@@ -30,10 +30,10 @@ final class UserWindowController: NSWindowController {
 }
 
 extension UserWindowController {
-    static func make(delegate: UserWindowControllerDelegate?, nicoUtility: NicoUtility, messageContainer: MessageContainer, userId: String, handleName: String?) -> UserWindowController {
+    static func make(delegate: UserWindowControllerDelegate?, nicoManager: NicoManagerType, messageContainer: MessageContainer, userId: String, handleName: String?) -> UserWindowController {
         let wc = StoryboardScene.UserWindowController.userWindowController.instantiate()
         wc.delegate = delegate
-        wc.set(nicoUtility: nicoUtility, messageContainer: messageContainer, userId: userId, handleName: handleName)
+        wc.set(nicoManager: nicoManager, messageContainer: messageContainer, userId: userId, handleName: handleName)
         return wc
     }
 }
@@ -49,12 +49,12 @@ extension UserWindowController: NSWindowDelegate {
 
 // MARK: - Public Functions
 extension UserWindowController {
-    func set(nicoUtility: NicoUtility, messageContainer: MessageContainer, userId: String, handleName: String?) {
+    func set(nicoManager: NicoManagerType, messageContainer: MessageContainer, userId: String, handleName: String?) {
         self.userId = userId
-        let userName = nicoUtility.cachedUserName(forUserId: userId)
+        let userName = nicoManager.cachedUserName(forUserId: userId)
         window?.title = handleName ?? userName ?? userId
         guard let userViewController = contentViewController as? UserViewController else { return }
-        userViewController.set(nicoUtility: nicoUtility, messageContainer: messageContainer, userId: userId, handleName: handleName)
+        userViewController.set(nicoManager: nicoManager, messageContainer: messageContainer, userId: userId, handleName: handleName)
     }
 
     func reloadMessages() {

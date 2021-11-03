@@ -41,7 +41,7 @@ final class MainWindowController: NSWindowController {
 
 extension MainWindowController: NSWindowDelegate {
     func windowWillClose(_ notification: Notification) {
-        // XXX: Consider whther we should call disconnect call at deinit in NicoUtility?
+        // XXX: Consider whther we should call disconnect call at deinit in NicoManager?
         mainViewController.disconnect()
         delegate?.mainWindowControllerWillClose(self)
     }
