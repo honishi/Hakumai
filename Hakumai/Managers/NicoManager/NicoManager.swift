@@ -120,7 +120,7 @@ final class NicoManager: NicoManagerType {
     // Timeshift Comments
     private var earliestTimeShiftChatDate: Date = .distantFuture
     private var timeShiftThreadRequestCount = 0
-    private var timeShiftChatCountIn1ThreadRequest = 0
+    private var chatCountIn1TimeShiftThreadRequest = 0
     private var timeShiftChats: [Chat] = []
 
     init(authManager: AuthManagerProtocol = AuthManager.shared) {
@@ -368,11 +368,10 @@ private extension NicoManager {
     // #4/5. Open watch socket.
     func openWatchSocket(webSocketUrl: URL, userId: String, connectContext: NicoConnectContext) {
         openWatchSocket(webSocketUrl: webSocketUrl) { [weak self] in
-            guard let me = self else { return }
+            guard let me = self, let isTimeShift = me.live?.isTimeShift else { return }
             switch $0 {
             case .success(let room):
-                guard let isTimeShifted = me.live?.isTimeShift else { return }
-                if isTimeShifted {
+                if isTimeShift {
                     me.openTimeShiftMessageSocket(userId: userId, room: room, connectContext: connectContext)
                 } else {
                     me.openMessageSocket(userId: userId, room: room, connectContext: connectContext)
@@ -559,23 +558,15 @@ private extension NicoManager {
         switch event {
         case .connected:
             socket.write(string: startWatchingMessage)
-        case .disconnected:
-            break
         case .text(let text):
             processWatchSocketTextEvent(text: text, socket: socket, completion: completion)
-        case .binary:
-            break
         case .pong:
             lastPongSocketDates?.watch = Date()
-        case .ping:
-            break
         case .error:
             reconnect()
-        case .viabilityChanged:
-            break
         case .reconnectSuggested:
             reconnect()
-        case .cancelled:
+        case .binary, .cancelled, .disconnected, .ping, .viabilityChanged:
             break
         }
     }
@@ -744,13 +735,14 @@ private extension NicoManager {
     func resetTimeShiftVariables() {
         earliestTimeShiftChatDate = .distantFuture
         timeShiftThreadRequestCount = 0
-        timeShiftChatCountIn1ThreadRequest = 0
+        chatCountIn1TimeShiftThreadRequest = 0
         timeShiftChats.removeAll()
     }
 
     // swiftlint:disable function_parameter_count function_body_length
     func handleTimeShiftMessageSocketEvent(socket: WebSocket, event: WebSocketEvent, userId: String, threadId: String, threadKey: String, completion: (Result<Void, NicoError>) -> Void) {
         // log.debug(event)
+        let resFrom = -200
         switch event {
         case .connected:
             completion(Result.success(()))
@@ -758,27 +750,27 @@ private extension NicoManager {
                 socket: socket,
                 userId: userId,
                 threadId: threadId,
-                resFrom: -200,
+                resFrom: resFrom,
                 threadKey: threadKey)
         case .text(let text):
             let result = processTimeShiftMessageSocketTextEvent(text: text)
             switch result {
             case .pingContentStart:
-                timeShiftChatCountIn1ThreadRequest = 0
+                chatCountIn1TimeShiftThreadRequest = 0
             case .chat(let chat):
                 earliestTimeShiftChatDate = min(earliestTimeShiftChatDate, chat.date)
                 timeShiftChats.append(chat)
-                timeShiftChatCountIn1ThreadRequest += 1
+                chatCountIn1TimeShiftThreadRequest += 1
             case .pingContentFinish:
-                let receivedAnyChats = timeShiftChatCountIn1ThreadRequest > 0
-                if receivedAnyChats {
+                let receivedSomeChats = chatCountIn1TimeShiftThreadRequest > 0
+                if receivedSomeChats {
                     delegate?.nicoManagerReceivingTimeShiftChats(
                         self, totalChatCount: timeShiftChats.count)
                 }
-                let receivedAllChats = timeShiftChatCountIn1ThreadRequest == 0
+                let receivedAllChats = chatCountIn1TimeShiftThreadRequest == 0
                 let tooManyRequest = 1000 < timeShiftThreadRequestCount
                 if receivedAllChats || tooManyRequest {
-                    delegate?.nicoManagerDidReceiveTimeShiftChats(
+                    delegate?.nicoManagerDidFinishReceivingTimeShiftChats(
                         self, totalChatCount: timeShiftChats.count)
                     timeShiftChats.sort(by: { a, b in a.date < b.date })
                     timeShiftChats.forEach {
@@ -791,7 +783,7 @@ private extension NicoManager {
                     socket: socket,
                     userId: userId,
                     threadId: threadId,
-                    resFrom: -200,
+                    resFrom: resFrom,
                     when: earliestTimeShiftChatDate)
                 timeShiftThreadRequestCount += 1
             case .unknown:

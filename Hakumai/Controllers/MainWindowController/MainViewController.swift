@@ -479,7 +479,7 @@ extension MainViewController: NicoManagerDelegate {
         logSystemMessageToTableView(L10n.receivingComments(totalChatCount))
     }
 
-    func nicoManagerDidReceiveTimeShiftChats(_ nicoManager: NicoManagerType, totalChatCount: Int) {
+    func nicoManagerDidFinishReceivingTimeShiftChats(_ nicoManager: NicoManagerType, totalChatCount: Int) {
         logSystemMessageToTableView(L10n.receivedComments(totalChatCount))
     }
 

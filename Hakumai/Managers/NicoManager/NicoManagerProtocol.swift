@@ -52,7 +52,7 @@ protocol NicoManagerDelegate: AnyObject {
 
     // Timeshift.
     func nicoManagerReceivingTimeShiftChats(_ nicoManager: NicoManagerType, totalChatCount: Int)
-    func nicoManagerDidReceiveTimeShiftChats(_ nicoManager: NicoManagerType, totalChatCount: Int)
+    func nicoManagerDidFinishReceivingTimeShiftChats(_ nicoManager: NicoManagerType, totalChatCount: Int)
 
     // Disconnect.
     func nicoManagerDidDisconnect(_ nicoManager: NicoManagerType, disconnectContext: NicoDisconnectContext)
