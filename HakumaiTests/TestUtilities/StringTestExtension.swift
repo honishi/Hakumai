@@ -11,7 +11,7 @@ import Foundation
 // swiftlint:disable force_unwrapping
 extension String {
     func resourceFileToData() -> Data {
-        let bundle = Bundle(for: NicoUtilityTests.self)
+        let bundle = Bundle(for: NicoManagerTests.self)
         let path = bundle.path(forResource: self, ofType: nil)
         let fileHandle = FileHandle(forReadingAtPath: path!)
         let data = fileHandle?.readDataToEndOfFile()

@@ -78,7 +78,7 @@ final class MainViewController: NSViewController {
     // swiftlint:enable weak_delegate
 
     // MARK: General Properties
-    let nicoUtility = NicoUtility()
+    let nicoManager: NicoManagerType = NicoManager()
     let messageContainer = MessageContainer()
     let speechManager = SpeechManager()
     let rankingManager: RankingManagerType = RankingManager.shared
@@ -287,7 +287,7 @@ extension MainViewController: NSTableViewDelegate {
             let iconView = view as? IconTableCellView
             let iconType = { () -> IconType in
                 if chat.isSystemComment { return .none }
-                let iconUrl = nicoUtility.userIconUrl(for: chat.userId)
+                let iconUrl = nicoManager.userIconUrl(for: chat.userId)
                 return .user(iconUrl)
             }()
             iconView?.configure(iconType: iconType)
@@ -301,7 +301,7 @@ extension MainViewController: NSTableViewDelegate {
             let userIdView = view as? UserIdTableCellView
             let handleName = HandleNameManager.shared.handleName(forLive: live, chat: chat)
             userIdView?.info = (
-                nicoUtility: nicoUtility,
+                nicoManager: nicoManager,
                 handleName: handleName,
                 userId: chat.userId,
                 premium: chat.premium,
@@ -378,21 +378,21 @@ extension MainViewController: AuthWindowControllerDelegate {
     }
 }
 
-// MARK: - NicoUtilityDelegate Functions
-extension MainViewController: NicoUtilityDelegate {
-    func nicoUtilityNeedsToken(_ nicoUtility: NicoUtilityType) {
+// MARK: - NicoManagerDelegate Functions
+extension MainViewController: NicoManagerDelegate {
+    func nicoManagerNeedsToken(_ nicoManager: NicoManagerType) {
         showAuthWindowController()
     }
 
-    func nicoUtilityDidConfirmTokenExistence(_ nicoUtility: NicoUtilityType) {
+    func nicoManagerDidConfirmTokenExistence(_ nicoManager: NicoManagerType) {
         // nop
     }
 
-    func nicoUtilityWillPrepareLive(_ nicoUtility: NicoUtilityType) {
+    func nicoManagerWillPrepareLive(_ nicoManager: NicoManagerType) {
         updateMainControlViews(status: .connecting)
     }
 
-    func nicoUtilityDidPrepareLive(_ nicoUtility: NicoUtilityType, user: User, live: Live, connectContext: NicoConnectContext) {
+    func nicoManagerDidPrepareLive(_ nicoManager: NicoManagerType, user: User, live: Live, connectContext: NicoConnectContext) {
         self.live = live
 
         updateCommunityViews(for: live)
@@ -416,14 +416,14 @@ extension MainViewController: NicoUtilityDelegate {
         logRankingManagerDebugMessageIfEnabled()
     }
 
-    func nicoUtilityDidFailToPrepareLive(_ nicoUtility: NicoUtilityType, error: NicoError) {
+    func nicoManagerDidFailToPrepareLive(_ nicoManager: NicoManagerType, error: NicoError) {
         logSystemMessageToTableView(L10n.failedToPrepareLive(error.toMessage))
         updateMainControlViews(status: .disconnected)
         rankingManager.removeDelegate(self)
         logRankingManagerDebugMessageIfEnabled()
     }
 
-    func nicoUtilityDidConnectToLive(_ nicoUtility: NicoUtilityType, roomPosition: RoomPosition, connectContext: NicoConnectContext) {
+    func nicoManagerDidConnectToLive(_ nicoManager: NicoManagerType, roomPosition: RoomPosition, connectContext: NicoConnectContext) {
         guard connectedToLive == false else { return }
         connectedToLive = true
         switch connectContext {
@@ -442,7 +442,7 @@ extension MainViewController: NicoUtilityDelegate {
         updateSpeechManagerState()
     }
 
-    func nicoUtilityDidReceiveChat(_ nicoUtility: NicoUtilityType, chat: Chat) {
+    func nicoManagerDidReceiveChat(_ nicoManager: NicoManagerType, chat: Chat) {
         // log.debug("\(chat.mail),\(chat.comment)")
         if let live = live {
             HandleNameManager.shared.extractAndUpdateHandleName(live: live, chat: chat)
@@ -456,7 +456,7 @@ extension MainViewController: NicoUtilityDelegate {
         }
     }
 
-    func nicoUtilityWillReconnectToLive(_ nicoUtility: NicoUtilityType, reason: NicoReconnectReason) {
+    func nicoManagerWillReconnectToLive(_ nicoManager: NicoManagerType, reason: NicoReconnectReason) {
         switch reason {
         case .normal:
             // logSystemMessageToTableView(L10n.reconnecting)
@@ -466,7 +466,7 @@ extension MainViewController: NicoUtilityDelegate {
         }
     }
 
-    func nicoUtilityDidDisconnect(_ nicoUtility: NicoUtilityType, disconnectContext: NicoDisconnectContext) {
+    func nicoManagerDidDisconnect(_ nicoManager: NicoManagerType, disconnectContext: NicoDisconnectContext) {
         switch disconnectContext {
         case .normal:
             logSystemMessageToTableView(L10n.liveClosed)
@@ -493,7 +493,7 @@ extension MainViewController: NicoUtilityDelegate {
         logRankingManagerDebugMessageIfEnabled()
     }
 
-    func nicoUtilityDidReceiveStatistics(_ nicoUtility: NicoUtilityType, stat: LiveStatistics) {
+    func nicoManagerDidReceiveStatistics(_ nicoManager: NicoManagerType, stat: LiveStatistics) {
         updateLiveStatistics(stat: stat)
     }
 }
@@ -528,9 +528,9 @@ extension MainViewController {
 
     func logout() {
         if connectedToLive {
-            nicoUtility.disconnect()
+            nicoManager.disconnect()
         }
-        nicoUtility.logout()
+        nicoManager.logout()
         authWindowController.logout()
         logSystemMessageToTableView(L10n.logoutCompleted)
     }
@@ -556,7 +556,7 @@ extension MainViewController {
         var defaultHandleName: String?
         if let handleName = HandleNameManager.shared.handleName(forLive: live, chat: chat) {
             defaultHandleName = handleName
-        } else if let userName = nicoUtility.cachedUserName(forChat: chat) {
+        } else if let userName = nicoManager.cachedUserName(forChat: chat) {
             defaultHandleName = userName
         }
         return defaultHandleName
@@ -588,7 +588,7 @@ extension MainViewController {
 
     func disconnect() {
         guard connectedToLive else { return }
-        nicoUtility.disconnect()
+        nicoManager.disconnect()
     }
 
     var clickedMessage: Message? {
@@ -597,7 +597,7 @@ extension MainViewController {
     }
 
     func userPageUrl(for userId: String) -> URL? {
-        return nicoUtility.userPageUrl(for: userId)
+        return nicoManager.userPageUrl(for: userId)
     }
 
     func setVoiceVolume(_ volume: Int) {
@@ -737,7 +737,7 @@ private extension MainViewController {
     }
 
     func configureManagers() {
-        nicoUtility.delegate = self
+        nicoManager.delegate = self
     }
 
     func configureMute() {
@@ -877,11 +877,11 @@ extension MainViewController {
         reason = .normal
         // reason = .noPong
         // reason = .noTexts
-        nicoUtility.reconnect(reason: reason)
+        nicoManager.reconnect(reason: reason)
     }
 
     @IBAction func debugExpireTokenButtonPressed(_ sender: Any) {
-        nicoUtility.injectExpiredAccessToken()
+        nicoManager.injectExpiredAccessToken()
         logSystemMessageToTableView("Injected expired access token.")
     }
 
@@ -892,12 +892,12 @@ extension MainViewController {
         clearAllChats()
         communityImageView.image = Asset.defaultCommunityImage.image
 
-        nicoUtility.connect(liveProgramId: liveProgramId)
+        nicoManager.connect(liveProgramId: liveProgramId)
     }
 
     @IBAction func connectButtonPressed(_ sender: AnyObject) {
         if connectedToLive {
-            nicoUtility.disconnect()
+            nicoManager.disconnect()
         } else {
             connectLive(self)
         }
@@ -912,7 +912,7 @@ extension MainViewController {
             return
         }
 
-        nicoUtility.comment(comment, anonymously: commentAnonymouslyButton.isOn) { comment in
+        nicoManager.comment(comment, anonymously: commentAnonymouslyButton.isOn) { comment in
             if comment == nil {
                 self.logSystemMessageToTableView(L10n.failedToComment)
             }
@@ -961,7 +961,7 @@ private extension MainViewController {
             }
             userWindowController = UserWindowController.make(
                 delegate: self,
-                nicoUtility: nicoUtility,
+                nicoManager: nicoManager,
                 messageContainer: messageContainer,
                 userId: chat.userId,
                 handleName: handleName)
@@ -1011,7 +1011,7 @@ private extension MainViewController {
     @objc func updateElapsedLabelValue() {
         var display = defaultElapsedTimeValue
 
-        if let beginTime = nicoUtility.live?.beginTime {
+        if let beginTime = nicoManager.live?.beginTime {
             var prefix = ""
             var elapsed = Date().timeIntervalSince(beginTime as Date)
             if elapsed < 0 {

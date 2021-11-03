@@ -1,5 +1,5 @@
 //
-//  NicoUtilityModel.swift
+//  NicoRestApiModel.swift
 //  Hakumai
 //
 //  Created by Hiroyuki Onishi on 2021/05/05.

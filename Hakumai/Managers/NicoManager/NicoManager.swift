@@ -1,5 +1,5 @@
 //
-//  NicoUtility.swift
+//  NicoManager.swift
 //  Hakumai
 //
 //  Created by Hiroyuki Onishi on 11/10/14.
@@ -53,7 +53,7 @@ private let postCommentMessage = """
 """
 
 // MARK: - Class
-final class NicoUtility: NicoUtilityType {
+final class NicoManager: NicoManagerType {
     // MARK: - Types
     struct ConnectRequests {
         // swiftlint:disable nesting
@@ -79,7 +79,7 @@ final class NicoUtility: NicoUtilityType {
     }
 
     // Public Properties
-    weak var delegate: NicoUtilityDelegate?
+    weak var delegate: NicoManagerDelegate?
     private(set) var live: Live?
 
     // Private Properties
@@ -126,7 +126,7 @@ final class NicoUtility: NicoUtilityType {
 }
 
 // MARK: - Public Methods (Main)
-extension NicoUtility {
+extension NicoManager {
     func connect(liveProgramId: String) {
         connect(liveProgramId: liveProgramId, connectContext: .normal)
     }
@@ -134,10 +134,10 @@ extension NicoUtility {
     func connect(liveProgramId: String, connectContext: NicoConnectContext) {
         // 1. Check if the token is existing.
         guard authManager.hasToken else {
-            delegate?.nicoUtilityNeedsToken(self)
+            delegate?.nicoManagerNeedsToken(self)
             return
         }
-        delegate?.nicoUtilityDidConfirmTokenExistence(self)
+        delegate?.nicoManagerDidConfirmTokenExistence(self)
 
         // 2. Save connection request.
         connectRequests.onGoing = ConnectRequests.Request(liveProgramId: liveProgramId)
@@ -158,7 +158,7 @@ extension NicoUtility {
         }
 
         // 5. Ok, start to establish connection from retrieving general live info.
-        delegate?.nicoUtilityWillPrepareLive(self)
+        delegate?.nicoManagerWillPrepareLive(self)
         requestLiveInfo(liveProgramId: liveProgramId, connectContext: connectContext)
     }
 
@@ -168,7 +168,7 @@ extension NicoUtility {
 
     func disconnect(disconnectContext: NicoDisconnectContext) {
         disconnectSocketsAndResetState()
-        delegate?.nicoUtilityDidDisconnect(self, disconnectContext: disconnectContext)
+        delegate?.nicoManagerDidDisconnect(self, disconnectContext: disconnectContext)
     }
 
     func reconnect(reason: NicoReconnectReason = .normal) {
@@ -185,7 +185,7 @@ extension NicoUtility {
         connectRequests.lastEstablished = nil
 
         disconnect(disconnectContext: .reconnect(reason))
-        delegate?.nicoUtilityWillReconnectToLive(self, reason: reason)
+        delegate?.nicoManagerWillReconnectToLive(self, reason: reason)
 
         // Just in case, make some delay to invoke the connect method.
         DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 2) {
@@ -226,7 +226,7 @@ extension NicoUtility {
 }
 
 // MARK: - Public Methods (Username)
-extension NicoUtility {
+extension NicoManager {
     func cachedUserName(forChat chat: Chat) -> String? {
         cachedUserName(forUserId: chat.userId)
     }
@@ -283,7 +283,7 @@ extension NicoUtility {
 
 // MARK: - Private Methods
 // Main connect sequence.
-private extension NicoUtility {
+private extension NicoManager {
     // #1/5. Get general live info.
     func requestLiveInfo(liveProgramId: String, connectContext: NicoConnectContext) {
         callOAuthEndpoint(
@@ -302,7 +302,7 @@ private extension NicoUtility {
                     live: data.toLive(with: liveProgramId))
             case .failure(let error):
                 log.error(error)
-                me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: .internal)
+                me.delegate?.nicoManagerDidFailToPrepareLive(me, error: .internal)
             }
         }
     }
@@ -322,7 +322,7 @@ private extension NicoUtility {
                     user: response.toUser())
             case .failure(let error):
                 log.error(error)
-                me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: .internal)
+                me.delegate?.nicoManagerDidFailToPrepareLive(me, error: .internal)
             }
         }
     }
@@ -341,7 +341,7 @@ private extension NicoUtility {
             switch result {
             case .success(let response):
                 me.live = live
-                me.delegate?.nicoUtilityDidPrepareLive(
+                me.delegate?.nicoManagerDidPrepareLive(
                     me, user: user, live: live, connectContext: connectContext)
                 // Ok, proceed to websocket calls..
                 me.openWatchSocket(
@@ -351,7 +351,7 @@ private extension NicoUtility {
                 )
             case .failure(let error):
                 log.error(error)
-                me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: .internal)
+                me.delegate?.nicoManagerDidFailToPrepareLive(me, error: .internal)
             }
         }
     }
@@ -364,7 +364,7 @@ private extension NicoUtility {
             case .success(let room):
                 me.openMessageSocket(userId: userId, room: room, connectContext: connectContext)
             case .failure:
-                me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: .noMessageServerInfo)
+                me.delegate?.nicoManagerDidFailToPrepareLive(me, error: .noMessageServerInfo)
             }
         }
     }
@@ -379,19 +379,19 @@ private extension NicoUtility {
                 me.connectRequests.lastEstablished = me.connectRequests.onGoing
                 me.connectRequests.onGoing = nil
                 me.isConnected = true
-                me.delegate?.nicoUtilityDidConnectToLive(
+                me.delegate?.nicoManagerDidConnectToLive(
                     me,
                     roomPosition: RoomPosition.arena,
                     connectContext: connectContext)
             case .failure:
-                me.delegate?.nicoUtilityDidFailToPrepareLive(me, error: .openMessageServerFailed)
+                me.delegate?.nicoManagerDidFailToPrepareLive(me, error: .openMessageServerFailed)
             }
         }
     }
 }
 
 // Methods for disconnect and timers.
-private extension NicoUtility {
+private extension NicoManager {
     func startAllTimers() {
         startWatchSocketKeepSeatTimer(interval: watchSocketKeepSeatInterval)
         startMessageSocketEmptyMessageTimer(interval: messageSocketEmptyMessageInterval)
@@ -423,7 +423,7 @@ private extension NicoUtility {
 }
 
 // Methods for OAuth endpoint calls.
-private extension NicoUtility {
+private extension NicoManager {
     func callOAuthEndpoint<T: Codable>(url: String,
                                        parameters: Alamofire.Parameters? = nil,
                                        allowRefreshToken: Bool = true,
@@ -506,7 +506,7 @@ private extension NicoUtility {
 }
 
 // MARK: Private Methods (Watch Socket)
-private extension NicoUtility {
+private extension NicoManager {
     func openWatchSocket(webSocketUrl: URL, completion: @escaping (Result<WebSocketRoomData, NicoError>) -> Void) {
         var request = URLRequest(url: webSocketUrl)
         request.headers = [commonUserAgentKey: commonUserAgentValue]
@@ -565,7 +565,7 @@ private extension NicoUtility {
             socket.write(string: pongMessage)
             log.debug("pong: \(pongMessage)")
         case let stat as WebSocketStatisticsData:
-            delegate?.nicoUtilityDidReceiveStatistics(self, stat: stat.toLiveStatistics())
+            delegate?.nicoManagerDidReceiveStatistics(self, stat: stat.toLiveStatistics())
         case is WebSocketDisconnectData:
             disconnect()
         case is WebSocketReconnectData:
@@ -598,7 +598,7 @@ private extension NicoUtility {
 }
 
 // MARK: - Private Methods (Message Socket)
-private extension NicoUtility {
+private extension NicoManager {
     func openMessageSocket(userId: String, room: WebSocketRoomData, connectContext: NicoConnectContext, completion: @escaping (Result<Void, NicoError>) -> Void) {
         guard let url = URL(string: room.data.messageServer.uri) else {
             completion(Result.failure(NicoError.internal))
@@ -687,7 +687,7 @@ private extension NicoUtility {
             return
         }
         chatNumbers.latest = chat.no
-        delegate?.nicoUtilityDidReceiveChat(self, chat: chat)
+        delegate?.nicoManagerDidReceiveChat(self, chat: chat)
         if _chat.isDisconnect {
             disconnect()
         }
@@ -695,13 +695,13 @@ private extension NicoUtility {
 }
 
 // MARK: - Private Methods (Keep Seat Timer for Watch Socket)
-private extension NicoUtility {
+private extension NicoManager {
     func startWatchSocketKeepSeatTimer(interval: Int) {
         stopWatchSocketKeepSeatTimer()
         watchSocketKeepSeatTimer = Timer.scheduledTimer(
             timeInterval: Double(interval),
             target: self,
-            selector: #selector(NicoUtility.watchSocketKeepSeatTimerFired),
+            selector: #selector(NicoManager.watchSocketKeepSeatTimerFired),
             userInfo: nil,
             repeats: true)
         log.debug("Started watch socket keep-seat timer.")
@@ -720,13 +720,13 @@ private extension NicoUtility {
 }
 
 // MARK: - Private Methods (Empty Message Timer for Message Socket)
-private extension NicoUtility {
+private extension NicoManager {
     func startMessageSocketEmptyMessageTimer(interval: Int) {
         stopMessageSocketEmptyMessageTimer()
         messageSocketEmptyMessageTimer = Timer.scheduledTimer(
             timeInterval: Double(interval),
             target: self,
-            selector: #selector(NicoUtility.messageSocketEmptyMessageTimerFired),
+            selector: #selector(NicoManager.messageSocketEmptyMessageTimerFired),
             userInfo: nil,
             repeats: true)
         log.debug("Started message socket empty-message timer.")
@@ -745,14 +745,14 @@ private extension NicoUtility {
 }
 
 // MARK: - Private Methods (Ping-Pong Check Timer)
-private extension NicoUtility {
+private extension NicoManager {
     func startPingPongCheckTimer(interval: Int = pingPongCheckInterval) {
         stopPingPongCheckTimer()
         lastPongSocketDates = .init()
         pingPongCheckTimer = Timer.scheduledTimer(
             timeInterval: Double(interval),
             target: self,
-            selector: #selector(NicoUtility.pingPongCheckTimerFired),
+            selector: #selector(NicoManager.pingPongCheckTimerFired),
             userInfo: nil,
             repeats: true)
         log.debug("Started ping-pong check timer.")
@@ -774,7 +774,7 @@ private extension NicoUtility {
         pongCatchTimer = Timer.scheduledTimer(
             timeInterval: Double(pongCatchDelay),
             target: self,
-            selector: #selector(NicoUtility.pongCatchTimerFired),
+            selector: #selector(NicoManager.pongCatchTimerFired),
             userInfo: pingDate,
             repeats: false)
     }
@@ -795,7 +795,7 @@ private extension NicoUtility {
 }
 
 // MARK: - Private Methods (Last Text Check Timer)
-private extension NicoUtility {
+private extension NicoManager {
     func setTextSocketEventCheckTimer(delay: Int) {
         guard isConnected else { return }
         objc_sync_enter(self)
@@ -804,7 +804,7 @@ private extension NicoUtility {
         textSocketEventCheckTimer = Timer.scheduledTimer(
             timeInterval: Double(delay),
             target: self,
-            selector: #selector(NicoUtility.textSocketEventCheckTimerFired),
+            selector: #selector(NicoManager.textSocketEventCheckTimerFired),
             userInfo: nil,
             repeats: false)
         // log.debug("Set text socket event timer. (\(delay) sec)")
