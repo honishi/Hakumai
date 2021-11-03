@@ -752,6 +752,7 @@ private extension NicoManager {
                 threadId: threadId,
                 resFrom: resFrom,
                 threadKey: threadKey)
+            timeShiftThreadRequestCount += 1
         case .text(let text):
             let result = processTimeShiftMessageSocketTextEvent(text: text)
             switch result {
@@ -763,19 +764,16 @@ private extension NicoManager {
                 chatCountIn1TimeShiftThreadRequest += 1
             case .pingContentFinish:
                 let receivedSomeChats = chatCountIn1TimeShiftThreadRequest > 0
-                if receivedSomeChats {
+                let shouldNotify = timeShiftThreadRequestCount % 5 == 0
+                if receivedSomeChats && shouldNotify {
                     delegate?.nicoManagerReceivingTimeShiftChats(
                         self, totalChatCount: timeShiftChats.count)
                 }
                 let receivedAllChats = chatCountIn1TimeShiftThreadRequest == 0
                 let tooManyRequest = 1000 < timeShiftThreadRequestCount
                 if receivedAllChats || tooManyRequest {
-                    delegate?.nicoManagerDidFinishReceivingTimeShiftChats(
-                        self, totalChatCount: timeShiftChats.count)
                     timeShiftChats.sort(by: { a, b in a.date < b.date })
-                    timeShiftChats.forEach {
-                        delegate?.nicoManagerDidReceiveChat(self, chat: $0)
-                    }
+                    delegate?.nicoManagerDidReceiveTimeShiftChats(self, chats: timeShiftChats)
                     disconnect()
                     break
                 }

@@ -453,10 +453,9 @@ extension MainViewController: NicoManagerDelegate {
 
     func nicoManagerDidReceiveChat(_ nicoManager: NicoManagerType, chat: Chat) {
         // log.debug("\(chat.mail),\(chat.comment)")
-        if let live = live {
-            HandleNameManager.shared.extractAndUpdateHandleName(live: live, chat: chat)
-        }
-        appendTableView(chat)
+        guard let live = live else { return }
+        HandleNameManager.shared.extractAndUpdateHandleName(live: live, chat: chat)
+        appendToTable(chat)
 
         for userWindowController in userWindowControllers where chat.userId == userWindowController.userId {
             DispatchQueue.main.async {
@@ -479,8 +478,13 @@ extension MainViewController: NicoManagerDelegate {
         logSystemMessageToTableView(L10n.receivingComments(totalChatCount))
     }
 
-    func nicoManagerDidFinishReceivingTimeShiftChats(_ nicoManager: NicoManagerType, totalChatCount: Int) {
-        logSystemMessageToTableView(L10n.receivedComments(totalChatCount))
+    func nicoManagerDidReceiveTimeShiftChats(_ nicoManager: NicoManagerType, chats: [Chat]) {
+        logSystemMessageToTableView(L10n.receivedComments(chats.count))
+        guard let live = live else { return }
+        chats.forEach {
+            HandleNameManager.shared.extractAndUpdateHandleName(live: live, chat: $0)
+        }
+        bulkAppendToTable(chats)
     }
 
     func nicoManagerDidDisconnect(_ nicoManager: NicoManagerType, disconnectContext: NicoDisconnectContext) {
@@ -681,7 +685,7 @@ extension MainViewController {
 // MARK: Chat Message Utility (Internal)
 extension MainViewController {
     func logSystemMessageToTableView(_ message: String) {
-        appendTableView(message)
+        appendToTable(message)
     }
 }
 
@@ -823,7 +827,7 @@ private extension MainViewController {
 
 // MARK: Chat Message Utility (Private)
 private extension MainViewController {
-    func appendTableView(_ chatOrSystemMessage: Any) {
+    func appendToTable(_ chatOrSystemMessage: Any) {
         DispatchQueue.main.async {
             let shouldScroll = self.scrollView.isReachedToBottom
             let (appended, count) = self.messageContainer.append(chatOrSystemMessage: chatOrSystemMessage)
@@ -838,6 +842,16 @@ private extension MainViewController {
             if message.messageType == .chat, let chat = message.chat {
                 self.handleSpeech(chat: chat)
             }
+            self.scrollView.flashScrollers()
+        }
+    }
+
+    func bulkAppendToTable(_ chatOrSystemMessage: [Any]) {
+        DispatchQueue.main.async {
+            chatOrSystemMessage.forEach {
+                self.messageContainer.append(chatOrSystemMessage: $0)
+            }
+            self.tableView.reloadData()
             self.scrollView.flashScrollers()
         }
     }
