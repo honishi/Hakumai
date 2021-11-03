@@ -729,7 +729,7 @@ private extension NicoManager {
         let socket = WebSocket(request: request)
         resetTimeShiftVariables()
         socket.onEvent = { [weak self] in
-            self?.handleMessageSocketEventForTimeShift(
+            self?.handleTimeShiftMessageSocketEvent(
                 socket: socket,
                 event: $0,
                 userId: userId,
@@ -749,7 +749,7 @@ private extension NicoManager {
     }
 
     // swiftlint:disable function_parameter_count function_body_length
-    func handleMessageSocketEventForTimeShift(socket: WebSocket, event: WebSocketEvent, userId: String, threadId: String, threadKey: String, completion: (Result<Void, NicoError>) -> Void) {
+    func handleTimeShiftMessageSocketEvent(socket: WebSocket, event: WebSocketEvent, userId: String, threadId: String, threadKey: String, completion: (Result<Void, NicoError>) -> Void) {
         // log.debug(event)
         switch event {
         case .connected:
@@ -761,7 +761,7 @@ private extension NicoManager {
                 resFrom: -200,
                 threadKey: threadKey)
         case .text(let text):
-            let result = processMessageSocketTimeShiftTextEvent(text: text)
+            let result = processTimeShiftMessageSocketTextEvent(text: text)
             switch result {
             case .pingContentStart:
                 timeShiftChatCountIn1ThreadRequest = 0
@@ -821,14 +821,14 @@ private extension NicoManager {
         case unknown
     }
 
-    func processMessageSocketTimeShiftTextEvent(text: String) -> MessageSocketProcessResult {
+    func processTimeShiftMessageSocketTextEvent(text: String) -> MessageSocketProcessResult {
         guard let data = text.data(using: .utf8) else { return .unknown }
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         if let pc = try? decoder.decode(WebSocketPingContentData.self, from: data) {
-            if pc.ping.content.hasPrefix("rs:0") {
+            if pc.ping.content == "rs:0" {
                 return .pingContentStart
-            } else if pc.ping.content.hasPrefix("rf:0") {
+            } else if pc.ping.content == "rf:0" {
                 return .pingContentFinish
             }
             return .unknown
