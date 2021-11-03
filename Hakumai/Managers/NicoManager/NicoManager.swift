@@ -45,8 +45,11 @@ private let keepSeatMessage = """
 private let pongMessage = """
 {"type":"pong"}
 """
-private let startThreadMessage = """
+private let threadMessage = """
 [{"ping":{"content":"rs:0"}},{"ping":{"content":"ps:0"}},{"thread":{"thread":"%@","version":"20061206","user_id":"%@","res_from":%d,"with_global":1,"scores":1,"nicoru":0,"threadkey":"%@"}},{"ping":{"content":"pf:0"}},{"ping":{"content":"rf:0"}}]
+"""
+private let timeShiftThreadMessage = """
+[{"ping":{"content":"rs:0"}},{"ping":{"content":"ps:0"}},{"thread":{"thread":"%@","version":"20061206","when":%d,"user_id":"%@","res_from":%d,"with_global":1,"scores":1,"nicoru":0}},{"ping":{"content":"pf:0"}},{"ping":{"content":"rf:0"}}]
 """
 private let postCommentMessage = """
 {"type":"postComment","data":{"text":"%@","vpos":%d,"isAnonymous":%@}}
@@ -113,6 +116,12 @@ final class NicoManager: NicoManagerType {
 
     // App-side Health Check (Text Socket)
     private var textSocketEventCheckTimer: Timer?
+
+    // TODO: refactor
+    private var earliestChatDate: Int = Int.max
+    private var chatGoBackCount = 0
+    private var chatCountInThreadRequest = 0
+    private var goBackChats: [Chat] = []
 
     init(authManager: AuthManagerProtocol = AuthManager.shared) {
         self.authManager = authManager
@@ -362,14 +371,19 @@ private extension NicoManager {
             guard let me = self else { return }
             switch $0 {
             case .success(let room):
-                me.openMessageSocket(userId: userId, room: room, connectContext: connectContext)
+                guard let isTimeShifted = me.live?.isTimeShift else { return }
+                if isTimeShifted {
+                    me.openTimeShiftMessageSocket(userId: userId, room: room, connectContext: connectContext)
+                } else {
+                    me.openMessageSocket(userId: userId, room: room, connectContext: connectContext)
+                }
             case .failure:
                 me.delegate?.nicoManagerDidFailToPrepareLive(me, error: .noMessageServerInfo)
             }
         }
     }
 
-    // #5/5. Finally, open message socket.
+    // #5-a/5. Finally, open message socket.
     func openMessageSocket(userId: String, room: WebSocketRoomData, connectContext: NicoConnectContext) {
         openMessageSocket(userId: userId, room: room, connectContext: connectContext) { [weak self] in
             guard let me = self else { return }
@@ -377,6 +391,24 @@ private extension NicoManager {
             case .success:
                 me.startAllTimers()
                 me.connectRequests.lastEstablished = me.connectRequests.onGoing
+                me.connectRequests.onGoing = nil
+                me.isConnected = true
+                me.delegate?.nicoManagerDidConnectToLive(
+                    me,
+                    roomPosition: RoomPosition.arena,
+                    connectContext: connectContext)
+            case .failure:
+                me.delegate?.nicoManagerDidFailToPrepareLive(me, error: .openMessageServerFailed)
+            }
+        }
+    }
+
+    // #5-b/5. This is for time-shifted program.
+    func openTimeShiftMessageSocket(userId: String, room: WebSocketRoomData, connectContext: NicoConnectContext) {
+        openTimeShiftMessageSocket(userId: userId, room: room, connectContext: connectContext) { [weak self] in
+            guard let me = self else { return }
+            switch $0 {
+            case .success:
                 me.connectRequests.onGoing = nil
                 me.isConnected = true
                 me.delegate?.nicoManagerDidConnectToLive(
@@ -593,7 +625,7 @@ private extension NicoManager {
     }
 }
 
-// MARK: - Private Methods (Message Socket)
+// MARK: - Private Methods (Message Socket, Non-TimeShifted)
 private extension NicoManager {
     func openMessageSocket(userId: String, room: WebSocketRoomData, connectContext: NicoConnectContext, completion: @escaping (Result<Void, NicoError>) -> Void) {
         guard let url = URL(string: room.data.messageServer.uri) else {
@@ -633,37 +665,30 @@ private extension NicoManager {
         switch event {
         case .connected:
             completion(Result.success(()))
-            sendStartThreadMessage(
+            sendThreadMessage(
                 socket: socket,
                 userId: userId,
                 threadId: threadId,
                 resFrom: resFrom,
                 threadKey: threadKey)
-        case .disconnected:
-            break
         case .text(let text):
             processMessageSocketTextEvent(text: text)
             setTextSocketEventCheckTimer(delay: textEventDisconnectDetectDelay)
-        case .binary:
-            break
         case .pong:
             lastPongSocketDates?.message = Date()
-        case .ping:
-            break
         case .error:
             reconnect()
-        case .viabilityChanged:
-            break
         case .reconnectSuggested:
             reconnect()
-        case .cancelled:
+        case .binary, .cancelled, .disconnected, .ping, .viabilityChanged:
             break
         }
     }
     // swiftlint:enable function_parameter_count
 
-    func sendStartThreadMessage(socket: WebSocket, userId: String, threadId: String, resFrom: Int, threadKey: String) {
-        let message = String.init(format: startThreadMessage, threadId, userId, resFrom, threadKey)
+    func sendThreadMessage(socket: WebSocket, userId: String, threadId: String, resFrom: Int, threadKey: String) {
+        let message = String.init(format: threadMessage, threadId, userId, resFrom, threadKey)
+        log.debug(message)
         socket.write(string: message)
     }
 
@@ -683,6 +708,130 @@ private extension NicoManager {
         if _chat.isDisconnect {
             disconnect()
         }
+    }
+}
+
+// MARK: - Private Methods (Message Socket, TimeShifted)
+private extension NicoManager {
+    func openTimeShiftMessageSocket(userId: String, room: WebSocketRoomData, connectContext: NicoConnectContext, completion: @escaping (Result<Void, NicoError>) -> Void) {
+        guard let url = URL(string: room.data.messageServer.uri) else {
+            completion(Result.failure(NicoError.internal))
+            return
+        }
+        var request = URLRequest(url: url)
+        request.headers = [
+            commonUserAgentKey: commonUserAgentValue,
+            // TODO: refactor
+            "Sec-WebSocket-Extensions": "permessage-deflate; client_max_window_bits",
+            "Sec-WebSocket-Protocol": "msg.nicovideo.jp#json"
+        ]
+        // TODO: refactor
+        request.timeoutInterval = 10
+        let socket = WebSocket(request: request)
+        resetGoBack()
+        socket.onEvent = { [weak self] in
+            self?.handleMessageSocketEventForTimeShift(
+                socket: socket,
+                event: $0,
+                userId: userId,
+                threadId: room.data.threadId,
+                threadKey: room.data.yourPostKey,
+                completion: completion)
+        }
+        socket.connect()
+        messageSocket = socket
+    }
+
+    func resetGoBack() {
+        earliestChatDate = Int.max
+        chatGoBackCount = 0
+        chatCountInThreadRequest = 0
+        goBackChats.removeAll()
+    }
+
+    // swiftlint:disable function_parameter_count
+    func handleMessageSocketEventForTimeShift(socket: WebSocket, event: WebSocketEvent, userId: String, threadId: String, threadKey: String, completion: (Result<Void, NicoError>) -> Void) {
+        log.debug(event)
+        switch event {
+        case .connected:
+            completion(Result.success(()))
+            sendThreadMessage(
+                socket: socket,
+                userId: userId,
+                threadId: threadId,
+                resFrom: -200,
+                threadKey: threadKey)
+        case .text(let text):
+            let result = processMessageSocketTimeShiftTextEvent(text: text)
+            switch result {
+            case .pingContentStart:
+                chatCountInThreadRequest = 0
+            case .chat:
+                chatCountInThreadRequest += 1
+            case .pingContentFinish:
+                if chatCountInThreadRequest == 0 || 100 < chatGoBackCount {
+                    goBackChats.sort(by: { a, b in a.date < b.date })
+                    goBackChats.forEach {
+                        delegate?.nicoManagerDidReceiveChat(self, chat: $0)
+                    }
+                    disconnect()
+                    break
+                }
+                sendTimeShiftThreadMessage(
+                    socket: socket,
+                    userId: userId,
+                    threadId: threadId,
+                    resFrom: -200,
+                    when: earliestChatDate)
+                chatGoBackCount += 1
+            case .unknown:
+                break
+            }
+        case .pong:
+            lastPongSocketDates?.message = Date()
+        case .binary, .cancelled, .disconnected, .error, .ping, .reconnectSuggested, .viabilityChanged:
+            break
+        }
+    }
+    // swiftlint:enable function_parameter_count
+
+    func sendTimeShiftThreadMessage(socket: WebSocket, userId: String, threadId: String, resFrom: Int, when: Int) {
+        let message = String.init(
+            format: timeShiftThreadMessage,
+            threadId,
+            when,
+            userId,
+            resFrom)
+        log.debug(message)
+        socket.write(string: message)
+    }
+
+    enum MessageSocketProcessResult {
+        case chat
+        case pingContentStart
+        case pingContentFinish
+        case unknown
+    }
+
+    func processMessageSocketTimeShiftTextEvent(text: String) -> MessageSocketProcessResult {
+        guard let data = text.data(using: .utf8) else { return .unknown }
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        if let pc = try? decoder.decode(WebSocketPingContentData.self, from: data) {
+            if pc.ping.content.hasPrefix("rs:0") {
+                return .pingContentStart
+            } else if pc.ping.content.hasPrefix("rf:0") {
+                return .pingContentFinish
+            }
+            return .unknown
+        }
+        guard let _chat = try? decoder.decode(WebSocketChatData.self, from: data) else { return .unknown }
+        log.debug(_chat.chat.date)
+        earliestChatDate = min(earliestChatDate, _chat.chat.date)
+        log.debug(earliestChatDate)
+        let chat = _chat.toChat()
+        goBackChats.append(chat)
+        return .chat
     }
 }
 
