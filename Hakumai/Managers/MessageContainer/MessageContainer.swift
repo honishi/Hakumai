@@ -32,6 +32,7 @@ final class MessageContainer {
 
 extension MessageContainer {
     // MARK: - Basic Operation to Content Array
+    @discardableResult
     func append(chatOrSystemMessage object: Any) -> (appended: Bool, count: Int) {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
