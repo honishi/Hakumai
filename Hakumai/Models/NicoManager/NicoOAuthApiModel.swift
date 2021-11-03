@@ -19,12 +19,17 @@ struct WatchProgramsResponse: Codable {
         let socialGroup: SocialGroup
     }
 
+    enum ProgramStatus: String, Codable {
+        case onAir = "ON_AIR"
+        case ended = "ENDED"
+    }
+
     struct Schedule: Codable {
         let beginTime: Date
         let endTime: Date
         let openTime: Date
         let scheduledEndTime: Date
-        let status: String
+        let status: ProgramStatus?
         let vposBaseTime: Date
     }
 

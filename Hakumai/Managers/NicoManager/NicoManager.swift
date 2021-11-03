@@ -523,32 +523,28 @@ private extension NicoManager {
     }
 
     func handleWatchSocketEvent(socket: WebSocket, event: WebSocketEvent, completion: (Result<WebSocketRoomData, NicoError>) -> Void) {
+        log.debug(event)
         switch event {
         case .connected:
-            log.debug("connected")
             socket.write(string: startWatchingMessage)
         case .disconnected:
-            log.debug("disconnected")
+            break
         case .text(let text):
-            log.debug("text: \(text)")
             processWatchSocketTextEvent(text: text, socket: socket, completion: completion)
         case .binary:
-            log.debug("binary")
+            break
         case .pong:
-            log.debug("pong")
             lastPongSocketDates?.watch = Date()
         case .ping:
-            log.debug("ping")
+            break
         case .error:
-            log.debug("error")
             reconnect()
         case .viabilityChanged:
-            log.debug("viabilityChanged")
+            break
         case .reconnectSuggested:
-            log.debug("reconnectSuggested")
             reconnect()
         case .cancelled:
-            log.debug("cancelled")
+            break
         }
     }
 
@@ -633,9 +629,9 @@ private extension NicoManager {
 
     // swiftlint:disable function_parameter_count
     func handleMessageSocketEvent(socket: WebSocket, event: WebSocketEvent, userId: String, threadId: String, resFrom: Int, threadKey: String, completion: (Result<Void, NicoError>) -> Void) {
+        log.debug(event)
         switch event {
         case .connected:
-            log.debug("connected")
             completion(Result.success(()))
             sendStartThreadMessage(
                 socket: socket,
@@ -644,28 +640,24 @@ private extension NicoManager {
                 resFrom: resFrom,
                 threadKey: threadKey)
         case .disconnected:
-            log.debug("disconnected")
+            break
         case .text(let text):
-            log.debug("text: \(text)")
             processMessageSocketTextEvent(text: text)
             setTextSocketEventCheckTimer(delay: textEventDisconnectDetectDelay)
         case .binary:
-            log.debug("binary")
+            break
         case .pong:
-            log.debug("pong")
             lastPongSocketDates?.message = Date()
         case .ping:
-            log.debug("ping")
+            break
         case .error:
-            log.debug("error")
             reconnect()
         case .viabilityChanged:
-            log.debug("viabilityChanged")
+            break
         case .reconnectSuggested:
-            log.debug("reconnectSuggested")
             reconnect()
         case .cancelled:
-            log.debug("cancelled")
+            break
         }
     }
     // swiftlint:enable function_parameter_count
@@ -836,7 +828,8 @@ private extension WatchProgramsResponse {
             ),
             baseTime: data.program.schedule.vposBaseTime,
             openTime: data.program.schedule.openTime,
-            beginTime: data.program.schedule.beginTime
+            beginTime: data.program.schedule.beginTime,
+            isTimeShift: data.program.schedule.status == .ended
         )
     }
 }
