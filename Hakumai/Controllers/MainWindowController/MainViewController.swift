@@ -466,6 +466,14 @@ extension MainViewController: NicoManagerDelegate {
         }
     }
 
+    func nicoManagerReceivingTimeShiftChats(_ nicoManager: NicoManagerType, totalChatCount: Int) {
+        logSystemMessageToTableView(L10n.receivingComments(totalChatCount))
+    }
+
+    func nicoManagerDidReceiveTimeShiftChats(_ nicoManager: NicoManagerType, totalChatCount: Int) {
+        logSystemMessageToTableView(L10n.receivedComments(totalChatCount))
+    }
+
     func nicoManagerDidDisconnect(_ nicoManager: NicoManagerType, disconnectContext: NicoDisconnectContext) {
         switch disconnectContext {
         case .normal:
@@ -1088,6 +1096,10 @@ private extension MainViewController {
     func handleSpeech(chat: Chat) {
         guard #available(macOS 10.14, *) else { return }
         guard speakButton.isOn else { return }
+        guard live?.isTimeShift == false else {
+            // log.debug("Skip enqueing since speech for time shift program is not supported.")
+            return
+        }
         guard let started = liveStartedDate,
               Date().timeIntervalSince(started) > 5 else {
             // Skip enqueuing since there's possibility that we receive lots of

@@ -50,6 +50,10 @@ protocol NicoManagerDelegate: AnyObject {
     func nicoManagerWillReconnectToLive(_ nicoManager: NicoManagerType, reason: NicoReconnectReason)
     func nicoManagerDidReceiveStatistics(_ nicoManager: NicoManagerType, stat: LiveStatistics)
 
+    // Timeshift.
+    func nicoManagerReceivingTimeShiftChats(_ nicoManager: NicoManagerType, totalChatCount: Int)
+    func nicoManagerDidReceiveTimeShiftChats(_ nicoManager: NicoManagerType, totalChatCount: Int)
+
     // Disconnect.
     func nicoManagerDidDisconnect(_ nicoManager: NicoManagerType, disconnectContext: NicoDisconnectContext)
 }

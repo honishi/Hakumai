@@ -108,6 +108,8 @@
 "reconnecting" = "再接続します...";
 "reconnected" = "再接続しました.";
 "failed_to_comment" = "コメントに失敗しました.";
+"receiving_comments" = "コメントを取得中... (%d)";
+"received_comments" = "%d コメントを取得しました.";
 
 /// Error
 "error_internal" = "内部エラー.";

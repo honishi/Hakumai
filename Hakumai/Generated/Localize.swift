@@ -162,6 +162,14 @@ internal enum L10n {
   internal static let quitHakumai = L10n.tr("Localizable", "quit_hakumai")
   /// Chikuran Rank (Show only when ranked in top 500)
   internal static let rankingDescription = L10n.tr("Localizable", "ranking_description")
+  /// Received %d comments.
+  internal static func receivedComments(_ p1: Int) -> String {
+    return L10n.tr("Localizable", "received_comments", p1)
+  }
+  /// Receiving comments... (%d)
+  internal static func receivingComments(_ p1: Int) -> String {
+    return L10n.tr("Localizable", "receiving_comments", p1)
+  }
   /// Reconnected.
   internal static let reconnected = L10n.tr("Localizable", "reconnected")
   /// Reconnecting...

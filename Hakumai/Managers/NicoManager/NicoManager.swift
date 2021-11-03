@@ -118,7 +118,7 @@ final class NicoManager: NicoManagerType {
     private var textSocketEventCheckTimer: Timer?
 
     // TODO: refactor
-    private var earliestChatDate: Int = Int.max
+    private var earliestChatDate: Date = .distantFuture
     private var chatGoBackCount = 0
     private var chatCountInThreadRequest = 0
     private var goBackChats: [Chat] = []
@@ -743,13 +743,13 @@ private extension NicoManager {
     }
 
     func resetGoBack() {
-        earliestChatDate = Int.max
+        earliestChatDate = .distantFuture
         chatGoBackCount = 0
         chatCountInThreadRequest = 0
         goBackChats.removeAll()
     }
 
-    // swiftlint:disable function_parameter_count
+    // swiftlint:disable function_parameter_count function_body_length
     func handleMessageSocketEventForTimeShift(socket: WebSocket, event: WebSocketEvent, userId: String, threadId: String, threadKey: String, completion: (Result<Void, NicoError>) -> Void) {
         log.debug(event)
         switch event {
@@ -766,10 +766,18 @@ private extension NicoManager {
             switch result {
             case .pingContentStart:
                 chatCountInThreadRequest = 0
-            case .chat:
+            case .chat(let chat):
+                earliestChatDate = min(earliestChatDate, chat.date)
+                goBackChats.append(chat)
                 chatCountInThreadRequest += 1
             case .pingContentFinish:
-                if chatCountInThreadRequest == 0 || 100 < chatGoBackCount {
+                if chatCountInThreadRequest > 0 {
+                    delegate?.nicoManagerReceivingTimeShiftChats(
+                        self, totalChatCount: goBackChats.count)
+                }
+                if chatCountInThreadRequest == 0 || 1000 < chatGoBackCount {
+                    delegate?.nicoManagerDidReceiveTimeShiftChats(
+                        self, totalChatCount: goBackChats.count)
                     goBackChats.sort(by: { a, b in a.date < b.date })
                     goBackChats.forEach {
                         delegate?.nicoManagerDidReceiveChat(self, chat: $0)
@@ -787,19 +795,17 @@ private extension NicoManager {
             case .unknown:
                 break
             }
-        case .pong:
-            lastPongSocketDates?.message = Date()
-        case .binary, .cancelled, .disconnected, .error, .ping, .reconnectSuggested, .viabilityChanged:
+        case .binary, .cancelled, .disconnected, .error, .ping, .pong, .reconnectSuggested, .viabilityChanged:
             break
         }
     }
-    // swiftlint:enable function_parameter_count
+    // swiftlint:enable function_parameter_count function_body_length
 
-    func sendTimeShiftThreadMessage(socket: WebSocket, userId: String, threadId: String, resFrom: Int, when: Int) {
+    func sendTimeShiftThreadMessage(socket: WebSocket, userId: String, threadId: String, resFrom: Int, when: Date) {
         let message = String.init(
             format: timeShiftThreadMessage,
             threadId,
-            when,
+            Int(when.timeIntervalSince1970),
             userId,
             resFrom)
         log.debug(message)
@@ -807,7 +813,7 @@ private extension NicoManager {
     }
 
     enum MessageSocketProcessResult {
-        case chat
+        case chat(Chat)
         case pingContentStart
         case pingContentFinish
         case unknown
@@ -825,13 +831,8 @@ private extension NicoManager {
             }
             return .unknown
         }
-        guard let _chat = try? decoder.decode(WebSocketChatData.self, from: data) else { return .unknown }
-        log.debug(_chat.chat.date)
-        earliestChatDate = min(earliestChatDate, _chat.chat.date)
-        log.debug(earliestChatDate)
-        let chat = _chat.toChat()
-        goBackChats.append(chat)
-        return .chat
+        guard let chat = try? decoder.decode(WebSocketChatData.self, from: data) else { return .unknown }
+        return .chat(chat.toChat())
     }
 }
 
