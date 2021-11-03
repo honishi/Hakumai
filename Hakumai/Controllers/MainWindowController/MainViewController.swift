@@ -395,6 +395,11 @@ extension MainViewController: NicoManagerDelegate {
     func nicoManagerDidPrepareLive(_ nicoManager: NicoManagerType, user: User, live: Live, connectContext: NicoConnectContext) {
         self.live = live
 
+        delegate?.mainViewControllerDidPrepareLive(
+            self,
+            title: live.title,
+            community: live.community?.title ?? "-")
+
         updateCommunityViews(for: live)
 
         if live.isTimeShift {
@@ -416,11 +421,6 @@ extension MainViewController: NicoManagerDelegate {
         case .reconnect:
             break
         }
-
-        delegate?.mainViewControllerDidPrepareLive(
-            self,
-            title: live.title,
-            community: live.community?.title ?? "-")
 
         logRankingManagerDebugMessageIfEnabled()
     }
