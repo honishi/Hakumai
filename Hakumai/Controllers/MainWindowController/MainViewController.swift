@@ -474,7 +474,9 @@ extension MainViewController: NicoManagerDelegate {
         }
     }
 
-    func nicoManagerReceivingTimeShiftChats(_ nicoManager: NicoManagerType, totalChatCount: Int) {
+    func nicoManagerReceivingTimeShiftChats(_ nicoManager: NicoManagerType, requestCount: Int, totalChatCount: Int) {
+        let shouldLog = requestCount % 5 == 0
+        guard shouldLog else { return }
         logSystemMessageToTableView(L10n.receivingComments(totalChatCount))
     }
 
