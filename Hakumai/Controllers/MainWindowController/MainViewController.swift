@@ -47,12 +47,15 @@ final class MainViewController: NSViewController {
     @IBOutlet private weak var communityImageView: NSImageView!
     @IBOutlet private weak var liveTitleLabel: NSTextField!
     @IBOutlet private weak var communityTitleLabel: NSTextField!
-    @IBOutlet private weak var communityIdLabel: NSTextField!
 
-    @IBOutlet private weak var visitorsTitleLabel: NSTextField!
+    @IBOutlet private weak var visitorsIconImageView: NSImageView!
     @IBOutlet private weak var visitorsValueLabel: NSTextField!
-    @IBOutlet private weak var commentsTitleLabel: NSTextField!
+    @IBOutlet private weak var commentsIconImageView: NSImageView!
     @IBOutlet private weak var commentsValueLabel: NSTextField!
+    @IBOutlet private weak var advertiseIconImageView: NSImageView!
+    @IBOutlet private weak var advertiseValueLabel: NSTextField!
+    @IBOutlet private weak var giftIconImageView: NSImageView!
+    @IBOutlet private weak var giftValueLabel: NSTextField!
     @IBOutlet private weak var speakButton: NSButton!
 
     @IBOutlet private weak var scrollView: BottomButtonScrollView!
@@ -702,13 +705,21 @@ private extension MainViewController {
         liveUrlTextField.placeholderString = L10n.liveUrlTextFieldPlaceholder
 
         liveTitleLabel.stringValue = "[\(L10n.liveTitle)]"
-        communityIdLabel.stringValue = "[\(L10n.communityId)]"
         communityTitleLabel.stringValue = "[\(L10n.communityName)]"
 
-        visitorsTitleLabel.stringValue = "\(L10n.visitorCount):"
+        visitorsIconImageView.toolTip = L10n.visitorCount
+        visitorsValueLabel.toolTip = L10n.visitorCount
         visitorsValueLabel.stringValue = defaultLabelValue
-        commentsTitleLabel.stringValue = "\(L10n.commentCount):"
+        commentsIconImageView.toolTip = L10n.commentCount
+        commentsValueLabel.toolTip = L10n.commentCount
         commentsValueLabel.stringValue = defaultLabelValue
+        advertiseIconImageView.toolTip = L10n.advertisePoint
+        advertiseValueLabel.toolTip = L10n.advertisePoint
+        advertiseValueLabel.stringValue = defaultLabelValue
+        giftIconImageView.toolTip = L10n.giftPoint
+        giftValueLabel.toolTip = L10n.giftPoint
+        giftValueLabel.stringValue = defaultLabelValue
+
         speakButton.title = L10n.speakComment
 
         if #available(macOS 10.14, *) {
@@ -818,12 +829,7 @@ private extension MainViewController {
             )
         }
         liveTitleLabel.stringValue = live.title
-        communityIdLabel.stringValue = live.community?.communityId ?? "-"
-        var communityTitle = live.community?.title ?? "-"
-        if let level = live.community?.level {
-            communityTitle += " (Lv.\(level))"
-        }
-        communityTitleLabel.stringValue = communityTitle
+        communityTitleLabel.stringValue = live.community?.title ?? "-"
     }
 }
 

@@ -99,6 +99,8 @@
 "login_completed" = "ログインしました.";
 "logout_completed" = "ログアウトしました.";
 "new_live" = "新規放送";
+"advertise_point" = "広告";
+"gift_point" = "ギフト";
 
 /// Message
 "prepared_live" = "\"%@\" で放送情報を取得しました.";
