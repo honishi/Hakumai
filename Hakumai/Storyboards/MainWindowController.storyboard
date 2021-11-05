@@ -743,7 +743,7 @@
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PqT-0D-HbI">
+                                                    <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="16" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PqT-0D-HbI">
                                                         <rect key="frame" x="0.0" y="0.0" width="517" height="17"/>
                                                         <subviews>
                                                             <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9sP-vu-ghg">
@@ -777,7 +777,7 @@
                                                                 </customSpacing>
                                                             </stackView>
                                                             <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TZQ-cV-kEw">
-                                                                <rect key="frame" x="51" y="1" width="43" height="16"/>
+                                                                <rect key="frame" x="59" y="1" width="43" height="16"/>
                                                                 <subviews>
                                                                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="MCs-Zv-FLD">
                                                                         <rect key="frame" x="0.0" y="0.0" width="16" height="16"/>
@@ -807,7 +807,7 @@
                                                                 </customSpacing>
                                                             </stackView>
                                                             <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VO6-jf-Ekf">
-                                                                <rect key="frame" x="102" y="1" width="43" height="16"/>
+                                                                <rect key="frame" x="118" y="1" width="43" height="16"/>
                                                                 <subviews>
                                                                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="jC1-XL-axi">
                                                                         <rect key="frame" x="0.0" y="0.0" width="16" height="16"/>
@@ -837,7 +837,7 @@
                                                                 </customSpacing>
                                                             </stackView>
                                                             <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0IF-gf-Kcz">
-                                                                <rect key="frame" x="153" y="1" width="43" height="16"/>
+                                                                <rect key="frame" x="177" y="1" width="43" height="16"/>
                                                                 <subviews>
                                                                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="gzt-sF-boU">
                                                                         <rect key="frame" x="0.0" y="0.0" width="16" height="16"/>
@@ -867,7 +867,7 @@
                                                                 </customSpacing>
                                                             </stackView>
                                                             <customView horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Gr6-qH-sQ4">
-                                                                <rect key="frame" x="204" y="0.0" width="243" height="17"/>
+                                                                <rect key="frame" x="236" y="0.0" width="203" height="17"/>
                                                             </customView>
                                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="QmJ-8z-tPW">
                                                                 <rect key="frame" x="453" y="0.0" width="64" height="18"/>
@@ -1282,8 +1282,8 @@
                         <outlet property="activeUserChartView" destination="yo1-uX-sTU" id="JBb-lq-f6C"/>
                         <outlet property="activeUserIconImageView" destination="52j-Zb-keG" id="Jc5-9l-rji"/>
                         <outlet property="activeUserValueLabel" destination="09h-Eb-cuW" id="6Lr-4p-RbY"/>
-                        <outlet property="advertiseIconImageView" destination="jC1-XL-axi" id="YJ3-9k-PbS"/>
-                        <outlet property="advertiseValueLabel" destination="0qo-uD-qcd" id="fRg-C8-lpp"/>
+                        <outlet property="adPointsIconImageView" destination="jC1-XL-axi" id="YJ3-9k-PbS"/>
+                        <outlet property="adPointsValueLabel" destination="0qo-uD-qcd" id="fRg-C8-lpp"/>
                         <outlet property="commentAnonymouslyButton" destination="UtQ-bi-lar" id="ugQ-Jr-d3b"/>
                         <outlet property="commentTextField" destination="pml-Sh-s7e" id="JGp-sC-LAL"/>
                         <outlet property="commentsIconImageView" destination="MCs-Zv-FLD" id="fWS-P1-F68"/>
@@ -1295,8 +1295,8 @@
                         <outlet property="debugReconnectButton" destination="IZs-cK-l0Y" id="neM-ub-baA"/>
                         <outlet property="elapsedTimeIconImageView" destination="e8e-M3-DzU" id="7HC-qY-wzD"/>
                         <outlet property="elapsedTimeValueLabel" destination="p3A-6s-IKD" id="6T8-le-0s2"/>
-                        <outlet property="giftIconImageView" destination="gzt-sF-boU" id="IXz-FO-VGY"/>
-                        <outlet property="giftValueLabel" destination="ak0-Zv-XEq" id="Et0-Xg-T8n"/>
+                        <outlet property="giftPointsIconImageView" destination="gzt-sF-boU" id="IXz-FO-VGY"/>
+                        <outlet property="giftPointsLabel" destination="ak0-Zv-XEq" id="Et0-Xg-T8n"/>
                         <outlet property="grabUrlButton" destination="GRS-m4-7KE" id="WFa-bJ-le5"/>
                         <outlet property="liveTitleLabel" destination="65a-aX-RIL" id="uvT-R4-GZO"/>
                         <outlet property="liveUrlTextField" destination="gZN-es-bFO" id="vZe-3V-txV"/>

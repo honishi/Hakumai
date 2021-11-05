@@ -18,12 +18,12 @@ internal enum L10n {
   internal static let activeUserDescription = L10n.tr("Localizable", "active_user_description")
   /// History of active unique users in last 20 minutes
   internal static let activeUserHistoryDescription = L10n.tr("Localizable", "active_user_history_description")
+  /// Advertise
+  internal static let adPoints = L10n.tr("Localizable", "ad_points")
   /// Add
   internal static let add = L10n.tr("Localizable", "add")
   /// Add to Mute User
   internal static let addToMuteUser = L10n.tr("Localizable", "add_to_mute_user")
-  /// Advertise
-  internal static let advertisePoint = L10n.tr("Localizable", "advertise_point")
   /// Always On Top
   internal static let alwaysOnTop = L10n.tr("Localizable", "always_on_top")
   /// Bring All to Front
@@ -103,7 +103,7 @@ internal enum L10n {
   /// File
   internal static let file = L10n.tr("Localizable", "file")
   /// Gift
-  internal static let giftPoint = L10n.tr("Localizable", "gift_point")
+  internal static let giftPoints = L10n.tr("Localizable", "gift_points")
   /// Google Chrome
   internal static let googleChrome = L10n.tr("Localizable", "google_chrome")
   /// Grab URL from Browser

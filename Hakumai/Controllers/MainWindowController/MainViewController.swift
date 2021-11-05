@@ -52,10 +52,10 @@ final class MainViewController: NSViewController {
     @IBOutlet private weak var visitorsValueLabel: NSTextField!
     @IBOutlet private weak var commentsIconImageView: NSImageView!
     @IBOutlet private weak var commentsValueLabel: NSTextField!
-    @IBOutlet private weak var advertiseIconImageView: NSImageView!
-    @IBOutlet private weak var advertiseValueLabel: NSTextField!
-    @IBOutlet private weak var giftIconImageView: NSImageView!
-    @IBOutlet private weak var giftValueLabel: NSTextField!
+    @IBOutlet private weak var adPointsIconImageView: NSImageView!
+    @IBOutlet private weak var adPointsValueLabel: NSTextField!
+    @IBOutlet private weak var giftPointsIconImageView: NSImageView!
+    @IBOutlet private weak var giftPointsLabel: NSTextField!
     @IBOutlet private weak var speakButton: NSButton!
 
     @IBOutlet private weak var scrollView: BottomButtonScrollView!
@@ -713,12 +713,12 @@ private extension MainViewController {
         commentsIconImageView.toolTip = L10n.commentCount
         commentsValueLabel.toolTip = L10n.commentCount
         commentsValueLabel.stringValue = defaultLabelValue
-        advertiseIconImageView.toolTip = L10n.advertisePoint
-        advertiseValueLabel.toolTip = L10n.advertisePoint
-        advertiseValueLabel.stringValue = defaultLabelValue
-        giftIconImageView.toolTip = L10n.giftPoint
-        giftValueLabel.toolTip = L10n.giftPoint
-        giftValueLabel.stringValue = defaultLabelValue
+        adPointsIconImageView.toolTip = L10n.adPoints
+        adPointsValueLabel.toolTip = L10n.adPoints
+        adPointsValueLabel.stringValue = defaultLabelValue
+        giftPointsIconImageView.toolTip = L10n.giftPoints
+        giftPointsLabel.toolTip = L10n.giftPoints
+        giftPointsLabel.stringValue = defaultLabelValue
 
         speakButton.title = L10n.speakComment
 
@@ -888,9 +888,13 @@ private extension MainViewController {
     func updateLiveStatistics(stat: LiveStatistics) {
         let visitors = String(stat.viewers).numberStringWithSeparatorComma()
         let comments = String(stat.comments).numberStringWithSeparatorComma()
+        let adPoints = String(stat.adPoints ?? 0).numberStringWithSeparatorComma()
+        let giftPoints = String(stat.giftPoints ?? 0).numberStringWithSeparatorComma()
         DispatchQueue.main.async {
             self.visitorsValueLabel.stringValue = visitors
             self.commentsValueLabel.stringValue = comments
+            self.adPointsValueLabel.stringValue = adPoints
+            self.giftPointsLabel.stringValue = giftPoints
         }
     }
 }
