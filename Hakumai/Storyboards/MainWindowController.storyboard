@@ -932,13 +932,13 @@
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="none" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveName="MainTableView" rowSizeStyle="automatic" headerView="cl3-1e-Mq0" viewBased="YES" id="21S-OF-mg3" customClass="ClickTableView" customModule="Hakumai" customModuleProvider="target">
-                                                    <rect key="frame" x="0.0" y="0.0" width="582" height="412"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="591" height="412"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <size key="intercellSpacing" width="6" height="2"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                                     <tableColumns>
-                                                        <tableColumn identifier="RoomPositionColumn" width="56" minWidth="10" maxWidth="88" id="PtZ-YS-lF5">
+                                                        <tableColumn identifier="RoomPositionColumn" width="72" minWidth="10" maxWidth="88" id="PtZ-YS-lF5">
                                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Room">
                                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                 <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
@@ -1028,7 +1028,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
                                         <tableHeaderView key="headerView" wantsLayer="YES" id="cl3-1e-Mq0">
-                                            <rect key="frame" x="0.0" y="0.0" width="582" height="23"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="591" height="23"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableHeaderView>
                                     </scrollView>
