@@ -10,9 +10,9 @@ import Foundation
 import Cocoa
 import SnapKit
 
-private let defaultButtonWidth = 40
+private let defaultButtonWidth = 32
 private let buttonTopBottomOffset: CGFloat = 8
-private let buttonRightOffset: CGFloat = 16
+private let buttonRightOffset: CGFloat = 20
 
 final class ButtonScrollView: NSScrollView {
     // MARK: - Properties
@@ -89,7 +89,6 @@ private extension ButtonScrollView {
         button.bezelStyle = .rounded
         button.image = image
         button.imageScaling = .scaleProportionallyUpOrDown
-        button.showsBorderOnlyWhileMouseInside = true
     }
 
     func addBoundsDidChangeNotificationObserver() {
