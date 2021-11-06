@@ -34,6 +34,8 @@ internal enum Asset {
   internal static let premiumIppan = ImageAsset(name: "PremiumIppan")
   internal static let premiumMisc = ImageAsset(name: "PremiumMisc")
   internal static let premiumPremium = ImageAsset(name: "PremiumPremium")
+  internal static let arrowDownwardBlack = ImageAsset(name: "arrow_downward_black")
+  internal static let arrowUpwardBlack = ImageAsset(name: "arrow_upward_black")
   internal static let handleNameOver184Id = ImageAsset(name: "HandleNameOver184Id")
   internal static let handleNameOverRawId = ImageAsset(name: "HandleNameOverRawId")
   internal static let userId184Id = ImageAsset(name: "UserId184Id")

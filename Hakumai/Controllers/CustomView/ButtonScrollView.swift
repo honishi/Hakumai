@@ -12,7 +12,7 @@ import SnapKit
 
 private let defaultButtonWidth = 40
 private let buttonTopBottomOffset: CGFloat = 8
-private let buttonRightOffset: CGFloat = 20
+private let buttonRightOffset: CGFloat = 16
 
 final class ButtonScrollView: NSScrollView {
     // MARK: - Properties
@@ -36,10 +36,10 @@ extension ButtonScrollView {
         enableBottomScrollButton()
     }
 
-    func enableTopScrollButton(title: String = "👆", width: Int? = defaultButtonWidth) {
+    func enableTopScrollButton(width: Int? = defaultButtonWidth) {
         guard topButton.target == nil else { return }
 
-        configureButtonAppearance(topButton, title: title)
+        configureButtonAppearance(topButton, image: Asset.arrowUpwardBlack.image)
         topButton.target = self
         topButton.action = #selector(topButtonPressed)
         updateTopButtonVisibility()
@@ -56,10 +56,10 @@ extension ButtonScrollView {
         addBoundsDidChangeNotificationObserver()
     }
 
-    func enableBottomScrollButton(title: String = "👇", width: Int? = defaultButtonWidth) {
+    func enableBottomScrollButton(width: Int? = defaultButtonWidth) {
         guard bottomButton.target == nil else { return }
 
-        configureButtonAppearance(bottomButton, title: title)
+        configureButtonAppearance(bottomButton, image: Asset.arrowDownwardBlack.image)
         bottomButton.target = self
         bottomButton.action = #selector(bottomButtonPressed)
         updateBottomButtonVisibility()
@@ -85,9 +85,11 @@ extension ButtonScrollView {
 }
 
 private extension ButtonScrollView {
-    func configureButtonAppearance(_ button: NSButton, title: String) {
+    func configureButtonAppearance(_ button: NSButton, image: NSImage) {
         button.bezelStyle = .rounded
-        button.title = title
+        button.image = image
+        button.imageScaling = .scaleProportionallyUpOrDown
+        button.showsBorderOnlyWhileMouseInside = true
     }
 
     func addBoundsDidChangeNotificationObserver() {
