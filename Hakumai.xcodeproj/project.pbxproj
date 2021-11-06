@@ -43,7 +43,7 @@
 		DB576ED32657A5BC0041050A /* AuthModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB576ED22657A5BC0041050A /* AuthModel.swift */; };
 		DB61AD82271B18DA001656F5 /* CircleImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB61AD81271B18DA001656F5 /* CircleImageView.swift */; };
 		DB682D421A36E6AE00499C72 /* Parameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB682D411A36E6AE00499C72 /* Parameter.swift */; };
-		DB690973266372230081F24F /* BottomButtonScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB690972266372230081F24F /* BottomButtonScrollView.swift */; };
+		DB690973266372230081F24F /* ButtonScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB690972266372230081F24F /* ButtonScrollView.swift */; };
 		DB6C73142662894B0026A8C0 /* NSScrollView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6C73132662894B0026A8C0 /* NSScrollView+Extensions.swift */; };
 		DB6DD2AA2650EC86009A9574 /* NicoWebSocketModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6DD2A92650EC86009A9574 /* NicoWebSocketModel.swift */; };
 		DB6DD2AC2650ECD7009A9574 /* NicoWebModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6DD2AB2650ECD7009A9574 /* NicoWebModel.swift */; };
@@ -170,7 +170,7 @@
 		DB576ED22657A5BC0041050A /* AuthModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthModel.swift; sourceTree = "<group>"; };
 		DB61AD81271B18DA001656F5 /* CircleImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleImageView.swift; sourceTree = "<group>"; };
 		DB682D411A36E6AE00499C72 /* Parameter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Parameter.swift; sourceTree = "<group>"; };
-		DB690972266372230081F24F /* BottomButtonScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomButtonScrollView.swift; sourceTree = "<group>"; };
+		DB690972266372230081F24F /* ButtonScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonScrollView.swift; sourceTree = "<group>"; };
 		DB6C73132662894B0026A8C0 /* NSScrollView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSScrollView+Extensions.swift"; sourceTree = "<group>"; };
 		DB6DD2A92650EC86009A9574 /* NicoWebSocketModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoWebSocketModel.swift; sourceTree = "<group>"; };
 		DB6DD2AB2650ECD7009A9574 /* NicoWebModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoWebModel.swift; sourceTree = "<group>"; };
@@ -399,7 +399,7 @@
 		DB690971266372080081F24F /* CustomView */ = {
 			isa = PBXGroup;
 			children = (
-				DB690972266372230081F24F /* BottomButtonScrollView.swift */,
+				DB690972266372230081F24F /* ButtonScrollView.swift */,
 				DB61AD81271B18DA001656F5 /* CircleImageView.swift */,
 				DB1E736F26F237F600A6F4C0 /* ClickTableView.swift */,
 			);
@@ -926,8 +926,8 @@
 				DB576ED32657A5BC0041050A /* AuthModel.swift in Sources */,
 				DB15AF9A26567AF1009DACBE /* AuthViewController.swift in Sources */,
 				DB15AF9826567A9D009DACBE /* AuthWindowController.swift in Sources */,
-				DB690973266372230081F24F /* BottomButtonScrollView.swift in Sources */,
 				DB74B86C1A6E790C0064AC28 /* BrowserHelper.swift in Sources */,
+				DB690973266372230081F24F /* ButtonScrollView.swift in Sources */,
 				DBFA887B1A1BC25A005349AD /* Chat.swift in Sources */,
 				DB61AD82271B18DA001656F5 /* CircleImageView.swift in Sources */,
 				DB1E737026F237F600A6F4C0 /* ClickTableView.swift in Sources */,

@@ -58,7 +58,7 @@ final class MainViewController: NSViewController {
     @IBOutlet private weak var giftPointsLabel: NSTextField!
     @IBOutlet private weak var speakButton: NSButton!
 
-    @IBOutlet private weak var scrollView: BottomButtonScrollView!
+    @IBOutlet private weak var scrollView: ButtonScrollView!
     @IBOutlet private(set) weak var tableView: ClickTableView!
 
     @IBOutlet private weak var commentTextField: NSTextField!
@@ -740,7 +740,7 @@ private extension MainViewController {
         rankingDateLabel.toolTip = L10n.rankingDescription
         updateRankingLabel(rank: nil, date: nil)
 
-        scrollView.enableBottomScrollButton()
+        scrollView.enableScrollButtons()
         configureTableView()
         registerNibs()
 
