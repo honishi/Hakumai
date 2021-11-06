@@ -24,7 +24,7 @@ final class UserViewController: NSViewController {
     @IBOutlet private weak var handleNameTitleLabel: NSTextField!
     @IBOutlet private weak var handleNameValueLabel: NSTextField!
     @IBOutlet private weak var tableView: NSTableView!
-    @IBOutlet private weak var scrollView: BottomButtonScrollView!
+    @IBOutlet private weak var scrollView: ButtonScrollView!
 
     // MARK: Basics
     private var nicoManager: NicoManagerType!
@@ -184,7 +184,7 @@ private extension UserViewController {
         userIdCopyButton.title = L10n.copyUserId
         userNameTitleLabel.stringValue = "\(L10n.userName):"
         handleNameTitleLabel.stringValue = "\(L10n.handleName):"
-        scrollView.enableBottomScrollButton()
+        scrollView.enableScrollButtons()
     }
 
     func configure(view: NSTableCellView, forChat message: Message, withTableColumn tableColumn: NSTableColumn) {

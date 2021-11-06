@@ -9,7 +9,15 @@
 import Foundation
 import Cocoa
 
+private let reachAllowance: CGFloat = 16
+
 extension NSScrollView {
+    var isReachedToTop: Bool {
+        let offsetTopY = contentView.documentVisibleRect.origin.y + contentView.contentInsets.top
+        // log.debug(offsetTopY)
+        return offsetTopY - reachAllowance < 0
+    }
+
     var isReachedToBottom: Bool {
         let viewRect = contentView.documentRect
         let visibleRect = contentView.documentVisibleRect
@@ -17,10 +25,16 @@ extension NSScrollView {
 
         let bottomY = viewRect.size.height
         let offsetBottomY = visibleRect.origin.y + visibleRect.size.height
-        let allowance: CGFloat = 16
 
-        let shouldScroll = (bottomY <= (offsetBottomY + allowance))
-        return shouldScroll
+        return bottomY <= (offsetBottomY + reachAllowance)
+    }
+
+    func scrollToTop() {
+        let x = contentView.documentVisibleRect.origin.x
+        let y = contentView.contentInsets.top * -1
+        let origin = NSPoint(x: x, y: y)
+
+        contentView.setBoundsOrigin(origin)
     }
 
     func scrollToBottom() {

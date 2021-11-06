@@ -764,10 +764,11 @@ private extension NicoManager {
                 chatCountIn1TimeShiftThreadRequest += 1
             case .pingContentFinish:
                 let receivedSomeChats = chatCountIn1TimeShiftThreadRequest > 0
-                let shouldNotify = timeShiftThreadRequestCount % 5 == 0
-                if receivedSomeChats && shouldNotify {
+                if receivedSomeChats {
                     delegate?.nicoManagerReceivingTimeShiftChats(
-                        self, totalChatCount: timeShiftChats.count)
+                        self,
+                        requestCount: timeShiftThreadRequestCount,
+                        totalChatCount: timeShiftChats.count)
                 }
                 let receivedAllChats = chatCountIn1TimeShiftThreadRequest == 0
                 let tooManyRequest = 1000 < timeShiftThreadRequestCount

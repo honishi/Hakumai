@@ -99,6 +99,8 @@
 "login_completed" = "Login completed.";
 "logout_completed" = "Logout completed.";
 "new_live" = "New Live";
+"ad_points" = "Advertise";
+"gift_points" = "Gift";
 
 /// Message
 "prepared_live" = "Retrieved the live info as user \"%@\".";
