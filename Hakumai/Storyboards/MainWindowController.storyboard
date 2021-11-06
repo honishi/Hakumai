@@ -755,7 +755,7 @@
                                                                             <constraint firstAttribute="height" constant="16" id="Mh7-Gr-fvy"/>
                                                                             <constraint firstAttribute="width" constant="16" id="wvo-Yw-KVi"/>
                                                                         </constraints>
-                                                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="people_black" id="AdX-xG-emm"/>
+                                                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="visitor_count" id="AdX-xG-emm"/>
                                                                         <color key="contentTintColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                                     </imageView>
                                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8WA-yo-AuZ">
@@ -785,7 +785,7 @@
                                                                             <constraint firstAttribute="height" constant="16" id="776-Jw-2EX"/>
                                                                             <constraint firstAttribute="width" constant="16" id="qSz-TS-z3l"/>
                                                                         </constraints>
-                                                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="question_answer_black" id="lzv-ac-tqv"/>
+                                                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="comment_count" id="lzv-ac-tqv"/>
                                                                         <color key="contentTintColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                                     </imageView>
                                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vmz-z1-HHp">
@@ -815,7 +815,7 @@
                                                                             <constraint firstAttribute="width" constant="16" id="DFd-Ve-jfw"/>
                                                                             <constraint firstAttribute="height" constant="16" id="ZZm-tB-Srq"/>
                                                                         </constraints>
-                                                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="campaign_black" id="zvx-5J-F9k"/>
+                                                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="ad_points" id="zvx-5J-F9k"/>
                                                                         <color key="contentTintColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                                     </imageView>
                                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0qo-uD-qcd">
@@ -845,7 +845,7 @@
                                                                             <constraint firstAttribute="width" constant="16" id="PwW-3t-0IX"/>
                                                                             <constraint firstAttribute="height" constant="16" id="wpU-s0-P8T"/>
                                                                         </constraints>
-                                                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="paid_black" id="tVv-Uz-rYt"/>
+                                                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="gift_points" id="tVv-Uz-rYt"/>
                                                                         <color key="contentTintColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                                     </imageView>
                                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ak0-Zv-XEq">
@@ -1112,7 +1112,7 @@
                                                             <constraint firstAttribute="width" constant="16" id="0Fb-Jn-yGi"/>
                                                             <constraint firstAttribute="height" constant="16" id="PcT-da-ESf"/>
                                                         </constraints>
-                                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="record_voice_over_black" id="u11-qB-0M4"/>
+                                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="people_black" id="u11-qB-0M4"/>
                                                         <color key="contentTintColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                     </imageView>
                                                     <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ekE-tz-Is1">
@@ -1503,14 +1503,14 @@ Gw
     </scenes>
     <resources>
         <image name="DefaultCommunityImage" width="128" height="128"/>
-        <image name="campaign_black" width="48" height="48"/>
+        <image name="ad_points" width="56" height="56"/>
+        <image name="comment_count" width="48" height="48"/>
+        <image name="gift_points" width="48" height="48"/>
         <image name="link_black" width="48" height="48"/>
         <image name="military_tech_black" width="48" height="48"/>
-        <image name="paid_black" width="48" height="48"/>
         <image name="people_black" width="72" height="72"/>
         <image name="play_arrow_black" width="48" height="48"/>
-        <image name="question_answer_black" width="48" height="48"/>
-        <image name="record_voice_over_black" width="48" height="48"/>
         <image name="schedule_black" width="72" height="72"/>
+        <image name="visitor_count" width="48" height="48"/>
     </resources>
 </document>
