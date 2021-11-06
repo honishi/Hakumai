@@ -11,8 +11,8 @@ import Cocoa
 import SnapKit
 
 private let defaultButtonWidth = 32
-private let buttonTopBottomOffset: CGFloat = 8
-private let buttonRightOffset: CGFloat = 20
+private let buttonTopBottomMargin: CGFloat = 8
+private let buttonRightMargin: CGFloat = 20
 
 final class ButtonScrollView: NSScrollView {
     // MARK: - Properties
@@ -50,8 +50,8 @@ extension ButtonScrollView {
         superview?.addSubview(topButton)
         topButton.snp.makeConstraints { make in
             if let width = width { make.width.equalTo(width) }
-            make.right.equalTo(self).offset(-buttonRightOffset)
-            make.top.equalTo(self).offset(buttonTopBottomOffset + contentView.contentInsets.top)
+            make.right.equalTo(self).offset(-buttonRightMargin)
+            make.top.equalTo(self).offset(buttonTopBottomMargin + contentView.contentInsets.top)
         }
         addBoundsDidChangeNotificationObserver()
     }
@@ -67,8 +67,8 @@ extension ButtonScrollView {
         superview?.addSubview(bottomButton)
         bottomButton.snp.makeConstraints { make in
             if let width = width { make.width.equalTo(width) }
-            make.right.equalTo(self).offset(-buttonRightOffset)
-            make.bottom.equalTo(self).offset(-buttonTopBottomOffset)
+            make.right.equalTo(self).offset(-buttonRightMargin)
+            make.bottom.equalTo(self).offset(-buttonTopBottomMargin)
         }
         addBoundsDidChangeNotificationObserver()
     }
