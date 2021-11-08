@@ -17,7 +17,6 @@ private let maximumFontSizeForNonMainColumn: CGFloat = 16
 private let defaultMinimumRowHeight: CGFloat = 17
 
 private let enableDebugButtons = false
-private let enableRankingManagerDebugMessage = false
 
 private let defaultElapsedTimeValue = "--:--:--"
 private let defaultLabelValue = "---"
@@ -529,7 +528,7 @@ extension MainViewController: RankingManagerDelegate {
     }
 
     func rankingManager(_ rankingManager: RankingManagerType, hasDebugMessage message: String) {
-        guard enableRankingManagerDebugMessage else { return }
+        guard logDebugInfo else { return }
         logSystemMessageToTableView(message)
     }
 }
@@ -1254,8 +1253,8 @@ private extension MainViewController {
 // MARK: Debug Methods
 private extension MainViewController {
     func logRankingManagerDebugMessageIfEnabled() {
-        guard enableRankingManagerDebugMessage else { return }
-        logSystemMessageToTableView("isRankingManagerRunning: \(rankingManager.isRunning)")
+        guard logDebugInfo else { return }
+        logSystemMessageToTableView("RankingManager is \(rankingManager.isRunning ? "running" : "stopped").")
     }
 }
 
