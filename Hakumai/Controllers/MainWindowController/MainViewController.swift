@@ -116,6 +116,9 @@ final class MainViewController: NSViewController {
     private var userWindowControllers = [UserWindowController]()
     private var nextUserWindowTopLeftPoint: NSPoint = NSPoint.zero
 
+    // Debug
+    private var logDebugInfo = false
+
     deinit { log.debug("deinit") }
 }
 
@@ -142,12 +145,8 @@ extension MainViewController {
         configureMute()
         configureFontSize()
         configureAnonymouslyButton()
+        configureDebugLogInfo()
         DispatchQueue.main.async { self.focusLiveTextField() }
-    }
-
-    override func viewDidAppear() {
-        // kickTableViewStressTest()
-        // updateStandardUserDefaults()
     }
 }
 
@@ -671,6 +670,13 @@ extension MainViewController {
         rebuildFilteredMessages()
     }
 
+    func changeLogDebugInfo(_ enabled: Bool) {
+        let changed = logDebugInfo != enabled
+        guard changed else { return }
+        logDebugInfo = enabled
+        logSystemMessageToTableView("Debug log \(logDebugInfo ? "enabled" : "disabled").")
+    }
+
     private func rebuildFilteredMessages() {
         DispatchQueue.main.async {
             self.progressIndicator.startAnimation(self)
@@ -794,6 +800,11 @@ private extension MainViewController {
     func configureAnonymouslyButton() {
         let anonymous = UserDefaults.standard.bool(forKey: Parameters.commentAnonymously)
         commentAnonymouslyButton.state = anonymous ? .on : .off
+    }
+
+    func configureDebugLogInfo() {
+        let enabled = UserDefaults.standard.bool(forKey: Parameters.logDebugInfo)
+        changeLogDebugInfo(enabled)
     }
 
     func updateMainControlViews(status connectionStatus: ConnectionStatus) {

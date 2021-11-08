@@ -114,6 +114,10 @@ extension MainWindowController {
     func changeFontSize(_ fontSize: Float) {
         mainViewController.changeFontSize(fontSize)
     }
+
+    func changeLogDebugInfo(_ enabled: Bool) {
+        mainViewController.changeLogDebugInfo(enabled)
+    }
 }
 
 private extension MainWindowController {
