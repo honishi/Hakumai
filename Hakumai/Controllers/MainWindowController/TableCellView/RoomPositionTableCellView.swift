@@ -13,9 +13,9 @@ final class RoomPositionTableCellView: NSTableCellView {
     @IBOutlet weak var coloredView: ColoredView!
     @IBOutlet weak var commentNoLabel: NSTextField!
 
-    var roomPosition: RoomPosition? {
+    var messageType: Message.MessageType = .system {
         didSet {
-            coloredView.fillColor = color(forRoomPosition: roomPosition)
+            coloredView.fillColor = color(forMessageType: messageType)
         }
     }
     var commentNo: Int? { didSet { commentNoLabel.stringValue = string(ofCommentNo: commentNo) } }
@@ -23,8 +23,15 @@ final class RoomPositionTableCellView: NSTableCellView {
 }
 
 private extension RoomPositionTableCellView {
-    func color(forRoomPosition roomPosition: RoomPosition?) -> NSColor {
-        return roomPosition == nil ? UIHelper.systemMessageColorBackground() : UIHelper.roomColorArena()
+    func color(forMessageType messageType: Message.MessageType) -> NSColor {
+        switch messageType {
+        case .system:
+            return UIHelper.systemMessageColorBackground()
+        case .chat:
+            return UIHelper.roomColorArena()
+        case .debug:
+            return UIHelper.debugMessageColorBackground()
+        }
     }
 
     func string(ofCommentNo commentNo: Int?) -> String {

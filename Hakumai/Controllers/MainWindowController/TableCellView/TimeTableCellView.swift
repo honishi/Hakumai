@@ -17,16 +17,24 @@ final class TimeTableCellView: NSTableCellView {
 }
 
 extension TimeTableCellView {
-    func configure(live: Live?, chat: Chat?) {
-        coloredView.fillColor = color(chat: chat)
-        timeLabel.stringValue = time(live: live, chat: chat)
+    func configure(live: Live?, message: Message?) {
+        coloredView.fillColor = color(message: message)
+        timeLabel.stringValue = time(live: live, chat: message?.chat)
     }
 }
 
 private extension TimeTableCellView {
-    func color(chat: Chat?) -> NSColor {
-        guard let chat = chat else { return UIHelper.systemMessageColorBackground() }
-        return chat.isSystemComment ? UIHelper.systemMessageColorBackground() : UIHelper.scoreColorGreen()
+    func color(message: Message?) -> NSColor {
+        guard let message = message else { return UIHelper.systemMessageColorBackground() }
+        switch message.messageType {
+        case .system:
+            return UIHelper.systemMessageColorBackground()
+        case .chat:
+            guard let chat = message.chat else { return UIHelper.systemMessageColorBackground() }
+            return chat.isSystemComment ? UIHelper.systemMessageColorBackground() : UIHelper.scoreColorGreen()
+        case .debug:
+            return UIHelper.debugMessageColorBackground()
+        }
     }
 
     func time(live: Live?, chat: Chat?) -> String {

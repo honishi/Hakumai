@@ -195,10 +195,10 @@ private extension UserViewController {
         switch convertFromNSUserInterfaceItemIdentifier(tableColumn.identifier) {
         case kRoomPositionColumnIdentifier:
             let roomPositionView = view as? RoomPositionTableCellView
-            roomPositionView?.roomPosition = chat.roomPosition
+            roomPositionView?.messageType = message.messageType
             roomPositionView?.commentNo = chat.no
         case kTimeColumnIdentifier:
-            (view as? TimeTableCellView)?.configure(live: nicoManager.live, chat: chat)
+            (view as? TimeTableCellView)?.configure(live: nicoManager.live, message: message)
         case kCommentColumnIdentifier:
             let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)

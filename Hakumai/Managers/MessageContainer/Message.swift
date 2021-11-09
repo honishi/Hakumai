@@ -12,6 +12,7 @@ final class Message {
     enum MessageType: Int {
         case system = 0
         case chat
+        case debug
     }
 
     // MARK: - Properties
@@ -36,11 +37,15 @@ final class Message {
         self.date = Date()
     }
 
-    convenience init(messageNo: Int, message: String) {
-        self.init(messageNo: messageNo, messageType: .system, message: message, chat: nil, firstChat: nil)
+    convenience init(messageNo: Int, system: String) {
+        self.init(messageNo: messageNo, messageType: .system, message: system, chat: nil, firstChat: nil)
     }
 
     convenience init(messageNo: Int, chat: Chat, firstChat: Bool = false) {
         self.init(messageNo: messageNo, messageType: .chat, message: nil, chat: chat, firstChat: firstChat)
+    }
+
+    convenience init(messageNo: Int, debug: String) {
+        self.init(messageNo: messageNo, messageType: .debug, message: debug, chat: nil, firstChat: nil)
     }
 }

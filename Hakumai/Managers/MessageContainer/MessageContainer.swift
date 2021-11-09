@@ -37,7 +37,7 @@ extension MessageContainer {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
 
-        let message = Message(messageNo: messageNo, message: systemMessage)
+        let message = Message(messageNo: messageNo, system: systemMessage)
         return append(message: message)
     }
 
@@ -54,6 +54,15 @@ extension MessageContainer {
             }
         }
         let message = Message(messageNo: messageNo, chat: chat, firstChat: isFirstChat)
+        return append(message: message)
+    }
+
+    @discardableResult
+    func append(debug: String) -> (appended: Bool, count: Int) {
+        objc_sync_enter(self)
+        defer { objc_sync_exit(self) }
+
+        let message = Message(messageNo: messageNo, debug: debug)
         return append(message: message)
     }
 
@@ -84,8 +93,9 @@ extension MessageContainer {
 
         objc_sync_enter(self)
         for message in sourceMessages {
-            if message.messageType != .chat {
-                continue
+            switch message.messageType {
+            case .system, .debug:   continue
+            case .chat:             break
             }
             if message.chat?.userId == userId {
                 userMessages.append(message)
@@ -142,8 +152,9 @@ extension MessageContainer {
                 let message = self.sourceMessages[i - 1]
                 objc_sync_exit(self)
                 i -= 1
-                if message.messageType == .system {
-                    continue
+                switch message.messageType {
+                case .system, .debug:   continue
+                case .chat:             break
                 }
                 guard let chat = message.chat else { continue }
                 if !chat.isUserComment {
@@ -225,31 +236,29 @@ private extension MessageContainer {
     }
 
     func shouldAppend(message: Message) -> Bool {
-        // filter by message type
-        if message.messageType == .system {
+        switch message.messageType {
+        case .system, .debug:
             return true
-        }
 
-        guard let chat = message.chat else { return false }
-
-        // filter by comment
-        if enableMuteWords {
-            for muteWord in muteWords {
-                if let word = muteWord[MuteUserWordKey.word] {
-                    if chat.comment.lowercased().range(of: word.lowercased()) != nil {
-                        return false
+        case .chat:
+            guard let chat = message.chat else { return false }
+            // filter by comment
+            if enableMuteWords {
+                for muteWord in muteWords {
+                    if let word = muteWord[MuteUserWordKey.word] {
+                        if chat.comment.lowercased().range(of: word.lowercased()) != nil {
+                            return false
+                        }
                     }
                 }
             }
-        }
-
-        // filter by userid
-        if enableMuteUserIds {
-            for muteUserId in muteUserIds where muteUserId[MuteUserIdKey.userId] == chat.userId {
-                return false
+            // filter by userid
+            if enableMuteUserIds {
+                for muteUserId in muteUserIds where muteUserId[MuteUserIdKey.userId] == chat.userId {
+                    return false
+                }
             }
+            return true
         }
-
-        return true
     }
 }

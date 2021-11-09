@@ -230,25 +230,26 @@ extension MainViewController: NSTableViewDelegate {
 
         guard let _view = view, let tableColumn = tableColumn else { return nil }
 
-        if message.messageType == .system {
-            configure(view: _view, forSystemMessage: message, withTableColumn: tableColumn)
-        } else if message.messageType == .chat {
+        switch message.messageType {
+        case .system, .debug:
+            configure(view: _view, forSystemAndDebug: message, withTableColumn: tableColumn)
+        case .chat:
             configure(view: _view, forChat: message, withTableColumn: tableColumn)
         }
 
         return view
     }
 
-    private func configure(view: NSTableCellView, forSystemMessage message: Message, withTableColumn tableColumn: NSTableColumn) {
+    private func configure(view: NSTableCellView, forSystemAndDebug message: Message, withTableColumn tableColumn: NSTableColumn) {
         switch tableColumn.identifier.rawValue {
         case kRoomPositionColumnIdentifier:
             let roomPositionView = view as? RoomPositionTableCellView
-            roomPositionView?.roomPosition = nil
+            roomPositionView?.messageType = message.messageType
             roomPositionView?.commentNo = nil
             roomPositionView?.fontSize = nil
         case kTimeColumnIdentifier:
             let timeView = view as? TimeTableCellView
-            timeView?.configure(live: nil, chat: nil)
+            timeView?.configure(live: nil, message: message)
             timeView?.fontSize = nil
         case kIconColumnIdentifier:
             let iconView = view as? IconTableCellView
@@ -277,12 +278,12 @@ extension MainViewController: NSTableViewDelegate {
         switch tableColumn.identifier.rawValue {
         case kRoomPositionColumnIdentifier:
             let roomPositionView = view as? RoomPositionTableCellView
-            roomPositionView?.roomPosition = chat.roomPosition
+            roomPositionView?.messageType = message.messageType
             roomPositionView?.commentNo = chat.no
             roomPositionView?.fontSize = min(tableViewFontSize, maximumFontSizeForNonMainColumn)
         case kTimeColumnIdentifier:
             let timeView = view as? TimeTableCellView
-            timeView?.configure(live: live, chat: chat)
+            timeView?.configure(live: live, message: message)
             timeView?.fontSize = min(tableViewFontSize, maximumFontSizeForNonMainColumn)
         case kIconColumnIdentifier:
             let iconView = view as? IconTableCellView
@@ -322,10 +323,13 @@ extension MainViewController: NSTableViewDelegate {
         var content: String!
         var attributes = [String: Any]()
 
-        if message.messageType == .system, let _message = message.message {
+        switch message.messageType {
+        case .system, .debug:
+            guard let _message = message.message else { fatalError() }
             content = _message
             attributes = UIHelper.normalCommentAttributes(fontSize: tableViewFontSize)
-        } else if message.messageType == .chat, let _message = message.chat?.comment {
+        case .chat:
+            guard let _message = message.chat?.comment else { fatalError() }
             content = _message
             if message.firstChat == true {
                 attributes = UIHelper.boldCommentAttributes(fontSize: tableViewFontSize)
@@ -529,8 +533,7 @@ extension MainViewController: RankingManagerDelegate {
     }
 
     func rankingManager(_ rankingManager: RankingManagerType, hasDebugMessage message: String) {
-        guard logDebugInfo else { return }
-        logSystemMessageToTable(message)
+        logDebugMessageIfEnabled(message)
     }
 }
 
@@ -860,6 +863,13 @@ private extension MainViewController {
         }
     }
 
+    func appendToTable(debug: String) {
+        DispatchQueue.main.async {
+            let result = self.messageContainer.append(debug: debug)
+            self._updateTable(appended: result.appended, messageCount: result.count)
+        }
+    }
+
     func _updateTable(appended: Bool, messageCount: Int) {
         guard appended else { return }
         let shouldScroll = scrollView.isReachedToBottom
@@ -869,8 +879,12 @@ private extension MainViewController {
         if shouldScroll {
             scrollView.scrollToBottom()
         }
-        if message.messageType == .chat, let chat = message.chat {
+        switch message.messageType {
+        case .chat:
+            guard let chat = message.chat else { return }
             handleSpeech(chat: chat)
+        case .system, .debug:
+            break
         }
         scrollView.flashScrollers()
     }
@@ -883,16 +897,6 @@ private extension MainViewController {
             self.tableView.reloadData()
             self.scrollView.flashScrollers()
         }
-    }
-
-    func logMessage(_ message: Message) {
-        var content: String?
-        if message.messageType == .system {
-            content = message.message
-        } else if message.messageType == .chat {
-            content = message.chat?.comment
-        }
-        log.debug("[ \(content ?? "-") ]")
     }
 }
 
@@ -1265,7 +1269,7 @@ private extension MainViewController {
 private extension MainViewController {
     func logDebugMessageIfEnabled(_ message: String) {
         guard logDebugInfo else { return }
-        logSystemMessageToTable(message)
+        appendToTable(debug: message)
     }
 
     func logDebugReconnectReason(_ reason: NicoReconnectReason) {
