@@ -33,33 +33,35 @@ final class MessageContainer {
 extension MessageContainer {
     // MARK: - Basic Operation to Content Array
     @discardableResult
-    func append(chatOrSystemMessage object: Any) -> (appended: Bool, count: Int) {
+    func append(systemMessage: String) -> (appended: Bool, count: Int) {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
 
-        var message: Message!
+        let message = Message(messageNo: messageNo, message: systemMessage)
+        return append(message: message)
+    }
 
-        if let systemMessage = object as? String {
-            message = Message(messageNo: messageNo, message: systemMessage)
-        } else if let chat = object as? Chat {
-            var isFirstChat = false
-            if chat.isUserComment {
-                isFirstChat = firstChat[chat.userId] == nil ? true : false
-                if isFirstChat {
-                    firstChat[chat.userId] = true
-                }
+    @discardableResult
+    func append(chat: Chat) -> (appended: Bool, count: Int) {
+        objc_sync_enter(self)
+        defer { objc_sync_exit(self) }
+
+        var isFirstChat = false
+        if chat.isUserComment {
+            isFirstChat = firstChat[chat.userId] == nil ? true : false
+            if isFirstChat {
+                firstChat[chat.userId] = true
             }
-            message = Message(messageNo: messageNo, chat: chat, firstChat: isFirstChat)
-        } else {
-            assert(false, "appending unexpected object")
         }
+        let message = Message(messageNo: messageNo, chat: chat, firstChat: isFirstChat)
+        return append(message: message)
+    }
+
+    private func append(message: Message) -> (appended: Bool, count: Int) {
         messageNo += 1
-
         sourceMessages.append(message)
-
         let appended = append(message: message, into: &filteredMessages)
         let count = filteredMessages.count
-
         return (appended, count)
     }
 

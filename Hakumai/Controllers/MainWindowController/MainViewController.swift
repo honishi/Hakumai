@@ -456,7 +456,7 @@ extension MainViewController: NicoManagerDelegate {
         // log.debug("\(chat.mail),\(chat.comment)")
         guard let live = live else { return }
         HandleNameManager.shared.extractAndUpdateHandleName(live: live, chat: chat)
-        appendToTable(chat)
+        appendToTable(chat: chat)
 
         for userWindowController in userWindowControllers where chat.userId == userWindowController.userId {
             DispatchQueue.main.async {
@@ -488,7 +488,7 @@ extension MainViewController: NicoManagerDelegate {
         chats.forEach {
             HandleNameManager.shared.extractAndUpdateHandleName(live: live, chat: $0)
         }
-        bulkAppendToTable(chats)
+        bulkAppendToTable(chats: chats)
     }
 
     func nicoManagerDidDisconnect(_ nicoManager: NicoManagerType, disconnectContext: NicoDisconnectContext) {
@@ -693,10 +693,10 @@ extension MainViewController {
     }
 }
 
-// MARK: Chat Message Utility (Internal)
-extension MainViewController {
+// MARK: Chat Message Utility
+private extension MainViewController {
     func logSystemMessageToTable(_ message: String) {
-        appendToTable(message)
+        appendToTable(systemMessage: message)
     }
 }
 
@@ -846,29 +846,39 @@ private extension MainViewController {
 
 // MARK: Chat Message Utility (Private)
 private extension MainViewController {
-    func appendToTable(_ chatOrSystemMessage: Any) {
+    func appendToTable(chat: Chat) {
         DispatchQueue.main.async {
-            let shouldScroll = self.scrollView.isReachedToBottom
-            let (appended, count) = self.messageContainer.append(chatOrSystemMessage: chatOrSystemMessage)
-            guard appended else { return }
-            let rowIndex = count - 1
-            let message = self.messageContainer[rowIndex]
-            self.tableView.insertRows(at: IndexSet(integer: rowIndex), withAnimation: NSTableView.AnimationOptions())
-            // self.logChat(chatOrSystemMessage)
-            if shouldScroll {
-                self.scrollView.scrollToBottom()
-            }
-            if message.messageType == .chat, let chat = message.chat {
-                self.handleSpeech(chat: chat)
-            }
-            self.scrollView.flashScrollers()
+            let result = self.messageContainer.append(chat: chat)
+            self._updateTable(appended: result.appended, messageCount: result.count)
         }
     }
 
-    func bulkAppendToTable(_ chatOrSystemMessage: [Any]) {
+    func appendToTable(systemMessage: String) {
         DispatchQueue.main.async {
-            chatOrSystemMessage.forEach {
-                self.messageContainer.append(chatOrSystemMessage: $0)
+            let result = self.messageContainer.append(systemMessage: systemMessage)
+            self._updateTable(appended: result.appended, messageCount: result.count)
+        }
+    }
+
+    func _updateTable(appended: Bool, messageCount: Int) {
+        guard appended else { return }
+        let shouldScroll = scrollView.isReachedToBottom
+        let rowIndex = messageCount - 1
+        let message = messageContainer[rowIndex]
+        tableView.insertRows(at: IndexSet(integer: rowIndex), withAnimation: NSTableView.AnimationOptions())
+        if shouldScroll {
+            scrollView.scrollToBottom()
+        }
+        if message.messageType == .chat, let chat = message.chat {
+            handleSpeech(chat: chat)
+        }
+        scrollView.flashScrollers()
+    }
+
+    func bulkAppendToTable(chats: [Chat]) {
+        DispatchQueue.main.async {
+            chats.forEach {
+                self.messageContainer.append(chat: $0)
             }
             self.tableView.reloadData()
             self.scrollView.flashScrollers()
