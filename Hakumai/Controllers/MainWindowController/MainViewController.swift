@@ -116,7 +116,7 @@ final class MainViewController: NSViewController {
     private var nextUserWindowTopLeftPoint: NSPoint = NSPoint.zero
 
     // Debug
-    private var logDebugInfo = false
+    private var logDebugMessage = false
 
     deinit { log.debug("deinit") }
 }
@@ -673,11 +673,11 @@ extension MainViewController {
         rebuildFilteredMessages()
     }
 
-    func changeLogDebugInfo(_ enabled: Bool) {
-        let changed = logDebugInfo != enabled
+    func changeLogDebugMessage(_ enabled: Bool) {
+        let changed = logDebugMessage != enabled
         guard changed else { return }
-        logDebugInfo = enabled
-        logSystemMessageToTable("Debug log \(logDebugInfo ? "enabled" : "disabled").")
+        logDebugMessage = enabled
+        appendToTable(debugMessage: "Debug log \(logDebugMessage ? "enabled" : "disabled").")
     }
 
     private func rebuildFilteredMessages() {
@@ -806,8 +806,8 @@ private extension MainViewController {
     }
 
     func configureDebugLogInfo() {
-        let enabled = UserDefaults.standard.bool(forKey: Parameters.logDebugInfo)
-        changeLogDebugInfo(enabled)
+        let enabled = UserDefaults.standard.bool(forKey: Parameters.logDebugMessage)
+        changeLogDebugMessage(enabled)
     }
 
     func updateMainControlViews(status connectionStatus: ConnectionStatus) {
@@ -853,6 +853,8 @@ private extension MainViewController {
         DispatchQueue.main.async {
             let result = self.messageContainer.append(chat: chat)
             self._updateTable(appended: result.appended, messageCount: result.count)
+            guard result.appended else { return }
+            self.handleSpeech(chat: chat)
         }
     }
 
@@ -863,9 +865,9 @@ private extension MainViewController {
         }
     }
 
-    func appendToTable(debug: String) {
+    func appendToTable(debugMessage: String) {
         DispatchQueue.main.async {
-            let result = self.messageContainer.append(debug: debug)
+            let result = self.messageContainer.append(debug: debugMessage)
             self._updateTable(appended: result.appended, messageCount: result.count)
         }
     }
@@ -874,17 +876,9 @@ private extension MainViewController {
         guard appended else { return }
         let shouldScroll = scrollView.isReachedToBottom
         let rowIndex = messageCount - 1
-        let message = messageContainer[rowIndex]
         tableView.insertRows(at: IndexSet(integer: rowIndex), withAnimation: NSTableView.AnimationOptions())
         if shouldScroll {
             scrollView.scrollToBottom()
-        }
-        switch message.messageType {
-        case .chat:
-            guard let chat = message.chat else { return }
-            handleSpeech(chat: chat)
-        case .system, .debug:
-            break
         }
         scrollView.flashScrollers()
     }
@@ -1268,8 +1262,8 @@ private extension MainViewController {
 // MARK: Debug Methods
 private extension MainViewController {
     func logDebugMessageIfEnabled(_ message: String) {
-        guard logDebugInfo else { return }
-        appendToTable(debug: message)
+        guard logDebugMessage else { return }
+        appendToTable(debugMessage: message)
     }
 
     func logDebugReconnectReason(_ reason: NicoReconnectReason) {

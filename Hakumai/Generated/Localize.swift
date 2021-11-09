@@ -124,8 +124,8 @@ internal enum L10n {
   internal static let liveTitle = L10n.tr("Localizable", "live_title")
   /// ⌘L (Live URL, Live#)
   internal static let liveUrlTextFieldPlaceholder = L10n.tr("Localizable", "live_url_text_field_placeholder")
-  /// Log debug info in main window
-  internal static let logDebugInfo = L10n.tr("Localizable", "log_debug_info")
+  /// Log debug message in main window
+  internal static let logDebugMessage = L10n.tr("Localizable", "log_debug_message")
   /// Login
   internal static let login = L10n.tr("Localizable", "login")
   /// Login completed.

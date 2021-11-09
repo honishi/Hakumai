@@ -214,7 +214,7 @@
                                                                 <font key="font" metaFont="system"/>
                                                             </buttonCell>
                                                             <connections>
-                                                                <binding destination="Ex8-3g-KNv" name="value" keyPath="values.LogDebugInfo" id="1mE-sQ-xU5"/>
+                                                                <binding destination="Ex8-3g-KNv" name="value" keyPath="values.LogDebugMessage" id="lvO-WF-NNC"/>
                                                             </connections>
                                                         </button>
                                                     </subviews>
@@ -269,7 +269,7 @@
                         <outlet property="browserInUseMatrix" destination="y0n-lu-hbG" id="Dee-Od-G0x"/>
                         <outlet property="chromeButtonCell" destination="Ici-yj-KuI" id="ZIX-rJ-KYV"/>
                         <outlet property="commentSpeakingBox" destination="ICr-HG-iyb" id="6y6-k7-mqr"/>
-                        <outlet property="logDebugInfoButton" destination="7lf-Wg-9jA" id="S63-js-K9y"/>
+                        <outlet property="logDebugMessageButton" destination="7lf-Wg-9jA" id="S63-js-K9y"/>
                         <outlet property="miscBox" destination="nEt-qg-eF7" id="mvL-Ix-z1R"/>
                         <outlet property="safariButtonCell" destination="wGq-x5-Aua" id="lb1-w9-hCF"/>
                         <outlet property="speakVolumeSlider" destination="NBg-Gf-rw0" id="gzQ-f2-Xwi"/>

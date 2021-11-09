@@ -24,7 +24,7 @@ final class GeneralViewController: NSViewController {
     @IBOutlet private weak var speakVolumeSlider: NSSlider!
 
     @IBOutlet private weak var miscBox: NSBox!
-    @IBOutlet private weak var logDebugInfoButton: NSButton!
+    @IBOutlet private weak var logDebugMessageButton: NSButton!
 
     // MARK: - Object Lifecycle
     static func make() -> GeneralViewController {
@@ -56,7 +56,7 @@ private extension GeneralViewController {
         speakVolumeTitleTextField.stringValue = "\(L10n.speakVolume):"
 
         miscBox.title = L10n.misc
-        logDebugInfoButton.title = L10n.logDebugInfo
+        logDebugMessageButton.title = L10n.logDebugMessage
     }
 
     func disableSpeakComponentsIfNeeded() {

@@ -131,8 +131,8 @@ extension AppDelegate {
         case (Parameters.alwaysOnTop, let newValue as Bool):
             makeWindowsAlwaysOnTop(newValue)
 
-        case (Parameters.logDebugInfo, let newValue as Bool):
-            mainWindowControllers.forEach { $0.changeLogDebugInfo(newValue) }
+        case (Parameters.logDebugMessage, let newValue as Bool):
+            mainWindowControllers.forEach { $0.changeLogDebugMessage(newValue) }
 
         default:
             break
@@ -194,7 +194,7 @@ private extension AppDelegate {
             Parameters.enableMuteWords: true,
             Parameters.alwaysOnTop: false,
             Parameters.commentAnonymously: true,
-            Parameters.logDebugInfo: false]
+            Parameters.logDebugMessage: false]
         UserDefaults.standard.register(defaults: defaults)
     }
 
@@ -207,7 +207,7 @@ private extension AppDelegate {
             Parameters.enableMuteUserIds, Parameters.muteUserIds,
             Parameters.enableMuteWords, Parameters.muteWords,
             // misc
-            Parameters.fontSize, Parameters.alwaysOnTop, Parameters.logDebugInfo
+            Parameters.fontSize, Parameters.alwaysOnTop, Parameters.logDebugMessage
         ]
         for keyPath in keyPaths {
             UserDefaults.standard.addObserver(

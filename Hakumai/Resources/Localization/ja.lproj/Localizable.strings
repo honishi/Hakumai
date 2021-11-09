@@ -152,7 +152,7 @@
 "speak_comments" = "コメント読み上げ (macOS 10.14 以降が必要)";
 "speak_volume" = "読み上げボリューム";
 "misc" = "その他";
-"log_debug_info" = "デバッグ情報をメインウィンドウに表示する";
+"log_debug_message" = "デバッグ情報をメインウィンドウに表示する";
 
 /// Mute
 "enable_mute_user_ids" = "ユーザーID指定のミュートを使う";
