@@ -93,7 +93,7 @@ private extension RankingManager {
     }
 
     func _queryRank(page: Int) {
-        logDebugMessage("Processing page \(page).")
+        // logDebugMessage("Processing page \(page).")
         var request = URLRequest(url: rankingUrl(for: page))
         request.headers = [commonUserAgentKey: commonUserAgentValue]
         AF.request(request)
@@ -116,7 +116,7 @@ private extension RankingManager {
                     me.notifyUpdatedRankToDelegates()
                 case .failure(let error):
                     // No-op.
-                    me.logDebugMessage(error.localizedDescription)
+                    me.logDebugMessage("Failed at page \(page), \(error.localizedDescription)")
                 }
                 me.isQuerying = false
                 me.notifyDebugMessageToDelegates("Finished query. (\(Date().description))")
