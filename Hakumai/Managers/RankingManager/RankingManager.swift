@@ -180,8 +180,8 @@ private extension RankingManager {
             guard let rank = rank else { return "-" }
             return String(rank)
         }()
-        let _delegate: String = delegate.debugDescription
-        self.notifyDebugMessageToDelegates("Will notify rank #\(_rank) for \(liveId) -> \(_delegate)")
+        let _delegate = "\(String(describing: delegate))".extractRegexp(pattern: ".+(0x.+)>") ?? "-"
+        self.notifyDebugMessageToDelegates("Notifying rank #\(_rank) for \(liveId) → \(_delegate)")
     }
 }
 
