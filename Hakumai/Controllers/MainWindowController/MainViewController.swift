@@ -375,7 +375,7 @@ extension MainViewController: NSControlTextEditingDelegate {
 // MARK: - AuthWindowControllerDelegate Functions
 extension MainViewController: AuthWindowControllerDelegate {
     func authWindowControllerDidLogin(_ authWindowController: AuthWindowController) {
-        logSystemMessageToTableView(L10n.loginCompleted)
+        logSystemMessageToTable(L10n.loginCompleted)
     }
 }
 
@@ -407,7 +407,7 @@ extension MainViewController: NicoManagerDelegate {
             resetElapsedLabel()
             resetActiveUser()
             updateRankingLabel(rank: nil, date: nil)
-            logSystemMessageToTableView(L10n.preparedLive(user.nickname))
+            logSystemMessageToTable(L10n.preparedLive(user.nickname))
             return
         }
 
@@ -418,19 +418,19 @@ extension MainViewController: NicoManagerDelegate {
         case .normal:
             resetActiveUser()
             rankingManager.addDelegate(self, for: live.liveId)
-            logSystemMessageToTableView(L10n.preparedLive(user.nickname))
+            logSystemMessageToTable(L10n.preparedLive(user.nickname))
         case .reconnect:
             break
         }
 
-        logRankingManagerDebugMessageIfEnabled()
+        logDebugRankingManagerStatus()
     }
 
     func nicoManagerDidFailToPrepareLive(_ nicoManager: NicoManagerType, error: NicoError) {
-        logSystemMessageToTableView(L10n.failedToPrepareLive(error.toMessage))
+        logSystemMessageToTable(L10n.failedToPrepareLive(error.toMessage))
         updateMainControlViews(status: .disconnected)
         rankingManager.removeDelegate(self)
-        logRankingManagerDebugMessageIfEnabled()
+        logDebugRankingManagerStatus()
     }
 
     func nicoManagerDidConnectToLive(_ nicoManager: NicoManagerType, roomPosition: RoomPosition, connectContext: NicoConnectContext) {
@@ -439,11 +439,11 @@ extension MainViewController: NicoManagerDelegate {
         switch connectContext {
         case .normal:
             liveStartedDate = Date()
-            logSystemMessageToTableView(L10n.connectedToLive)
+            logSystemMessageToTable(L10n.connectedToLive)
         case .reconnect(let reason):
             switch reason {
             case .normal:
-                logSystemMessageToTableView(L10n.reconnected)
+                logSystemMessageToTable(L10n.reconnected)
             case .noPong, .noTexts:
                 break
             }
@@ -473,16 +473,17 @@ extension MainViewController: NicoManagerDelegate {
         case .noPong, .noTexts:
             break
         }
+        logDebugReconnectReason(reason)
     }
 
     func nicoManagerReceivingTimeShiftChats(_ nicoManager: NicoManagerType, requestCount: Int, totalChatCount: Int) {
         let shouldLog = requestCount % 5 == 0
         guard shouldLog else { return }
-        logSystemMessageToTableView(L10n.receivingComments(totalChatCount))
+        logSystemMessageToTable(L10n.receivingComments(totalChatCount))
     }
 
     func nicoManagerDidReceiveTimeShiftChats(_ nicoManager: NicoManagerType, chats: [Chat]) {
-        logSystemMessageToTableView(L10n.receivedComments(chats.count))
+        logSystemMessageToTable(L10n.receivedComments(chats.count))
         guard let live = live else { return }
         chats.forEach {
             HandleNameManager.shared.extractAndUpdateHandleName(live: live, chat: $0)
@@ -493,11 +494,11 @@ extension MainViewController: NicoManagerDelegate {
     func nicoManagerDidDisconnect(_ nicoManager: NicoManagerType, disconnectContext: NicoDisconnectContext) {
         switch disconnectContext {
         case .normal:
-            logSystemMessageToTableView(L10n.liveClosed)
+            logSystemMessageToTable(L10n.liveClosed)
         case .reconnect(let reason):
             switch reason {
             case .normal:
-                logSystemMessageToTableView(L10n.liveClosed)
+                logSystemMessageToTable(L10n.liveClosed)
             case .noPong, .noTexts:
                 break
             }
@@ -514,7 +515,7 @@ extension MainViewController: NicoManagerDelegate {
             updateMainControlViews(status: .connecting)
         }
 
-        logRankingManagerDebugMessageIfEnabled()
+        logDebugRankingManagerStatus()
     }
 
     func nicoManagerDidReceiveStatistics(_ nicoManager: NicoManagerType, stat: LiveStatistics) {
@@ -529,7 +530,7 @@ extension MainViewController: RankingManagerDelegate {
 
     func rankingManager(_ rankingManager: RankingManagerType, hasDebugMessage message: String) {
         guard logDebugInfo else { return }
-        logSystemMessageToTableView(message)
+        logSystemMessageToTable(message)
     }
 }
 
@@ -556,7 +557,7 @@ extension MainViewController {
         }
         nicoManager.logout()
         authWindowController.logout()
-        logSystemMessageToTableView(L10n.logoutCompleted)
+        logSystemMessageToTable(L10n.logoutCompleted)
     }
 
     func showHandleNameAddViewController(live: Live, chat: Chat) {
@@ -673,7 +674,7 @@ extension MainViewController {
         let changed = logDebugInfo != enabled
         guard changed else { return }
         logDebugInfo = enabled
-        logSystemMessageToTableView("Debug log \(logDebugInfo ? "enabled" : "disabled").")
+        logSystemMessageToTable("Debug log \(logDebugInfo ? "enabled" : "disabled").")
     }
 
     private func rebuildFilteredMessages() {
@@ -694,7 +695,7 @@ extension MainViewController {
 
 // MARK: Chat Message Utility (Internal)
 extension MainViewController {
-    func logSystemMessageToTableView(_ message: String) {
+    func logSystemMessageToTable(_ message: String) {
         appendToTable(message)
     }
 }
@@ -935,7 +936,7 @@ extension MainViewController {
 
     @IBAction func debugExpireTokenButtonPressed(_ sender: Any) {
         nicoManager.injectExpiredAccessToken()
-        logSystemMessageToTableView("Injected expired access token.")
+        logSystemMessageToTable("Injected expired access token.")
     }
 
     @IBAction func connectLive(_ sender: AnyObject) {
@@ -967,7 +968,7 @@ extension MainViewController {
 
         nicoManager.comment(comment, anonymously: commentAnonymouslyButton.isOn) { comment in
             if comment == nil {
-                self.logSystemMessageToTableView(L10n.failedToComment)
+                self.logSystemMessageToTable(L10n.failedToComment)
             }
         }
         commentTextField.stringValue = ""
@@ -1252,9 +1253,24 @@ private extension MainViewController {
 
 // MARK: Debug Methods
 private extension MainViewController {
-    func logRankingManagerDebugMessageIfEnabled() {
+    func logDebugMessageIfEnabled(_ message: String) {
         guard logDebugInfo else { return }
-        logSystemMessageToTableView("RankingManager is \(rankingManager.isRunning ? "running" : "stopped").")
+        logSystemMessageToTable(message)
+    }
+
+    func logDebugReconnectReason(_ reason: NicoReconnectReason) {
+        let _reason: String = {
+            switch reason {
+            case .normal:   return "normal"
+            case .noPong:   return "no pong"
+            case .noTexts:  return "no text"
+            }
+        }()
+        logDebugMessageIfEnabled("Reconnecting... (\(_reason))")
+    }
+
+    func logDebugRankingManagerStatus() {
+        logDebugMessageIfEnabled("RankingManager is \(rankingManager.isRunning ? "running" : "stopped").")
     }
 }
 
