@@ -295,6 +295,7 @@ extension NicoManager {
 private extension NicoManager {
     // #1/5. Get general live info.
     func requestLiveInfo(liveProgramId: String, connectContext: NicoConnectContext) {
+        delegate?.nicoManager(self, hasDebugMessgae: "Requesting live info...")
         callOAuthEndpoint(
             url: watchProgramsApiUrl,
             parameters: [
@@ -305,12 +306,16 @@ private extension NicoManager {
             guard let me = self else { return }
             switch result {
             case .success(let data):
+                me.delegate?.nicoManager(me, hasDebugMessgae: "Completed to request live info.")
                 me.requestUserInfo(
                     liveProgramId: liveProgramId,
                     connectContext: connectContext,
                     live: data.toLive(with: liveProgramId))
             case .failure(let error):
                 log.error(error)
+                me.delegate?.nicoManager(
+                    me,
+                    hasDebugMessgae: "Failed to request live info. (\(error))")
                 me.delegate?.nicoManagerDidFailToPrepareLive(me, error: .internal)
             }
         }
@@ -318,12 +323,14 @@ private extension NicoManager {
 
     // #2/5. Get user info.
     func requestUserInfo(liveProgramId: String, connectContext: NicoConnectContext, live: Live, allowRefreshToken: Bool = true) {
+        delegate?.nicoManager(self, hasDebugMessgae: "Requesting user info...")
         callOAuthEndpoint(
             url: userinfoApiUrl
         ) { [weak self] (result: Result<UserInfoResponse, NicoError>) in
             guard let me = self else { return }
             switch result {
             case .success(let response):
+                me.delegate?.nicoManager(me, hasDebugMessgae: "Completed to request user info.")
                 me.requestWebSocketEndpoint(
                     liveProgramId: liveProgramId,
                     connectContext: connectContext,
@@ -331,6 +338,9 @@ private extension NicoManager {
                     user: response.toUser())
             case .failure(let error):
                 log.error(error)
+                me.delegate?.nicoManager(
+                    me,
+                    hasDebugMessgae: "Failed to request user info. (\(error))")
                 me.delegate?.nicoManagerDidFailToPrepareLive(me, error: .internal)
             }
         }
@@ -338,6 +348,7 @@ private extension NicoManager {
 
     // #3/5. Get websocket endpoint.
     func requestWebSocketEndpoint(liveProgramId: String, connectContext: NicoConnectContext, live: Live, user: User) {
+        delegate?.nicoManager(self, hasDebugMessgae: "Requesting websocket endpoint...")
         // https://github.com/niconamaworkshop/websocket_api_document
         callOAuthEndpoint(
             url: wsEndpointApiUrl,
@@ -349,6 +360,7 @@ private extension NicoManager {
             guard let me = self else { return }
             switch result {
             case .success(let response):
+                me.delegate?.nicoManager(me, hasDebugMessgae: "Completed to request websocket endpoint.")
                 me.live = live
                 me.delegate?.nicoManagerDidPrepareLive(
                     me, user: user, live: live, connectContext: connectContext)
@@ -360,6 +372,9 @@ private extension NicoManager {
                 )
             case .failure(let error):
                 log.error(error)
+                me.delegate?.nicoManager(
+                    me,
+                    hasDebugMessgae: "Failed to request websocket endpoint. (\(error))")
                 me.delegate?.nicoManagerDidFailToPrepareLive(me, error: .internal)
             }
         }
@@ -367,16 +382,21 @@ private extension NicoManager {
 
     // #4/5. Open watch socket.
     func openWatchSocket(webSocketUrl: URL, userId: String, connectContext: NicoConnectContext) {
+        delegate?.nicoManager(self, hasDebugMessgae: "Opening watch socket...")
         openWatchSocket(webSocketUrl: webSocketUrl) { [weak self] in
             guard let me = self, let isTimeShift = me.live?.isTimeShift else { return }
             switch $0 {
             case .success(let room):
+                me.delegate?.nicoManager(me, hasDebugMessgae: "Completed to open watch socket.")
                 if isTimeShift {
                     me.openTimeShiftMessageSocket(userId: userId, room: room, connectContext: connectContext)
                 } else {
                     me.openMessageSocket(userId: userId, room: room, connectContext: connectContext)
                 }
-            case .failure:
+            case .failure(let error):
+                me.delegate?.nicoManager(
+                    me,
+                    hasDebugMessgae: "Failed to open watch socket. (\(error))")
                 me.delegate?.nicoManagerDidFailToPrepareLive(me, error: .noMessageServerInfo)
             }
         }
@@ -384,10 +404,12 @@ private extension NicoManager {
 
     // #5-a/5. Finally, open message socket.
     func openMessageSocket(userId: String, room: WebSocketRoomData, connectContext: NicoConnectContext) {
+        delegate?.nicoManager(self, hasDebugMessgae: "Opening message socket...")
         openMessageSocket(userId: userId, room: room, connectContext: connectContext) { [weak self] in
             guard let me = self else { return }
             switch $0 {
             case .success:
+                me.delegate?.nicoManager(me, hasDebugMessgae: "Completed to open message socket.")
                 me.startAllTimers()
                 me.connectRequests.lastEstablished = me.connectRequests.onGoing
                 me.connectRequests.onGoing = nil
@@ -396,7 +418,10 @@ private extension NicoManager {
                     me,
                     roomPosition: RoomPosition.arena,
                     connectContext: connectContext)
-            case .failure:
+            case .failure(let error):
+                me.delegate?.nicoManager(
+                    me,
+                    hasDebugMessgae: "Failed to open message socket. (\(error))")
                 me.delegate?.nicoManagerDidFailToPrepareLive(me, error: .openMessageServerFailed)
             }
         }
@@ -404,17 +429,22 @@ private extension NicoManager {
 
     // #5-b/5. This is for time-shifted program.
     func openTimeShiftMessageSocket(userId: String, room: WebSocketRoomData, connectContext: NicoConnectContext) {
+        delegate?.nicoManager(self, hasDebugMessgae: "Opening message socket for timeshift...")
         openTimeShiftMessageSocket(userId: userId, room: room, connectContext: connectContext) { [weak self] in
             guard let me = self else { return }
             switch $0 {
             case .success:
+                me.delegate?.nicoManager(me, hasDebugMessgae: "Completed to open message socket for timeshift.")
                 me.connectRequests.onGoing = nil
                 me.isConnected = true
                 me.delegate?.nicoManagerDidConnectToLive(
                     me,
                     roomPosition: RoomPosition.arena,
                     connectContext: connectContext)
-            case .failure:
+            case .failure(let error):
+                me.delegate?.nicoManager(
+                    me,
+                    hasDebugMessgae: "Failed to open message socket for timeshift. (\(error))")
                 me.delegate?.nicoManagerDidFailToPrepareLive(me, error: .openMessageServerFailed)
             }
         }
@@ -470,6 +500,7 @@ private extension NicoManager {
             completion: completion)
     }
 
+    // swiftlint:disable function_body_length
     func callOAuthEndpoint<T: Codable>(url: URL,
                                        parameters: Alamofire.Parameters?,
                                        allowRefreshToken: Bool,
@@ -501,10 +532,16 @@ private extension NicoManager {
                 // Is access token expired?
                 if error.isInvalidToken, allowRefreshToken {
                     // Access token is expired, so refresh tokens..
+                    me.delegate?.nicoManager(
+                        me,
+                        hasDebugMessgae: "Access token is expired, refreshing token...")
                     me.authManager.refreshToken {
                         switch $0 {
                         case .success:
                             // Refresh token successfully completed, retry the call.
+                            me.delegate?.nicoManager(
+                                me,
+                                hasDebugMessgae: "Completed to refresh token.")
                             me.callOAuthEndpoint(
                                 url: url,
                                 parameters: parameters,
@@ -513,16 +550,23 @@ private extension NicoManager {
                         case .failure(let error):
                             log.error(error)
                             // Refresh token failed, finish to establish connection here.
+                            me.delegate?.nicoManager(
+                                me,
+                                hasDebugMessgae: "Failed to refresh token. (\(error))")
                             completion(.failure(.internal))
                         }
                     }
                     return
                 }
                 // For normal error case, returning the error immediately.
+                me.delegate?.nicoManager(
+                    me,
+                    hasDebugMessgae: "Failed to call OAuth endpoint. (\(error))")
                 completion(.failure(.internal))
             }
         }
     }
+    // swiftlint:enable function_body_length
 
     func authorizationHeader(with: String) -> HTTPHeaders {
         [httpHeaderKeyAuthorization: "Bearer \(with)"]
@@ -561,7 +605,8 @@ private extension NicoManager {
             processWatchSocketTextEvent(text: text, socket: socket, completion: completion)
         case .pong:
             lastPongSocketDates?.watch = Date()
-        case .error:
+        case .error(let error):
+            delegate?.nicoManager(self, hasDebugMessgae: "Watch socket error. (\(String(describing: error)))")
             reconnect()
         case .reconnectSuggested:
             reconnect()
@@ -661,7 +706,8 @@ private extension NicoManager {
             setTextSocketEventCheckTimer(delay: textEventDisconnectDetectDelay)
         case .pong:
             lastPongSocketDates?.message = Date()
-        case .error:
+        case .error(let error):
+            delegate?.nicoManager(self, hasDebugMessgae: "Message socket error. (\(String(describing: error)))")
             reconnect()
         case .reconnectSuggested:
             reconnect()

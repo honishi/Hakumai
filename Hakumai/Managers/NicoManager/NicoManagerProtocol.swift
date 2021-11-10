@@ -56,6 +56,9 @@ protocol NicoManagerDelegate: AnyObject {
 
     // Disconnect.
     func nicoManagerDidDisconnect(_ nicoManager: NicoManagerType, disconnectContext: NicoDisconnectContext)
+
+    // Debug.
+    func nicoManager(_ nicoManager: NicoManagerType, hasDebugMessgae message: String)
 }
 
 enum NicoError: Error {

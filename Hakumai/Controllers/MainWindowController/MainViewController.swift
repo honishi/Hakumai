@@ -525,6 +525,10 @@ extension MainViewController: NicoManagerDelegate {
     func nicoManagerDidReceiveStatistics(_ nicoManager: NicoManagerType, stat: LiveStatistics) {
         updateLiveStatistics(stat: stat)
     }
+
+    func nicoManager(_ nicoManager: NicoManagerType, hasDebugMessgae message: String) {
+        logDebugMessageIfEnabled(message)
+    }
 }
 
 extension MainViewController: RankingManagerDelegate {
