@@ -185,7 +185,14 @@ extension MainViewController: NSTableViewDelegate {
             attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
         // log.debug("\(commentRect.size.width),\(commentRect.size.height)")
 
-        let iconHeight = message.chat?.hasUserIcon == true ? iconColumnWidth : 0
+        let iconHeight: CGFloat = {
+            switch message.content {
+            case .system, .debug:
+                return 0
+            case .chat(let chat, _):
+                return chat.hasUserIcon ? iconColumnWidth : 0
+            }
+        }()
         return max(iconHeight, max(commentRect.size.height, minimumRowHeight))
     }
 
@@ -227,7 +234,7 @@ extension MainViewController: NSTableViewDelegate {
 
         guard let _view = view, let tableColumn = tableColumn else { return nil }
 
-        switch message.messageType {
+        switch message.content {
         case .system, .debug:
             configure(view: _view, forSystemAndDebug: message, withTableColumn: tableColumn)
         case .chat:
@@ -241,8 +248,7 @@ extension MainViewController: NSTableViewDelegate {
         switch tableColumn.identifier.rawValue {
         case kRoomPositionColumnIdentifier:
             let roomPositionView = view as? RoomPositionTableCellView
-            roomPositionView?.messageType = message.messageType
-            roomPositionView?.commentNo = nil
+            roomPositionView?.message = message
             roomPositionView?.fontSize = nil
         case kTimeColumnIdentifier:
             let timeView = view as? TimeTableCellView
@@ -270,13 +276,12 @@ extension MainViewController: NSTableViewDelegate {
     }
 
     private func configure(view: NSTableCellView, forChat message: Message, withTableColumn tableColumn: NSTableColumn) {
-        guard let chat = message.chat else { return }
+        guard case let .chat(chat, _) = message.content else { return }
 
         switch tableColumn.identifier.rawValue {
         case kRoomPositionColumnIdentifier:
             let roomPositionView = view as? RoomPositionTableCellView
-            roomPositionView?.messageType = message.messageType
-            roomPositionView?.commentNo = chat.no
+            roomPositionView?.message = message
             roomPositionView?.fontSize = min(tableViewFontSize, maximumFontSizeForNonMainColumn)
         case kTimeColumnIdentifier:
             let timeView = view as? TimeTableCellView
@@ -317,22 +322,18 @@ extension MainViewController: NSTableViewDelegate {
 
     // MARK: Utility
     private func contentAndAttributes(forMessage message: Message) -> (String, [String: Any]) {
-        var content: String!
-        var attributes = [String: Any]()
+        let content: String
+        let attributes: [String: Any]
 
-        switch message.messageType {
-        case .system, .debug:
-            guard let _message = message.message else { fatalError() }
+        switch message.content {
+        case .system(let _message), .debug(let _message):
             content = _message
             attributes = UIHelper.normalCommentAttributes(fontSize: tableViewFontSize)
-        case .chat:
-            guard let _message = message.chat?.comment else { fatalError() }
-            content = _message
-            if message.firstChat == true {
-                attributes = UIHelper.boldCommentAttributes(fontSize: tableViewFontSize)
-            } else {
-                attributes = UIHelper.normalCommentAttributes(fontSize: tableViewFontSize)
-            }
+        case .chat(let chat, let firstChat):
+            content = chat.comment
+            attributes = firstChat ?
+                UIHelper.boldCommentAttributes(fontSize: tableViewFontSize) :
+                UIHelper.normalCommentAttributes(fontSize: tableViewFontSize)
         }
 
         return (content, attributes)
@@ -1004,7 +1005,7 @@ private extension MainViewController {
         guard clickedRow != -1 else { return }
 
         let message = messageContainer[clickedRow]
-        guard message.messageType == .chat, let chat = message.chat else { return }
+        guard case let .chat(chat, _) = message.content else { return }
         var userWindowController: UserWindowController?
 
         // check if user window exists?

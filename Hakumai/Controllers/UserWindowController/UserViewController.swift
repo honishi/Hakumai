@@ -113,7 +113,11 @@ extension UserViewController: NSTableViewDataSource, NSTableViewDelegate {
             view?.textField?.stringValue = ""
         }
         let message = messages[row]
-        if message.messageType == .chat, let _view = view, let tableColumn = tableColumn {
+        switch message.content {
+        case .system, .debug:
+            break
+        case .chat:
+            guard let _view = view, let tableColumn = tableColumn else { break }
             configure(view: _view, forChat: message, withTableColumn: tableColumn)
         }
         return view
@@ -188,15 +192,12 @@ private extension UserViewController {
     }
 
     func configure(view: NSTableCellView, forChat message: Message, withTableColumn tableColumn: NSTableColumn) {
-        guard let chat = message.chat else { return }
-
         var attributed: NSAttributedString?
 
         switch convertFromNSUserInterfaceItemIdentifier(tableColumn.identifier) {
         case kRoomPositionColumnIdentifier:
             let roomPositionView = view as? RoomPositionTableCellView
-            roomPositionView?.messageType = message.messageType
-            roomPositionView?.commentNo = chat.no
+            roomPositionView?.message = message
         case kTimeColumnIdentifier:
             (view as? TimeTableCellView)?.configure(live: nicoManager.live, message: message)
         case kCommentColumnIdentifier:
@@ -224,15 +225,16 @@ private extension UserViewController {
 
     // MARK: Utility
     func contentAndAttributes(forMessage message: Message) -> (String, [String: Any]) {
-        var content: String!
-        var attributes = [String: Any]()
+        let content: String
+        let attributes: [String: Any]
 
-        if message.messageType == .system, let _message = message.message {
+        switch message.content {
+        case .system(let _message), .debug(let _message):
             content = _message
             attributes = UIHelper.normalCommentAttributes()
-        } else if message.messageType == .chat, let _message = message.chat?.comment {
-            content = _message
-            attributes = (message.firstChat == true ? UIHelper.boldCommentAttributes() : UIHelper.normalCommentAttributes())
+        case .chat(let chat, let firstChat):
+            content = chat.comment
+            attributes = firstChat ? UIHelper.boldCommentAttributes() : UIHelper.normalCommentAttributes()
         }
 
         return (content, attributes)

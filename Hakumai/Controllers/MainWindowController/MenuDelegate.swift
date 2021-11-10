@@ -34,8 +34,7 @@ final class MenuDelegate: NSObject {
 extension MenuDelegate: NSMenuItemValidation {
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         guard let message = clickedMessage,
-              message.messageType == .chat,
-              let chat = message.chat else { return false }
+              case let .chat(chat, _) = message.content else { return false }
         switch menuItem {
         case copyCommentMenuItem:
             return true
@@ -62,36 +61,38 @@ extension MenuDelegate: NSMenuItemValidation {
 extension MenuDelegate {
     // MARK: - Context Menu Handlers
     @IBAction func copyComment(_ sender: AnyObject) {
-        guard let chat = clickedMessage?.chat else { return }
+        guard case let .chat(chat, _) = clickedMessage?.content else { return }
         chat.comment.copyToPasteBoard()
     }
 
     @IBAction func copyUrl(_ sender: Any) {
-        guard let chat = clickedMessage?.chat,
+        guard case let .chat(chat, _) = clickedMessage?.content,
               let urlString = chat.comment.extractUrlString() else { return }
         urlString.copyToPasteBoard()
     }
 
     @IBAction func openUrl(_ sender: AnyObject) {
-        guard let chat = clickedMessage?.chat,
+        guard case let .chat(chat, _) = clickedMessage?.content,
               let urlString = chat.comment.extractUrlString(),
               let urlObject = URL(string: urlString) else { return }
         NSWorkspace.shared.open(urlObject)
     }
 
     @IBAction func addHandleName(_ sender: AnyObject) {
-        guard let live = currentLive, let chat = clickedMessage?.chat else { return }
+        guard let live = currentLive,
+              case let .chat(chat, _) = clickedMessage?.content else { return }
         mainViewController.showHandleNameAddViewController(live: live, chat: chat)
     }
 
     @IBAction func removeHandleName(_ sender: AnyObject) {
-        guard let live = currentLive, let chat = clickedMessage?.chat else { return }
+        guard let live = currentLive,
+              case let .chat(chat, _) = clickedMessage?.content else { return }
         HandleNameManager.shared.removeHandleName(live: live, chat: chat)
         mainViewController.refreshHandleName()
     }
 
     @IBAction func addToMuteUser(_ sender: AnyObject) {
-        guard let chat = clickedMessage?.chat else { return }
+        guard case let .chat(chat, _) = clickedMessage?.content else { return }
         let defaults = UserDefaults.standard
         var muteUserIds = defaults.object(forKey: Parameters.muteUserIds) as? [[String: String]] ?? [[String: String]]()
         for muteUserId in muteUserIds where chat.userId == muteUserId[MuteUserIdKey.userId] {
@@ -104,8 +105,8 @@ extension MenuDelegate {
     }
 
     @IBAction func openUserPage(_ sender: AnyObject) {
-        guard let userId = clickedMessage?.chat?.userId,
-              let url = mainViewController.userPageUrl(for: userId) else { return }
+        guard case let .chat(chat, _) = clickedMessage?.content,
+              let url = mainViewController.userPageUrl(for: chat.userId) else { return }
         NSWorkspace.shared.open(url)
     }
 }

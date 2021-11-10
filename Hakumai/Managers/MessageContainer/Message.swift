@@ -9,43 +9,42 @@
 import Foundation
 
 final class Message {
-    enum MessageType: Int {
-        case system = 0
-        case chat
-        case debug
+    enum ContentType {
+        case system(message: String)
+        case chat(chat: Chat, first: Bool)
+        case debug(message: String)
     }
 
     // MARK: - Properties
     let messageNo: Int
-    let messageType: MessageType
+    let content: ContentType
     let date: Date
 
-    // property for system message
-    let message: String?
-
-    // property for chat message
-    let chat: Chat?
-    let firstChat: Bool?
-
     // MARK: - Object Lifecycle
-    init(messageNo: Int, messageType: MessageType, message: String?, chat: Chat?, firstChat: Bool?) {
+    init(messageNo: Int, content: ContentType) {
         self.messageNo = messageNo
-        self.messageType = messageType
-        self.message = message
-        self.chat = chat
-        self.firstChat = firstChat
+        self.content = content
         self.date = Date()
     }
 
     convenience init(messageNo: Int, system: String) {
-        self.init(messageNo: messageNo, messageType: .system, message: system, chat: nil, firstChat: nil)
+        self.init(
+            messageNo: messageNo,
+            content: .system(message: system)
+        )
     }
 
-    convenience init(messageNo: Int, chat: Chat, firstChat: Bool = false) {
-        self.init(messageNo: messageNo, messageType: .chat, message: nil, chat: chat, firstChat: firstChat)
+    convenience init(messageNo: Int, chat: Chat, first: Bool = false) {
+        self.init(
+            messageNo: messageNo,
+            content: .chat(chat: chat, first: first)
+        )
     }
 
     convenience init(messageNo: Int, debug: String) {
-        self.init(messageNo: messageNo, messageType: .debug, message: debug, chat: nil, firstChat: nil)
+        self.init(
+            messageNo: messageNo,
+            content: .debug(message: debug)
+        )
     }
 }

@@ -19,27 +19,27 @@ final class TimeTableCellView: NSTableCellView {
 extension TimeTableCellView {
     func configure(live: Live?, message: Message?) {
         coloredView.fillColor = color(message: message)
-        timeLabel.stringValue = time(live: live, chat: message?.chat)
+        timeLabel.stringValue = time(live: live, message: message)
     }
 }
 
 private extension TimeTableCellView {
     func color(message: Message?) -> NSColor {
         guard let message = message else { return UIHelper.systemMessageColorBackground() }
-        switch message.messageType {
+        switch message.content {
         case .system:
             return UIHelper.systemMessageColorBackground()
-        case .chat:
-            guard let chat = message.chat else { return UIHelper.systemMessageColorBackground() }
+        case .chat(let chat, _):
             return chat.isSystemComment ? UIHelper.systemMessageColorBackground() : UIHelper.scoreColorGreen()
         case .debug:
             return UIHelper.debugMessageColorBackground()
         }
     }
 
-    func time(live: Live?, chat: Chat?) -> String {
-        guard let beginDate = live?.beginTime, let chatDate = chat?.date else { return "-" }
-        return chatDate.toElapsedTimeString(from: beginDate)
+    func time(live: Live?, message: Message?) -> String {
+        guard let beginDate = live?.beginTime,
+              case let .chat(chat, _) = message?.content else { return "-" }
+        return chat.date.toElapsedTimeString(from: beginDate)
     }
 
     func set(fontSize: CGFloat?) {

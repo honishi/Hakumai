@@ -46,15 +46,11 @@ extension MessageContainer {
     func append(chat: Chat) -> (appended: Bool, count: Int) {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
-
-        var isFirstChat = false
-        if chat.isUserComment {
-            isFirstChat = firstChat[chat.userId] == nil ? true : false
-            if isFirstChat {
-                firstChat[chat.userId] = true
-            }
+        let isFirst = chat.isUserComment && firstChat[chat.userId] == nil
+        if isFirst {
+            firstChat[chat.userId] = true
         }
-        let message = Message(messageNo: messageNo, chat: chat, firstChat: isFirstChat)
+        let message = Message(messageNo: messageNo, chat: chat, first: isFirst)
         return append(message: message)
     }
 
@@ -94,11 +90,11 @@ extension MessageContainer {
 
         objc_sync_enter(self)
         for message in sourceMessages {
-            switch message.messageType {
-            case .system, .debug:   continue
-            case .chat:             break
-            }
-            if message.chat?.userId == userId {
+            switch message.content {
+            case .system, .debug:
+                continue
+            case .chat(let chat, _):
+                guard chat.userId == userId else { continue }
                 userMessages.append(message)
             }
         }
@@ -153,11 +149,7 @@ extension MessageContainer {
                 let message = self.sourceMessages[i - 1]
                 objc_sync_exit(self)
                 i -= 1
-                switch message.messageType {
-                case .system, .debug:   continue
-                case .chat:             break
-                }
-                guard let chat = message.chat else { continue }
+                guard case let .chat(chat, _) = message.content else { continue }
                 if !chat.isUserComment {
                     continue
                 }
@@ -238,12 +230,11 @@ private extension MessageContainer {
     }
 
     func shouldAppend(message: Message) -> Bool {
-        switch message.messageType {
+        switch message.content {
         case .system:
             return true
 
-        case .chat:
-            guard let chat = message.chat else { return false }
+        case .chat(let chat, _):
             // filter by comment
             if enableMuteWords {
                 for muteWord in muteWords {
