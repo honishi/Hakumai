@@ -233,28 +233,29 @@ private extension MessageContainer {
         switch message.content {
         case .system:
             return true
-
         case .chat(let chat, _):
-            // filter by comment
-            if enableMuteWords {
-                for muteWord in muteWords {
-                    if let word = muteWord[MuteUserWordKey.word] {
-                        if chat.comment.lowercased().range(of: word.lowercased()) != nil {
-                            return false
-                        }
-                    }
-                }
-            }
-            // filter by userid
-            if enableMuteUserIds {
-                for muteUserId in muteUserIds where muteUserId[MuteUserIdKey.userId] == chat.userId {
-                    return false
-                }
-            }
-            return true
-
+            return shouldAppendByMuteWords(chat) && shouldAppendByUserId(chat)
         case .debug:
             return enableDebugMessage
         }
+    }
+
+    func shouldAppendByMuteWords(_ chat: Chat) -> Bool {
+        guard enableMuteWords else { return true }
+        for muteWord in muteWords {
+            if let word = muteWord[MuteUserWordKey.word],
+               chat.comment.lowercased().range(of: word.lowercased()) != nil {
+                return false
+            }
+        }
+        return true
+    }
+
+    func shouldAppendByUserId(_ chat: Chat) -> Bool {
+        guard enableMuteUserIds else { return true }
+        for muteUserId in muteUserIds where muteUserId[MuteUserIdKey.userId] == chat.userId {
+            return false
+        }
+        return true
     }
 }
