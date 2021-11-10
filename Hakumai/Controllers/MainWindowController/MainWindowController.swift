@@ -115,8 +115,8 @@ extension MainWindowController {
         mainViewController.changeFontSize(fontSize)
     }
 
-    func changeLogDebugMessage(_ enabled: Bool) {
-        mainViewController.changeLogDebugMessage(enabled)
+    func changeEnableDebugMessage(_ enabled: Bool) {
+        mainViewController.changeEnableDebugMessage(enabled)
     }
 }
 

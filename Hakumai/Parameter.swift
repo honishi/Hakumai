@@ -26,7 +26,7 @@ struct Parameters {
     static let alwaysOnTop = "AlwaysOnTop"
     static let commentAnonymously = "CommentAnonymously"
     static let fontSize = "FontSize"
-    static let logDebugMessage = "LogDebugMessage"
+    static let enableDebugMessage = "EnableDebugMessage"
 }
 
 // session management

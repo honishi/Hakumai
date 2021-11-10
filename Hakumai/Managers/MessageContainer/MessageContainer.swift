@@ -18,6 +18,7 @@ final class MessageContainer {
     var muteUserIds = [[String: String]]()
     var enableMuteWords = false
     var muteWords = [[String: String]]()
+    var enableDebugMessage = false
 
     // MARK: Private
     private var messageNo = 0
@@ -238,7 +239,7 @@ private extension MessageContainer {
 
     func shouldAppend(message: Message) -> Bool {
         switch message.messageType {
-        case .system, .debug:
+        case .system:
             return true
 
         case .chat:
@@ -260,6 +261,9 @@ private extension MessageContainer {
                 }
             }
             return true
+
+        case .debug:
+            return enableDebugMessage
         }
     }
 }

@@ -115,9 +115,6 @@ final class MainViewController: NSViewController {
     private var userWindowControllers = [UserWindowController]()
     private var nextUserWindowTopLeftPoint: NSPoint = NSPoint.zero
 
-    // Debug
-    private var logDebugMessage = false
-
     deinit { log.debug("deinit") }
 }
 
@@ -144,7 +141,7 @@ extension MainViewController {
         configureMute()
         configureFontSize()
         configureAnonymouslyButton()
-        configureDebugLogInfo()
+        configureDebugMessage()
         DispatchQueue.main.async { self.focusLiveTextField() }
     }
 }
@@ -527,7 +524,7 @@ extension MainViewController: NicoManagerDelegate {
     }
 
     func nicoManager(_ nicoManager: NicoManagerType, hasDebugMessgae message: String) {
-        logDebugMessageIfEnabled(message)
+        logDebugMessage(message)
     }
 }
 
@@ -537,7 +534,7 @@ extension MainViewController: RankingManagerDelegate {
     }
 
     func rankingManager(_ rankingManager: RankingManagerType, hasDebugMessage message: String) {
-        logDebugMessageIfEnabled(message)
+        logDebugMessage(message)
     }
 }
 
@@ -677,11 +674,10 @@ extension MainViewController {
         rebuildFilteredMessages()
     }
 
-    func changeLogDebugMessage(_ enabled: Bool) {
-        let changed = logDebugMessage != enabled
-        guard changed else { return }
-        logDebugMessage = enabled
-        appendToTable(debugMessage: "Debug log \(logDebugMessage ? "enabled" : "disabled").")
+    func changeEnableDebugMessage(_ enabled: Bool) {
+        messageContainer.enableDebugMessage = enabled
+        log.debug("Changed enable debug message: \(enabled)")
+        rebuildFilteredMessages()
     }
 
     private func rebuildFilteredMessages() {
@@ -809,9 +805,9 @@ private extension MainViewController {
         commentAnonymouslyButton.state = anonymous ? .on : .off
     }
 
-    func configureDebugLogInfo() {
-        let enabled = UserDefaults.standard.bool(forKey: Parameters.logDebugMessage)
-        changeLogDebugMessage(enabled)
+    func configureDebugMessage() {
+        let enabled = UserDefaults.standard.bool(forKey: Parameters.enableDebugMessage)
+        changeEnableDebugMessage(enabled)
     }
 
     func updateMainControlViews(status connectionStatus: ConnectionStatus) {
@@ -1265,8 +1261,7 @@ private extension MainViewController {
 
 // MARK: Debug Methods
 private extension MainViewController {
-    func logDebugMessageIfEnabled(_ message: String) {
-        guard logDebugMessage else { return }
+    func logDebugMessage(_ message: String) {
         log.debug(message)
         appendToTable(debugMessage: message)
     }
@@ -1279,11 +1274,11 @@ private extension MainViewController {
             case .noTexts:  return "no text"
             }
         }()
-        logDebugMessageIfEnabled("Reconnecting... (\(_reason))")
+        logDebugMessage("Reconnecting... (\(_reason))")
     }
 
     func logDebugRankingManagerStatus() {
-        logDebugMessageIfEnabled("RankingManager is \(rankingManager.isRunning ? "running" : "stopped").")
+        logDebugMessage("RankingManager is \(rankingManager.isRunning ? "running" : "stopped").")
     }
 }
 

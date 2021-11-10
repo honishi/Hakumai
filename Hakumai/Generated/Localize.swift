@@ -80,6 +80,8 @@ internal enum L10n {
   internal static let elapsedTime = L10n.tr("Localizable", "elapsed_time")
   /// Enable 184
   internal static let enable184 = L10n.tr("Localizable", "enable_184")
+  /// Enable debug message in main window
+  internal static let enableDebugMessage = L10n.tr("Localizable", "enable_debug_message")
   /// Enable Mute User Ids
   internal static let enableMuteUserIds = L10n.tr("Localizable", "enable_mute_user_ids")
   /// Enable Mute Words
@@ -124,8 +126,6 @@ internal enum L10n {
   internal static let liveTitle = L10n.tr("Localizable", "live_title")
   /// ⌘L (Live URL, Live#)
   internal static let liveUrlTextFieldPlaceholder = L10n.tr("Localizable", "live_url_text_field_placeholder")
-  /// Log debug message in main window
-  internal static let logDebugMessage = L10n.tr("Localizable", "log_debug_message")
   /// Login
   internal static let login = L10n.tr("Localizable", "login")
   /// Login completed.
