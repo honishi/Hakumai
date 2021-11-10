@@ -187,7 +187,7 @@ extension MessageContainer {
             let sourceCount = self.sourceMessages.count
 
             for i in 0..<sourceCount {
-                _ = self.append(message: self.sourceMessages[i], into: &workingMessages)
+                self.append(message: self.sourceMessages[i], into: &workingMessages)
             }
 
             // log.debug("completed 1st pass")
@@ -207,7 +207,7 @@ extension MessageContainer {
 
                 let deltaCount = self.sourceMessages.count
                 for i in sourceCount..<deltaCount {
-                    _ = self.append(message: self.sourceMessages[i], into: &self.filteredMessages)
+                    self.append(message: self.sourceMessages[i], into: &self.filteredMessages)
                 }
                 // log.debug("copied delta messages \(sourceCount)..<\(deltaCount)")
 
@@ -226,6 +226,7 @@ extension MessageContainer {
 // MARK: - Internal Functions
 private extension MessageContainer {
     // MARK: Filtered Message Append Utility
+    @discardableResult
     func append(message: Message, into messages: inout [Message]) -> Bool {
         var appended = false
         if shouldAppend(message: message) {

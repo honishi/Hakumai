@@ -1267,6 +1267,7 @@ private extension MainViewController {
 private extension MainViewController {
     func logDebugMessageIfEnabled(_ message: String) {
         guard logDebugMessage else { return }
+        log.debug(message)
         appendToTable(debugMessage: message)
     }
 
