@@ -540,8 +540,7 @@ private extension NicoManager {
 private extension NicoManager {
     func openWatchSocket(webSocketUrl: URL, completion: @escaping (Result<WebSocketRoomData, NicoError>) -> Void) {
         var request = URLRequest(url: webSocketUrl)
-        request.headers = [commonUserAgentKey: commonUserAgentValue]
-        request.timeoutInterval = defaultRequestTimeout
+        request.applyDefaultWatchSocketSetting()
         let socket = WebSocket(request: request)
         socket.onEvent = { [weak self] in
             self?.handleWatchSocketEvent(
@@ -698,13 +697,20 @@ private extension NicoManager {
 }
 
 private extension URLRequest {
+    mutating func applyDefaultWatchSocketSetting() {
+        headers = [
+            commonUserAgentKey: commonUserAgentValue
+        ]
+        timeoutInterval = defaultRequestTimeout
+    }
+
     mutating func applyDefaultMessageSocketSetting() {
         headers = [
             commonUserAgentKey: commonUserAgentValue,
             "Sec-WebSocket-Extensions": "permessage-deflate; client_max_window_bits",
             "Sec-WebSocket-Protocol": "msg.nicovideo.jp#json"
         ]
-        timeoutInterval = 10
+        timeoutInterval = defaultRequestTimeout
     }
 }
 
