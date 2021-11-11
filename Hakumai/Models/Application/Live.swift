@@ -10,7 +10,8 @@ import Foundation
 
 private let liveBaseUrl = "http://live.nicovideo.jp/watch/"
 
-final class Live: CustomStringConvertible {
+struct Live {
+    // MARK: - Properties
     // "lv" prefix is included in live id like "lv12345"
     let liveId: String
     let title: String
@@ -21,23 +22,12 @@ final class Live: CustomStringConvertible {
     let isTimeShift: Bool
 
     var liveUrlString: String { liveBaseUrl + liveId }
+}
 
+extension Live: CustomStringConvertible {
     var description: String {
-        return (
-            "Live: liveId[\(liveId)] title[\(title)] community[\(community?.description ?? "-")] " +
-                "baseTime[\(baseTime.description)] openTime[\(openTime.description)] " +
-                "beginTime[\(beginTime.description)] isTimeShift[\(isTimeShift)]"
-        )
-    }
-
-    // MARK: - Object Lifecycle
-    init(liveId: String, title: String, community: Community?, baseTime: Date, openTime: Date, beginTime: Date, isTimeShift: Bool) {
-        self.liveId = liveId
-        self.title = title
-        self.community = community
-        self.baseTime = baseTime
-        self.openTime = openTime
-        self.beginTime = beginTime
-        self.isTimeShift = isTimeShift
+        "Live: liveId[\(liveId)] title[\(title)] community[\(community?.description ?? "-")] " +
+            "baseTime[\(baseTime.description)] openTime[\(openTime.description)] " +
+            "beginTime[\(beginTime.description)] isTimeShift[\(isTimeShift)]"
     }
 }

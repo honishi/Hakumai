@@ -46,7 +46,6 @@
 		DB690973266372230081F24F /* ButtonScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB690972266372230081F24F /* ButtonScrollView.swift */; };
 		DB6C73142662894B0026A8C0 /* NSScrollView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6C73132662894B0026A8C0 /* NSScrollView+Extensions.swift */; };
 		DB6DD2AA2650EC86009A9574 /* NicoWebSocketModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6DD2A92650EC86009A9574 /* NicoWebSocketModel.swift */; };
-		DB6DD2AC2650ECD7009A9574 /* NicoWebModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6DD2AB2650ECD7009A9574 /* NicoWebModel.swift */; };
 		DB6DD2AE2650F1B0009A9574 /* NicoManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6DD2AD2650F1B0009A9574 /* NicoManagerProtocol.swift */; };
 		DB73A38C1A4F43F6008423D0 /* MuteAddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB73A38B1A4F43F6008423D0 /* MuteAddViewController.swift */; };
 		DB74B86C1A6E790C0064AC28 /* BrowserHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB74B86B1A6E790C0064AC28 /* BrowserHelper.swift */; };
@@ -173,7 +172,6 @@
 		DB690972266372230081F24F /* ButtonScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonScrollView.swift; sourceTree = "<group>"; };
 		DB6C73132662894B0026A8C0 /* NSScrollView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSScrollView+Extensions.swift"; sourceTree = "<group>"; };
 		DB6DD2A92650EC86009A9574 /* NicoWebSocketModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoWebSocketModel.swift; sourceTree = "<group>"; };
-		DB6DD2AB2650ECD7009A9574 /* NicoWebModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoWebModel.swift; sourceTree = "<group>"; };
 		DB6DD2AD2650F1B0009A9574 /* NicoManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoManagerProtocol.swift; sourceTree = "<group>"; };
 		DB73A38B1A4F43F6008423D0 /* MuteAddViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MuteAddViewController.swift; sourceTree = "<group>"; };
 		DB74B86B1A6E790C0064AC28 /* BrowserHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrowserHelper.swift; sourceTree = "<group>"; };
@@ -433,7 +431,6 @@
 			children = (
 				DBBE416B266CB939004002F1 /* NicoOAuthApiModel.swift */,
 				DBCA2D232642BCF500B6147C /* NicoRestApiModel.swift */,
-				DB6DD2AB2650ECD7009A9574 /* NicoWebModel.swift */,
 				DB6DD2A92650EC86009A9574 /* NicoWebSocketModel.swift */,
 			);
 			path = NicoManager;
@@ -959,7 +956,6 @@
 				DB6DD2AE2650F1B0009A9574 /* NicoManagerProtocol.swift in Sources */,
 				DBBE416C266CB939004002F1 /* NicoOAuthApiModel.swift in Sources */,
 				DBCA2D242642BCF500B6147C /* NicoRestApiModel.swift in Sources */,
-				DB6DD2AC2650ECD7009A9574 /* NicoWebModel.swift in Sources */,
 				DB6DD2AA2650EC86009A9574 /* NicoWebSocketModel.swift in Sources */,
 				DB6C73142662894B0026A8C0 /* NSScrollView+Extensions.swift in Sources */,
 				DBD7A1E9265D5863001C87E0 /* NSView+Extensions.swift in Sources */,

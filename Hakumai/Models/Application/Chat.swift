@@ -8,7 +8,8 @@
 
 import Foundation
 
-final class Chat: CustomStringConvertible {
+struct Chat {
+    // MARK: - Properties
     let roomPosition: RoomPosition = .arena
     let no: Int
     let date: Date
@@ -23,14 +24,6 @@ final class Chat: CustomStringConvertible {
     var isSystemComment: Bool { Chat.isSystemComment(premium) }
     var hasUserIcon: Bool { isUserComment && isRawUserId }
 
-    var description: String {
-        return (
-            "Chat: roomPosition[\(roomPosition.description)] no[\(no)] " +
-                "date[\(date.description)] dateUsec[\(dateUsec)] mail[\(mail ?? [])] userId[\(userId)] " +
-                "premium[\(premium.description)] comment[\(comment)]"
-        )
-    }
-
     // MARK: - Object Lifecycle
     init(no: Int, date: Date, dateUsec: Int, mail: [String]?, userId: String, comment: String, premium: Premium) {
         self.no = no
@@ -41,6 +34,14 @@ final class Chat: CustomStringConvertible {
         // self.comment = comment
         self.comment = Chat.replaceSlashCommand(comment: comment, premium: premium)
         self.premium = premium
+    }
+}
+
+extension Chat: CustomStringConvertible {
+    var description: String {
+        "Chat: roomPosition[\(roomPosition.description)] no[\(no)] " +
+            "date[\(date.description)] dateUsec[\(dateUsec)] mail[\(mail ?? [])] userId[\(userId)] " +
+            "premium[\(premium.description)] comment[\(comment)]"
     }
 }
 

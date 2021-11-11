@@ -12,7 +12,8 @@ import Foundation
 private let communityPrefixUser = "^co\\d+"
 private let communityPrefixChannel = "^ch\\d+"
 
-final class Community: CustomStringConvertible {
+struct Community {
+    // MARK: - Properties
     let communityId: String
     let title: String
     let level: Int
@@ -20,19 +21,11 @@ final class Community: CustomStringConvertible {
 
     var isUser: Bool { communityId.hasRegexp(pattern: communityPrefixUser) }
     var isChannel: Bool { communityId.hasRegexp(pattern: communityPrefixChannel) }
+}
 
+extension Community: CustomStringConvertible {
     var description: String {
-        return (
-            "Community: community[\(communityId)] title[\(title)] level[\(level)] " +
-                "thumbnailUrl[\(thumbnailUrl?.description ?? "-")]"
-        )
-    }
-
-    // MARK: Object Lifecycle
-    init(communityId: String, title: String, level: Int, thumbnailUrl: URL?) {
-        self.communityId = communityId
-        self.title = title
-        self.level = level
-        self.thumbnailUrl = thumbnailUrl
+        "Community: community[\(communityId)] title[\(title)] level[\(level)] " +
+            "thumbnailUrl[\(thumbnailUrl?.description ?? "-")]"
     }
 }

@@ -8,7 +8,8 @@
 
 import Foundation
 
-final class Message {
+struct Message {
+    // MARK: - Types
     enum ContentType {
         case system(message: String)
         case chat(chat: Chat, first: Bool)
@@ -18,33 +19,21 @@ final class Message {
     // MARK: - Properties
     let messageNo: Int
     let content: ContentType
-    let date: Date
+    let date: Date = Date()
 
     // MARK: - Object Lifecycle
-    init(messageNo: Int, content: ContentType) {
+    init(messageNo: Int, system: String) {
         self.messageNo = messageNo
-        self.content = content
-        self.date = Date()
+        self.content = .system(message: system)
     }
 
-    convenience init(messageNo: Int, system: String) {
-        self.init(
-            messageNo: messageNo,
-            content: .system(message: system)
-        )
+    init(messageNo: Int, chat: Chat, first: Bool = false) {
+        self.messageNo = messageNo
+        self.content = .chat(chat: chat, first: first)
     }
 
-    convenience init(messageNo: Int, chat: Chat, first: Bool = false) {
-        self.init(
-            messageNo: messageNo,
-            content: .chat(chat: chat, first: first)
-        )
-    }
-
-    convenience init(messageNo: Int, debug: String) {
-        self.init(
-            messageNo: messageNo,
-            content: .debug(message: debug)
-        )
+    init(messageNo: Int, debug: String) {
+        self.messageNo = messageNo
+        self.content = .debug(message: debug)
     }
 }

@@ -8,18 +8,10 @@
 
 import Foundation
 
-final class LiveStatistics {
+struct LiveStatistics {
     // MARK: - Properties
     let viewers: Int
     let comments: Int
     let adPoints: Int?
     let giftPoints: Int?
-
-    // MARK: - Object Lifecycle
-    init(viewers: Int, comments: Int, adPoints: Int?, giftPoints: Int?) {
-        self.viewers = viewers
-        self.comments = comments
-        self.adPoints = adPoints
-        self.giftPoints = giftPoints
-    }
 }

@@ -8,15 +8,12 @@
 
 import Foundation
 
-final class User: CustomStringConvertible {
+struct User {
+    // MARK: - Properties
     let userId: String
     let nickname: String
+}
 
+extension User: CustomStringConvertible {
     var description: String { "User: userId[\(userId)] nickname[\(nickname)]" }
-
-    // MARK: - Object Lifecycle
-    init(userId: String, nickname: String) {
-        self.userId = userId
-        self.nickname = nickname
-    }
 }
