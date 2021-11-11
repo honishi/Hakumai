@@ -197,14 +197,14 @@ private extension UserViewController {
         switch convertFromNSUserInterfaceItemIdentifier(tableColumn.identifier) {
         case kRoomPositionColumnIdentifier:
             let roomPositionView = view as? RoomPositionTableCellView
-            roomPositionView?.message = message
+            roomPositionView?.configure(message: message)
         case kTimeColumnIdentifier:
             (view as? TimeTableCellView)?.configure(live: nicoManager.live, message: message)
         case kCommentColumnIdentifier:
             let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)
             attributed = NSAttributedString(string: content, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
-            commentView?.attributedString = attributed
+            commentView?.configure(attributedString: attributed)
         default:
             break
         }

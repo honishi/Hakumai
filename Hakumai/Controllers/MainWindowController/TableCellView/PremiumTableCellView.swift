@@ -13,8 +13,13 @@ final class PremiumTableCellView: NSTableCellView {
     @IBOutlet weak var premiumImageView: NSImageView!
     @IBOutlet weak var premiumTextField: NSTextField!
 
-    var premium: Premium? = nil { didSet { set(premium: premium) } }
     var fontSize: CGFloat? { didSet { set(fontSize: fontSize) } }
+}
+
+extension PremiumTableCellView {
+    func configure(premium: Premium?) {
+        set(premium: premium)
+    }
 }
 
 private extension PremiumTableCellView {

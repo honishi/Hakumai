@@ -248,7 +248,7 @@ extension MainViewController: NSTableViewDelegate {
         switch tableColumn.identifier.rawValue {
         case kRoomPositionColumnIdentifier:
             let roomPositionView = view as? RoomPositionTableCellView
-            roomPositionView?.message = message
+            roomPositionView?.configure(message: message)
             roomPositionView?.fontSize = nil
         case kTimeColumnIdentifier:
             let timeView = view as? TimeTableCellView
@@ -261,14 +261,14 @@ extension MainViewController: NSTableViewDelegate {
             let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)
             let attributed = NSAttributedString(string: content, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
-            commentView?.attributedString = attributed
+            commentView?.configure(attributedString: attributed)
         case kUserIdColumnIdentifier:
             let userIdView = view as? UserIdTableCellView
-            userIdView?.info = nil
+            userIdView?.configure(info: nil)
             userIdView?.fontSize = nil
         case kPremiumColumnIdentifier:
             let premiumView = view as? PremiumTableCellView
-            premiumView?.premium = nil
+            premiumView?.configure(premium: nil)
             premiumView?.fontSize = nil
         default:
             break
@@ -281,7 +281,7 @@ extension MainViewController: NSTableViewDelegate {
         switch tableColumn.identifier.rawValue {
         case kRoomPositionColumnIdentifier:
             let roomPositionView = view as? RoomPositionTableCellView
-            roomPositionView?.message = message
+            roomPositionView?.configure(message: message)
             roomPositionView?.fontSize = min(tableViewFontSize, maximumFontSizeForNonMainColumn)
         case kTimeColumnIdentifier:
             let timeView = view as? TimeTableCellView
@@ -299,21 +299,22 @@ extension MainViewController: NSTableViewDelegate {
             let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)
             let attributed = NSAttributedString(string: content as String, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
-            commentView?.attributedString = attributed
+            commentView?.configure(attributedString: attributed)
         case kUserIdColumnIdentifier:
             guard let live = live else { return }
             let userIdView = view as? UserIdTableCellView
             let handleName = HandleNameManager.shared.handleName(forLive: live, chat: chat)
-            userIdView?.info = (
+            userIdView?.configure(info: (
                 nicoManager: nicoManager,
                 handleName: handleName,
                 userId: chat.userId,
                 premium: chat.premium,
-                comment: chat.comment)
+                comment: chat.comment
+            ))
             userIdView?.fontSize = tableViewFontSize
         case kPremiumColumnIdentifier:
             let premiumView = view as? PremiumTableCellView
-            premiumView?.premium = chat.premium
+            premiumView?.configure(premium: chat.premium)
             premiumView?.fontSize = min(tableViewFontSize, maximumFontSizeForNonMainColumn)
         default:
             break

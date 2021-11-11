@@ -13,13 +13,14 @@ final class RoomPositionTableCellView: NSTableCellView {
     @IBOutlet weak var coloredView: ColoredView!
     @IBOutlet weak var commentNoLabel: NSTextField!
 
-    var message: Message? {
-        didSet {
-            coloredView.fillColor = color(for: message)
-            commentNoLabel.stringValue = string(for: message)
-        }
-    }
     var fontSize: CGFloat? { didSet { set(fontSize: fontSize) } }
+}
+
+extension RoomPositionTableCellView {
+    func configure(message: Message?) {
+        coloredView.fillColor = color(for: message)
+        commentNoLabel.stringValue = string(for: message)
+    }
 }
 
 private extension RoomPositionTableCellView {

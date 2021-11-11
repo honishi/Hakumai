@@ -15,25 +15,25 @@ final class UserIdTableCellView: NSTableCellView {
     @IBOutlet weak var userIdTextField: NSTextField!
     @IBOutlet weak var userIdImageView: NSImageView!
 
-    var info: (nicoManager: NicoManagerType, handleName: String?, userId: String?, premium: Premium?, comment: String?)? = nil {
-        didSet {
-            self.nicoManager = info?.nicoManager
-            self.currentUserId = info?.userId
-            guard let userId = info?.userId, let premium = info?.premium else {
-                userIdImageView.image = nil
-                userIdTextField.stringValue = ""
-                return
-            }
-            userIdImageView.image = image(forHandleName: info?.handleName, userId: userId, premium: premium)
-            setUserIdLabel(userId: userId, premium: premium, handleName: info?.handleName)
-        }
-    }
-
     var fontSize: CGFloat? { didSet { set(fontSize: fontSize) } }
 
     // XXX: remove this non presentation layer instance..
     private var nicoManager: NicoManagerType?
     private var currentUserId: String?
+}
+
+extension UserIdTableCellView {
+    func configure(info: (nicoManager: NicoManagerType, handleName: String?, userId: String?, premium: Premium?, comment: String?)?) {
+        nicoManager = info?.nicoManager
+        currentUserId = info?.userId
+        guard let userId = info?.userId, let premium = info?.premium else {
+            userIdImageView.image = nil
+            userIdTextField.stringValue = ""
+            return
+        }
+        userIdImageView.image = image(forHandleName: info?.handleName, userId: userId, premium: premium)
+        setUserIdLabel(userId: userId, premium: premium, handleName: info?.handleName)
+    }
 }
 
 private extension UserIdTableCellView {
