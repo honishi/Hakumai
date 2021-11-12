@@ -167,3 +167,9 @@
 "add" = "Add";
 "cancel" = "Cancel";
 "set" = "Set";
+
+///
+/// Scroll View
+///
+"scroll_up_button" = "Press to scroll up / long press to scroll to top";
+"scroll_down_button" = "Press to scroll down / long press to scroll to bottom";

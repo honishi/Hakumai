@@ -30,21 +30,38 @@ extension NSScrollView {
     }
 
     func scrollToTop() {
-        let x = contentView.documentVisibleRect.origin.x
-        let y = contentView.contentInsets.top * -1
-        let origin = NSPoint(x: x, y: y)
-
-        contentView.setBoundsOrigin(origin)
+        contentView.setBoundsOrigin(NSPoint(x: _x, y: _minY))
+        flashScrollers()
     }
 
     func scrollToBottom() {
-        let x = contentView.documentVisibleRect.origin.x
-        let y = contentView.documentRect.size.height - contentView.documentVisibleRect.size.height
-        let origin = NSPoint(x: x, y: y)
-
-        // note: do not use scrollRowToVisible here.
-        // scroll will be sometimes stopped when very long comment arrives.
-        // tableView.scrollRowToVisible(tableView.numberOfRows - 1)
-        contentView.setBoundsOrigin(origin)
+        contentView.setBoundsOrigin(NSPoint(x: _x, y: _maxY))
+        flashScrollers()
     }
+
+    func scrollUp() {
+        let y = max(
+            contentView.documentVisibleRect.origin.y
+                - contentView.documentVisibleRect.size.height
+                + contentView.contentInsets.top,
+            _minY)
+        contentView.setBoundsOrigin(NSPoint(x: _x, y: y))
+        flashScrollers()
+    }
+
+    func scrollDown() {
+        let y = min(
+            contentView.documentVisibleRect.origin.y
+                + contentView.documentVisibleRect.size.height
+                - contentView.contentInsets.top,
+            _maxY)
+        contentView.setBoundsOrigin(NSPoint(x: _x, y: y))
+        flashScrollers()
+    }
+}
+
+private extension NSScrollView {
+    var _x: CGFloat { contentView.documentVisibleRect.origin.x }
+    var _minY: CGFloat { -contentView.contentInsets.top }
+    var _maxY: CGFloat { contentView.documentRect.size.height - contentView.documentVisibleRect.size.height }
 }

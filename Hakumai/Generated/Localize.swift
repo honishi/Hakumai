@@ -186,6 +186,10 @@ internal enum L10n {
   internal static let removeHandleName = L10n.tr("Localizable", "remove_handle_name")
   /// Safari (Not supported yet…)
   internal static let safari = L10n.tr("Localizable", "safari")
+  /// Press to scroll down / long press to scroll to bottom
+  internal static let scrollDownButton = L10n.tr("Localizable", "scroll_down_button")
+  /// Press to scroll up / long press to scroll to top
+  internal static let scrollUpButton = L10n.tr("Localizable", "scroll_up_button")
   /// Select All
   internal static let selectAll = L10n.tr("Localizable", "select_all")
   /// Services
