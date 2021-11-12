@@ -88,7 +88,7 @@ private extension RankingManager {
         rankMap.removeAll()
         rankUpdatedDate = nil
         isQuerying = true
-        notifyDebugMessageToDelegates("Started query... (\(Date().description))")
+        notifyDebugMessageToDelegates("Started query...")
         _queryRank(page: 1)
     }
 
@@ -119,7 +119,7 @@ private extension RankingManager {
                     me.logDebugMessage("Failed at page \(page), \(error.localizedDescription)")
                 }
                 me.isQuerying = false
-                me.notifyDebugMessageToDelegates("Finished query. (\(Date().description))")
+                me.notifyDebugMessageToDelegates("Finished query.")
             }
     }
 
