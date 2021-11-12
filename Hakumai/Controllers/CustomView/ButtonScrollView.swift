@@ -13,6 +13,7 @@ import SnapKit
 private let defaultButtonWidth = 32
 private let buttonTopBottomMargin: CGFloat = 8
 private let buttonRightMargin: CGFloat = 20
+private let longPressInterval: TimeInterval = 0.5
 
 final class ButtonScrollView: NSScrollView {
     // MARK: - Properties
@@ -22,10 +23,7 @@ final class ButtonScrollView: NSScrollView {
 
     deinit {
         log.debug()
-        NotificationCenter.default.removeObserver(
-            self,
-            name: NSView.boundsDidChangeNotification,
-            object: nil)
+        removeBoundsDidChangeNotificationObserver()
     }
 }
 
@@ -36,6 +34,13 @@ extension ButtonScrollView {
         enableBottomScrollButton()
     }
 
+    func updateButtonVisibilities() {
+        updateTopButtonVisibility()
+        updateBottomButtonVisibility()
+    }
+}
+
+private extension ButtonScrollView {
     func enableTopScrollButton(width: Int? = defaultButtonWidth) {
         guard upButton.superview == nil else { return }
 
@@ -75,16 +80,6 @@ extension ButtonScrollView {
         addBoundsDidChangeNotificationObserver()
     }
 
-    func updateTopButtonVisibility() {
-        upButton.isHidden = isReachedToTop
-    }
-
-    func updateBottomButtonVisibility() {
-        downButton.isHidden = isReachedToBottom
-    }
-}
-
-private extension ButtonScrollView {
     func configureButtonAppearance(_ button: NSButton, image: NSImage) {
         button.bezelStyle = .rounded
         button.image = image
@@ -102,9 +97,23 @@ private extension ButtonScrollView {
             object: nil)
     }
 
+    func removeBoundsDidChangeNotificationObserver() {
+        NotificationCenter.default.removeObserver(
+            self,
+            name: NSView.boundsDidChangeNotification,
+            object: nil)
+    }
+
     @objc func contentViewDidChangeBounds(_ notification: Notification) {
-        updateTopButtonVisibility()
-        updateBottomButtonVisibility()
+        updateButtonVisibilities()
+    }
+
+    func updateTopButtonVisibility() {
+        upButton.isHidden = isReachedToTop
+    }
+
+    func updateBottomButtonVisibility() {
+        downButton.isHidden = isReachedToBottom
     }
 }
 
@@ -120,7 +129,7 @@ class LongPressButton: NSButton {
     override func mouseDown(with event: NSEvent) {
         isHighlighted = true
         timer = Timer.scheduledTimer(
-            timeInterval: 0.5,
+            timeInterval: longPressInterval,
             target: self,
             selector: #selector(_onLongPressed),
             userInfo: nil,

@@ -166,9 +166,7 @@ extension UserViewController {
         // Use main queue here. This ensures the `updateBottomButtonVisibility()` call is
         // executed after the completion of `tableView.reloadData()` for sure.
         // (`updateBottomButtonVisibility()` needs to be called after `tableView.reloadData()` call.)
-        DispatchQueue.main.async {
-            self.scrollView.updateBottomButtonVisibility()
-        }
+        DispatchQueue.main.async { self.scrollView.updateButtonVisibilities() }
     }
 
     @IBAction func userIdButtonPressed(_ sender: Any) {
