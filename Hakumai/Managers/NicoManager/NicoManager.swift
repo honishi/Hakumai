@@ -45,6 +45,7 @@ private let keepSeatMessage = """
 private let pongMessage = """
 {"type":"pong"}
 """
+private let defaultResFrom = -999
 private let threadMessage = """
 [{"ping":{"content":"rs:0"}},{"ping":{"content":"ps:0"}},{"thread":{"thread":"%@","version":"20061206","user_id":"%@","res_from":%d,"with_global":1,"scores":1,"nicoru":0,"threadkey":"%@"}},{"ping":{"content":"pf:0"}},{"ping":{"content":"rf:0"}}]
 """
@@ -676,12 +677,7 @@ private extension NicoManager {
                 event: $0,
                 userId: userId,
                 threadId: room.data.threadId,
-                resFrom: {
-                    switch connectContext {
-                    case .normal:       return -150
-                    case .reconnect:    return -100
-                    }
-                }(),
+                resFrom: defaultResFrom,
                 threadKey: room.data.yourPostKey,
                 completion: completion)
         }
@@ -794,7 +790,6 @@ private extension NicoManager {
     // swiftlint:disable function_parameter_count function_body_length
     func handleTimeShiftMessageSocketEvent(socket: WebSocket, event: WebSocketEvent, userId: String, threadId: String, threadKey: String, completion: (Result<Void, NicoError>) -> Void) {
         // log.debug(event)
-        let resFrom = -200
         switch event {
         case .connected:
             completion(Result.success(()))
@@ -802,7 +797,7 @@ private extension NicoManager {
                 socket: socket,
                 userId: userId,
                 threadId: threadId,
-                resFrom: resFrom,
+                resFrom: defaultResFrom,
                 threadKey: threadKey)
             timeShiftThreadRequestCount += 1
         case .text(let text):
@@ -815,6 +810,9 @@ private extension NicoManager {
                 timeShiftChats.append(chat)
                 chatCountIn1TimeShiftThreadRequest += 1
             case .pingContentFinish:
+                delegate?.nicoManager(
+                    self,
+                    hasDebugMessgae: "Received time shift chats: \(timeShiftChats.count)")
                 let receivedSomeChats = chatCountIn1TimeShiftThreadRequest > 0
                 if receivedSomeChats {
                     delegate?.nicoManagerReceivingTimeShiftChats(
@@ -834,7 +832,7 @@ private extension NicoManager {
                     socket: socket,
                     userId: userId,
                     threadId: threadId,
-                    resFrom: resFrom,
+                    resFrom: defaultResFrom,
                     when: earliestTimeShiftChatDate)
                 timeShiftThreadRequestCount += 1
             case .unknown:
