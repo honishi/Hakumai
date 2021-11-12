@@ -9,6 +9,8 @@
 import Foundation
 import AppKit
 
+private let defaultTimeValue = "-"
+
 final class TimeTableCellView: NSTableCellView {
     @IBOutlet weak var coloredView: ColoredView!
     @IBOutlet weak var timeLabel: NSTextField!
@@ -37,9 +39,17 @@ private extension TimeTableCellView {
     }
 
     func time(live: Live?, message: Message?) -> String {
-        guard let beginDate = live?.beginTime,
-              case let .chat(chat, _) = message?.content else { return "-" }
-        return chat.date.toElapsedTimeString(from: beginDate)
+        guard let message = message else { return defaultTimeValue }
+        switch message.content {
+        case .system, .debug:
+            return "[\(message.date.toLocalTimeString())]"
+        case .chat(chat: let chat, _):
+            guard let beginDate = live?.beginTime,
+                  let elapsed = chat.date.toElapsedTimeString(from: beginDate) else {
+                return defaultTimeValue
+            }
+            return elapsed
+        }
     }
 
     func set(fontSize: CGFloat?) {
@@ -49,11 +59,17 @@ private extension TimeTableCellView {
 }
 
 private extension Date {
-    func toElapsedTimeString(from fromDate: Date) -> String {
+    func toElapsedTimeString(from fromDate: Date) -> String? {
         let comps = Calendar.current.dateComponents(
             [.hour, .minute, .second], from: fromDate, to: self)
-        guard let h = comps.hour, let m = comps.minute, let s = comps.second else { return "-" }
+        guard let h = comps.hour, let m = comps.minute, let s = comps.second else { return nil }
         return "\(h):\(m.zeroPadded):\(s.zeroPadded)"
+    }
+
+    func toLocalTimeString() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "H:mm:ss"
+        return formatter.string(from: self)
     }
 }
 

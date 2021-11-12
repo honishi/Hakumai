@@ -253,7 +253,7 @@ extension MainViewController: NSTableViewDelegate {
         case kTimeColumnIdentifier:
             let timeView = view as? TimeTableCellView
             timeView?.configure(live: nil, message: message)
-            timeView?.fontSize = nil
+            timeView?.fontSize = min(tableViewFontSize, maximumFontSizeForNonMainColumn)
         case kIconColumnIdentifier:
             let iconView = view as? IconTableCellView
             iconView?.configure(iconType: .none)

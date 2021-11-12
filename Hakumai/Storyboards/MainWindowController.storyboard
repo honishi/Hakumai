@@ -962,7 +962,7 @@
                                                             </textFieldCell>
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                         </tableColumn>
-                                                        <tableColumn identifier="TimeColumn" width="10" minWidth="8" maxWidth="80" id="6b9-rQ-TbG">
+                                                        <tableColumn identifier="TimeColumn" width="10" minWidth="8" maxWidth="96" id="6b9-rQ-TbG">
                                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Time">
                                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                 <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
