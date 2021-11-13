@@ -33,7 +33,6 @@ final class MainViewController: NSViewController {
     enum ConnectionStatus { case disconnected, connecting, connected }
 
     // MARK: Properties
-    static var shared: MainViewController!
     weak var delegate: MainViewControllerDelegate?
 
     // MARK: Main Outlets
@@ -116,14 +115,6 @@ final class MainViewController: NSViewController {
     private var nextUserWindowTopLeftPoint: NSPoint = NSPoint.zero
 
     deinit { log.debug("deinit") }
-}
-
-// MARK: - Object Lifecycle
-extension MainViewController {
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        MainViewController.shared = self
-    }
 }
 
 // MARK: - NSViewController Functions
@@ -572,21 +563,18 @@ extension MainViewController {
     }
 
     func showHandleNameAddViewController(live: Live, chat: ChatMessage) {
-        let handleNameAddViewController =
-            StoryboardScene.MainWindowController.handleNameAddViewController.instantiate()
-        handleNameAddViewController.handleName = (defaultHandleName(live: live, chat: chat) ?? "") as NSString
-        handleNameAddViewController.completion = { (cancelled: Bool, handleName: String?) -> Void in
+        let vc = StoryboardScene.MainWindowController.handleNameAddViewController.instantiate()
+        vc.handleName = (defaultHandleName(live: live, chat: chat) ?? "") as NSString
+        vc.completion = { [weak self, weak vc] (cancelled, handleName) in
+            guard let me = self, let vc = vc else { return }
             if !cancelled, let handleName = handleName {
                 HandleNameManager.shared.updateHandleName(
                     for: chat.userId, in: live.communityId, name: handleName)
-                MainViewController.shared.refreshHandleName()
+                me.refreshHandleName()
             }
-
-            self.dismiss(handleNameAddViewController)
-            // TODO: deinit in handleNameViewController is not called after this completion
+            me.dismiss(vc)
         }
-
-        presentAsSheet(handleNameAddViewController)
+        presentAsSheet(vc)
     }
 
     private func defaultHandleName(live: Live, chat: ChatMessage) -> String? {
