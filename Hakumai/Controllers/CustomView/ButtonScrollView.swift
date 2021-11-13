@@ -30,25 +30,26 @@ final class ButtonScrollView: NSScrollView {
 // MARK: - Public Functions
 extension ButtonScrollView {
     func enableScrollButtons() {
-        enableTopScrollButton()
-        enableBottomScrollButton()
+        addTopScrollButton()
+        addBottomScrollButton()
+        updateButtonVisibilities()
+        addBoundsDidChangeNotificationObserver()
     }
 
     func updateButtonVisibilities() {
-        updateTopButtonVisibility()
-        updateBottomButtonVisibility()
+        upButton.isHidden = isReachedToTop
+        downButton.isHidden = isReachedToBottom
     }
 }
 
 private extension ButtonScrollView {
-    func enableTopScrollButton(width: Int? = defaultButtonWidth) {
+    func addTopScrollButton(width: Int? = defaultButtonWidth) {
         guard upButton.superview == nil else { return }
 
         configureButtonAppearance(upButton, image: Asset.arrowUpwardBlack.image)
         upButton.toolTip = L10n.scrollUpButton
         upButton.onPressed = { [weak self] in self?.scrollUp() }
         upButton.onLongPressed = { [weak self] in self?.scrollToTop() }
-        updateTopButtonVisibility()
 
         // Make sure we need to call `addSubview()` of `superview`, not of `self`.
         // Seems `self` and its descendants are not controlled by auto layout,
@@ -59,17 +60,15 @@ private extension ButtonScrollView {
             make.right.equalTo(self).offset(-buttonRightMargin)
             make.top.equalTo(self).offset(buttonTopBottomMargin + contentView.contentInsets.top)
         }
-        addBoundsDidChangeNotificationObserver()
     }
 
-    func enableBottomScrollButton(width: Int? = defaultButtonWidth) {
+    func addBottomScrollButton(width: Int? = defaultButtonWidth) {
         guard downButton.superview == nil else { return }
 
         configureButtonAppearance(downButton, image: Asset.arrowDownwardBlack.image)
         downButton.toolTip = L10n.scrollDownButton
         downButton.onPressed = { [weak self] in self?.scrollDown() }
         downButton.onLongPressed = { [weak self] in self?.scrollToBottom() }
-        updateBottomButtonVisibility()
 
         superview?.addSubview(downButton)
         downButton.snp.makeConstraints { make in
@@ -77,7 +76,6 @@ private extension ButtonScrollView {
             make.right.equalTo(self).offset(-buttonRightMargin)
             make.bottom.equalTo(self).offset(-buttonTopBottomMargin)
         }
-        addBoundsDidChangeNotificationObserver()
     }
 
     func configureButtonAppearance(_ button: NSButton, image: NSImage) {
@@ -106,14 +104,6 @@ private extension ButtonScrollView {
 
     @objc func contentViewDidChangeBounds(_ notification: Notification) {
         updateButtonVisibilities()
-    }
-
-    func updateTopButtonVisibility() {
-        upButton.isHidden = isReachedToTop
-    }
-
-    func updateBottomButtonVisibility() {
-        downButton.isHidden = isReachedToBottom
     }
 }
 
