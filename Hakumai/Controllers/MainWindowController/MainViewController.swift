@@ -522,7 +522,7 @@ extension MainViewController: NicoManagerDelegate {
     }
 
     func nicoManager(_ nicoManager: NicoManagerType, hasDebugMessgae message: String) {
-        logDebugMessage(message)
+        logDebugMessageToTable(message)
     }
 }
 
@@ -532,7 +532,7 @@ extension MainViewController: RankingManagerDelegate {
     }
 
     func rankingManager(_ rankingManager: RankingManagerType, hasDebugMessage message: String) {
-        logDebugMessage(message)
+        logDebugMessageToTable(message)
     }
 }
 
@@ -1258,7 +1258,7 @@ private extension MainViewController {
 
 // MARK: Debug Methods
 private extension MainViewController {
-    func logDebugMessage(_ message: String) {
+    func logDebugMessageToTable(_ message: String) {
         log.debug(message)
         appendToTable(debugMessage: message)
     }
@@ -1271,11 +1271,11 @@ private extension MainViewController {
             case .noTexts:  return "no text"
             }
         }()
-        logDebugMessage("Reconnecting... (\(_reason))")
+        logDebugMessageToTable("Reconnecting... (\(_reason))")
     }
 
     func logDebugRankingManagerStatus() {
-        logDebugMessage("RankingManager is \(rankingManager.isRunning ? "running" : "stopped").")
+        logDebugMessageToTable("RankingManager is \(rankingManager.isRunning ? "running" : "stopped").")
     }
 }
 
