@@ -138,7 +138,6 @@ extension MessageContainer {
             let fiveMinutesAgo = Date(timeIntervalSinceNow: (Double)(-5 * 60))
 
             // log.debug("start counting active")
-
             objc_sync_enter(self)
             let count = self.sourceMessages.count
             objc_sync_exit(self)
@@ -149,10 +148,7 @@ extension MessageContainer {
                 let message = self.sourceMessages[i - 1]
                 objc_sync_exit(self)
                 i -= 1
-                guard case let .chat(chat) = message.content else { continue }
-                if !chat.isUser {
-                    continue
-                }
+                guard case let .chat(chat) = message.content, chat.isUser else { continue }
                 // is "chat.date < fiveMinutesAgo" ?
                 if chat.date.compare(fiveMinutesAgo) == .orderedAscending {
                     break
@@ -161,7 +157,6 @@ extension MessageContainer {
             }
 
             // log.debug("end counting active")
-
             completion(activeUsers.count)
 
             objc_sync_enter(self)
