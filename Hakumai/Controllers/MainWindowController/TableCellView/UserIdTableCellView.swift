@@ -55,9 +55,7 @@ private extension UserIdTableCellView {
             concatUserName(userId: userId, userName: nil, handleName: handleName)
 
         // if needed, then resolve userid
-        if handleName != nil || !userId.isRawUserId || !premium.isUser {
-            return
-        }
+        guard handleName == nil, premium.isUser, userId.isRawUserId else { return }
 
         if let userName = nicoManager?.cachedUserName(for: userId) {
             userIdTextField.stringValue = concatUserName(userId: userId, userName: userName, handleName: handleName)
