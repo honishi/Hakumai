@@ -50,15 +50,16 @@ private extension UserIdTableCellView {
 
     func setUserIdLabel(userId: String, premium: Premium, handleName: String?) {
         // set default name
-        userIdTextField.stringValue = premium.isSystem ?
-            systemUserLabel :
-            concatUserName(userId: userId, userName: nil, handleName: handleName)
+        updateUserIdTextField(
+            premium.isSystem ?
+                systemUserLabel : concatUserName(userId: userId, userName: nil, handleName: handleName))
 
         // if needed, then resolve userid
         guard handleName == nil, premium.isUser, userId.isRawUserId else { return }
 
         if let userName = nicoManager?.cachedUserName(for: userId) {
-            userIdTextField.stringValue = concatUserName(userId: userId, userName: userName, handleName: handleName)
+            updateUserIdTextField(
+                concatUserName(userId: userId, userName: userName, handleName: handleName))
             return
         }
 
@@ -72,8 +73,8 @@ private extension UserIdTableCellView {
             }
             guard let userName = $0 else { return }
             DispatchQueue.main.async {
-                me.userIdTextField.stringValue =
-                    me.concatUserName(userId: userId, userName: userName, handleName: handleName)
+                me.updateUserIdTextField(
+                    me.concatUserName(userId: userId, userName: userName, handleName: handleName))
             }
         }
     }
@@ -93,5 +94,10 @@ private extension UserIdTableCellView {
     func set(fontSize: CGFloat?) {
         let size = fontSize ?? CGFloat(kDefaultFontSize)
         userIdTextField.font = NSFont.systemFont(ofSize: size)
+    }
+
+    func updateUserIdTextField(_ text: String) {
+        userIdTextField.stringValue = text
+        userIdTextField.toolTip = text
     }
 }
