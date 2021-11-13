@@ -37,7 +37,7 @@ private extension RoomPositionTableCellView {
     }
 
     func string(for message: Message?) -> String {
-        guard case let .chat(chat, _) = message?.content else { return "" }
+        guard case let .chat(chat) = message?.content else { return "" }
         return String(chat.no).numberStringWithSeparatorComma()
     }
 

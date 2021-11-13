@@ -49,7 +49,7 @@ final class HandleNameManagerTests: XCTestCase {
     }
 
     func checkExtractHandleName(_ comment: String, expected: String?) {
-        XCTAssert(HandleNameManager.shared.extractHandleName(fromComment: comment) == expected, "")
+        XCTAssert(HandleNameManager.shared.extractHandleName(from: comment) == expected, "")
     }
 
     func testInsertOrReplaceThenSelectHandleName() {

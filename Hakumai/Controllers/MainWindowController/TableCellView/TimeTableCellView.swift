@@ -31,8 +31,8 @@ private extension TimeTableCellView {
         switch message.content {
         case .system:
             return UIHelper.systemMessageColorBackground()
-        case .chat(let chat, _):
-            return chat.isSystemComment ? UIHelper.systemMessageColorBackground() : UIHelper.scoreColorGreen()
+        case .chat(let chat):
+            return chat.isSystem ? UIHelper.systemMessageColorBackground() : UIHelper.scoreColorGreen()
         case .debug:
             return UIHelper.debugMessageColorBackground()
         }
@@ -43,7 +43,7 @@ private extension TimeTableCellView {
         switch message.content {
         case .system, .debug:
             return "[\(message.date.toLocalTimeString())]"
-        case .chat(chat: let chat, _):
+        case .chat(chat: let chat):
             guard let beginDate = live?.beginTime,
                   let elapsed = chat.date.toElapsedTimeString(from: beginDate) else {
                 return defaultTimeValue

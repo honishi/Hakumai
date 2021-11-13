@@ -189,7 +189,7 @@ extension MainViewController: NSTableViewDelegate {
             switch message.content {
             case .system, .debug:
                 return 0
-            case .chat(let chat, _):
+            case .chat(let chat):
                 return chat.hasUserIcon ? iconColumnWidth : 0
             }
         }()
@@ -276,7 +276,7 @@ extension MainViewController: NSTableViewDelegate {
     }
 
     private func configure(view: NSTableCellView, forChat message: Message, withTableColumn tableColumn: NSTableColumn) {
-        guard case let .chat(chat, _) = message.content else { return }
+        guard case let .chat(chat) = message.content else { return }
 
         switch tableColumn.identifier.rawValue {
         case kRoomPositionColumnIdentifier:
@@ -290,7 +290,7 @@ extension MainViewController: NSTableViewDelegate {
         case kIconColumnIdentifier:
             let iconView = view as? IconTableCellView
             let iconType = { () -> IconType in
-                if chat.isSystemComment { return .none }
+                if chat.isSystem { return .none }
                 let iconUrl = nicoManager.userIconUrl(for: chat.userId)
                 return .user(iconUrl)
             }()
@@ -303,7 +303,7 @@ extension MainViewController: NSTableViewDelegate {
         case kUserIdColumnIdentifier:
             guard let live = live else { return }
             let userIdView = view as? UserIdTableCellView
-            let handleName = HandleNameManager.shared.handleName(forLive: live, chat: chat)
+            let handleName = HandleNameManager.shared.handleName(for: chat.userId, in: live.communityId)
             userIdView?.configure(info: (
                 nicoManager: nicoManager,
                 handleName: handleName,
@@ -327,14 +327,17 @@ extension MainViewController: NSTableViewDelegate {
         let attributes: [String: Any]
 
         switch message.content {
-        case .system(let _message), .debug(let _message):
-            content = _message
+        case .system(let system):
+            content = system.message
             attributes = UIHelper.normalCommentAttributes(fontSize: tableViewFontSize)
-        case .chat(let chat, let firstChat):
+        case .chat(let chat):
             content = chat.comment
-            attributes = firstChat ?
+            attributes = chat.isFirst ?
                 UIHelper.boldCommentAttributes(fontSize: tableViewFontSize) :
                 UIHelper.normalCommentAttributes(fontSize: tableViewFontSize)
+        case .debug(let debug):
+            content = debug.message
+            attributes = UIHelper.normalCommentAttributes(fontSize: tableViewFontSize)
         }
 
         return (content, attributes)
@@ -402,7 +405,7 @@ extension MainViewController: NicoManagerDelegate {
         delegate?.mainViewControllerDidPrepareLive(
             self,
             title: live.title,
-            community: live.community?.title ?? "-")
+            community: live.community.title)
 
         updateCommunityViews(for: live)
 
@@ -458,7 +461,8 @@ extension MainViewController: NicoManagerDelegate {
     func nicoManagerDidReceiveChat(_ nicoManager: NicoManagerType, chat: Chat) {
         // log.debug("\(chat.mail),\(chat.comment)")
         guard let live = live else { return }
-        HandleNameManager.shared.extractAndUpdateHandleName(live: live, chat: chat)
+        HandleNameManager.shared.extractAndUpdateHandleName(
+            from: chat.comment, in: live.communityId, for: chat.userId)
         appendToTable(chat: chat)
 
         for userWindowController in userWindowControllers where chat.userId == userWindowController.userId {
@@ -489,7 +493,8 @@ extension MainViewController: NicoManagerDelegate {
         logSystemMessageToTable(L10n.receivedComments(chats.count))
         guard let live = live else { return }
         chats.forEach {
-            HandleNameManager.shared.extractAndUpdateHandleName(live: live, chat: $0)
+            HandleNameManager.shared.extractAndUpdateHandleName(
+                from: $0.comment, in: live.communityId, for: $0.userId)
         }
         bulkAppendToTable(chats: chats)
     }
@@ -566,13 +571,14 @@ extension MainViewController {
         logSystemMessageToTable(L10n.logoutCompleted)
     }
 
-    func showHandleNameAddViewController(live: Live, chat: Chat) {
+    func showHandleNameAddViewController(live: Live, chat: ChatMessage) {
         let handleNameAddViewController =
             StoryboardScene.MainWindowController.handleNameAddViewController.instantiate()
         handleNameAddViewController.handleName = (defaultHandleName(live: live, chat: chat) ?? "") as NSString
         handleNameAddViewController.completion = { (cancelled: Bool, handleName: String?) -> Void in
             if !cancelled, let handleName = handleName {
-                HandleNameManager.shared.updateHandleName(live: live, chat: chat, handleName: handleName)
+                HandleNameManager.shared.updateHandleName(
+                    for: chat.userId, in: live.communityId, name: handleName)
                 MainViewController.shared.refreshHandleName()
             }
 
@@ -583,11 +589,11 @@ extension MainViewController {
         presentAsSheet(handleNameAddViewController)
     }
 
-    private func defaultHandleName(live: Live, chat: Chat) -> String? {
+    private func defaultHandleName(live: Live, chat: ChatMessage) -> String? {
         var defaultHandleName: String?
-        if let handleName = HandleNameManager.shared.handleName(forLive: live, chat: chat) {
+        if let handleName = HandleNameManager.shared.handleName(for: chat.userId, in: live.communityId) {
             defaultHandleName = handleName
-        } else if let userName = nicoManager.cachedUserName(forChat: chat) {
+        } else if let userName = nicoManager.cachedUserName(for: chat.userId) {
             defaultHandleName = userName
         }
         return defaultHandleName
@@ -838,14 +844,14 @@ private extension MainViewController {
     }
 
     func _updateCommunityViews(for live: Live) {
-        if let url = live.community?.thumbnailUrl {
+        if let url = live.community.thumbnailUrl {
             communityImageView.kf.setImage(
                 with: url,
                 placeholder: Asset.defaultCommunityImage.image
             )
         }
         liveTitleLabel.stringValue = live.title
-        communityTitleLabel.stringValue = live.community?.title ?? "-"
+        communityTitleLabel.stringValue = live.community.title
     }
 }
 
@@ -1007,7 +1013,7 @@ private extension MainViewController {
         guard clickedRow != -1 else { return }
 
         let message = messageContainer[clickedRow]
-        guard case let .chat(chat, _) = message.content else { return }
+        guard case let .chat(chat) = message.content else { return }
         var userWindowController: UserWindowController?
 
         // check if user window exists?
@@ -1021,7 +1027,7 @@ private extension MainViewController {
             // not exist, so create and cache it
             var handleName: String?
             if let live = live,
-               let _handleName = HandleNameManager.shared.handleName(forLive: live, chat: chat) {
+               let _handleName = HandleNameManager.shared.handleName(for: chat.userId, in: live.communityId) {
                 handleName = _handleName
             }
             userWindowController = UserWindowController.make(

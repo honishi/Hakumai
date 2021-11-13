@@ -46,11 +46,11 @@ extension MessageContainer {
     func append(chat: Chat) -> (appended: Bool, count: Int) {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
-        let isFirst = chat.isUserComment && firstChat[chat.userId] == nil
+        let isFirst = chat.premium.isUser && firstChat[chat.userId] == nil
         if isFirst {
             firstChat[chat.userId] = true
         }
-        let message = Message(messageNo: messageNo, chat: chat, first: isFirst)
+        let message = Message(messageNo: messageNo, chat: chat, isFirst: isFirst)
         return append(message: message)
     }
 
@@ -93,7 +93,7 @@ extension MessageContainer {
             switch message.content {
             case .system, .debug:
                 continue
-            case .chat(let chat, _):
+            case .chat(let chat):
                 guard chat.userId == userId else { continue }
                 userMessages.append(message)
             }
@@ -149,8 +149,8 @@ extension MessageContainer {
                 let message = self.sourceMessages[i - 1]
                 objc_sync_exit(self)
                 i -= 1
-                guard case let .chat(chat, _) = message.content else { continue }
-                if !chat.isUserComment {
+                guard case let .chat(chat) = message.content else { continue }
+                if !chat.isUser {
                     continue
                 }
                 // is "chat.date < fiveMinutesAgo" ?
@@ -233,14 +233,14 @@ private extension MessageContainer {
         switch message.content {
         case .system:
             return true
-        case .chat(let chat, _):
+        case .chat(let chat):
             return shouldAppendByMuteWords(chat) && shouldAppendByUserId(chat)
         case .debug:
             return enableDebugMessage
         }
     }
 
-    func shouldAppendByMuteWords(_ chat: Chat) -> Bool {
+    func shouldAppendByMuteWords(_ chat: ChatMessage) -> Bool {
         guard enableMuteWords else { return true }
         for muteWord in muteWords {
             if let word = muteWord[MuteUserWordKey.word],
@@ -251,7 +251,7 @@ private extension MessageContainer {
         return true
     }
 
-    func shouldAppendByUserId(_ chat: Chat) -> Bool {
+    func shouldAppendByUserId(_ chat: ChatMessage) -> Bool {
         guard enableMuteUserIds else { return true }
         for muteUserId in muteUserIds where muteUserId[MuteUserIdKey.userId] == chat.userId {
             return false

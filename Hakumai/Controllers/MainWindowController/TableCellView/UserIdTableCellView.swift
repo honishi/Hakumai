@@ -41,10 +41,10 @@ private extension UserIdTableCellView {
         if premium.isSystem {
             return Asset.premiumMisc.image
         } else if handleName != nil {
-            return Chat.isRawUserId(userId) ?
+            return userId.isRawUserId ?
                 Asset.handleNameOverRawId.image : Asset.handleNameOver184Id.image
         }
-        return Chat.isRawUserId(userId) ?
+        return userId.isRawUserId ?
             Asset.userIdRawId.image : Asset.userId184Id.image
     }
 
@@ -55,16 +55,16 @@ private extension UserIdTableCellView {
             concatUserName(userId: userId, userName: nil, handleName: handleName)
 
         // if needed, then resolve userid
-        if handleName != nil || !Chat.isRawUserId(userId) || !Chat.isUserComment(premium) {
+        if handleName != nil || !userId.isRawUserId || !premium.isUser {
             return
         }
 
-        if let userName = nicoManager?.cachedUserName(forUserId: userId) {
+        if let userName = nicoManager?.cachedUserName(for: userId) {
             userIdTextField.stringValue = concatUserName(userId: userId, userName: userName, handleName: handleName)
             return
         }
 
-        nicoManager?.resolveUsername(forUserId: userId) { [weak self] in
+        nicoManager?.resolveUsername(for: userId) { [weak self] in
             guard let me = self else { return }
             guard me.currentUserId == userId else {
                 // Seems the view is reused before the previous async username

@@ -143,7 +143,7 @@ extension UserViewController {
         // User ID
         userIdButton.title = userId
         // UserName
-        if let userName = nicoManager.cachedUserName(forUserId: userId) {
+        if let userName = nicoManager.cachedUserName(for: userId) {
             userNameValueLabel.stringValue = userName
         } else {
             userNameValueLabel.stringValue = defaultLabelValue
@@ -170,7 +170,7 @@ extension UserViewController {
     }
 
     @IBAction func userIdButtonPressed(_ sender: Any) {
-        guard Chat.isRawUserId(userId),
+        guard userId.isRawUserId,
               let url = nicoManager.userPageUrl(for: userId) else { return }
         NSWorkspace.shared.open(url)
     }
@@ -215,7 +215,7 @@ private extension UserViewController {
 
     func resolveUserName(for userId: String?) {
         guard let userId = userId else { return }
-        nicoManager.resolveUsername(forUserId: userId) { [weak self] in
+        nicoManager.resolveUsername(for: userId) { [weak self] in
             guard let resolved = $0 else { return }
             DispatchQueue.main.async { self?.userNameValueLabel.stringValue = resolved }
         }
@@ -227,12 +227,15 @@ private extension UserViewController {
         let attributes: [String: Any]
 
         switch message.content {
-        case .system(let _message), .debug(let _message):
-            content = _message
+        case .system(let system):
+            content = system.message
             attributes = UIHelper.normalCommentAttributes()
-        case .chat(let chat, let firstChat):
+        case .chat(let chat):
             content = chat.comment
-            attributes = firstChat ? UIHelper.boldCommentAttributes() : UIHelper.normalCommentAttributes()
+            attributes = chat.isFirst ? UIHelper.boldCommentAttributes() : UIHelper.normalCommentAttributes()
+        case .debug(let debug):
+            content = debug.message
+            attributes = UIHelper.normalCommentAttributes()
         }
 
         return (content, attributes)

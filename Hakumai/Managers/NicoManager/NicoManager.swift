@@ -237,17 +237,13 @@ extension NicoManager {
 
 // MARK: - Public Methods (Username)
 extension NicoManager {
-    func cachedUserName(forChat chat: Chat) -> String? {
-        cachedUserName(forUserId: chat.userId)
-    }
-
-    func cachedUserName(forUserId userId: String) -> String? {
-        guard Chat.isRawUserId(userId) else { return nil }
+    func cachedUserName(for userId: String) -> String? {
+        guard userId.isRawUserId else { return nil }
         return cachedUserNames[userId]
     }
 
-    func resolveUsername(forUserId userId: String, completion: @escaping (String?) -> Void) {
-        guard Chat.isRawUserId(userId) else {
+    func resolveUsername(for userId: String, completion: @escaping (String?) -> Void) {
+        guard userId.isRawUserId else {
             completion(nil)
             return
         }

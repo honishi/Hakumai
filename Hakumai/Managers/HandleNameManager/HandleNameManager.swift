@@ -39,29 +39,28 @@ final class HandleNameManager {
 
 // MARK: - Public Functions
 extension HandleNameManager {
-    func extractAndUpdateHandleName(live: Live, chat: Chat) {
-        guard let handleName = extractHandleName(fromComment: chat.comment) else { return }
-        updateHandleName(live: live, chat: chat, handleName: handleName)
+    func extractAndUpdateHandleName(from comment: String, in communityId: String, for userId: String) {
+        guard let handleName = extractHandleName(from: comment) else { return }
+        updateHandleName(for: userId, in: communityId, name: handleName)
     }
 
-    func updateHandleName(live: Live, chat: Chat, handleName: String) {
-        guard let communityId = live.community?.communityId else { return }
-        let anonymous = !chat.isRawUserId
-        insertOrReplaceHandleName(communityId: communityId, userId: chat.userId, anonymous: anonymous, handleName: handleName)
+    func updateHandleName(for userId: String, in communityId: String, name: String) {
+        let anonymous = !userId.isRawUserId
+        insertOrReplaceHandleName(communityId: communityId, userId: userId, anonymous: anonymous, handleName: name)
     }
 
-    func removeHandleName(live: Live, chat: Chat) {
-        guard let communityId = live.community?.communityId else { return }
-        deleteHandleName(communityId: communityId, userId: chat.userId)
+    func removeHandleName(for userId: String, in communityId: String) {
+        deleteHandleName(communityId: communityId, userId: userId)
     }
 
-    func handleName(forLive live: Live, chat: Chat) -> String? {
-        guard let communityId = live.community?.communityId else { return nil }
-        return selectHandleName(communityId: communityId, userId: chat.userId)
+    func handleName(for userId: String, in communityId: String) -> String? {
+        return selectHandleName(communityId: communityId, userId: userId)
     }
+}
 
-    // MARK: - Internal Functions
-    func extractHandleName(fromComment comment: String) -> String? {
+// MARK: - Internal Functions
+extension HandleNameManager {
+    func extractHandleName(from comment: String) -> String? {
         if comment.hasRegexp(pattern: kRegexpRemainingTime) {
             return nil
         }

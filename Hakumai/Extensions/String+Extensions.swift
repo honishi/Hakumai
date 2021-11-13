@@ -71,6 +71,15 @@ extension String {
 }
 
 extension String {
+    var isRawUserId: Bool {
+        guard let regexp = try? NSRegularExpression(pattern: "^\\d+$", options: []) else { return false }
+        let matched = regexp.firstMatch(
+            in: self,
+            options: [],
+            range: NSRange(location: 0, length: self.utf16.count))
+        return matched != nil
+    }
+
     func extractLiveProgramId() -> String? {
         let liveProgramIdPattern = "lv\\d{9,}"
         let patterns = [

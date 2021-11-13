@@ -34,7 +34,7 @@ final class MenuDelegate: NSObject {
 extension MenuDelegate: NSMenuItemValidation {
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         guard let message = clickedMessage,
-              case let .chat(chat, _) = message.content else { return false }
+              case let .chat(chat) = message.content else { return false }
         switch menuItem {
         case copyCommentMenuItem:
             return true
@@ -42,15 +42,15 @@ extension MenuDelegate: NSMenuItemValidation {
             return chat.comment.extractUrlString() != nil ? true : false
         case setHandleNameMenuItem:
             guard currentLive != nil else { return false }
-            return chat.isUserComment
+            return chat.isUser
         case removeHandleNameMenuItem:
             guard let live = currentLive else { return false }
-            let hasHandleName = (HandleNameManager.shared.handleName(forLive: live, chat: chat) != nil)
+            let hasHandleName = HandleNameManager.shared.handleName(for: chat.userId, in: live.communityId) != nil
             return hasHandleName
         case addToMuteUserMenuItem:
-            return chat.isUserComment
+            return chat.isUser
         case openUserPageMenuItem:
-            return (chat.isRawUserId && chat.isUserComment) ? true : false
+            return chat.isRawUserId && chat.isUser
         default:
             break
         }
@@ -61,18 +61,18 @@ extension MenuDelegate: NSMenuItemValidation {
 extension MenuDelegate {
     // MARK: - Context Menu Handlers
     @IBAction func copyComment(_ sender: AnyObject) {
-        guard case let .chat(chat, _) = clickedMessage?.content else { return }
+        guard case let .chat(chat) = clickedMessage?.content else { return }
         chat.comment.copyToPasteBoard()
     }
 
     @IBAction func copyUrl(_ sender: Any) {
-        guard case let .chat(chat, _) = clickedMessage?.content,
+        guard case let .chat(chat) = clickedMessage?.content,
               let urlString = chat.comment.extractUrlString() else { return }
         urlString.copyToPasteBoard()
     }
 
     @IBAction func openUrl(_ sender: AnyObject) {
-        guard case let .chat(chat, _) = clickedMessage?.content,
+        guard case let .chat(chat) = clickedMessage?.content,
               let urlString = chat.comment.extractUrlString(),
               let urlObject = URL(string: urlString) else { return }
         NSWorkspace.shared.open(urlObject)
@@ -80,19 +80,19 @@ extension MenuDelegate {
 
     @IBAction func addHandleName(_ sender: AnyObject) {
         guard let live = currentLive,
-              case let .chat(chat, _) = clickedMessage?.content else { return }
+              case let .chat(chat) = clickedMessage?.content else { return }
         mainViewController.showHandleNameAddViewController(live: live, chat: chat)
     }
 
     @IBAction func removeHandleName(_ sender: AnyObject) {
         guard let live = currentLive,
-              case let .chat(chat, _) = clickedMessage?.content else { return }
-        HandleNameManager.shared.removeHandleName(live: live, chat: chat)
+              case let .chat(chat) = clickedMessage?.content else { return }
+        HandleNameManager.shared.removeHandleName(for: chat.userId, in: live.communityId)
         mainViewController.refreshHandleName()
     }
 
     @IBAction func addToMuteUser(_ sender: AnyObject) {
-        guard case let .chat(chat, _) = clickedMessage?.content else { return }
+        guard case let .chat(chat) = clickedMessage?.content else { return }
         let defaults = UserDefaults.standard
         var muteUserIds = defaults.object(forKey: Parameters.muteUserIds) as? [[String: String]] ?? [[String: String]]()
         for muteUserId in muteUserIds where chat.userId == muteUserId[MuteUserIdKey.userId] {
@@ -105,7 +105,7 @@ extension MenuDelegate {
     }
 
     @IBAction func openUserPage(_ sender: AnyObject) {
-        guard case let .chat(chat, _) = clickedMessage?.content,
+        guard case let .chat(chat) = clickedMessage?.content,
               let url = mainViewController.userPageUrl(for: chat.userId) else { return }
         NSWorkspace.shared.open(url)
     }

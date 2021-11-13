@@ -15,18 +15,19 @@ struct Live {
     // "lv" prefix is included in live id like "lv12345"
     let liveId: String
     let title: String
-    let community: Community?
+    let community: Community
     let baseTime: Date
     let openTime: Date
     let beginTime: Date
     let isTimeShift: Bool
 
+    var communityId: String { community.communityId }
     var liveUrlString: String { liveBaseUrl + liveId }
 }
 
 extension Live: CustomStringConvertible {
     var description: String {
-        "Live: liveId[\(liveId)] title[\(title)] community[\(community?.description ?? "-")] " +
+        "Live: liveId[\(liveId)] title[\(title)] community[\(community.description)] " +
             "baseTime[\(baseTime.description)] openTime[\(openTime.description)] " +
             "beginTime[\(beginTime.description)] isTimeShift[\(isTimeShift)]"
     }

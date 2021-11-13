@@ -90,4 +90,5 @@ enum Premium: Int, CustomStringConvertible {
     }
 
     var isSystem: Bool { [.system, .caster, .operator].contains(self) }
+    var isUser: Bool { [.ippan, .premium, .ippanTransparent].contains(self) }
 }
