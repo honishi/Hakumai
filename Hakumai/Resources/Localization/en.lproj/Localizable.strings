@@ -151,6 +151,8 @@
 "comment_speaking" = "Comment Speech";
 "speak_comments" = "Speech Comments (Requires macOS 10.14-)";
 "speak_volume" = "Speech Volume";
+"misc" = "Misc";
+"enable_debug_message" = "Enable debug message in main window";
 
 /// Mute
 "enable_mute_user_ids" = "Enable Mute User Ids";
@@ -165,3 +167,9 @@
 "add" = "Add";
 "cancel" = "Cancel";
 "set" = "Set";
+
+///
+/// Scroll View
+///
+"scroll_up_button" = "Press to scroll up / long press to scroll to top";
+"scroll_down_button" = "Press to scroll down / long press to scroll to bottom";

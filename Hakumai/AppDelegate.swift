@@ -100,7 +100,7 @@ extension AppDelegate {
 
 // MARK: KVO Functions
 extension AppDelegate {
-    // swiftlint:disable block_based_kvo
+    // swiftlint:disable block_based_kvo cyclomatic_complexity
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
         // log.debug("detected observing value changed: key[\(keyPath)]")
         guard let keyPath = keyPath, let change = change else { return }
@@ -131,11 +131,14 @@ extension AppDelegate {
         case (Parameters.alwaysOnTop, let newValue as Bool):
             makeWindowsAlwaysOnTop(newValue)
 
+        case (Parameters.enableDebugMessage, let newValue as Bool):
+            mainWindowControllers.forEach { $0.changeEnableDebugMessage(newValue) }
+
         default:
             break
         }
     }
-    // swiftlint:enable block_based_kvo
+    // swiftlint:enable block_based_kvo cyclomatic_complexity
 }
 
 // MARK: Application Initialize Utility
@@ -190,7 +193,8 @@ private extension AppDelegate {
             Parameters.enableMuteUserIds: true,
             Parameters.enableMuteWords: true,
             Parameters.alwaysOnTop: false,
-            Parameters.commentAnonymously: true]
+            Parameters.commentAnonymously: true,
+            Parameters.enableDebugMessage: false]
         UserDefaults.standard.register(defaults: defaults)
     }
 
@@ -203,7 +207,7 @@ private extension AppDelegate {
             Parameters.enableMuteUserIds, Parameters.muteUserIds,
             Parameters.enableMuteWords, Parameters.muteWords,
             // misc
-            Parameters.fontSize, Parameters.alwaysOnTop
+            Parameters.fontSize, Parameters.alwaysOnTop, Parameters.enableDebugMessage
         ]
         for keyPath in keyPaths {
             UserDefaults.standard.addObserver(

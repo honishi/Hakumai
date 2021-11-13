@@ -18,6 +18,7 @@ final class MessageContainer {
     var muteUserIds = [[String: String]]()
     var enableMuteWords = false
     var muteWords = [[String: String]]()
+    var enableDebugMessage = false
 
     // MARK: Private
     private var messageNo = 0
@@ -33,33 +34,40 @@ final class MessageContainer {
 extension MessageContainer {
     // MARK: - Basic Operation to Content Array
     @discardableResult
-    func append(chatOrSystemMessage object: Any) -> (appended: Bool, count: Int) {
+    func append(systemMessage: String) -> (appended: Bool, count: Int) {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
 
-        var message: Message!
+        let message = Message(messageNo: messageNo, system: systemMessage)
+        return append(message: message)
+    }
 
-        if let systemMessage = object as? String {
-            message = Message(messageNo: messageNo, message: systemMessage)
-        } else if let chat = object as? Chat {
-            var isFirstChat = false
-            if chat.isUserComment {
-                isFirstChat = firstChat[chat.userId] == nil ? true : false
-                if isFirstChat {
-                    firstChat[chat.userId] = true
-                }
-            }
-            message = Message(messageNo: messageNo, chat: chat, firstChat: isFirstChat)
-        } else {
-            assert(false, "appending unexpected object")
+    @discardableResult
+    func append(chat: Chat) -> (appended: Bool, count: Int) {
+        objc_sync_enter(self)
+        defer { objc_sync_exit(self) }
+        let isFirst = chat.premium.isUser && firstChat[chat.userId] == nil
+        if isFirst {
+            firstChat[chat.userId] = true
         }
+        let message = Message(messageNo: messageNo, chat: chat, isFirst: isFirst)
+        return append(message: message)
+    }
+
+    @discardableResult
+    func append(debug: String) -> (appended: Bool, count: Int) {
+        objc_sync_enter(self)
+        defer { objc_sync_exit(self) }
+
+        let message = Message(messageNo: messageNo, debug: debug)
+        return append(message: message)
+    }
+
+    private func append(message: Message) -> (appended: Bool, count: Int) {
         messageNo += 1
-
         sourceMessages.append(message)
-
         let appended = append(message: message, into: &filteredMessages)
         let count = filteredMessages.count
-
         return (appended, count)
     }
 
@@ -82,10 +90,11 @@ extension MessageContainer {
 
         objc_sync_enter(self)
         for message in sourceMessages {
-            if message.messageType != .chat {
+            switch message.content {
+            case .system, .debug:
                 continue
-            }
-            if message.chat?.userId == userId {
+            case .chat(let chat):
+                guard chat.userId == userId else { continue }
                 userMessages.append(message)
             }
         }
@@ -129,7 +138,6 @@ extension MessageContainer {
             let fiveMinutesAgo = Date(timeIntervalSinceNow: (Double)(-5 * 60))
 
             // log.debug("start counting active")
-
             objc_sync_enter(self)
             let count = self.sourceMessages.count
             objc_sync_exit(self)
@@ -140,13 +148,7 @@ extension MessageContainer {
                 let message = self.sourceMessages[i - 1]
                 objc_sync_exit(self)
                 i -= 1
-                if message.messageType == .system {
-                    continue
-                }
-                guard let chat = message.chat else { continue }
-                if !chat.isUserComment {
-                    continue
-                }
+                guard case let .chat(chat) = message.content, chat.isUser else { continue }
                 // is "chat.date < fiveMinutesAgo" ?
                 if chat.date.compare(fiveMinutesAgo) == .orderedAscending {
                     break
@@ -155,7 +157,6 @@ extension MessageContainer {
             }
 
             // log.debug("end counting active")
-
             completion(activeUsers.count)
 
             objc_sync_enter(self)
@@ -174,7 +175,7 @@ extension MessageContainer {
             let sourceCount = self.sourceMessages.count
 
             for i in 0..<sourceCount {
-                _ = self.append(message: self.sourceMessages[i], into: &workingMessages)
+                self.append(message: self.sourceMessages[i], into: &workingMessages)
             }
 
             // log.debug("completed 1st pass")
@@ -194,7 +195,7 @@ extension MessageContainer {
 
                 let deltaCount = self.sourceMessages.count
                 for i in sourceCount..<deltaCount {
-                    _ = self.append(message: self.sourceMessages[i], into: &self.filteredMessages)
+                    self.append(message: self.sourceMessages[i], into: &self.filteredMessages)
                 }
                 // log.debug("copied delta messages \(sourceCount)..<\(deltaCount)")
 
@@ -213,6 +214,7 @@ extension MessageContainer {
 // MARK: - Internal Functions
 private extension MessageContainer {
     // MARK: Filtered Message Append Utility
+    @discardableResult
     func append(message: Message, into messages: inout [Message]) -> Bool {
         var appended = false
         if shouldAppend(message: message) {
@@ -223,31 +225,32 @@ private extension MessageContainer {
     }
 
     func shouldAppend(message: Message) -> Bool {
-        // filter by message type
-        if message.messageType == .system {
+        switch message.content {
+        case .system:
             return true
+        case .chat(let chat):
+            return shouldAppendByMuteWords(chat) && shouldAppendByUserId(chat)
+        case .debug:
+            return enableDebugMessage
         }
+    }
 
-        guard let chat = message.chat else { return false }
-
-        // filter by comment
-        if enableMuteWords {
-            for muteWord in muteWords {
-                if let word = muteWord[MuteUserWordKey.word] {
-                    if chat.comment.lowercased().range(of: word.lowercased()) != nil {
-                        return false
-                    }
-                }
-            }
-        }
-
-        // filter by userid
-        if enableMuteUserIds {
-            for muteUserId in muteUserIds where muteUserId[MuteUserIdKey.userId] == chat.userId {
+    func shouldAppendByMuteWords(_ chat: ChatMessage) -> Bool {
+        guard enableMuteWords else { return true }
+        for muteWord in muteWords {
+            if let word = muteWord[MuteUserWordKey.word],
+               chat.comment.lowercased().range(of: word.lowercased()) != nil {
                 return false
             }
         }
+        return true
+    }
 
+    func shouldAppendByUserId(_ chat: ChatMessage) -> Bool {
+        guard enableMuteUserIds else { return true }
+        for muteUserId in muteUserIds where muteUserId[MuteUserIdKey.userId] == chat.userId {
+            return false
+        }
         return true
     }
 }

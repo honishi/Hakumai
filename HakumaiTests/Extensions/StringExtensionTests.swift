@@ -17,6 +17,11 @@ final class StringExtensionTests: XCTestCase {
 
 // MARK: String
 extension StringExtensionTests {
+    func testIsRawUserId() {
+        XCTAssert("123".isRawUserId == true, "")
+        XCTAssert("123a".isRawUserId == false, "")
+    }
+
     func testExtractRegexp() {
         var pattern: String
         var extracted: String?

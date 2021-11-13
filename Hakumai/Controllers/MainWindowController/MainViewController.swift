@@ -17,7 +17,6 @@ private let maximumFontSizeForNonMainColumn: CGFloat = 16
 private let defaultMinimumRowHeight: CGFloat = 17
 
 private let enableDebugButtons = false
-private let enableRankingManagerDebugMessage = false
 
 private let defaultElapsedTimeValue = "--:--:--"
 private let defaultLabelValue = "---"
@@ -34,7 +33,6 @@ final class MainViewController: NSViewController {
     enum ConnectionStatus { case disconnected, connecting, connected }
 
     // MARK: Properties
-    static var shared: MainViewController!
     weak var delegate: MainViewControllerDelegate?
 
     // MARK: Main Outlets
@@ -119,14 +117,6 @@ final class MainViewController: NSViewController {
     deinit { log.debug("deinit") }
 }
 
-// MARK: - Object Lifecycle
-extension MainViewController {
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        MainViewController.shared = self
-    }
-}
-
 // MARK: - NSViewController Functions
 extension MainViewController {
     override var representedObject: Any? {
@@ -142,12 +132,8 @@ extension MainViewController {
         configureMute()
         configureFontSize()
         configureAnonymouslyButton()
+        configureDebugMessage()
         DispatchQueue.main.async { self.focusLiveTextField() }
-    }
-
-    override func viewDidAppear() {
-        // kickTableViewStressTest()
-        // updateStandardUserDefaults()
     }
 }
 
@@ -190,7 +176,14 @@ extension MainViewController: NSTableViewDelegate {
             attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
         // log.debug("\(commentRect.size.width),\(commentRect.size.height)")
 
-        let iconHeight = message.chat?.hasUserIcon == true ? iconColumnWidth : 0
+        let iconHeight: CGFloat = {
+            switch message.content {
+            case .system, .debug:
+                return 0
+            case .chat(let chat):
+                return chat.hasUserIcon ? iconColumnWidth : 0
+            }
+        }()
         return max(iconHeight, max(commentRect.size.height, minimumRowHeight))
     }
 
@@ -232,26 +225,26 @@ extension MainViewController: NSTableViewDelegate {
 
         guard let _view = view, let tableColumn = tableColumn else { return nil }
 
-        if message.messageType == .system {
-            configure(view: _view, forSystemMessage: message, withTableColumn: tableColumn)
-        } else if message.messageType == .chat {
+        switch message.content {
+        case .system, .debug:
+            configure(view: _view, forSystemAndDebug: message, withTableColumn: tableColumn)
+        case .chat:
             configure(view: _view, forChat: message, withTableColumn: tableColumn)
         }
 
         return view
     }
 
-    private func configure(view: NSTableCellView, forSystemMessage message: Message, withTableColumn tableColumn: NSTableColumn) {
+    private func configure(view: NSTableCellView, forSystemAndDebug message: Message, withTableColumn tableColumn: NSTableColumn) {
         switch tableColumn.identifier.rawValue {
         case kRoomPositionColumnIdentifier:
             let roomPositionView = view as? RoomPositionTableCellView
-            roomPositionView?.roomPosition = nil
-            roomPositionView?.commentNo = nil
+            roomPositionView?.configure(message: message)
             roomPositionView?.fontSize = nil
         case kTimeColumnIdentifier:
             let timeView = view as? TimeTableCellView
-            timeView?.configure(live: nil, chat: nil)
-            timeView?.fontSize = nil
+            timeView?.configure(live: nil, message: message)
+            timeView?.fontSize = min(tableViewFontSize, maximumFontSizeForNonMainColumn)
         case kIconColumnIdentifier:
             let iconView = view as? IconTableCellView
             iconView?.configure(iconType: .none)
@@ -259,14 +252,14 @@ extension MainViewController: NSTableViewDelegate {
             let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)
             let attributed = NSAttributedString(string: content, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
-            commentView?.attributedString = attributed
+            commentView?.configure(attributedString: attributed)
         case kUserIdColumnIdentifier:
             let userIdView = view as? UserIdTableCellView
-            userIdView?.info = nil
+            userIdView?.configure(info: nil)
             userIdView?.fontSize = nil
         case kPremiumColumnIdentifier:
             let premiumView = view as? PremiumTableCellView
-            premiumView?.premium = nil
+            premiumView?.configure(premium: nil)
             premiumView?.fontSize = nil
         default:
             break
@@ -274,22 +267,21 @@ extension MainViewController: NSTableViewDelegate {
     }
 
     private func configure(view: NSTableCellView, forChat message: Message, withTableColumn tableColumn: NSTableColumn) {
-        guard let chat = message.chat else { return }
+        guard case let .chat(chat) = message.content else { return }
 
         switch tableColumn.identifier.rawValue {
         case kRoomPositionColumnIdentifier:
             let roomPositionView = view as? RoomPositionTableCellView
-            roomPositionView?.roomPosition = chat.roomPosition
-            roomPositionView?.commentNo = chat.no
+            roomPositionView?.configure(message: message)
             roomPositionView?.fontSize = min(tableViewFontSize, maximumFontSizeForNonMainColumn)
         case kTimeColumnIdentifier:
             let timeView = view as? TimeTableCellView
-            timeView?.configure(live: live, chat: chat)
+            timeView?.configure(live: live, message: message)
             timeView?.fontSize = min(tableViewFontSize, maximumFontSizeForNonMainColumn)
         case kIconColumnIdentifier:
             let iconView = view as? IconTableCellView
             let iconType = { () -> IconType in
-                if chat.isSystemComment { return .none }
+                if chat.isSystem { return .none }
                 let iconUrl = nicoManager.userIconUrl(for: chat.userId)
                 return .user(iconUrl)
             }()
@@ -298,21 +290,22 @@ extension MainViewController: NSTableViewDelegate {
             let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)
             let attributed = NSAttributedString(string: content as String, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
-            commentView?.attributedString = attributed
+            commentView?.configure(attributedString: attributed)
         case kUserIdColumnIdentifier:
             guard let live = live else { return }
             let userIdView = view as? UserIdTableCellView
-            let handleName = HandleNameManager.shared.handleName(forLive: live, chat: chat)
-            userIdView?.info = (
+            let handleName = HandleNameManager.shared.handleName(for: chat.userId, in: live.communityId)
+            userIdView?.configure(info: (
                 nicoManager: nicoManager,
                 handleName: handleName,
                 userId: chat.userId,
                 premium: chat.premium,
-                comment: chat.comment)
+                comment: chat.comment
+            ))
             userIdView?.fontSize = tableViewFontSize
         case kPremiumColumnIdentifier:
             let premiumView = view as? PremiumTableCellView
-            premiumView?.premium = chat.premium
+            premiumView?.configure(premium: chat.premium)
             premiumView?.fontSize = min(tableViewFontSize, maximumFontSizeForNonMainColumn)
         default:
             break
@@ -321,19 +314,21 @@ extension MainViewController: NSTableViewDelegate {
 
     // MARK: Utility
     private func contentAndAttributes(forMessage message: Message) -> (String, [String: Any]) {
-        var content: String!
-        var attributes = [String: Any]()
+        let content: String
+        let attributes: [String: Any]
 
-        if message.messageType == .system, let _message = message.message {
-            content = _message
+        switch message.content {
+        case .system(let system):
+            content = system.message
             attributes = UIHelper.normalCommentAttributes(fontSize: tableViewFontSize)
-        } else if message.messageType == .chat, let _message = message.chat?.comment {
-            content = _message
-            if message.firstChat == true {
-                attributes = UIHelper.boldCommentAttributes(fontSize: tableViewFontSize)
-            } else {
-                attributes = UIHelper.normalCommentAttributes(fontSize: tableViewFontSize)
-            }
+        case .chat(let chat):
+            content = chat.comment
+            attributes = chat.isFirst ?
+                UIHelper.boldCommentAttributes(fontSize: tableViewFontSize) :
+                UIHelper.normalCommentAttributes(fontSize: tableViewFontSize)
+        case .debug(let debug):
+            content = debug.message
+            attributes = UIHelper.normalCommentAttributes(fontSize: tableViewFontSize)
         }
 
         return (content, attributes)
@@ -377,7 +372,7 @@ extension MainViewController: NSControlTextEditingDelegate {
 // MARK: - AuthWindowControllerDelegate Functions
 extension MainViewController: AuthWindowControllerDelegate {
     func authWindowControllerDidLogin(_ authWindowController: AuthWindowController) {
-        logSystemMessageToTableView(L10n.loginCompleted)
+        logSystemMessageToTable(L10n.loginCompleted)
     }
 }
 
@@ -401,7 +396,7 @@ extension MainViewController: NicoManagerDelegate {
         delegate?.mainViewControllerDidPrepareLive(
             self,
             title: live.title,
-            community: live.community?.title ?? "-")
+            community: live.community.title)
 
         updateCommunityViews(for: live)
 
@@ -409,7 +404,7 @@ extension MainViewController: NicoManagerDelegate {
             resetElapsedLabel()
             resetActiveUser()
             updateRankingLabel(rank: nil, date: nil)
-            logSystemMessageToTableView(L10n.preparedLive(user.nickname))
+            logSystemMessageToTable(L10n.preparedLive(user.nickname))
             return
         }
 
@@ -420,19 +415,19 @@ extension MainViewController: NicoManagerDelegate {
         case .normal:
             resetActiveUser()
             rankingManager.addDelegate(self, for: live.liveId)
-            logSystemMessageToTableView(L10n.preparedLive(user.nickname))
+            logSystemMessageToTable(L10n.preparedLive(user.nickname))
         case .reconnect:
             break
         }
 
-        logRankingManagerDebugMessageIfEnabled()
+        logDebugRankingManagerStatus()
     }
 
     func nicoManagerDidFailToPrepareLive(_ nicoManager: NicoManagerType, error: NicoError) {
-        logSystemMessageToTableView(L10n.failedToPrepareLive(error.toMessage))
+        logSystemMessageToTable(L10n.failedToPrepareLive(error.toMessage))
         updateMainControlViews(status: .disconnected)
         rankingManager.removeDelegate(self)
-        logRankingManagerDebugMessageIfEnabled()
+        logDebugRankingManagerStatus()
     }
 
     func nicoManagerDidConnectToLive(_ nicoManager: NicoManagerType, roomPosition: RoomPosition, connectContext: NicoConnectContext) {
@@ -441,11 +436,11 @@ extension MainViewController: NicoManagerDelegate {
         switch connectContext {
         case .normal:
             liveStartedDate = Date()
-            logSystemMessageToTableView(L10n.connectedToLive)
+            logSystemMessageToTable(L10n.connectedToLive)
         case .reconnect(let reason):
             switch reason {
             case .normal:
-                logSystemMessageToTableView(L10n.reconnected)
+                logSystemMessageToTable(L10n.reconnected)
             case .noPong, .noTexts:
                 break
             }
@@ -457,8 +452,9 @@ extension MainViewController: NicoManagerDelegate {
     func nicoManagerDidReceiveChat(_ nicoManager: NicoManagerType, chat: Chat) {
         // log.debug("\(chat.mail),\(chat.comment)")
         guard let live = live else { return }
-        HandleNameManager.shared.extractAndUpdateHandleName(live: live, chat: chat)
-        appendToTable(chat)
+        HandleNameManager.shared.extractAndUpdateHandleName(
+            from: chat.comment, for: chat.userId, in: live.communityId)
+        appendToTable(chat: chat)
 
         for userWindowController in userWindowControllers where chat.userId == userWindowController.userId {
             DispatchQueue.main.async {
@@ -475,31 +471,33 @@ extension MainViewController: NicoManagerDelegate {
         case .noPong, .noTexts:
             break
         }
+        logDebugReconnectReason(reason)
     }
 
     func nicoManagerReceivingTimeShiftChats(_ nicoManager: NicoManagerType, requestCount: Int, totalChatCount: Int) {
         let shouldLog = requestCount % 5 == 0
         guard shouldLog else { return }
-        logSystemMessageToTableView(L10n.receivingComments(totalChatCount))
+        logSystemMessageToTable(L10n.receivingComments(totalChatCount))
     }
 
     func nicoManagerDidReceiveTimeShiftChats(_ nicoManager: NicoManagerType, chats: [Chat]) {
-        logSystemMessageToTableView(L10n.receivedComments(chats.count))
+        logSystemMessageToTable(L10n.receivedComments(chats.count))
         guard let live = live else { return }
         chats.forEach {
-            HandleNameManager.shared.extractAndUpdateHandleName(live: live, chat: $0)
+            HandleNameManager.shared.extractAndUpdateHandleName(
+                from: $0.comment, for: $0.userId, in: live.communityId)
         }
-        bulkAppendToTable(chats)
+        bulkAppendToTable(chats: chats)
     }
 
     func nicoManagerDidDisconnect(_ nicoManager: NicoManagerType, disconnectContext: NicoDisconnectContext) {
         switch disconnectContext {
         case .normal:
-            logSystemMessageToTableView(L10n.liveClosed)
+            logSystemMessageToTable(L10n.liveClosed)
         case .reconnect(let reason):
             switch reason {
             case .normal:
-                logSystemMessageToTableView(L10n.liveClosed)
+                logSystemMessageToTable(L10n.liveClosed)
             case .noPong, .noTexts:
                 break
             }
@@ -516,11 +514,15 @@ extension MainViewController: NicoManagerDelegate {
             updateMainControlViews(status: .connecting)
         }
 
-        logRankingManagerDebugMessageIfEnabled()
+        logDebugRankingManagerStatus()
     }
 
     func nicoManagerDidReceiveStatistics(_ nicoManager: NicoManagerType, stat: LiveStatistics) {
         updateLiveStatistics(stat: stat)
+    }
+
+    func nicoManager(_ nicoManager: NicoManagerType, hasDebugMessgae message: String) {
+        logDebugMessageToTable(message)
     }
 }
 
@@ -530,8 +532,7 @@ extension MainViewController: RankingManagerDelegate {
     }
 
     func rankingManager(_ rankingManager: RankingManagerType, hasDebugMessage message: String) {
-        guard enableRankingManagerDebugMessage else { return }
-        logSystemMessageToTableView(message)
+        logDebugMessageToTable(message)
     }
 }
 
@@ -558,31 +559,29 @@ extension MainViewController {
         }
         nicoManager.logout()
         authWindowController.logout()
-        logSystemMessageToTableView(L10n.logoutCompleted)
+        logSystemMessageToTable(L10n.logoutCompleted)
     }
 
-    func showHandleNameAddViewController(live: Live, chat: Chat) {
-        let handleNameAddViewController =
-            StoryboardScene.MainWindowController.handleNameAddViewController.instantiate()
-        handleNameAddViewController.handleName = (defaultHandleName(live: live, chat: chat) ?? "") as NSString
-        handleNameAddViewController.completion = { (cancelled: Bool, handleName: String?) -> Void in
+    func showHandleNameAddViewController(live: Live, chat: ChatMessage) {
+        let vc = StoryboardScene.MainWindowController.handleNameAddViewController.instantiate()
+        vc.handleName = (defaultHandleName(live: live, chat: chat) ?? "") as NSString
+        vc.completion = { [weak self, weak vc] (cancelled, handleName) in
+            guard let me = self, let vc = vc else { return }
             if !cancelled, let handleName = handleName {
-                HandleNameManager.shared.updateHandleName(live: live, chat: chat, handleName: handleName)
-                MainViewController.shared.refreshHandleName()
+                HandleNameManager.shared.updateHandleName(
+                    name: handleName, for: chat.userId, in: live.communityId)
+                me.refreshHandleName()
             }
-
-            self.dismiss(handleNameAddViewController)
-            // TODO: deinit in handleNameViewController is not called after this completion
+            me.dismiss(vc)
         }
-
-        presentAsSheet(handleNameAddViewController)
+        presentAsSheet(vc)
     }
 
-    private func defaultHandleName(live: Live, chat: Chat) -> String? {
+    private func defaultHandleName(live: Live, chat: ChatMessage) -> String? {
         var defaultHandleName: String?
-        if let handleName = HandleNameManager.shared.handleName(forLive: live, chat: chat) {
+        if let handleName = HandleNameManager.shared.handleName(for: chat.userId, in: live.communityId) {
             defaultHandleName = handleName
-        } else if let userName = nicoManager.cachedUserName(forChat: chat) {
+        } else if let userName = nicoManager.cachedUserName(for: chat.userId) {
             defaultHandleName = userName
         }
         return defaultHandleName
@@ -671,6 +670,12 @@ extension MainViewController {
         rebuildFilteredMessages()
     }
 
+    func changeEnableDebugMessage(_ enabled: Bool) {
+        messageContainer.enableDebugMessage = enabled
+        log.debug("Changed enable debug message: \(enabled)")
+        rebuildFilteredMessages()
+    }
+
     private func rebuildFilteredMessages() {
         DispatchQueue.main.async {
             self.progressIndicator.startAnimation(self)
@@ -687,10 +692,10 @@ extension MainViewController {
     }
 }
 
-// MARK: Chat Message Utility (Internal)
-extension MainViewController {
-    func logSystemMessageToTableView(_ message: String) {
-        appendToTable(message)
+// MARK: Chat Message Utility
+private extension MainViewController {
+    func logSystemMessageToTable(_ message: String) {
+        appendToTable(systemMessage: message)
     }
 }
 
@@ -796,6 +801,11 @@ private extension MainViewController {
         commentAnonymouslyButton.state = anonymous ? .on : .off
     }
 
+    func configureDebugMessage() {
+        let enabled = UserDefaults.standard.bool(forKey: Parameters.enableDebugMessage)
+        changeEnableDebugMessage(enabled)
+    }
+
     func updateMainControlViews(status connectionStatus: ConnectionStatus) {
         DispatchQueue.main.async { self._updateMainControlViews(status: connectionStatus) }
     }
@@ -822,56 +832,62 @@ private extension MainViewController {
     }
 
     func _updateCommunityViews(for live: Live) {
-        if let url = live.community?.thumbnailUrl {
+        if let url = live.community.thumbnailUrl {
             communityImageView.kf.setImage(
                 with: url,
                 placeholder: Asset.defaultCommunityImage.image
             )
         }
         liveTitleLabel.stringValue = live.title
-        communityTitleLabel.stringValue = live.community?.title ?? "-"
+        communityTitleLabel.stringValue = live.community.title
     }
 }
 
 // MARK: Chat Message Utility (Private)
 private extension MainViewController {
-    func appendToTable(_ chatOrSystemMessage: Any) {
+    func appendToTable(chat: Chat) {
         DispatchQueue.main.async {
-            let shouldScroll = self.scrollView.isReachedToBottom
-            let (appended, count) = self.messageContainer.append(chatOrSystemMessage: chatOrSystemMessage)
-            guard appended else { return }
-            let rowIndex = count - 1
-            let message = self.messageContainer[rowIndex]
-            self.tableView.insertRows(at: IndexSet(integer: rowIndex), withAnimation: NSTableView.AnimationOptions())
-            // self.logChat(chatOrSystemMessage)
-            if shouldScroll {
-                self.scrollView.scrollToBottom()
-            }
-            if message.messageType == .chat, let chat = message.chat {
-                self.handleSpeech(chat: chat)
-            }
-            self.scrollView.flashScrollers()
+            let result = self.messageContainer.append(chat: chat)
+            self._updateTable(appended: result.appended, messageCount: result.count)
+            guard result.appended else { return }
+            self.handleSpeech(chat: chat)
         }
     }
 
-    func bulkAppendToTable(_ chatOrSystemMessage: [Any]) {
+    func appendToTable(systemMessage: String) {
         DispatchQueue.main.async {
-            chatOrSystemMessage.forEach {
-                self.messageContainer.append(chatOrSystemMessage: $0)
+            let result = self.messageContainer.append(systemMessage: systemMessage)
+            self._updateTable(appended: result.appended, messageCount: result.count)
+        }
+    }
+
+    func appendToTable(debugMessage: String) {
+        DispatchQueue.main.async {
+            let result = self.messageContainer.append(debug: debugMessage)
+            self._updateTable(appended: result.appended, messageCount: result.count)
+        }
+    }
+
+    func _updateTable(appended: Bool, messageCount: Int) {
+        guard appended else { return }
+        let shouldScroll = scrollView.isReachedToBottom
+        let rowIndex = messageCount - 1
+        tableView.insertRows(at: IndexSet(integer: rowIndex), withAnimation: NSTableView.AnimationOptions())
+        if shouldScroll {
+            scrollView.scrollToBottom()
+        }
+        scrollView.flashScrollers()
+    }
+
+    func bulkAppendToTable(chats: [Chat]) {
+        DispatchQueue.main.async {
+            chats.forEach {
+                self.messageContainer.append(chat: $0)
             }
             self.tableView.reloadData()
             self.scrollView.flashScrollers()
+            self.scrollView.updateButtonVisibilities()
         }
-    }
-
-    func logMessage(_ message: Message) {
-        var content: String?
-        if message.messageType == .system {
-            content = message.message
-        } else if message.messageType == .chat {
-            content = message.chat?.comment
-        }
-        log.debug("[ \(content ?? "-") ]")
     }
 }
 
@@ -925,7 +941,7 @@ extension MainViewController {
 
     @IBAction func debugExpireTokenButtonPressed(_ sender: Any) {
         nicoManager.injectExpiredAccessToken()
-        logSystemMessageToTableView("Injected expired access token.")
+        logSystemMessageToTable("Injected expired access token.")
     }
 
     @IBAction func connectLive(_ sender: AnyObject) {
@@ -957,7 +973,7 @@ extension MainViewController {
 
         nicoManager.comment(comment, anonymously: commentAnonymouslyButton.isOn) { comment in
             if comment == nil {
-                self.logSystemMessageToTableView(L10n.failedToComment)
+                self.logSystemMessageToTable(L10n.failedToComment)
             }
         }
         commentTextField.stringValue = ""
@@ -985,7 +1001,7 @@ private extension MainViewController {
         guard clickedRow != -1 else { return }
 
         let message = messageContainer[clickedRow]
-        guard message.messageType == .chat, let chat = message.chat else { return }
+        guard case let .chat(chat) = message.content else { return }
         var userWindowController: UserWindowController?
 
         // check if user window exists?
@@ -999,7 +1015,7 @@ private extension MainViewController {
             // not exist, so create and cache it
             var handleName: String?
             if let live = live,
-               let _handleName = HandleNameManager.shared.handleName(forLive: live, chat: chat) {
+               let _handleName = HandleNameManager.shared.handleName(for: chat.userId, in: live.communityId) {
                 handleName = _handleName
             }
             userWindowController = UserWindowController.make(
@@ -1242,9 +1258,24 @@ private extension MainViewController {
 
 // MARK: Debug Methods
 private extension MainViewController {
-    func logRankingManagerDebugMessageIfEnabled() {
-        guard enableRankingManagerDebugMessage else { return }
-        logSystemMessageToTableView("isRankingManagerRunning: \(rankingManager.isRunning)")
+    func logDebugMessageToTable(_ message: String) {
+        log.debug(message)
+        appendToTable(debugMessage: message)
+    }
+
+    func logDebugReconnectReason(_ reason: NicoReconnectReason) {
+        let _reason: String = {
+            switch reason {
+            case .normal:   return "normal"
+            case .noPong:   return "no pong"
+            case .noTexts:  return "no text"
+            }
+        }()
+        logDebugMessageToTable("Reconnecting... (\(_reason))")
+    }
+
+    func logDebugRankingManagerStatus() {
+        logDebugMessageToTable("RankingManager is \(rankingManager.isRunning ? "running" : "stopped").")
     }
 }
 

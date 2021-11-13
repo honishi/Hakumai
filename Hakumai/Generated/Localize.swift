@@ -80,6 +80,8 @@ internal enum L10n {
   internal static let elapsedTime = L10n.tr("Localizable", "elapsed_time")
   /// Enable 184
   internal static let enable184 = L10n.tr("Localizable", "enable_184")
+  /// Enable debug message in main window
+  internal static let enableDebugMessage = L10n.tr("Localizable", "enable_debug_message")
   /// Enable Mute User Ids
   internal static let enableMuteUserIds = L10n.tr("Localizable", "enable_mute_user_ids")
   /// Enable Mute Words
@@ -140,6 +142,8 @@ internal enum L10n {
   internal static let maxActiveUserCount = L10n.tr("Localizable", "max_active_user_count")
   /// Minimize
   internal static let minimize = L10n.tr("Localizable", "minimize")
+  /// Misc
+  internal static let misc = L10n.tr("Localizable", "misc")
   /// New Comment
   internal static let newComment = L10n.tr("Localizable", "new_comment")
   /// New Live
@@ -182,6 +186,10 @@ internal enum L10n {
   internal static let removeHandleName = L10n.tr("Localizable", "remove_handle_name")
   /// Safari (Not supported yet…)
   internal static let safari = L10n.tr("Localizable", "safari")
+  /// Press to scroll down / long press to scroll to bottom
+  internal static let scrollDownButton = L10n.tr("Localizable", "scroll_down_button")
+  /// Press to scroll up / long press to scroll to top
+  internal static let scrollUpButton = L10n.tr("Localizable", "scroll_up_button")
   /// Select All
   internal static let selectAll = L10n.tr("Localizable", "select_all")
   /// Services

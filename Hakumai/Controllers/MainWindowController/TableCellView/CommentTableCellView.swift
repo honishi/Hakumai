@@ -11,10 +11,10 @@ import AppKit
 
 final class CommentTableCellView: NSTableCellView {
     @IBOutlet private weak var commentTextField: NSTextField!
+}
 
-    var attributedString: NSAttributedString? {
-        didSet {
-            commentTextField.attributedStringValue = attributedString ?? NSAttributedString(string: "-")
-        }
+extension CommentTableCellView {
+    func configure(attributedString: NSAttributedString?) {
+        commentTextField.attributedStringValue = attributedString ?? NSAttributedString(string: "-")
     }
 }

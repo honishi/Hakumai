@@ -9,6 +9,8 @@
 import Foundation
 import AppKit
 
+private let defaultTimeValue = "-"
+
 final class TimeTableCellView: NSTableCellView {
     @IBOutlet weak var coloredView: ColoredView!
     @IBOutlet weak var timeLabel: NSTextField!
@@ -17,21 +19,37 @@ final class TimeTableCellView: NSTableCellView {
 }
 
 extension TimeTableCellView {
-    func configure(live: Live?, chat: Chat?) {
-        coloredView.fillColor = color(chat: chat)
-        timeLabel.stringValue = time(live: live, chat: chat)
+    func configure(live: Live?, message: Message?) {
+        coloredView.fillColor = color(message: message)
+        timeLabel.stringValue = time(live: live, message: message)
     }
 }
 
 private extension TimeTableCellView {
-    func color(chat: Chat?) -> NSColor {
-        guard let chat = chat else { return UIHelper.systemMessageColorBackground() }
-        return chat.isSystemComment ? UIHelper.systemMessageColorBackground() : UIHelper.scoreColorGreen()
+    func color(message: Message?) -> NSColor {
+        guard let message = message else { return UIHelper.systemMessageColorBackground() }
+        switch message.content {
+        case .system:
+            return UIHelper.systemMessageColorBackground()
+        case .chat(let chat):
+            return chat.isSystem ? UIHelper.systemMessageColorBackground() : UIHelper.scoreColorGreen()
+        case .debug:
+            return UIHelper.debugMessageColorBackground()
+        }
     }
 
-    func time(live: Live?, chat: Chat?) -> String {
-        guard let beginDate = live?.beginTime, let chatDate = chat?.date else { return "-" }
-        return chatDate.toElapsedTimeString(from: beginDate)
+    func time(live: Live?, message: Message?) -> String {
+        guard let message = message else { return defaultTimeValue }
+        switch message.content {
+        case .system, .debug:
+            return "[\(message.date.toLocalTimeString())]"
+        case .chat(chat: let chat):
+            guard let beginDate = live?.beginTime,
+                  let elapsed = chat.date.toElapsedTimeString(from: beginDate) else {
+                return defaultTimeValue
+            }
+            return elapsed
+        }
     }
 
     func set(fontSize: CGFloat?) {
@@ -41,11 +59,17 @@ private extension TimeTableCellView {
 }
 
 private extension Date {
-    func toElapsedTimeString(from fromDate: Date) -> String {
+    func toElapsedTimeString(from fromDate: Date) -> String? {
         let comps = Calendar.current.dateComponents(
             [.hour, .minute, .second], from: fromDate, to: self)
-        guard let h = comps.hour, let m = comps.minute, let s = comps.second else { return "-" }
+        guard let h = comps.hour, let m = comps.minute, let s = comps.second else { return nil }
         return "\(h):\(m.zeroPadded):\(s.zeroPadded)"
+    }
+
+    func toLocalTimeString() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "H:mm:ss"
+        return formatter.string(from: self)
     }
 }
 

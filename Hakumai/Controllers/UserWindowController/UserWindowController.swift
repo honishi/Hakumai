@@ -51,7 +51,7 @@ extension UserWindowController: NSWindowDelegate {
 extension UserWindowController {
     func set(nicoManager: NicoManagerType, messageContainer: MessageContainer, userId: String, handleName: String?) {
         self.userId = userId
-        let userName = nicoManager.cachedUserName(forUserId: userId)
+        let userName = nicoManager.cachedUserName(for: userId)
         window?.title = handleName ?? userName ?? userId
         guard let userViewController = contentViewController as? UserViewController else { return }
         userViewController.set(nicoManager: nicoManager, messageContainer: messageContainer, userId: userId, handleName: handleName)

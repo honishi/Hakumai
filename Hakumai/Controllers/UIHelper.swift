@@ -46,17 +46,19 @@ extension NSColor {
 }
 
 final class UIHelper {
-    // MARK: - System Message Colors
+    // MARK: - Main Window Colors
     static func systemMessageColorBackground() -> NSColor {
         return NSColor(rgba: "#808080")
     }
 
-    // MARK: - Score Colors
+    static func debugMessageColorBackground() -> NSColor {
+        return NSColor(rgba: "#101010")
+    }
+
     static func scoreColorGreen() -> NSColor {
         return NSColor(rgba: "#0EA50B")
     }
 
-    // MARK: - Room Colors
     static func roomColorArena() -> NSColor {
         return NSColor(rgba: "#3c49ff")
     }

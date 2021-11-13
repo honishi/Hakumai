@@ -23,6 +23,9 @@ final class GeneralViewController: NSViewController {
     @IBOutlet private weak var speakVolumeValueTextField: NSTextField!
     @IBOutlet private weak var speakVolumeSlider: NSSlider!
 
+    @IBOutlet private weak var miscBox: NSBox!
+    @IBOutlet private weak var enableDebugMessageButton: NSButton!
+
     // MARK: - Object Lifecycle
     static func make() -> GeneralViewController {
         return StoryboardScene.PreferenceWindowController.generalViewController.instantiate()
@@ -51,6 +54,9 @@ private extension GeneralViewController {
 
         commentSpeakingBox.title = L10n.commentSpeaking
         speakVolumeTitleTextField.stringValue = "\(L10n.speakVolume):"
+
+        miscBox.title = L10n.misc
+        enableDebugMessageButton.title = L10n.enableDebugMessage
     }
 
     func disableSpeakComponentsIfNeeded() {

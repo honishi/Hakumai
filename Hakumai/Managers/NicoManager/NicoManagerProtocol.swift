@@ -22,9 +22,8 @@ protocol NicoManagerType: AnyObject {
     func logout()
 
     // Methods for User Accounts
-    func cachedUserName(forChat chat: Chat) -> String?
-    func cachedUserName(forUserId userId: String) -> String?
-    func resolveUsername(forUserId userId: String, completion: @escaping (String?) -> Void)
+    func cachedUserName(for userId: String) -> String?
+    func resolveUsername(for userId: String, completion: @escaping (String?) -> Void)
     func userPageUrl(for userId: String) -> URL?
     func userIconUrl(for userId: String) -> URL?
 
@@ -56,6 +55,9 @@ protocol NicoManagerDelegate: AnyObject {
 
     // Disconnect.
     func nicoManagerDidDisconnect(_ nicoManager: NicoManagerType, disconnectContext: NicoDisconnectContext)
+
+    // Debug.
+    func nicoManager(_ nicoManager: NicoManagerType, hasDebugMessgae message: String)
 }
 
 enum NicoError: Error {

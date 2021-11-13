@@ -88,12 +88,12 @@ private extension RankingManager {
         rankMap.removeAll()
         rankUpdatedDate = nil
         isQuerying = true
-        notifyDebugMessageToDelegates("Started query... (\(Date().description))")
+        notifyDebugMessageToDelegates("Started query...")
         _queryRank(page: 1)
     }
 
     func _queryRank(page: Int) {
-        logDebugMessage("Processing page \(page).")
+        // logDebugMessage("Processing page \(page).")
         var request = URLRequest(url: rankingUrl(for: page))
         request.headers = [commonUserAgentKey: commonUserAgentValue]
         AF.request(request)
@@ -116,10 +116,10 @@ private extension RankingManager {
                     me.notifyUpdatedRankToDelegates()
                 case .failure(let error):
                     // No-op.
-                    me.logDebugMessage(error.localizedDescription)
+                    me.logDebugMessage("Failed at page \(page), \(error.localizedDescription)")
                 }
                 me.isQuerying = false
-                me.notifyDebugMessageToDelegates("Finished query. (\(Date().description))")
+                me.notifyDebugMessageToDelegates("Finished query.")
             }
     }
 
@@ -180,8 +180,8 @@ private extension RankingManager {
             guard let rank = rank else { return "-" }
             return String(rank)
         }()
-        let _delegate: String = delegate.debugDescription
-        self.notifyDebugMessageToDelegates("Will notify rank #\(_rank) for \(liveId) -> \(_delegate)")
+        let _delegate = "\(String(describing: delegate))".extractRegexp(pattern: ".+(0x.+)>") ?? "-"
+        self.notifyDebugMessageToDelegates("Notifying rank #\(_rank) for \(liveId) → \(_delegate)")
     }
 }
 

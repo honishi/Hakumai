@@ -13,23 +13,32 @@ final class RoomPositionTableCellView: NSTableCellView {
     @IBOutlet weak var coloredView: ColoredView!
     @IBOutlet weak var commentNoLabel: NSTextField!
 
-    var roomPosition: RoomPosition? {
-        didSet {
-            coloredView.fillColor = color(forRoomPosition: roomPosition)
-        }
-    }
-    var commentNo: Int? { didSet { commentNoLabel.stringValue = string(ofCommentNo: commentNo) } }
     var fontSize: CGFloat? { didSet { set(fontSize: fontSize) } }
 }
 
+extension RoomPositionTableCellView {
+    func configure(message: Message?) {
+        coloredView.fillColor = color(for: message)
+        commentNoLabel.stringValue = string(for: message)
+    }
+}
+
 private extension RoomPositionTableCellView {
-    func color(forRoomPosition roomPosition: RoomPosition?) -> NSColor {
-        return roomPosition == nil ? UIHelper.systemMessageColorBackground() : UIHelper.roomColorArena()
+    func color(for message: Message?) -> NSColor {
+        guard let message = message else { return UIHelper.systemMessageColorBackground() }
+        switch message.content {
+        case .system:
+            return UIHelper.systemMessageColorBackground()
+        case .chat:
+            return UIHelper.roomColorArena()
+        case .debug:
+            return UIHelper.debugMessageColorBackground()
+        }
     }
 
-    func string(ofCommentNo commentNo: Int?) -> String {
-        guard let commentNo = commentNo else { return "" }
-        return String(commentNo).numberStringWithSeparatorComma()
+    func string(for message: Message?) -> String {
+        guard case let .chat(chat) = message?.content else { return "" }
+        return String(chat.no).numberStringWithSeparatorComma()
     }
 
     func set(fontSize: CGFloat?) {

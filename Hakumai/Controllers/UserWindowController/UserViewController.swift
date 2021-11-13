@@ -113,7 +113,11 @@ extension UserViewController: NSTableViewDataSource, NSTableViewDelegate {
             view?.textField?.stringValue = ""
         }
         let message = messages[row]
-        if message.messageType == .chat, let _view = view, let tableColumn = tableColumn {
+        switch message.content {
+        case .system, .debug:
+            break
+        case .chat:
+            guard let _view = view, let tableColumn = tableColumn else { break }
             configure(view: _view, forChat: message, withTableColumn: tableColumn)
         }
         return view
@@ -139,7 +143,7 @@ extension UserViewController {
         // User ID
         userIdButton.title = userId
         // UserName
-        if let userName = nicoManager.cachedUserName(forUserId: userId) {
+        if let userName = nicoManager.cachedUserName(for: userId) {
             userNameValueLabel.stringValue = userName
         } else {
             userNameValueLabel.stringValue = defaultLabelValue
@@ -162,13 +166,11 @@ extension UserViewController {
         // Use main queue here. This ensures the `updateBottomButtonVisibility()` call is
         // executed after the completion of `tableView.reloadData()` for sure.
         // (`updateBottomButtonVisibility()` needs to be called after `tableView.reloadData()` call.)
-        DispatchQueue.main.async {
-            self.scrollView.updateBottomButtonVisibility()
-        }
+        DispatchQueue.main.async { self.scrollView.updateButtonVisibilities() }
     }
 
     @IBAction func userIdButtonPressed(_ sender: Any) {
-        guard Chat.isRawUserId(userId),
+        guard userId.isRawUserId,
               let url = nicoManager.userPageUrl(for: userId) else { return }
         NSWorkspace.shared.open(url)
     }
@@ -188,22 +190,19 @@ private extension UserViewController {
     }
 
     func configure(view: NSTableCellView, forChat message: Message, withTableColumn tableColumn: NSTableColumn) {
-        guard let chat = message.chat else { return }
-
         var attributed: NSAttributedString?
 
         switch convertFromNSUserInterfaceItemIdentifier(tableColumn.identifier) {
         case kRoomPositionColumnIdentifier:
             let roomPositionView = view as? RoomPositionTableCellView
-            roomPositionView?.roomPosition = chat.roomPosition
-            roomPositionView?.commentNo = chat.no
+            roomPositionView?.configure(message: message)
         case kTimeColumnIdentifier:
-            (view as? TimeTableCellView)?.configure(live: nicoManager.live, chat: chat)
+            (view as? TimeTableCellView)?.configure(live: nicoManager.live, message: message)
         case kCommentColumnIdentifier:
             let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)
             attributed = NSAttributedString(string: content, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
-            commentView?.attributedString = attributed
+            commentView?.configure(attributedString: attributed)
         default:
             break
         }
@@ -216,7 +215,7 @@ private extension UserViewController {
 
     func resolveUserName(for userId: String?) {
         guard let userId = userId else { return }
-        nicoManager.resolveUsername(forUserId: userId) { [weak self] in
+        nicoManager.resolveUsername(for: userId) { [weak self] in
             guard let resolved = $0 else { return }
             DispatchQueue.main.async { self?.userNameValueLabel.stringValue = resolved }
         }
@@ -224,15 +223,19 @@ private extension UserViewController {
 
     // MARK: Utility
     func contentAndAttributes(forMessage message: Message) -> (String, [String: Any]) {
-        var content: String!
-        var attributes = [String: Any]()
+        let content: String
+        let attributes: [String: Any]
 
-        if message.messageType == .system, let _message = message.message {
-            content = _message
+        switch message.content {
+        case .system(let system):
+            content = system.message
             attributes = UIHelper.normalCommentAttributes()
-        } else if message.messageType == .chat, let _message = message.chat?.comment {
-            content = _message
-            attributes = (message.firstChat == true ? UIHelper.boldCommentAttributes() : UIHelper.normalCommentAttributes())
+        case .chat(let chat):
+            content = chat.comment
+            attributes = chat.isFirst ? UIHelper.boldCommentAttributes() : UIHelper.normalCommentAttributes()
+        case .debug(let debug):
+            content = debug.message
+            attributes = UIHelper.normalCommentAttributes()
         }
 
         return (content, attributes)

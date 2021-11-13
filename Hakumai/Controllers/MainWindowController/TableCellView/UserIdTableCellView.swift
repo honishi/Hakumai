@@ -15,20 +15,6 @@ final class UserIdTableCellView: NSTableCellView {
     @IBOutlet weak var userIdTextField: NSTextField!
     @IBOutlet weak var userIdImageView: NSImageView!
 
-    var info: (nicoManager: NicoManagerType, handleName: String?, userId: String?, premium: Premium?, comment: String?)? = nil {
-        didSet {
-            self.nicoManager = info?.nicoManager
-            self.currentUserId = info?.userId
-            guard let userId = info?.userId, let premium = info?.premium else {
-                userIdImageView.image = nil
-                userIdTextField.stringValue = ""
-                return
-            }
-            userIdImageView.image = image(forHandleName: info?.handleName, userId: userId, premium: premium)
-            setUserIdLabel(userId: userId, premium: premium, handleName: info?.handleName)
-        }
-    }
-
     var fontSize: CGFloat? { didSet { set(fontSize: fontSize) } }
 
     // XXX: remove this non presentation layer instance..
@@ -36,15 +22,29 @@ final class UserIdTableCellView: NSTableCellView {
     private var currentUserId: String?
 }
 
+extension UserIdTableCellView {
+    func configure(info: (nicoManager: NicoManagerType, handleName: String?, userId: String?, premium: Premium?, comment: String?)?) {
+        nicoManager = info?.nicoManager
+        currentUserId = info?.userId
+        guard let userId = info?.userId, let premium = info?.premium else {
+            userIdImageView.image = nil
+            userIdTextField.stringValue = ""
+            return
+        }
+        userIdImageView.image = image(forHandleName: info?.handleName, userId: userId, premium: premium)
+        setUserIdLabel(userId: userId, premium: premium, handleName: info?.handleName)
+    }
+}
+
 private extension UserIdTableCellView {
     func image(forHandleName handleName: String?, userId: String, premium: Premium) -> NSImage {
         if premium.isSystem {
             return Asset.premiumMisc.image
         } else if handleName != nil {
-            return Chat.isRawUserId(userId) ?
+            return userId.isRawUserId ?
                 Asset.handleNameOverRawId.image : Asset.handleNameOver184Id.image
         }
-        return Chat.isRawUserId(userId) ?
+        return userId.isRawUserId ?
             Asset.userIdRawId.image : Asset.userId184Id.image
     }
 
@@ -55,16 +55,14 @@ private extension UserIdTableCellView {
             concatUserName(userId: userId, userName: nil, handleName: handleName)
 
         // if needed, then resolve userid
-        if handleName != nil || !Chat.isRawUserId(userId) || !Chat.isUserComment(premium) {
-            return
-        }
+        guard handleName == nil, premium.isUser, userId.isRawUserId else { return }
 
-        if let userName = nicoManager?.cachedUserName(forUserId: userId) {
+        if let userName = nicoManager?.cachedUserName(for: userId) {
             userIdTextField.stringValue = concatUserName(userId: userId, userName: userName, handleName: handleName)
             return
         }
 
-        nicoManager?.resolveUsername(forUserId: userId) { [weak self] in
+        nicoManager?.resolveUsername(for: userId) { [weak self] in
             guard let me = self else { return }
             guard me.currentUserId == userId else {
                 // Seems the view is reused before the previous async username
