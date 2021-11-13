@@ -39,12 +39,12 @@ final class HandleNameManager {
 
 // MARK: - Public Functions
 extension HandleNameManager {
-    func extractAndUpdateHandleName(from comment: String, in communityId: String, for userId: String) {
+    func extractAndUpdateHandleName(from comment: String, for userId: String, in communityId: String) {
         guard let handleName = extractHandleName(from: comment) else { return }
-        updateHandleName(for: userId, in: communityId, name: handleName)
+        updateHandleName(name: handleName, for: userId, in: communityId)
     }
 
-    func updateHandleName(for userId: String, in communityId: String, name: String) {
+    func updateHandleName(name: String, for userId: String, in communityId: String) {
         let anonymous = !userId.isRawUserId
         insertOrReplaceHandleName(communityId: communityId, userId: userId, anonymous: anonymous, handleName: name)
     }

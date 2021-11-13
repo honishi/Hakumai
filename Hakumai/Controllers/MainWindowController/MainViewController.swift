@@ -453,7 +453,7 @@ extension MainViewController: NicoManagerDelegate {
         // log.debug("\(chat.mail),\(chat.comment)")
         guard let live = live else { return }
         HandleNameManager.shared.extractAndUpdateHandleName(
-            from: chat.comment, in: live.communityId, for: chat.userId)
+            from: chat.comment, for: chat.userId, in: live.communityId)
         appendToTable(chat: chat)
 
         for userWindowController in userWindowControllers where chat.userId == userWindowController.userId {
@@ -485,7 +485,7 @@ extension MainViewController: NicoManagerDelegate {
         guard let live = live else { return }
         chats.forEach {
             HandleNameManager.shared.extractAndUpdateHandleName(
-                from: $0.comment, in: live.communityId, for: $0.userId)
+                from: $0.comment, for: $0.userId, in: live.communityId)
         }
         bulkAppendToTable(chats: chats)
     }
@@ -569,7 +569,7 @@ extension MainViewController {
             guard let me = self, let vc = vc else { return }
             if !cancelled, let handleName = handleName {
                 HandleNameManager.shared.updateHandleName(
-                    for: chat.userId, in: live.communityId, name: handleName)
+                    name: handleName, for: chat.userId, in: live.communityId)
                 me.refreshHandleName()
             }
             me.dismiss(vc)
