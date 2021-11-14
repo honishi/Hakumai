@@ -886,7 +886,7 @@ private extension MainViewController {
             }
             self.tableView.reloadData()
             self.scrollView.flashScrollers()
-            self.scrollView.updateButtonVisibilities()
+            self.scrollView.updateButtonEnables()
         }
     }
 }
