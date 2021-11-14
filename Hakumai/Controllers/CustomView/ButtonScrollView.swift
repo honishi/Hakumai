@@ -49,18 +49,10 @@ extension ButtonScrollView {
 extension ButtonScrollView {
     override func updateTrackingAreas() {
         super.updateTrackingAreas()
-        for trackingArea in trackingAreas {
-            removeTrackingArea(trackingArea)
-        }
-        let options: NSTrackingArea.Options = [
-            .mouseMoved,
-            .activeAlways
-        ]
+        trackingAreas.forEach { removeTrackingArea($0) }
+        let options: NSTrackingArea.Options = [.mouseMoved, .activeAlways]
         let trackingArea = NSTrackingArea(
-            rect: bounds,
-            options: options,
-            owner: self,
-            userInfo: nil)
+            rect: bounds, options: options, owner: self, userInfo: nil)
         addTrackingArea(trackingArea)
     }
 
@@ -207,8 +199,8 @@ class LongPressButton: NSButton {
 extension LongPressButton {
     // This custom `userInfo` dictionary is used just for indentifying whether
     // the `NSTrackingArea` instance is the one of custom mouse enter and exit tracking.
-    private var _longPressButtonTrackingTag: [AnyHashable: Bool] {
-        ["_longPressButtonTracking": true]
+    private var _longPressButtonTrackAreaTag: [AnyHashable: Bool] {
+        ["_longPressButtonMouseTrackArea": true]
     }
 
     override func updateTrackingAreas() {
@@ -216,22 +208,16 @@ extension LongPressButton {
         for trackingArea in trackingAreas {
             // Remove only the `NSTrackingArea` instances of custom mouse enter
             // and exit tracking, so that `toolTip` works as expected.
-            let isLongPressButtonMouseTracking: Bool = {
+            let isLongPressButtonMouseTrackArea: Bool = {
                 guard let userInfo = trackingArea.userInfo as? [AnyHashable: Bool] else { return false }
-                return userInfo == _longPressButtonTrackingTag
+                return userInfo == _longPressButtonTrackAreaTag
             }()
-            guard isLongPressButtonMouseTracking else { continue }
+            guard isLongPressButtonMouseTrackArea else { continue }
             removeTrackingArea(trackingArea)
         }
-        let options: NSTrackingArea.Options = [
-            .mouseEnteredAndExited,
-            .activeAlways
-        ]
+        let options: NSTrackingArea.Options = [.mouseEnteredAndExited, .activeAlways]
         let trackingArea = NSTrackingArea(
-            rect: bounds,
-            options: options,
-            owner: self,
-            userInfo: _longPressButtonTrackingTag)
+            rect: bounds, options: options, owner: self, userInfo: _longPressButtonTrackAreaTag)
         addTrackingArea(trackingArea)
     }
 
