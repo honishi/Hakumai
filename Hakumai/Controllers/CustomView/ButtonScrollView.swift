@@ -21,6 +21,9 @@ final class ButtonScrollView: NSScrollView {
     private let downButton = LongPressButton()
     private var isBoundsChangeObserving = false
 
+    private var hideButtonsTimer: Timer?
+    private var isMouseOnButtons = false
+
     deinit {
         log.debug()
         removeBoundsDidChangeNotificationObserver()
@@ -32,13 +35,54 @@ extension ButtonScrollView {
     func enableScrollButtons() {
         addTopScrollButton()
         addBottomScrollButton()
-        updateButtonVisibilities()
+        updateButtonEnables()
+        hideButtons()
         addBoundsDidChangeNotificationObserver()
     }
 
-    func updateButtonVisibilities() {
-        upButton.isHidden = isReachedToTop
-        downButton.isHidden = isReachedToBottom
+    func updateButtonEnables() {
+        upButton.isEnabled = !isReachedToTop
+        downButton.isEnabled = !isReachedToBottom
+    }
+}
+
+extension ButtonScrollView {
+    override func updateTrackingAreas() {
+        super.updateTrackingAreas()
+        trackingAreas.forEach { removeTrackingArea($0) }
+        let options: NSTrackingArea.Options = [.mouseMoved, .activeAlways]
+        let trackingArea = NSTrackingArea(
+            rect: bounds, options: options, owner: self, userInfo: nil)
+        addTrackingArea(trackingArea)
+    }
+
+    override func mouseMoved(with event: NSEvent) {
+        guard !isMouseOnButtons else { return }
+        showButtons(activateHideTimer: true)
+    }
+}
+
+private extension ButtonScrollView {
+    func showButtons(activateHideTimer: Bool) {
+        hideButtonsTimer?.invalidate()
+        hideButtonsTimer = nil
+
+        upButton.isHidden = false
+        downButton.isHidden = false
+
+        guard activateHideTimer else { return }
+        hideButtonsTimer = Timer.scheduledTimer(
+            timeInterval: 2,
+            target: self,
+            selector: #selector(hideButtons),
+            userInfo: nil,
+            repeats: false)
+    }
+
+    @objc
+    func hideButtons() {
+        upButton.isHidden = true
+        downButton.isHidden = true
     }
 }
 
@@ -50,6 +94,13 @@ private extension ButtonScrollView {
         upButton.toolTip = L10n.scrollUpButton
         upButton.onPressed = { [weak self] in self?.scrollUp() }
         upButton.onLongPressed = { [weak self] in self?.scrollToTop() }
+        upButton.onMouseEntered = { [weak self] in
+            self?.isMouseOnButtons = true
+            self?.showButtons(activateHideTimer: false)
+        }
+        upButton.onMouseExited = { [weak self] in
+            self?.isMouseOnButtons = false
+        }
 
         // Make sure we need to call `addSubview()` of `superview`, not of `self`.
         // Seems `self` and its descendants are not controlled by auto layout,
@@ -69,6 +120,13 @@ private extension ButtonScrollView {
         downButton.toolTip = L10n.scrollDownButton
         downButton.onPressed = { [weak self] in self?.scrollDown() }
         downButton.onLongPressed = { [weak self] in self?.scrollToBottom() }
+        downButton.onMouseEntered = { [weak self] in
+            self?.isMouseOnButtons = true
+            self?.showButtons(activateHideTimer: false)
+        }
+        downButton.onMouseExited = { [weak self] in
+            self?.isMouseOnButtons = false
+        }
 
         superview?.addSubview(downButton)
         downButton.snp.makeConstraints { make in
@@ -103,7 +161,7 @@ private extension ButtonScrollView {
     }
 
     @objc func contentViewDidChangeBounds(_ notification: Notification) {
-        updateButtonVisibilities()
+        updateButtonEnables()
     }
 }
 
@@ -111,6 +169,8 @@ private extension ButtonScrollView {
 class LongPressButton: NSButton {
     var onPressed: (() -> Void)?
     var onLongPressed: (() -> Void)?
+    var onMouseEntered: (() -> Void)?
+    var onMouseExited: (() -> Void)?
 
     private var timer: Timer?
 
@@ -131,7 +191,42 @@ class LongPressButton: NSButton {
         guard timer != nil else { return }
         timer?.invalidate()
         timer = nil
+        guard isEnabled else { return }
         onPressed?()
+    }
+}
+
+extension LongPressButton {
+    // This custom `userInfo` dictionary is used just for indentifying whether
+    // the `NSTrackingArea` instance is the one of custom mouse enter and exit tracking.
+    private var _longPressButtonTrackAreaTag: [AnyHashable: Bool] {
+        ["_longPressButtonMouseTrackArea": true]
+    }
+
+    override func updateTrackingAreas() {
+        super.updateTrackingAreas()
+        for trackingArea in trackingAreas {
+            // Remove only the `NSTrackingArea` instances of custom mouse enter
+            // and exit tracking, so that `toolTip` works as expected.
+            let isLongPressButtonMouseTrackArea: Bool = {
+                guard let userInfo = trackingArea.userInfo as? [AnyHashable: Bool] else { return false }
+                return userInfo == _longPressButtonTrackAreaTag
+            }()
+            guard isLongPressButtonMouseTrackArea else { continue }
+            removeTrackingArea(trackingArea)
+        }
+        let options: NSTrackingArea.Options = [.mouseEnteredAndExited, .activeAlways]
+        let trackingArea = NSTrackingArea(
+            rect: bounds, options: options, owner: self, userInfo: _longPressButtonTrackAreaTag)
+        addTrackingArea(trackingArea)
+    }
+
+    override func mouseEntered(with event: NSEvent) {
+        onMouseEntered?()
+    }
+
+    override func mouseExited(with event: NSEvent) {
+        onMouseExited?()
     }
 }
 
@@ -141,6 +236,7 @@ private extension LongPressButton {
         isHighlighted = false
         timer?.invalidate()
         timer = nil
+        guard isEnabled else { return }
         onLongPressed?()
     }
 }
