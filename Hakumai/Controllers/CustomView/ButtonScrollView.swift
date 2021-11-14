@@ -205,9 +205,22 @@ class LongPressButton: NSButton {
 }
 
 extension LongPressButton {
+    // This custom `userInfo` dictionary is used just for indentifying whether
+    // the `NSTrackingArea` instance is the one of custom mouse enter and exit tracking.
+    private var _longPressButtonTrackingTag: [AnyHashable: Bool] {
+        ["_longPressButtonTracking": true]
+    }
+
     override func updateTrackingAreas() {
         super.updateTrackingAreas()
         for trackingArea in trackingAreas {
+            // Remove only the `NSTrackingArea` instances of custom mouse enter
+            // and exit tracking, so that `toolTip` works as expected.
+            let isLongPressButtonMouseTracking: Bool = {
+                guard let userInfo = trackingArea.userInfo as? [AnyHashable: Bool] else { return false }
+                return userInfo == _longPressButtonTrackingTag
+            }()
+            guard isLongPressButtonMouseTracking else { continue }
             removeTrackingArea(trackingArea)
         }
         let options: NSTrackingArea.Options = [
@@ -218,7 +231,7 @@ extension LongPressButton {
             rect: bounds,
             options: options,
             owner: self,
-            userInfo: nil)
+            userInfo: _longPressButtonTrackingTag)
         addTrackingArea(trackingArea)
     }
 
