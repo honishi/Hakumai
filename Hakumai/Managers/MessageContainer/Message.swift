@@ -93,8 +93,8 @@ private let commentEmojiReplacePatterns = [
 
 extension String {
     func htmlTagRemoved(premium: Premium) -> String {
-        // TODO: Implementation.
-        return self
+        guard premium == .caster, hasRegexp(pattern: "https?://") else { return self }
+        return stringByRemovingRegexp(pattern: "<[^>]*>")
     }
 
     func slashCommandReplaced(premium: Premium) -> String {

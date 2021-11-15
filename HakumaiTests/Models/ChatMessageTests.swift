@@ -19,6 +19,23 @@ final class ChatMessageTests: XCTestCase {
         super.tearDown()
     }
 
+    func testRemoveHtmlTags() {
+        var comment = ""
+        var expected = ""
+        var actual = ""
+        let caster = Premium.caster
+
+        comment = "https://example.com/watch/<u><font color=\"xxx\"><a href=\"xxx\">xxx</a></font></u>?abc"
+        expected = "https://example.com/watch/xxx?abc"
+        actual = comment.htmlTagRemoved(premium: caster)
+        XCTAssert(expected == actual, "")
+
+        comment = "<aaa>bbb</aaa>"
+        expected = "<aaa>bbb</aaa>"
+        actual = comment.htmlTagRemoved(premium: caster)
+        XCTAssert(expected == actual, "")
+    }
+
     // swiftlint:disable function_body_length
     func testReplaceComment() {
         var comment = ""
