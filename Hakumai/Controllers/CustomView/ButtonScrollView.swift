@@ -72,7 +72,7 @@ private extension ButtonScrollView {
 
         guard activateHideTimer else { return }
         hideButtonsTimer = Timer.scheduledTimer(
-            timeInterval: 2,
+            timeInterval: 3,
             target: self,
             selector: #selector(hideButtons),
             userInfo: nil,
