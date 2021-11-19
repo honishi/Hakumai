@@ -91,10 +91,15 @@ private let commentEmojiReplacePatterns = [
     ("^/vote ", "🙋‍♂️ ")
 ]
 
-extension ChatMessage {
-    static func replaceSlashCommand(comment: String, premium: Premium) -> String {
-        guard premium == .caster, comment.starts(with: "/") else { return comment }
-        var replaced = comment
+extension String {
+    func htmlTagRemoved(premium: Premium) -> String {
+        guard premium == .caster, hasRegexp(pattern: "https?://") else { return self }
+        return stringByRemovingRegexp(pattern: "<[^>]*>")
+    }
+
+    func slashCommandReplaced(premium: Premium) -> String {
+        guard premium == .caster, starts(with: "/") else { return self }
+        var replaced = self
         commentPreReplacePatterns.forEach {
             replaced = replaced.stringByReplacingRegexp(pattern: $0.0, with: $0.1)
         }
@@ -112,7 +117,9 @@ extension Chat {
             no: no,
             date: date,
             userId: userId,
-            comment: ChatMessage.replaceSlashCommand(comment: comment, premium: premium),
+            comment: comment
+                .htmlTagRemoved(premium: premium)
+                .slashCommandReplaced(premium: premium),
             premium: premium,
             isFirst: isFirst
         )

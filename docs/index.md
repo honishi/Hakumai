@@ -9,7 +9,8 @@ layout: default
 
 <a href="https://hakumai.s3.amazonaws.com/Hakumai.{{site.binary_version}}.zip" class="button button-primary" onclick="ga('send', 'event', 'app', 'download', 'Hakumai.{{site.binary_version}}.zip');"><i class="fa fa-download"></i>
 Download</a>
-v{{site.binary_version}}, {{site.binary_date}} (for macOS 10.12-)
+v{{site.binary_version}} / {{site.binary_date}} /
+<a href="https://hakumai.s3.amazonaws.com/rnotes.html" target="_blank">Release Notes</a>
 
 ## About Hakumai
 
