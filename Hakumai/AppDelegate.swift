@@ -16,6 +16,8 @@ private let mainWindowDefaultTopLeftPoint = NSPoint(x: 100, y: 100)
 final class AppDelegate: NSObject, NSApplicationDelegate {
     @IBOutlet weak var speakMenuItem: NSMenuItem!
 
+    private let notificationPresenter: NotificationPresenterProtocol = NotificationPresenter.default
+
     private var mainWindowControllers: [MainWindowController] = []
     private var nextMainWindowTopLeftPoint: NSPoint = NSPoint.zero
 
@@ -26,6 +28,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         initializeUserDefaults()
         addObserverForUserDefaults()
         configureMenuItems()
+        notificationPresenter.configure()
         clearImageCache()
         debugPrintToken()
         openNewWindow()

@@ -92,6 +92,7 @@
 		DBD7A1E9265D5863001C87E0 /* NSView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD7A1E8265D5863001C87E0 /* NSView+Extensions.swift */; };
 		DBE093FF1A5869A2004554FD /* HandleNameManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE093FE1A5869A2004554FD /* HandleNameManagerTests.swift */; };
 		DBE094021A586FFC004554FD /* HandleNameManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE094011A586FFC004554FD /* HandleNameManager.swift */; };
+		DBE59AC227495240005230CE /* NotificationPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE59AC127495240005230CE /* NotificationPresenter.swift */; };
 		DBFA887B1A1BC25A005349AD /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA887A1A1BC25A005349AD /* Chat.swift */; };
 		DBFA88821A1BC8C9005349AD /* Enum.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA88811A1BC8C9005349AD /* Enum.swift */; };
 		DBFA888B1A1C9A56005349AD /* Live.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA888A1A1C9A56005349AD /* Live.swift */; };
@@ -221,6 +222,7 @@
 		DBD7A1E8265D5863001C87E0 /* NSView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSView+Extensions.swift"; sourceTree = "<group>"; };
 		DBE093FE1A5869A2004554FD /* HandleNameManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HandleNameManagerTests.swift; sourceTree = "<group>"; };
 		DBE094011A586FFC004554FD /* HandleNameManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HandleNameManager.swift; sourceTree = "<group>"; };
+		DBE59AC127495240005230CE /* NotificationPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationPresenter.swift; sourceTree = "<group>"; };
 		DBFA887A1A1BC25A005349AD /* Chat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
 		DBFA88811A1BC8C9005349AD /* Enum.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enum.swift; sourceTree = "<group>"; };
 		DBFA888A1A1C9A56005349AD /* Live.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Live.swift; sourceTree = "<group>"; };
@@ -596,6 +598,7 @@
 				DBFB814D1A36B4F300294934 /* PreferenceWindowController */,
 				DB414C031A48106B008D2F40 /* UserWindowController */,
 				DB74B86B1A6E790C0064AC28 /* BrowserHelper.swift */,
+				DBE59AC127495240005230CE /* NotificationPresenter.swift */,
 				DB7B3DE71A246EE200205470 /* UIHelper.swift */,
 			);
 			path = Controllers;
@@ -960,6 +963,7 @@
 				DBBE416C266CB939004002F1 /* NicoOAuthApiModel.swift in Sources */,
 				DBCA2D242642BCF500B6147C /* NicoRestApiModel.swift in Sources */,
 				DB6DD2AA2650EC86009A9574 /* NicoWebSocketModel.swift in Sources */,
+				DBE59AC227495240005230CE /* NotificationPresenter.swift in Sources */,
 				DB6C73142662894B0026A8C0 /* NSScrollView+Extensions.swift in Sources */,
 				DBD7A1E9265D5863001C87E0 /* NSView+Extensions.swift in Sources */,
 				DB9EFC741A3E974A0087D302 /* NSWindow+Extensions.swift in Sources */,

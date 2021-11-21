@@ -79,10 +79,11 @@ final class MainViewController: NSViewController {
     // swiftlint:enable weak_delegate
 
     // MARK: General Properties
-    let nicoManager: NicoManagerType = NicoManager()
-    let messageContainer = MessageContainer()
-    let speechManager = SpeechManager()
-    let rankingManager: RankingManagerType = RankingManager.shared
+    private let nicoManager: NicoManagerType = NicoManager()
+    private let messageContainer = MessageContainer()
+    private let speechManager = SpeechManager()
+    private let rankingManager: RankingManagerType = RankingManager.shared
+    private let notificationPresenter: NotificationPresenterProtocol = NotificationPresenter.default
 
     private(set) var live: Live?
     private var connectedToLive = false
@@ -437,6 +438,7 @@ extension MainViewController: NicoManagerDelegate {
         case .normal:
             liveStartedDate = Date()
             logSystemMessageToTable(L10n.connectedToLive)
+            showLiveOpenedNotification()
         case .reconnect(let reason):
             switch reason {
             case .normal:
@@ -494,6 +496,7 @@ extension MainViewController: NicoManagerDelegate {
         switch disconnectContext {
         case .normal:
             logSystemMessageToTable(L10n.liveClosed)
+            showLiveClosedNotification()
         case .reconnect(let reason):
             switch reason {
             case .normal:
@@ -1242,6 +1245,25 @@ private extension MainViewController {
     }
 }
 
+// MARK: Notification Methods
+private extension MainViewController {
+    func showLiveOpenedNotification() {
+        guard let live = live else { return }
+        notificationPresenter.show(
+            title: L10n.connectedToLive,
+            body: live.summaryTitle
+        )
+    }
+
+    func showLiveClosedNotification() {
+        guard let live = live else { return }
+        notificationPresenter.show(
+            title: L10n.liveClosed,
+            body: live.summaryTitle
+        )
+    }
+}
+
 // MARK: Misc Utility
 private extension MainViewController {
     func clearAllChats() {
@@ -1254,6 +1276,10 @@ private extension MainViewController {
         authWindowController.startAuthorization()
         authWindowController.showWindow(self)
     }
+}
+
+private extension Live {
+    var summaryTitle: String { "\(title) / \(community.title)" }
 }
 
 // MARK: Debug Methods
