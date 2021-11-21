@@ -1248,18 +1248,19 @@ private extension MainViewController {
 // MARK: Notification Methods
 private extension MainViewController {
     func showLiveOpenedNotification() {
-        guard let live = live else { return }
-        notificationPresenter.show(
-            title: L10n.connectedToLive,
-            body: live.summaryTitle
-        )
+        _showNotification(title: L10n.connectedToLive)
     }
 
     func showLiveClosedNotification() {
-        guard let live = live else { return }
+        _showNotification(title: L10n.liveClosed)
+    }
+
+    func _showNotification(title: String) {
+        guard let live = live, !live.isTimeShift else { return }
         notificationPresenter.show(
-            title: L10n.liveClosed,
-            body: live.summaryTitle
+            title: title,
+            body: live.summaryTitle,
+            jpegImageUrl: live.community.thumbnailUrl
         )
     }
 }
@@ -1279,7 +1280,7 @@ private extension MainViewController {
 }
 
 private extension Live {
-    var summaryTitle: String { "\(title) / \(community.title)" }
+    var summaryTitle: String { "\(title)\n\(community.title)" }
 }
 
 // MARK: Debug Methods

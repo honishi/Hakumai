@@ -6,15 +6,23 @@
 //  Copyright © 2021 Hiroyuki Onishi. All rights reserved.
 //
 
+import AppKit
 import Foundation
 import UserNotifications
+import Alamofire
 
 protocol NotificationPresenterProtocol {
     func configure()
-    func show(title: String?, body: String?)
+    func show(title: String?, body: String?, jpegImageUrl: URL?)
 }
 
 final class NotificationPresenter: NSObject, NotificationPresenterProtocol {
+    private lazy var session: Session = {
+        let configuration = URLSessionConfiguration.af.default
+        configuration.headers.add(.userAgent(commonUserAgentValue))
+        return Session(configuration: configuration)
+    }()
+
     func configure() {
         guard #available(macOS 10.14, *) else { return }
         let center = UNUserNotificationCenter.current()
@@ -28,13 +36,39 @@ final class NotificationPresenter: NSObject, NotificationPresenterProtocol {
         }
     }
 
-    func show(title: String?, body: String?) {
-        DispatchQueue.main.async { self._show(title: title, body: body) }
+    func show(title: String?, body: String?, jpegImageUrl: URL?) {
+        guard let imageUrl = jpegImageUrl else {
+            _show(title: title, body: body, imageData: nil)
+            return
+        }
+        session.request(imageUrl)
+            .cURLDescription(calling: { log.debug($0) })
+            .validate()
+            .responseData { [weak self] in
+                switch $0.result {
+                case .success(let data):
+                    self?._show(
+                        title: title,
+                        body: body,
+                        // imageUrl.lastPathComponent is like "co5356526.jpg"
+                        imageData: ImageData(data: data, identifier: imageUrl.lastPathComponent)
+                    )
+                case .failure(let error):
+                    log.error(error)
+                }
+            }
     }
+}
 
-    func _show(title: String?, body: String?) {
+private struct ImageData {
+    let data: Data
+    let identifier: String
+}
+
+private extension NotificationPresenter {
+    func _show(title: String?, body: String?, imageData: ImageData?) {
         guard #available(macOS 10.14, *) else { return }
-        let content = UNMutableNotificationContent.make(title: title, body: body)
+        let content = UNMutableNotificationContent.make(title: title, body: body, imageData: imageData)
         let uuidString = UUID().uuidString
         let request = UNNotificationRequest(identifier: uuidString, content: content, trigger: nil)
         UNUserNotificationCenter.current().add(request) {
@@ -60,7 +94,7 @@ extension NotificationPresenter {
 
 @available(macOS 10.14, *)
 private extension UNMutableNotificationContent {
-    static func make(title: String?, body: String?) -> UNMutableNotificationContent {
+    static func make(title: String?, body: String?, imageData: ImageData?) -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
         if let title = title {
             content.title = title
@@ -68,9 +102,37 @@ private extension UNMutableNotificationContent {
         if let body = body {
             content.body = body
         }
-        if #available(macOS 12.0, *) {
-            // content.interruptionLevel = .timeSensitive
+        if let imageData = imageData,
+           let attachment = UNNotificationAttachment.create(imageData: imageData) {
+            content.attachments = [attachment]
         }
+        // content.interruptionLevel = .timeSensitive
         return content
+    }
+}
+
+@available(macOS 10.14, *)
+private extension UNNotificationAttachment {
+    // Based on https://stackoverflow.com/a/39103096/13220031
+    static func create(imageData: ImageData, options: [NSObject: AnyObject]? = nil) -> UNNotificationAttachment? {
+        let fileManager = FileManager.default
+        let tmpSubFolderName = ProcessInfo.processInfo.globallyUniqueString
+        let tmpSubFolderUrl = URL(fileURLWithPath: NSTemporaryDirectory())
+            .appendingPathComponent(tmpSubFolderName, isDirectory: true)
+        do {
+            try fileManager.createDirectory(
+                at: tmpSubFolderUrl,
+                withIntermediateDirectories: true,
+                attributes: nil)
+            let fileUrl = tmpSubFolderUrl.appendingPathComponent(imageData.identifier)
+            log.debug(fileUrl)
+            try imageData.data.write(to: fileUrl)
+            let imageAttachment = try UNNotificationAttachment.init(
+                identifier: imageData.identifier, url: fileUrl, options: options)
+            return imageAttachment
+        } catch {
+            log.error(error.localizedDescription)
+        }
+        return nil
     }
 }
