@@ -16,6 +16,8 @@ private let mainWindowDefaultTopLeftPoint = NSPoint(x: 100, y: 100)
 final class AppDelegate: NSObject, NSApplicationDelegate {
     @IBOutlet weak var speakMenuItem: NSMenuItem!
 
+    private let notificationPresenter: NotificationPresenterProtocol = NotificationPresenter.default
+
     private var mainWindowControllers: [MainWindowController] = []
     private var nextMainWindowTopLeftPoint: NSPoint = NSPoint.zero
 
@@ -26,6 +28,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         initializeUserDefaults()
         addObserverForUserDefaults()
         configureMenuItems()
+        configureNotificationPresenter()
         clearImageCache()
         debugPrintToken()
         openNewWindow()
@@ -194,6 +197,7 @@ private extension AppDelegate {
             Parameters.enableMuteWords: true,
             Parameters.alwaysOnTop: false,
             Parameters.commentAnonymously: true,
+            Parameters.enableLiveNotification: false,
             Parameters.enableDebugMessage: false]
         UserDefaults.standard.register(defaults: defaults)
     }
@@ -220,6 +224,13 @@ private extension AppDelegate {
             speakMenuItem.isHidden = false
         } else {
             speakMenuItem.isHidden = true
+        }
+    }
+
+    func configureNotificationPresenter() {
+        notificationPresenter.configure()
+        notificationPresenter.notificationClicked = { [weak self] in
+            self?.showWindow(for: $0)
         }
     }
 
@@ -275,6 +286,14 @@ private extension AppDelegate {
     func closeWindow() {
         guard let window = NSApplication.shared.keyWindow else { return }
         window.close()
+    }
+
+    func mainWindowController(for liveProgramId: String) -> MainWindowController? {
+        return mainWindowControllers.filter { $0.isLiveProgramId(liveProgramId) }.first
+    }
+
+    func showWindow(for liveProgramId: String) {
+        mainWindowController(for: liveProgramId)?.showWindow(self)
     }
 }
 

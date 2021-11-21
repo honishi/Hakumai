@@ -205,8 +205,18 @@
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Uwv-0k-kzX">
-                                                    <rect key="frame" x="16" y="54" width="428" height="16"/>
+                                                    <rect key="frame" x="16" y="30" width="428" height="40"/>
                                                     <subviews>
+                                                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ACY-bp-F35">
+                                                            <rect key="frame" x="-2" y="23" width="65" height="18"/>
+                                                            <buttonCell key="cell" type="check" title="Check" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="ItO-gi-EW4">
+                                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                <font key="font" metaFont="system"/>
+                                                            </buttonCell>
+                                                            <connections>
+                                                                <binding destination="Ex8-3g-KNv" name="value" keyPath="values.EnableLiveNotification" id="247-ob-EhF"/>
+                                                            </connections>
+                                                        </button>
                                                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7lf-Wg-9jA">
                                                             <rect key="frame" x="-2" y="-1" width="65" height="18"/>
                                                             <buttonCell key="cell" type="check" title="Check" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="ubw-h1-FMm">
@@ -220,8 +230,10 @@
                                                     </subviews>
                                                     <visibilityPriorities>
                                                         <integer value="1000"/>
+                                                        <integer value="1000"/>
                                                     </visibilityPriorities>
                                                     <customSpacing>
+                                                        <real value="3.4028234663852886e+38"/>
                                                         <real value="3.4028234663852886e+38"/>
                                                     </customSpacing>
                                                 </stackView>
@@ -270,6 +282,7 @@
                         <outlet property="chromeButtonCell" destination="Ici-yj-KuI" id="ZIX-rJ-KYV"/>
                         <outlet property="commentSpeakingBox" destination="ICr-HG-iyb" id="6y6-k7-mqr"/>
                         <outlet property="enableDebugMessageButton" destination="7lf-Wg-9jA" id="S63-js-K9y"/>
+                        <outlet property="enableLiveNotificationButton" destination="ACY-bp-F35" id="XO9-GH-lL6"/>
                         <outlet property="miscBox" destination="nEt-qg-eF7" id="mvL-Ix-z1R"/>
                         <outlet property="safariButtonCell" destination="wGq-x5-Aua" id="lb1-w9-hCF"/>
                         <outlet property="speakVolumeSlider" destination="NBg-Gf-rw0" id="gzQ-f2-Xwi"/>

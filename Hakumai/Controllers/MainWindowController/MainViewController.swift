@@ -79,10 +79,11 @@ final class MainViewController: NSViewController {
     // swiftlint:enable weak_delegate
 
     // MARK: General Properties
-    let nicoManager: NicoManagerType = NicoManager()
-    let messageContainer = MessageContainer()
-    let speechManager = SpeechManager()
-    let rankingManager: RankingManagerType = RankingManager.shared
+    private let nicoManager: NicoManagerType = NicoManager()
+    private let messageContainer = MessageContainer()
+    private let speechManager = SpeechManager()
+    private let rankingManager: RankingManagerType = RankingManager.shared
+    private let notificationPresenter: NotificationPresenterProtocol = NotificationPresenter.default
 
     private(set) var live: Live?
     private var connectedToLive = false
@@ -437,6 +438,7 @@ extension MainViewController: NicoManagerDelegate {
         case .normal:
             liveStartedDate = Date()
             logSystemMessageToTable(L10n.connectedToLive)
+            showLiveOpenedNotification()
         case .reconnect(let reason):
             switch reason {
             case .normal:
@@ -494,6 +496,7 @@ extension MainViewController: NicoManagerDelegate {
         switch disconnectContext {
         case .normal:
             logSystemMessageToTable(L10n.liveClosed)
+            showLiveClosedNotification()
         case .reconnect(let reason):
             switch reason {
             case .normal:
@@ -1239,6 +1242,28 @@ private extension MainViewController {
             self.rankingValueLabel.stringValue = _rank
             self.rankingDateLabel.stringValue = _date
         }
+    }
+}
+
+// MARK: Notification Methods
+private extension MainViewController {
+    func showLiveOpenedNotification() {
+        _showNotification(title: L10n.connectedToLive)
+    }
+
+    func showLiveClosedNotification() {
+        _showNotification(title: L10n.liveClosed)
+    }
+
+    func _showNotification(title: String) {
+        let enabled = UserDefaults.standard.bool(forKey: Parameters.enableLiveNotification)
+        guard enabled, let live = live, !live.isTimeShift else { return }
+        notificationPresenter.show(
+            title: title,
+            body: "\(live.title)\n\(live.community.title)",
+            liveProgramId: live.liveId,
+            jpegImageUrl: live.community.thumbnailUrl
+        )
     }
 }
 
