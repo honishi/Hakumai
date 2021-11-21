@@ -1260,7 +1260,7 @@ private extension MainViewController {
         guard enabled, let live = live, !live.isTimeShift else { return }
         notificationPresenter.show(
             title: title,
-            body: live.summaryTitle,
+            body: "\(live.title)\n\(live.community.title)",
             liveProgramId: live.liveId,
             jpegImageUrl: live.community.thumbnailUrl
         )
@@ -1279,10 +1279,6 @@ private extension MainViewController {
         authWindowController.startAuthorization()
         authWindowController.showWindow(self)
     }
-}
-
-private extension Live {
-    var summaryTitle: String { "\(title)\n\(community.title)" }
 }
 
 // MARK: Debug Methods
