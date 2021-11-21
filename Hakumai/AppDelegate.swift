@@ -230,7 +230,7 @@ private extension AppDelegate {
     func configureNotificationPresenter() {
         notificationPresenter.configure()
         notificationPresenter.notificationClicked = { [weak self] in
-            self?.showMainWindowController(for: $0)
+            self?.showWindow(for: $0)
         }
     }
 
@@ -245,14 +245,6 @@ private extension AppDelegate {
 extension AppDelegate {
     var activeMainWindowController: MainWindowController? {
         mainWindowControllers.filter { $0.window?.isKeyWindow == true }.first
-    }
-
-    func mainWindowController(for liveProgramId: String) -> MainWindowController? {
-        return mainWindowControllers.filter { $0.isLiveProgramId(liveProgramId) }.first
-    }
-
-    func showMainWindowController(for liveProgramId: String) {
-        mainWindowController(for: liveProgramId)?.showWindow(self)
     }
 }
 
@@ -294,6 +286,14 @@ private extension AppDelegate {
     func closeWindow() {
         guard let window = NSApplication.shared.keyWindow else { return }
         window.close()
+    }
+
+    func mainWindowController(for liveProgramId: String) -> MainWindowController? {
+        return mainWindowControllers.filter { $0.isLiveProgramId(liveProgramId) }.first
+    }
+
+    func showWindow(for liveProgramId: String) {
+        mainWindowController(for: liveProgramId)?.showWindow(self)
     }
 }
 
