@@ -11,9 +11,13 @@ import Foundation
 import UserNotifications
 import Alamofire
 
-protocol NotificationPresenterProtocol {
+private let userInfoLiveProgramIdKey = "userInfoLiveProgramIdKey"
+
+protocol NotificationPresenterProtocol: AnyObject {
+    var notificationClicked: ((_ liveProgramId: String) -> Void)? { get set }
+
     func configure()
-    func show(title: String?, body: String?, jpegImageUrl: URL?)
+    func show(title: String?, body: String?, liveProgramId: String?, jpegImageUrl: URL?)
 }
 
 final class NotificationPresenter: NSObject, NotificationPresenterProtocol {
@@ -22,6 +26,8 @@ final class NotificationPresenter: NSObject, NotificationPresenterProtocol {
         configuration.headers.add(.userAgent(commonUserAgentValue))
         return Session(configuration: configuration)
     }()
+
+    var notificationClicked: ((_ liveProgramId: String) -> Void)?
 
     func configure() {
         guard #available(macOS 10.14, *) else { return }
@@ -36,9 +42,9 @@ final class NotificationPresenter: NSObject, NotificationPresenterProtocol {
         }
     }
 
-    func show(title: String?, body: String?, jpegImageUrl: URL?) {
+    func show(title: String?, body: String?, liveProgramId: String?, jpegImageUrl: URL?) {
         guard let imageUrl = jpegImageUrl else {
-            _show(title: title, body: body, imageData: nil)
+            _show(title: title, body: body, liveProgramId: liveProgramId, imageData: nil)
             return
         }
         session.request(imageUrl)
@@ -50,6 +56,7 @@ final class NotificationPresenter: NSObject, NotificationPresenterProtocol {
                     self?._show(
                         title: title,
                         body: body,
+                        liveProgramId: liveProgramId,
                         // imageUrl.lastPathComponent is like "co5356526.jpg"
                         imageData: ImageData(data: data, identifier: imageUrl.lastPathComponent)
                     )
@@ -66,9 +73,10 @@ private struct ImageData {
 }
 
 private extension NotificationPresenter {
-    func _show(title: String?, body: String?, imageData: ImageData?) {
+    func _show(title: String?, body: String?, liveProgramId: String?, imageData: ImageData?) {
         guard #available(macOS 10.14, *) else { return }
-        let content = UNMutableNotificationContent.make(title: title, body: body, imageData: imageData)
+        let content = UNMutableNotificationContent.make(
+            title: title, body: body, liveProgramId: liveProgramId, imageData: imageData)
         let uuidString = UUID().uuidString
         let request = UNNotificationRequest(identifier: uuidString, content: content, trigger: nil)
         UNUserNotificationCenter.current().add(request) {
@@ -86,6 +94,15 @@ extension NotificationPresenter: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler([.alert, .sound])
     }
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        guard let liveProgramId = response.notification.request.content.userInfo[userInfoLiveProgramIdKey] as? String else {
+            completionHandler()
+            return
+        }
+        notificationClicked?(liveProgramId)
+        completionHandler()
+    }
 }
 
 extension NotificationPresenter {
@@ -94,13 +111,16 @@ extension NotificationPresenter {
 
 @available(macOS 10.14, *)
 private extension UNMutableNotificationContent {
-    static func make(title: String?, body: String?, imageData: ImageData?) -> UNMutableNotificationContent {
+    static func make(title: String?, body: String?, liveProgramId: String?, imageData: ImageData?) -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
         if let title = title {
             content.title = title
         }
         if let body = body {
             content.body = body
+        }
+        if let liveProgramId = liveProgramId {
+            content.userInfo = [userInfoLiveProgramIdKey: liveProgramId]
         }
         if let imageData = imageData,
            let attachment = UNNotificationAttachment.create(imageData: imageData) {

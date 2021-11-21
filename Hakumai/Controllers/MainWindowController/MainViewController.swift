@@ -1260,6 +1260,7 @@ private extension MainViewController {
         notificationPresenter.show(
             title: title,
             body: live.summaryTitle,
+            liveProgramId: live.liveId,
             jpegImageUrl: live.community.thumbnailUrl
         )
     }
