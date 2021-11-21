@@ -1256,7 +1256,8 @@ private extension MainViewController {
     }
 
     func _showNotification(title: String) {
-        guard let live = live, !live.isTimeShift else { return }
+        let enabled = UserDefaults.standard.bool(forKey: Parameters.enableLiveNotification)
+        guard enabled, let live = live, !live.isTimeShift else { return }
         notificationPresenter.show(
             title: title,
             body: live.summaryTitle,

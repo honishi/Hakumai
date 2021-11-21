@@ -24,6 +24,7 @@ final class GeneralViewController: NSViewController {
     @IBOutlet private weak var speakVolumeSlider: NSSlider!
 
     @IBOutlet private weak var miscBox: NSBox!
+    @IBOutlet private weak var enableLiveNotificationButton: NSButton!
     @IBOutlet private weak var enableDebugMessageButton: NSButton!
 
     // MARK: - Object Lifecycle
@@ -38,6 +39,7 @@ extension GeneralViewController {
         super.viewDidLoad()
         configureView()
         disableSpeakComponentsIfNeeded()
+        disableNotificationComponentsIfNeeded()
     }
 
     override func viewDidAppear() {
@@ -56,6 +58,7 @@ private extension GeneralViewController {
         speakVolumeTitleTextField.stringValue = "\(L10n.speakVolume):"
 
         miscBox.title = L10n.misc
+        enableLiveNotificationButton.title = L10n.enableLiveNotification
         enableDebugMessageButton.title = L10n.enableDebugMessage
     }
 
@@ -64,5 +67,10 @@ private extension GeneralViewController {
         speakVolumeTitleTextField.isEnabled = false
         speakVolumeValueTextField.isEnabled = false
         speakVolumeSlider.isEnabled = false
+    }
+
+    func disableNotificationComponentsIfNeeded() {
+        if #available(macOS 10.14, *) { return }
+        enableLiveNotificationButton.isHidden = true
     }
 }

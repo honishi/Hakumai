@@ -197,6 +197,7 @@ private extension AppDelegate {
             Parameters.enableMuteWords: true,
             Parameters.alwaysOnTop: false,
             Parameters.commentAnonymously: true,
+            Parameters.enableLiveNotification: true,
             Parameters.enableDebugMessage: false]
         UserDefaults.standard.register(defaults: defaults)
     }
