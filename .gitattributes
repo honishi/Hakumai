@@ -1,3 +1,4 @@
 # to fix wrong repository language issue
 # see detail at https://github.com/github/linguist#my-repository-is-detected-as-the-wrong-language
 HakumaiTests/Resources/*.html linguist-vendored
+docs/* linguist-documentation
