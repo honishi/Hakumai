@@ -156,6 +156,7 @@
 		DB2F5164266696FD000A1C58 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		DB2F516626669B3E000A1C58 /* Localize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Localize.swift; sourceTree = "<group>"; };
 		DB346B9B1A548C3B00137639 /* CommunityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommunityTests.swift; sourceTree = "<group>"; };
+		DB34F830275BAF7200180C7A /* live_page.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = live_page.html; sourceTree = "<group>"; };
 		DB3AE44126A1ABCF001681E9 /* OAuthCredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthCredential.swift; sourceTree = "<group>"; };
 		DB3AE44526A1ACB9001681E9 /* OAuthCredential.sample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthCredential.sample.swift; sourceTree = "<group>"; };
 		DB3AF8F22645A92500A52987 /* Hakumai.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Hakumai.entitlements; sourceTree = "<group>"; };
@@ -621,6 +622,7 @@
 			isa = PBXGroup;
 			children = (
 				DBAFCFB22731403500989F8B /* chikuran.html */,
+				DB34F830275BAF7200180C7A /* live_page.html */,
 				DBBE416D266CCAF5004002F1 /* userinfo_response.json */,
 				DBBE416F266CCB83004002F1 /* wsendpoint_response.json */,
 			);
