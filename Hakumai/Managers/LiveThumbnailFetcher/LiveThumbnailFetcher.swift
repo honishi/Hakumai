@@ -53,7 +53,7 @@ private extension LiveThumbnailFetcher {
     func queryLivePage() {
         guard let liveProgramId = liveProgramId,
               let url = URL(string: livePageBaseUrl + liveProgramId) else {
-            log.error("Invalid live page url: \(liveProgramId ?? "-")")
+            log.error("Invalid live page url: \(self.liveProgramId ?? "-")")
             return
         }
         var request = URLRequest(url: url)
