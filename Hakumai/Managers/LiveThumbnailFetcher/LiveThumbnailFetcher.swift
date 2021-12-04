@@ -23,7 +23,7 @@ extension LiveThumbnailFetcher: LiveThumbnailFetcherProtocol {
     func start(for liveProgramId: String, delegate: LiveThumbnailFetcherDelegate) {
         self.liveProgramId = liveProgramId
         self.delegate = delegate
-        scheduleTimer()
+        scheduleQueryTimer()
     }
 
     func stop() {
@@ -32,7 +32,7 @@ extension LiveThumbnailFetcher: LiveThumbnailFetcherProtocol {
 }
 
 private extension LiveThumbnailFetcher {
-    func scheduleTimer() {
+    func scheduleQueryTimer() {
         queryTimer = Timer.scheduledTimer(
             timeInterval: queryInterval,
             target: self,
@@ -66,7 +66,7 @@ private extension LiveThumbnailFetcher {
                 switch $0.result {
                 case .success(let html):
                     guard let thumbnailUrl = me.extractLiveThumbnailUrl(from: html) else {
-                        log.error("Live thumbnail exstraction failed.")
+                        log.error("Live thumbnail extraction failed.")
                         return
                     }
                     me.delegate?.liveThumbnailFetcher(
