@@ -7,24 +7,79 @@
 //
 
 import Foundation
+import Alamofire
+import Kanna
+
+private let livePageBaseUrl = "https://live.nicovideo.jp/watch/"
+private let queryInterval: TimeInterval = 10 // 60
 
 final class LiveThumbnailFetcher {
-    //
+    private var liveProgramId: String?
+    private weak var delegate: LiveThumbnailFetcherDelegate?
+    private var queryTimer: Timer?
 }
 
 extension LiveThumbnailFetcher: LiveThumbnailFetcherProtocol {
     func start(for liveProgramId: String, delegate: LiveThumbnailFetcherDelegate) {
-        //
+        self.liveProgramId = liveProgramId
+        self.delegate = delegate
+        scheduleTimer()
     }
 
     func stop() {
-        //
+        invalidateQueryTimer()
     }
 }
 
 private extension LiveThumbnailFetcher {
+    func scheduleTimer() {
+        queryTimer = Timer.scheduledTimer(
+            timeInterval: queryInterval,
+            target: self,
+            selector: #selector(LiveThumbnailFetcher.queryLivePage),
+            userInfo: nil,
+            repeats: true)
+    }
+
+    func invalidateQueryTimer() {
+        queryTimer?.invalidate()
+        queryTimer = nil
+    }
+
+    @objc
+    func queryLivePage() {
+        guard let liveProgramId = liveProgramId,
+              let url = URL(string: livePageBaseUrl + liveProgramId) else {
+            log.error("Invalid live page url: \(liveProgramId ?? "-")")
+            return
+        }
+        var request = URLRequest(url: url)
+        request.headers = [commonUserAgentKey: commonUserAgentValue]
+        AF.request(request)
+            // .cURLDescription { log.debug($0) }
+            .validate()
+            .responseString { [weak self] in
+                guard let me = self else { return }
+                switch $0.result {
+                case .success(let html):
+                    guard let thumbnailUrl = me.extractLiveThumbnailUrl(from: html) else {
+                        log.error("Live thumbnail exstraction failed.")
+                        return
+                    }
+                    me.delegate?.liveThumbnailFetcher(
+                        me, didGetThumbnailUrl: thumbnailUrl, forLiveProgramId: liveProgramId)
+                case .failure(let error):
+                    // No-op.
+                    log.error(error)
+                }
+            }
+    }
+
     func extractLiveThumbnailUrl(from html: String) -> URL? {
-        return nil
+        guard let doc = try? HTML(html: html, encoding: .utf8),
+              let ogImage = doc.xpath("//meta[@property=\"og:image\"]").first,
+              let content = ogImage["content"] else { return nil }
+        return URL(string: content)
     }
 }
 

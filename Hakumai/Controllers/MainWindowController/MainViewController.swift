@@ -83,6 +83,7 @@ final class MainViewController: NSViewController {
     private let messageContainer = MessageContainer()
     private let speechManager = SpeechManager()
     private let rankingManager: RankingManagerType = RankingManager.shared
+    private let liveThumbnailFetcher: LiveThumbnailFetcherProtocol = LiveThumbnailFetcher()
     private let notificationPresenter: NotificationPresenterProtocol = NotificationPresenter.default
 
     private(set) var live: Live?
@@ -416,6 +417,7 @@ extension MainViewController: NicoManagerDelegate {
         case .normal:
             resetActiveUser()
             rankingManager.addDelegate(self, for: live.liveId)
+            liveThumbnailFetcher.start(for: live.liveId, delegate: self)
             logSystemMessageToTable(L10n.preparedLive(user.nickname))
         case .reconnect:
             break
@@ -428,6 +430,7 @@ extension MainViewController: NicoManagerDelegate {
         logSystemMessageToTable(L10n.failedToPrepareLive(error.toMessage))
         updateMainControlViews(status: .disconnected)
         rankingManager.removeDelegate(self)
+        liveThumbnailFetcher.stop()
         logDebugRankingManagerStatus()
     }
 
@@ -513,6 +516,7 @@ extension MainViewController: NicoManagerDelegate {
         case .normal:
             updateMainControlViews(status: .disconnected)
             rankingManager.removeDelegate(self)
+            liveThumbnailFetcher.stop()
         case .reconnect:
             updateMainControlViews(status: .connecting)
         }
@@ -536,6 +540,13 @@ extension MainViewController: RankingManagerDelegate {
 
     func rankingManager(_ rankingManager: RankingManagerType, hasDebugMessage message: String) {
         logDebugMessageToTable(message)
+    }
+}
+
+extension MainViewController: LiveThumbnailFetcherDelegate {
+    func liveThumbnailFetcher(_ liveThumbnailFetcher: LiveThumbnailFetcherProtocol, didGetThumbnailUrl thumbnailUrl: URL, forLiveProgramId liveProgramId: String) {
+        log.debug(thumbnailUrl)
+        communityImageView.kf.setImage(with: thumbnailUrl)
     }
 }
 
