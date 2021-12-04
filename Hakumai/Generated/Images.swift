@@ -19,7 +19,7 @@ internal typealias AssetImageTypeAlias = ImageAsset.Image
 
 // swiftlint:disable identifier_name line_length nesting type_body_length type_name
 internal enum Asset {
-  internal static let defaultCommunityImage = ImageAsset(name: "DefaultCommunityImage")
+  internal static let defaultLiveThumbnailImage = ImageAsset(name: "DefaultLiveThumbnailImage")
   internal static let defaultUserImage = ImageAsset(name: "DefaultUserImage")
   internal static let adPoints = ImageAsset(name: "ad_points")
   internal static let commentCount = ImageAsset(name: "comment_count")

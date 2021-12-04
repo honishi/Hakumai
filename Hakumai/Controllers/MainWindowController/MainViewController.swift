@@ -42,7 +42,7 @@ final class MainViewController: NSViewController {
     @IBOutlet private weak var debugExpireTokenButton: NSButton!
     @IBOutlet private weak var connectButton: NSButton!
 
-    @IBOutlet private weak var communityImageView: NSImageView!
+    @IBOutlet private weak var liveThumbnailImageView: NSImageView!
     @IBOutlet private weak var liveTitleLabel: NSTextField!
     @IBOutlet private weak var communityTitleLabel: NSTextField!
 
@@ -537,9 +537,9 @@ extension MainViewController: NicoManagerDelegate {
 extension MainViewController: LiveThumbnailFetcherDelegate {
     func liveThumbnailFetcher(_ liveThumbnailFetcher: LiveThumbnailFetcherProtocol, didGetThumbnailUrl thumbnailUrl: URL, forLiveProgramId liveProgramId: String) {
         log.debug(thumbnailUrl)
-        communityImageView.kf.setImage(
+        liveThumbnailImageView.kf.setImage(
             with: thumbnailUrl,
-            placeholder: communityImageView.image
+            placeholder: liveThumbnailImageView.image
         )
     }
 }
@@ -720,7 +720,7 @@ private extension MainViewController {
 // MARK: Configure Views
 private extension MainViewController {
     func configureViews() {
-        communityImageView.addBorder()
+        liveThumbnailImageView.addBorder()
         [debugReconnectButton, debugExpireTokenButton].forEach {
             $0?.isHidden = !enableDebugButtons
         }
@@ -961,7 +961,7 @@ extension MainViewController {
         guard let liveProgramId = liveUrlTextField.stringValue.extractLiveProgramId() else { return }
 
         clearAllChats()
-        communityImageView.image = Asset.defaultCommunityImage.image
+        liveThumbnailImageView.image = Asset.defaultLiveThumbnailImage.image
 
         nicoManager.connect(liveProgramId: liveProgramId)
     }

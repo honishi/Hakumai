@@ -11,8 +11,7 @@ import Alamofire
 import Kanna
 
 private let livePageBaseUrl = "https://live.nicovideo.jp/watch/"
-// TODO: update.
-private let queryInterval: TimeInterval = 10 // 60
+private let queryInterval: TimeInterval = 30
 
 final class LiveThumbnailFetcher {
     private var liveProgramId: String?
