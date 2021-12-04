@@ -10,6 +10,7 @@ import Foundation
 import AppKit
 import Charts
 import Kingfisher
+import SnapKit
 
 private let userWindowDefaultTopLeftPoint = NSPoint(x: 100, y: 100)
 private let calculateActiveUserInterval: TimeInterval = 5
@@ -42,7 +43,8 @@ final class MainViewController: NSViewController {
     @IBOutlet private weak var debugExpireTokenButton: NSButton!
     @IBOutlet private weak var connectButton: NSButton!
 
-    @IBOutlet private weak var communityImageView: NSImageView!
+    @IBOutlet private weak var liveThumbnailImageView: NSImageView!
+    @IBOutlet private weak var liveThumbnailImageViewInitialAspectRatio: NSLayoutConstraint!
     @IBOutlet private weak var liveTitleLabel: NSTextField!
     @IBOutlet private weak var communityTitleLabel: NSTextField!
 
@@ -73,6 +75,8 @@ final class MainViewController: NSViewController {
     @IBOutlet private weak var rankingDateLabel: NSTextField!
     @IBOutlet private weak var progressIndicator: NSProgressIndicator!
 
+    private var liveThumbnailImageViewAspectRatio: Constraint?
+
     // MARK: Menu Delegate
     // swiftlint:disable weak_delegate
     @IBOutlet var menuDelegate: MenuDelegate!
@@ -82,6 +86,7 @@ final class MainViewController: NSViewController {
     private let nicoManager: NicoManagerType = NicoManager()
     private let messageContainer = MessageContainer()
     private let speechManager = SpeechManager()
+    private let liveThumbnailFetcher: LiveThumbnailFetcherProtocol = LiveThumbnailFetcher()
     private let rankingManager: RankingManagerType = RankingManager.shared
     private let notificationPresenter: NotificationPresenterProtocol = NotificationPresenter.default
 
@@ -402,6 +407,7 @@ extension MainViewController: NicoManagerDelegate {
         updateCommunityViews(for: live)
 
         if live.isTimeShift {
+            liveThumbnailFetcher.start(for: live.liveId, delegate: self)
             resetElapsedLabel()
             resetActiveUser()
             updateRankingLabel(rank: nil, date: nil)
@@ -414,6 +420,7 @@ extension MainViewController: NicoManagerDelegate {
 
         switch connectContext {
         case .normal:
+            liveThumbnailFetcher.start(for: live.liveId, delegate: self)
             resetActiveUser()
             rankingManager.addDelegate(self, for: live.liveId)
             logSystemMessageToTable(L10n.preparedLive(user.nickname))
@@ -427,6 +434,7 @@ extension MainViewController: NicoManagerDelegate {
     func nicoManagerDidFailToPrepareLive(_ nicoManager: NicoManagerType, error: NicoError) {
         logSystemMessageToTable(L10n.failedToPrepareLive(error.toMessage))
         updateMainControlViews(status: .disconnected)
+        liveThumbnailFetcher.stop()
         rankingManager.removeDelegate(self)
         logDebugRankingManagerStatus()
     }
@@ -512,6 +520,7 @@ extension MainViewController: NicoManagerDelegate {
         switch disconnectContext {
         case .normal:
             updateMainControlViews(status: .disconnected)
+            liveThumbnailFetcher.stop()
             rankingManager.removeDelegate(self)
         case .reconnect:
             updateMainControlViews(status: .connecting)
@@ -526,6 +535,37 @@ extension MainViewController: NicoManagerDelegate {
 
     func nicoManager(_ nicoManager: NicoManagerType, hasDebugMessgae message: String) {
         logDebugMessageToTable(message)
+    }
+}
+
+extension MainViewController: LiveThumbnailFetcherDelegate {
+    func liveThumbnailFetcher(_ liveThumbnailFetcher: LiveThumbnailFetcherProtocol, didGetThumbnailUrl thumbnailUrl: URL, forLiveProgramId liveProgramId: String) {
+        log.debug(thumbnailUrl)
+        liveThumbnailImageView.kf.setImage(
+            with: thumbnailUrl,
+            placeholder: liveThumbnailImageView.image
+        ) { [weak self] in
+            switch $0 {
+            case .success(_):
+                self?.adjustLiveThumbnailImageViewAspectRatio()
+            case .failure(let error):
+                log.error(error)
+            }
+        }
+    }
+
+    private func adjustLiveThumbnailImageViewAspectRatio() {
+        guard let image = liveThumbnailImageView.image else { return }
+        let aspectRatio = image.size.height / image.size.width
+        liveThumbnailImageViewInitialAspectRatio?.isActive = false
+        liveThumbnailImageViewAspectRatio?.deactivate()
+        liveThumbnailImageView.snp.makeConstraints { make in
+            self.liveThumbnailImageViewAspectRatio = make
+                .height
+                .equalTo(self.liveThumbnailImageView.snp.width)
+                .multipliedBy(aspectRatio)
+                .constraint
+        }
     }
 }
 
@@ -705,7 +745,7 @@ private extension MainViewController {
 // MARK: Configure Views
 private extension MainViewController {
     func configureViews() {
-        communityImageView.addBorder()
+        liveThumbnailImageView.addBorder()
         [debugReconnectButton, debugExpireTokenButton].forEach {
             $0?.isHidden = !enableDebugButtons
         }
@@ -835,12 +875,6 @@ private extension MainViewController {
     }
 
     func _updateCommunityViews(for live: Live) {
-        if let url = live.community.thumbnailUrl {
-            communityImageView.kf.setImage(
-                with: url,
-                placeholder: Asset.defaultCommunityImage.image
-            )
-        }
         liveTitleLabel.stringValue = live.title
         communityTitleLabel.stringValue = live.community.title
     }
@@ -952,7 +986,8 @@ extension MainViewController {
         guard let liveProgramId = liveUrlTextField.stringValue.extractLiveProgramId() else { return }
 
         clearAllChats()
-        communityImageView.image = Asset.defaultCommunityImage.image
+        liveThumbnailImageView.image = Asset.defaultLiveThumbnailImage.image
+        adjustLiveThumbnailImageViewAspectRatio()
 
         nicoManager.connect(liveProgramId: liveProgramId)
     }

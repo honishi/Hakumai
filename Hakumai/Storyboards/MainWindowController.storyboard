@@ -713,10 +713,10 @@
                                             <imageView wantsLayer="YES" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="NQm-lE-rVr">
                                                 <rect key="frame" x="0.0" y="0.0" width="55" height="55"/>
                                                 <constraints>
+                                                    <constraint firstAttribute="width" secondItem="NQm-lE-rVr" secondAttribute="height" multiplier="1:1" id="JL8-Ur-WNq"/>
                                                     <constraint firstAttribute="height" constant="55" id="NLv-j6-Vde"/>
-                                                    <constraint firstAttribute="width" constant="55" id="pr9-rr-7yq"/>
                                                 </constraints>
-                                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="DefaultCommunityImage" id="Rj1-mk-21r"/>
+                                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="DefaultLiveThumbnailImage" id="Rj1-mk-21r"/>
                                             </imageView>
                                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="250" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="d3A-5T-Fi5">
                                                 <rect key="frame" x="63" y="0.0" width="547" height="55"/>
@@ -1288,7 +1288,6 @@
                         <outlet property="commentTextField" destination="pml-Sh-s7e" id="JGp-sC-LAL"/>
                         <outlet property="commentsIconImageView" destination="MCs-Zv-FLD" id="fWS-P1-F68"/>
                         <outlet property="commentsValueLabel" destination="vmz-z1-HHp" id="zEw-JV-b7X"/>
-                        <outlet property="communityImageView" destination="NQm-lE-rVr" id="Vlq-76-e8s"/>
                         <outlet property="communityTitleLabel" destination="mqT-iT-cC6" id="JMh-Lc-OmS"/>
                         <outlet property="connectButton" destination="hii-Mo-bho" id="UHG-jK-W7S"/>
                         <outlet property="debugExpireTokenButton" destination="lRV-dk-B0Y" id="rYr-fV-TAS"/>
@@ -1298,6 +1297,8 @@
                         <outlet property="giftPointsIconImageView" destination="gzt-sF-boU" id="IXz-FO-VGY"/>
                         <outlet property="giftPointsLabel" destination="ak0-Zv-XEq" id="Et0-Xg-T8n"/>
                         <outlet property="grabUrlButton" destination="GRS-m4-7KE" id="WFa-bJ-le5"/>
+                        <outlet property="liveThumbnailImageView" destination="NQm-lE-rVr" id="Vlq-76-e8s"/>
+                        <outlet property="liveThumbnailImageViewInitialAspectRatio" destination="JL8-Ur-WNq" id="naG-Q7-KwZ"/>
                         <outlet property="liveTitleLabel" destination="65a-aX-RIL" id="uvT-R4-GZO"/>
                         <outlet property="liveUrlTextField" destination="gZN-es-bFO" id="vZe-3V-txV"/>
                         <outlet property="maxActiveUserValueLabel" destination="575-Oj-4dX" id="qIj-Hw-YFs"/>
@@ -1502,7 +1503,7 @@ Gw
         </scene>
     </scenes>
     <resources>
-        <image name="DefaultCommunityImage" width="128" height="128"/>
+        <image name="DefaultLiveThumbnailImage" width="128" height="128"/>
         <image name="ad_points" width="56" height="56"/>
         <image name="comment_count" width="48" height="48"/>
         <image name="gift_points" width="48" height="48"/>

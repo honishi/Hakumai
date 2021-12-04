@@ -30,6 +30,10 @@
 		DB2F516126669675000A1C58 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DB2F516326669675000A1C58 /* Localizable.strings */; };
 		DB2F516726669B3E000A1C58 /* Localize.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2F516626669B3E000A1C58 /* Localize.swift */; };
 		DB346B9C1A548C3B00137639 /* CommunityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB346B9B1A548C3B00137639 /* CommunityTests.swift */; };
+		DB34F833275BB18100180C7A /* LiveThumbnailFetcherProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB34F832275BB18100180C7A /* LiveThumbnailFetcherProtocol.swift */; };
+		DB34F835275BB18D00180C7A /* LiveThumbnailFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB34F834275BB18D00180C7A /* LiveThumbnailFetcher.swift */; };
+		DB34F837275BB37600180C7A /* LiveThumbnailFetcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB34F836275BB37600180C7A /* LiveThumbnailFetcherTest.swift */; };
+		DB34F838275BB55000180C7A /* live_page.html in Resources */ = {isa = PBXBuildFile; fileRef = DB34F830275BAF7200180C7A /* live_page.html */; };
 		DB3AE44226A1ABCF001681E9 /* OAuthCredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB3AE44126A1ABCF001681E9 /* OAuthCredential.swift */; };
 		DB414C071A4810A5008D2F40 /* UserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB414C061A4810A5008D2F40 /* UserViewController.swift */; };
 		DB414C091A481138008D2F40 /* UserWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB414C081A481138008D2F40 /* UserWindowController.swift */; };
@@ -156,6 +160,10 @@
 		DB2F5164266696FD000A1C58 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		DB2F516626669B3E000A1C58 /* Localize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Localize.swift; sourceTree = "<group>"; };
 		DB346B9B1A548C3B00137639 /* CommunityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommunityTests.swift; sourceTree = "<group>"; };
+		DB34F830275BAF7200180C7A /* live_page.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = live_page.html; sourceTree = "<group>"; };
+		DB34F832275BB18100180C7A /* LiveThumbnailFetcherProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveThumbnailFetcherProtocol.swift; sourceTree = "<group>"; };
+		DB34F834275BB18D00180C7A /* LiveThumbnailFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveThumbnailFetcher.swift; sourceTree = "<group>"; };
+		DB34F836275BB37600180C7A /* LiveThumbnailFetcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveThumbnailFetcherTest.swift; sourceTree = "<group>"; };
 		DB3AE44126A1ABCF001681E9 /* OAuthCredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthCredential.swift; sourceTree = "<group>"; };
 		DB3AE44526A1ACB9001681E9 /* OAuthCredential.sample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthCredential.sample.swift; sourceTree = "<group>"; };
 		DB3AF8F22645A92500A52987 /* Hakumai.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Hakumai.entitlements; sourceTree = "<group>"; };
@@ -371,6 +379,15 @@
 			path = Localization;
 			sourceTree = "<group>";
 		};
+		DB34F831275BB15900180C7A /* LiveThumbnailFetcher */ = {
+			isa = PBXGroup;
+			children = (
+				DB34F834275BB18D00180C7A /* LiveThumbnailFetcher.swift */,
+				DB34F832275BB18100180C7A /* LiveThumbnailFetcherProtocol.swift */,
+			);
+			path = LiveThumbnailFetcher;
+			sourceTree = "<group>";
+		};
 		DB414C031A48106B008D2F40 /* UserWindowController */ = {
 			isa = PBXGroup;
 			children = (
@@ -413,6 +430,7 @@
 			children = (
 				DB576ECE2657A4860041050A /* AuthManager */,
 				DBE093F91A5867A7004554FD /* HandleNameManager */,
+				DB34F831275BB15900180C7A /* LiveThumbnailFetcher */,
 				DB1E32C41A2C0CCE00CD874A /* MessageContainer */,
 				DBE093F61A585EC5004554FD /* NicoManager */,
 				DB22A636272D005700E2177D /* RankingManager */,
@@ -498,6 +516,7 @@
 				DB7BA06D1A58B6B7000778CF /* ChatMessageTests.swift */,
 				DB346B9B1A548C3B00137639 /* CommunityTests.swift */,
 				DBE093FE1A5869A2004554FD /* HandleNameManagerTests.swift */,
+				DB34F836275BB37600180C7A /* LiveThumbnailFetcherTest.swift */,
 				DB0F0ECC1A16441D00F8BDC5 /* NicoManagerTests.swift */,
 				DBD1CF53273F376A00D52271 /* PremiumTests.swift */,
 				DBAFCFAD27313EB200989F8B /* RankingManagerTests.swift */,
@@ -621,6 +640,7 @@
 			isa = PBXGroup;
 			children = (
 				DBAFCFB22731403500989F8B /* chikuran.html */,
+				DB34F830275BAF7200180C7A /* live_page.html */,
 				DBBE416D266CCAF5004002F1 /* userinfo_response.json */,
 				DBBE416F266CCB83004002F1 /* wsendpoint_response.json */,
 			);
@@ -766,6 +786,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DBAFCFB32731403500989F8B /* chikuran.html in Resources */,
+				DB34F838275BB55000180C7A /* live_page.html in Resources */,
 				DBBE416E266CCAF5004002F1 /* userinfo_response.json in Resources */,
 				DBBE4170266CCB83004002F1 /* wsendpoint_response.json in Resources */,
 			);
@@ -949,6 +970,8 @@
 				DB1DBD8F2668FB1900435D85 /* L10n+Extensions.swift in Sources */,
 				DBFA888B1A1C9A56005349AD /* Live.swift in Sources */,
 				DBB4730B1A35951C002C797E /* LiveStatistics.swift in Sources */,
+				DB34F835275BB18D00180C7A /* LiveThumbnailFetcher.swift in Sources */,
+				DB34F833275BB18100180C7A /* LiveThumbnailFetcherProtocol.swift in Sources */,
 				DB2F516726669B3E000A1C58 /* Localize.swift in Sources */,
 				DBB952161A8655AB0059850A /* LoggerHelper.swift in Sources */,
 				DB2AE0C61A0EE2FD00B1CE4D /* MainViewController.swift in Sources */,
@@ -997,6 +1020,7 @@
 				DB346B9C1A548C3B00137639 /* CommunityTests.swift in Sources */,
 				DB2AE0D71A0EE2FD00B1CE4D /* HakumaiTests.swift in Sources */,
 				DBE093FF1A5869A2004554FD /* HandleNameManagerTests.swift in Sources */,
+				DB34F837275BB37600180C7A /* LiveThumbnailFetcherTest.swift in Sources */,
 				DB0F0ECD1A16441D00F8BDC5 /* NicoManagerTests.swift in Sources */,
 				DBD1CF54273F376A00D52271 /* PremiumTests.swift in Sources */,
 				DBAFCFAE27313EB200989F8B /* RankingManagerTests.swift in Sources */,
@@ -1152,7 +1176,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hakumai/Hakumai.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2004;
+				CURRENT_PROJECT_VERSION = 2005;
 				DEVELOPMENT_TEAM = N4SRN3NAQ3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Hakumai/Info.plist;
@@ -1161,7 +1185,7 @@
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
 				);
-				MARKETING_VERSION = 2.4.0;
+				MARKETING_VERSION = 2.5.0;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1185,7 +1209,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hakumai/Hakumai.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2004;
+				CURRENT_PROJECT_VERSION = 2005;
 				DEVELOPMENT_TEAM = N4SRN3NAQ3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Hakumai/Info.plist;
@@ -1194,7 +1218,7 @@
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
 				);
-				MARKETING_VERSION = 2.4.0;
+				MARKETING_VERSION = 2.5.0;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
