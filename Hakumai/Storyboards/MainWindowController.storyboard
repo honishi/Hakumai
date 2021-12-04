@@ -711,18 +711,18 @@
                                         <rect key="frame" x="2" y="498" width="610" height="55"/>
                                         <subviews>
                                             <imageView wantsLayer="YES" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="NQm-lE-rVr">
-                                                <rect key="frame" x="0.0" y="0.0" width="55" height="55"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="98" height="55"/>
                                                 <constraints>
+                                                    <constraint firstAttribute="width" secondItem="NQm-lE-rVr" secondAttribute="height" multiplier="16:9" id="JL8-Ur-WNq"/>
                                                     <constraint firstAttribute="height" constant="55" id="NLv-j6-Vde"/>
-                                                    <constraint firstAttribute="width" constant="55" id="pr9-rr-7yq"/>
                                                 </constraints>
                                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="DefaultCommunityImage" id="Rj1-mk-21r"/>
                                             </imageView>
                                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="250" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="d3A-5T-Fi5">
-                                                <rect key="frame" x="63" y="0.0" width="547" height="55"/>
+                                                <rect key="frame" x="106" y="0.0" width="504" height="55"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="249" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="65a-aX-RIL">
-                                                        <rect key="frame" x="-2" y="38" width="551" height="17"/>
+                                                        <rect key="frame" x="-2" y="38" width="508" height="17"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="17" id="aX3-eX-5Te"/>
                                                         </constraints>
@@ -733,7 +733,7 @@
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="249" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="mqT-iT-cC6">
-                                                        <rect key="frame" x="-2" y="19" width="551" height="17"/>
+                                                        <rect key="frame" x="-2" y="19" width="508" height="17"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="17" id="x00-mC-etv"/>
                                                         </constraints>
@@ -744,7 +744,7 @@
                                                         </textFieldCell>
                                                     </textField>
                                                     <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="16" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PqT-0D-HbI">
-                                                        <rect key="frame" x="0.0" y="0.0" width="547" height="17"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="504" height="17"/>
                                                         <subviews>
                                                             <stackView distribution="fill" orientation="horizontal" alignment="bottom" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9sP-vu-ghg">
                                                                 <rect key="frame" x="0.0" y="1" width="43" height="16"/>
@@ -867,10 +867,10 @@
                                                                 </customSpacing>
                                                             </stackView>
                                                             <customView horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Gr6-qH-sQ4">
-                                                                <rect key="frame" x="236" y="0.0" width="233" height="17"/>
+                                                                <rect key="frame" x="236" y="0.0" width="190" height="17"/>
                                                             </customView>
                                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="QmJ-8z-tPW">
-                                                                <rect key="frame" x="483" y="0.0" width="64" height="18"/>
+                                                                <rect key="frame" x="440" y="0.0" width="64" height="18"/>
                                                                 <buttonCell key="cell" type="check" title="Speak" bezelStyle="regularSquare" imagePosition="left" inset="2" id="EpQ-m0-lHg">
                                                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                                     <font key="font" metaFont="system"/>

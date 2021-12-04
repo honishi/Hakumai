@@ -82,8 +82,8 @@ final class MainViewController: NSViewController {
     private let nicoManager: NicoManagerType = NicoManager()
     private let messageContainer = MessageContainer()
     private let speechManager = SpeechManager()
-    private let rankingManager: RankingManagerType = RankingManager.shared
     private let liveThumbnailFetcher: LiveThumbnailFetcherProtocol = LiveThumbnailFetcher()
+    private let rankingManager: RankingManagerType = RankingManager.shared
     private let notificationPresenter: NotificationPresenterProtocol = NotificationPresenter.default
 
     private(set) var live: Live?
@@ -403,6 +403,7 @@ extension MainViewController: NicoManagerDelegate {
         updateCommunityViews(for: live)
 
         if live.isTimeShift {
+            liveThumbnailFetcher.start(for: live.liveId, delegate: self)
             resetElapsedLabel()
             resetActiveUser()
             updateRankingLabel(rank: nil, date: nil)
@@ -415,9 +416,9 @@ extension MainViewController: NicoManagerDelegate {
 
         switch connectContext {
         case .normal:
+            liveThumbnailFetcher.start(for: live.liveId, delegate: self)
             resetActiveUser()
             rankingManager.addDelegate(self, for: live.liveId)
-            liveThumbnailFetcher.start(for: live.liveId, delegate: self)
             logSystemMessageToTable(L10n.preparedLive(user.nickname))
         case .reconnect:
             break
@@ -429,8 +430,8 @@ extension MainViewController: NicoManagerDelegate {
     func nicoManagerDidFailToPrepareLive(_ nicoManager: NicoManagerType, error: NicoError) {
         logSystemMessageToTable(L10n.failedToPrepareLive(error.toMessage))
         updateMainControlViews(status: .disconnected)
-        rankingManager.removeDelegate(self)
         liveThumbnailFetcher.stop()
+        rankingManager.removeDelegate(self)
         logDebugRankingManagerStatus()
     }
 
@@ -515,8 +516,8 @@ extension MainViewController: NicoManagerDelegate {
         switch disconnectContext {
         case .normal:
             updateMainControlViews(status: .disconnected)
-            rankingManager.removeDelegate(self)
             liveThumbnailFetcher.stop()
+            rankingManager.removeDelegate(self)
         case .reconnect:
             updateMainControlViews(status: .connecting)
         }
@@ -533,6 +534,16 @@ extension MainViewController: NicoManagerDelegate {
     }
 }
 
+extension MainViewController: LiveThumbnailFetcherDelegate {
+    func liveThumbnailFetcher(_ liveThumbnailFetcher: LiveThumbnailFetcherProtocol, didGetThumbnailUrl thumbnailUrl: URL, forLiveProgramId liveProgramId: String) {
+        log.debug(thumbnailUrl)
+        communityImageView.kf.setImage(
+            with: thumbnailUrl,
+            placeholder: communityImageView.image
+        )
+    }
+}
+
 extension MainViewController: RankingManagerDelegate {
     func rankingManager(_ rankingManager: RankingManagerType, didUpdateRank rank: Int?, for liveId: String, at date: Date?) {
         updateRankingLabel(rank: rank, date: date)
@@ -540,13 +551,6 @@ extension MainViewController: RankingManagerDelegate {
 
     func rankingManager(_ rankingManager: RankingManagerType, hasDebugMessage message: String) {
         logDebugMessageToTable(message)
-    }
-}
-
-extension MainViewController: LiveThumbnailFetcherDelegate {
-    func liveThumbnailFetcher(_ liveThumbnailFetcher: LiveThumbnailFetcherProtocol, didGetThumbnailUrl thumbnailUrl: URL, forLiveProgramId liveProgramId: String) {
-        log.debug(thumbnailUrl)
-        communityImageView.kf.setImage(with: thumbnailUrl)
     }
 }
 
@@ -846,12 +850,6 @@ private extension MainViewController {
     }
 
     func _updateCommunityViews(for live: Live) {
-        if let url = live.community.thumbnailUrl {
-            communityImageView.kf.setImage(
-                with: url,
-                placeholder: Asset.defaultCommunityImage.image
-            )
-        }
         liveTitleLabel.stringValue = live.title
         communityTitleLabel.stringValue = live.community.title
     }

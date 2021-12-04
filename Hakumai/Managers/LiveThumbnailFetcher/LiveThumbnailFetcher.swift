@@ -11,6 +11,7 @@ import Alamofire
 import Kanna
 
 private let livePageBaseUrl = "https://live.nicovideo.jp/watch/"
+// TODO: update.
 private let queryInterval: TimeInterval = 10 // 60
 
 final class LiveThumbnailFetcher {
@@ -39,11 +40,14 @@ private extension LiveThumbnailFetcher {
             selector: #selector(LiveThumbnailFetcher.queryLivePage),
             userInfo: nil,
             repeats: true)
+        log.debug("Scheduled query timer.")
+        queryTimer?.fire()
     }
 
     func invalidateQueryTimer() {
         queryTimer?.invalidate()
         queryTimer = nil
+        log.debug("Invalidated query timer.")
     }
 
     @objc
