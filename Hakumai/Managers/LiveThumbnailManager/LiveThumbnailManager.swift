@@ -11,7 +11,7 @@ import Alamofire
 import Kanna
 
 private let livePageBaseUrl = "https://live.nicovideo.jp/watch/"
-private let queryInterval: TimeInterval = 15
+private let timerInterval: TimeInterval = 15
 
 final class LiveThumbnailManager {
     private var liveProgramId: String?
@@ -36,7 +36,7 @@ extension LiveThumbnailManager: LiveThumbnailManagerType {
 private extension LiveThumbnailManager {
     func scheduleTimer() {
         timer = Timer.scheduledTimer(
-            timeInterval: queryInterval,
+            timeInterval: timerInterval,
             target: self,
             selector: #selector(LiveThumbnailManager.timerFired),
             userInfo: nil,
