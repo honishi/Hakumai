@@ -24,6 +24,7 @@ extension LiveThumbnailManager: LiveThumbnailManagerType {
     func start(for liveProgramId: String, delegate: LiveThumbnailManagerDelegate) {
         self.liveProgramId = liveProgramId
         self.delegate = delegate
+        self.originalThumbnailUrl = nil
         scheduleTimer()
     }
 
