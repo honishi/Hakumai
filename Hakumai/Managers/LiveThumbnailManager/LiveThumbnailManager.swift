@@ -1,5 +1,5 @@
 //
-//  LiveThumbnailFetcher.swift
+//  LiveThumbnailManager.swift
 //  Hakumai
 //
 //  Created by Hiroyuki Onishi on 2021/12/04.
@@ -13,15 +13,15 @@ import Kanna
 private let livePageBaseUrl = "https://live.nicovideo.jp/watch/"
 private let queryInterval: TimeInterval = 15
 
-final class LiveThumbnailFetcher {
+final class LiveThumbnailManager {
     private var liveProgramId: String?
     private var liveThumbnailUrl: URL?
-    private weak var delegate: LiveThumbnailFetcherDelegate?
+    private weak var delegate: LiveThumbnailManagerDelegate?
     private var timer: Timer?
 }
 
-extension LiveThumbnailFetcher: LiveThumbnailFetcherProtocol {
-    func start(for liveProgramId: String, delegate: LiveThumbnailFetcherDelegate) {
+extension LiveThumbnailManager: LiveThumbnailManagerType {
+    func start(for liveProgramId: String, delegate: LiveThumbnailManagerDelegate) {
         self.liveProgramId = liveProgramId
         self.delegate = delegate
         scheduleTimer()
@@ -32,12 +32,12 @@ extension LiveThumbnailFetcher: LiveThumbnailFetcherProtocol {
     }
 }
 
-private extension LiveThumbnailFetcher {
+private extension LiveThumbnailManager {
     func scheduleTimer() {
         timer = Timer.scheduledTimer(
             timeInterval: queryInterval,
             target: self,
-            selector: #selector(LiveThumbnailFetcher.makeLiveThumbnailUrl),
+            selector: #selector(LiveThumbnailManager.makeLiveThumbnailUrl),
             userInfo: nil,
             repeats: true)
         log.debug("Scheduled timer.")
@@ -59,7 +59,7 @@ private extension LiveThumbnailFetcher {
         if let liveThumbnailUrl = liveThumbnailUrl,
            let url = constructLiveThumbnailUrl(from: liveThumbnailUrl, for: Date()) {
             log.debug("Made live thumbnail url: \(url.absoluteString)")
-            delegate?.liveThumbnailFetcher(
+            delegate?.liveThumbnailManager(
                 self, didGetThumbnailUrl: url, forLiveProgramId: liveProgramId)
             return
         }
@@ -86,7 +86,7 @@ private extension LiveThumbnailFetcher {
                     }
                     me.liveThumbnailUrl = url
                     log.debug("Fetched live thumbnail url: \(url.absoluteString)")
-                    me.delegate?.liveThumbnailFetcher(
+                    me.delegate?.liveThumbnailManager(
                         me, didGetThumbnailUrl: url, forLiveProgramId: liveProgramId)
                 case .failure(let error):
                     // No-op.
@@ -117,7 +117,7 @@ private extension LiveThumbnailFetcher {
 // Extension for unit testing.
 // https://stackoverflow.com/a/50136916/13220031
 #if DEBUG
-extension LiveThumbnailFetcher {
+extension LiveThumbnailManager {
     func exposedExtractLiveThumbnailUrl(from html: String) -> URL? {
         return extractLiveThumbnailUrl(from: html)
     }
