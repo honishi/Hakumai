@@ -11,52 +11,67 @@ import Alamofire
 import Kanna
 
 private let livePageBaseUrl = "https://live.nicovideo.jp/watch/"
-private let queryInterval: TimeInterval = 30
+private let queryInterval: TimeInterval = 15
 
 final class LiveThumbnailFetcher {
     private var liveProgramId: String?
+    private var liveThumbnailUrl: URL?
     private weak var delegate: LiveThumbnailFetcherDelegate?
-    private var queryTimer: Timer?
+    private var timer: Timer?
 }
 
 extension LiveThumbnailFetcher: LiveThumbnailFetcherProtocol {
     func start(for liveProgramId: String, delegate: LiveThumbnailFetcherDelegate) {
         self.liveProgramId = liveProgramId
         self.delegate = delegate
-        scheduleQueryTimer()
+        scheduleTimer()
     }
 
     func stop() {
-        invalidateQueryTimer()
+        invalidateTimer()
     }
 }
 
 private extension LiveThumbnailFetcher {
-    func scheduleQueryTimer() {
-        queryTimer = Timer.scheduledTimer(
+    func scheduleTimer() {
+        timer = Timer.scheduledTimer(
             timeInterval: queryInterval,
             target: self,
-            selector: #selector(LiveThumbnailFetcher.queryLivePage),
+            selector: #selector(LiveThumbnailFetcher.makeLiveThumbnailUrl),
             userInfo: nil,
             repeats: true)
-        log.debug("Scheduled query timer.")
-        queryTimer?.fire()
+        log.debug("Scheduled timer.")
+        timer?.fire()
     }
 
-    func invalidateQueryTimer() {
-        queryTimer?.invalidate()
-        queryTimer = nil
-        log.debug("Invalidated query timer.")
+    func invalidateTimer() {
+        timer?.invalidate()
+        timer = nil
+        log.debug("Invalidated timer.")
     }
 
     @objc
-    func queryLivePage() {
-        guard let liveProgramId = liveProgramId,
-              let url = URL(string: livePageBaseUrl + liveProgramId) else {
+    func makeLiveThumbnailUrl() {
+        guard let liveProgramId = liveProgramId else {
+            log.error("Missing live program id: \(self.liveProgramId ?? "-")")
+            return
+        }
+        if let liveThumbnailUrl = liveThumbnailUrl,
+           let url = constructLiveThumbnailUrl(from: liveThumbnailUrl, for: Date()) {
+            log.debug("Made live thumbnail url: \(url.absoluteString)")
+            delegate?.liveThumbnailFetcher(
+                self, didGetThumbnailUrl: url, forLiveProgramId: liveProgramId)
+            return
+        }
+        queryLivePage(liveProgramId: liveProgramId)
+    }
+
+    func queryLivePage(liveProgramId: String) {
+        guard let livePageUrl = URL(string: livePageBaseUrl + liveProgramId) else {
             log.error("Invalid live page url: \(self.liveProgramId ?? "-")")
             return
         }
-        var request = URLRequest(url: url)
+        var request = URLRequest(url: livePageUrl)
         request.headers = [commonUserAgentKey: commonUserAgentValue]
         AF.request(request)
             // .cURLDescription { log.debug($0) }
@@ -65,12 +80,14 @@ private extension LiveThumbnailFetcher {
                 guard let me = self else { return }
                 switch $0.result {
                 case .success(let html):
-                    guard let thumbnailUrl = me.extractLiveThumbnailUrl(from: html) else {
+                    guard let url = me.extractLiveThumbnailUrl(from: html) else {
                         log.error("Live thumbnail extraction failed.")
                         return
                     }
+                    me.liveThumbnailUrl = url
+                    log.debug("Fetched live thumbnail url: \(url.absoluteString)")
                     me.delegate?.liveThumbnailFetcher(
-                        me, didGetThumbnailUrl: thumbnailUrl, forLiveProgramId: liveProgramId)
+                        me, didGetThumbnailUrl: url, forLiveProgramId: liveProgramId)
                 case .failure(let error):
                     // No-op.
                     log.error(error)
@@ -84,6 +101,12 @@ private extension LiveThumbnailFetcher {
               let content = ogImage["content"] else { return nil }
         return URL(string: content)
     }
+
+    func constructLiveThumbnailUrl(from thumbnailUrl: URL, for date: Date) -> URL? {
+        let baseUrl = thumbnailUrl.absoluteString.stringByRemovingRegexp(pattern: "\\?t=\\d+$")
+        let time = Int(date.timeIntervalSince1970 * 1000)
+        return URL(string: baseUrl + "?t=\(time)")
+    }
 }
 
 // Extension for unit testing.
@@ -92,6 +115,10 @@ private extension LiveThumbnailFetcher {
 extension LiveThumbnailFetcher {
     func exposedExtractLiveThumbnailUrl(from html: String) -> URL? {
         return extractLiveThumbnailUrl(from: html)
+    }
+
+    func exposedConstructLiveThumbnailUrl(from thumbnailUrl: URL, for date: Date) -> URL? {
+        return constructLiveThumbnailUrl(from: thumbnailUrl, for: date)
     }
 }
 #endif
