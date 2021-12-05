@@ -15,7 +15,7 @@ private let queryInterval: TimeInterval = 15
 
 final class LiveThumbnailManager {
     private var liveProgramId: String?
-    private var liveThumbnailUrl: URL?
+    private var originalThumbnailUrl: URL?
     private weak var delegate: LiveThumbnailManagerDelegate?
     private var timer: Timer?
 }
@@ -37,7 +37,7 @@ private extension LiveThumbnailManager {
         timer = Timer.scheduledTimer(
             timeInterval: queryInterval,
             target: self,
-            selector: #selector(LiveThumbnailManager.makeLiveThumbnailUrl),
+            selector: #selector(LiveThumbnailManager.timerFired),
             userInfo: nil,
             repeats: true)
         log.debug("Scheduled timer.")
@@ -51,19 +51,26 @@ private extension LiveThumbnailManager {
     }
 
     @objc
-    func makeLiveThumbnailUrl() {
+    func timerFired() {
         guard let liveProgramId = liveProgramId else {
             log.error("Missing live program id: \(self.liveProgramId ?? "-")")
             return
         }
-        if let liveThumbnailUrl = liveThumbnailUrl,
-           let url = constructLiveThumbnailUrl(from: liveThumbnailUrl, for: Date()) {
-            log.debug("Made live thumbnail url: \(url.absoluteString)")
-            delegate?.liveThumbnailManager(
-                self, didGetThumbnailUrl: url, forLiveProgramId: liveProgramId)
+        if let originalThumbnailUrl = originalThumbnailUrl {
+            makeThumbnailUrl(from: originalThumbnailUrl, for: liveProgramId)
             return
         }
         queryLivePage(liveProgramId: liveProgramId)
+    }
+
+    func makeThumbnailUrl(from originalUrl: URL, for liveProgramId: String) {
+        guard let url = constructThumbnailUrl(from: originalUrl, for: Date()) else {
+            log.debug("Skipped to make live thumbnail url for \(liveProgramId).")
+            return
+        }
+        log.debug("Made live thumbnail url: \(url.absoluteString)")
+        delegate?.liveThumbnailManager(
+            self, didGetThumbnailUrl: url, forLiveProgramId: liveProgramId)
     }
 
     func queryLivePage(liveProgramId: String) {
@@ -80,11 +87,11 @@ private extension LiveThumbnailManager {
                 guard let me = self else { return }
                 switch $0.result {
                 case .success(let html):
-                    guard let url = me.extractLiveThumbnailUrl(from: html) else {
+                    guard let url = me.extractThumbnailUrl(from: html) else {
                         log.error("Live thumbnail extraction failed.")
                         return
                     }
-                    me.liveThumbnailUrl = url
+                    me.originalThumbnailUrl = url
                     log.debug("Fetched live thumbnail url: \(url.absoluteString)")
                     me.delegate?.liveThumbnailManager(
                         me, didGetThumbnailUrl: url, forLiveProgramId: liveProgramId)
@@ -95,19 +102,17 @@ private extension LiveThumbnailManager {
             }
     }
 
-    func extractLiveThumbnailUrl(from html: String) -> URL? {
+    func extractThumbnailUrl(from html: String) -> URL? {
         guard let doc = try? HTML(html: html, encoding: .utf8),
               let ogImage = doc.xpath("//meta[@property=\"og:image\"]").first,
               let content = ogImage["content"] else { return nil }
         return URL(string: content)
     }
 
-    func constructLiveThumbnailUrl(from thumbnailUrl: URL, for date: Date) -> URL? {
+    func constructThumbnailUrl(from thumbnailUrl: URL, for date: Date) -> URL? {
         let timePattern = "\\?t=\\d+$"
         let urlString = thumbnailUrl.absoluteString
-        guard urlString.hasRegexp(pattern: timePattern) else {
-            return thumbnailUrl
-        }
+        guard urlString.hasRegexp(pattern: timePattern) else { return nil }
         let baseUrl = urlString.stringByRemovingRegexp(pattern: timePattern)
         let time = Int(date.timeIntervalSince1970 * 1000)
         return URL(string: baseUrl + "?t=\(time)")
@@ -118,12 +123,12 @@ private extension LiveThumbnailManager {
 // https://stackoverflow.com/a/50136916/13220031
 #if DEBUG
 extension LiveThumbnailManager {
-    func exposedExtractLiveThumbnailUrl(from html: String) -> URL? {
-        return extractLiveThumbnailUrl(from: html)
+    func exposedExtractThumbnailUrl(from html: String) -> URL? {
+        return extractThumbnailUrl(from: html)
     }
 
-    func exposedConstructLiveThumbnailUrl(from thumbnailUrl: URL, for date: Date) -> URL? {
-        return constructLiveThumbnailUrl(from: thumbnailUrl, for: date)
+    func exposedConstructThumbnailUrl(from thumbnailUrl: URL, for date: Date) -> URL? {
+        return constructThumbnailUrl(from: thumbnailUrl, for: date)
     }
 }
 #endif
