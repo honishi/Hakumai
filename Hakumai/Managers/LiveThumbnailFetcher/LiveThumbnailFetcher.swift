@@ -103,7 +103,12 @@ private extension LiveThumbnailFetcher {
     }
 
     func constructLiveThumbnailUrl(from thumbnailUrl: URL, for date: Date) -> URL? {
-        let baseUrl = thumbnailUrl.absoluteString.stringByRemovingRegexp(pattern: "\\?t=\\d+$")
+        let timePattern = "\\?t=\\d+$"
+        let urlString = thumbnailUrl.absoluteString
+        guard urlString.hasRegexp(pattern: timePattern) else {
+            return thumbnailUrl
+        }
+        let baseUrl = urlString.stringByRemovingRegexp(pattern: timePattern)
         let time = Int(date.timeIntervalSince1970 * 1000)
         return URL(string: baseUrl + "?t=\(time)")
     }
