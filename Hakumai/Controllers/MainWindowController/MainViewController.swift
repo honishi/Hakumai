@@ -408,7 +408,7 @@ extension MainViewController: NicoManagerDelegate {
         updateCommunityViews(for: live)
 
         if live.isTimeShift {
-            liveThumbnailManager.start(for: live.liveId, delegate: self)
+            liveThumbnailManager.start(for: live.liveProgramId, delegate: self)
             resetElapsedLabel()
             resetActiveUser()
             updateRankingLabel(rank: nil, date: nil)
@@ -421,9 +421,9 @@ extension MainViewController: NicoManagerDelegate {
 
         switch connectContext {
         case .normal:
-            liveThumbnailManager.start(for: live.liveId, delegate: self)
+            liveThumbnailManager.start(for: live.liveProgramId, delegate: self)
             resetActiveUser()
-            rankingManager.addDelegate(self, for: live.liveId)
+            rankingManager.addDelegate(self, for: live.liveProgramId)
             logSystemMessageToTable(L10n.preparedLive(user.nickname))
         case .reconnect:
             break
@@ -1299,7 +1299,7 @@ private extension MainViewController {
         notificationPresenter.show(
             title: title,
             body: "\(live.title)\n\(live.community.title)",
-            liveProgramId: live.liveId,
+            liveProgramId: live.liveProgramId,
             jpegImageUrl: live.community.thumbnailUrl
         )
     }

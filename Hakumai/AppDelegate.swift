@@ -154,9 +154,7 @@ extension AppDelegate {
 extension AppDelegate: BrowserUrlObserverDelegate {
     func browserUrlObserver(_ browserUrlObserver: BrowserUrlObserverType, didGetUrl liveUrl: URL) {
         log.debug(liveUrl)
-        let liveProgramId = liveUrl.absoluteString.extractLiveProgramId()
-        let connectedAlready = mainWindowControllers.map { $0.live?.liveId }.contains(liveProgramId)
-        guard !connectedAlready else {
+        guard !isConnected(url: liveUrl) else {
             log.debug("Already connected, skip.")
             return
         }
@@ -164,8 +162,13 @@ extension AppDelegate: BrowserUrlObserverDelegate {
             activeMainWindowController?.connectToUrl(liveUrl)
             return
         }
-        let wc = openNewTab(selectTab: false)
+        let wc = openNewTab()
         wc?.connectToUrl(liveUrl)
+    }
+
+    private func isConnected(url: URL) -> Bool {
+        let liveProgramId = url.absoluteString.extractLiveProgramId()
+        return mainWindowControllers.map { $0.live?.liveProgramId }.contains(liveProgramId)
     }
 }
 

@@ -64,7 +64,7 @@ extension MainWindowController {
 
 extension MainWindowController {
     func isLiveProgramId(_ liveProgramId: String) -> Bool {
-        mainViewController.live?.liveId == liveProgramId
+        mainViewController.live?.liveProgramId == liveProgramId
     }
 
     func login() {

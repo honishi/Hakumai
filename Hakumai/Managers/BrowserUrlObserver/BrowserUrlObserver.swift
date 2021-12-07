@@ -8,7 +8,7 @@
 
 import Foundation
 
-private let timerInterval: TimeInterval = 5
+private let timerInterval: TimeInterval = 3
 
 final class BrowserUrlObserver {
     private(set) var browser: BrowserInUseType = .chrome
