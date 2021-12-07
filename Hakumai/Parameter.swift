@@ -26,6 +26,7 @@ struct Parameters {
     static let alwaysOnTop = "AlwaysOnTop"
     static let commentAnonymously = "CommentAnonymously"
     static let fontSize = "FontSize"
+    static let enableBrowserUrlObservation = "EnableBrowserUrlObservation"
     static let enableLiveNotification = "EnableLiveNotification"
     static let enableDebugMessage = "EnableDebugMessage"
 }

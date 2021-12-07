@@ -732,17 +732,40 @@
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <textField horizontalHuggingPriority="249" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="mqT-iT-cC6">
-                                                        <rect key="frame" x="-2" y="19" width="551" height="17"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="height" constant="17" id="x00-mC-etv"/>
-                                                        </constraints>
-                                                        <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Label" id="jGH-vk-fS8">
-                                                            <font key="font" metaFont="system"/>
-                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                        </textFieldCell>
-                                                    </textField>
+                                                    <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DFd-WO-NFi">
+                                                        <rect key="frame" x="0.0" y="19" width="547" height="17"/>
+                                                        <subviews>
+                                                            <textField horizontalHuggingPriority="249" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="mqT-iT-cC6">
+                                                                <rect key="frame" x="-2" y="0.0" width="462" height="17"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="height" constant="17" id="x00-mC-etv"/>
+                                                                </constraints>
+                                                                <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Label" id="jGH-vk-fS8">
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                                </textFieldCell>
+                                                            </textField>
+                                                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OrT-PU-Uk2">
+                                                                <rect key="frame" x="464" y="0.0" width="83" height="18"/>
+                                                                <buttonCell key="cell" type="check" title="Auto URL" bezelStyle="regularSquare" imagePosition="left" inset="2" id="0Gl-Ym-ufF">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                                <connections>
+                                                                    <binding destination="TkR-hQ-T5S" name="value" keyPath="values.EnableBrowserUrlObservation" id="rJW-ox-cHa"/>
+                                                                </connections>
+                                                            </button>
+                                                        </subviews>
+                                                        <visibilityPriorities>
+                                                            <integer value="1000"/>
+                                                            <integer value="1000"/>
+                                                        </visibilityPriorities>
+                                                        <customSpacing>
+                                                            <real value="3.4028234663852886e+38"/>
+                                                            <real value="3.4028234663852886e+38"/>
+                                                        </customSpacing>
+                                                    </stackView>
                                                     <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="16" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PqT-0D-HbI">
                                                         <rect key="frame" x="0.0" y="0.0" width="547" height="17"/>
                                                         <subviews>
@@ -867,10 +890,10 @@
                                                                 </customSpacing>
                                                             </stackView>
                                                             <customView horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Gr6-qH-sQ4">
-                                                                <rect key="frame" x="236" y="0.0" width="233" height="17"/>
+                                                                <rect key="frame" x="236" y="0.0" width="214" height="17"/>
                                                             </customView>
                                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="QmJ-8z-tPW">
-                                                                <rect key="frame" x="483" y="0.0" width="64" height="18"/>
+                                                                <rect key="frame" x="464" y="0.0" width="83" height="18"/>
                                                                 <buttonCell key="cell" type="check" title="Speak" bezelStyle="regularSquare" imagePosition="left" inset="2" id="EpQ-m0-lHg">
                                                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                                     <font key="font" metaFont="system"/>
@@ -902,6 +925,7 @@
                                                     </stackView>
                                                 </subviews>
                                                 <constraints>
+                                                    <constraint firstItem="QmJ-8z-tPW" firstAttribute="width" secondItem="OrT-PU-Uk2" secondAttribute="width" id="Lnz-gF-WP7"/>
                                                     <constraint firstAttribute="trailing" secondItem="QmJ-8z-tPW" secondAttribute="trailing" id="QNc-7h-9og"/>
                                                 </constraints>
                                                 <visibilityPriorities>
@@ -1284,6 +1308,7 @@
                         <outlet property="activeUserValueLabel" destination="09h-Eb-cuW" id="6Lr-4p-RbY"/>
                         <outlet property="adPointsIconImageView" destination="jC1-XL-axi" id="YJ3-9k-PbS"/>
                         <outlet property="adPointsValueLabel" destination="0qo-uD-qcd" id="fRg-C8-lpp"/>
+                        <outlet property="autoUrlButton" destination="OrT-PU-Uk2" id="tin-kS-cwh"/>
                         <outlet property="commentAnonymouslyButton" destination="UtQ-bi-lar" id="ugQ-Jr-d3b"/>
                         <outlet property="commentTextField" destination="pml-Sh-s7e" id="JGp-sC-LAL"/>
                         <outlet property="commentsIconImageView" destination="MCs-Zv-FLD" id="fWS-P1-F68"/>

@@ -94,6 +94,7 @@
 "elapsed_time" = "Elapsed Time";
 "live_title" = "Live Title";
 "live_url_text_field_placeholder" = "⌘L (Live URL, Live#)";
+"auto_url" = "Auto URL";
 "speak_comment" = "Speech";
 "visitor_count" = "Visitors";
 "login_completed" = "Login completed.";

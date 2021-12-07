@@ -56,6 +56,7 @@ final class MainViewController: NSViewController {
     @IBOutlet private weak var adPointsValueLabel: NSTextField!
     @IBOutlet private weak var giftPointsIconImageView: NSImageView!
     @IBOutlet private weak var giftPointsLabel: NSTextField!
+    @IBOutlet private weak var autoUrlButton: NSButton!
     @IBOutlet private weak var speakButton: NSButton!
 
     @IBOutlet private weak var scrollView: ButtonScrollView!
@@ -775,6 +776,7 @@ private extension MainViewController {
         giftPointsLabel.toolTip = L10n.giftPoints
         giftPointsLabel.stringValue = defaultLabelValue
 
+        autoUrlButton.title = L10n.autoUrl
         speakButton.title = L10n.speakComment
 
         if #available(macOS 10.14, *) {

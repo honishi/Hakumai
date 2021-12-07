@@ -34,7 +34,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         clearImageCache()
         debugPrintToken()
         openNewWindow()
-        startManagers()
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
@@ -137,6 +136,9 @@ extension AppDelegate {
         case (Parameters.alwaysOnTop, let newValue as Bool):
             makeWindowsAlwaysOnTop(newValue)
 
+        case (Parameters.enableBrowserUrlObservation, let newValue as Bool):
+            toggleBrowserUrlObservation(newValue)
+
         case (Parameters.enableDebugMessage, let newValue as Bool):
             mainWindowControllers.forEach { $0.changeEnableDebugMessage(newValue) }
 
@@ -151,6 +153,12 @@ extension AppDelegate {
 extension AppDelegate: BrowserUrlObserverDelegate {
     func browserUrlObserver(_ browserUrlObserver: BrowserUrlObserverType, didGetUrl liveUrl: URL) {
         log.debug(liveUrl)
+        let liveProgramId = liveUrl.absoluteString.extractLiveProgramId()
+        let connectedAlready = mainWindowControllers.map { $0.live?.liveId }.contains(liveProgramId)
+        guard !connectedAlready else {
+            log.debug("Already connected, skip.")
+            return
+        }
         if activeMainWindowController?.isEmpty == true {
             activeMainWindowController?.connectToUrl(liveUrl)
             return
@@ -213,6 +221,7 @@ private extension AppDelegate {
             Parameters.enableMuteWords: true,
             Parameters.alwaysOnTop: false,
             Parameters.commentAnonymously: true,
+            Parameters.enableBrowserUrlObservation: false,
             Parameters.enableLiveNotification: false,
             Parameters.enableDebugMessage: false]
         UserDefaults.standard.register(defaults: defaults)
@@ -227,7 +236,8 @@ private extension AppDelegate {
             Parameters.enableMuteUserIds, Parameters.muteUserIds,
             Parameters.enableMuteWords, Parameters.muteWords,
             // misc
-            Parameters.fontSize, Parameters.alwaysOnTop, Parameters.enableDebugMessage
+            Parameters.fontSize, Parameters.alwaysOnTop,
+            Parameters.enableBrowserUrlObservation, Parameters.enableDebugMessage
         ]
         for keyPath in keyPaths {
             UserDefaults.standard.addObserver(
@@ -254,10 +264,6 @@ private extension AppDelegate {
         KingfisherManager.shared.cache.clearCache {
             log.debug("Disk cache for images has been cleared.")
         }
-    }
-
-    func startManagers() {
-        browserUrlObserver.start(delegate: self)
     }
 }
 
@@ -343,6 +349,15 @@ private extension AppDelegate {
         guard kMinimumFontSize...kMaximumFontSize ~= fontSize else { return }
         UserDefaults.standard.set(fontSize, forKey: Parameters.fontSize)
         UserDefaults.standard.synchronize()
+    }
+
+    func toggleBrowserUrlObservation(_ isEnabled: Bool) {
+        log.debug("changed browser url observation: \(isEnabled)")
+        if isEnabled {
+            browserUrlObserver.start(delegate: self)
+        } else {
+            browserUrlObserver.stop()
+        }
     }
 }
 
