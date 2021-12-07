@@ -11,12 +11,18 @@ import Foundation
 private let timerInterval: TimeInterval = 5
 
 final class BrowserUrlObserver {
+    private(set) var browser: BrowserInUseType = .chrome
     private(set) weak var delegate: BrowserUrlObserverDelegate?
     private var timer: Timer?
     private var liveProgramIds: Set<String> = []
 }
 
 extension BrowserUrlObserver: BrowserUrlObserverType {
+    func setBrowserType(_ browser: BrowserInUseType) {
+        self.browser = browser
+        log.debug("set browser: \(browser)")
+    }
+
     func start(delegate: BrowserUrlObserverDelegate) {
         self.delegate = delegate
         liveProgramIds.removeAll()
@@ -47,9 +53,7 @@ private extension BrowserUrlObserver {
 
     @objc
     func timerFired() {
-        let rawValue = UserDefaults.standard.integer(forKey: Parameters.browserInUse)
-        guard let browser = BrowserInUseType(rawValue: rawValue),
-              let urlString = BrowserHelper.extractUrl(fromBrowser: browser.toBrowserHelperBrowserType),
+        guard let urlString = BrowserHelper.extractUrl(fromBrowser: browser.toBrowserHelperBrowserType),
               let liveProgramId = urlString.extractLiveProgramId(),
               !liveProgramIds.contains(liveProgramId),
               let url = URL(string: urlString) else { return }

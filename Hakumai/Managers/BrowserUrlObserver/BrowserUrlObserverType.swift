@@ -9,6 +9,7 @@
 import Foundation
 
 protocol BrowserUrlObserverType {
+    func setBrowserType(_ browser: BrowserInUseType)
     func start(delegate: BrowserUrlObserverDelegate)
     func stop()
 }

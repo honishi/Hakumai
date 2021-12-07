@@ -111,9 +111,10 @@ extension AppDelegate {
         guard let keyPath = keyPath, let change = change else { return }
 
         switch (keyPath, change[.newKey]) {
-        case (Parameters.browserInUse, _):
-            // log.debug("browserInUse -> \(changed)")
-            break
+        case (Parameters.browserInUse, let changed as Int):
+            log.debug("browserInUse -> \(changed)")
+            guard let browser = BrowserInUseType(rawValue: changed) else { return }
+            browserUrlObserver.setBrowserType(browser)
 
         case (Parameters.commentSpeechVolume, let changed as Int):
             mainWindowControllers.forEach { $0.setVoiceVolume(changed) }
