@@ -75,9 +75,11 @@ extension MainWindowController {
         mainViewController.logout()
     }
 
+    var live: Live? { mainViewController.live }
+
     var isEmpty: Bool { mainViewController.isEmpty }
 
-    var live: Live? { mainViewController.live }
+    var commentInputInProgress: Bool { mainViewController.commentInputInProgress }
 
     func connectToUrl(_ url: URL) {
         mainViewController.connectToUrl(url)

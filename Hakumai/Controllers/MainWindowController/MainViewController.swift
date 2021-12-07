@@ -608,6 +608,8 @@ extension MainViewController {
 
     var isEmpty: Bool { live == nil }
 
+    var commentInputInProgress: Bool { !commentTextField.stringValue.isEmpty }
+
     func connectToUrl(_ url: URL) {
         liveUrlTextField.stringValue = url.absoluteString
         connectLive(self)

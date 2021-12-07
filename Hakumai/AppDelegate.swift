@@ -162,7 +162,10 @@ extension AppDelegate: BrowserUrlObserverDelegate {
             activeMainWindowController?.connectToUrl(liveUrl)
             return
         }
-        let wc = openNewTab()
+        let commentInputInProgress = mainWindowControllers
+            .map { $0.commentInputInProgress }
+            .contains(true)
+        let wc = openNewTab(selectTab: !commentInputInProgress)
         wc?.connectToUrl(liveUrl)
     }
 
