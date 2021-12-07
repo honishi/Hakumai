@@ -11,6 +11,8 @@
 		A7F49743094E5F56137600E8 /* Pods_HakumaiTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 624C843B0BCD6D9BBCFABC5C /* Pods_HakumaiTests.framework */; };
 		DB022ED1271144CF003DC12A /* IconTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB022ED0271144CF003DC12A /* IconTableCellView.swift */; };
 		DB022ED3271144F8003DC12A /* IconTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB022ED2271144F8003DC12A /* IconTableCellView.xib */; };
+		DB0D37A7275F78510086A7A2 /* BrowserUrlObserverType.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0D37A6275F78510086A7A2 /* BrowserUrlObserverType.swift */; };
+		DB0D37A9275F785D0086A7A2 /* BrowserUrlObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0D37A8275F785D0086A7A2 /* BrowserUrlObserver.swift */; };
 		DB0E10641A39B6C200A10E00 /* GeneralViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0E10631A39B6C200A10E00 /* GeneralViewController.swift */; };
 		DB0E10681A39B6DD00A10E00 /* MuteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0E10671A39B6DD00A10E00 /* MuteViewController.swift */; };
 		DB0F0ECD1A16441D00F8BDC5 /* NicoManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0F0ECC1A16441D00F8BDC5 /* NicoManagerTests.swift */; };
@@ -134,6 +136,8 @@
 		C64D90E7D7263B8BAA24E4EB /* Pods-HakumaiTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HakumaiTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-HakumaiTests/Pods-HakumaiTests.release.xcconfig"; sourceTree = "<group>"; };
 		DB022ED0271144CF003DC12A /* IconTableCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconTableCellView.swift; sourceTree = "<group>"; };
 		DB022ED2271144F8003DC12A /* IconTableCellView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = IconTableCellView.xib; sourceTree = "<group>"; };
+		DB0D37A6275F78510086A7A2 /* BrowserUrlObserverType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserUrlObserverType.swift; sourceTree = "<group>"; };
+		DB0D37A8275F785D0086A7A2 /* BrowserUrlObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserUrlObserver.swift; sourceTree = "<group>"; };
 		DB0E10631A39B6C200A10E00 /* GeneralViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralViewController.swift; sourceTree = "<group>"; };
 		DB0E10671A39B6DD00A10E00 /* MuteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MuteViewController.swift; sourceTree = "<group>"; };
 		DB0F0ECC1A16441D00F8BDC5 /* NicoManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicoManagerTests.swift; sourceTree = "<group>"; };
@@ -267,6 +271,15 @@
 				DBAC3D2D21C411E900B09673 /* SystemConfiguration.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		DB0D37A5275F70C80086A7A2 /* BrowserUrlObserver */ = {
+			isa = PBXGroup;
+			children = (
+				DB0D37A8275F785D0086A7A2 /* BrowserUrlObserver.swift */,
+				DB0D37A6275F78510086A7A2 /* BrowserUrlObserverType.swift */,
+			);
+			path = BrowserUrlObserver;
 			sourceTree = "<group>";
 		};
 		DB15AF94265679E4009DACBE /* AuthWindowController */ = {
@@ -429,6 +442,7 @@
 			isa = PBXGroup;
 			children = (
 				DB576ECE2657A4860041050A /* AuthManager */,
+				DB0D37A5275F70C80086A7A2 /* BrowserUrlObserver */,
 				DBE093F91A5867A7004554FD /* HandleNameManager */,
 				DB34F831275BB15900180C7A /* LiveThumbnailManager */,
 				DB1E32C41A2C0CCE00CD874A /* MessageContainer */,
@@ -951,6 +965,8 @@
 				DB15AF9A26567AF1009DACBE /* AuthViewController.swift in Sources */,
 				DB15AF9826567A9D009DACBE /* AuthWindowController.swift in Sources */,
 				DB74B86C1A6E790C0064AC28 /* BrowserHelper.swift in Sources */,
+				DB0D37A9275F785D0086A7A2 /* BrowserUrlObserver.swift in Sources */,
+				DB0D37A7275F78510086A7A2 /* BrowserUrlObserverType.swift in Sources */,
 				DB690973266372230081F24F /* ButtonScrollView.swift in Sources */,
 				DBFA887B1A1BC25A005349AD /* Chat.swift in Sources */,
 				DB61AD82271B18DA001656F5 /* CircleImageView.swift in Sources */,

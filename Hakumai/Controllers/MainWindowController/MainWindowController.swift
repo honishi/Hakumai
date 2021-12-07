@@ -75,6 +75,14 @@ extension MainWindowController {
         mainViewController.logout()
     }
 
+    var isEmpty: Bool { mainViewController.isEmpty }
+
+    var live: Live? { mainViewController.live }
+
+    func connectToUrl(_ url: URL) {
+        mainViewController.connectToUrl(url)
+    }
+
     func focusLiveTextField() {
         mainViewController.focusLiveTextField()
     }

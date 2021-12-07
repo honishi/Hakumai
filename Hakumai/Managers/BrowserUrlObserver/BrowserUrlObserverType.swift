@@ -1,0 +1,18 @@
+//
+//  BrowserUrlObserverType.swift
+//  Hakumai
+//
+//  Created by Hiroyuki Onishi on 2021/12/07.
+//  Copyright © 2021 Hiroyuki Onishi. All rights reserved.
+//
+
+import Foundation
+
+protocol BrowserUrlObserverType {
+    func start(delegate: BrowserUrlObserverDelegate)
+    func stop()
+}
+
+protocol BrowserUrlObserverDelegate: AnyObject {
+    func browserUrlObserver(_ browserUrlObserver: BrowserUrlObserverType, didGetUrl liveUrl: URL)
+}

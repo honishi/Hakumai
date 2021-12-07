@@ -42,3 +42,14 @@ final class BrowserHelper {
         return result
     }
 }
+
+extension BrowserInUseType {
+    var toBrowserHelperBrowserType: BrowserHelper.BrowserType {
+        return {
+            switch self {
+            case .chrome:   return .chrome
+            case .safari:   return .safari
+            }
+        }()
+    }
+}

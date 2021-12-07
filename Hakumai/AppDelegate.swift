@@ -21,6 +21,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var mainWindowControllers: [MainWindowController] = []
     private var nextMainWindowTopLeftPoint: NSPoint = NSPoint.zero
 
+    private let browserUrlObserver: BrowserUrlObserverType = BrowserUrlObserver()
+
     // MARK: - NSApplicationDelegate Functions
     func applicationDidFinishLaunching(_ notification: Notification) {
         LoggerHelper.setupLogger(log)
@@ -32,6 +34,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         clearImageCache()
         debugPrintToken()
         openNewWindow()
+        startManagers()
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
@@ -144,6 +147,19 @@ extension AppDelegate {
     // swiftlint:enable block_based_kvo cyclomatic_complexity
 }
 
+// MARK: BrowserUrlObserverDelegate Methods
+extension AppDelegate: BrowserUrlObserverDelegate {
+    func browserUrlObserver(_ browserUrlObserver: BrowserUrlObserverType, didGetUrl liveUrl: URL) {
+        log.debug(liveUrl)
+        if activeMainWindowController?.isEmpty == true {
+            activeMainWindowController?.connectToUrl(liveUrl)
+            return
+        }
+        let wc = openNewTab(selectTab: false)
+        wc?.connectToUrl(liveUrl)
+    }
+}
+
 // MARK: Application Initialize Utility
 private extension AppDelegate {
     func migrateApplicationVersion() {
@@ -239,12 +255,21 @@ private extension AppDelegate {
             log.debug("Disk cache for images has been cleared.")
         }
     }
+
+    func startManagers() {
+        browserUrlObserver.start(delegate: self)
+    }
 }
 
 // MARK: Multi-Window Management
 extension AppDelegate {
     var activeMainWindowController: MainWindowController? {
-        mainWindowControllers.filter { $0.window?.isKeyWindow == true }.first
+        let keyWindowWc = mainWindowControllers.filter { $0.window?.isKeyWindow == true }.first
+        return keyWindowWc ?? mainWindowControllers.first
+    }
+
+    var lastTabbedWindow: NSWindow? {
+        mainWindowControllers.last?.window?.tabbedWindows?.last
     }
 }
 
@@ -273,14 +298,18 @@ private extension AppDelegate {
         log.debug(mainWindowControllers)
     }
 
-    func openNewTab() {
+    @discardableResult
+    func openNewTab(selectTab: Bool = true) -> MainWindowController? {
         let wc = MainWindowController.make(delegate: self)
-        guard let activeWindow = activeMainWindowController?.window,
-              let newWindow = wc.window else { return }
-        activeWindow.addTabbedWindow(newWindow, ordered: .above)
-        activeWindow.selectNextTab(self)
+        guard let newWindow = wc.window,
+              let lastWindow = lastTabbedWindow else { return nil }
+        lastWindow.addTabbedWindow(newWindow, ordered: .above)
+        if selectTab {
+            wc.showWindow(self)
+        }
         mainWindowControllers.append(wc)
         log.debug(mainWindowControllers)
+        return wc
     }
 
     func closeWindow() {

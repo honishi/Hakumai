@@ -605,6 +605,13 @@ extension MainViewController {
         logSystemMessageToTable(L10n.logoutCompleted)
     }
 
+    var isEmpty: Bool { live == nil }
+
+    func connectToUrl(_ url: URL) {
+        liveUrlTextField.stringValue = url.absoluteString
+        connectLive(self)
+    }
+
     func showHandleNameAddViewController(live: Live, chat: ChatMessage) {
         let vc = StoryboardScene.MainWindowController.handleNameAddViewController.instantiate()
         vc.handleName = (defaultHandleName(live: live, chat: chat) ?? "") as NSString
@@ -956,14 +963,8 @@ private extension MainViewController {
 extension MainViewController {
     @IBAction func grabUrlFromBrowser(_ sender: AnyObject) {
         let rawValue = UserDefaults.standard.integer(forKey: Parameters.browserInUse)
-        guard let _browser = BrowserInUseType(rawValue: rawValue) else { return }
-        let browser: BrowserHelper.BrowserType = {
-            switch _browser {
-            case .chrome:   return .chrome
-            case .safari:   return .safari
-            }
-        }()
-        guard let url = BrowserHelper.extractUrl(fromBrowser: browser) else { return }
+        guard let browser = BrowserInUseType(rawValue: rawValue) else { return }
+        guard let url = BrowserHelper.extractUrl(fromBrowser: browser.toBrowserHelperBrowserType) else { return }
         liveUrlTextField.stringValue = url
         connectLive(self)
     }
