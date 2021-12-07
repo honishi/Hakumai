@@ -154,6 +154,14 @@
                                                 <action selector="grabUrlFromChrome:" target="Voe-Tx-rLC" id="qgK-4S-6R8"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="auto_url" keyEquivalent="i" id="Yf7-Pt-E1j">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="auto_url"/>
+                                            </userDefinedRuntimeAttributes>
+                                            <connections>
+                                                <binding destination="v7j-s9-O0w" name="value" keyPath="values.EnableBrowserUrlObservation" id="aNI-Wc-w53"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem isSeparatorItem="YES" id="m54-Is-iLE"/>
                                         <menuItem title="new_comment" keyEquivalent="o" id="Ev7-F1-Fdp">
                                             <userDefinedRuntimeAttributes>
@@ -592,6 +600,7 @@
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <userDefaultsController id="Qbm-2t-1Py"/>
                 <customObject id="zCO-sh-zt2" customClass="SUUpdater"/>
+                <userDefaultsController id="v7j-s9-O0w"/>
             </objects>
             <point key="canvasLocation" x="-469" y="630"/>
         </scene>

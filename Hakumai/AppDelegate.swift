@@ -137,7 +137,7 @@ extension AppDelegate {
             makeWindowsAlwaysOnTop(newValue)
 
         case (Parameters.enableBrowserUrlObservation, let newValue as Bool):
-            toggleBrowserUrlObservation(newValue)
+            setBrowserUrlObservation(newValue)
 
         case (Parameters.enableDebugMessage, let newValue as Bool):
             mainWindowControllers.forEach { $0.changeEnableDebugMessage(newValue) }
@@ -351,7 +351,7 @@ private extension AppDelegate {
         UserDefaults.standard.synchronize()
     }
 
-    func toggleBrowserUrlObservation(_ isEnabled: Bool) {
+    func setBrowserUrlObservation(_ isEnabled: Bool) {
         log.debug("changed browser url observation: \(isEnabled)")
         if isEnabled {
             browserUrlObserver.start(delegate: self)
