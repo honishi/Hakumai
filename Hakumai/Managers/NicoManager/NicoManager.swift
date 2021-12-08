@@ -1007,7 +1007,7 @@ private extension NicoManager {
 private extension WatchProgramsResponse {
     func toLive(with nicoliveProgramId: String) -> Live {
         Live(
-            liveId: nicoliveProgramId,
+            liveProgramId: nicoliveProgramId,
             title: data.program.title,
             community: Community(
                 communityId: data.socialGroup.socialGroupId,

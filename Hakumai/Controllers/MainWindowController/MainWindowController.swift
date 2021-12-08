@@ -64,7 +64,7 @@ extension MainWindowController {
 
 extension MainWindowController {
     func isLiveProgramId(_ liveProgramId: String) -> Bool {
-        mainViewController.live?.liveId == liveProgramId
+        mainViewController.live?.liveProgramId == liveProgramId
     }
 
     func login() {
@@ -73,6 +73,16 @@ extension MainWindowController {
 
     func logout() {
         mainViewController.logout()
+    }
+
+    var live: Live? { mainViewController.live }
+
+    var isEmpty: Bool { mainViewController.isEmpty }
+
+    var commentInputInProgress: Bool { mainViewController.commentInputInProgress }
+
+    func connectToUrl(_ url: URL) {
+        mainViewController.connectToUrl(url)
     }
 
     func focusLiveTextField() {

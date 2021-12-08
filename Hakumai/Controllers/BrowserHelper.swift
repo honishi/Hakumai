@@ -8,6 +8,21 @@
 
 import Foundation
 
+private let appNameChrome = "Google Chrome"
+private let appNameSafari = "Safari"
+
+private let chromeScript = """
+if application "\(appNameChrome)" is running then
+  tell application "\(appNameChrome)" to get URL of active tab of front window as string
+end if
+"""
+
+private let safariScript = """
+if application "\(appNameSafari)" is running then
+  tell application "\(appNameSafari)" to get URL of current tab of front window as string
+end if
+"""
+
 final class BrowserHelper {
     enum BrowserType {
         case chrome
@@ -17,22 +32,21 @@ final class BrowserHelper {
 
     // http://stackoverflow.com/a/6111592
     static func extractUrl(fromBrowser browserType: BrowserType) -> String? {
-        var source = ""
-
-        switch browserType {
-        case .chrome:
-            source = "tell application \"Google Chrome\" to get URL of active tab of front window as string"
-        case .safari:
-            source = "tell application \"Safari\" to get URL of current tab of front window as string"
-        default:
-            break
-        }
-
+        let source = { () -> String in
+            switch browserType {
+            case .chrome:   return chromeScript
+            case .safari:   return safariScript
+            default:        return ""
+            }
+        }()
         let script = NSAppleScript(source: source)
         var scriptError: NSDictionary?
         let descriptor = script?.executeAndReturnError(&scriptError)
 
-        guard scriptError == nil else { return nil }
+        guard scriptError == nil else {
+            log.error(scriptError)
+            return nil
+        }
 
         var result: String?
         if let unicode = descriptor?.coerce(toDescriptorType: UInt32(typeUnicodeText)) {
@@ -40,5 +54,16 @@ final class BrowserHelper {
             result = NSString(characters: (data as NSData).bytes.assumingMemoryBound(to: unichar.self), length: (data.count / MemoryLayout<unichar>.size)) as String
         }
         return result
+    }
+}
+
+extension BrowserInUseType {
+    var toBrowserHelperBrowserType: BrowserHelper.BrowserType {
+        return {
+            switch self {
+            case .chrome:   return .chrome
+            case .safari:   return .safari
+            }
+        }()
     }
 }

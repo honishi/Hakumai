@@ -11,6 +11,7 @@ import AppKit
 import Kingfisher
 
 private let mainWindowDefaultTopLeftPoint = NSPoint(x: 100, y: 100)
+private let browserUrlIgnoreSeconds: TimeInterval = 120
 
 @NSApplicationMain
 final class AppDelegate: NSObject, NSApplicationDelegate {
@@ -20,6 +21,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private var mainWindowControllers: [MainWindowController] = []
     private var nextMainWindowTopLeftPoint: NSPoint = NSPoint.zero
+
+    private let browserUrlObserver: BrowserUrlObserverType = BrowserUrlObserver()
 
     // MARK: - NSApplicationDelegate Functions
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -109,9 +112,10 @@ extension AppDelegate {
         guard let keyPath = keyPath, let change = change else { return }
 
         switch (keyPath, change[.newKey]) {
-        case (Parameters.browserInUse, _):
-            // log.debug("browserInUse -> \(changed)")
-            break
+        case (Parameters.browserInUse, let changed as Int):
+            log.debug("browserInUse -> \(changed)")
+            guard let browser = BrowserInUseType(rawValue: changed) else { return }
+            browserUrlObserver.setBrowserType(browser)
 
         case (Parameters.commentSpeechVolume, let changed as Int):
             mainWindowControllers.forEach { $0.setVoiceVolume(changed) }
@@ -134,6 +138,9 @@ extension AppDelegate {
         case (Parameters.alwaysOnTop, let newValue as Bool):
             makeWindowsAlwaysOnTop(newValue)
 
+        case (Parameters.enableBrowserUrlObservation, let newValue as Bool):
+            setBrowserUrlObservation(newValue)
+
         case (Parameters.enableDebugMessage, let newValue as Bool):
             mainWindowControllers.forEach { $0.changeEnableDebugMessage(newValue) }
 
@@ -142,6 +149,35 @@ extension AppDelegate {
         }
     }
     // swiftlint:enable block_based_kvo cyclomatic_complexity
+}
+
+// MARK: BrowserUrlObserverDelegate Methods
+extension AppDelegate: BrowserUrlObserverDelegate {
+    func browserUrlObserver(_ browserUrlObserver: BrowserUrlObserverType, didGetUrl liveUrl: URL) {
+        log.debug(liveUrl)
+        if let liveProgramId = liveUrl.absoluteString.extractLiveProgramId() {
+            browserUrlObserver.ignoreLive(
+                liveProgramId: liveProgramId, seconds: browserUrlIgnoreSeconds)
+        }
+        guard !isConnected(url: liveUrl) else {
+            log.debug("Already connected, skip.")
+            return
+        }
+        if activeMainWindowController?.isEmpty == true {
+            activeMainWindowController?.connectToUrl(liveUrl)
+            return
+        }
+        let commentInputInProgress = mainWindowControllers
+            .map { $0.commentInputInProgress }
+            .contains(true)
+        let wc = openNewTab(selectTab: !commentInputInProgress)
+        wc?.connectToUrl(liveUrl)
+    }
+
+    private func isConnected(url: URL) -> Bool {
+        let liveProgramId = url.absoluteString.extractLiveProgramId()
+        return mainWindowControllers.map { $0.live?.liveProgramId }.contains(liveProgramId)
+    }
 }
 
 // MARK: Application Initialize Utility
@@ -197,6 +233,7 @@ private extension AppDelegate {
             Parameters.enableMuteWords: true,
             Parameters.alwaysOnTop: false,
             Parameters.commentAnonymously: true,
+            Parameters.enableBrowserUrlObservation: false,
             Parameters.enableLiveNotification: false,
             Parameters.enableDebugMessage: false]
         UserDefaults.standard.register(defaults: defaults)
@@ -211,7 +248,8 @@ private extension AppDelegate {
             Parameters.enableMuteUserIds, Parameters.muteUserIds,
             Parameters.enableMuteWords, Parameters.muteWords,
             // misc
-            Parameters.fontSize, Parameters.alwaysOnTop, Parameters.enableDebugMessage
+            Parameters.fontSize, Parameters.alwaysOnTop,
+            Parameters.enableBrowserUrlObservation, Parameters.enableDebugMessage
         ]
         for keyPath in keyPaths {
             UserDefaults.standard.addObserver(
@@ -244,7 +282,13 @@ private extension AppDelegate {
 // MARK: Multi-Window Management
 extension AppDelegate {
     var activeMainWindowController: MainWindowController? {
-        mainWindowControllers.filter { $0.window?.isKeyWindow == true }.first
+        let keyWindowWc = mainWindowControllers.filter { $0.window?.isKeyWindow == true }.first
+        return keyWindowWc ?? mainWindowControllers.first
+    }
+
+    var lastTabbedWindow: NSWindow? {
+        let activeWindow = activeMainWindowController?.window
+        return activeWindow?.tabbedWindows?.last ?? activeWindow
     }
 }
 
@@ -254,6 +298,10 @@ extension AppDelegate: MainWindowControllerDelegate {
     }
 
     func mainWindowControllerWillClose(_ mainWindowController: MainWindowController) {
+        if let liveProgramId = mainWindowController.live?.liveProgramId {
+            browserUrlObserver.ignoreLive(
+                liveProgramId: liveProgramId, seconds: browserUrlIgnoreSeconds)
+        }
         mainWindowControllers.removeAll { $0 == mainWindowController }
         log.debug(mainWindowControllers)
     }
@@ -273,14 +321,18 @@ private extension AppDelegate {
         log.debug(mainWindowControllers)
     }
 
-    func openNewTab() {
+    @discardableResult
+    func openNewTab(selectTab: Bool = true) -> MainWindowController? {
         let wc = MainWindowController.make(delegate: self)
-        guard let activeWindow = activeMainWindowController?.window,
-              let newWindow = wc.window else { return }
-        activeWindow.addTabbedWindow(newWindow, ordered: .above)
-        activeWindow.selectNextTab(self)
+        guard let newWindow = wc.window,
+              let lastWindow = lastTabbedWindow else { return nil }
+        lastWindow.addTabbedWindow(newWindow, ordered: .above)
+        if selectTab, lastWindow.isOnActiveSpace {
+            wc.showWindow(self)
+        }
         mainWindowControllers.append(wc)
         log.debug(mainWindowControllers)
+        return wc
     }
 
     func closeWindow() {
@@ -314,6 +366,15 @@ private extension AppDelegate {
         guard kMinimumFontSize...kMaximumFontSize ~= fontSize else { return }
         UserDefaults.standard.set(fontSize, forKey: Parameters.fontSize)
         UserDefaults.standard.synchronize()
+    }
+
+    func setBrowserUrlObservation(_ isEnabled: Bool) {
+        log.debug("changed browser url observation: \(isEnabled)")
+        if isEnabled {
+            browserUrlObserver.start(delegate: self)
+        } else {
+            browserUrlObserver.stop()
+        }
     }
 }
 

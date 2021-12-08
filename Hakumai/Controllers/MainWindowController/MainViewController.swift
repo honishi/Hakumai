@@ -56,6 +56,7 @@ final class MainViewController: NSViewController {
     @IBOutlet private weak var adPointsValueLabel: NSTextField!
     @IBOutlet private weak var giftPointsIconImageView: NSImageView!
     @IBOutlet private weak var giftPointsLabel: NSTextField!
+    @IBOutlet private weak var autoUrlButton: NSButton!
     @IBOutlet private weak var speakButton: NSButton!
 
     @IBOutlet private weak var scrollView: ButtonScrollView!
@@ -407,7 +408,7 @@ extension MainViewController: NicoManagerDelegate {
         updateCommunityViews(for: live)
 
         if live.isTimeShift {
-            liveThumbnailManager.start(for: live.liveId, delegate: self)
+            liveThumbnailManager.start(for: live.liveProgramId, delegate: self)
             resetElapsedLabel()
             resetActiveUser()
             updateRankingLabel(rank: nil, date: nil)
@@ -420,9 +421,9 @@ extension MainViewController: NicoManagerDelegate {
 
         switch connectContext {
         case .normal:
-            liveThumbnailManager.start(for: live.liveId, delegate: self)
+            liveThumbnailManager.start(for: live.liveProgramId, delegate: self)
             resetActiveUser()
-            rankingManager.addDelegate(self, for: live.liveId)
+            rankingManager.addDelegate(self, for: live.liveProgramId)
             logSystemMessageToTable(L10n.preparedLive(user.nickname))
         case .reconnect:
             break
@@ -605,6 +606,15 @@ extension MainViewController {
         logSystemMessageToTable(L10n.logoutCompleted)
     }
 
+    var isEmpty: Bool { live == nil }
+
+    var commentInputInProgress: Bool { !commentTextField.stringValue.isEmpty }
+
+    func connectToUrl(_ url: URL) {
+        liveUrlTextField.stringValue = url.absoluteString
+        connectLive(self)
+    }
+
     func showHandleNameAddViewController(live: Live, chat: ChatMessage) {
         let vc = StoryboardScene.MainWindowController.handleNameAddViewController.instantiate()
         vc.handleName = (defaultHandleName(live: live, chat: chat) ?? "") as NSString
@@ -768,6 +778,7 @@ private extension MainViewController {
         giftPointsLabel.toolTip = L10n.giftPoints
         giftPointsLabel.stringValue = defaultLabelValue
 
+        autoUrlButton.title = L10n.autoUrl
         speakButton.title = L10n.speakComment
 
         if #available(macOS 10.14, *) {
@@ -956,14 +967,8 @@ private extension MainViewController {
 extension MainViewController {
     @IBAction func grabUrlFromBrowser(_ sender: AnyObject) {
         let rawValue = UserDefaults.standard.integer(forKey: Parameters.browserInUse)
-        guard let _browser = BrowserInUseType(rawValue: rawValue) else { return }
-        let browser: BrowserHelper.BrowserType = {
-            switch _browser {
-            case .chrome:   return .chrome
-            case .safari:   return .safari
-            }
-        }()
-        guard let url = BrowserHelper.extractUrl(fromBrowser: browser) else { return }
+        guard let browser = BrowserInUseType(rawValue: rawValue) else { return }
+        guard let url = BrowserHelper.extractUrl(fromBrowser: browser.toBrowserHelperBrowserType) else { return }
         liveUrlTextField.stringValue = url
         connectLive(self)
     }
@@ -1296,7 +1301,7 @@ private extension MainViewController {
         notificationPresenter.show(
             title: title,
             body: "\(live.title)\n\(live.community.title)",
-            liveProgramId: live.liveId,
+            liveProgramId: live.liveProgramId,
             jpegImageUrl: live.community.thumbnailUrl
         )
     }

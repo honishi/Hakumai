@@ -26,6 +26,8 @@ internal enum L10n {
   internal static let addToMuteUser = L10n.tr("Localizable", "add_to_mute_user")
   /// Always On Top
   internal static let alwaysOnTop = L10n.tr("Localizable", "always_on_top")
+  /// Auto URL
+  internal static let autoUrl = L10n.tr("Localizable", "auto_url")
   /// Bring All to Front
   internal static let bringAllToFront = L10n.tr("Localizable", "bring_all_to_front")
   /// Browser Used for "Grab URL from Browser" feature (⌘U)
@@ -186,7 +188,7 @@ internal enum L10n {
   internal static let reconnecting = L10n.tr("Localizable", "reconnecting")
   /// Remove Handle Name
   internal static let removeHandleName = L10n.tr("Localizable", "remove_handle_name")
-  /// Safari (Not supported yet…)
+  /// Safari
   internal static let safari = L10n.tr("Localizable", "safari")
   /// Press to scroll down / long press to scroll to bottom
   internal static let scrollDownButton = L10n.tr("Localizable", "scroll_down_button")
