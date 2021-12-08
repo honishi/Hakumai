@@ -32,7 +32,10 @@ final class BrowserHelper {
         var scriptError: NSDictionary?
         let descriptor = script?.executeAndReturnError(&scriptError)
 
-        guard scriptError == nil else { return nil }
+        guard scriptError == nil else {
+            log.error(scriptError)
+            return nil
+        }
 
         var result: String?
         if let unicode = descriptor?.coerce(toDescriptorType: UInt32(typeUnicodeText)) {
