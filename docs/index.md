@@ -40,10 +40,9 @@ Hakumai は macOS で動作するニコニコ生放送用のコメントビュ�
 ## Donation
 
 <div style="text-align: center;">
-<a href="https://donation.yahoo.co.jp/" target="_blank">
-<img src="./image/job_kome_nouka.png" width="160px">
-https://donation.yahoo.co.jp/
-</a>
+<img src="./image/job_kome_nouka.png" width="160px"><br>
+<a href="https://donation.yahoo.co.jp/" target="_blank">💰ドネーション</a> /
+<a href="https://www.amazon.co.jp/b?node=8443136051" target="_blank">🍠ほしい物リスト</a>
 </div>
 
 ## Contact
