@@ -287,7 +287,8 @@ extension AppDelegate {
     }
 
     var lastTabbedWindow: NSWindow? {
-        mainWindowControllers.last?.window?.tabbedWindows?.last
+        let activeWindow = activeMainWindowController?.window
+        return activeWindow?.tabbedWindows?.last ?? activeWindow
     }
 }
 
