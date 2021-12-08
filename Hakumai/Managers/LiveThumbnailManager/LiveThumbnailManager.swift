@@ -128,8 +128,8 @@ extension LiveThumbnailManager {
         return extractThumbnailUrl(from: html)
     }
 
-    func exposedConstructThumbnailUrl(from thumbnailUrl: URL, for date: Date) -> URL? {
-        return constructThumbnailUrl(from: thumbnailUrl, for: date)
+    func exposedConstructThumbnailUrl(from thumbnailUrl: URL, for untilDate: Date) -> URL? {
+        return constructThumbnailUrl(from: thumbnailUrl, for: untilDate)
     }
 }
 #endif

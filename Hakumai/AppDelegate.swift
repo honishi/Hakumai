@@ -11,6 +11,7 @@ import AppKit
 import Kingfisher
 
 private let mainWindowDefaultTopLeftPoint = NSPoint(x: 100, y: 100)
+private let browserUrlIgnoreSeconds: TimeInterval = 120
 
 @NSApplicationMain
 final class AppDelegate: NSObject, NSApplicationDelegate {
@@ -154,6 +155,10 @@ extension AppDelegate {
 extension AppDelegate: BrowserUrlObserverDelegate {
     func browserUrlObserver(_ browserUrlObserver: BrowserUrlObserverType, didGetUrl liveUrl: URL) {
         log.debug(liveUrl)
+        if let liveProgramId = liveUrl.absoluteString.extractLiveProgramId() {
+            browserUrlObserver.ignoreLive(
+                liveProgramId: liveProgramId, seconds: browserUrlIgnoreSeconds)
+        }
         guard !isConnected(url: liveUrl) else {
             log.debug("Already connected, skip.")
             return
@@ -292,6 +297,10 @@ extension AppDelegate: MainWindowControllerDelegate {
     }
 
     func mainWindowControllerWillClose(_ mainWindowController: MainWindowController) {
+        if let liveProgramId = mainWindowController.live?.liveProgramId {
+            browserUrlObserver.ignoreLive(
+                liveProgramId: liveProgramId, seconds: browserUrlIgnoreSeconds)
+        }
         mainWindowControllers.removeAll { $0 == mainWindowController }
         log.debug(mainWindowControllers)
     }
@@ -317,7 +326,7 @@ private extension AppDelegate {
         guard let newWindow = wc.window,
               let lastWindow = lastTabbedWindow else { return nil }
         lastWindow.addTabbedWindow(newWindow, ordered: .above)
-        if selectTab {
+        if selectTab, lastWindow.isOnActiveSpace {
             wc.showWindow(self)
         }
         mainWindowControllers.append(wc)
