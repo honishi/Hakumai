@@ -148,7 +148,7 @@
 /// General
 "browser_in_use" = "\"ブラウザから URL をコピーする\" 機能 (⌘U) で使用するブラウザ";
 "google_chrome" = "Google Chrome";
-"safari" = "Safari (まだ未サポート…)";
+"safari" = "Safari";
 "comment_speaking" = "コメント読み上げ";
 "speak_comments" = "コメント読み上げ (macOS 10.14 以降が必要)";
 "speak_volume" = "読み上げボリューム";

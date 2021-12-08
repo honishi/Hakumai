@@ -188,7 +188,7 @@ internal enum L10n {
   internal static let reconnecting = L10n.tr("Localizable", "reconnecting")
   /// Remove Handle Name
   internal static let removeHandleName = L10n.tr("Localizable", "remove_handle_name")
-  /// Safari (Not supported yet…)
+  /// Safari
   internal static let safari = L10n.tr("Localizable", "safari")
   /// Press to scroll down / long press to scroll to bottom
   internal static let scrollDownButton = L10n.tr("Localizable", "scroll_down_button")

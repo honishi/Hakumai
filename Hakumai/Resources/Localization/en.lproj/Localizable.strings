@@ -148,7 +148,7 @@
 /// General
 "browser_in_use" = "Browser Used for \"Grab URL from Browser\" feature (⌘U)";
 "google_chrome" = "Google Chrome";
-"safari" = "Safari (Not supported yet…)";
+"safari" = "Safari";
 "comment_speaking" = "Comment Speech";
 "speak_comments" = "Speech Comments (Requires macOS 10.14-)";
 "speak_volume" = "Speech Volume";
