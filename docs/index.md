@@ -2,7 +2,7 @@
 layout: default
 ---
 
-**Niconama Comment Viewer** Alternative for **macOS**.
+Niconama Comment Viewer Alternative for macOS.
 
 <a href="https://twitter.com/share" class="twitter-share-button" data-text="Hakumai - Mac用ニコ生コメントビューア">Tweet</a>
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
@@ -41,8 +41,10 @@ Hakumai は macOS で動作するニコニコ生放送用のコメントビュ�
 
 <div style="text-align: center;">
 <img src="./image/job_kome_nouka.png" width="160px"><br>
-<a href="https://donation.yahoo.co.jp/" target="_blank">💰ドネーション</a> /
-<a href="https://www.amazon.co.jp/b?node=8443136051" target="_blank">🍠ほしい物リスト</a>
+<div class="middle-text">
+🌾 <a href="https://donation.yahoo.co.jp/" target="_blank">ドネーション</a>
+🌾 <a href="https://www.amazon.co.jp/b?node=8443136051" target="_blank">ほしい物リスト</a> 🌾
+</div>
 </div>
 
 ## Contact
@@ -54,7 +56,7 @@ Hakumai は macOS で動作するニコニコ生放送用のコメントビュ�
 
 ## Special Thanks
 
-<div class="thanks">
+<div class="small-text thanks">
 
 あすぷす / イノシシ / うまごん / うんさい / 大原直人 / 加瀬ちゃん / きょろちゃん / ジャスティス名川 / とろみ / 七原浩平 / ビッグニート / 向日葵 / ヘクトパスカル山田 / もっちゃん / 森一真 / らみあ
 / りーこ
