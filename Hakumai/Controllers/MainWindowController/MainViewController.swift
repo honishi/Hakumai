@@ -43,8 +43,7 @@ final class MainViewController: NSViewController {
     @IBOutlet private weak var debugExpireTokenButton: NSButton!
     @IBOutlet private weak var connectButton: NSButton!
 
-    @IBOutlet private weak var liveThumbnailImageView: NSImageView!
-    @IBOutlet private weak var liveThumbnailImageViewInitialAspectRatio: NSLayoutConstraint!
+    @IBOutlet private weak var liveThumbnailImageView: LiveThumbnailImageView!
     @IBOutlet private weak var liveTitleLabel: NSTextField!
     @IBOutlet private weak var communityTitleLabel: NSTextField!
 
@@ -75,8 +74,6 @@ final class MainViewController: NSViewController {
     @IBOutlet private weak var rankingValueLabel: NSTextField!
     @IBOutlet private weak var rankingDateLabel: NSTextField!
     @IBOutlet private weak var progressIndicator: NSProgressIndicator!
-
-    private var liveThumbnailImageViewAspectRatio: Constraint?
 
     // MARK: Menu Delegate
     // swiftlint:disable weak_delegate
@@ -545,28 +542,7 @@ extension MainViewController: LiveThumbnailManagerDelegate {
         liveThumbnailImageView.kf.setImage(
             with: thumbnailUrl,
             placeholder: liveThumbnailImageView.image
-        ) { [weak self] in
-            switch $0 {
-            case .success(_):
-                self?.adjustLiveThumbnailImageViewAspectRatio()
-            case .failure(let error):
-                log.error(error)
-            }
-        }
-    }
-
-    private func adjustLiveThumbnailImageViewAspectRatio() {
-        guard let image = liveThumbnailImageView.image else { return }
-        let aspectRatio = image.size.height / image.size.width
-        liveThumbnailImageViewInitialAspectRatio?.isActive = false
-        liveThumbnailImageViewAspectRatio?.deactivate()
-        liveThumbnailImageView.snp.makeConstraints { make in
-            self.liveThumbnailImageViewAspectRatio = make
-                .height
-                .equalTo(self.liveThumbnailImageView.snp.width)
-                .multipliedBy(aspectRatio)
-                .constraint
-        }
+        )
     }
 }
 
@@ -992,7 +968,6 @@ extension MainViewController {
 
         clearAllChats()
         liveThumbnailImageView.image = Asset.defaultLiveThumbnailImage.image
-        adjustLiveThumbnailImageViewAspectRatio()
 
         nicoManager.connect(liveProgramId: liveProgramId)
     }

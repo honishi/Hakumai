@@ -719,13 +719,14 @@
                                     <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalCompressionResistancePriority="250" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jZp-vI-7KI">
                                         <rect key="frame" x="2" y="498" width="610" height="55"/>
                                         <subviews>
-                                            <imageView wantsLayer="YES" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="NQm-lE-rVr">
+                                            <imageView wantsLayer="YES" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="55" placeholderIntrinsicHeight="55" translatesAutoresizingMaskIntoConstraints="NO" id="NQm-lE-rVr" customClass="LiveThumbnailImageView" customModule="Hakumai" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="0.0" width="55" height="55"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="width" secondItem="NQm-lE-rVr" secondAttribute="height" multiplier="1:1" id="JL8-Ur-WNq"/>
-                                                    <constraint firstAttribute="height" constant="55" id="NLv-j6-Vde"/>
-                                                </constraints>
                                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="DefaultLiveThumbnailImage" id="Rj1-mk-21r"/>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="height">
+                                                        <real key="value" value="55"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                </userDefinedRuntimeAttributes>
                                             </imageView>
                                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="250" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="d3A-5T-Fi5">
                                                 <rect key="frame" x="63" y="0.0" width="547" height="55"/>
@@ -1332,7 +1333,6 @@
                         <outlet property="giftPointsLabel" destination="ak0-Zv-XEq" id="Et0-Xg-T8n"/>
                         <outlet property="grabUrlButton" destination="GRS-m4-7KE" id="WFa-bJ-le5"/>
                         <outlet property="liveThumbnailImageView" destination="NQm-lE-rVr" id="Vlq-76-e8s"/>
-                        <outlet property="liveThumbnailImageViewInitialAspectRatio" destination="JL8-Ur-WNq" id="naG-Q7-KwZ"/>
                         <outlet property="liveTitleLabel" destination="65a-aX-RIL" id="uvT-R4-GZO"/>
                         <outlet property="liveUrlTextField" destination="gZN-es-bFO" id="vZe-3V-txV"/>
                         <outlet property="maxActiveUserValueLabel" destination="575-Oj-4dX" id="qIj-Hw-YFs"/>
