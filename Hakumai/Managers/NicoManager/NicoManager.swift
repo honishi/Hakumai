@@ -469,7 +469,13 @@ private extension NicoManager {
         stopAllTimers()
 
         [watchSocket, messageSocket].forEach {
-            $0?.onEvent = nil
+            // Do not call `$0?.onEvent = nil` here.
+            // I'm not sure the reason but, for sure, letting the `onEvent` to be nil
+            // before calling `$0?.disconnect()` makes the network connections not
+            // being cleaned-up with the states like `CloseWait`. And they are
+            // piled-up and eventually causes network error for new connection request
+            // with the message like “No space left on device”.
+            // You can confirm this "memory leak" in Network Activity Report in Xcode.
             $0?.disconnect()
         }
         watchSocket = nil
