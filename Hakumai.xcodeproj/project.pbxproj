@@ -55,6 +55,7 @@
 		DB6DD2AE2650F1B0009A9574 /* NicoManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6DD2AD2650F1B0009A9574 /* NicoManagerProtocol.swift */; };
 		DB73A38C1A4F43F6008423D0 /* MuteAddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB73A38B1A4F43F6008423D0 /* MuteAddViewController.swift */; };
 		DB74B86C1A6E790C0064AC28 /* BrowserHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB74B86B1A6E790C0064AC28 /* BrowserHelper.swift */; };
+		DB7A9367276373C100C361FF /* LiveThumbnailImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7A9366276373C100C361FF /* LiveThumbnailImageView.swift */; };
 		DB7B3DDC1A23B35300205470 /* ColoredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B3DDB1A23B35300205470 /* ColoredView.swift */; };
 		DB7B3DE21A242D7B00205470 /* TimeTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB7B3DE11A242D7B00205470 /* TimeTableCellView.xib */; };
 		DB7B3DE51A2434FB00205470 /* TimeTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B3DE41A2434FB00205470 /* TimeTableCellView.swift */; };
@@ -189,6 +190,7 @@
 		DB6DD2AD2650F1B0009A9574 /* NicoManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoManagerProtocol.swift; sourceTree = "<group>"; };
 		DB73A38B1A4F43F6008423D0 /* MuteAddViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MuteAddViewController.swift; sourceTree = "<group>"; };
 		DB74B86B1A6E790C0064AC28 /* BrowserHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrowserHelper.swift; sourceTree = "<group>"; };
+		DB7A9366276373C100C361FF /* LiveThumbnailImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveThumbnailImageView.swift; sourceTree = "<group>"; };
 		DB7B3DDB1A23B35300205470 /* ColoredView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColoredView.swift; sourceTree = "<group>"; };
 		DB7B3DE11A242D7B00205470 /* TimeTableCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TimeTableCellView.xib; sourceTree = "<group>"; };
 		DB7B3DE41A2434FB00205470 /* TimeTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeTableCellView.swift; sourceTree = "<group>"; };
@@ -434,6 +436,7 @@
 				DB690972266372230081F24F /* ButtonScrollView.swift */,
 				DB61AD81271B18DA001656F5 /* CircleImageView.swift */,
 				DB1E736F26F237F600A6F4C0 /* ClickTableView.swift */,
+				DB7A9366276373C100C361FF /* LiveThumbnailImageView.swift */,
 			);
 			path = CustomView;
 			sourceTree = "<group>";
@@ -986,6 +989,7 @@
 				DB1DBD8F2668FB1900435D85 /* L10n+Extensions.swift in Sources */,
 				DBFA888B1A1C9A56005349AD /* Live.swift in Sources */,
 				DBB4730B1A35951C002C797E /* LiveStatistics.swift in Sources */,
+				DB7A9367276373C100C361FF /* LiveThumbnailImageView.swift in Sources */,
 				DB34F835275BB18D00180C7A /* LiveThumbnailManager.swift in Sources */,
 				DB34F833275BB18100180C7A /* LiveThumbnailManagerType.swift in Sources */,
 				DB2F516726669B3E000A1C58 /* Localize.swift in Sources */,
@@ -1192,7 +1196,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hakumai/Hakumai.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2070;
+				CURRENT_PROJECT_VERSION = 2071;
 				DEVELOPMENT_TEAM = N4SRN3NAQ3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Hakumai/Info.plist;
@@ -1201,7 +1205,7 @@
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
 				);
-				MARKETING_VERSION = 2.7.0;
+				MARKETING_VERSION = 2.7.1;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1225,7 +1229,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hakumai/Hakumai.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2070;
+				CURRENT_PROJECT_VERSION = 2071;
 				DEVELOPMENT_TEAM = N4SRN3NAQ3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Hakumai/Info.plist;
@@ -1234,7 +1238,7 @@
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
 				);
-				MARKETING_VERSION = 2.7.0;
+				MARKETING_VERSION = 2.7.1;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
