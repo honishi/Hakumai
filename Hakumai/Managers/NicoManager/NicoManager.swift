@@ -469,17 +469,17 @@ private extension NicoManager {
         stopAllTimers()
 
         [watchSocket, messageSocket].forEach {
-            // Do not call `$0?.onEvent = nil` here.
-            // I'm not sure the reason but, for sure, letting the `onEvent` to be nil
-            // before calling `$0?.disconnect()` makes the network connections not
-            // being cleaned-up with the states like `CloseWait`. And they are
-            // piled-up and eventually causes network error for new connection request
-            // with the message like “No space left on device”.
-            // You can confirm this "memory leak" in Network Activity Report in Xcode.
             $0?.disconnect()
         }
-        watchSocket = nil
-        messageSocket = nil
+        // To wait the completion of the above socket disconnect operation, skip to
+        // immediate-nullify `watchSocket` and `messageSocket` here.
+        // It's okay not to nullify them since they, in any case, are nullified
+        // in the next open socket methods.
+        // If we nullify them immediately here, these sockets are remained incompletely
+        // in the status like `CloseWait`. And they are piled up and eventually cause
+        // the network error for new connect requests with the message like
+        // “No space left on device”.
+        // You can confirm this "memory leak" in Network Activity Report in Xcode.
 
         live = nil
         isConnected = false
@@ -589,8 +589,9 @@ private extension NicoManager {
         var request = URLRequest(url: webSocketUrl)
         request.applyDefaultWatchSocketSetting()
         let socket = WebSocket(request: request)
-        socket.onEvent = { [weak self] in
-            self?.handleWatchSocketEvent(
+        socket.onEvent = { [weak self, weak socket] in
+            guard let me = self, let socket = socket else { return }
+            me.handleWatchSocketEvent(
                 socket: socket,
                 event: $0,
                 completion: completion)
@@ -673,8 +674,9 @@ private extension NicoManager {
         var request = URLRequest(url: url)
         request.applyDefaultMessageSocketSetting()
         let socket = WebSocket(request: request)
-        socket.onEvent = { [weak self] in
-            self?.handleMessageSocketEvent(
+        socket.onEvent = { [weak self, weak socket] in
+            guard let me = self, let socket = socket else { return }
+            me.handleMessageSocketEvent(
                 socket: socket,
                 event: $0,
                 userId: userId,
@@ -769,8 +771,9 @@ private extension NicoManager {
         request.applyDefaultMessageSocketSetting()
         let socket = WebSocket(request: request)
         resetTimeShiftVariables()
-        socket.onEvent = { [weak self] in
-            self?.handleTimeShiftMessageSocketEvent(
+        socket.onEvent = { [weak self, weak socket] in
+            guard let me = self, let socket = socket else { return }
+            me.handleTimeShiftMessageSocketEvent(
                 socket: socket,
                 event: $0,
                 userId: userId,
