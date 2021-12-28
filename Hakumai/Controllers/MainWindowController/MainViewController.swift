@@ -268,10 +268,11 @@ extension MainViewController: NSTableViewDelegate {
         default:
             break
         }
+        colorizeCell(view, color: nil)
     }
 
     private func configure(view: NSTableCellView, forChat message: Message, withTableColumn tableColumn: NSTableColumn) {
-        guard case let .chat(chat) = message.content else { return }
+        guard let live = live, case let .chat(chat) = message.content else { return }
 
         switch tableColumn.identifier.rawValue {
         case kRoomPositionColumnIdentifier:
@@ -296,7 +297,6 @@ extension MainViewController: NSTableViewDelegate {
             let attributed = NSAttributedString(string: content as String, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
             commentView?.configure(attributedString: attributed)
         case kUserIdColumnIdentifier:
-            guard let live = live else { return }
             let userIdView = view as? UserIdTableCellView
             let handleName = HandleNameManager.shared.handleName(for: chat.userId, in: live.communityId)
             userIdView?.configure(info: (
@@ -314,6 +314,14 @@ extension MainViewController: NSTableViewDelegate {
         default:
             break
         }
+        let color = HandleNameManager.shared.backgroundColor(for: chat.userId, in: live.communityId)
+        colorizeCell(view, color: color)
+    }
+
+    private func colorizeCell(_ view: NSTableCellView, color: NSColor?) {
+        // https://stackoverflow.com/a/17795052/13220031
+        view.wantsLayer = true
+        view.layer?.backgroundColor = color?.cgColor
     }
 
     // MARK: Utility
@@ -599,7 +607,7 @@ extension MainViewController {
             if !cancelled, let handleName = handleName {
                 HandleNameManager.shared.updateHandleName(
                     name: handleName, for: chat.userId, in: live.communityId)
-                me.refreshHandleName()
+                me.reloadTableView()
             }
             me.dismiss(vc)
         }
@@ -616,7 +624,7 @@ extension MainViewController {
         return defaultHandleName
     }
 
-    func refreshHandleName() {
+    func reloadTableView() {
         tableView.reloadData()
         scrollView.flashScrollers()
     }

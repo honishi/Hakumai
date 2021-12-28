@@ -17,12 +17,16 @@ final class MenuDelegate: NSObject {
     @IBOutlet private weak var openUrlMenuItem: NSMenuItem!
     @IBOutlet private weak var setHandleNameMenuItem: NSMenuItem!
     @IBOutlet private weak var removeHandleNameMenuItem: NSMenuItem!
+    @IBOutlet private weak var setUserColorMenuItem: NSMenuItem!
+    @IBOutlet private weak var removeUserColorMenuItem: NSMenuItem!
     @IBOutlet private weak var addToMuteUserMenuItem: NSMenuItem!
     @IBOutlet private weak var openUserPageMenuItem: NSMenuItem!
 
     // MARK: Computed Properties
     private var clickedMessage: Message? { mainViewController.clickedMessage }
     private var currentLive: Live? { mainViewController.live }
+
+    private let userColorPanel = UserColorPanel()
 
     // MARK: - Object Lifecycle
     override func awakeFromNib() {
@@ -32,6 +36,7 @@ final class MenuDelegate: NSObject {
 }
 
 extension MenuDelegate: NSMenuItemValidation {
+    // swiftlint:disable cyclomatic_complexity
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         guard let message = clickedMessage,
               case let .chat(chat) = message.content else { return false }
@@ -40,13 +45,17 @@ extension MenuDelegate: NSMenuItemValidation {
             return true
         case copyUrlMenuItem, openUrlMenuItem:
             return chat.comment.extractUrlString() != nil ? true : false
-        case setHandleNameMenuItem:
+        case setHandleNameMenuItem, setUserColorMenuItem:
             guard currentLive != nil else { return false }
             return chat.isUser
         case removeHandleNameMenuItem:
             guard let live = currentLive else { return false }
             let hasHandleName = HandleNameManager.shared.handleName(for: chat.userId, in: live.communityId) != nil
             return hasHandleName
+        case removeUserColorMenuItem:
+            guard let live = currentLive else { return false }
+            let hasColor = HandleNameManager.shared.backgroundColor(for: chat.userId, in: live.communityId) != nil
+            return hasColor
         case addToMuteUserMenuItem:
             return chat.isUser
         case openUserPageMenuItem:
@@ -56,6 +65,7 @@ extension MenuDelegate: NSMenuItemValidation {
         }
         return false
     }
+    // swiftlint:enable cyclomatic_complexity
 }
 
 extension MenuDelegate {
@@ -88,7 +98,27 @@ extension MenuDelegate {
         guard let live = currentLive,
               case let .chat(chat) = clickedMessage?.content else { return }
         HandleNameManager.shared.removeHandleName(for: chat.userId, in: live.communityId)
-        mainViewController.refreshHandleName()
+        mainViewController.reloadTableView()
+    }
+
+    @IBAction func setUserColor(_ sender: Any) {
+        guard let live = currentLive,
+              case let .chat(chat) = clickedMessage?.content else { return }
+        userColorPanel.targetUser = UserColorPanel.User(userId: chat.userId, communityId: live.communityId)
+        userColorPanel.makeKeyAndOrderFront(nil)
+    }
+
+    @objc private func userColorSelected(_ sender: UserColorPanel) {
+        guard let user = sender.targetUser else { return }
+        HandleNameManager.shared.setBackgroundColor(sender.color, for: user.userId, in: user.communityId)
+        mainViewController.reloadTableView()
+    }
+
+    @IBAction func removeUserColor(_ sender: Any) {
+        guard let live = currentLive,
+              case let .chat(chat) = clickedMessage?.content else { return }
+        HandleNameManager.shared.setBackgroundColor(nil, for: chat.userId, in: live.communityId)
+        mainViewController.reloadTableView()
     }
 
     @IBAction func addToMuteUser(_ sender: AnyObject) {
@@ -118,7 +148,21 @@ private extension MenuDelegate {
         openUrlMenuItem.title = L10n.openUrlInComment
         setHandleNameMenuItem.title = L10n.setHandleName
         removeHandleNameMenuItem.title = L10n.removeHandleName
+        setUserColorMenuItem.title = L10n.setUserColor
+        removeUserColorMenuItem.title = L10n.removeUserColor
         addToMuteUserMenuItem.title = L10n.addToMuteUser
         openUserPageMenuItem.title = L10n.openUserPage
+
+        userColorPanel.setTarget(self)
+        userColorPanel.setAction(#selector(userColorSelected(_:)))
+        userColorPanel.isContinuous = true
     }
+}
+
+private final class UserColorPanel: NSColorPanel {
+    struct User {
+        let userId: String
+        let communityId: String
+    }
+    var targetUser: User?
 }

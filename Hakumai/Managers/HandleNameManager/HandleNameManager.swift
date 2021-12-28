@@ -25,6 +25,9 @@ final class HandleNameManager {
     private var database: FMDatabase!
     private var databaseQueue: FMDatabaseQueue!
 
+    // TODO: remove temporary.
+    private var backgroundColors: [String: NSColor] = [:]
+
     // MARK: - Object Lifecycle
     init() {
         objc_sync_enter(self)
@@ -55,6 +58,18 @@ extension HandleNameManager {
 
     func handleName(for userId: String, in communityId: String) -> String? {
         return selectHandleName(communityId: communityId, userId: userId)
+    }
+
+    func setBackgroundColor(_ color: NSColor?, for userId: String, in communityId: String) {
+        backgroundColors[_bgColorKey(userId, communityId)] = color
+    }
+
+    func backgroundColor(for userId: String, in communityId: String) -> NSColor? {
+        return backgroundColors[_bgColorKey(userId, communityId)]
+    }
+
+    func _bgColorKey(_ userId: String, _ communityId: String) -> String {
+        return "\(userId):\(communityId)"
     }
 }
 

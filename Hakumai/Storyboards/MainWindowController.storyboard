@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="19455" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19455"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -1383,6 +1383,18 @@
                                 <action selector="removeHandleName:" target="Riw-FG-ugq" id="yLO-gr-dGL"/>
                             </connections>
                         </menuItem>
+                        <menuItem title="set_user_color" id="B2C-Zs-yHF">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="setUserColor:" target="Riw-FG-ugq" id="886-Jw-nhY"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="remove_user_color" id="ECu-en-m0D">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="removeUserColor:" target="Riw-FG-ugq" id="vY3-X9-tcJ"/>
+                            </connections>
+                        </menuItem>
                         <menuItem isSeparatorItem="YES" id="uwl-U0-wdQ"/>
                         <menuItem title="add_to_mute_user" id="vkF-qq-cvh">
                             <modifierMask key="keyEquivalentModifierMask"/>
@@ -1411,7 +1423,9 @@
                         <outlet property="openUrlMenuItem" destination="rwi-Ju-wYL" id="4ds-0I-koO"/>
                         <outlet property="openUserPageMenuItem" destination="9gC-Dv-kyp" id="Yqk-Mt-JHF"/>
                         <outlet property="removeHandleNameMenuItem" destination="vop-lQ-wo6" id="eKS-r7-dtJ"/>
+                        <outlet property="removeUserColorMenuItem" destination="ECu-en-m0D" id="ZRy-kp-Hlx"/>
                         <outlet property="setHandleNameMenuItem" destination="cOM-FI-15Y" id="gbs-UV-eRI"/>
+                        <outlet property="setUserColorMenuItem" destination="B2C-Zs-yHF" id="n03-D8-U4K"/>
                     </connections>
                 </customObject>
                 <userDefaultsController representsSharedInstance="YES" id="TkR-hQ-T5S"/>
