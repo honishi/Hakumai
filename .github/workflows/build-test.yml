@@ -45,8 +45,7 @@ jobs:
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '12.4'
-          # xcode-version: '12.5'
+          xcode-version: '13.2.1'
 
       # setup xcode project
       - name: Setup cache for Pods

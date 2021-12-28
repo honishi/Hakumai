@@ -124,12 +124,19 @@ extension HandleNameManager {
     }
 
     func upsertHandleName(communityId: String, userId: String, anonymous: Bool, handleName: String) {
-        let sql = """
-            insert into \(kHandleNamesTable)
-            values (?, ?, ?, ?, null, strftime('%s', 'now'), null, null, null)
-            on conflict do update set handle_name = ?
-        """
-        enqueueExecuteUpdate(sql, args: [communityId, userId, handleName, anonymous, handleName])
+        if isRowExisted(communityId: communityId, userId: userId) {
+            let sql = """
+                update \(kHandleNamesTable) set handle_name = ?
+                where community_id = ? and user_id = ?
+            """
+            executeUpdate(sql, args: [handleName, communityId, userId])
+        } else {
+            let sql = """
+                insert into \(kHandleNamesTable)
+                values (?, ?, ?, ?, null, strftime('%s', 'now'), null, null, null)
+            """
+            executeUpdate(sql, args: [communityId, userId, handleName, anonymous])
+        }
     }
 
     func selectHandleName(communityId: String, userId: String) -> String? {
@@ -137,14 +144,21 @@ extension HandleNameManager {
     }
 
     func upsertColor(communityId: String, userId: String, anonymous: Bool, color: NSColor) {
-        let sql = """
-            insert into \(kHandleNamesTable)
-            values (?, ?, null, ?, ?, strftime('%s', 'now'), null, null, null)
-            on conflict do update set color = ?
-        """
         let _color = color.hex
         guard _color.isValidHexString else { return }
-        enqueueExecuteUpdate(sql, args: [communityId, userId, anonymous, _color, _color])
+        if isRowExisted(communityId: communityId, userId: userId) {
+            let sql = """
+                update \(kHandleNamesTable) set color = ?
+                where community_id = ? and user_id = ?
+            """
+            executeUpdate(sql, args: [_color, handleName, communityId])
+        } else {
+            let sql = """
+                insert into \(kHandleNamesTable)
+                values (?, ?, null, ?, ?, strftime('%s', 'now'), null, null, null)
+            """
+            executeUpdate(sql, args: [communityId, userId, anonymous, _color])
+        }
     }
 
     func selectColor(communityId: String, userId: String) -> NSColor? {
@@ -173,6 +187,10 @@ private extension HandleNameManager {
             primary key (community_id, user_id))
         """
         executeUpdate(sql, args: [])
+    }
+
+    func isRowExisted(communityId: String, userId: String) -> Bool {
+        return select(column: "user_id", communityId: communityId, userId: userId) != nil
     }
 
     func select(column: String, communityId: String, userId: String) -> String? {
@@ -221,41 +239,28 @@ private extension HandleNameManager {
 
 private extension HandleNameManager {
     func executeQuery(_ sql: String, args: [Any], column: String) -> String? {
-        guard let database = database else { return nil }
-
-        objc_sync_enter(self)
-        defer { objc_sync_exit(self) }
-
-        guard let resultSet = database.executeQuery(sql, withArgumentsIn: args) else { return nil }
+        guard let databaseQueue = databaseQueue else { return nil }
         var selected: String?
-        while resultSet.next() {
-            selected = resultSet.string(forColumn: column)
-            break
+        databaseQueue.inDatabase { database in
+            // log.debug(sql)
+            guard let resultSet = database.executeQuery(sql, withArgumentsIn: args) else { return }
+            while resultSet.next() {
+                selected = resultSet.string(forColumn: column)
+                break
+            }
+            resultSet.close()
         }
-        resultSet.close()
         return selected
     }
 
     func executeUpdate(_ sql: String, args: [Any]) {
-        guard let database = database else { return }
-
-        objc_sync_enter(self)
-        defer { objc_sync_exit(self) }
-
-        let success = database.executeUpdate(sql, withArgumentsIn: args)
-        if !success {
-            let message = String(describing: database.lastErrorMessage())
-            log.error("failed to execute update: \(message)")
-        }
-    }
-
-    func enqueueExecuteUpdate(_ sql: String, args: [Any]) {
         guard let databaseQueue = databaseQueue else { return }
         databaseQueue.inDatabase { database in
+            // log.debug(sql)
             let success = database.executeUpdate(sql, withArgumentsIn: args)
             if !success {
                 let message = String(describing: database.lastErrorMessage())
-                log.error("failed to execute update (queue): \(message)")
+                log.error("failed to execute update: \(message)")
             }
         }
     }
