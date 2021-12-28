@@ -149,8 +149,8 @@ extension HandleNameManager {
 
     func selectColor(communityId: String, userId: String) -> NSColor? {
         let string = select(column: "color", communityId: communityId, userId: userId)
-        guard let string = string, string.isValidHexString else { return nil }
-        return NSColor(hex: string)
+        guard let _string = string, _string.isValidHexString else { return nil }
+        return NSColor(hex: _string)
     }
 }
 
