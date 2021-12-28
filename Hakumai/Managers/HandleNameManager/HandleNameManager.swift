@@ -125,7 +125,7 @@ extension HandleNameManager {
 
     func upsertHandleName(communityId: String, userId: String, anonymous: Bool, handleName: String) {
         let sql = """
-            insert or replace into \(kHandleNamesTable)
+            insert into \(kHandleNamesTable)
             values (?, ?, ?, ?, null, strftime('%s', 'now'), null, null, null)
             on conflict do update set handle_name = ?
         """
@@ -143,12 +143,13 @@ extension HandleNameManager {
             on conflict do update set color = ?
         """
         let _color = color.hex
+        guard _color.isValidHexString else { return }
         enqueueExecuteUpdate(sql, args: [communityId, userId, anonymous, _color, _color])
     }
 
     func selectColor(communityId: String, userId: String) -> NSColor? {
         let string = select(column: "color", communityId: communityId, userId: userId)
-        guard let string = string else { return nil }
+        guard let string = string, string.isValidHexString else { return nil }
         return NSColor(hex: string)
     }
 }

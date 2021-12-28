@@ -83,4 +83,23 @@ extension StringExtensionTests {
         comment = "aaa http://example.com aaa"
         XCTAssert(comment.extractUrlString() == "http://example.com", "")
     }
+
+    func testIsValidHexString() {
+        XCTAssert("".isValidHexString == false, "")
+        XCTAssert("123".isValidHexString == false, "")
+        XCTAssert("#000000".isValidHexString == true, "")
+        XCTAssert("#123456".isValidHexString == true, "")
+        XCTAssert("#abcdef".isValidHexString == true, "")
+        XCTAssert("#ABCDEF".isValidHexString == true, "")
+        XCTAssert("#789abc".isValidHexString == true, "")
+        XCTAssert("#789ABC".isValidHexString == true, "")
+        XCTAssert("#ffffff".isValidHexString == true, "")
+        XCTAssert("#FFFFFF".isValidHexString == true, "")
+        XCTAssert("#000".isValidHexString == false, "")
+        XCTAssert("#fff".isValidHexString == false, "")
+        XCTAssert("#FFF".isValidHexString == false, "")
+        XCTAssert("#1234567".isValidHexString == false, "")
+        XCTAssert("#fffffff".isValidHexString == false, "")
+        XCTAssert("#FFFFFFF".isValidHexString == false, "")
+    }
 }
