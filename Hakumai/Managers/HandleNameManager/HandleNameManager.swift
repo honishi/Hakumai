@@ -25,6 +25,9 @@ final class HandleNameManager {
     private var database: FMDatabase!
     private var databaseQueue: FMDatabaseQueue!
 
+    private let handleNameCacher = DatabaseValueCacher<String>()
+    private let colorCacher = DatabaseValueCacher<NSColor>()
+
     // MARK: - Object Lifecycle
     init() {
         objc_sync_enter(self)
@@ -50,15 +53,29 @@ extension HandleNameManager {
             userId: userId,
             anonymous: userId.isAnonymous,
             handleName: name)
+        handleNameCacher.update(value: name, for: userId, in: communityId)
     }
 
     func removeHandleName(for userId: String, in communityId: String) {
         updateHandleNameToNull(communityId: communityId, userId: userId)
         deleteRowIfHasNoData(communityId: communityId, userId: userId)
+        handleNameCacher.updateValueAsNil(for: userId, in: communityId)
     }
 
     func handleName(for userId: String, in communityId: String) -> String? {
-        return selectHandleName(communityId: communityId, userId: userId)
+        let cached = handleNameCacher.cachedValue(for: userId, in: communityId)
+        switch cached {
+        case .cached(let handleName):
+            // log.debug("handleName: cached: \(handleName ?? "nil")")
+            return handleName
+        case .notCached:
+            // log.debug("handleName: not cached")
+            break
+        }
+        let queried = selectHandleName(communityId: communityId, userId: userId)
+        handleNameCacher.update(value: queried, for: userId, in: communityId)
+        // log.debug("handleName: update cache: \(queried ?? "nil")")
+        return queried
     }
 
     func setColor(_ color: NSColor, for userId: String, in communityId: String) {
@@ -67,15 +84,29 @@ extension HandleNameManager {
             userId: userId,
             anonymous: userId.isAnonymous,
             color: color)
+        colorCacher.update(value: color, for: userId, in: communityId)
     }
 
     func removeColor(for userId: String, in communityId: String) {
         updateColorToNull(communityId: communityId, userId: userId)
         deleteRowIfHasNoData(communityId: communityId, userId: userId)
+        colorCacher.updateValueAsNil(for: userId, in: communityId)
     }
 
     func color(for userId: String, in communityId: String) -> NSColor? {
-        return selectColor(communityId: communityId, userId: userId)
+        let cached = colorCacher.cachedValue(for: userId, in: communityId)
+        switch cached {
+        case .cached(let color):
+            // log.debug("color: cached: \(color?.description ?? "nil")")
+            return color
+        case .notCached:
+            // log.debug("color: not cached")
+            break
+        }
+        let queried = selectColor(communityId: communityId, userId: userId)
+        colorCacher.update(value: queried, for: userId, in: communityId)
+        // log.debug("color: update cache: \(queried?.description ?? "nil")")
+        return queried
     }
 }
 
@@ -109,7 +140,7 @@ extension HandleNameManager {
         let sql = """
             insert into \(kHandleNamesTable)
             values (?, ?, null, ?, ?, strftime('%s', 'now'), null, null, null)
-            on conflict do update set handle_name = ?
+            on conflict do update set color = ?
         """
         let _color = color.hex
         enqueueExecuteUpdate(sql, args: [communityId, userId, anonymous, _color, _color])
