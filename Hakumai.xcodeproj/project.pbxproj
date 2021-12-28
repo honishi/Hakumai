@@ -97,6 +97,7 @@
 		DBD1CF54273F376A00D52271 /* PremiumTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD1CF53273F376A00D52271 /* PremiumTests.swift */; };
 		DBD65C201A2EB08D00B84C97 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD65C1F1A2EB08D00B84C97 /* Message.swift */; };
 		DBD7A1E9265D5863001C87E0 /* NSView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD7A1E8265D5863001C87E0 /* NSView+Extensions.swift */; };
+		DBDBA084277AC747000EE2F2 /* NSColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBDBA083277AC747000EE2F2 /* NSColor+Extensions.swift */; };
 		DBE093FF1A5869A2004554FD /* HandleNameManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE093FE1A5869A2004554FD /* HandleNameManagerTests.swift */; };
 		DBE094021A586FFC004554FD /* HandleNameManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE094011A586FFC004554FD /* HandleNameManager.swift */; };
 		DBE59AC227495240005230CE /* NotificationPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE59AC127495240005230CE /* NotificationPresenter.swift */; };
@@ -234,6 +235,7 @@
 		DBD1CF53273F376A00D52271 /* PremiumTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumTests.swift; sourceTree = "<group>"; };
 		DBD65C1F1A2EB08D00B84C97 /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		DBD7A1E8265D5863001C87E0 /* NSView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSView+Extensions.swift"; sourceTree = "<group>"; };
+		DBDBA083277AC747000EE2F2 /* NSColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSColor+Extensions.swift"; sourceTree = "<group>"; };
 		DBE093FE1A5869A2004554FD /* HandleNameManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HandleNameManagerTests.swift; sourceTree = "<group>"; };
 		DBE094011A586FFC004554FD /* HandleNameManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HandleNameManager.swift; sourceTree = "<group>"; };
 		DBE59AC127495240005230CE /* NotificationPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationPresenter.swift; sourceTree = "<group>"; };
@@ -519,6 +521,7 @@
 				DBAFE965266F501A00538916 /* AFError+Extensions.swift */,
 				DBB473031A359082002C797E /* Int+Extensions.swift */,
 				DB1DBD8E2668FB1900435D85 /* L10n+Extensions.swift */,
+				DBDBA083277AC747000EE2F2 /* NSColor+Extensions.swift */,
 				DB6C73132662894B0026A8C0 /* NSScrollView+Extensions.swift */,
 				DBD7A1E8265D5863001C87E0 /* NSView+Extensions.swift */,
 				DB9EFC731A3E974A0087D302 /* NSWindow+Extensions.swift */,
@@ -1007,6 +1010,7 @@
 				DBCA2D242642BCF500B6147C /* NicoRestApiModel.swift in Sources */,
 				DB6DD2AA2650EC86009A9574 /* NicoWebSocketModel.swift in Sources */,
 				DBE59AC227495240005230CE /* NotificationPresenter.swift in Sources */,
+				DBDBA084277AC747000EE2F2 /* NSColor+Extensions.swift in Sources */,
 				DB6C73142662894B0026A8C0 /* NSScrollView+Extensions.swift in Sources */,
 				DBD7A1E9265D5863001C87E0 /* NSView+Extensions.swift in Sources */,
 				DB9EFC741A3E974A0087D302 /* NSWindow+Extensions.swift in Sources */,
