@@ -25,18 +25,15 @@ final class HandleNameManager {
     private var database: FMDatabase!
     private var databaseQueue: FMDatabaseQueue!
 
-    // TODO: remove temporary.
-    private var backgroundColors: [String: NSColor] = [:]
-
     // MARK: - Object Lifecycle
     init() {
         objc_sync_enter(self)
+        defer { objc_sync_exit(self) }
         LoggerHelper.createApplicationDirectoryIfNotExists()
         database = HandleNameManager.databaseForHandleNames()
         databaseQueue = HandleNameManager.databaseQueueForHandleNames()
         createHandleNamesTableIfNotExists()
-        deleteObsoletedHandleNames()
-        objc_sync_exit(self)
+        deleteObsoleteRows()
     }
 }
 
@@ -44,32 +41,41 @@ final class HandleNameManager {
 extension HandleNameManager {
     func extractAndUpdateHandleName(from comment: String, for userId: String, in communityId: String) {
         guard let handleName = extractHandleName(from: comment) else { return }
-        updateHandleName(name: handleName, for: userId, in: communityId)
+        setHandleName(name: handleName, for: userId, in: communityId)
     }
 
-    func updateHandleName(name: String, for userId: String, in communityId: String) {
-        let anonymous = !userId.isRawUserId
-        insertOrReplaceHandleName(communityId: communityId, userId: userId, anonymous: anonymous, handleName: name)
+    func setHandleName(name: String, for userId: String, in communityId: String) {
+        upsertHandleName(
+            communityId: communityId,
+            userId: userId,
+            anonymous: userId.isAnonymous,
+            handleName: name)
     }
 
     func removeHandleName(for userId: String, in communityId: String) {
-        deleteHandleName(communityId: communityId, userId: userId)
+        updateHandleNameToNull(communityId: communityId, userId: userId)
+        deleteRowIfHasNoData(communityId: communityId, userId: userId)
     }
 
     func handleName(for userId: String, in communityId: String) -> String? {
         return selectHandleName(communityId: communityId, userId: userId)
     }
 
-    func setBackgroundColor(_ color: NSColor?, for userId: String, in communityId: String) {
-        backgroundColors[_bgColorKey(userId, communityId)] = color
+    func setColor(_ color: NSColor, for userId: String, in communityId: String) {
+        upsertColor(
+            communityId: communityId,
+            userId: userId,
+            anonymous: userId.isAnonymous,
+            color: color)
     }
 
-    func backgroundColor(for userId: String, in communityId: String) -> NSColor? {
-        return backgroundColors[_bgColorKey(userId, communityId)]
+    func removeColor(for userId: String, in communityId: String) {
+        updateColorToNull(communityId: communityId, userId: userId)
+        deleteRowIfHasNoData(communityId: communityId, userId: userId)
     }
 
-    func _bgColorKey(_ userId: String, _ communityId: String) -> String {
-        return "\(userId):\(communityId)"
+    func color(for userId: String, in communityId: String) -> NSColor? {
+        return selectColor(communityId: communityId, userId: userId)
     }
 }
 
@@ -86,37 +92,33 @@ extension HandleNameManager {
         return handleName
     }
 
-    func insertOrReplaceHandleName(communityId: String, userId: String, anonymous: Bool, handleName: String) {
-        guard databaseQueue != nil else {
-            log.warning("database not ready")
-            return
-        }
-
-        let insertSql = "insert or replace into " + kHandleNamesTable + " " +
-            "values (?, ?, ?, ?, null, strftime('%s', 'now'), null, null, null)"
-
-        databaseQueue.inDatabase { database in
-            database.executeUpdate(insertSql, withArgumentsIn: [communityId, userId, handleName, anonymous])
-        }
+    func upsertHandleName(communityId: String, userId: String, anonymous: Bool, handleName: String) {
+        let sql = """
+            insert or replace into \(kHandleNamesTable)
+            values (?, ?, ?, ?, null, strftime('%s', 'now'), null, null, null)
+            on conflict do update set handle_name = ?
+        """
+        enqueueExecuteUpdate(sql, args: [communityId, userId, handleName, anonymous, handleName])
     }
 
     func selectHandleName(communityId: String, userId: String) -> String? {
-        guard let database = database else { return nil }
+        return select(column: "handle_name", communityId: communityId, userId: userId)
+    }
 
-        let selectSql = "select handle_name from " + kHandleNamesTable + " where community_id = ? and user_id = ?"
-        var handleName: String?
+    func upsertColor(communityId: String, userId: String, anonymous: Bool, color: NSColor) {
+        let sql = """
+            insert into \(kHandleNamesTable)
+            values (?, ?, null, ?, ?, strftime('%s', 'now'), null, null, null)
+            on conflict do update set handle_name = ?
+        """
+        let _color = color.hex
+        enqueueExecuteUpdate(sql, args: [communityId, userId, anonymous, _color, _color])
+    }
 
-        objc_sync_enter(self)
-        defer { objc_sync_exit(self) }
-
-        let resultSet = database.executeQuery(selectSql, withArgumentsIn: [communityId, userId])
-        while (resultSet?.next())! {    // swiftlint:disable:this force_unwrapping
-            handleName = resultSet?.string(forColumn: "handle_name")
-            break
-        }
-        resultSet?.close()
-
-        return handleName
+    func selectColor(communityId: String, userId: String) -> NSColor? {
+        let string = select(column: "color", communityId: communityId, userId: userId)
+        guard let string = string else { return nil }
+        return NSColor(hex: string)
     }
 }
 
@@ -124,67 +126,111 @@ private extension HandleNameManager {
     // MARK: Database Functions
     // for test
     func dropHandleNamesTableIfExists() {
-        guard let database = database else { return }
-
-        let dropTableSql = "drop table if exists " + kHandleNamesTable
-
-        objc_sync_enter(self)
-        let success = database.executeUpdate(dropTableSql, withArgumentsIn: [])
-        objc_sync_exit(self)
-
-        if !success {
-            log.error("failed to drop table: \(String(describing: database.lastErrorMessage()))")
-        }
+        let sql = """
+            drop table if exists \(kHandleNamesTable)
+        """
+        executeUpdate(sql, args: [])
     }
 
     func createHandleNamesTableIfNotExists() {
-        guard let database = database else { return }
-
-        // currently not used but reserved columns; color, reserved1, reserved2, reserved3
-        let createTableSql = "create table if not exists " + kHandleNamesTable + " " +
-            "(community_id text, user_id text, handle_name text, anonymous integer, color text, updated integer, " +
-            "reserved1 text, reserved2 text, reserved3 text, " +
-            "primary key (community_id, user_id))"
-
-        objc_sync_enter(self)
-        let success = database.executeUpdate(createTableSql, withArgumentsIn: [])
-        objc_sync_exit(self)
-
-        if !success {
-            log.error("failed to create table: \(String(describing: database.lastErrorMessage()))")
-        }
+        let sql = """
+            create table if not exists \(kHandleNamesTable)
+            (community_id text, user_id text, handle_name text, anonymous integer,
+            color text, updated integer,
+            reserved1 text, reserved2 text, reserved3 text,
+            primary key (community_id, user_id))
+        """
+        executeUpdate(sql, args: [])
     }
 
-    func deleteHandleName(communityId: String, userId: String) {
-        guard let database = database else { return }
-
-        let deleteSql = "delete from " + kHandleNamesTable + " where community_id = ? and user_id = ?"
-
-        objc_sync_enter(self)
-        let success = database.executeUpdate(deleteSql, withArgumentsIn: [communityId, userId])
-        objc_sync_exit(self)
-
-        if !success {
-            log.error("failed to delete table: \(String(describing: database.lastErrorMessage()))")
-        }
+    func select(column: String, communityId: String, userId: String) -> String? {
+        let sql = """
+            select \(column) from \(kHandleNamesTable)
+            where community_id = ? and user_id = ?
+        """
+        return executeQuery(sql, args: [communityId, userId], column: column)
     }
 
-    func deleteObsoletedHandleNames() {
-        guard let database = database else { return }
+    func updateHandleNameToNull(communityId: String, userId: String) {
+        _updateColumnToNull(communityId: communityId, userId: userId, column: "handle_name")
+    }
 
-        let deleteSql = "delete from " + kHandleNamesTable + " where updated < ? and anonymous = 1"
+    func updateColorToNull(communityId: String, userId: String) {
+        _updateColumnToNull(communityId: communityId, userId: userId, column: "color")
+    }
+
+    func _updateColumnToNull(communityId: String, userId: String, column: String) {
+        let sql = """
+            update \(kHandleNamesTable)
+            set \(column) = null
+            where community_id = ? and user_id = ?
+        """
+        executeUpdate(sql, args: [communityId, userId])
+    }
+
+    func deleteRowIfHasNoData(communityId: String, userId: String) {
+        let sql = """
+            delete from \(kHandleNamesTable)
+            where community_id = ? and user_id = ? and
+            handle_name is null and color is null
+        """
+        executeUpdate(sql, args: [communityId, userId])
+    }
+
+    func deleteObsoleteRows() {
+        let sql = """
+            delete from \(kHandleNamesTable)
+            where updated < ? and anonymous = 1
+        """
         let threshold = Date().timeIntervalSince1970 - kHandleNameObsoleteThreshold
+        executeUpdate(sql, args: [threshold])
+    }
+}
+
+private extension HandleNameManager {
+    func executeQuery(_ sql: String, args: [Any], column: String) -> String? {
+        guard let database = database else { return nil }
 
         objc_sync_enter(self)
-        let success = database.executeUpdate(deleteSql, withArgumentsIn: [threshold])
-        objc_sync_exit(self)
+        defer { objc_sync_exit(self) }
 
+        guard let resultSet = database.executeQuery(sql, withArgumentsIn: args) else { return nil }
+        var selected: String?
+        while resultSet.next() {
+            selected = resultSet.string(forColumn: column)
+            break
+        }
+        resultSet.close()
+        return selected
+    }
+
+    func executeUpdate(_ sql: String, args: [Any]) {
+        guard let database = database else { return }
+
+        objc_sync_enter(self)
+        defer { objc_sync_exit(self) }
+
+        let success = database.executeUpdate(sql, withArgumentsIn: args)
         if !success {
-            log.error("failed to delete table: \(String(describing: database.lastErrorMessage()))")
+            let message = String(describing: database.lastErrorMessage())
+            log.error("failed to execute update: \(message)")
         }
     }
 
-    // MARK: Database Instance Utility
+    func enqueueExecuteUpdate(_ sql: String, args: [Any]) {
+        guard let databaseQueue = databaseQueue else { return }
+        databaseQueue.inDatabase { database in
+            let success = database.executeUpdate(sql, withArgumentsIn: args)
+            if !success {
+                let message = String(describing: database.lastErrorMessage())
+                log.error("failed to execute update (queue): \(message)")
+            }
+        }
+    }
+}
+
+// MARK: Database Instance Utility
+private extension HandleNameManager {
     static func fullPathForHandleNamesDatabase() -> String {
         return LoggerHelper.applicationDirectoryPath() + "/" + kHandleNamesDatabase
     }

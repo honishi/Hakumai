@@ -80,6 +80,8 @@ extension String {
         return matched != nil
     }
 
+    var isAnonymous: Bool { !isRawUserId }
+
     func extractLiveProgramId() -> String? {
         let liveProgramIdPattern = "lv\\d{9,}"
         let patterns = [

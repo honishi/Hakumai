@@ -54,7 +54,7 @@ extension MenuDelegate: NSMenuItemValidation {
             return hasHandleName
         case removeUserColorMenuItem:
             guard let live = currentLive else { return false }
-            let hasColor = HandleNameManager.shared.backgroundColor(for: chat.userId, in: live.communityId) != nil
+            let hasColor = HandleNameManager.shared.color(for: chat.userId, in: live.communityId) != nil
             return hasColor
         case addToMuteUserMenuItem:
             return chat.isUser
@@ -110,14 +110,14 @@ extension MenuDelegate {
 
     @objc private func userColorSelected(_ sender: UserColorPanel) {
         guard let user = sender.targetUser else { return }
-        HandleNameManager.shared.setBackgroundColor(sender.color, for: user.userId, in: user.communityId)
+        HandleNameManager.shared.setColor(sender.color, for: user.userId, in: user.communityId)
         mainViewController.reloadTableView()
     }
 
     @IBAction func removeUserColor(_ sender: Any) {
         guard let live = currentLive,
               case let .chat(chat) = clickedMessage?.content else { return }
-        HandleNameManager.shared.setBackgroundColor(nil, for: chat.userId, in: live.communityId)
+        HandleNameManager.shared.removeColor(for: chat.userId, in: live.communityId)
         mainViewController.reloadTableView()
     }
 

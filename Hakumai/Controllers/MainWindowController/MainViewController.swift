@@ -314,7 +314,7 @@ extension MainViewController: NSTableViewDelegate {
         default:
             break
         }
-        let color = HandleNameManager.shared.backgroundColor(for: chat.userId, in: live.communityId)
+        let color = HandleNameManager.shared.color(for: chat.userId, in: live.communityId)
         colorizeCell(view, color: color)
     }
 
@@ -605,7 +605,7 @@ extension MainViewController {
         vc.completion = { [weak self, weak vc] (cancelled, handleName) in
             guard let me = self, let vc = vc else { return }
             if !cancelled, let handleName = handleName {
-                HandleNameManager.shared.updateHandleName(
+                HandleNameManager.shared.setHandleName(
                     name: handleName, for: chat.userId, in: live.communityId)
                 me.reloadTableView()
             }
