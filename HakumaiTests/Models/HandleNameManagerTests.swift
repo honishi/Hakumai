@@ -57,9 +57,9 @@ final class HandleNameManagerTests: XCTestCase {
         let userId = String(arc4random() % 100)
         let handleName = "山田"
 
-        HandleNameManager.shared.upsertHandleName(communityId: communityId, userId: userId, anonymous: false, handleName: handleName)
+        HandleNameManager.shared.upsert(handleName: handleName, for: userId, in: communityId)
 
-        let resolved = HandleNameManager.shared.selectHandleName(communityId: communityId, userId: userId)
+        let resolved = HandleNameManager.shared.selectHandleName(for: userId, in: communityId)
         XCTAssert(resolved == handleName, "")
     }
 }

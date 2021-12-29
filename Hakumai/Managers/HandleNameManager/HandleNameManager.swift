@@ -48,17 +48,13 @@ extension HandleNameManager {
     }
 
     func setHandleName(name: String, for userId: String, in communityId: String) {
-        upsertHandleName(
-            communityId: communityId,
-            userId: userId,
-            anonymous: userId.isAnonymous,
-            handleName: name)
+        upsert(handleName: name, for: userId, in: communityId)
         handleNameCacher.update(value: name, for: userId, in: communityId)
     }
 
     func removeHandleName(for userId: String, in communityId: String) {
-        updateHandleNameToNull(communityId: communityId, userId: userId)
-        deleteRowIfHasNoData(communityId: communityId, userId: userId)
+        updateHandleNameToNull(for: userId, in: communityId)
+        deleteRowIfHasNoData(for: userId, in: communityId)
         handleNameCacher.updateValueAsNil(for: userId, in: communityId)
     }
 
@@ -72,24 +68,20 @@ extension HandleNameManager {
             // log.debug("handleName: not cached")
             break
         }
-        let queried = selectHandleName(communityId: communityId, userId: userId)
+        let queried = selectHandleName(for: userId, in: communityId)
         handleNameCacher.update(value: queried, for: userId, in: communityId)
         // log.debug("handleName: update cache: \(queried ?? "nil")")
         return queried
     }
 
     func setColor(_ color: NSColor, for userId: String, in communityId: String) {
-        upsertColor(
-            communityId: communityId,
-            userId: userId,
-            anonymous: userId.isAnonymous,
-            color: color)
+        upsert(color: color, for: userId, in: communityId)
         colorCacher.update(value: color, for: userId, in: communityId)
     }
 
     func removeColor(for userId: String, in communityId: String) {
-        updateColorToNull(communityId: communityId, userId: userId)
-        deleteRowIfHasNoData(communityId: communityId, userId: userId)
+        updateColorToNull(for: userId, in: communityId)
+        deleteRowIfHasNoData(for: userId, in: communityId)
         colorCacher.updateValueAsNil(for: userId, in: communityId)
     }
 
@@ -103,7 +95,7 @@ extension HandleNameManager {
             // log.debug("color: not cached")
             break
         }
-        let queried = selectColor(communityId: communityId, userId: userId)
+        let queried = selectColor(for: userId, in: communityId)
         colorCacher.update(value: queried, for: userId, in: communityId)
         // log.debug("color: update cache: \(queried?.description ?? "nil")")
         return queried
@@ -119,58 +111,40 @@ extension HandleNameManager {
         if comment.hasRegexp(pattern: kRegexpMailAddress) {
             return nil
         }
-        let handleName = comment.extractRegexp(pattern: kRegexpHandleName)
-        return handleName
+        return comment.extractRegexp(pattern: kRegexpHandleName)
     }
 
-    func upsertHandleName(communityId: String, userId: String, anonymous: Bool, handleName: String) {
-        if isRowExisted(communityId: communityId, userId: userId) {
-            let sql = """
-                update \(kHandleNamesTable) set handle_name = ?
-                where community_id = ? and user_id = ?
-            """
-            executeUpdate(sql, args: [handleName, communityId, userId])
+    func upsert(handleName: String, for userId: String, in communityId: String) {
+        if isRowExisted(for: userId, in: communityId) {
+            update(column: "handle_name", value: handleName, for: userId, in: communityId)
         } else {
-            let sql = """
-                insert into \(kHandleNamesTable)
-                values (?, ?, ?, ?, null, strftime('%s', 'now'), null, null, null)
-            """
-            executeUpdate(sql, args: [communityId, userId, handleName, anonymous])
+            insert(handleName: handleName, for: userId, in: communityId)
         }
     }
 
-    func selectHandleName(communityId: String, userId: String) -> String? {
-        return select(column: "handle_name", communityId: communityId, userId: userId)
+    func selectHandleName(for userId: String, in communityId: String) -> String? {
+        return select(column: "handle_name", for: userId, in: communityId)
     }
 
-    func upsertColor(communityId: String, userId: String, anonymous: Bool, color: NSColor) {
-        let _color = color.hex
-        guard _color.isValidHexString else { return }
-        if isRowExisted(communityId: communityId, userId: userId) {
-            let sql = """
-                update \(kHandleNamesTable) set color = ?
-                where community_id = ? and user_id = ?
-            """
-            executeUpdate(sql, args: [_color, handleName, communityId])
+    func upsert(color: NSColor, for userId: String, in communityId: String) {
+        let colorHex = color.hex
+        guard colorHex.isValidHexString else { return }
+        if isRowExisted(for: userId, in: communityId) {
+            update(column: "color", value: colorHex, for: userId, in: communityId)
         } else {
-            let sql = """
-                insert into \(kHandleNamesTable)
-                values (?, ?, null, ?, ?, strftime('%s', 'now'), null, null, null)
-            """
-            executeUpdate(sql, args: [communityId, userId, anonymous, _color])
+            insert(colorHex: colorHex, for: userId, in: communityId)
         }
     }
 
-    func selectColor(communityId: String, userId: String) -> NSColor? {
-        let string = select(column: "color", communityId: communityId, userId: userId)
+    func selectColor(for userId: String, in communityId: String) -> NSColor? {
+        let string = select(column: "color", for: userId, in: communityId)
         guard let _string = string, _string.isValidHexString else { return nil }
         return NSColor(hex: _string)
     }
 }
 
+// MARK: DDL Functions
 private extension HandleNameManager {
-    // MARK: Database Functions
-    // for test
     func dropHandleNamesTableIfExists() {
         let sql = """
             drop table if exists \(kHandleNamesTable)
@@ -188,12 +162,15 @@ private extension HandleNameManager {
         """
         executeUpdate(sql, args: [])
     }
+}
 
-    func isRowExisted(communityId: String, userId: String) -> Bool {
-        return select(column: "user_id", communityId: communityId, userId: userId) != nil
+// MARK: Select + DML Functions
+private extension HandleNameManager {
+    func isRowExisted(for userId: String, in communityId: String) -> Bool {
+        return select(column: "user_id", for: userId, in: communityId) != nil
     }
 
-    func select(column: String, communityId: String, userId: String) -> String? {
+    func select(column: String, for userId: String, in communityId: String) -> String? {
         let sql = """
             select \(column) from \(kHandleNamesTable)
             where community_id = ? and user_id = ?
@@ -201,15 +178,39 @@ private extension HandleNameManager {
         return executeQuery(sql, args: [communityId, userId], column: column)
     }
 
-    func updateHandleNameToNull(communityId: String, userId: String) {
-        _updateColumnToNull(communityId: communityId, userId: userId, column: "handle_name")
+    func insert(handleName: String, for userId: String, in communityId: String) {
+        let sql = """
+            insert into \(kHandleNamesTable)
+            values (?, ?, ?, ?, null, strftime('%s', 'now'), null, null, null)
+        """
+        executeUpdate(sql, args: [communityId, userId, handleName, userId.isAnonymous])
     }
 
-    func updateColorToNull(communityId: String, userId: String) {
-        _updateColumnToNull(communityId: communityId, userId: userId, column: "color")
+    func insert(colorHex: String, for userId: String, in communityId: String) {
+        let sql = """
+            insert into \(kHandleNamesTable)
+            values (?, ?, null, ?, ?, strftime('%s', 'now'), null, null, null)
+        """
+        executeUpdate(sql, args: [communityId, userId, userId.isAnonymous, colorHex])
     }
 
-    func _updateColumnToNull(communityId: String, userId: String, column: String) {
+    func update(column: String, value: Any, for userId: String, in communityId: String) {
+        let sql = """
+            update \(kHandleNamesTable) set \(column) = ?
+            where community_id = ? and user_id = ?
+        """
+        executeUpdate(sql, args: [value, communityId, userId])
+    }
+
+    func updateHandleNameToNull(for userId: String, in communityId: String) {
+        _updateColumnToNull(column: "handle_name", for: userId, in: communityId)
+    }
+
+    func updateColorToNull(for userId: String, in communityId: String) {
+        _updateColumnToNull(column: "color", for: userId, in: communityId)
+    }
+
+    func _updateColumnToNull(column: String, for userId: String, in communityId: String) {
         let sql = """
             update \(kHandleNamesTable)
             set \(column) = null
@@ -218,7 +219,7 @@ private extension HandleNameManager {
         executeUpdate(sql, args: [communityId, userId])
     }
 
-    func deleteRowIfHasNoData(communityId: String, userId: String) {
+    func deleteRowIfHasNoData(for userId: String, in communityId: String) {
         let sql = """
             delete from \(kHandleNamesTable)
             where community_id = ? and user_id = ? and
@@ -237,6 +238,7 @@ private extension HandleNameManager {
     }
 }
 
+// MARK: SQL Execution Utility
 private extension HandleNameManager {
     func executeQuery(_ sql: String, args: [Any], column: String) -> String? {
         guard let databaseQueue = databaseQueue else { return nil }
