@@ -20,8 +20,8 @@ class DatabaseValueCacherTests: XCTestCase {
         // let userId2 = "userId2"
         // let communityId2 = "communityId2"
 
-        var actual: DatabaseValueCacher<String>.CacheResult
-        var expected: DatabaseValueCacher<String>.CacheResult
+        var actual: DatabaseValueCacher<String>.CacheStatus
+        var expected: DatabaseValueCacher<String>.CacheStatus
 
         actual = cacher.cachedValue(for: userId1, in: communityId1)
         expected = .notCached

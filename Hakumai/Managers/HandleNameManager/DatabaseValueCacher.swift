@@ -9,39 +9,33 @@
 import Foundation
 
 class DatabaseValueCacher<T: Equatable> {
-    enum CacheResult: Equatable {
+    enum CacheStatus: Equatable {
         case cached(T?) // `.cached(nil)` means the value is cached as `nil`.
         case notCached
     }
 
-    private var cache: [String: Any] = [:]
+    private var cache: [String: CacheStatus] = [:]
 
     func update(value: T?, for userId: String, in communityId: String) {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
         let key = cacheKey(userId, communityId)
-        cache[key] = value ?? NSNull()
+        let _value: CacheStatus = {
+            guard let value = value else { return .cached(nil) }
+            return .cached(value)
+        }()
+        cache[key] = _value
     }
 
     func updateValueAsNil(for userId: String, in communityId: String) {
         update(value: nil, for: userId, in: communityId)
     }
 
-    func cachedValue(for userId: String, in communityId: String) -> CacheResult {
+    func cachedValue(for userId: String, in communityId: String) -> CacheStatus {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
         let key = cacheKey(userId, communityId)
-        guard let cached = cache[key] else {
-            return .notCached
-        }
-        switch cached {
-        case is NSNull:
-            return .cached(nil)
-        case let value as T:
-            return .cached(value)
-        default:
-            fatalError()
-        }
+        return cache[key] ?? .notCached
     }
 
     private func cacheKey(_ userId: String, _ communityId: String) -> String {
