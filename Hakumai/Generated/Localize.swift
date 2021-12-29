@@ -188,6 +188,8 @@ internal enum L10n {
   internal static let reconnecting = L10n.tr("Localizable", "reconnecting")
   /// Remove Handle Name
   internal static let removeHandleName = L10n.tr("Localizable", "remove_handle_name")
+  /// Remove User Color
+  internal static let removeUserColor = L10n.tr("Localizable", "remove_user_color")
   /// Safari
   internal static let safari = L10n.tr("Localizable", "safari")
   /// Press to scroll down / long press to scroll to bottom
@@ -204,6 +206,8 @@ internal enum L10n {
   internal static let setHandleName = L10n.tr("Localizable", "set_handle_name")
   /// Set/Update Handle Name
   internal static let setUpdateHandleName = L10n.tr("Localizable", "set_update_handle_name")
+  /// Set User Color
+  internal static let setUserColor = L10n.tr("Localizable", "set_user_color")
   /// Show All
   internal static let showAll = L10n.tr("Localizable", "show_all")
   /// Show Spelling and Grammar

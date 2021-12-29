@@ -97,6 +97,9 @@
 		DBD1CF54273F376A00D52271 /* PremiumTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD1CF53273F376A00D52271 /* PremiumTests.swift */; };
 		DBD65C201A2EB08D00B84C97 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD65C1F1A2EB08D00B84C97 /* Message.swift */; };
 		DBD7A1E9265D5863001C87E0 /* NSView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD7A1E8265D5863001C87E0 /* NSView+Extensions.swift */; };
+		DBDBA084277AC747000EE2F2 /* NSColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBDBA083277AC747000EE2F2 /* NSColor+Extensions.swift */; };
+		DBDBA086277B40A3000EE2F2 /* DatabaseValueCacher.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBDBA085277B40A3000EE2F2 /* DatabaseValueCacher.swift */; };
+		DBDBA088277B45AB000EE2F2 /* DatabaseValueCacherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBDBA087277B45AB000EE2F2 /* DatabaseValueCacherTests.swift */; };
 		DBE093FF1A5869A2004554FD /* HandleNameManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE093FE1A5869A2004554FD /* HandleNameManagerTests.swift */; };
 		DBE094021A586FFC004554FD /* HandleNameManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE094011A586FFC004554FD /* HandleNameManager.swift */; };
 		DBE59AC227495240005230CE /* NotificationPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE59AC127495240005230CE /* NotificationPresenter.swift */; };
@@ -234,6 +237,9 @@
 		DBD1CF53273F376A00D52271 /* PremiumTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumTests.swift; sourceTree = "<group>"; };
 		DBD65C1F1A2EB08D00B84C97 /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		DBD7A1E8265D5863001C87E0 /* NSView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSView+Extensions.swift"; sourceTree = "<group>"; };
+		DBDBA083277AC747000EE2F2 /* NSColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSColor+Extensions.swift"; sourceTree = "<group>"; };
+		DBDBA085277B40A3000EE2F2 /* DatabaseValueCacher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseValueCacher.swift; sourceTree = "<group>"; };
+		DBDBA087277B45AB000EE2F2 /* DatabaseValueCacherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseValueCacherTests.swift; sourceTree = "<group>"; };
 		DBE093FE1A5869A2004554FD /* HandleNameManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HandleNameManagerTests.swift; sourceTree = "<group>"; };
 		DBE094011A586FFC004554FD /* HandleNameManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HandleNameManager.swift; sourceTree = "<group>"; };
 		DBE59AC127495240005230CE /* NotificationPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationPresenter.swift; sourceTree = "<group>"; };
@@ -519,6 +525,7 @@
 				DBAFE965266F501A00538916 /* AFError+Extensions.swift */,
 				DBB473031A359082002C797E /* Int+Extensions.swift */,
 				DB1DBD8E2668FB1900435D85 /* L10n+Extensions.swift */,
+				DBDBA083277AC747000EE2F2 /* NSColor+Extensions.swift */,
 				DB6C73132662894B0026A8C0 /* NSScrollView+Extensions.swift */,
 				DBD7A1E8265D5863001C87E0 /* NSView+Extensions.swift */,
 				DB9EFC731A3E974A0087D302 /* NSWindow+Extensions.swift */,
@@ -532,6 +539,7 @@
 			children = (
 				DB7BA06D1A58B6B7000778CF /* ChatMessageTests.swift */,
 				DB346B9B1A548C3B00137639 /* CommunityTests.swift */,
+				DBDBA087277B45AB000EE2F2 /* DatabaseValueCacherTests.swift */,
 				DBE093FE1A5869A2004554FD /* HandleNameManagerTests.swift */,
 				DB34F836275BB37600180C7A /* LiveThumbnailManagerTest.swift */,
 				DB0F0ECC1A16441D00F8BDC5 /* NicoManagerTests.swift */,
@@ -620,6 +628,7 @@
 		DBE093F91A5867A7004554FD /* HandleNameManager */ = {
 			isa = PBXGroup;
 			children = (
+				DBDBA085277B40A3000EE2F2 /* DatabaseValueCacher.swift */,
 				DBE094011A586FFC004554FD /* HandleNameManager.swift */,
 			);
 			path = HandleNameManager;
@@ -977,6 +986,7 @@
 				DB7B3DDC1A23B35300205470 /* ColoredView.swift in Sources */,
 				DB5164FC264E662100F809B3 /* CommentTableCellView.swift in Sources */,
 				DB7F21B01A210017008D17E0 /* Community.swift in Sources */,
+				DBDBA086277B40A3000EE2F2 /* DatabaseValueCacher.swift in Sources */,
 				DBFA88821A1BC8C9005349AD /* Enum.swift in Sources */,
 				DB0E10641A39B6C200A10E00 /* GeneralViewController.swift in Sources */,
 				DB414C0B1A4811C4008D2F40 /* Global.swift in Sources */,
@@ -1007,6 +1017,7 @@
 				DBCA2D242642BCF500B6147C /* NicoRestApiModel.swift in Sources */,
 				DB6DD2AA2650EC86009A9574 /* NicoWebSocketModel.swift in Sources */,
 				DBE59AC227495240005230CE /* NotificationPresenter.swift in Sources */,
+				DBDBA084277AC747000EE2F2 /* NSColor+Extensions.swift in Sources */,
 				DB6C73142662894B0026A8C0 /* NSScrollView+Extensions.swift in Sources */,
 				DBD7A1E9265D5863001C87E0 /* NSView+Extensions.swift in Sources */,
 				DB9EFC741A3E974A0087D302 /* NSWindow+Extensions.swift in Sources */,
@@ -1038,6 +1049,7 @@
 			files = (
 				DB7BA06E1A58B6B7000778CF /* ChatMessageTests.swift in Sources */,
 				DB346B9C1A548C3B00137639 /* CommunityTests.swift in Sources */,
+				DBDBA088277B45AB000EE2F2 /* DatabaseValueCacherTests.swift in Sources */,
 				DB2AE0D71A0EE2FD00B1CE4D /* HakumaiTests.swift in Sources */,
 				DBE093FF1A5869A2004554FD /* HandleNameManagerTests.swift in Sources */,
 				DB34F837275BB37600180C7A /* LiveThumbnailManagerTest.swift in Sources */,
@@ -1196,7 +1208,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hakumai/Hakumai.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2072;
+				CURRENT_PROJECT_VERSION = 2080;
 				DEVELOPMENT_TEAM = N4SRN3NAQ3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Hakumai/Info.plist;
@@ -1205,7 +1217,7 @@
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
 				);
-				MARKETING_VERSION = 2.7.2;
+				MARKETING_VERSION = 2.8.0;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1229,7 +1241,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hakumai/Hakumai.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2072;
+				CURRENT_PROJECT_VERSION = 2080;
 				DEVELOPMENT_TEAM = N4SRN3NAQ3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Hakumai/Info.plist;
@@ -1238,7 +1250,7 @@
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
 				);
-				MARKETING_VERSION = 2.7.2;
+				MARKETING_VERSION = 2.8.0;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = (
 					"$(inherited)",

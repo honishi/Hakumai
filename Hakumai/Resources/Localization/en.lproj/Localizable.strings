@@ -131,6 +131,8 @@
 "open_url_in_comment" = "Open URL in Comment";
 "set_handle_name" = "Set Handle Name";
 "remove_handle_name" = "Remove Handle Name";
+"set_user_color" = "Set User Color";
+"remove_user_color" = "Remove User Color";
 "add_to_mute_user" = "Add to Mute User";
 "open_user_page" = "Open User Page";
 
