@@ -9,13 +9,13 @@
 import Foundation
 import FMDB
 
-private let kHandleNamesDatabase = "HandleNames"
-private let kHandleNamesTable = "handle_names"
-private let kHandleNameObsoleteThreshold = TimeInterval(60 * 60 * 24 * 7) // = 1 week
+private let handleNamesDatabase = "HandleNames"
+private let handleNamesTable = "handle_names"
+private let handleNameObsoleteThreshold = TimeInterval(60 * 60 * 24 * 7) // = 1 week
 
 // comment like "@5" (="あと5分")
-private let kRegexpRemainingTime = "[@＠][0-9０-９]{1,2}$"
-private let kRegexpHandleName = ".*[@＠]\\s*(\\S{2,})\\s*"
+private let regexpRemainingTime = "[@＠][0-9０-９]{1,2}$"
+private let regexpHandleName = ".*[@＠]\\s*(\\S{2,})\\s*"
 
 // handle name manager
 final class HandleNameManager {
@@ -103,15 +103,16 @@ extension HandleNameManager {
 }
 
 // MARK: - Internal Functions
+// Making methods internal for tests.
 extension HandleNameManager {
     func extractHandleName(from comment: String) -> String? {
-        if comment.hasRegexp(pattern: kRegexpRemainingTime) {
+        if comment.hasRegexp(pattern: regexpRemainingTime) {
             return nil
         }
         if comment.hasRegexp(pattern: kRegexpMailAddress) {
             return nil
         }
-        return comment.extractRegexp(pattern: kRegexpHandleName)
+        return comment.extractRegexp(pattern: regexpHandleName)
     }
 
     func upsert(handleName: String, for userId: String, in communityId: String) {
@@ -147,14 +148,14 @@ extension HandleNameManager {
 private extension HandleNameManager {
     func dropHandleNamesTableIfExists() {
         let sql = """
-            drop table if exists \(kHandleNamesTable)
+            drop table if exists \(handleNamesTable)
         """
         executeUpdate(sql, args: [])
     }
 
     func createHandleNamesTableIfNotExists() {
         let sql = """
-            create table if not exists \(kHandleNamesTable)
+            create table if not exists \(handleNamesTable)
             (community_id text, user_id text, handle_name text, anonymous integer,
             color text, updated integer,
             reserved1 text, reserved2 text, reserved3 text,
@@ -172,7 +173,7 @@ private extension HandleNameManager {
 
     func select(column: String, for userId: String, in communityId: String) -> String? {
         let sql = """
-            select \(column) from \(kHandleNamesTable)
+            select \(column) from \(handleNamesTable)
             where community_id = ? and user_id = ?
         """
         return executeQuery(sql, args: [communityId, userId], column: column)
@@ -180,7 +181,7 @@ private extension HandleNameManager {
 
     func insert(handleName: String, for userId: String, in communityId: String) {
         let sql = """
-            insert into \(kHandleNamesTable)
+            insert into \(handleNamesTable)
             values (?, ?, ?, ?, null, strftime('%s', 'now'), null, null, null)
         """
         executeUpdate(sql, args: [communityId, userId, handleName, userId.isAnonymous])
@@ -188,7 +189,7 @@ private extension HandleNameManager {
 
     func insert(colorHex: String, for userId: String, in communityId: String) {
         let sql = """
-            insert into \(kHandleNamesTable)
+            insert into \(handleNamesTable)
             values (?, ?, null, ?, ?, strftime('%s', 'now'), null, null, null)
         """
         executeUpdate(sql, args: [communityId, userId, userId.isAnonymous, colorHex])
@@ -196,7 +197,7 @@ private extension HandleNameManager {
 
     func update(column: String, value: Any, for userId: String, in communityId: String) {
         let sql = """
-            update \(kHandleNamesTable) set \(column) = ?
+            update \(handleNamesTable) set \(column) = ?
             where community_id = ? and user_id = ?
         """
         executeUpdate(sql, args: [value, communityId, userId])
@@ -212,7 +213,7 @@ private extension HandleNameManager {
 
     func _updateColumnToNull(column: String, for userId: String, in communityId: String) {
         let sql = """
-            update \(kHandleNamesTable)
+            update \(handleNamesTable)
             set \(column) = null
             where community_id = ? and user_id = ?
         """
@@ -221,7 +222,7 @@ private extension HandleNameManager {
 
     func deleteRowIfHasNoData(for userId: String, in communityId: String) {
         let sql = """
-            delete from \(kHandleNamesTable)
+            delete from \(handleNamesTable)
             where community_id = ? and user_id = ? and
             handle_name is null and color is null
         """
@@ -230,10 +231,10 @@ private extension HandleNameManager {
 
     func deleteObsoleteRows() {
         let sql = """
-            delete from \(kHandleNamesTable)
+            delete from \(handleNamesTable)
             where updated < ? and anonymous = 1
         """
-        let threshold = Date().timeIntervalSince1970 - kHandleNameObsoleteThreshold
+        let threshold = Date().timeIntervalSince1970 - handleNameObsoleteThreshold
         executeUpdate(sql, args: [threshold])
     }
 }
@@ -271,12 +272,12 @@ private extension HandleNameManager {
 // MARK: Database Instance Utility
 private extension HandleNameManager {
     static func fullPathForHandleNamesDatabase() -> String {
-        return LoggerHelper.applicationDirectoryPath() + "/" + kHandleNamesDatabase
+        return LoggerHelper.applicationDirectoryPath() + "/" + handleNamesDatabase
     }
 
     static func databaseForHandleNames() -> FMDatabase? {
         let database = FMDatabase(path: HandleNameManager.fullPathForHandleNamesDatabase())
-        guard database.open() == true else {
+        guard database.open() else {
             log.error("unable to open database")
             return nil
         }
