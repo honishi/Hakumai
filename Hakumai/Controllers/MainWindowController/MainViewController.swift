@@ -231,11 +231,15 @@ extension MainViewController: NSTableViewDelegate {
 
         guard let _view = view, let tableColumn = tableColumn else { return nil }
 
+        resetColorizeAndFlash(view: _view)
+
         switch message.content {
         case .system, .debug:
+            // No colorization and flash here.
             configure(view: _view, forSystemAndDebug: message, withTableColumn: tableColumn)
         case .chat:
             configure(view: _view, forChat: message, withTableColumn: tableColumn)
+            colorizeOrFlashIfNeeded(view: _view, message: message, tableColumn: tableColumn)
         }
 
         return view
@@ -270,11 +274,8 @@ extension MainViewController: NSTableViewDelegate {
         default:
             break
         }
-        view.setBackgroundColor(nil)
-        view.cancelFlash()
     }
 
-    // swiftlint:disable function_body_length
     private func configure(view: NSTableCellView, forChat message: Message, withTableColumn tableColumn: NSTableColumn) {
         guard let live = live, case let .chat(chat) = message.content else { return }
 
@@ -318,6 +319,16 @@ extension MainViewController: NSTableViewDelegate {
         default:
             break
         }
+    }
+
+    private func resetColorizeAndFlash(view: NSTableCellView) {
+        view.setBackgroundColor(nil)
+        view.cancelFlash()
+    }
+
+    private func colorizeOrFlashIfNeeded(view: NSTableCellView, message: Message, tableColumn: NSTableColumn) {
+        guard let live = live, case let .chat(chat) = message.content else { return }
+
         let color = HandleNameManager.shared.color(for: chat.userId, in: live.communityId)
         view.setBackgroundColor(color)
 
@@ -327,11 +338,8 @@ extension MainViewController: NSTableViewDelegate {
            !isCellViewFlashed(messageNo: messageNo, tableColumnIdentifier: tableColumnId) {
             view.flash(NSColor.red)
             setCellViewFlashedStatus(messageNo: messageNo, tableColumnIdentifier: tableColumnId, flashed: true)
-        } else {
-            view.cancelFlash()
         }
     }
-    // swiftlint:enable function_body_length
 
     // MARK: Utility
     private func contentAndAttributes(forMessage message: Message) -> (String, [String: Any]) {
