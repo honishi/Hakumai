@@ -11,20 +11,28 @@ import AppKit
 
 final class UIHelper {
     // MARK: - Main Window Colors
-    static func systemMessageColorBackground() -> NSColor {
+    static func systemMessageBgColor() -> NSColor {
         return NSColor(hex: "#808080")
     }
 
-    static func debugMessageColorBackground() -> NSColor {
+    static func debugMessageBgColor() -> NSColor {
         return NSColor(hex: "#101010")
     }
 
-    static func scoreColorGreen() -> NSColor {
+    static func greenScoreColor() -> NSColor {
         return NSColor(hex: "#0EA50B")
     }
 
-    static func roomColorArena() -> NSColor {
-        return NSColor(hex: "#3c49ff")
+    static func arenaRoomColor() -> NSColor {
+        return NSColor(hex: "#3C49FF")
+    }
+
+    static func cellViewFlashColor() -> NSColor {
+        // return NSColor(hex: "#FEC601")
+        return NSColor(hex: "#FEC60180")
+        // return NSColor(hex: "#EDAD0B")
+        // return NSColor(hex: "#D59B0A")
+        // return NSColor(hex: "#C5A205")
     }
 
     // MARK: - Font Attributes

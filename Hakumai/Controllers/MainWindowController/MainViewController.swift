@@ -336,7 +336,7 @@ extension MainViewController: NSTableViewDelegate {
         let tableColumnId = tableColumn.identifier.rawValue
         if [.emotion, .gift, .nicoad].contains(chat.slashCommand),
            !isCellViewFlashed(messageNo: messageNo, tableColumnIdentifier: tableColumnId) {
-            view.flash(NSColor.red)
+            view.flash(UIHelper.cellViewFlashColor())
             setCellViewFlashedStatus(messageNo: messageNo, tableColumnIdentifier: tableColumnId, flashed: true)
         }
     }
