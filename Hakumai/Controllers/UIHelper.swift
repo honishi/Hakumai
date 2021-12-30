@@ -28,11 +28,7 @@ final class UIHelper {
     }
 
     static func cellViewFlashColor() -> NSColor {
-        // return NSColor(hex: "#FEC601")
-        return NSColor(hex: "#FEC60180")
-        // return NSColor(hex: "#EDAD0B")
-        // return NSColor(hex: "#D59B0A")
-        // return NSColor(hex: "#C5A205")
+        return NSColor(hex: "#FFBD2F")
     }
 
     // MARK: - Font Attributes
