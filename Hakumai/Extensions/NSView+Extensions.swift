@@ -21,3 +21,28 @@ extension NSView {
         layer?.borderColor = NSColor.black.cgColor
     }
 }
+
+private let keyPathBackgroundColor = "backgroundColor"
+
+extension NSView {
+    func setBackgroundColor(_ color: NSColor?) {
+        // https://stackoverflow.com/a/17795052/13220031
+        wantsLayer = true
+        layer?.backgroundColor = color?.cgColor
+    }
+
+    func flash(_ color: NSColor, duration: TimeInterval = 1) {
+        cancelFlash()
+
+        wantsLayer = true
+        let animation = CABasicAnimation(keyPath: keyPathBackgroundColor)
+        animation.fromValue = color.cgColor
+        animation.toValue = NSColor.clear.cgColor
+        animation.duration = duration
+        layer?.add(animation, forKey: animation.keyPath)
+    }
+
+    func cancelFlash() {
+        layer?.removeAnimation(forKey: keyPathBackgroundColor)
+    }
+}

@@ -268,7 +268,8 @@ extension MainViewController: NSTableViewDelegate {
         default:
             break
         }
-        colorizeCell(view, color: nil)
+        view.setBackgroundColor(nil)
+        view.cancelFlash()
     }
 
     private func configure(view: NSTableCellView, forChat message: Message, withTableColumn tableColumn: NSTableColumn) {
@@ -315,13 +316,12 @@ extension MainViewController: NSTableViewDelegate {
             break
         }
         let color = HandleNameManager.shared.color(for: chat.userId, in: live.communityId)
-        colorizeCell(view, color: color)
-    }
-
-    private func colorizeCell(_ view: NSTableCellView, color: NSColor?) {
-        // https://stackoverflow.com/a/17795052/13220031
-        view.wantsLayer = true
-        view.layer?.backgroundColor = color?.cgColor
+        view.setBackgroundColor(color)
+        if [.emotion, .gift, .nicoad].contains(chat.slashCommand) {
+            view.flash(NSColor.red)
+        } else {
+            view.cancelFlash()
+        }
     }
 
     // MARK: Utility
