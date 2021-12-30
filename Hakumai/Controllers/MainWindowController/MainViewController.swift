@@ -109,6 +109,8 @@ final class MainViewController: NSViewController {
     private var maxActiveUserCount = 0
     private var activeUserHistory: [(Date, Int)] = []
 
+    private var cellViewFlashed: [String: Bool] = [:]
+
     // AuthWindowController
     private lazy var authWindowController: AuthWindowController = {
         AuthWindowController.make(delegate: self)
@@ -272,6 +274,7 @@ extension MainViewController: NSTableViewDelegate {
         view.cancelFlash()
     }
 
+    // swiftlint:disable function_body_length
     private func configure(view: NSTableCellView, forChat message: Message, withTableColumn tableColumn: NSTableColumn) {
         guard let live = live, case let .chat(chat) = message.content else { return }
 
@@ -317,12 +320,18 @@ extension MainViewController: NSTableViewDelegate {
         }
         let color = HandleNameManager.shared.color(for: chat.userId, in: live.communityId)
         view.setBackgroundColor(color)
-        if [.emotion, .gift, .nicoad].contains(chat.slashCommand) {
+
+        let messageNo = message.messageNo
+        let tableColumnId = tableColumn.identifier.rawValue
+        if [.emotion, .gift, .nicoad].contains(chat.slashCommand),
+           !isCellViewFlashed(messageNo: messageNo, tableColumnIdentifier: tableColumnId) {
             view.flash(NSColor.red)
+            setCellViewFlashedStatus(messageNo: messageNo, tableColumnIdentifier: tableColumnId, flashed: true)
         } else {
             view.cancelFlash()
         }
     }
+    // swiftlint:enable function_body_length
 
     // MARK: Utility
     private func contentAndAttributes(forMessage message: Message) -> (String, [String: Any]) {
@@ -344,6 +353,26 @@ extension MainViewController: NSTableViewDelegate {
         }
 
         return (content, attributes)
+    }
+}
+
+private extension MainViewController {
+    func resetCellViewFlashedStatus() {
+        cellViewFlashed = [:]
+    }
+
+    func setCellViewFlashedStatus(messageNo: Int, tableColumnIdentifier: String, flashed: Bool) {
+        let key = _cellViewFlashedKey(messageNo, tableColumnIdentifier)
+        cellViewFlashed[key] = flashed
+    }
+
+    func isCellViewFlashed(messageNo: Int, tableColumnIdentifier: String) -> Bool {
+        let key = _cellViewFlashedKey(messageNo, tableColumnIdentifier)
+        return cellViewFlashed[key] == true
+    }
+
+    func _cellViewFlashedKey(_ messageNo: Int, _ tableColumnIdentifier: String) -> String {
+        return "\(messageNo):\(tableColumnIdentifier)"
     }
 }
 
@@ -414,6 +443,7 @@ extension MainViewController: NicoManagerDelegate {
 
         if live.isTimeShift {
             liveThumbnailManager.start(for: live.liveProgramId, delegate: self)
+            resetCellViewFlashedStatus()
             resetElapsedLabel()
             resetActiveUser()
             updateRankingLabel(rank: nil, date: nil)
@@ -427,6 +457,7 @@ extension MainViewController: NicoManagerDelegate {
         switch connectContext {
         case .normal:
             liveThumbnailManager.start(for: live.liveProgramId, delegate: self)
+            resetCellViewFlashedStatus()
             resetActiveUser()
             rankingManager.addDelegate(self, for: live.liveProgramId)
             logSystemMessageToTable(L10n.preparedLive(user.nickname))
