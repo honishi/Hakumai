@@ -27,8 +27,12 @@ final class UIHelper {
         return NSColor(hex: "#3C49FF")
     }
 
-    static func cellViewFlashColor() -> NSColor {
+    static func cellViewAdFlashColor() -> NSColor {
         return NSColor(hex: "#FFBD2F")
+    }
+
+    static func cellViewGiftFlashColor() -> NSColor {
+        return NSColor(hex: "#D01C24")
     }
 
     // MARK: - Font Attributes

@@ -329,14 +329,24 @@ extension MainViewController: NSTableViewDelegate {
     private func colorizeOrFlashIfNeeded(view: NSTableCellView, message: Message, tableColumn: NSTableColumn) {
         guard let live = live, case let .chat(chat) = message.content else { return }
 
-        let color = HandleNameManager.shared.color(for: chat.userId, in: live.communityId)
-        view.setBackgroundColor(color)
+        let bgColor = HandleNameManager.shared.color(for: chat.userId, in: live.communityId)
+        view.setBackgroundColor(bgColor)
 
         let messageNo = message.messageNo
         let tableColumnId = tableColumn.identifier.rawValue
-        if [.emotion, .gift, .nicoad].contains(chat.slashCommand),
-           !isCellViewFlashed(messageNo: messageNo, tableColumnIdentifier: tableColumnId) {
-            view.flash(UIHelper.cellViewFlashColor())
+        guard !isCellViewFlashed(messageNo: messageNo, tableColumnIdentifier: tableColumnId) else { return }
+
+        let flashColor: NSColor?
+        switch chat.slashCommand {
+        case .gift:
+            flashColor = UIHelper.cellViewGiftFlashColor()
+        case .nicoad:
+            flashColor = UIHelper.cellViewAdFlashColor()
+        case .cruise, .emotion, .info, .quote, .spi, .vote, .none:
+            flashColor = nil
+        }
+        if let flashColor = flashColor {
+            view.flash(flashColor)
             setCellViewFlashedStatus(messageNo: messageNo, tableColumnIdentifier: tableColumnId, flashed: true)
         }
     }
