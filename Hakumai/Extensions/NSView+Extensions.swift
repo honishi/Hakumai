@@ -31,7 +31,7 @@ extension NSView {
         layer?.backgroundColor = color?.cgColor
     }
 
-    func flash(_ color: NSColor, duration: TimeInterval = 1) {
+    func flash(_ color: NSColor, duration: TimeInterval = 2) {
         cancelFlash()
 
         wantsLayer = true
