@@ -29,7 +29,7 @@ final class UIHelper {
 
     static func cellViewAdFlashColor() -> NSColor {
         let light = "#FFBD2F"
-        let dark = "#C98508"
+        let dark = "#E09900"
         if #available(macOS 10.14, *) {
             return NSApplication.shared.isDarkMode ? NSColor(hex: dark) : NSColor(hex: light)
         } else {
@@ -38,8 +38,8 @@ final class UIHelper {
     }
 
     static func cellViewGiftFlashColor() -> NSColor {
-        let light = "#D01C24"
-        let dark = light
+        let light = "#E5444F"
+        let dark = "#D01C24"
         if #available(macOS 10.14, *) {
             return NSApplication.shared.isDarkMode ? NSColor(hex: dark) : NSColor(hex: light)
         } else {
