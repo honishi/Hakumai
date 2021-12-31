@@ -28,11 +28,23 @@ final class UIHelper {
     }
 
     static func cellViewAdFlashColor() -> NSColor {
-        return NSColor(hex: "#FFBD2F")
+        let light = "#FFBD2F"
+        let dark = "#E09900"
+        if #available(macOS 10.14, *) {
+            return NSApplication.shared.isDarkMode ? NSColor(hex: dark) : NSColor(hex: light)
+        } else {
+            return NSColor(hex: light)
+        }
     }
 
     static func cellViewGiftFlashColor() -> NSColor {
-        return NSColor(hex: "#D01C24")
+        let light = "#E5444F"
+        let dark = "#D01C24"
+        if #available(macOS 10.14, *) {
+            return NSApplication.shared.isDarkMode ? NSColor(hex: dark) : NSColor(hex: light)
+        } else {
+            return NSColor(hex: light)
+        }
     }
 
     // MARK: - Font Attributes
@@ -60,5 +72,14 @@ final class UIHelper {
         let style = NSMutableParagraphStyle()
         style.maximumLineHeight = fontSize * 1.2
         return style
+    }
+}
+
+extension NSApplication {
+    var isDarkMode: Bool {
+        if #available(OSX 10.14, *) {
+            return effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+        }
+        return false
     }
 }
