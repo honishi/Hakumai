@@ -25,14 +25,14 @@ extension RoomPositionTableCellView {
 
 private extension RoomPositionTableCellView {
     func color(for message: Message?) -> NSColor {
-        guard let message = message else { return UIHelper.systemMessageColorBackground() }
+        guard let message = message else { return UIHelper.systemMessageBgColor() }
         switch message.content {
         case .system:
-            return UIHelper.systemMessageColorBackground()
+            return UIHelper.systemMessageBgColor()
         case .chat:
-            return UIHelper.roomColorArena()
+            return UIHelper.arenaRoomColor()
         case .debug:
-            return UIHelper.debugMessageColorBackground()
+            return UIHelper.debugMessageBgColor()
         }
     }
 

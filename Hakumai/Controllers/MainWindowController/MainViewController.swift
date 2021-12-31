@@ -109,6 +109,8 @@ final class MainViewController: NSViewController {
     private var maxActiveUserCount = 0
     private var activeUserHistory: [(Date, Int)] = []
 
+    private var cellViewFlashed: [String: Bool] = [:]
+
     // AuthWindowController
     private lazy var authWindowController: AuthWindowController = {
         AuthWindowController.make(delegate: self)
@@ -229,11 +231,15 @@ extension MainViewController: NSTableViewDelegate {
 
         guard let _view = view, let tableColumn = tableColumn else { return nil }
 
+        resetColorizeAndFlash(view: _view)
+
         switch message.content {
         case .system, .debug:
+            // No colorization and flash here.
             configure(view: _view, forSystemAndDebug: message, withTableColumn: tableColumn)
         case .chat:
             configure(view: _view, forChat: message, withTableColumn: tableColumn)
+            colorizeOrFlashIfNeeded(view: _view, message: message, tableColumn: tableColumn)
         }
 
         return view
@@ -268,7 +274,6 @@ extension MainViewController: NSTableViewDelegate {
         default:
             break
         }
-        colorizeCell(view, color: nil)
     }
 
     private func configure(view: NSTableCellView, forChat message: Message, withTableColumn tableColumn: NSTableColumn) {
@@ -314,14 +319,36 @@ extension MainViewController: NSTableViewDelegate {
         default:
             break
         }
-        let color = HandleNameManager.shared.color(for: chat.userId, in: live.communityId)
-        colorizeCell(view, color: color)
     }
 
-    private func colorizeCell(_ view: NSTableCellView, color: NSColor?) {
-        // https://stackoverflow.com/a/17795052/13220031
-        view.wantsLayer = true
-        view.layer?.backgroundColor = color?.cgColor
+    private func resetColorizeAndFlash(view: NSTableCellView) {
+        view.setBackgroundColor(nil)
+        view.cancelFlash()
+    }
+
+    private func colorizeOrFlashIfNeeded(view: NSTableCellView, message: Message, tableColumn: NSTableColumn) {
+        guard let live = live, case let .chat(chat) = message.content else { return }
+
+        let bgColor = HandleNameManager.shared.color(for: chat.userId, in: live.communityId)
+        view.setBackgroundColor(bgColor)
+
+        let messageNo = message.messageNo
+        let tableColumnId = tableColumn.identifier.rawValue
+        guard !isCellViewFlashed(messageNo: messageNo, tableColumnIdentifier: tableColumnId) else { return }
+
+        let flashColor: NSColor?
+        switch chat.slashCommand {
+        case .gift:
+            flashColor = UIHelper.cellViewGiftFlashColor()
+        case .nicoad:
+            flashColor = UIHelper.cellViewAdFlashColor()
+        case .cruise, .emotion, .info, .quote, .spi, .vote, .none:
+            flashColor = nil
+        }
+        if let flashColor = flashColor {
+            view.flash(flashColor)
+            setCellViewFlashedStatus(messageNo: messageNo, tableColumnIdentifier: tableColumnId, flashed: true)
+        }
     }
 
     // MARK: Utility
@@ -344,6 +371,26 @@ extension MainViewController: NSTableViewDelegate {
         }
 
         return (content, attributes)
+    }
+}
+
+private extension MainViewController {
+    func resetCellViewFlashedStatus() {
+        cellViewFlashed = [:]
+    }
+
+    func setCellViewFlashedStatus(messageNo: Int, tableColumnIdentifier: String, flashed: Bool) {
+        let key = _cellViewFlashedKey(messageNo, tableColumnIdentifier)
+        cellViewFlashed[key] = flashed
+    }
+
+    func isCellViewFlashed(messageNo: Int, tableColumnIdentifier: String) -> Bool {
+        let key = _cellViewFlashedKey(messageNo, tableColumnIdentifier)
+        return cellViewFlashed[key] == true
+    }
+
+    func _cellViewFlashedKey(_ messageNo: Int, _ tableColumnIdentifier: String) -> String {
+        return "\(messageNo):\(tableColumnIdentifier)"
     }
 }
 
@@ -414,6 +461,7 @@ extension MainViewController: NicoManagerDelegate {
 
         if live.isTimeShift {
             liveThumbnailManager.start(for: live.liveProgramId, delegate: self)
+            resetCellViewFlashedStatus()
             resetElapsedLabel()
             resetActiveUser()
             updateRankingLabel(rank: nil, date: nil)
@@ -427,6 +475,7 @@ extension MainViewController: NicoManagerDelegate {
         switch connectContext {
         case .normal:
             liveThumbnailManager.start(for: live.liveProgramId, delegate: self)
+            resetCellViewFlashedStatus()
             resetActiveUser()
             rankingManager.addDelegate(self, for: live.liveProgramId)
             logSystemMessageToTable(L10n.preparedLive(user.nickname))

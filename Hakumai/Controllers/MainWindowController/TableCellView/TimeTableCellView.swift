@@ -27,14 +27,14 @@ extension TimeTableCellView {
 
 private extension TimeTableCellView {
     func color(message: Message?) -> NSColor {
-        guard let message = message else { return UIHelper.systemMessageColorBackground() }
+        guard let message = message else { return UIHelper.systemMessageBgColor() }
         switch message.content {
         case .system:
-            return UIHelper.systemMessageColorBackground()
+            return UIHelper.systemMessageBgColor()
         case .chat(let chat):
-            return chat.isSystem ? UIHelper.systemMessageColorBackground() : UIHelper.scoreColorGreen()
+            return chat.isSystem ? UIHelper.systemMessageBgColor() : UIHelper.greenScoreColor()
         case .debug:
-            return UIHelper.debugMessageColorBackground()
+            return UIHelper.debugMessageBgColor()
         }
     }
 
