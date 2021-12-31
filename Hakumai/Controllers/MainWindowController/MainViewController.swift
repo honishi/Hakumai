@@ -346,7 +346,7 @@ extension MainViewController: NSTableViewDelegate {
             flashColor = nil
         }
         if let flashColor = flashColor {
-            view.flash(flashColor)
+            view.flash(flashColor, duration: 1.5)
             setCellViewFlashedStatus(messageNo: messageNo, tableColumnIdentifier: tableColumnId, flashed: true)
         }
     }
