@@ -28,54 +28,42 @@ final class UIHelper {
     }
 
     static func cellViewAdFlashColor() -> NSColor {
-        let light = "#FFBD2F"
-        let dark = "#E09900"
-        if #available(macOS 10.14, *) {
-            return NSApplication.shared.isDarkMode ? NSColor(hex: dark) : NSColor(hex: light)
-        } else {
-            return NSColor(hex: light)
-        }
+        return colorIf(light: "#FFBD2F", dark: "#E09900")
     }
 
     static func cellViewGiftFlashColor() -> NSColor {
-        let light = "#E5444F"
-        let dark = "#D01C24"
+        return colorIf(light: "#E5444F", dark: "#D01C24")
+    }
+
+    static func casterCommentColor() -> NSColor {
+        return colorIf(light: "#D22E1B", dark: "#FF8170")
+    }
+
+    // MARK: - Font Attributes
+    static func commentAttributes(
+        fontSize: CGFloat = CGFloat(kDefaultFontSize),
+        isBold: Bool = false,
+        isRed: Bool = false
+    ) -> [NSAttributedString.Key: Any] {
+        return [
+            .font: isBold ? NSFont.boldSystemFont(ofSize: fontSize) : NSFont.systemFont(ofSize: fontSize),
+            .foregroundColor: isRed ? casterCommentColor() : NSColor.labelColor,
+            .paragraphStyle: NSParagraphStyle.default
+        ]
+    }
+}
+
+private extension UIHelper {
+    static func colorIf(light: String, dark: String) -> NSColor {
         if #available(macOS 10.14, *) {
             return NSApplication.shared.isDarkMode ? NSColor(hex: dark) : NSColor(hex: light)
         } else {
             return NSColor(hex: light)
         }
     }
-
-    // MARK: - Font Attributes
-    static func normalCommentAttributes() -> [String: Any] {
-        return normalCommentAttributes(fontSize: CGFloat(kDefaultFontSize))
-    }
-
-    static func normalCommentAttributes(fontSize: CGFloat) -> [String: Any] {
-        let attributes = [NSAttributedString.Key.font.rawValue: NSFont.systemFont(ofSize: fontSize),
-                          NSAttributedString.Key.paragraphStyle.rawValue: NSParagraphStyle.default]
-        return attributes
-    }
-
-    static func boldCommentAttributes() -> [String: Any] {
-        return boldCommentAttributes(fontSize: CGFloat(kDefaultFontSize))
-    }
-
-    static func boldCommentAttributes(fontSize: CGFloat) -> [String: Any] {
-        let attributes = [NSAttributedString.Key.font.rawValue: NSFont.boldSystemFont(ofSize: fontSize),
-                          NSAttributedString.Key.paragraphStyle.rawValue: NSParagraphStyle.default]
-        return attributes
-    }
-
-    private static func commonCommentParagraphStyle(fontSize: CGFloat) -> NSParagraphStyle {
-        let style = NSMutableParagraphStyle()
-        style.maximumLineHeight = fontSize * 1.2
-        return style
-    }
 }
 
-extension NSApplication {
+private extension NSApplication {
     var isDarkMode: Bool {
         if #available(OSX 10.14, *) {
             return effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua

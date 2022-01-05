@@ -50,7 +50,7 @@ struct ChatMessage {
     let comment: String
     let premium: Premium
     let isFirst: Bool
-    let slashCommand: SlashCommand
+    let slashCommand: SlashCommand?
 }
 
 struct DebugMessage {
@@ -63,6 +63,7 @@ extension ChatMessage {
     var isUser: Bool { premium.isUser }
     var isSystem: Bool { premium.isSystem }
     var hasUserIcon: Bool { isUser && isRawUserId }
+    var isCasterComment: Bool { premium == .caster && slashCommand == nil }
 }
 
 private let commentPreReplacePatterns = [
@@ -113,7 +114,7 @@ extension String {
 
 enum SlashCommand {
     case cruise, emotion, gift, info, nicoad, quote, spi, vote
-    case none
+    case unknown
 }
 
 // MARK: - Model Mapper
@@ -132,25 +133,32 @@ extension Chat {
         )
     }
 
-    func toSlashCommand() -> SlashCommand {
-        guard premium == .caster else { return .none }
-        if comment.hasPrefix("/cruise") {
+    func toSlashCommand() -> SlashCommand? {
+        guard premium == .caster else { return nil }
+        return Chat.toSlashCommand(from: comment)
+    }
+
+    static func toSlashCommand(from comment: String) -> SlashCommand? {
+        guard comment.hasRegexp(pattern: "^/\\w+ .+$") else {
+            return nil
+        }
+        if comment.hasPrefix("/cruise ") {
             return .cruise
-        } else if comment.hasPrefix("/emotion") {
+        } else if comment.hasPrefix("/emotion ") {
             return .emotion
-        } else if comment.hasPrefix("/gift") {
+        } else if comment.hasPrefix("/gift ") {
             return .gift
-        } else if comment.hasPrefix("/info") {
+        } else if comment.hasPrefix("/info ") {
             return .info
-        } else if comment.hasPrefix("/nicoad") {
+        } else if comment.hasPrefix("/nicoad ") {
             return .nicoad
-        } else if comment.hasPrefix("/quote") {
+        } else if comment.hasPrefix("/quote ") {
             return .quote
-        } else if comment.hasPrefix("/spi") {
+        } else if comment.hasPrefix("/spi ") {
             return .spi
-        } else if comment.hasPrefix("/vote") {
+        } else if comment.hasPrefix("/vote ") {
             return .vote
         }
-        return .none
+        return .unknown
     }
 }

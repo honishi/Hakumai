@@ -178,8 +178,9 @@ extension MainViewController: NSTableViewDelegate {
         let (content, attributes) = contentAndAttributes(forMessage: message)
 
         let commentRect = content.boundingRect(
-            with: CGSize(width: width - widthPadding, height: 0), options: NSString.DrawingOptions.usesLineFragmentOrigin,
-            attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
+            with: CGSize(width: width - widthPadding, height: 0),
+            options: .usesLineFragmentOrigin,
+            attributes: attributes)
         // log.debug("\(commentRect.size.width),\(commentRect.size.height)")
 
         let iconHeight: CGFloat = {
@@ -200,9 +201,11 @@ extension MainViewController: NSTableViewDelegate {
 
     private func calculateMinimumRowHeight(fontSize: CGFloat) -> CGFloat {
         let placeholderContent = "." as NSString
-        let placeholderAttributes = UIHelper.normalCommentAttributes(fontSize: fontSize)
+        let placeholderAttributes = UIHelper.commentAttributes(fontSize: fontSize)
         let rect = placeholderContent.boundingRect(
-            with: CGSize(width: 1, height: 0), options: NSString.DrawingOptions.usesLineFragmentOrigin, attributes: convertToOptionalNSAttributedStringKeyDictionary(placeholderAttributes))
+            with: CGSize(width: 1, height: 0),
+            options: .usesLineFragmentOrigin,
+            attributes: placeholderAttributes)
         return rect.size.height
     }
 
@@ -261,7 +264,7 @@ extension MainViewController: NSTableViewDelegate {
         case kCommentColumnIdentifier:
             let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)
-            let attributed = NSAttributedString(string: content, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
+            let attributed = NSAttributedString(string: content, attributes: attributes)
             commentView?.configure(attributedString: attributed)
         case kUserIdColumnIdentifier:
             let userIdView = view as? UserIdTableCellView
@@ -299,7 +302,7 @@ extension MainViewController: NSTableViewDelegate {
         case kCommentColumnIdentifier:
             let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)
-            let attributed = NSAttributedString(string: content as String, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
+            let attributed = NSAttributedString(string: content as String, attributes: attributes)
             commentView?.configure(attributedString: attributed)
         case kUserIdColumnIdentifier:
             let userIdView = view as? UserIdTableCellView
@@ -338,11 +341,16 @@ extension MainViewController: NSTableViewDelegate {
 
         let flashColor: NSColor?
         switch chat.slashCommand {
-        case .gift:
-            flashColor = UIHelper.cellViewGiftFlashColor()
-        case .nicoad:
-            flashColor = UIHelper.cellViewAdFlashColor()
-        case .cruise, .emotion, .info, .quote, .spi, .vote, .none:
+        case .some(let slashCommand):
+            switch slashCommand {
+            case .gift:
+                flashColor = UIHelper.cellViewGiftFlashColor()
+            case .nicoad:
+                flashColor = UIHelper.cellViewAdFlashColor()
+            case .cruise, .emotion, .info, .quote, .spi, .vote, .unknown:
+                flashColor = nil
+            }
+        case .none:
             flashColor = nil
         }
         if let flashColor = flashColor {
@@ -352,22 +360,23 @@ extension MainViewController: NSTableViewDelegate {
     }
 
     // MARK: Utility
-    private func contentAndAttributes(forMessage message: Message) -> (String, [String: Any]) {
+    private func contentAndAttributes(forMessage message: Message) -> (String, [NSAttributedString.Key: Any]) {
         let content: String
-        let attributes: [String: Any]
+        let attributes: [NSAttributedString.Key: Any]
 
         switch message.content {
         case .system(let system):
             content = system.message
-            attributes = UIHelper.normalCommentAttributes(fontSize: tableViewFontSize)
+            attributes = UIHelper.commentAttributes(fontSize: tableViewFontSize)
         case .chat(let chat):
             content = chat.comment
-            attributes = chat.isFirst ?
-                UIHelper.boldCommentAttributes(fontSize: tableViewFontSize) :
-                UIHelper.normalCommentAttributes(fontSize: tableViewFontSize)
+            attributes = UIHelper.commentAttributes(
+                fontSize: tableViewFontSize,
+                isBold: chat.isFirst,
+                isRed: chat.isCasterComment)
         case .debug(let debug):
             content = debug.message
-            attributes = UIHelper.normalCommentAttributes(fontSize: tableViewFontSize)
+            attributes = UIHelper.commentAttributes(fontSize: tableViewFontSize)
         }
 
         return (content, attributes)
@@ -787,6 +796,7 @@ private extension MainViewController {
 
 // MARK: Configure Views
 private extension MainViewController {
+    // swiftlint:disable function_body_length
     func configureViews() {
         liveThumbnailImageView.addBorder()
         [debugReconnectButton, debugExpireTokenButton].forEach {
@@ -838,7 +848,13 @@ private extension MainViewController {
 
         configureActiveUserChart()
         resetActiveUser()
+
+        let appearanceMonitorView = AppearanceMonitorView.make { [weak self] in
+            self?.tableView.reloadData()
+        }
+        view.addSubview(appearanceMonitorView)
     }
+    // swiftlint:enable function_body_length
 
     func configureTableView() {
         tableView.setClickAction(
@@ -1390,11 +1406,4 @@ private extension NicoError {
 private extension NSButton {
     var isOn: Bool { self.state == .on }
 }
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-    guard let input = input else { return nil }
-    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
-}
-
 // swiftlint:enable file_length
