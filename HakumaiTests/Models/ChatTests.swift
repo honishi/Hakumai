@@ -14,12 +14,12 @@ class ChatTests: XCTestCase {
     override func tearDownWithError() throws {}
 
     func testToSlashCommand() throws {
-        XCTAssert(Chat.toSlashCommane(from: "") == nil, "")
-        XCTAssert(Chat.toSlashCommane(from: "nicoad") == nil, "")
-        XCTAssert(Chat.toSlashCommane(from: "nicoad ") == nil, "")
-        XCTAssert(Chat.toSlashCommane(from: "/nicoad xxx") == .nicoad, "")
-        XCTAssert(Chat.toSlashCommane(from: "/gift xxx") == .gift, "")
-        XCTAssert(Chat.toSlashCommane(from: "/vote xxx") == .vote, "")
-        XCTAssert(Chat.toSlashCommane(from: "/abc xxx") == .unknown, "")
+        XCTAssert(Chat.toSlashCommand(from: "") == nil, "")
+        XCTAssert(Chat.toSlashCommand(from: "nicoad") == nil, "")
+        XCTAssert(Chat.toSlashCommand(from: "nicoad ") == nil, "")
+        XCTAssert(Chat.toSlashCommand(from: "/nicoad xxx") == .nicoad, "")
+        XCTAssert(Chat.toSlashCommand(from: "/gift xxx") == .gift, "")
+        XCTAssert(Chat.toSlashCommand(from: "/vote xxx") == .vote, "")
+        XCTAssert(Chat.toSlashCommand(from: "/abc xxx") == .unknown, "")
     }
 }

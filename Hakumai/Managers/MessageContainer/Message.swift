@@ -135,10 +135,10 @@ extension Chat {
 
     func toSlashCommand() -> SlashCommand? {
         guard premium == .caster else { return nil }
-        return Chat.toSlashCommane(from: comment)
+        return Chat.toSlashCommand(from: comment)
     }
 
-    static func toSlashCommane(from comment: String) -> SlashCommand? {
+    static func toSlashCommand(from comment: String) -> SlashCommand? {
         guard comment.hasRegexp(pattern: "^/\\w+ .+$") else {
             return nil
         }

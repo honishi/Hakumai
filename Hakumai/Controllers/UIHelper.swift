@@ -46,10 +46,9 @@ final class UIHelper {
         isRed: Bool = false
     ) -> [NSAttributedString.Key: Any] {
         return [
-            NSAttributedString.Key.font:
-                isBold ? NSFont.boldSystemFont(ofSize: fontSize) : NSFont.systemFont(ofSize: fontSize),
-            NSAttributedString.Key.paragraphStyle: NSParagraphStyle.default,
-            NSAttributedString.Key.foregroundColor: isRed ? casterCommentColor() : NSColor.labelColor
+            .font: isBold ? NSFont.boldSystemFont(ofSize: fontSize) : NSFont.systemFont(ofSize: fontSize),
+            .foregroundColor: isRed ? casterCommentColor() : NSColor.labelColor,
+            .paragraphStyle: NSParagraphStyle.default
         ]
     }
 }

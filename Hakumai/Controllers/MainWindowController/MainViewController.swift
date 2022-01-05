@@ -796,6 +796,7 @@ private extension MainViewController {
 
 // MARK: Configure Views
 private extension MainViewController {
+    // swiftlint:disable function_body_length
     func configureViews() {
         liveThumbnailImageView.addBorder()
         [debugReconnectButton, debugExpireTokenButton].forEach {
@@ -853,6 +854,7 @@ private extension MainViewController {
         }
         view.addSubview(appearanceMonitorView)
     }
+    // swiftlint:enable function_body_length
 
     func configureTableView() {
         tableView.setClickAction(
