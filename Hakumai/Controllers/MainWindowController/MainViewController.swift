@@ -338,11 +338,16 @@ extension MainViewController: NSTableViewDelegate {
 
         let flashColor: NSColor?
         switch chat.slashCommand {
-        case .gift:
-            flashColor = UIHelper.cellViewGiftFlashColor()
-        case .nicoad:
-            flashColor = UIHelper.cellViewAdFlashColor()
-        case .cruise, .emotion, .info, .quote, .spi, .vote, .none:
+        case .some(let slashCommand):
+            switch slashCommand {
+            case .gift:
+                flashColor = UIHelper.cellViewGiftFlashColor()
+            case .nicoad:
+                flashColor = UIHelper.cellViewAdFlashColor()
+            case .cruise, .emotion, .info, .quote, .spi, .vote, .unknown:
+                flashColor = nil
+            }
+        case .none:
             flashColor = nil
         }
         if let flashColor = flashColor {
