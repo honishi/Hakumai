@@ -48,30 +48,17 @@ final class UIHelper {
     }
 
     // MARK: - Font Attributes
-    static func normalCommentAttributes() -> [String: Any] {
-        return normalCommentAttributes(fontSize: CGFloat(kDefaultFontSize))
-    }
-
-    static func normalCommentAttributes(fontSize: CGFloat) -> [String: Any] {
-        let attributes = [NSAttributedString.Key.font.rawValue: NSFont.systemFont(ofSize: fontSize),
-                          NSAttributedString.Key.paragraphStyle.rawValue: NSParagraphStyle.default]
-        return attributes
-    }
-
-    static func boldCommentAttributes() -> [String: Any] {
-        return boldCommentAttributes(fontSize: CGFloat(kDefaultFontSize))
-    }
-
-    static func boldCommentAttributes(fontSize: CGFloat) -> [String: Any] {
-        let attributes = [NSAttributedString.Key.font.rawValue: NSFont.boldSystemFont(ofSize: fontSize),
-                          NSAttributedString.Key.paragraphStyle.rawValue: NSParagraphStyle.default]
-        return attributes
-    }
-
-    private static func commonCommentParagraphStyle(fontSize: CGFloat) -> NSParagraphStyle {
-        let style = NSMutableParagraphStyle()
-        style.maximumLineHeight = fontSize * 1.2
-        return style
+    static func commentAttributes(
+        fontSize: CGFloat = CGFloat(kDefaultFontSize),
+        isBold: Bool = false,
+        isRed: Bool = false
+    ) -> [NSAttributedString.Key: Any] {
+        return [
+            NSAttributedString.Key.font:
+                isBold ? NSFont.boldSystemFont(ofSize: fontSize) : NSFont.systemFont(ofSize: fontSize),
+            NSAttributedString.Key.paragraphStyle: NSParagraphStyle.default,
+            NSAttributedString.Key.foregroundColor: isRed ? NSColor.red : NSColor.labelColor
+        ]
     }
 }
 

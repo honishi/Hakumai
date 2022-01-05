@@ -91,8 +91,10 @@ extension UserViewController: NSTableViewDataSource, NSTableViewDelegate {
 
         let (content, attributes) = contentAndAttributes(forMessage: message)
 
-        let commentRect = content.boundingRect(with: CGSize(width: width - widthPadding, height: 0),
-                                               options: NSString.DrawingOptions.usesLineFragmentOrigin, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
+        let commentRect = content.boundingRect(
+            with: CGSize(width: width - widthPadding, height: 0),
+            options: .usesLineFragmentOrigin,
+            attributes: attributes)
         // log.debug("\(commentRect.size.width),\(commentRect.size.height)")
 
         return commentRect.size.height
@@ -201,7 +203,7 @@ private extension UserViewController {
         case kCommentColumnIdentifier:
             let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)
-            attributed = NSAttributedString(string: content, attributes: convertToOptionalNSAttributedStringKeyDictionary(attributes))
+            attributed = NSAttributedString(string: content, attributes: attributes)
             commentView?.configure(attributedString: attributed)
         default:
             break
@@ -222,20 +224,20 @@ private extension UserViewController {
     }
 
     // MARK: Utility
-    func contentAndAttributes(forMessage message: Message) -> (String, [String: Any]) {
+    func contentAndAttributes(forMessage message: Message) -> (String, [NSAttributedString.Key: Any]) {
         let content: String
-        let attributes: [String: Any]
+        let attributes: [NSAttributedString.Key: Any]
 
         switch message.content {
         case .system(let system):
             content = system.message
-            attributes = UIHelper.normalCommentAttributes()
+            attributes = UIHelper.commentAttributes()
         case .chat(let chat):
             content = chat.comment
-            attributes = chat.isFirst ? UIHelper.boldCommentAttributes() : UIHelper.normalCommentAttributes()
+            attributes = UIHelper.commentAttributes(isBold: chat.isFirst)
         case .debug(let debug):
             content = debug.message
-            attributes = UIHelper.normalCommentAttributes()
+            attributes = UIHelper.commentAttributes()
         }
 
         return (content, attributes)
@@ -245,12 +247,6 @@ private extension UserViewController {
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToNSUserInterfaceItemIdentifier(_ input: String) -> NSUserInterfaceItemIdentifier {
     return NSUserInterfaceItemIdentifier(rawValue: input)
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-    guard let input = input else { return nil }
-    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
 }
 
 // Helper function inserted by Swift 4.2 migrator.
