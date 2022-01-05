@@ -63,6 +63,7 @@ extension ChatMessage {
     var isUser: Bool { premium.isUser }
     var isSystem: Bool { premium.isSystem }
     var hasUserIcon: Bool { isUser && isRawUserId }
+    var isCasterComment: Bool { premium == .caster && slashCommand == nil }
 }
 
 private let commentPreReplacePatterns = [

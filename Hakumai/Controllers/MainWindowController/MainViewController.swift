@@ -370,7 +370,10 @@ extension MainViewController: NSTableViewDelegate {
             attributes = UIHelper.commentAttributes(fontSize: tableViewFontSize)
         case .chat(let chat):
             content = chat.comment
-            attributes = UIHelper.commentAttributes(fontSize: tableViewFontSize, isBold: chat.isFirst)
+            attributes = UIHelper.commentAttributes(
+                fontSize: tableViewFontSize,
+                isBold: chat.isFirst,
+                isRed: chat.isCasterComment)
         case .debug(let debug):
             content = debug.message
             attributes = UIHelper.commentAttributes(fontSize: tableViewFontSize)
