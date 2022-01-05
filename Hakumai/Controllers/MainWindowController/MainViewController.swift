@@ -847,6 +847,11 @@ private extension MainViewController {
 
         configureActiveUserChart()
         resetActiveUser()
+
+        let appearanceMonitorView = AppearanceMonitorView.make { [weak self] in
+            self?.tableView.reloadData()
+        }
+        view.addSubview(appearanceMonitorView)
     }
 
     func configureTableView() {
