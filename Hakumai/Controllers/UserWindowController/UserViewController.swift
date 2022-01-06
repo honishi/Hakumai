@@ -55,7 +55,8 @@ extension UserViewController {
             (kNibNameCommentTableCellView, kCommentColumnIdentifier)]
         for (nibName, identifier) in nibs {
             guard let nib = NSNib(nibNamed: nibName, bundle: Bundle.main) else { continue }
-            tableView.register(nib, forIdentifier: convertToNSUserInterfaceItemIdentifier(identifier))
+            let itemIdentifier = NSUserInterfaceItemIdentifier(rawValue: identifier)
+            tableView.register(nib, forIdentifier: itemIdentifier)
         }
     }
 }
@@ -75,7 +76,10 @@ extension UserViewController: NSTableViewDataSource, NSTableViewDelegate {
 
         var rowHeight: CGFloat = 0
 
-        guard let commentTableColumn = tableView.tableColumn(withIdentifier: convertToNSUserInterfaceItemIdentifier(kCommentColumnIdentifier)) else { return rowHeight }
+        let itemIdentifier = NSUserInterfaceItemIdentifier(rawValue: kCommentColumnIdentifier)
+        guard let commentTableColumn = tableView.tableColumn(withIdentifier: itemIdentifier) else {
+            return rowHeight
+        }
         let commentColumnWidth = commentTableColumn.width
         rowHeight = commentColumnHeight(forMessage: message, width: commentColumnWidth)
 
@@ -102,7 +106,7 @@ extension UserViewController: NSTableViewDataSource, NSTableViewDelegate {
 
     func tableViewColumnDidResize(_ aNotification: Notification) {
         guard let column = (aNotification as NSNotification).userInfo?["NSTableColumn"] as? NSTableColumn else { return }
-        if convertFromNSUserInterfaceItemIdentifier(column.identifier) == kCommentColumnIdentifier {
+        if column.identifier.rawValue == kCommentColumnIdentifier {
             rowHeightCacher.removeAll(keepingCapacity: false)
             tableView.reloadData()
         }
@@ -194,7 +198,7 @@ private extension UserViewController {
     func configure(view: NSTableCellView, forChat message: Message, withTableColumn tableColumn: NSTableColumn) {
         var attributed: NSAttributedString?
 
-        switch convertFromNSUserInterfaceItemIdentifier(tableColumn.identifier) {
+        switch tableColumn.identifier.rawValue {
         case kRoomPositionColumnIdentifier:
             let roomPositionView = view as? RoomPositionTableCellView
             roomPositionView?.configure(message: message)
@@ -242,14 +246,4 @@ private extension UserViewController {
 
         return (content, attributes)
     }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToNSUserInterfaceItemIdentifier(_ input: String) -> NSUserInterfaceItemIdentifier {
-    return NSUserInterfaceItemIdentifier(rawValue: input)
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSUserInterfaceItemIdentifier(_ input: NSUserInterfaceItemIdentifier) -> String {
-    return input.rawValue
 }
