@@ -53,7 +53,7 @@ extension PreferenceWindowController {
         guard let toolbarItem = sender as? NSToolbarItem else { return }
         var viewController: NSViewController?
 
-        switch convertFromNSToolbarItemIdentifier(toolbarItem.itemIdentifier) {
+        switch toolbarItem.itemIdentifier.rawValue {
         case kToolbarItemIdentifierGeneral:
             viewController = GeneralViewController.shared
         case kToolbarItemIdentifierMute:
@@ -63,7 +63,7 @@ extension PreferenceWindowController {
         }
 
         if let controller = viewController {
-            changeContent(viewController: controller, itemIdentifier: convertFromNSToolbarItemIdentifier(toolbarItem.itemIdentifier))
+            changeContent(viewController: controller, itemIdentifier: toolbarItem.itemIdentifier.rawValue)
         }
     }
 }
@@ -81,7 +81,7 @@ private extension PreferenceWindowController {
         }
         window?.contentView?.addSubview(viewController.view)
         resizeWindowForContentView(view: viewController.view)
-        toolbar.selectedItemIdentifier = convertToOptionalNSToolbarItemIdentifier(itemIdentifier)
+        toolbar.selectedItemIdentifier = NSToolbarItem.Identifier(rawValue: itemIdentifier)
     }
 
     func resizeWindowForContentView(view: NSView) {
@@ -111,15 +111,4 @@ private extension PreferenceWindowController {
         }
         return toolbarHeight
     }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSToolbarItemIdentifier(_ input: NSToolbarItem.Identifier) -> String {
-    return input.rawValue
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSToolbarItemIdentifier(_ input: String?) -> NSToolbarItem.Identifier? {
-    guard let input = input else { return nil }
-    return NSToolbarItem.Identifier(rawValue: input)
 }
