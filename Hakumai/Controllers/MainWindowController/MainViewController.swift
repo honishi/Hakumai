@@ -478,7 +478,6 @@ extension MainViewController: NicoManagerDelegate {
             return
         }
 
-        focusCommentTextField()
         startElapsedTimeAndActiveUserTimer()
 
         switch connectContext {
@@ -488,6 +487,7 @@ extension MainViewController: NicoManagerDelegate {
             resetActiveUser()
             rankingManager.addDelegate(self, for: live.liveProgramId)
             logSystemMessageToTable(L10n.preparedLive(user.nickname))
+            focusCommentTextField()
         case .reconnect:
             break
         }
