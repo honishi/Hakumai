@@ -65,7 +65,8 @@ extension MessageContainer {
     private func append(message: Message) -> (appended: Bool, count: Int) {
         messageNo += 1
         sourceMessages.append(message)
-        let appended = append(message: message, into: &filteredMessages)
+        let appended = appendIfConditionMet(
+            message: message, into: &filteredMessages)
         let count = filteredMessages.count
         return (appended, count)
     }
@@ -174,7 +175,9 @@ extension MessageContainer {
             let sourceCount = self.sourceMessages.count
 
             for i in 0..<sourceCount {
-                self.append(message: self.sourceMessages[i], into: &workingMessages)
+                self.appendIfConditionMet(
+                    message: self.sourceMessages[i],
+                    into: &workingMessages)
             }
 
             // log.debug("completed 1st pass")
@@ -194,7 +197,9 @@ extension MessageContainer {
 
                 let deltaCount = self.sourceMessages.count
                 for i in sourceCount..<deltaCount {
-                    self.append(message: self.sourceMessages[i], into: &self.filteredMessages)
+                    self.appendIfConditionMet(
+                        message: self.sourceMessages[i],
+                        into: &self.filteredMessages)
                 }
                 // log.debug("copied delta messages \(sourceCount)..<\(deltaCount)")
 
@@ -214,7 +219,7 @@ extension MessageContainer {
 private extension MessageContainer {
     // MARK: Filtered Message Append Utility
     @discardableResult
-    func append(message: Message, into messages: inout [Message]) -> Bool {
+    func appendIfConditionMet(message: Message, into messages: inout [Message]) -> Bool {
         var appended = false
         if shouldAppend(message: message) {
             messages.append(message)
@@ -228,7 +233,9 @@ private extension MessageContainer {
         case .system:
             return true
         case .chat(let chat):
-            return shouldAppendByMuteWords(chat) && shouldAppendByUserId(chat) && shouldAppendByEmotion(chat)
+            return shouldAppendByMuteWords(chat)
+                && shouldAppendByUserId(chat)
+                && shouldAppendByEmotion(chat)
         case .debug:
             return enableDebugMessage
         }
