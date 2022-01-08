@@ -129,6 +129,10 @@ extension MainWindowController {
         mainViewController.changeFontSize(fontSize)
     }
 
+    func changeEnableEmotionMessage(_ enabled: Bool) {
+        mainViewController.changeEnableEmotionMessage(enabled)
+    }
+
     func changeEnableDebugMessage(_ enabled: Bool) {
         mainViewController.changeEnableDebugMessage(enabled)
     }

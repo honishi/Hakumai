@@ -12,12 +12,11 @@ import Foundation
 final class MessageContainer {
     // MARK: - Properties
     // MARK: Public
-    var beginDateToShowHbIfseetnoCommands: Date?
-    var showHbIfseetnoCommands = false
     var enableMuteUserIds = false
     var muteUserIds = [[String: String]]()
     var enableMuteWords = false
     var muteWords = [[String: String]]()
+    var enableEmotionMessage = true
     var enableDebugMessage = false
 
     // MARK: Private
@@ -229,7 +228,7 @@ private extension MessageContainer {
         case .system:
             return true
         case .chat(let chat):
-            return shouldAppendByMuteWords(chat) && shouldAppendByUserId(chat)
+            return shouldAppendByMuteWords(chat) && shouldAppendByUserId(chat) && shouldAppendByEmotion(chat)
         case .debug:
             return enableDebugMessage
         }
@@ -252,5 +251,13 @@ private extension MessageContainer {
             return false
         }
         return true
+    }
+
+    func shouldAppendByEmotion(_ chat: ChatMessage) -> Bool {
+        if enableEmotionMessage {
+            return true
+        }
+        let isEmotion = chat.slashCommand == .emotion
+        return !isEmotion
     }
 }
