@@ -155,6 +155,7 @@
 "speak_comments" = "Speech Comments (Requires macOS 10.14-)";
 "speak_volume" = "Speech Volume";
 "misc" = "Misc";
+"enable_emotion_message" = "Show emotion";
 "enable_live_notification" = "Enable notifications for live connection";
 "enable_debug_message" = "Enable debug message in main window";
 

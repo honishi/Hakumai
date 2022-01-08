@@ -155,6 +155,7 @@
 "speak_comments" = "コメント読み上げ (macOS 10.14 以降が必要)";
 "speak_volume" = "読み上げボリューム";
 "misc" = "その他";
+"enable_emotion_message" = "エモーションを表示する";
 "enable_live_notification" = "放送への接続や切断を通知する";
 "enable_debug_message" = "デバッグ情報をメインウィンドウに表示する";
 

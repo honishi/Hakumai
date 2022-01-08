@@ -84,6 +84,8 @@ internal enum L10n {
   internal static let enable184 = L10n.tr("Localizable", "enable_184")
   /// Enable debug message in main window
   internal static let enableDebugMessage = L10n.tr("Localizable", "enable_debug_message")
+  /// Show emotion
+  internal static let enableEmotionMessage = L10n.tr("Localizable", "enable_emotion_message")
   /// Enable notifications for live connection
   internal static let enableLiveNotification = L10n.tr("Localizable", "enable_live_notification")
   /// Enable Mute User Ids

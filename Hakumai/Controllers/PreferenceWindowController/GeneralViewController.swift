@@ -24,6 +24,7 @@ final class GeneralViewController: NSViewController {
     @IBOutlet private weak var speakVolumeSlider: NSSlider!
 
     @IBOutlet private weak var miscBox: NSBox!
+    @IBOutlet private weak var enableEmotionMessageButton: NSButton!
     @IBOutlet private weak var enableLiveNotificationButton: NSButton!
     @IBOutlet private weak var enableDebugMessageButton: NSButton!
 
@@ -58,6 +59,7 @@ private extension GeneralViewController {
         speakVolumeTitleTextField.stringValue = "\(L10n.speakVolume):"
 
         miscBox.title = L10n.misc
+        enableEmotionMessageButton.title = L10n.enableEmotionMessage
         enableLiveNotificationButton.title = L10n.enableLiveNotification
         enableDebugMessageButton.title = L10n.enableDebugMessage
     }

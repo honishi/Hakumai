@@ -71,10 +71,10 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="16" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="msl-tt-je4">
-                                <rect key="frame" x="20" y="44" width="460" height="336"/>
+                                <rect key="frame" x="20" y="24" width="460" height="356"/>
                                 <subviews>
                                     <box autoresizesSubviews="NO" borderType="line" title="browser_in_use" translatesAutoresizingMaskIntoConstraints="NO" id="MWm-if-ayO">
-                                        <rect key="frame" x="-3" y="232" width="466" height="104"/>
+                                        <rect key="frame" x="-3" y="252" width="466" height="104"/>
                                         <view key="contentView" id="rtk-61-lXP">
                                             <rect key="frame" x="3" y="3" width="460" height="86"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -127,7 +127,7 @@
                                         </constraints>
                                     </box>
                                     <box borderType="line" title="comment_speaking" translatesAutoresizingMaskIntoConstraints="NO" id="ICr-HG-iyb">
-                                        <rect key="frame" x="-3" y="112" width="466" height="108"/>
+                                        <rect key="frame" x="-3" y="132" width="466" height="108"/>
                                         <view key="contentView" id="Mny-of-dvr">
                                             <rect key="frame" x="3" y="3" width="460" height="90"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -199,14 +199,24 @@
                                         </constraints>
                                     </box>
                                     <box title="misc" translatesAutoresizingMaskIntoConstraints="NO" id="nEt-qg-eF7">
-                                        <rect key="frame" x="-3" y="-4" width="466" height="104"/>
+                                        <rect key="frame" x="-3" y="-4" width="466" height="124"/>
                                         <view key="contentView" id="GGm-m8-776">
-                                            <rect key="frame" x="3" y="3" width="460" height="86"/>
+                                            <rect key="frame" x="3" y="3" width="460" height="106"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Uwv-0k-kzX">
-                                                    <rect key="frame" x="16" y="30" width="428" height="40"/>
+                                                    <rect key="frame" x="16" y="26" width="428" height="64"/>
                                                     <subviews>
+                                                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gzI-bE-fXB">
+                                                            <rect key="frame" x="-2" y="47" width="65" height="18"/>
+                                                            <buttonCell key="cell" type="check" title="Check" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="dLE-8x-lgs">
+                                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                <font key="font" metaFont="system"/>
+                                                            </buttonCell>
+                                                            <connections>
+                                                                <binding destination="Ex8-3g-KNv" name="value" keyPath="values.EnableEmotionMessage" id="ZNL-2Z-ns8"/>
+                                                            </connections>
+                                                        </button>
                                                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ACY-bp-F35">
                                                             <rect key="frame" x="-2" y="23" width="65" height="18"/>
                                                             <buttonCell key="cell" type="check" title="Check" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="ItO-gi-EW4">
@@ -231,8 +241,10 @@
                                                     <visibilityPriorities>
                                                         <integer value="1000"/>
                                                         <integer value="1000"/>
+                                                        <integer value="1000"/>
                                                     </visibilityPriorities>
                                                     <customSpacing>
+                                                        <real value="3.4028234663852886e+38"/>
                                                         <real value="3.4028234663852886e+38"/>
                                                         <real value="3.4028234663852886e+38"/>
                                                     </customSpacing>
@@ -245,7 +257,7 @@
                                             </constraints>
                                         </view>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="100" id="kek-ht-XVI"/>
+                                            <constraint firstAttribute="height" constant="120" id="kek-ht-XVI"/>
                                         </constraints>
                                     </box>
                                 </subviews>
@@ -282,6 +294,7 @@
                         <outlet property="chromeButtonCell" destination="Ici-yj-KuI" id="ZIX-rJ-KYV"/>
                         <outlet property="commentSpeakingBox" destination="ICr-HG-iyb" id="6y6-k7-mqr"/>
                         <outlet property="enableDebugMessageButton" destination="7lf-Wg-9jA" id="S63-js-K9y"/>
+                        <outlet property="enableEmotionMessageButton" destination="gzI-bE-fXB" id="0E5-AF-tJr"/>
                         <outlet property="enableLiveNotificationButton" destination="ACY-bp-F35" id="XO9-GH-lL6"/>
                         <outlet property="miscBox" destination="nEt-qg-eF7" id="mvL-Ix-z1R"/>
                         <outlet property="safariButtonCell" destination="wGq-x5-Aua" id="lb1-w9-hCF"/>

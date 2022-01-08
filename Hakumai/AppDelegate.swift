@@ -108,7 +108,7 @@ extension AppDelegate {
 extension AppDelegate {
     // swiftlint:disable block_based_kvo cyclomatic_complexity
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
-        // log.debug("detected observing value changed: key[\(keyPath)]")
+        // log.debug("detected observing value changed: key:[\(keyPath)], change:[\(change)]")
         guard let keyPath = keyPath, let change = change else { return }
 
         switch (keyPath, change[.newKey]) {
@@ -140,6 +140,9 @@ extension AppDelegate {
 
         case (Parameters.enableBrowserUrlObservation, let newValue as Bool):
             setBrowserUrlObservation(newValue)
+
+        case (Parameters.enableEmotionMessage, let newValue as Bool):
+            mainWindowControllers.forEach { $0.changeEnableEmotionMessage(newValue) }
 
         case (Parameters.enableDebugMessage, let newValue as Bool):
             mainWindowControllers.forEach { $0.changeEnableDebugMessage(newValue) }
@@ -235,6 +238,7 @@ private extension AppDelegate {
             Parameters.commentAnonymously: true,
             Parameters.enableBrowserUrlObservation: false,
             Parameters.enableLiveNotification: false,
+            Parameters.enableEmotionMessage: true,
             Parameters.enableDebugMessage: false]
         UserDefaults.standard.register(defaults: defaults)
     }
@@ -248,8 +252,11 @@ private extension AppDelegate {
             Parameters.enableMuteUserIds, Parameters.muteUserIds,
             Parameters.enableMuteWords, Parameters.muteWords,
             // misc
-            Parameters.fontSize, Parameters.alwaysOnTop,
-            Parameters.enableBrowserUrlObservation, Parameters.enableDebugMessage
+            Parameters.fontSize,
+            Parameters.alwaysOnTop,
+            Parameters.enableBrowserUrlObservation,
+            Parameters.enableEmotionMessage,
+            Parameters.enableDebugMessage
         ]
         for keyPath in keyPaths {
             UserDefaults.standard.addObserver(

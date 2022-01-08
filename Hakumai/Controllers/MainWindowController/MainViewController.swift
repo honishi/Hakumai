@@ -138,6 +138,7 @@ extension MainViewController {
         configureMute()
         configureFontSize()
         configureAnonymouslyButton()
+        configureEmotionMessage()
         configureDebugMessage()
         DispatchQueue.main.async { self.focusLiveTextField() }
     }
@@ -765,6 +766,12 @@ extension MainViewController {
         rebuildFilteredMessages()
     }
 
+    func changeEnableEmotionMessage(_ enabled: Bool) {
+        messageContainer.enableEmotionMessage = enabled
+        log.debug("Changed enable emotion message: \(enabled)")
+        rebuildFilteredMessages()
+    }
+
     func changeEnableDebugMessage(_ enabled: Bool) {
         messageContainer.enableDebugMessage = enabled
         log.debug("Changed enable debug message: \(enabled)")
@@ -902,6 +909,11 @@ private extension MainViewController {
     func configureAnonymouslyButton() {
         let anonymous = UserDefaults.standard.bool(forKey: Parameters.commentAnonymously)
         commentAnonymouslyButton.state = anonymous ? .on : .off
+    }
+
+    func configureEmotionMessage() {
+        let enabled = UserDefaults.standard.bool(forKey: Parameters.enableEmotionMessage)
+        changeEnableEmotionMessage(enabled)
     }
 
     func configureDebugMessage() {
