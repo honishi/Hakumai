@@ -1212,13 +1212,6 @@ private extension MainViewController {
     func updateActiveUser(active: Int) {
         activeUserCount = active
         maxActiveUserCount = max(maxActiveUserCount, active)
-        if activeUserHistory.isEmpty {
-            let originDate = Date().addingTimeInterval(chartDuration * -1)
-            for i in 0...Int(chartDuration / calculateActiveUserInterval) {
-                let date = originDate.addingTimeInterval(calculateActiveUserInterval * Double(i))
-                activeUserHistory.append((date, 0))
-            }
-        }
         activeUserHistory.append((Date(), active))
         activeUserHistory = activeUserHistory.filter { Date().timeIntervalSince($0.0) < chartDuration }
     }
@@ -1314,6 +1307,7 @@ private extension MainViewController {
         ds.highlightEnabled = false
         data.append(ds)
         adjustChartLeftAxis(max: maxActiveUserCount)
+        activeUserChartView.xAxis.axisMinimum = Date().timeIntervalSince1970 - chartDuration
         activeUserChartView.data = data
     }
 
