@@ -32,7 +32,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         addObserverForUserDefaults()
         configureMenuItems()
         configureNotificationPresenter()
-        clearImageCache()
+        configureAndClearImageCache()
         debugPrintToken()
         openNewWindow()
     }
@@ -279,8 +279,14 @@ private extension AppDelegate {
         }
     }
 
-    func clearImageCache() {
-        KingfisherManager.shared.cache.clearCache {
+    func configureAndClearImageCache() {
+        // Default cache behavior:
+        // "Images in memory storage will expire after 5 minutes from
+        // last accessed, while it is a week for images in disk storage."
+        // https://github.com/onevcat/Kingfisher/wiki/Cheat-Sheet#set-default-expiration-for-cache
+        let cache = KingfisherManager.shared.cache
+        cache.diskStorage.config.expiration = .seconds(60 * 60 * 12)    // 12 hours
+        cache.clearCache {
             log.debug("Disk cache for images has been cleared.")
         }
     }
