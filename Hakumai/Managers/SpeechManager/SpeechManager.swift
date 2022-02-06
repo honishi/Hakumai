@@ -9,7 +9,7 @@
 import Foundation
 import AVFoundation
 
-private let dequeuChatTimerInterval: TimeInterval = 0.5
+private let dequeuChatTimerInterval: TimeInterval = 0.25
 
 private let voiceSpeedMap: [(commentLengthRange: CountableRange<Int>, speed: Float)] = [
     (0..<40, 0.50),
@@ -23,8 +23,8 @@ private let recentChatsThreshold = 50
 
 private let voicevoxSpeedMap: [(commentLengthRange: CountableRange<Int>, speed: Float)] = [
     (0..<40, 1),
-    (40..<80, 1.3),
-    (80..<120, 1.6),
+    (40..<80, 1.2),
+    (80..<120, 1.5),
     (120..<160, 1.9),
     (160..<Int.max, 2.2)
 ]
@@ -127,9 +127,13 @@ extension SpeechManager {
 
         chatQueue.append(chat)
 
-        let audio = VoicevoxAudio(chat: chat, speedScale: voicevoxSpeed)
+        let audio = VoicevoxAudio(
+            audioKey: chat.audioKey,
+            comment: cleanComment(from: chat.comment),
+            speedScale: voicevoxSpeed,
+            speaker: 8)
         audioQueue.append(audio)
-        // preloadFromAudioQueue()
+        preloadFromAudioQueue()
 
         recentChats.append(chat)
         if recentChats.count > recentChatsThreshold {
@@ -144,6 +148,7 @@ extension SpeechManager {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
 
+        log.debug("audioQueue: \(audioQueue.count), vvSpeed: \(voicevoxSpeed)")
         preloadFromAudioQueue()
 
         // log.debug("\(requestingAudioLoad), \(player.isPlaying)")
@@ -159,6 +164,7 @@ extension SpeechManager {
         let isShortComment = chat.comment.count < 10
         guard isUniqueComment || isShortComment else {
             log.debug("skip duplicate speech comment. [\(chat.comment)]")
+            removeFromAudioQueue(audioKey: chat.audioKey)
             return
         }
 
@@ -166,8 +172,9 @@ extension SpeechManager {
             currentCommentLength: chat.comment.count,
             remainingCommentLength: chatQueue.map { $0.comment.count }.reduce(0, +),
             currentVoiceSpeed: voiceSpeed)
+
         /*
-         speak(comment: chat.comment,
+         speak(comment: chat.cleanComment,
          speed: voiceSpeed,
          volume: Float(voiceVolume) / 100.0)
          */
@@ -181,23 +188,21 @@ extension SpeechManager {
 
         switch audio.loadStatus {
         case .notLoaded:
-            requestingAudioLoad = true
             audio.startLoad()
             audio.setLoadStatusListener { [weak self] in
                 guard let me = self else { return }
                 me.handleLoadStatusChange(loadStatus: $0, audioKey: chat.audioKey)
             }
         case .loading:
-            requestingAudioLoad = true
             audio.setLoadStatusListener { [weak self] in
                 guard let me = self else { return }
                 me.handleLoadStatusChange(loadStatus: $0, audioKey: chat.audioKey)
             }
         case .loaded(let data):
             playAudio(data: data)
-            preloadFromAudioQueue()
+            removeFromAudioQueue(audioKey: chat.audioKey)
         case .failed:
-            break
+            removeFromAudioQueue(audioKey: chat.audioKey)
         }
     }
     // swiftlint:enable cyclomatic_complexity
@@ -218,18 +223,22 @@ extension SpeechManager {
 
     func handleLoadStatusChange(loadStatus: VoicevoxAudio.LoadStatus, audioKey: String) {
         switch loadStatus {
-        case .notLoaded, .loading, .failed:
+        case .notLoaded:
             break
+        case .loading:
+            requestingAudioLoad = true
         case .loaded(let data):
-            playAudio(data: data)
-        }
-        switch loadStatus {
-        case .notLoaded, .loading:
-            break
-        case .loaded, .failed:
             requestingAudioLoad = false
-            audioQueue.remove(audioKey: audioKey)
+            playAudio(data: data)
+            removeFromAudioQueue(audioKey: audioKey)
+        case .failed:
+            requestingAudioLoad = false
+            removeFromAudioQueue(audioKey: audioKey)
         }
+    }
+
+    func removeFromAudioQueue(audioKey: String) {
+        audioQueue = audioQueue.filter({ $0.audioKey != audioKey })
     }
 
     func refreshChatQueueIfQueuedTooMuch() -> Bool {
@@ -284,7 +293,7 @@ private extension SpeechManager {
 
     func speak(comment: String, speed: Float, volume: Float) {
         guard #available(macOS 10.14, *) else { return }
-        let utterance = AVSpeechUtterance.init(string: cleanComment(from: comment))
+        let utterance = AVSpeechUtterance.init(string: comment)
         utterance.rate = speed
         utterance.volume = volume
         let voice = AVSpeechSynthesisVoice.init(language: "ja-JP")
@@ -319,69 +328,12 @@ private extension NSRegularExpression {
     }
 }
 
-final class VoicevoxAudio {
-    enum LoadStatus: Equatable {
-        case notLoaded, loading, loaded(Data), failed
-    }
-    typealias Listener = ((LoadStatus) -> Void)
-
-    private(set) var loadStatus: LoadStatus = .notLoaded
-
-    let chat: Chat
-    var audioKey: String { chat.audioKey }
-
-    private let speedScale: Float
-
-    private var listener: Listener?
-    private let voicevoxWrapper: VoicevoxWrapperType = VoicevoxWrapper()
-
-    init(chat: Chat, speedScale: Float) {
-        self.chat = chat
-        self.speedScale = speedScale
-    }
-
-    func startLoad() {
-        loadStatus = .loading
-        voicevoxWrapper.requestAudio(text: chat.cleanComment, speedScale: speedScale) { [weak self] in
-            guard let me = self else { return }
-            switch $0 {
-            case .success(let data):
-                log.debug(data)
-                me.loadStatus = .loaded(data)
-            case .failure(let error):
-                log.error(error)
-                me.loadStatus = .failed
-            }
-            me.listener?(me.loadStatus)
-        }
-    }
-
-    func setLoadStatusListener(_ listener: Listener?) {
-        self.listener = listener
-        self.listener?(loadStatus)
-    }
-}
-
-extension Chat {
-    var audioKey: String { "\(no)-\(dateUsec)-\(userId)" }
-
-    // TODO: Merge
-    // define as 'internal' for test
-    var cleanComment: String {
-        var cleaned = comment
-        cleanCommentPatterns.forEach {
-            cleaned = cleaned.stringByReplacingRegexp(pattern: $0.0, with: $0.1)
-        }
-        return cleaned
-    }
-}
-
 private extension Array where Element == VoicevoxAudio {
     func firstFilter(audioKey: String) -> VoicevoxAudio? {
         return self.filter { $0.audioKey == audioKey }.first
     }
+}
 
-    mutating func remove(audioKey: String) {
-        removeAll { $0.audioKey == audioKey }
-    }
+private extension Chat {
+    var audioKey: String { "\(no)-\(dateUsec)-\(userId)" }
 }

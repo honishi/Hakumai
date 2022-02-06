@@ -10,7 +10,7 @@ import Foundation
 import Alamofire
 
 protocol VoicevoxWrapperType {
-    func requestAudio(text: String, speedScale: Float, completion: @escaping (Result<Data, VoicevoxWrapperError>) -> Void)
+    func requestAudio(text: String, speedScale: Float, speaker: Int, completion: @escaping (Result<Data, VoicevoxWrapperError>) -> Void)
 }
 
 enum VoicevoxWrapperError: Error {
@@ -22,14 +22,14 @@ private let voicevoxUrl = "http://localhost:50021"
 final class VoicevoxWrapper: VoicevoxWrapperType {}
 
 extension VoicevoxWrapper {
-    func requestAudio(text: String, speedScale: Float, completion: @escaping (Result<Data, VoicevoxWrapperError>) -> Void) {
-        requestAudioQuery(text: text, speedScale: speedScale, completion: completion)
+    func requestAudio(text: String, speedScale: Float, speaker: Int, completion: @escaping (Result<Data, VoicevoxWrapperError>) -> Void) {
+        requestAudioQuery(text: text, speedScale: speedScale, speaker: speaker, completion: completion)
     }
 }
 
 private extension VoicevoxWrapper {
-    func requestAudioQuery(text: String, speedScale: Float, completion: @escaping (Result<Data, VoicevoxWrapperError>) -> Void) {
-        let urlString = voicevoxUrl + "/audio_query?text=\(text.escapsed)&speaker=2"
+    func requestAudioQuery(text: String, speedScale: Float, speaker: Int, completion: @escaping (Result<Data, VoicevoxWrapperError>) -> Void) {
+        let urlString = voicevoxUrl + "/audio_query?text=\(text.escapsed)&speaker=\(speaker)"
         guard let url = URL(string: urlString) else { return }
         var request = URLRequest(url: url)
         request.method = .post
@@ -42,12 +42,11 @@ private extension VoicevoxWrapper {
                 log.debug(speedScale)
                 switch $0.result {
                 case .success(let json):
-                    log.debug(json)
-                    //     ("^(/vote )(.+)$", "$1アンケ $2"),
+                    // log.debug(json)
                     let speedAdjusted = json.stringByReplacingRegexp(
                         pattern: "(\"speedScale\":)1.0(,)", with: "$1\(speedScale)$2")
-                    log.debug(speedAdjusted)
-                    me.requestSynthesis(json: speedAdjusted, completion: completion)
+                    // log.debug(speedAdjusted)
+                    me.requestSynthesis(json: speedAdjusted, speaker: speaker, completion: completion)
                 case .failure(let error):
                     log.error(error)
                     completion(Result.failure(VoicevoxWrapperError.internal))
@@ -55,8 +54,8 @@ private extension VoicevoxWrapper {
             }
     }
 
-    func requestSynthesis(json: String, completion: @escaping (Result<Data, VoicevoxWrapperError>) -> Void) {
-        let urlString = voicevoxUrl + "/synthesis?speaker=2"
+    func requestSynthesis(json: String, speaker: Int, completion: @escaping (Result<Data, VoicevoxWrapperError>) -> Void) {
+        let urlString = voicevoxUrl + "/synthesis?speaker=\(speaker)"
         guard let url = URL(string: urlString) else { return }
         var request = URLRequest(url: url)
         request.method = .post
