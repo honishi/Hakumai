@@ -272,6 +272,7 @@ extension SpeechManager {
         return false
     }
 
+    // TODO: block ４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４
     // define as 'internal' for test
     func isAcceptableComment(_ comment: String) -> Bool {
         return comment.count < 100 &&
