@@ -67,14 +67,14 @@
             <objects>
                 <viewController storyboardIdentifier="GeneralViewController" id="wCA-UG-k48" customClass="GeneralViewController" customModule="Hakumai" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="yCS-uV-ZpM">
-                        <rect key="frame" x="0.0" y="0.0" width="500" height="400"/>
+                        <rect key="frame" x="0.0" y="0.0" width="500" height="440"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="16" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="msl-tt-je4">
-                                <rect key="frame" x="20" y="24" width="460" height="356"/>
+                                <rect key="frame" x="20" y="24" width="460" height="396"/>
                                 <subviews>
                                     <box autoresizesSubviews="NO" borderType="line" title="browser_in_use" translatesAutoresizingMaskIntoConstraints="NO" id="MWm-if-ayO">
-                                        <rect key="frame" x="-3" y="252" width="466" height="104"/>
+                                        <rect key="frame" x="-3" y="292" width="466" height="104"/>
                                         <view key="contentView" id="rtk-61-lXP">
                                             <rect key="frame" x="3" y="3" width="460" height="86"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -127,16 +127,16 @@
                                         </constraints>
                                     </box>
                                     <box borderType="line" title="comment_speaking" translatesAutoresizingMaskIntoConstraints="NO" id="ICr-HG-iyb">
-                                        <rect key="frame" x="-3" y="132" width="466" height="108"/>
+                                        <rect key="frame" x="-3" y="132" width="466" height="148"/>
                                         <view key="contentView" id="Mny-of-dvr">
-                                            <rect key="frame" x="3" y="3" width="460" height="90"/>
+                                            <rect key="frame" x="3" y="3" width="460" height="130"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fYb-qO-6pE">
-                                                    <rect key="frame" x="16" y="30" width="428" height="44"/>
+                                                    <rect key="frame" x="16" y="17" width="428" height="97"/>
                                                     <subviews>
                                                         <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2NO-6f-IfF">
-                                                            <rect key="frame" x="0.0" y="28" width="131" height="16"/>
+                                                            <rect key="frame" x="0.0" y="81" width="131" height="16"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lhl-Ab-vvj">
                                                                     <rect key="frame" x="-2" y="0.0" width="94" height="16"/>
@@ -168,7 +168,7 @@
                                                             </customSpacing>
                                                         </stackView>
                                                         <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NBg-Gf-rw0">
-                                                            <rect key="frame" x="-2" y="-6" width="207" height="28"/>
+                                                            <rect key="frame" x="-2" y="47" width="207" height="28"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="203" id="OK4-Sn-4dr"/>
                                                             </constraints>
@@ -177,12 +177,35 @@
                                                                 <binding destination="Ex8-3g-KNv" name="value" keyPath="values.CommentSpeechVolume" id="Bsq-np-X3K"/>
                                                             </connections>
                                                         </slider>
+                                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0RT-z1-Slf">
+                                                            <rect key="frame" x="-2" y="29" width="73" height="16"/>
+                                                            <textFieldCell key="cell" lineBreakMode="clipping" title="Speaker Id:" id="KVg-Cz-8Kd">
+                                                                <font key="font" metaFont="system"/>
+                                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                            </textFieldCell>
+                                                        </textField>
+                                                        <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GCa-WM-EJG">
+                                                            <rect key="frame" x="0.0" y="0.0" width="96" height="21"/>
+                                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="dZ6-Yn-rSE">
+                                                                <font key="font" usesAppearanceFont="YES"/>
+                                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                            </textFieldCell>
+                                                            <connections>
+                                                                <binding destination="Ex8-3g-KNv" name="value" keyPath="values.CommentSpeechVoicevoxSpeaker" id="oJq-1p-xEL"/>
+                                                            </connections>
+                                                        </textField>
                                                     </subviews>
                                                     <visibilityPriorities>
                                                         <integer value="1000"/>
                                                         <integer value="1000"/>
+                                                        <integer value="1000"/>
+                                                        <integer value="1000"/>
                                                     </visibilityPriorities>
                                                     <customSpacing>
+                                                        <real value="3.4028234663852886e+38"/>
+                                                        <real value="3.4028234663852886e+38"/>
                                                         <real value="3.4028234663852886e+38"/>
                                                         <real value="3.4028234663852886e+38"/>
                                                     </customSpacing>
@@ -195,7 +218,7 @@
                                             </constraints>
                                         </view>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="104" id="Gn5-5M-B8e"/>
+                                            <constraint firstAttribute="height" constant="144" id="Gn5-5M-B8e"/>
                                         </constraints>
                                     </box>
                                     <box title="misc" translatesAutoresizingMaskIntoConstraints="NO" id="nEt-qg-eF7">

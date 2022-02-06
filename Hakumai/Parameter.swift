@@ -14,6 +14,7 @@ struct Parameters {
     // general
     static let browserInUse = "BrowserInUse"
     static let commentSpeechVolume = "CommentSpeechVolume"
+    static let commentSpeechVoicevoxSpeaker = "CommentSpeechVoicevoxSpeaker"
 
     // mute
     static let enableMuteUserIds = "EnableMuteUserIds"

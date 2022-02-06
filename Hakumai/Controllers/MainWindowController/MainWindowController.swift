@@ -109,6 +109,10 @@ extension MainWindowController {
         mainViewController.setVoiceVolume(volume)
     }
 
+    func setVoiceSpeaker(_ speaker: Int) {
+        mainViewController.setVoiceSpeaker(speaker)
+    }
+
     func changeEnableMuteUserIds(_ enabled: Bool) {
         mainViewController.changeEnableMuteUserIds(enabled)
     }

@@ -60,6 +60,7 @@ final class SpeechManager: NSObject {
     private var recentChats: [Chat] = []
     private var voiceSpeed = voiceSpeedMap[0].speed
     private var voiceVolume = 100
+    private var voiceSpeaker = 0
     private var timer: Timer?
 
     // swiftlint:disable force_try
@@ -118,6 +119,11 @@ extension SpeechManager {
         log.debug("set volume: \(voiceVolume)")
     }
 
+    func setVoiceSpeaker(_ speaker: Int) {
+        voiceSpeaker = speaker
+        log.debug("set speaker: \(speaker)")
+    }
+
     func enqueue(chat: Chat) {
         guard [.ippan, .premium, .ippanTransparent].contains(chat.premium) else { return }
         guard isAcceptableComment(chat.comment) else { return }
@@ -131,7 +137,7 @@ extension SpeechManager {
             audioKey: chat.audioKey,
             comment: cleanComment(from: chat.comment),
             speedScale: voicevoxSpeed,
-            speaker: 8)
+            speaker: voiceSpeaker)
         audioQueue.append(audio)
         preloadFromAudioQueue()
 

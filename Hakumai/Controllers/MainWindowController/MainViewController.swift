@@ -724,6 +724,10 @@ extension MainViewController {
     func setVoiceVolume(_ volume: Int) {
         speechManager.setVoiceVolume(volume)
     }
+
+    func setVoiceSpeaker(_ speaker: Int) {
+        speechManager.setVoiceSpeaker(speaker)
+    }
 }
 
 // MARK: Utility
