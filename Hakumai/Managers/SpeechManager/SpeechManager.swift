@@ -21,6 +21,14 @@ private let voiceSpeedMap: [(commentLengthRange: CountableRange<Int>, speed: Flo
 private let refreshChatQueueThreshold = 30
 private let recentChatsThreshold = 50
 
+private let voicevoxSpeedMap: [(commentLengthRange: CountableRange<Int>, speed: Float)] = [
+    (0..<40, 1),
+    (40..<80, 1.2),
+    (80..<120, 1.4),
+    (120..<160, 1.6),
+    (160..<Int.max, 1.8)
+]
+
 // https://stackoverflow.com/a/38409026/13220031
 // See unicode list at https://0g0.org/ or https://0g0.org/unicode-list/
 // See unicode search at https://www.marbacka.net/msearch/tool.php#chr2enc
@@ -62,7 +70,9 @@ final class SpeechManager: NSObject {
 
     private let voicevoxWrapper: VoicevoxWrapperType = VoicevoxWrapper()
     private var player: AVAudioPlayer = AVAudioPlayer()
-    private var requestingAudio = false
+    private var requestingAudioLoad = false
+    private var audioMap: [String: VoicevoxAudio] = [:]
+    private var voicevoxSpeed = voicevoxSpeedMap[0].speed
 
     // MARK: - Object Lifecycle
     override init() {
@@ -115,6 +125,10 @@ extension SpeechManager {
 
         chatQueue.append(chat)
 
+        let audio = VoicevoxAudio(chat: chat, speedScale: voicevoxSpeed)
+        audio.startLoad()
+        audioMap[audioMapKey(for: chat)] = audio
+
         recentChats.append(chat)
         if recentChats.count > recentChatsThreshold {
             recentChats.remove(at: 0)
@@ -127,8 +141,8 @@ extension SpeechManager {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
 
-        log.debug("\(requestingAudio), \(player.isPlaying)")
-        guard !requestingAudio, !player.isPlaying else { return }
+        // log.debug("\(requestingAudioLoad), \(player.isPlaying)")
+        guard !requestingAudioLoad, !player.isPlaying else { return }
 
         guard !_Synthesizer.shared.synthesizer.isSpeaking,
               0 < chatQueue.count else { return }
@@ -153,20 +167,43 @@ extension SpeechManager {
          volume: Float(voiceVolume) / 100.0)
          */
 
-        requestingAudio = true
-        voicevoxWrapper.requestAudio(text: chat.comment) { [weak self] in
-            guard let me = self else { return }
-            switch $0 {
-            case .success(let data):
-                log.debug(data)
-                me.requestingAudio = false
-                guard let player = try? AVAudioPlayer(data: data) else { return }
-                me.player = player
-                me.player.play()
-            case .failure(let error):
-                log.error(error)
-                me.requestingAudio = false
+        voicevoxSpeed = adjustedVoicevoxSpeed(
+            currentCommentLength: chat.comment.count,
+            remainingCommentLength: chatQueue.map { $0.comment.count }.reduce(0, +),
+            currentVoiceSpeed: voicevoxSpeed)
+
+        let audioKey = audioMapKey(for: chat)
+        guard let audio = audioMap[audioKey] else { return }
+
+        switch audio.loadStatus {
+        case .notLoaded:
+            break
+        case .loading:
+            requestingAudioLoad = true
+            audio.setLoadStatusListener { [weak self] in
+                guard let me = self else { return }
+                me.handleLoadStatusChange(loadStatus: $0, audioKey: audioKey)
             }
+        case .loaded(let data):
+            playAudio(data: data)
+        case .failed:
+            break
+        }
+    }
+
+    func handleLoadStatusChange(loadStatus: VoicevoxAudio.LoadStatus, audioKey: String) {
+        switch loadStatus {
+        case .notLoaded, .loading, .failed:
+            break
+        case .loaded(let data):
+            playAudio(data: data)
+        }
+        switch loadStatus {
+        case .notLoaded, .loading:
+            break
+        case .loaded, .failed:
+            requestingAudioLoad = false
+            audioMap[audioKey] = nil
         }
     }
 
@@ -229,10 +266,86 @@ private extension SpeechManager {
         utterance.voice = voice
         _Synthesizer.shared.synthesizer.speak(utterance)
     }
+
+    func audioMapKey(for chat: Chat) -> String {
+        return "\(chat.no)-\(chat.dateUsec)-\(chat.userId)"
+    }
+
+    func adjustedVoicevoxSpeed(currentCommentLength current: Int, remainingCommentLength remaining: Int, currentVoiceSpeed: Float) -> Float {
+        let total = current + remaining
+        var candidateSpeed = voicevoxSpeedMap[0].speed
+        for (commentLengthRange, speed) in voicevoxSpeedMap {
+            if commentLengthRange.contains(total) {
+                candidateSpeed = speed
+                break
+            }
+        }
+        let adjusted = remaining == 0 ? candidateSpeed : max(currentVoiceSpeed, candidateSpeed)
+        log.debug("current: \(current) remaining: \(remaining) total: \(total) candidate: \(candidateSpeed) adjusted: \(adjusted)")
+        return adjusted
+    }
+
+    func playAudio(data: Data) {
+        guard let player = try? AVAudioPlayer(data: data) else { return }
+        self.player = player
+        self.player.play()
+    }
 }
 
 private extension NSRegularExpression {
     func matchCount(in text: String) -> Int {
         return numberOfMatches(in: text, options: [], range: NSRange(0..<text.count))
+    }
+}
+
+final class VoicevoxAudio {
+    enum LoadStatus {
+        case notLoaded, loading, loaded(Data), failed
+    }
+    typealias Listener = ((LoadStatus) -> Void)
+
+    private(set) var loadStatus: LoadStatus = .notLoaded
+
+    private let chat: Chat
+    private let speedScale: Float
+
+    private var listener: Listener?
+    private let voicevoxWrapper: VoicevoxWrapperType = VoicevoxWrapper()
+
+    init(chat: Chat, speedScale: Float) {
+        self.chat = chat
+        self.speedScale = speedScale
+    }
+
+    func startLoad() {
+        loadStatus = .loading
+        voicevoxWrapper.requestAudio(text: chat.cleanComment(), speedScale: speedScale) { [weak self] in
+            guard let me = self else { return }
+            switch $0 {
+            case .success(let data):
+                log.debug(data)
+                me.loadStatus = .loaded(data)
+            case .failure(let error):
+                log.error(error)
+                me.loadStatus = .failed
+            }
+            me.listener?(me.loadStatus)
+        }
+    }
+
+    func setLoadStatusListener(_ listener: Listener?) {
+        self.listener = listener
+        self.listener?(loadStatus)
+    }
+}
+
+extension Chat {
+    // define as 'internal' for test
+    func cleanComment() -> String {
+        var cleaned = comment
+        cleanCommentPatterns.forEach {
+            cleaned = cleaned.stringByReplacingRegexp(pattern: $0.0, with: $0.1)
+        }
+        return cleaned
     }
 }

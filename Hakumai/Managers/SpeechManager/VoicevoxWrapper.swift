@@ -10,7 +10,7 @@ import Foundation
 import Alamofire
 
 protocol VoicevoxWrapperType {
-    func requestAudio(text: String, completion: @escaping (Result<Data, VoicevoxWrapperError>) -> Void)
+    func requestAudio(text: String, speedScale: Float, completion: @escaping (Result<Data, VoicevoxWrapperError>) -> Void)
 }
 
 enum VoicevoxWrapperError: Error {
@@ -22,13 +22,13 @@ private let voicevoxUrl = "http://localhost:50021"
 final class VoicevoxWrapper: VoicevoxWrapperType {}
 
 extension VoicevoxWrapper {
-    func requestAudio(text: String, completion: @escaping (Result<Data, VoicevoxWrapperError>) -> Void) {
-        requestAudioQuery(text: text, completion: completion)
+    func requestAudio(text: String, speedScale: Float, completion: @escaping (Result<Data, VoicevoxWrapperError>) -> Void) {
+        requestAudioQuery(text: text, speedScale: speedScale, completion: completion)
     }
 }
 
 private extension VoicevoxWrapper {
-    func requestAudioQuery(text: String, completion: @escaping (Result<Data, VoicevoxWrapperError>) -> Void) {
+    func requestAudioQuery(text: String, speedScale: Float, completion: @escaping (Result<Data, VoicevoxWrapperError>) -> Void) {
         let urlString = voicevoxUrl + "/audio_query?text=\(text.escapsed)&speaker=2"
         guard let url = URL(string: urlString) else { return }
         var request = URLRequest(url: url)
@@ -38,10 +38,16 @@ private extension VoicevoxWrapper {
             .validate()
             .responseString { [weak self] in
                 guard let me = self else { return }
+                log.debug(text)
+                log.debug(speedScale)
                 switch $0.result {
                 case .success(let json):
                     log.debug(json)
-                    me.requestSynthesis(json: json, completion: completion)
+                    //     ("^(/vote )(.+)$", "$1アンケ $2"),
+                    let speedAdjusted = json.stringByReplacingRegexp(
+                        pattern: "(\"speedScale\":)1.0(,)", with: "$1\(speedScale)$2")
+                    log.debug(speedAdjusted)
+                    me.requestSynthesis(json: speedAdjusted, completion: completion)
                 case .failure(let error):
                     log.error(error)
                     completion(Result.failure(VoicevoxWrapperError.internal))
