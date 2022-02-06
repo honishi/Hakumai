@@ -23,10 +23,10 @@ private let recentChatsThreshold = 50
 
 private let voicevoxSpeedMap: [(commentLengthRange: CountableRange<Int>, speed: Float)] = [
     (0..<40, 1),
-    (40..<80, 1.2),
-    (80..<120, 1.4),
-    (120..<160, 1.6),
-    (160..<Int.max, 1.8)
+    (40..<80, 1.3),
+    (80..<120, 1.6),
+    (120..<160, 1.9),
+    (160..<Int.max, 2.2)
 ]
 
 // https://stackoverflow.com/a/38409026/13220031
@@ -71,7 +71,7 @@ final class SpeechManager: NSObject {
     private let voicevoxWrapper: VoicevoxWrapperType = VoicevoxWrapper()
     private var player: AVAudioPlayer = AVAudioPlayer()
     private var requestingAudioLoad = false
-    private var audioMap: [String: VoicevoxAudio] = [:]
+    private var audioQueue: [VoicevoxAudio] = []
     private var voicevoxSpeed = voicevoxSpeedMap[0].speed
 
     // MARK: - Object Lifecycle
@@ -94,6 +94,7 @@ extension SpeechManager {
                 repeats: true)
         }
         log.debug("started speech manager.")
+        audioQueue.removeAll()
     }
 
     func stopManager() {
@@ -108,6 +109,7 @@ extension SpeechManager {
         chatQueue.removeAll()
         recentChats.removeAll()
         log.debug("stopped speech manager.")
+        audioQueue.removeAll()
     }
 
     // min/max: 0-100
@@ -126,8 +128,8 @@ extension SpeechManager {
         chatQueue.append(chat)
 
         let audio = VoicevoxAudio(chat: chat, speedScale: voicevoxSpeed)
-        audio.startLoad()
-        audioMap[audioMapKey(for: chat)] = audio
+        audioQueue.append(audio)
+        // preloadFromAudioQueue()
 
         recentChats.append(chat)
         if recentChats.count > recentChatsThreshold {
@@ -135,11 +137,14 @@ extension SpeechManager {
         }
     }
 
+    // swiftlint:disable cyclomatic_complexity
     @objc func dequeue(_ timer: Timer?) {
         guard #available(macOS 10.14, *) else { return }
 
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
+
+        preloadFromAudioQueue()
 
         // log.debug("\(requestingAudioLoad), \(player.isPlaying)")
         guard !requestingAudioLoad, !player.isPlaying else { return }
@@ -172,23 +177,43 @@ extension SpeechManager {
             remainingCommentLength: chatQueue.map { $0.comment.count }.reduce(0, +),
             currentVoiceSpeed: voicevoxSpeed)
 
-        let audioKey = audioMapKey(for: chat)
-        guard let audio = audioMap[audioKey] else { return }
+        guard let audio = audioQueue.firstFilter(audioKey: chat.audioKey) else { return }
 
         switch audio.loadStatus {
         case .notLoaded:
-            break
+            requestingAudioLoad = true
+            audio.startLoad()
+            audio.setLoadStatusListener { [weak self] in
+                guard let me = self else { return }
+                me.handleLoadStatusChange(loadStatus: $0, audioKey: chat.audioKey)
+            }
         case .loading:
             requestingAudioLoad = true
             audio.setLoadStatusListener { [weak self] in
                 guard let me = self else { return }
-                me.handleLoadStatusChange(loadStatus: $0, audioKey: audioKey)
+                me.handleLoadStatusChange(loadStatus: $0, audioKey: chat.audioKey)
             }
         case .loaded(let data):
             playAudio(data: data)
+            preloadFromAudioQueue()
         case .failed:
             break
         }
+    }
+    // swiftlint:enable cyclomatic_complexity
+
+    func preloadFromAudioQueue() {
+        let firstLoading = audioQueue.filter({ $0.loadStatus == .loading }).first
+        if let firstLoading = firstLoading {
+            log.debug("Audio load is in progress for \(firstLoading.audioKey).")
+            return
+        }
+        guard let firstNotLoaded = audioQueue.filter({ $0.loadStatus == .notLoaded }).first else {
+            log.debug("Seems no audio needs to request load.")
+            return
+        }
+        log.debug("Calling load for \(firstNotLoaded.audioKey)")
+        firstNotLoaded.startLoad()
     }
 
     func handleLoadStatusChange(loadStatus: VoicevoxAudio.LoadStatus, audioKey: String) {
@@ -203,7 +228,7 @@ extension SpeechManager {
             break
         case .loaded, .failed:
             requestingAudioLoad = false
-            audioMap[audioKey] = nil
+            audioQueue.remove(audioKey: audioKey)
         }
     }
 
@@ -253,7 +278,7 @@ private extension SpeechManager {
             }
         }
         let adjusted = remaining == 0 ? candidateSpeed : max(currentVoiceSpeed, candidateSpeed)
-        log.debug("current: \(current) remaining: \(remaining) total: \(total) candidate: \(candidateSpeed) adjusted: \(adjusted)")
+        // log.debug("current: \(current) remaining: \(remaining) total: \(total) candidate: \(candidateSpeed) adjusted: \(adjusted)")
         return adjusted
     }
 
@@ -267,10 +292,6 @@ private extension SpeechManager {
         _Synthesizer.shared.synthesizer.speak(utterance)
     }
 
-    func audioMapKey(for chat: Chat) -> String {
-        return "\(chat.no)-\(chat.dateUsec)-\(chat.userId)"
-    }
-
     func adjustedVoicevoxSpeed(currentCommentLength current: Int, remainingCommentLength remaining: Int, currentVoiceSpeed: Float) -> Float {
         let total = current + remaining
         var candidateSpeed = voicevoxSpeedMap[0].speed
@@ -281,7 +302,7 @@ private extension SpeechManager {
             }
         }
         let adjusted = remaining == 0 ? candidateSpeed : max(currentVoiceSpeed, candidateSpeed)
-        log.debug("current: \(current) remaining: \(remaining) total: \(total) candidate: \(candidateSpeed) adjusted: \(adjusted)")
+        // log.debug("current: \(current) remaining: \(remaining) total: \(total) candidate: \(candidateSpeed) adjusted: \(adjusted)")
         return adjusted
     }
 
@@ -299,14 +320,16 @@ private extension NSRegularExpression {
 }
 
 final class VoicevoxAudio {
-    enum LoadStatus {
+    enum LoadStatus: Equatable {
         case notLoaded, loading, loaded(Data), failed
     }
     typealias Listener = ((LoadStatus) -> Void)
 
     private(set) var loadStatus: LoadStatus = .notLoaded
 
-    private let chat: Chat
+    let chat: Chat
+    var audioKey: String { chat.audioKey }
+
     private let speedScale: Float
 
     private var listener: Listener?
@@ -319,7 +342,7 @@ final class VoicevoxAudio {
 
     func startLoad() {
         loadStatus = .loading
-        voicevoxWrapper.requestAudio(text: chat.cleanComment(), speedScale: speedScale) { [weak self] in
+        voicevoxWrapper.requestAudio(text: chat.cleanComment, speedScale: speedScale) { [weak self] in
             guard let me = self else { return }
             switch $0 {
             case .success(let data):
@@ -340,12 +363,25 @@ final class VoicevoxAudio {
 }
 
 extension Chat {
+    var audioKey: String { "\(no)-\(dateUsec)-\(userId)" }
+
+    // TODO: Merge
     // define as 'internal' for test
-    func cleanComment() -> String {
+    var cleanComment: String {
         var cleaned = comment
         cleanCommentPatterns.forEach {
             cleaned = cleaned.stringByReplacingRegexp(pattern: $0.0, with: $0.1)
         }
         return cleaned
+    }
+}
+
+private extension Array where Element == VoicevoxAudio {
+    func firstFilter(audioKey: String) -> VoicevoxAudio? {
+        return self.filter { $0.audioKey == audioKey }.first
+    }
+
+    mutating func remove(audioKey: String) {
+        removeAll { $0.audioKey == audioKey }
     }
 }
