@@ -48,7 +48,7 @@ private extension VoicevoxWrapper {
                     // log.debug(speedAdjusted)
                     me.requestSynthesis(json: speedAdjusted, speaker: speaker, completion: completion)
                 case .failure(let error):
-                    log.error(error)
+                    log.error("\(error), \(text), \(speedScale), \(speaker)")
                     completion(Result.failure(VoicevoxWrapperError.internal))
                 }
             }
@@ -71,7 +71,7 @@ private extension VoicevoxWrapper {
                     log.debug(data)
                     completion(Result.success(data))
                 case .failure(let error):
-                    log.error(error)
+                    log.error("\(error), \(json)")
                     completion(Result.failure(VoicevoxWrapperError.internal))
                 }
             }

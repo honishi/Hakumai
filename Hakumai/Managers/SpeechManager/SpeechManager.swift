@@ -365,7 +365,7 @@ private extension SpeechManager {
         let adjusted = updated > 10 ? 0 : updated
         UserDefaults.standard.set(adjusted, forKey: Parameters.commentSpeechVoicevoxSpeaker)
         UserDefaults.standard.synchronize()
-        voiceSpeaker = updated
+        voiceSpeaker = adjusted
     }
 
     func logAudioQueue() {

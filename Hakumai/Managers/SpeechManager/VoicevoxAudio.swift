@@ -1,5 +1,5 @@
 //
-//  VoicevoixAudio.swift
+//  VoicevoxAudio.swift
 //  Hakumai
 //
 //  Created by Hiroyuki Onishi on 2022/02/06.
@@ -7,6 +7,8 @@
 //
 
 import Foundation
+
+private let maxRetryCount = 3
 
 final class VoicevoxAudio {
     enum LoadStatus: Equatable {
@@ -24,6 +26,7 @@ final class VoicevoxAudio {
 
     private var listener: Listener?
     private let voicevoxWrapper: VoicevoxWrapperType = VoicevoxWrapper()
+    private var retryCount = 0
 
     init(audioKey: String, comment: String, speedScale: Float, speaker: Int) {
         self.audioKey = audioKey
@@ -40,15 +43,21 @@ final class VoicevoxAudio {
             speaker: speaker
         ) { [weak self] in
             guard let me = self else { return }
+            var shouldRetry = false
             switch $0 {
             case .success(let data):
-                log.debug(data)
+                log.debug("loaded: \(me.audioKey), \(data), \(me.comment)")
                 me.loadStatus = .loaded(data)
             case .failure(let error):
-                log.error(error)
+                log.error("failed: \(me.audioKey), \(error), \(me.comment)")
                 me.loadStatus = .failed
+                me.retryCount += 1
+                shouldRetry = me.retryCount <= maxRetryCount
             }
             me.listener?(me.loadStatus)
+            if shouldRetry {
+                me.startLoad()
+            }
         }
     }
 
