@@ -75,6 +75,12 @@ final class SpeechManager: NSObject {
     private var audioQueue: [VoicevoxAudio] = []
     private var voicevoxSpeed = voicevoxSpeedMap[0].speed
 
+    // Debug: for logger
+    private var _chatQueueCount = -1
+    private var _audioQueueCount = -1
+    private var _voiceVoxSpeed = -1
+    private var _preloadMessage = ""
+
     // MARK: - Object Lifecycle
     override init() {
         super.init()
@@ -145,6 +151,10 @@ extension SpeechManager {
         if recentChats.count > recentChatsThreshold {
             recentChats.remove(at: 0)
         }
+
+        DispatchQueue.main.async {
+            self.randomizeSpeaker()
+        }
     }
 
     // swiftlint:disable cyclomatic_complexity
@@ -154,7 +164,7 @@ extension SpeechManager {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
 
-        log.debug("audioQueue: \(audioQueue.count), vvSpeed: \(voicevoxSpeed)")
+        logAudioQueue()
         preloadFromAudioQueue()
 
         // log.debug("\(requestingAudioLoad), \(player.isPlaying)")
@@ -216,14 +226,14 @@ extension SpeechManager {
     func preloadFromAudioQueue() {
         let firstLoading = audioQueue.filter({ $0.loadStatus == .loading }).first
         if let firstLoading = firstLoading {
-            log.debug("Audio load is in progress for \(firstLoading.audioKey).")
+            logPreload("Audio load is in progress for \(firstLoading.audioKey).")
             return
         }
         guard let firstNotLoaded = audioQueue.filter({ $0.loadStatus == .notLoaded }).first else {
-            log.debug("Seems no audio needs to request load.")
+            logPreload("Seems no audio needs to request load.")
             return
         }
-        log.debug("Calling load for \(firstNotLoaded.audioKey)")
+        logPreload("Calling load for \(firstNotLoaded.audioKey)")
         firstNotLoaded.startLoad()
     }
 
@@ -252,6 +262,9 @@ extension SpeechManager {
         defer { objc_sync_exit(self) }
 
         if refreshChatQueueThreshold < chatQueue.count {
+            chatQueue.forEach {
+                self.removeFromAudioQueue(audioKey: $0.audioKey)
+            }
             chatQueue.removeAll()
             return true
         }
@@ -342,4 +355,40 @@ private extension Array where Element == VoicevoxAudio {
 
 private extension Chat {
     var audioKey: String { "\(no)-\(dateUsec)-\(userId)" }
+}
+
+private extension SpeechManager {
+    func randomizeSpeaker() {
+        guard let speakerString = UserDefaults.standard.string(forKey: Parameters.commentSpeechVoicevoxSpeaker),
+              let speaker = Int(speakerString) else { return }
+        let updated = speaker + 1
+        let adjusted = updated > 10 ? 0 : updated
+        UserDefaults.standard.set(adjusted, forKey: Parameters.commentSpeechVoicevoxSpeaker)
+        UserDefaults.standard.synchronize()
+        voiceSpeaker = updated
+    }
+
+    func logAudioQueue() {
+        let updated = _chatQueueCount != chatQueue.count
+            || _audioQueueCount != audioQueue.count
+            || _voiceVoxSpeed != voiceSpeaker
+
+        if updated {
+            log.debug("chatQueue: \(chatQueue.count), audioQueue: \(audioQueue.count), speed: \(voicevoxSpeed)")
+        }
+
+        _chatQueueCount = chatQueue.count
+        _audioQueueCount = audioQueue.count
+        _voiceVoxSpeed = voiceSpeaker
+    }
+
+    func logPreload(_ message: String) {
+        let updated = _preloadMessage != message
+
+        if updated {
+            log.debug(message)
+        }
+
+        _preloadMessage = message
+    }
 }
