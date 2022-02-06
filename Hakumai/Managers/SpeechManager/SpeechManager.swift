@@ -60,6 +60,10 @@ final class SpeechManager: NSObject {
     private let repeatedKanjiRegexp = try! NSRegularExpression(pattern: repeatedKanjiPattern, options: [])
     // swiftlint:enable force_try
 
+    private let voicevoxWrapper: VoicevoxWrapperType = VoicevoxWrapper()
+    private var player: AVAudioPlayer = AVAudioPlayer()
+    private var requestingAudio = false
+
     // MARK: - Object Lifecycle
     override init() {
         super.init()
@@ -123,6 +127,9 @@ extension SpeechManager {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
 
+        log.debug("\(requestingAudio), \(player.isPlaying)")
+        guard !requestingAudio, !player.isPlaying else { return }
+
         guard !_Synthesizer.shared.synthesizer.isSpeaking,
               0 < chatQueue.count else { return }
 
@@ -140,9 +147,27 @@ extension SpeechManager {
             currentCommentLength: chat.comment.count,
             remainingCommentLength: chatQueue.map { $0.comment.count }.reduce(0, +),
             currentVoiceSpeed: voiceSpeed)
-        speak(comment: chat.comment,
-              speed: voiceSpeed,
-              volume: Float(voiceVolume) / 100.0)
+        /*
+         speak(comment: chat.comment,
+         speed: voiceSpeed,
+         volume: Float(voiceVolume) / 100.0)
+         */
+
+        requestingAudio = true
+        voicevoxWrapper.requestAudio(text: chat.comment) { [weak self] in
+            guard let me = self else { return }
+            switch $0 {
+            case .success(let data):
+                log.debug(data)
+                me.requestingAudio = false
+                guard let player = try? AVAudioPlayer(data: data) else { return }
+                me.player = player
+                me.player.play()
+            case .failure(let error):
+                log.error(error)
+                me.requestingAudio = false
+            }
+        }
     }
 
     func refreshChatQueueIfQueuedTooMuch() -> Bool {
