@@ -185,23 +185,51 @@
                                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                             </textFieldCell>
                                                         </textField>
-                                                        <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="enO-Zx-XlQ">
-                                                            <rect key="frame" x="-3" y="-4" width="78" height="25"/>
-                                                            <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="3D4-I0-qQd" id="MgU-kU-yOQ">
-                                                                <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                                <font key="font" metaFont="menu"/>
-                                                                <menu key="menu" id="lxh-M6-dQ7">
-                                                                    <items>
-                                                                        <menuItem title="Item 1" state="on" id="3D4-I0-qQd"/>
-                                                                        <menuItem title="Item 2" id="YaZ-dK-Lvw"/>
-                                                                        <menuItem title="Item 3" id="YmO-PA-bUm"/>
-                                                                    </items>
-                                                                </menu>
-                                                            </popUpButtonCell>
-                                                            <connections>
-                                                                <action selector="speakerPopUpButtonChanged:" target="wCA-UG-k48" id="qq2-0V-SmZ"/>
-                                                            </connections>
-                                                        </popUpButton>
+                                                        <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yut-lC-QY7">
+                                                            <rect key="frame" x="0.0" y="0.0" width="168" height="20"/>
+                                                            <subviews>
+                                                                <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="enO-Zx-XlQ">
+                                                                    <rect key="frame" x="-3" y="-4" width="78" height="25"/>
+                                                                    <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="3D4-I0-qQd" id="MgU-kU-yOQ">
+                                                                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                                        <font key="font" metaFont="menu"/>
+                                                                        <menu key="menu" id="lxh-M6-dQ7">
+                                                                            <items>
+                                                                                <menuItem title="Item 1" state="on" id="3D4-I0-qQd"/>
+                                                                                <menuItem title="Item 2" id="YaZ-dK-Lvw"/>
+                                                                                <menuItem title="Item 3" id="YmO-PA-bUm"/>
+                                                                            </items>
+                                                                        </menu>
+                                                                    </popUpButtonCell>
+                                                                    <connections>
+                                                                        <action selector="speakerPopUpButtonChanged:" target="wCA-UG-k48" id="qq2-0V-SmZ"/>
+                                                                    </connections>
+                                                                </popUpButton>
+                                                                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uUI-9t-9ba">
+                                                                    <rect key="frame" x="72" y="-7" width="79" height="32"/>
+                                                                    <buttonCell key="cell" type="push" title="Sample" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Tit-sQ-zc3">
+                                                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                        <font key="font" metaFont="system"/>
+                                                                    </buttonCell>
+                                                                    <connections>
+                                                                        <action selector="speakSampleButtonPressed:" target="wCA-UG-k48" id="6YH-c2-IIq"/>
+                                                                    </connections>
+                                                                </button>
+                                                                <progressIndicator maxValue="100" displayedWhenStopped="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="o0Y-BZ-UHZ">
+                                                                    <rect key="frame" x="152" y="2" width="16" height="16"/>
+                                                                </progressIndicator>
+                                                            </subviews>
+                                                            <visibilityPriorities>
+                                                                <integer value="1000"/>
+                                                                <integer value="1000"/>
+                                                                <integer value="1000"/>
+                                                            </visibilityPriorities>
+                                                            <customSpacing>
+                                                                <real value="3.4028234663852886e+38"/>
+                                                                <real value="3.4028234663852886e+38"/>
+                                                                <real value="3.4028234663852886e+38"/>
+                                                            </customSpacing>
+                                                        </stackView>
                                                     </subviews>
                                                     <visibilityPriorities>
                                                         <integer value="1000"/>
@@ -327,6 +355,8 @@
                         <outlet property="enableLiveNotificationButton" destination="ACY-bp-F35" id="XO9-GH-lL6"/>
                         <outlet property="miscBox" destination="nEt-qg-eF7" id="mvL-Ix-z1R"/>
                         <outlet property="safariButtonCell" destination="wGq-x5-Aua" id="lb1-w9-hCF"/>
+                        <outlet property="speakSampleButton" destination="uUI-9t-9ba" id="BLj-ip-Ihi"/>
+                        <outlet property="speakSampleProgressIndicator" destination="o0Y-BZ-UHZ" id="NXI-LK-VZ3"/>
                         <outlet property="speakVolumeSlider" destination="NBg-Gf-rw0" id="gzQ-f2-Xwi"/>
                         <outlet property="speakVolumeTitleTextField" destination="lhl-Ab-vvj" id="STj-TK-3lB"/>
                         <outlet property="speakVolumeValueTextField" destination="TgB-HZ-aF1" id="siC-bI-K7H"/>

@@ -8,6 +8,7 @@
 
 import Foundation
 import AppKit
+import AVFoundation
 
 final class GeneralViewController: NSViewController {
     struct SpeakerPopUpItem: Equatable {
@@ -29,6 +30,8 @@ final class GeneralViewController: NSViewController {
     @IBOutlet private weak var speakVolumeSlider: NSSlider!
     // TODO: weak?
     @IBOutlet private var speakerPopUpButton: NSPopUpButton!
+    @IBOutlet private var speakSampleButton: NSButton!
+    @IBOutlet private var speakSampleProgressIndicator: NSProgressIndicator!
 
     @IBOutlet private weak var miscBox: NSBox!
     @IBOutlet private weak var enableEmotionMessageButton: NSButton!
@@ -36,6 +39,8 @@ final class GeneralViewController: NSViewController {
     @IBOutlet private weak var enableDebugMessageButton: NSButton!
 
     private var speakerPopUpItems: [SpeakerPopUpItem] = []
+    private let voicevoxWrapper: VoicevoxWrapperType = VoicevoxWrapper()
+    private var player: AVAudioPlayer?
 
     // MARK: - Object Lifecycle
     static func make() -> GeneralViewController {
@@ -69,6 +74,7 @@ private extension GeneralViewController {
         speakVolumeTitleTextField.stringValue = "\(L10n.speakVolume):"
         speakerPopUpButton.removeAllItems()
         speakerPopUpButton.isEnabled = false
+        speakSampleButton.isEnabled = false
 
         miscBox.title = L10n.misc
         enableEmotionMessageButton.title = L10n.enableEmotionMessage
@@ -81,6 +87,8 @@ private extension GeneralViewController {
         speakVolumeTitleTextField.isEnabled = false
         speakVolumeValueTextField.isEnabled = false
         speakVolumeSlider.isEnabled = false
+        speakerPopUpButton.isEnabled = false
+        speakSampleButton.isEnabled = false
     }
 
     func disableNotificationComponentsIfNeeded() {
@@ -89,8 +97,10 @@ private extension GeneralViewController {
     }
 
     func updateSpeakerPopUpButton() {
+        guard #available(macOS 10.14, *) else { return }
         speakerPopUpButton.isEnabled = false
-        VoicevoxWrapper().requestSpeakers { [weak self] in
+        speakSampleButton.isEnabled = false
+        voicevoxWrapper.requestSpeakers { [weak self] in
             guard let me = self else { return }
             switch $0 {
             case .success(let speakers):
@@ -110,10 +120,11 @@ private extension GeneralViewController {
 
     func configureSpeakerPopUpButton() {
         speakerPopUpButton.isEnabled = true
+        speakSampleButton.isEnabled = true
         speakerPopUpButton.removeAllItems()
         speakerPopUpButton.addItems(withTitles: speakerPopUpItems.map({ $0.name }))
 
-        let speakerId = UserDefaults.standard.integer(forKey: Parameters.commentSpeechVoicevoxSpeaker)
+        let speakerId = speakerIdInUserDefaults()
         if let selectedSpeakerPopUpItem = speakerPopUpItems.filter({ $0.speakerId == speakerId }).first,
            let indexInPopUpItems = speakerPopUpItems.firstIndex(of: selectedSpeakerPopUpItem) {
             speakerPopUpButton.selectItem(at: indexInPopUpItems)
@@ -125,6 +136,37 @@ private extension GeneralViewController {
     @IBAction func speakerPopUpButtonChanged(_ sender: Any) {
         let indexInPopUpItems = speakerPopUpButton.indexOfSelectedItem
         let speakerId = speakerPopUpItems[indexInPopUpItems].speakerId
+        saveSpeakerIdInUserDefaults(speakerId)
+    }
+
+    @IBAction func speakSampleButtonPressed(_ sender: Any) {
+        speakSample()
+    }
+
+    func speakSample() {
+        speakSampleProgressIndicator.startAnimation(self)
+        voicevoxWrapper.requestAudio(
+            text: "優しく手を差し伸べてくれてる人の声に少しでも耳を傾けてほしい。傷つけようとしてる人より遥かに多いはずなのに",
+            speedScale: 1,
+            speaker: speakerIdInUserDefaults()) { [weak self] in
+            guard let me = self else { return }
+            me.speakSampleProgressIndicator.stopAnimation(me)
+            switch $0 {
+            case .success(let data):
+                guard let player = try? AVAudioPlayer(data: data) else { return }
+                me.player = player
+                player.play()
+            case .failure(let error):
+                log.error(error)
+            }
+        }
+    }
+
+    func speakerIdInUserDefaults() -> Int {
+        return UserDefaults.standard.integer(forKey: Parameters.commentSpeechVoicevoxSpeaker)
+    }
+
+    func saveSpeakerIdInUserDefaults(_ speakerId: Int) {
         UserDefaults.standard.set(speakerId, forKey: Parameters.commentSpeechVoicevoxSpeaker)
         UserDefaults.standard.synchronize()
     }
