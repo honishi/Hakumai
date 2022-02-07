@@ -151,10 +151,6 @@ extension SpeechManager {
         if recentChats.count > recentChatsThreshold {
             recentChats.remove(at: 0)
         }
-
-        DispatchQueue.main.async {
-            self.randomizeSpeaker()
-        }
     }
 
     // swiftlint:disable cyclomatic_complexity
@@ -359,16 +355,6 @@ private extension Chat {
 }
 
 private extension SpeechManager {
-    func randomizeSpeaker() {
-        guard let speakerString = UserDefaults.standard.string(forKey: Parameters.commentSpeechVoicevoxSpeaker),
-              let speaker = Int(speakerString) else { return }
-        let updated = speaker + 1
-        let adjusted = updated > 10 ? 0 : updated
-        UserDefaults.standard.set(adjusted, forKey: Parameters.commentSpeechVoicevoxSpeaker)
-        UserDefaults.standard.synchronize()
-        voiceSpeaker = adjusted
-    }
-
     func logAudioQueue() {
         let updated = _chatQueueCount != chatQueue.count
             || _audioQueueCount != audioQueue.count

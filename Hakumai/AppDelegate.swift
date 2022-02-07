@@ -120,10 +120,8 @@ extension AppDelegate {
         case (Parameters.commentSpeechVolume, let changed as Int):
             mainWindowControllers.forEach { $0.setVoiceVolume(changed) }
 
-        case (Parameters.commentSpeechVoicevoxSpeaker, let changed as String):
-            // TODO: Int
-            guard let id = Int(changed) else { return }
-            mainWindowControllers.forEach { $0.setVoiceSpeaker(id) }
+        case (Parameters.commentSpeechVoicevoxSpeaker, let changed as Int):
+            mainWindowControllers.forEach { $0.setVoiceSpeaker(changed) }
 
         case (Parameters.enableMuteUserIds, let changed as Bool):
             mainWindowControllers.forEach { $0.changeEnableMuteUserIds(changed) }
