@@ -8,8 +8,6 @@
 
 import Foundation
 
-private let maxRetryCount = 3
-
 final class VoicevoxAudio {
     enum LoadStatus: Equatable {
         case notLoaded, loading, loaded(Data), failed
@@ -21,21 +19,16 @@ final class VoicevoxAudio {
     let audioKey: String
 
     private let comment: String
-    private let speedScale: Float
-    private let speaker: Int
 
     private var listener: Listener?
     private let voicevoxWrapper: VoicevoxWrapperType = VoicevoxWrapper()
-    private var retryCount = 0
 
     init(audioKey: String, comment: String, speedScale: Float, speaker: Int) {
         self.audioKey = audioKey
         self.comment = comment
-        self.speedScale = speedScale
-        self.speaker = speaker
     }
 
-    func startLoad() {
+    func startLoad(speedScale: Float, speaker: Int) {
         loadStatus = .loading
         voicevoxWrapper.requestAudio(
             text: comment,
@@ -43,7 +36,6 @@ final class VoicevoxAudio {
             speaker: speaker
         ) { [weak self] in
             guard let me = self else { return }
-            var shouldRetry = false
             switch $0 {
             case .success(let data):
                 log.debug("loaded: \(me.audioKey), \(data), \(me.comment)")
@@ -51,13 +43,8 @@ final class VoicevoxAudio {
             case .failure(let error):
                 log.error("failed: \(me.audioKey), \(error), \(me.comment)")
                 me.loadStatus = .failed
-                me.retryCount += 1
-                shouldRetry = me.retryCount <= maxRetryCount
             }
             me.listener?(me.loadStatus)
-            if shouldRetry {
-                me.startLoad()
-            }
         }
     }
 

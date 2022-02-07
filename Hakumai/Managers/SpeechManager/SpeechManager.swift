@@ -22,11 +22,11 @@ private let refreshChatQueueThreshold = 30
 private let recentChatsThreshold = 50
 
 private let voicevoxSpeedMap: [(commentLengthRange: CountableRange<Int>, speed: Float)] = [
-    (0..<40, 1),
-    (40..<80, 1.2),
-    (80..<120, 1.5),
-    (120..<160, 1.9),
-    (160..<Int.max, 2.2)
+    (0..<30, 1),
+    (30..<60, 1.25),
+    (60..<90, 1.5),
+    (90..<120, 1.75),
+    (120..<Int.max, 2)
 ]
 
 // https://stackoverflow.com/a/38409026/13220031
@@ -200,7 +200,7 @@ extension SpeechManager {
 
         switch audio.loadStatus {
         case .notLoaded:
-            audio.startLoad()
+            audio.startLoad(speedScale: voicevoxSpeed, speaker: voiceSpeaker)
             audio.setLoadStatusListener { [weak self] in
                 guard let me = self else { return }
                 me.handleLoadStatusChange(loadStatus: $0, audioKey: chat.audioKey)
@@ -230,7 +230,7 @@ extension SpeechManager {
             return
         }
         logPreload("Calling load for \(firstNotLoaded.audioKey)")
-        firstNotLoaded.startLoad()
+        firstNotLoaded.startLoad(speedScale: voicevoxSpeed, speaker: voiceSpeaker)
     }
 
     func handleLoadStatusChange(loadStatus: VoicevoxAudio.LoadStatus, audioKey: String) {
