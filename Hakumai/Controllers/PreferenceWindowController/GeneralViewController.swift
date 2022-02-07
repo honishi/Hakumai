@@ -45,6 +45,10 @@ extension GeneralViewController {
 
     override func viewDidAppear() {
         super.viewDidAppear()
+
+        VoicevoxWrapper().requestSpeakers {
+            log.debug($0)
+        }
     }
 }
 

@@ -9,16 +9,26 @@
 import Foundation
 import Alamofire
 
+// TODO: to static
 protocol VoicevoxWrapperType {
+    func requestSpeakers(completion: @escaping SpeakersRequestCompletion)
     func requestAudio(text: String, speedScale: Float, speaker: Int, completion: @escaping AudioRequestCompletion)
 }
 
+typealias SpeakersRequestCompletion = (Result<[VoicevoxSpeaker], VoicevoxWrapperError>) -> Void
 typealias AudioRequestCompletion = (Result<Data, VoicevoxWrapperError>) -> Void
+
+struct VoicevoxSpeaker {
+    let speakerId: Int
+    let name: String
+}
 
 enum VoicevoxWrapperError: Error {
     case `internal`
 }
 
+private let httpHeaderKeyContentType = "Content-Type"
+private let httpHeaderValueApplicationJson = "application/json"
 private let voicevoxUrl = "http://localhost:50021"
 
 final class VoicevoxWrapper: VoicevoxWrapperType {
@@ -30,6 +40,30 @@ final class VoicevoxWrapper: VoicevoxWrapperType {
 }
 
 extension VoicevoxWrapper {
+    func requestSpeakers(completion: @escaping SpeakersRequestCompletion) {
+        let urlString = voicevoxUrl + "/speakers"
+        guard let url = URL(string: urlString) else { return }
+        var request = URLRequest(url: url)
+        request.method = .get
+        request.setValue(httpHeaderValueApplicationJson, forHTTPHeaderField: httpHeaderKeyContentType)
+        AF.request(request)
+            .cURLDescription(calling: { log.debug($0) })
+            .validate()
+            .responseData {
+                switch $0.result {
+                case .success(let data):
+                    guard let decoded = try? JSONDecoder().decode([VoicevoxSpeakerResponse].self, from: data) else {
+                        completion(Result.failure(.internal))
+                        return
+                    }
+                    completion(Result.success(decoded.toVoicevoxSpeakers()))
+                case .failure(let error):
+                    log.error(error)
+                    completion(Result.failure(.internal))
+                }
+            }
+    }
+
     func requestAudio(text: String, speedScale: Float, speaker: Int, completion: @escaping AudioRequestCompletion) {
         let config = AudioConfiguration(
             text: text,
@@ -85,7 +119,7 @@ private extension VoicevoxWrapper {
         guard let url = URL(string: urlString) else { return }
         var request = URLRequest(url: url)
         request.method = .post
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue(httpHeaderValueApplicationJson, forHTTPHeaderField: httpHeaderKeyContentType)
         request.httpBody = data
         AF.request(request)
             .cURLDescription(calling: { log.debug($0) })
@@ -109,4 +143,17 @@ private extension VoicevoxWrapper {
 
 private extension String {
     var escapsed: String { URLEncoding.default.escape(self) }
+}
+
+private extension Array where Element == VoicevoxSpeakerResponse {
+    func toVoicevoxSpeakers() -> [VoicevoxSpeaker] {
+        return map { response in
+            response.styles.map {
+                VoicevoxSpeaker(
+                    speakerId: $0.id,
+                    name: "\(response.name) - \($0.name) [\($0.id)]"
+                )
+            }
+        }.flatMap { $0 }
+    }
 }

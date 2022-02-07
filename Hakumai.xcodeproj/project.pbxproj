@@ -70,6 +70,7 @@
 		DB80CA821A256F9A002636E0 /* MessageContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB80CA811A256F9A002636E0 /* MessageContainer.swift */; };
 		DB82B3A11C0724C000EFE3D9 /* SpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB82B3A01C0724C000EFE3D9 /* SpeechManager.swift */; };
 		DB82B3A41C087BA200EFE3D9 /* SpeechManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB82B3A31C087BA200EFE3D9 /* SpeechManagerTests.swift */; };
+		DB97D90027B146DD0088FF3D /* VoicevoxWrapperModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB97D8FF27B146DD0088FF3D /* VoicevoxWrapperModel.swift */; };
 		DB9EFC741A3E974A0087D302 /* NSWindow+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9EFC731A3E974A0087D302 /* NSWindow+Extensions.swift */; };
 		DB9EFC781A3E9EB10087D302 /* PreferenceWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9EFC771A3E9EB10087D302 /* PreferenceWindow.swift */; };
 		DBA414CC1A1A16F300E0CAD3 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA414CB1A1A16F300E0CAD3 /* String+Extensions.swift */; };
@@ -212,6 +213,7 @@
 		DB80CA811A256F9A002636E0 /* MessageContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageContainer.swift; sourceTree = "<group>"; };
 		DB82B3A01C0724C000EFE3D9 /* SpeechManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechManager.swift; sourceTree = "<group>"; };
 		DB82B3A31C087BA200EFE3D9 /* SpeechManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechManagerTests.swift; sourceTree = "<group>"; };
+		DB97D8FF27B146DD0088FF3D /* VoicevoxWrapperModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoicevoxWrapperModel.swift; sourceTree = "<group>"; };
 		DB9EFC731A3E974A0087D302 /* NSWindow+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSWindow+Extensions.swift"; sourceTree = "<group>"; };
 		DB9EFC771A3E9EB10087D302 /* PreferenceWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferenceWindow.swift; sourceTree = "<group>"; };
 		DBA414CB1A1A16F300E0CAD3 /* String+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
@@ -467,6 +469,7 @@
 				DBE093F61A585EC5004554FD /* NicoManager */,
 				DB22A636272D005700E2177D /* RankingManager */,
 				DB82B39F1C07248700EFE3D9 /* SpeechManager */,
+				DB97D8FE27B146C20088FF3D /* VoicevoxWrapper */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -515,9 +518,17 @@
 			children = (
 				DB82B3A01C0724C000EFE3D9 /* SpeechManager.swift */,
 				DBE619DD27B00566000FFB8E /* VoicevoxAudio.swift */,
-				DBE619DB27AEF4FE000FFB8E /* VoicevoxWrapper.swift */,
 			);
 			path = SpeechManager;
+			sourceTree = "<group>";
+		};
+		DB97D8FE27B146C20088FF3D /* VoicevoxWrapper */ = {
+			isa = PBXGroup;
+			children = (
+				DBE619DB27AEF4FE000FFB8E /* VoicevoxWrapper.swift */,
+				DB97D8FF27B146DD0088FF3D /* VoicevoxWrapperModel.swift */,
+			);
+			path = VoicevoxWrapper;
 			sourceTree = "<group>";
 		};
 		DBA414CA1A1A13FC00E0CAD3 /* Models */ = {
@@ -1055,6 +1066,7 @@
 				DB414C091A481138008D2F40 /* UserWindowController.swift in Sources */,
 				DBE619DE27B00566000FFB8E /* VoicevoxAudio.swift in Sources */,
 				DBE619DC27AEF4FE000FFB8E /* VoicevoxWrapper.swift in Sources */,
+				DB97D90027B146DD0088FF3D /* VoicevoxWrapperModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
