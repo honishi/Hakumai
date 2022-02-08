@@ -1,5 +1,5 @@
 //
-//  VoicevoxAudio.swift
+//  AudioLoader.swift
 //  Hakumai
 //
 //  Created by Hiroyuki Onishi on 2022/02/06.
@@ -8,30 +8,27 @@
 
 import Foundation
 
-final class VoicevoxAudio {
-    enum LoadStatus: Equatable {
+final class AudioLoader {
+    enum LoadState: Equatable {
         case notLoaded, loading, loaded(Data), failed
     }
-    typealias Listener = ((LoadStatus) -> Void)
+    typealias Listener = ((LoadState) -> Void)
 
-    private(set) var loadStatus: LoadStatus = .notLoaded
+    private(set) var state: LoadState = .notLoaded
 
-    let audioKey: String
-
-    private let comment: String
+    let text: String
 
     private var listener: Listener?
     private let voicevoxWrapper: VoicevoxWrapperType = VoicevoxWrapper()
 
-    init(audioKey: String, comment: String) {
-        self.audioKey = audioKey
-        self.comment = comment
+    init(text: String) {
+        self.text = text
     }
 
     func startLoad(speedScale: Float, volumeScale: Float, speaker: Int) {
-        loadStatus = .loading
+        state = .loading
         voicevoxWrapper.requestAudio(
-            text: comment,
+            text: text,
             speedScale: speedScale,
             volumeScale: volumeScale,
             speaker: speaker
@@ -39,18 +36,18 @@ final class VoicevoxAudio {
             guard let me = self else { return }
             switch $0 {
             case .success(let data):
-                log.debug("loaded: \(me.audioKey), \(data), \(me.comment)")
-                me.loadStatus = .loaded(data)
+                log.debug("loaded: \(data), \(me.text)")
+                me.state = .loaded(data)
             case .failure(let error):
-                log.error("failed: \(me.audioKey), \(error), \(me.comment)")
-                me.loadStatus = .failed
+                log.error("failed: \(error), \(me.text)")
+                me.state = .failed
             }
-            me.listener?(me.loadStatus)
+            me.listener?(me.state)
         }
     }
 
     func setLoadStatusListener(_ listener: Listener?) {
         self.listener = listener
-        self.listener?(loadStatus)
+        self.listener?(state)
     }
 }
