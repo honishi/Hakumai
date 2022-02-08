@@ -10,24 +10,8 @@ import Foundation
 import AVFoundation
 
 private let dequeuChatTimerInterval: TimeInterval = 0.25
-
-private let voiceSpeedMap: [(commentLengthRange: CountableRange<Int>, speed: Float)] = [
-    (0..<40, 0.50),
-    (40..<80, 0.55),
-    (80..<120, 0.60),
-    (120..<160, 0.65),
-    (160..<Int.max, 0.75)
-]
 private let refreshChatQueueThreshold = 30
 private let maxRecentSpeechTextsCount = 50
-
-private let voicevoxSpeedMap: [(commentLengthRange: CountableRange<Int>, speed: Float)] = [
-    (0..<30, 1),
-    (30..<60, 1.25),
-    (60..<90, 1.5),
-    (90..<120, 1.75),
-    (120..<Int.max, 2)
-]
 
 // https://stackoverflow.com/a/38409026/13220031
 // See unicode list at https://0g0.org/ or https://0g0.org/unicode-list/
@@ -63,12 +47,16 @@ final class SpeechManager: NSObject {
 
     // MARK: - Properties
     private var speechQueue: [Speech] = []
+    private var activeSpeech: Speech?
+    private var allSpeeches: [Speech] { ([activeSpeech] + speechQueue).compactMap { $0 } }
     private var recentSpeechTexts: [String] = []
-    private var voiceSpeed = voiceSpeedMap[0].speed
+    
+    // min(normal): 1.0, fast: 2.0
+    private var voiceSpeed: Float = 1.0
+    // min: 0, max(normal): 100
     private var voiceVolume = 100
     private var voiceSpeaker = 0
     private var timer: Timer?
-    private var currentSpeech: Speech?
 
     // swiftlint:disable force_try
     private let emojiRegexp = try! NSRegularExpression(pattern: emojiPattern, options: [])
@@ -78,11 +66,10 @@ final class SpeechManager: NSObject {
 
     private var player: AVAudioPlayer = AVAudioPlayer()
     private var waitingAudioLoadCompletion = false
-    private var voicevoxSpeed = voicevoxSpeedMap[0].speed
 
     // Debug: for logger
     private var _speechQueueCount = -1
-    private var _voiceVoxSpeed = -1
+    private var _voiceSpeed = -1
     private var _preloadMessage = ""
 
     // MARK: - Object Lifecycle
@@ -145,7 +132,7 @@ extension SpeechManager {
             audioLoader: AudioLoader(text: text)
         )
         speechQueue.append(speech)
-        preloadAudioIfAvailable()
+        // Do not call `preloadAudioIfAvailable()` here, since it will cause dequeue conflict.
 
         recentSpeechTexts.append(text)
         if recentSpeechTexts.count > maxRecentSpeechTextsCount {
@@ -170,39 +157,37 @@ extension SpeechManager {
         guard !isSpeaking else { return }
 
         guard !speechQueue.isEmpty else { return }
+        activeSpeech = speechQueue.removeFirst()
 
-        currentSpeech = speechQueue.removeFirst()
-        guard let currentSpeech = currentSpeech else { return }
+        guard let speech = activeSpeech else { return }
 
-        let isUniqueComment = recentSpeechTexts.filter { $0 == currentSpeech.text }.count == 1
-        let isShortComment = currentSpeech.text.count < 10
+        let isUniqueComment = recentSpeechTexts.filter { $0 == speech.text }.count == 1
+        let isShortComment = speech.text.count < 10
         guard isUniqueComment || isShortComment else {
-            log.debug("skip duplicate speech comment. [\(currentSpeech.text)]")
+            log.debug("skip duplicate speech comment. [\(speech.text)]")
             return
         }
 
         voiceSpeed = adjustedVoiceSpeed(
-            currentCommentLength: currentSpeech.text.count,
+            currentCommentLength: speech.text.count,
             remainingCommentLength: speechQueue.map { $0.text.count }.reduce(0, +),
             currentVoiceSpeed: voiceSpeed)
 
-        voicevoxSpeed = adjustedVoicevoxSpeed(
-            currentCommentLength: currentSpeech.text.count,
-            remainingCommentLength: speechQueue.map { $0.text.count }.reduce(0, +),
-            currentVoiceSpeed: voicevoxSpeed)
-
-        switch currentSpeech.audioLoader.state {
+        log.debug("\(speech.audioLoader.state) "
+                    + "[\(voiceSpeed)/\(voiceSpeed.asVoicevoxSpeedScale)/\(voiceSpeed.asAVSpeechSynthesizerSpeedRate)] "
+                    + "[\(speech.text)]")
+        switch speech.audioLoader.state {
         case .notLoaded:
-            currentSpeech.audioLoader.startLoad(
-                speedScale: voicevoxSpeed,
+            speech.audioLoader.startLoad(
+                speedScale: voiceSpeed.asVoicevoxSpeedScale,
                 volumeScale: voiceVolume.asVoicevoxVolumeScale,
                 speaker: voiceSpeaker)
-            currentSpeech.audioLoader.setLoadStatusListener { [weak self] in
+            speech.audioLoader.setLoadStatusListener { [weak self] in
                 guard let me = self else { return }
                 me.handleLoadStatusChange(loadStatus: $0)
             }
         case .loading:
-            currentSpeech.audioLoader.setLoadStatusListener { [weak self] in
+            speech.audioLoader.setLoadStatusListener { [weak self] in
                 guard let me = self else { return }
                 me.handleLoadStatusChange(loadStatus: $0)
             }
@@ -210,15 +195,18 @@ extension SpeechManager {
             playAudio(data: data)
         case .failed:
             speakOnAVSpeechSynthesizer(
-                comment: currentSpeech.text,
-                speed: voiceSpeed,
+                comment: speech.text,
+                speed: voiceSpeed.asAVSpeechSynthesizerSpeedRate,
                 volume: voiceVolume.asAVSpeechSynthesizerVolume)
         }
     }
     // swiftlint:enable cyclomatic_complexity
 
     func preloadAudioIfAvailable() {
-        let audioLoaders = speechQueue.map { $0.audioLoader }
+        objc_sync_enter(self)
+        defer { objc_sync_exit(self) }
+        
+        let audioLoaders = allSpeeches.map { $0.audioLoader }
         let firstLoading = audioLoaders.filter({ $0.state == .loading }).first
         if let firstLoading = firstLoading {
             logPreload("Audio load is in progress for \(firstLoading.text).")
@@ -230,12 +218,15 @@ extension SpeechManager {
         }
         logPreload("Requesting load for \(firstNotLoaded.text)")
         firstNotLoaded.startLoad(
-            speedScale: voicevoxSpeed,
+            speedScale: voiceSpeed.asVoicevoxSpeedScale,
             volumeScale: voiceVolume.asVoicevoxVolumeScale,
             speaker: voiceSpeaker)
     }
 
     func handleLoadStatusChange(loadStatus: AudioLoader.LoadState) {
+        objc_sync_enter(self)
+        defer { objc_sync_exit(self) }
+
         switch loadStatus {
         case .notLoaded:
             break
@@ -255,10 +246,19 @@ extension SpeechManager {
 
         if refreshChatQueueThreshold < speechQueue.count {
             speechQueue.removeAll()
+            appendSystemSpeech("コメントが多すぎるため、読み上げをリセットしました")
             return true
         }
 
         return false
+    }
+
+    func appendSystemSpeech(_ text: String) {
+        let speech = Speech(
+            text: text,
+            audioLoader: AudioLoader(text: text)
+        )
+        speechQueue.append(speech)
     }
 
     // TODO: block ４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４
@@ -289,14 +289,10 @@ private extension SpeechManager {
     }
 
     func adjustedVoiceSpeed(currentCommentLength current: Int, remainingCommentLength remaining: Int, currentVoiceSpeed: Float) -> Float {
-        let total = current + remaining
-        var candidateSpeed = voiceSpeedMap[0].speed
-        for (commentLengthRange, speed) in voiceSpeedMap {
-            if commentLengthRange.contains(total) {
-                candidateSpeed = speed
-                break
-            }
-        }
+        let total = Float(current) + Float(remaining)
+        let averageCommentLength: Float = 20
+        let normalCommentCount: Float = 5
+        let candidateSpeed = max(min(total / averageCommentLength / normalCommentCount, 2), 1)
         let adjusted = remaining == 0 ? candidateSpeed : max(currentVoiceSpeed, candidateSpeed)
         // log.debug("current: \(current) remaining: \(remaining) total: \(total) candidate: \(candidateSpeed) adjusted: \(adjusted)")
         return adjusted
@@ -312,20 +308,6 @@ private extension SpeechManager {
         _Synthesizer.shared.synthesizer.speak(utterance)
     }
 
-    func adjustedVoicevoxSpeed(currentCommentLength current: Int, remainingCommentLength remaining: Int, currentVoiceSpeed: Float) -> Float {
-        let total = current + remaining
-        var candidateSpeed = voicevoxSpeedMap[0].speed
-        for (commentLengthRange, speed) in voicevoxSpeedMap {
-            if commentLengthRange.contains(total) {
-                candidateSpeed = speed
-                break
-            }
-        }
-        let adjusted = remaining == 0 ? candidateSpeed : max(currentVoiceSpeed, candidateSpeed)
-        // log.debug("current: \(current) remaining: \(remaining) total: \(total) candidate: \(candidateSpeed) adjusted: \(adjusted)")
-        return adjusted
-    }
-
     func playAudio(data: Data) {
         guard let player = try? AVAudioPlayer(data: data) else { return }
         self.player = player
@@ -339,22 +321,33 @@ private extension NSRegularExpression {
     }
 }
 
+private extension Float {
+    // min~max: 1.0~2.0 -> 1.0~1.8
+    var asVoicevoxSpeedScale: Float { 1.0 + (self - 1) * 0.8 }
+
+    // min~max: 1.0~2.0 -> 0.5~0.75
+    var asAVSpeechSynthesizerSpeedRate: Float { 0.5 + (self - 1) * 0.25 }
+}
+
 private extension Int {
+    // min~max: 0~100 -> 0.0~1.0
     var asVoicevoxVolumeScale: Float { Float(self) / 100 }
+
+    // min~max: 0~100 -> 0.0~1.0
     var asAVSpeechSynthesizerVolume: Float { Float(self) / 100.0 }
 }
 
 private extension SpeechManager {
     func logAudioQueue() {
         let updated = _speechQueueCount != speechQueue.count
-            || _voiceVoxSpeed != voiceSpeaker
+            || _voiceSpeed != voiceSpeaker
 
         if updated {
-            log.debug("speechQueue: \(speechQueue.count), speed: \(voicevoxSpeed)")
+            log.debug("speechQueue: \(speechQueue.count), speed: \(voiceSpeed)")
         }
 
         _speechQueueCount = speechQueue.count
-        _voiceVoxSpeed = voiceSpeaker
+        _voiceSpeed = voiceSpeaker
     }
 
     func logPreload(_ message: String) {

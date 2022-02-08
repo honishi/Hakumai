@@ -99,7 +99,7 @@ private extension VoicevoxWrapper {
                 completion(Result.failure(.internal))
                 return
             }
-            log.debug(dictionary)
+            // log.debug(dictionary)
             dictionary["speedScale"] = config.speedScale
             dictionary["volumeScale"] = config.volumeScale
             guard let _data = try? JSONSerialization.data(withJSONObject: dictionary, options: []) else {
@@ -108,11 +108,11 @@ private extension VoicevoxWrapper {
                 return
             }
             if let string = String(bytes: _data, encoding: .utf8) {
-                log.debug(string)
+                // log.debug(string)
             }
             requestSynthesis(data: _data, config: config, completion: completion)
         case .failure(let error):
-            log.error(error)
+            log.error("[\(config.text)] \(error)")
             completion(Result.failure(.internal))
         }
     }
@@ -128,17 +128,17 @@ private extension VoicevoxWrapper {
             .cURLDescription(calling: { log.debug($0) })
             .validate()
             .responseData { [weak self] in
-                self?.handleSynthesisResponse($0, completion: completion)
+                self?.handleSynthesisResponse($0, config: config, completion: completion)
             }
     }
 
-    func handleSynthesisResponse(_ response: AFDataResponse<Data>, completion: @escaping AudioRequestCompletion) {
+    func handleSynthesisResponse(_ response: AFDataResponse<Data>, config: AudioConfiguration, completion: @escaping AudioRequestCompletion) {
         switch response.result {
         case .success(let data):
-            log.debug(data)
+            log.debug("[\(config.text)] [\(data)]")
             completion(Result.success(data))
         case .failure(let error):
-            log.error(error)
+            log.error("[\(config.text)] \(error)")
             completion(Result.failure(VoicevoxWrapperError.internal))
         }
     }
