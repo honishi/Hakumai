@@ -139,11 +139,7 @@ extension SpeechManager {
 
         chatQueue.append(chat)
 
-        let audio = VoicevoxAudio(
-            audioKey: chat.audioKey,
-            comment: cleanComment(from: chat.comment),
-            speedScale: voicevoxSpeed,
-            speaker: voiceSpeaker)
+        let audio = VoicevoxAudio(audioKey: chat.audioKey, comment: cleanComment(from: chat.comment))
         audioQueue.append(audio)
         preloadFromAudioQueue()
 
@@ -200,7 +196,10 @@ extension SpeechManager {
 
         switch audio.loadStatus {
         case .notLoaded:
-            audio.startLoad(speedScale: voicevoxSpeed, speaker: voiceSpeaker)
+            audio.startLoad(
+                speedScale: voicevoxSpeed,
+                volumeScale: voiceVolume.asVoicevoxVolumeScale,
+                speaker: voiceSpeaker)
             audio.setLoadStatusListener { [weak self] in
                 guard let me = self else { return }
                 me.handleLoadStatusChange(loadStatus: $0, audioKey: chat.audioKey)
@@ -230,7 +229,10 @@ extension SpeechManager {
             return
         }
         logPreload("Calling load for \(firstNotLoaded.audioKey)")
-        firstNotLoaded.startLoad(speedScale: voicevoxSpeed, speaker: voiceSpeaker)
+        firstNotLoaded.startLoad(
+            speedScale: voicevoxSpeed,
+            volumeScale: voiceVolume.asVoicevoxVolumeScale,
+            speaker: voiceSpeaker)
     }
 
     func handleLoadStatusChange(loadStatus: VoicevoxAudio.LoadStatus, audioKey: String) {
@@ -291,6 +293,8 @@ private extension SpeechManager {
     func configure() {
         let volume = UserDefaults.standard.integer(forKey: Parameters.commentSpeechVolume)
         setVoiceVolume(volume)
+        let speakerId = UserDefaults.standard.integer(forKey: Parameters.commentSpeechVoicevoxSpeaker)
+        setVoiceSpeaker(speakerId)
     }
 
     func adjustedVoiceSpeed(currentCommentLength current: Int, remainingCommentLength remaining: Int, currentVoiceSpeed: Float) -> Float {
@@ -352,6 +356,10 @@ private extension Array where Element == VoicevoxAudio {
 
 private extension Chat {
     var audioKey: String { "\(no)-\(dateUsec)-\(userId)" }
+}
+
+private extension Int {
+    var asVoicevoxVolumeScale: Float { Float(self) / 100 }
 }
 
 private extension SpeechManager {

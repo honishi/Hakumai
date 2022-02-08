@@ -10,6 +10,8 @@ import Foundation
 import AppKit
 import AVFoundation
 
+private let sampleVoiceText = "優しく手を差し伸べてくれてる人の声に少しでも耳を傾けてほしい。傷つけようとしてる人より遥かに多いはずなのに"
+
 final class GeneralViewController: NSViewController {
     struct SpeakerPopUpItem: Equatable {
         let speakerId: Int
@@ -146,8 +148,10 @@ private extension GeneralViewController {
     func speakSample() {
         speakSampleProgressIndicator.startAnimation(self)
         voicevoxWrapper.requestAudio(
-            text: "優しく手を差し伸べてくれてる人の声に少しでも耳を傾けてほしい。傷つけようとしてる人より遥かに多いはずなのに",
+            text: sampleVoiceText,
             speedScale: 1,
+            // TODO: use setting
+            volumeScale: 1,
             speaker: speakerIdInUserDefaults()) { [weak self] in
             guard let me = self else { return }
             me.speakSampleProgressIndicator.stopAnimation(me)

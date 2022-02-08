@@ -23,16 +23,17 @@ final class VoicevoxAudio {
     private var listener: Listener?
     private let voicevoxWrapper: VoicevoxWrapperType = VoicevoxWrapper()
 
-    init(audioKey: String, comment: String, speedScale: Float, speaker: Int) {
+    init(audioKey: String, comment: String) {
         self.audioKey = audioKey
         self.comment = comment
     }
 
-    func startLoad(speedScale: Float, speaker: Int) {
+    func startLoad(speedScale: Float, volumeScale: Float, speaker: Int) {
         loadStatus = .loading
         voicevoxWrapper.requestAudio(
             text: comment,
             speedScale: speedScale,
+            volumeScale: volumeScale,
             speaker: speaker
         ) { [weak self] in
             guard let me = self else { return }

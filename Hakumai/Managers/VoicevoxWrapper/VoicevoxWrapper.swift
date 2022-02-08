@@ -12,7 +12,7 @@ import Alamofire
 // TODO: to static
 protocol VoicevoxWrapperType {
     func requestSpeakers(completion: @escaping SpeakersRequestCompletion)
-    func requestAudio(text: String, speedScale: Float, speaker: Int, completion: @escaping AudioRequestCompletion)
+    func requestAudio(text: String, speedScale: Float, volumeScale: Float, speaker: Int, completion: @escaping AudioRequestCompletion)
 }
 
 typealias SpeakersRequestCompletion = (Result<[VoicevoxSpeaker], VoicevoxWrapperError>) -> Void
@@ -35,6 +35,7 @@ final class VoicevoxWrapper: VoicevoxWrapperType {
     struct AudioConfiguration {
         let text: String
         let speedScale: Float
+        let volumeScale: Float
         let speaker: Int
     }
 }
@@ -64,10 +65,11 @@ extension VoicevoxWrapper {
             }
     }
 
-    func requestAudio(text: String, speedScale: Float, speaker: Int, completion: @escaping AudioRequestCompletion) {
+    func requestAudio(text: String, speedScale: Float, volumeScale: Float, speaker: Int, completion: @escaping AudioRequestCompletion) {
         let config = AudioConfiguration(
             text: text,
             speedScale: speedScale,
+            volumeScale: volumeScale,
             speaker: speaker
         )
         requestAudioQuery(config: config, completion: completion)
@@ -99,6 +101,7 @@ private extension VoicevoxWrapper {
             }
             log.debug(dictionary)
             dictionary["speedScale"] = config.speedScale
+            dictionary["volumeScale"] = config.volumeScale
             guard let _data = try? JSONSerialization.data(withJSONObject: dictionary, options: []) else {
                 log.debug("Failed to make audio query data. \(data)")
                 completion(Result.failure(.internal))
