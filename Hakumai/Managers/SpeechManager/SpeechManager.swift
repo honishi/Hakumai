@@ -50,7 +50,7 @@ final class SpeechManager: NSObject {
     private var activeSpeech: Speech?
     private var allSpeeches: [Speech] { ([activeSpeech] + speechQueue).compactMap { $0 } }
     private var recentSpeechTexts: [String] = []
-    
+
     // min(normal): 1.0, fast: 2.0
     private var voiceSpeed: Float = 1.0
     // min: 0, max(normal): 100
@@ -205,7 +205,7 @@ extension SpeechManager {
     func preloadAudioIfAvailable() {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
-        
+
         let audioLoaders = allSpeeches.map { $0.audioLoader }
         let firstLoading = audioLoaders.filter({ $0.state == .loading }).first
         if let firstLoading = firstLoading {
