@@ -178,8 +178,8 @@
                                                             </connections>
                                                         </slider>
                                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0RT-z1-Slf">
-                                                            <rect key="frame" x="-2" y="28" width="58" height="16"/>
-                                                            <textFieldCell key="cell" lineBreakMode="clipping" title="Speaker:" id="KVg-Cz-8Kd">
+                                                            <rect key="frame" x="-2" y="28" width="136" height="16"/>
+                                                            <textFieldCell key="cell" lineBreakMode="clipping" title="Speaker (VOICEVOX):" id="KVg-Cz-8Kd">
                                                                 <font key="font" metaFont="system"/>
                                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
