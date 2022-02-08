@@ -126,18 +126,7 @@ extension SpeechManager {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
 
-        let text = cleanComment(from: chat.comment)
-        let speech = Speech(
-            text: text,
-            audioLoader: AudioLoader(text: text)
-        )
-        speechQueue.append(speech)
-        // Do not call `preloadAudioIfAvailable()` here, since it will cause dequeue conflict.
-
-        recentSpeechTexts.append(text)
-        if recentSpeechTexts.count > maxRecentSpeechTextsCount {
-            recentSpeechTexts.remove(at: 0)
-        }
+        appendToSpeechQueue(text: cleanComment(from: chat.comment))
     }
 
     // swiftlint:disable cyclomatic_complexity
@@ -202,6 +191,59 @@ extension SpeechManager {
     }
     // swiftlint:enable cyclomatic_complexity
 
+    func refreshChatQueueIfQueuedTooMuch() -> Bool {
+        objc_sync_enter(self)
+        defer { objc_sync_exit(self) }
+
+        if refreshChatQueueThreshold < speechQueue.count {
+            speechQueue.removeAll()
+            appendToSpeechQueue(text: "コメントが多すぎるため、読み上げをリセットしました")
+            return true
+        }
+
+        return false
+    }
+
+    // TODO: block ４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４
+    // define as 'internal' for test
+    func isAcceptableComment(_ comment: String) -> Bool {
+        return comment.count < 100 &&
+            emojiRegexp.matchCount(in: comment) < 5 &&
+            lineBreakRegexp.matchCount(in: comment) < 3 &&
+            repeatedKanjiRegexp.matchCount(in: comment) == 0
+    }
+
+    // define as 'internal' for test
+    func cleanComment(from comment: String) -> String {
+        var cleaned = comment
+        cleanCommentPatterns.forEach {
+            cleaned = cleaned.stringByReplacingRegexp(pattern: $0.0, with: $0.1)
+        }
+        return cleaned
+    }
+}
+
+private extension SpeechManager {
+    func configure() {
+        let volume = UserDefaults.standard.integer(forKey: Parameters.commentSpeechVolume)
+        setVoiceVolume(volume)
+        let speakerId = UserDefaults.standard.integer(forKey: Parameters.commentSpeechVoicevoxSpeaker)
+        setVoiceSpeaker(speakerId)
+    }
+
+    func appendToSpeechQueue(text: String) {
+        let speech = Speech(
+            text: text,
+            audioLoader: AudioLoader(text: text)
+        )
+        speechQueue.append(speech)
+
+        recentSpeechTexts.append(text)
+        if recentSpeechTexts.count > maxRecentSpeechTextsCount {
+            recentSpeechTexts.remove(at: 0)
+        }
+    }
+
     func preloadAudioIfAvailable() {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
@@ -238,54 +280,6 @@ extension SpeechManager {
         case .failed:
             waitingAudioLoadCompletion = false
         }
-    }
-
-    func refreshChatQueueIfQueuedTooMuch() -> Bool {
-        objc_sync_enter(self)
-        defer { objc_sync_exit(self) }
-
-        if refreshChatQueueThreshold < speechQueue.count {
-            speechQueue.removeAll()
-            appendSystemSpeech("コメントが多すぎるため、読み上げをリセットしました")
-            return true
-        }
-
-        return false
-    }
-
-    func appendSystemSpeech(_ text: String) {
-        let speech = Speech(
-            text: text,
-            audioLoader: AudioLoader(text: text)
-        )
-        speechQueue.append(speech)
-    }
-
-    // TODO: block ４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４
-    // define as 'internal' for test
-    func isAcceptableComment(_ comment: String) -> Bool {
-        return comment.count < 100 &&
-            emojiRegexp.matchCount(in: comment) < 5 &&
-            lineBreakRegexp.matchCount(in: comment) < 3 &&
-            repeatedKanjiRegexp.matchCount(in: comment) == 0
-    }
-
-    // define as 'internal' for test
-    func cleanComment(from comment: String) -> String {
-        var cleaned = comment
-        cleanCommentPatterns.forEach {
-            cleaned = cleaned.stringByReplacingRegexp(pattern: $0.0, with: $0.1)
-        }
-        return cleaned
-    }
-}
-
-private extension SpeechManager {
-    func configure() {
-        let volume = UserDefaults.standard.integer(forKey: Parameters.commentSpeechVolume)
-        setVoiceVolume(volume)
-        let speakerId = UserDefaults.standard.integer(forKey: Parameters.commentSpeechVoicevoxSpeaker)
-        setVoiceSpeaker(speakerId)
     }
 
     func adjustedVoiceSpeed(currentCommentLength current: Int, remainingCommentLength remaining: Int, currentVoiceSpeed: Float) -> Float {
