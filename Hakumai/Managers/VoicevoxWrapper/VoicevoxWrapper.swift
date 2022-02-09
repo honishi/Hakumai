@@ -9,7 +9,7 @@
 import Foundation
 import Alamofire
 
-// TODO: to static
+// XXX: Make the following functions static.
 protocol VoicevoxWrapperType {
     func requestSpeakers(completion: @escaping SpeakersRequestCompletion)
     func requestAudio(text: String, speedScale: Float, volumeScale: Float, speaker: Int, completion: @escaping AudioRequestCompletion)
@@ -24,6 +24,7 @@ struct VoicevoxSpeaker {
 }
 
 enum VoicevoxWrapperError: Error {
+    // XXX: More cases.
     case `internal`
 }
 
@@ -50,18 +51,8 @@ extension VoicevoxWrapper {
         AF.request(request)
             .cURLDescription(calling: { log.debug($0) })
             .validate()
-            .responseData {
-                switch $0.result {
-                case .success(let data):
-                    guard let decoded = try? JSONDecoder().decode([VoicevoxSpeakerResponse].self, from: data) else {
-                        completion(Result.failure(.internal))
-                        return
-                    }
-                    completion(Result.success(decoded.toVoicevoxSpeakers()))
-                case .failure(let error):
-                    log.error(error)
-                    completion(Result.failure(.internal))
-                }
+            .responseData { [weak self] in
+                self?.handleSpeakersResponse($0, completion: completion)
             }
     }
 
@@ -77,6 +68,20 @@ extension VoicevoxWrapper {
 }
 
 private extension VoicevoxWrapper {
+    func handleSpeakersResponse(_ response: AFDataResponse<Data>, completion: @escaping SpeakersRequestCompletion) {
+        switch response.result {
+        case .success(let data):
+            guard let decoded = try? JSONDecoder().decode([VoicevoxSpeakerResponse].self, from: data) else {
+                completion(Result.failure(.internal))
+                return
+            }
+            completion(Result.success(decoded.toVoicevoxSpeakers()))
+        case .failure(let error):
+            log.error(error)
+            completion(Result.failure(.internal))
+        }
+    }
+
     func requestAudioQuery(config: AudioConfiguration, completion: @escaping AudioRequestCompletion) {
         log.debug("\(config.text), \(config.speedScale), \(config.speaker)")
         let urlString = voicevoxUrl + "/audio_query?text=\(config.text.escapsed)&speaker=\(config.speaker)"
@@ -107,9 +112,7 @@ private extension VoicevoxWrapper {
                 completion(Result.failure(.internal))
                 return
             }
-            if let string = String(bytes: _data, encoding: .utf8) {
-                // log.debug(string)
-            }
+            // log.debug(String(bytes: _data, encoding: .utf8) ?? "")
             requestSynthesis(data: _data, config: config, completion: completion)
         case .failure(let error):
             log.error("[\(config.text)] \(error)")
