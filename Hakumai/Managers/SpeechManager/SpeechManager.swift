@@ -10,7 +10,7 @@ import Foundation
 import AVFoundation
 
 private let dequeuChatTimerInterval: TimeInterval = 0.25
-private let refreshChatQueueThreshold = 30
+private let maxSpeechCountForRefresh = 30
 private let maxRecentSpeechTextsCount = 50
 
 // https://stackoverflow.com/a/38409026/13220031
@@ -31,6 +31,8 @@ private let cleanCommentPatterns = [
     ("ニコ生(?!放送)", "ニコなま"),
     ("初見", "しょけん")
 ]
+
+private let speechTextRefresh = "読み上げリセット"
 
 @available(macOS 10.14, *)
 final class _Synthesizer {
@@ -127,6 +129,7 @@ extension SpeechManager {
         defer { objc_sync_exit(self) }
 
         appendToSpeechQueue(text: cleanComment(from: chat.comment))
+        refreshSpeechQueueIfNeeded()
     }
 
     // swiftlint:disable cyclomatic_complexity
@@ -172,13 +175,15 @@ extension SpeechManager {
                 volumeScale: voiceVolume.asVoicevoxVolumeScale,
                 speaker: voiceSpeaker)
             speech.audioLoader.setLoadStatusListener { [weak self] in
+                log.debug("Got status update: from [notLoaded] [\($0)] [\(speech.text)]")
                 guard let me = self else { return }
-                me.handleLoadStatusChange(loadStatus: $0)
+                me.handleLoadStatusChange(loadStatus: $0, speech: speech)
             }
         case .loading:
             speech.audioLoader.setLoadStatusListener { [weak self] in
+                log.debug("Got status update: from [loading] [\($0)]  [\(speech.text)]")
                 guard let me = self else { return }
-                me.handleLoadStatusChange(loadStatus: $0)
+                me.handleLoadStatusChange(loadStatus: $0, speech: speech)
             }
         case .loaded(let data):
             playAudio(data: data)
@@ -190,19 +195,6 @@ extension SpeechManager {
         }
     }
     // swiftlint:enable cyclomatic_complexity
-
-    func refreshChatQueueIfQueuedTooMuch() -> Bool {
-        objc_sync_enter(self)
-        defer { objc_sync_exit(self) }
-
-        if refreshChatQueueThreshold < speechQueue.count {
-            speechQueue.removeAll()
-            appendToSpeechQueue(text: "コメントが多すぎるため、読み上げをリセットしました")
-            return true
-        }
-
-        return false
-    }
 
     // TODO: block ４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４
     // define as 'internal' for test
@@ -244,6 +236,16 @@ private extension SpeechManager {
         }
     }
 
+    func refreshSpeechQueueIfNeeded() {
+        objc_sync_enter(self)
+        defer { objc_sync_exit(self) }
+
+        let tooManySpeechesInQueue = speechQueue.count > maxSpeechCountForRefresh
+        guard tooManySpeechesInQueue else { return }
+        speechQueue.removeAll()
+        appendToSpeechQueue(text: speechTextRefresh)
+    }
+
     func preloadAudioIfAvailable() {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
@@ -265,7 +267,7 @@ private extension SpeechManager {
             speaker: voiceSpeaker)
     }
 
-    func handleLoadStatusChange(loadStatus: AudioLoader.LoadState) {
+    func handleLoadStatusChange(loadStatus: AudioLoader.LoadState, speech: Speech) {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
 
@@ -279,6 +281,10 @@ private extension SpeechManager {
             playAudio(data: data)
         case .failed:
             waitingAudioLoadCompletion = false
+            speakOnAVSpeechSynthesizer(
+                comment: speech.text,
+                speed: voiceSpeed.asAVSpeechSynthesizerSpeedRate,
+                volume: voiceVolume.asAVSpeechSynthesizerVolume)
         }
     }
 

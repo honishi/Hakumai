@@ -1264,11 +1264,8 @@ private extension MainViewController {
             log.debug("Skip enqueuing early chats.")
             return
         }
-        DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async {
+        DispatchQueue.global(qos: .background).async {
             self.speechManager.enqueue(chat: chat)
-            if self.speechManager.refreshChatQueueIfQueuedTooMuch() {
-                // logSystemMessageToTableView("Refreshed speech queue.")
-            }
         }
     }
 }
