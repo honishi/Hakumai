@@ -64,6 +64,7 @@ final class SpeechManager: NSObject {
     private var activeSpeech: Speech?
     private var allSpeeches: [Speech] { ([activeSpeech] + speechQueue).compactMap { $0 } }
     private var recentSpeechTexts: [String] = []
+    private var trashQueue: [Speech] = []
 
     // min(normal): 1.0, fast: 2.0
     private var voiceSpeed: Float = 1.0
@@ -122,6 +123,7 @@ extension SpeechManager {
         speechQueue.removeAll()
         recentSpeechTexts.removeAll()
         activeSpeech = nil
+        trashQueue.removeAll()
         log.debug("stopped speech manager.")
     }
 
@@ -270,26 +272,29 @@ private extension SpeechManager {
     func refreshSpeechQueueIfNeeded() {
         let tooManySpeechesInQueue = speechQueue.count > maxSpeechCountForRefresh
         guard tooManySpeechesInQueue else { return }
+        trashQueue = speechQueue
         speechQueue.removeAll()
         appendToSpeechQueue(text: speechTextRefresh)
     }
 
     func preloadAudioIfAvailable() {
-        let allAudioLoaders = allSpeeches.map { $0.audioLoader }
-        let firstLoading = allAudioLoaders.filter({ $0.state == .loading }).first
-        if let firstLoading = firstLoading {
-            logPreloadStatus("Audio load is in progress for \(firstLoading.text).")
+        if let firstLoadingInTrash = trashQueue.firstAudioLoader(state: .loading) {
+            logPreloadStatus("Audio load in trash q is in progress for [\(firstLoadingInTrash.text)].")
             return
         }
-        guard let firstNotLoaded = allAudioLoaders.filter({ $0.state == .notLoaded }).first else {
-            logPreloadStatus("Seems no audio needs to request load.")
+        if let firstLoading = allSpeeches.firstAudioLoader(state: .loading) {
+            logPreloadStatus("Audio load is in progress for [\(firstLoading.text)].")
             return
         }
-        logPreloadStatus("Requesting load for \(firstNotLoaded.text)")
-        firstNotLoaded.startLoad(
-            speedScale: voiceSpeed.asVoicevoxSpeedScale,
-            volumeScale: voiceVolume.asVoicevoxVolumeScale,
-            speaker: voiceSpeaker)
+        if let firstNotLoaded = allSpeeches.firstAudioLoader(state: .notLoaded) {
+            logPreloadStatus("Requesting load for [\(firstNotLoaded.text)].")
+            firstNotLoaded.startLoad(
+                speedScale: voiceSpeed.asVoicevoxSpeedScale,
+                volumeScale: voiceVolume.asVoicevoxVolumeScale,
+                speaker: voiceSpeaker)
+            return
+        }
+        logPreloadStatus("Seems no audio needs to request load.")
     }
 
     func adjustedVoiceSpeed(currentCommentLength current: Int, remainingCommentLength remaining: Int, currentVoiceSpeed: Float) -> Float {
@@ -365,6 +370,12 @@ private extension Int {
 
     // min~max: 0~100 -> 0.0~1.0
     var asAVSpeechSynthesizerVolume: Float { Float(self) / 100.0 }
+}
+
+private extension Array where Element == SpeechManager.Speech {
+    func firstAudioLoader(state: AudioLoader.LoadState) -> AudioLoader? {
+        return map { $0.audioLoader }.filter { $0.state == state }.first
+    }
 }
 
 private extension SpeechManager {
