@@ -25,6 +25,8 @@ final class AudioLoader {
         self.text = text
     }
 
+    deinit { log.debug("") }
+
     func startLoad(speedScale: Float, volumeScale: Float, speaker: Int) {
         state = .loading
         voicevoxWrapper.requestAudio(
@@ -46,7 +48,7 @@ final class AudioLoader {
         }
     }
 
-    func setLoadStatusListener(_ listener: Listener?) {
+    func setListenerForExclusiveAudioLoad(_ listener: Listener?) {
         self.listener = listener
         self.listener?(state)
     }

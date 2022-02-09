@@ -20,28 +20,28 @@ final class SpeechManagerTests: XCTestCase {
 
     // swiftlint:disable function_body_length
     @available(macOS 10.14, *)
-    func testIsAcceptableComment() {
+    func testPreCheckComment() {
         let manager = SpeechManager()
         var comment = ""
-        var result: Bool
+        var result: SpeechManager.CommentPreCheckResult
 
         comment = "無職なのになんでカフェいくの？？？？？？？"
-        result = manager.isAcceptableComment(comment)
-        XCTAssert(result == true)
+        result = manager.preChechComment(comment)
+        XCTAssert(result == .accept)
 
         // length: 71
         comment = "初見です。骨皮筋bsゲス出っ歯人中ロングお未婚お下劣目尻ほうれい線口元シワシワ髪質ゴワゴワ体型貧相性格底辺人間力マイナスのむらマコさんわこつ。"
-        result = manager.isAcceptableComment(comment)
-        XCTAssert(result == true)
+        result = manager.preChechComment(comment)
+        XCTAssert(result == .accept)
 
         // length: 110
         comment = "初見です。骨皮筋bsゲス出っ歯人中ロングお未婚お下劣目尻ほうれい線口元シワシワ髪質ゴワゴワ体型貧相性格底辺人間力マイナスのむらマコさんわこつ。初見です。骨皮筋bsゲス出っ歯人中ロングお未婚お下劣目尻ほうれい線口元シワシワ"
-        result = manager.isAcceptableComment(comment)
-        XCTAssert(result == false)
+        result = manager.preChechComment(comment)
+        XCTAssert(result == .reject(.tooLong))
 
         comment = "👄👈🏻💗💗💗"
-        result = manager.isAcceptableComment(comment)
-        XCTAssert(result == true)
+        result = manager.preChechComment(comment)
+        XCTAssert(result == .accept)
 
         comment = """
             🟥🟧🟨🟩🟦🟪🟥🟧🟨🟩🟦🟪🟥🟧🟨🟩
@@ -49,8 +49,8 @@ final class SpeechManagerTests: XCTestCase {
             🟥🟧🟨🟩🟦🟪もこレインボー🟪🟥🟧🟨🟩
             🟥🟧🟨🟩🟦🟪🟥🟧🟨🟩🟦🟪🟥🟧🟨🟩
             """
-        result = manager.isAcceptableComment(comment)
-        XCTAssert(result == false)
+        result = manager.preChechComment(comment)
+        XCTAssert(result == .reject(.tooManyEmoji))
 
         comment = """
             .　　 ヾヽ
@@ -60,28 +60,28 @@ final class SpeechManagerTests: XCTestCase {
             ―〃-〃―――
             　　ﾚ,,/
             """
-        result = manager.isAcceptableComment(comment)
-        XCTAssert(result == false)
+        result = manager.preChechComment(comment)
+        XCTAssert(result == .reject(.tooManyLines))
 
         comment = "粨粨粨粨粨粨粨粨粨粨粨粨粨粨粨粨粨粨"
-        result = manager.isAcceptableComment(comment)
-        XCTAssert(result == false)
+        result = manager.preChechComment(comment)
+        XCTAssert(result == .reject(.tooManySameKanji))
 
         comment = "鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅"
-        result = manager.isAcceptableComment(comment)
-        XCTAssert(result == false)
+        result = manager.preChechComment(comment)
+        XCTAssert(result == .reject(.tooManySameKanji))
 
         comment = "えええええええええええええええええええええええええええええええええええｗｗｗｗｗｗｗｗｗｗｗｗ"
-        result = manager.isAcceptableComment(comment)
-        XCTAssert(result == true)
+        result = manager.preChechComment(comment)
+        XCTAssert(result == .accept)
 
         comment = "ｗｗｗｗｗｗｗｗｗｗｗｗ"
-        result = manager.isAcceptableComment(comment)
-        XCTAssert(result == true)
+        result = manager.preChechComment(comment)
+        XCTAssert(result == .accept)
 
         comment = "えええええええええええええええええええええええええええええええええええ"
-        result = manager.isAcceptableComment(comment)
-        XCTAssert(result == true)
+        result = manager.preChechComment(comment)
+        XCTAssert(result == .accept)
     }
     // swiftlint:enable function_body_length
 

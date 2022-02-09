@@ -148,13 +148,16 @@ private extension GeneralViewController {
 
     func speakSample() {
         speakSampleProgressIndicator.startAnimation(self)
+        speakSampleButton.isEnabled = false
         voicevoxWrapper.requestAudio(
             text: sampleVoiceText,
             speedScale: 1,
             volumeScale: Float(speechVolumeInUserDefaults()) / 100,
-            speaker: speakerIdInUserDefaults()) { [weak self] in
+            speaker: speakerIdInUserDefaults()
+        ) { [weak self] in
             guard let me = self else { return }
             me.speakSampleProgressIndicator.stopAnimation(me)
+            me.speakSampleButton.isEnabled = true
             switch $0 {
             case .success(let data):
                 guard let player = try? AVAudioPlayer(data: data) else { return }

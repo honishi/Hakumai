@@ -39,6 +39,8 @@ final class VoicevoxWrapper: VoicevoxWrapperType {
         let volumeScale: Float
         let speaker: Int
     }
+
+    deinit { log.debug("") }
 }
 
 extension VoicevoxWrapper {
