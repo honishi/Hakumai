@@ -27,6 +27,7 @@ private let defaultRankDateText = "--:--"
 // swiftlint:disable file_length
 protocol MainViewControllerDelegate: AnyObject {
     func mainViewControllerDidPrepareLive(_ mainViewController: MainViewController, title: String, community: String)
+    func mainViewControllerSpeechEnabledChanged(_ mainViewController: MainViewController, isEnabled: Bool)
 }
 
 final class MainViewController: NSViewController {
@@ -721,6 +722,11 @@ extension MainViewController {
         return nicoManager.userPageUrl(for: userId)
     }
 
+    func setSpeechEnabled(_ isEnabled: Bool) {
+        speakButton.state = isEnabled ? .on : .off
+        updateSpeechManagerState()
+    }
+
     func setVoiceVolume(_ volume: Int) {
         speechManager.setVoiceVolume(volume)
     }
@@ -732,11 +738,6 @@ extension MainViewController {
 
 // MARK: Utility
 extension MainViewController {
-    func changeEnableCommentSpeech(_ enabled: Bool) {
-        // log.debug("\(enabled)")
-        updateSpeechManagerState()
-    }
-
     func changeFontSize(_ fontSize: Float) {
         tableViewFontSize = CGFloat(fontSize)
 
@@ -1248,6 +1249,7 @@ private extension MainViewController {
         } else {
             speechManager.stopManager()
         }
+        delegate?.mainViewControllerSpeechEnabledChanged(self, isEnabled: speakButton.isOn)
     }
 
     func handleSpeech(chat: Chat) {

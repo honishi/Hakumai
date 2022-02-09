@@ -350,8 +350,8 @@ private extension NSRegularExpression {
 }
 
 private extension Float {
-    // min~max: 1.0~2.0 -> 1.0~1.8
-    var asVoicevoxSpeedScale: Float { 1.0 + (self - 1) * 0.8 }
+    // min~max: 1.0~2.0 -> 1.0~1.7
+    var asVoicevoxSpeedScale: Float { 1.0 + (self - 1) * 0.7 }
 
     // min~max: 1.0~2.0 -> 0.5~0.75
     var asAVSpeechSynthesizerSpeedRate: Float { 0.5 + (self - 1) * 0.25 }

@@ -317,6 +317,13 @@ extension AppDelegate: MainWindowControllerDelegate {
         mainWindowControllers.removeAll { $0 == mainWindowController }
         log.debug(mainWindowControllers)
     }
+
+    func mainWindowControllerSpeechEnabledChanged(_ mainWindowController: MainWindowController, isEnabled: Bool) {
+        log.debug(isEnabled)
+        guard isEnabled else { return }
+        let otherMainWindowControllers = mainWindowControllers.filter { $0 !== mainWindowController }
+        otherMainWindowControllers.forEach { $0.setSpeechEnabled(false) }
+    }
 }
 
 private extension AppDelegate {
