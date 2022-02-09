@@ -148,12 +148,14 @@
 /// Preference Window
 ///
 /// General
-"browser_in_use" = "Browser Used for \"Grab URL from Browser\" feature (⌘U)";
+"browser_in_use" = "Browser to be Integrate With";
 "google_chrome" = "Google Chrome";
 "safari" = "Safari";
-"comment_speaking" = "Comment Speech";
-"speak_comments" = "Speech Comments (Requires macOS 10.14-)";
+"comment_speaking" = "Comment Speech (Requires macOS 10.14-)";
 "speak_volume" = "Speech Volume";
+"voicevox_speaker" = "Speaker (VOICEVOX)";
+"speaker_sample" = "Sample";
+"voicevox_not_found" = "VOICEVOX Not Found";
 "misc" = "Misc";
 "enable_emotion_message" = "Show emotion";
 "enable_live_notification" = "Enable notifications for live connection";

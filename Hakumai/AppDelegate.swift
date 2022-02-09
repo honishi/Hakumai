@@ -120,6 +120,9 @@ extension AppDelegate {
         case (Parameters.commentSpeechVolume, let changed as Int):
             mainWindowControllers.forEach { $0.setVoiceVolume(changed) }
 
+        case (Parameters.commentSpeechVoicevoxSpeaker, let changed as Int):
+            mainWindowControllers.forEach { $0.setVoiceSpeaker(changed) }
+
         case (Parameters.enableMuteUserIds, let changed as Bool):
             mainWindowControllers.forEach { $0.changeEnableMuteUserIds(changed) }
 
@@ -232,6 +235,7 @@ private extension AppDelegate {
             Parameters.browserInUse: BrowserInUseType.chrome.rawValue,
             Parameters.fontSize: kDefaultFontSize,
             Parameters.commentSpeechVolume: 100,
+            Parameters.commentSpeechVoicevoxSpeaker: 0,
             Parameters.enableMuteUserIds: true,
             Parameters.enableMuteWords: true,
             Parameters.alwaysOnTop: false,
@@ -248,6 +252,7 @@ private extension AppDelegate {
             // general
             Parameters.browserInUse,
             Parameters.commentSpeechVolume,
+            Parameters.commentSpeechVoicevoxSpeaker,
             // mute
             Parameters.enableMuteUserIds, Parameters.muteUserIds,
             Parameters.enableMuteWords, Parameters.muteWords,
@@ -317,6 +322,13 @@ extension AppDelegate: MainWindowControllerDelegate {
         }
         mainWindowControllers.removeAll { $0 == mainWindowController }
         log.debug(mainWindowControllers)
+    }
+
+    func mainWindowControllerSpeechEnabledChanged(_ mainWindowController: MainWindowController, isEnabled: Bool) {
+        log.debug(isEnabled)
+        guard isEnabled else { return }
+        let otherMainWindowControllers = mainWindowControllers.filter { $0 !== mainWindowController }
+        otherMainWindowControllers.forEach { $0.setSpeechEnabled(false) }
     }
 }
 

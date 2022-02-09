@@ -12,6 +12,7 @@ import AppKit
 protocol MainWindowControllerDelegate: AnyObject {
     func mainWindowControllerRequestNewTab(_ mainWindowController: MainWindowController)
     func mainWindowControllerWillClose(_ mainWindowController: MainWindowController)
+    func mainWindowControllerSpeechEnabledChanged(_ mainWindowController: MainWindowController, isEnabled: Bool)
 }
 
 final class MainWindowController: NSWindowController {
@@ -50,6 +51,10 @@ extension MainWindowController: NSWindowDelegate {
 extension MainWindowController: MainViewControllerDelegate {
     func mainViewControllerDidPrepareLive(_ mainViewController: MainViewController, title: String, community: String) {
         setWindowTabTitle(title, toolTip: "\(title) (\(community))")
+    }
+
+    func mainViewControllerSpeechEnabledChanged(_ mainViewController: MainViewController, isEnabled: Bool) {
+        delegate?.mainWindowControllerSpeechEnabledChanged(self, isEnabled: isEnabled)
     }
 }
 
@@ -105,8 +110,16 @@ extension MainWindowController {
         mainViewController.toggleCommentAnonymouslyButtonState()
     }
 
+    func setSpeechEnabled(_ isEnabled: Bool) {
+        mainViewController.setSpeechEnabled(isEnabled)
+    }
+
     func setVoiceVolume(_ volume: Int) {
         mainViewController.setVoiceVolume(volume)
+    }
+
+    func setVoiceSpeaker(_ speaker: Int) {
+        mainViewController.setVoiceSpeaker(speaker)
     }
 
     func changeEnableMuteUserIds(_ enabled: Bool) {
