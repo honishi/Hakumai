@@ -22,6 +22,7 @@ private let lineBreakPattern = "\n"
 // private let repeatedCharPattern = "(.)\\1{9,}"
 // https://so-zou.jp/software/tech/programming/tech/regular-expression/meta-character/variable-width-encoding.htm#no1
 private let repeatedKanjiPattern = "(\\p{Han})\\1{9,}"
+private let repeatedNumberPattern = "[1234567890１２３４５６７８９０]{9,}"
 
 private let cleanCommentPatterns = [
     ("https?://[\\w!?/+\\-_~;.,*&@#$%()'\\[\\]=]+", " URL "),
@@ -50,7 +51,7 @@ final class SpeechManager: NSObject {
     }
 
     enum PreCheckRejectReason: Equatable {
-        case duplicate, tooLong, tooManyEmoji, tooManyLines, tooManySameKanji
+        case duplicate, tooLong, tooManyEmoji, tooManyLines, tooManySameKanji, tooManyNumber
     }
 
     struct Speech {
@@ -75,6 +76,7 @@ final class SpeechManager: NSObject {
     private let emojiRegexp = try! NSRegularExpression(pattern: emojiPattern, options: [])
     private let lineBreakRegexp = try! NSRegularExpression(pattern: lineBreakPattern, options: [])
     private let repeatedKanjiRegexp = try! NSRegularExpression(pattern: repeatedKanjiPattern, options: [])
+    private let repeatedNumberRegexp = try! NSRegularExpression(pattern: repeatedNumberPattern, options: [])
     // swiftlint:enable force_try
 
     private var player: AVAudioPlayer = AVAudioPlayer()
@@ -205,9 +207,8 @@ extension SpeechManager {
         return cleaned
     }
 
-    // TODO: block ４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４
     // define as 'internal' for test
-    func preChechComment(_ comment: String) -> CommentPreCheckResult {
+    func preCheckComment(_ comment: String) -> CommentPreCheckResult {
         if comment.count > 100 {
             return .reject(.tooLong)
         } else if emojiRegexp.matchCount(in: comment) > 5 {
@@ -216,6 +217,8 @@ extension SpeechManager {
             return .reject(.tooManyLines)
         } else if repeatedKanjiRegexp.matchCount(in: comment) > 0 {
             return .reject(.tooManySameKanji)
+        } else if repeatedNumberRegexp.matchCount(in: comment) > 0 {
+            return .reject(.tooManyNumber)
         }
 
         let isUniqueComment = recentSpeechTexts.filter { $0 == comment }.isEmpty
@@ -237,14 +240,14 @@ private extension SpeechManager {
     }
 
     func checkAndMakeText(_ text: String) -> String {
-        switch preChechComment(text) {
+        switch preCheckComment(text) {
         case .accept:
             return text
         case .reject(let reason):
             switch reason {
             case .duplicate:
                 return speechTextDuplicate
-            case .tooLong, .tooManyEmoji, .tooManyLines, .tooManySameKanji:
+            case .tooLong, .tooManyEmoji, .tooManyLines, .tooManySameKanji, .tooManyNumber:
                 return speechTextSkip
             }
         }

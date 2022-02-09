@@ -26,21 +26,21 @@ final class SpeechManagerTests: XCTestCase {
         var result: SpeechManager.CommentPreCheckResult
 
         comment = "無職なのになんでカフェいくの？？？？？？？"
-        result = manager.preChechComment(comment)
+        result = manager.preCheckComment(comment)
         XCTAssert(result == .accept)
 
         // length: 71
         comment = "初見です。骨皮筋bsゲス出っ歯人中ロングお未婚お下劣目尻ほうれい線口元シワシワ髪質ゴワゴワ体型貧相性格底辺人間力マイナスのむらマコさんわこつ。"
-        result = manager.preChechComment(comment)
+        result = manager.preCheckComment(comment)
         XCTAssert(result == .accept)
 
         // length: 110
         comment = "初見です。骨皮筋bsゲス出っ歯人中ロングお未婚お下劣目尻ほうれい線口元シワシワ髪質ゴワゴワ体型貧相性格底辺人間力マイナスのむらマコさんわこつ。初見です。骨皮筋bsゲス出っ歯人中ロングお未婚お下劣目尻ほうれい線口元シワシワ"
-        result = manager.preChechComment(comment)
+        result = manager.preCheckComment(comment)
         XCTAssert(result == .reject(.tooLong))
 
         comment = "👄👈🏻💗💗💗"
-        result = manager.preChechComment(comment)
+        result = manager.preCheckComment(comment)
         XCTAssert(result == .accept)
 
         comment = """
@@ -49,7 +49,7 @@ final class SpeechManagerTests: XCTestCase {
             🟥🟧🟨🟩🟦🟪もこレインボー🟪🟥🟧🟨🟩
             🟥🟧🟨🟩🟦🟪🟥🟧🟨🟩🟦🟪🟥🟧🟨🟩
             """
-        result = manager.preChechComment(comment)
+        result = manager.preCheckComment(comment)
         XCTAssert(result == .reject(.tooManyEmoji))
 
         comment = """
@@ -60,28 +60,72 @@ final class SpeechManagerTests: XCTestCase {
             ―〃-〃―――
             　　ﾚ,,/
             """
-        result = manager.preChechComment(comment)
+        result = manager.preCheckComment(comment)
         XCTAssert(result == .reject(.tooManyLines))
 
         comment = "粨粨粨粨粨粨粨粨粨粨粨粨粨粨粨粨粨粨"
-        result = manager.preChechComment(comment)
+        result = manager.preCheckComment(comment)
         XCTAssert(result == .reject(.tooManySameKanji))
 
         comment = "鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅"
-        result = manager.preChechComment(comment)
+        result = manager.preCheckComment(comment)
         XCTAssert(result == .reject(.tooManySameKanji))
 
         comment = "えええええええええええええええええええええええええええええええええええｗｗｗｗｗｗｗｗｗｗｗｗ"
-        result = manager.preChechComment(comment)
+        result = manager.preCheckComment(comment)
         XCTAssert(result == .accept)
 
         comment = "ｗｗｗｗｗｗｗｗｗｗｗｗ"
-        result = manager.preChechComment(comment)
+        result = manager.preCheckComment(comment)
         XCTAssert(result == .accept)
 
         comment = "えええええええええええええええええええええええええええええええええええ"
-        result = manager.preChechComment(comment)
+        result = manager.preCheckComment(comment)
         XCTAssert(result == .accept)
+
+        comment = "12345678"
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .accept)
+
+        comment = "123456789"
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .reject(.tooManyNumber))
+
+        comment = "１２３４５６７８"
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .accept)
+
+        comment = "１２３４５６７８９"
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .reject(.tooManyNumber))
+
+        comment = "44444444"
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .accept)
+
+        comment = "444444444"
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .reject(.tooManyNumber))
+
+        comment = "４４４４４４４４"
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .accept)
+
+        comment = "４４４４４４４４４"
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .reject(.tooManyNumber))
+
+        comment = "これは４４４４４４４４円です"
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .accept)
+
+        comment = "これは４４４４４４４４４円です"
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .reject(.tooManyNumber))
+
+        comment = "４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４"
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .reject(.tooManyNumber))
     }
     // swiftlint:enable function_body_length
 
