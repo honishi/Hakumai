@@ -30,7 +30,7 @@ internal enum L10n {
   internal static let autoUrl = L10n.tr("Localizable", "auto_url")
   /// Bring All to Front
   internal static let bringAllToFront = L10n.tr("Localizable", "bring_all_to_front")
-  /// Browser Used for "Grab URL from Browser" feature (⌘U)
+  /// Browser to be Integrate With
   internal static let browserInUse = L10n.tr("Localizable", "browser_in_use")
   /// Cancel
   internal static let cancel = L10n.tr("Localizable", "cancel")
@@ -48,7 +48,7 @@ internal enum L10n {
   internal static let closeWindow = L10n.tr("Localizable", "close_window")
   /// Comments
   internal static let commentCount = L10n.tr("Localizable", "comment_count")
-  /// Comment Speech
+  /// Comment Speech (Requires macOS 10.14-)
   internal static let commentSpeaking = L10n.tr("Localizable", "comment_speaking")
   /// ⌘O (Empty ⏎ to scroll to bottom)
   internal static let commentTextFieldPlaceholder = L10n.tr("Localizable", "comment_text_field_placeholder")
@@ -228,10 +228,10 @@ internal enum L10n {
   internal static let speak = L10n.tr("Localizable", "speak")
   /// Speech
   internal static let speakComment = L10n.tr("Localizable", "speak_comment")
-  /// Speech Comments (Requires macOS 10.14-)
-  internal static let speakComments = L10n.tr("Localizable", "speak_comments")
   /// Speech Volume
   internal static let speakVolume = L10n.tr("Localizable", "speak_volume")
+  /// Sample
+  internal static let speakerSample = L10n.tr("Localizable", "speaker_sample")
   /// Speech
   internal static let speech = L10n.tr("Localizable", "speech")
   /// Spelling and Grammar
@@ -254,6 +254,10 @@ internal enum L10n {
   internal static let view = L10n.tr("Localizable", "view")
   /// Visitors
   internal static let visitorCount = L10n.tr("Localizable", "visitor_count")
+  /// VOICEVOX Not Found
+  internal static let voicevoxNotFound = L10n.tr("Localizable", "voicevox_not_found")
+  /// Speaker (VOICEVOX)
+  internal static let voicevoxSpeaker = L10n.tr("Localizable", "voicevox_speaker")
   /// Window
   internal static let window = L10n.tr("Localizable", "window")
   /// Zoom

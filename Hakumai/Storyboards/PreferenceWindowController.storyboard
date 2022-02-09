@@ -361,6 +361,7 @@
                         <outlet property="speakVolumeTitleTextField" destination="lhl-Ab-vvj" id="STj-TK-3lB"/>
                         <outlet property="speakVolumeValueTextField" destination="TgB-HZ-aF1" id="siC-bI-K7H"/>
                         <outlet property="speakerPopUpButton" destination="enO-Zx-XlQ" id="YwZ-g9-4OC"/>
+                        <outlet property="speakerTitleTextField" destination="0RT-z1-Slf" id="NYZ-cd-1Xa"/>
                     </connections>
                 </viewController>
                 <customObject id="iZj-NB-vz6" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

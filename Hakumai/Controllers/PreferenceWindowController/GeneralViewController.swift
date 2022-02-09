@@ -30,9 +30,11 @@ final class GeneralViewController: NSViewController {
     @IBOutlet private weak var speakVolumeTitleTextField: NSTextField!
     @IBOutlet private weak var speakVolumeValueTextField: NSTextField!
     @IBOutlet private weak var speakVolumeSlider: NSSlider!
+    @IBOutlet private weak var speakerTitleTextField: NSTextField!
 
     // XXX: Make the following propeties `weak`.
-    // Need to refactor `PreferenceWindowController`.
+    // We need to refactor `PreferenceWindowController` which
+    // "removeFromSuperview" all controls for every content view update..
     @IBOutlet private var speakerPopUpButton: NSPopUpButton!
     @IBOutlet private var speakSampleButton: NSButton!
     @IBOutlet private var speakSampleProgressIndicator: NSProgressIndicator!
@@ -77,6 +79,8 @@ private extension GeneralViewController {
 
         commentSpeakingBox.title = L10n.commentSpeaking
         speakVolumeTitleTextField.stringValue = "\(L10n.speakVolume):"
+        speakerTitleTextField.stringValue = "\(L10n.voicevoxSpeaker):"
+        speakSampleButton.title = L10n.speakerSample
 
         miscBox.title = L10n.misc
         enableEmotionMessageButton.title = L10n.enableEmotionMessage
@@ -95,7 +99,7 @@ private extension GeneralViewController {
         speakerPopUpButton.isEnabled = false
         speakSampleButton.isEnabled = false
         speakerPopUpButton.removeAllItems()
-        speakerPopUpButton.addItems(withTitles: ["----------"])
+        speakerPopUpButton.addItems(withTitles: [L10n.voicevoxNotFound])
     }
 
     func disableNotificationComponentsIfNeeded() {
