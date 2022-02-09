@@ -37,7 +37,7 @@ final class SpeechManagerTests: XCTestCase {
         // length: 110
         comment = "初見です。骨皮筋bsゲス出っ歯人中ロングお未婚お下劣目尻ほうれい線口元シワシワ髪質ゴワゴワ体型貧相性格底辺人間力マイナスのむらマコさんわこつ。初見です。骨皮筋bsゲス出っ歯人中ロングお未婚お下劣目尻ほうれい線口元シワシワ"
         result = manager.preCheckComment(comment)
-        XCTAssert(result == .reject(.tooLong))
+        XCTAssert(result == .reject(.long))
 
         comment = "👄👈🏻💗💗💗"
         result = manager.preCheckComment(comment)
@@ -50,7 +50,7 @@ final class SpeechManagerTests: XCTestCase {
             🟥🟧🟨🟩🟦🟪🟥🟧🟨🟩🟦🟪🟥🟧🟨🟩
             """
         result = manager.preCheckComment(comment)
-        XCTAssert(result == .reject(.tooManyEmoji))
+        XCTAssert(result == .reject(.manyEmoji))
 
         comment = """
             .　　 ヾヽ
@@ -61,15 +61,15 @@ final class SpeechManagerTests: XCTestCase {
             　　ﾚ,,/
             """
         result = manager.preCheckComment(comment)
-        XCTAssert(result == .reject(.tooManyLines))
+        XCTAssert(result == .reject(.manyLines))
 
         comment = "粨粨粨粨粨粨粨粨粨粨粨粨粨粨粨粨粨粨"
         result = manager.preCheckComment(comment)
-        XCTAssert(result == .reject(.tooManySameKanji))
+        XCTAssert(result == .reject(.manySameKanji))
 
         comment = "鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅"
         result = manager.preCheckComment(comment)
-        XCTAssert(result == .reject(.tooManySameKanji))
+        XCTAssert(result == .reject(.manySameKanji))
 
         comment = "えええええええええええええええええええええええええええええええええええｗｗｗｗｗｗｗｗｗｗｗｗ"
         result = manager.preCheckComment(comment)
@@ -89,7 +89,7 @@ final class SpeechManagerTests: XCTestCase {
 
         comment = "123456789"
         result = manager.preCheckComment(comment)
-        XCTAssert(result == .reject(.tooManyNumber))
+        XCTAssert(result == .reject(.manyNumber))
 
         comment = "１２３４５６７８"
         result = manager.preCheckComment(comment)
@@ -97,7 +97,7 @@ final class SpeechManagerTests: XCTestCase {
 
         comment = "１２３４５６７８９"
         result = manager.preCheckComment(comment)
-        XCTAssert(result == .reject(.tooManyNumber))
+        XCTAssert(result == .reject(.manyNumber))
 
         comment = "44444444"
         result = manager.preCheckComment(comment)
@@ -105,7 +105,7 @@ final class SpeechManagerTests: XCTestCase {
 
         comment = "444444444"
         result = manager.preCheckComment(comment)
-        XCTAssert(result == .reject(.tooManyNumber))
+        XCTAssert(result == .reject(.manyNumber))
 
         comment = "４４４４４４４４"
         result = manager.preCheckComment(comment)
@@ -113,7 +113,7 @@ final class SpeechManagerTests: XCTestCase {
 
         comment = "４４４４４４４４４"
         result = manager.preCheckComment(comment)
-        XCTAssert(result == .reject(.tooManyNumber))
+        XCTAssert(result == .reject(.manyNumber))
 
         comment = "これは４４４４４４４４円です"
         result = manager.preCheckComment(comment)
@@ -121,11 +121,11 @@ final class SpeechManagerTests: XCTestCase {
 
         comment = "これは４４４４４４４４４円です"
         result = manager.preCheckComment(comment)
-        XCTAssert(result == .reject(.tooManyNumber))
+        XCTAssert(result == .reject(.manyNumber))
 
         comment = "４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４"
         result = manager.preCheckComment(comment)
-        XCTAssert(result == .reject(.tooManyNumber))
+        XCTAssert(result == .reject(.manyNumber))
     }
     // swiftlint:enable function_body_length
 

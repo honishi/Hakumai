@@ -9,7 +9,7 @@
 import Foundation
 import AVFoundation
 
-private let dequeuChatTimerInterval: TimeInterval = 0.25
+private let dequeuSpeechQueueInterval: TimeInterval = 0.25
 private let maxSpeechCountForRefresh = 30
 private let maxRecentSpeechTextsCount = 50
 
@@ -51,7 +51,7 @@ final class SpeechManager: NSObject {
     }
 
     enum PreCheckRejectReason: Equatable {
-        case duplicate, tooLong, tooManyEmoji, tooManyLines, tooManySameKanji, tooManyNumber
+        case duplicate, long, manyEmoji, manyLines, manySameKanji, manyNumber
     }
 
     struct Speech {
@@ -101,7 +101,7 @@ extension SpeechManager {
         // use explicit main queue to ensure that the timer continues to run even when caller thread ends.
         DispatchQueue.main.async {
             self.timer = Timer.scheduledTimer(
-                timeInterval: dequeuChatTimerInterval,
+                timeInterval: dequeuSpeechQueueInterval,
                 target: self,
                 selector: #selector(SpeechManager.dequeue(_:)),
                 userInfo: nil,
@@ -187,10 +187,9 @@ extension SpeechManager {
                 speaker: voiceSpeaker)
             fallthrough
         case .loading:
-            speech.audioLoader.setListenerForExclusiveAudioLoad { [weak self] in
+            speech.audioLoader.setStateChangeListener { [weak self] in
                 log.debug("Got status update: [\($0)]  [\(speech.text)]")
-                guard let me = self else { return }
-                me.handleLoadStateChange($0, speech: speech)
+                self?.listenStateChangeForExclusiveAudioLoad(state: $0, speech: speech)
             }
         case .loaded, .failed:
             break
@@ -210,15 +209,15 @@ extension SpeechManager {
     // define as 'internal' for test
     func preCheckComment(_ comment: String) -> CommentPreCheckResult {
         if comment.count > 100 {
-            return .reject(.tooLong)
+            return .reject(.long)
         } else if emojiRegexp.matchCount(in: comment) > 5 {
-            return .reject(.tooManyEmoji)
+            return .reject(.manyEmoji)
         } else if lineBreakRegexp.matchCount(in: comment) > 3 {
-            return .reject(.tooManyLines)
+            return .reject(.manyLines)
         } else if repeatedKanjiRegexp.matchCount(in: comment) > 0 {
-            return .reject(.tooManySameKanji)
+            return .reject(.manySameKanji)
         } else if repeatedNumberRegexp.matchCount(in: comment) > 0 {
-            return .reject(.tooManyNumber)
+            return .reject(.manyNumber)
         }
 
         let isUniqueComment = recentSpeechTexts.filter { $0 == comment }.isEmpty
@@ -247,7 +246,7 @@ private extension SpeechManager {
             switch reason {
             case .duplicate:
                 return speechTextDuplicate
-            case .tooLong, .tooManyEmoji, .tooManyLines, .tooManySameKanji, .tooManyNumber:
+            case .long, .manyEmoji, .manyLines, .manySameKanji, .manyNumber:
                 return speechTextSkip
             }
         }
@@ -303,7 +302,7 @@ private extension SpeechManager {
         return adjusted
     }
 
-    func handleLoadStateChange(_ state: AudioLoader.LoadState, speech: Speech) {
+    func listenStateChangeForExclusiveAudioLoad(state: AudioLoader.LoadState, speech: Speech) {
         switch state {
         case .notLoaded:
             break

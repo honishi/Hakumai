@@ -48,7 +48,7 @@ final class AudioLoader {
         }
     }
 
-    func setListenerForExclusiveAudioLoad(_ listener: Listener?) {
+    func setStateChangeListener(_ listener: Listener?) {
         self.listener = listener
         self.listener?(state)
     }
