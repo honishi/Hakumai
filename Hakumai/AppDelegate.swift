@@ -32,7 +32,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         addObserverForUserDefaults()
         configureMenuItems()
         configureNotificationPresenter()
-        clearImageCache()
+        configureAndClearImageCache()
         debugPrintToken()
         openNewWindow()
     }
@@ -119,6 +119,9 @@ extension AppDelegate {
 
         case (Parameters.commentSpeechVolume, let changed as Int):
             mainWindowControllers.forEach { $0.setVoiceVolume(changed) }
+
+        case (Parameters.commentSpeechVoicevoxSpeaker, let changed as Int):
+            mainWindowControllers.forEach { $0.setVoiceSpeaker(changed) }
 
         case (Parameters.enableMuteUserIds, let changed as Bool):
             mainWindowControllers.forEach { $0.changeEnableMuteUserIds(changed) }
@@ -232,6 +235,7 @@ private extension AppDelegate {
             Parameters.browserInUse: BrowserInUseType.chrome.rawValue,
             Parameters.fontSize: kDefaultFontSize,
             Parameters.commentSpeechVolume: 100,
+            Parameters.commentSpeechVoicevoxSpeaker: 0,
             Parameters.enableMuteUserIds: true,
             Parameters.enableMuteWords: true,
             Parameters.alwaysOnTop: false,
@@ -248,6 +252,7 @@ private extension AppDelegate {
             // general
             Parameters.browserInUse,
             Parameters.commentSpeechVolume,
+            Parameters.commentSpeechVoicevoxSpeaker,
             // mute
             Parameters.enableMuteUserIds, Parameters.muteUserIds,
             Parameters.enableMuteWords, Parameters.muteWords,
@@ -279,8 +284,14 @@ private extension AppDelegate {
         }
     }
 
-    func clearImageCache() {
-        KingfisherManager.shared.cache.clearCache {
+    func configureAndClearImageCache() {
+        // Default cache behavior:
+        // "Images in memory storage will expire after 5 minutes from
+        // last accessed, while it is a week for images in disk storage."
+        // https://github.com/onevcat/Kingfisher/wiki/Cheat-Sheet#set-default-expiration-for-cache
+        let cache = KingfisherManager.shared.cache
+        cache.diskStorage.config.expiration = .seconds(60 * 60 * 12)    // 12 hours
+        cache.clearCache {
             log.debug("Disk cache for images has been cleared.")
         }
     }
@@ -311,6 +322,13 @@ extension AppDelegate: MainWindowControllerDelegate {
         }
         mainWindowControllers.removeAll { $0 == mainWindowController }
         log.debug(mainWindowControllers)
+    }
+
+    func mainWindowControllerSpeechEnabledChanged(_ mainWindowController: MainWindowController, isEnabled: Bool) {
+        log.debug(isEnabled)
+        guard isEnabled else { return }
+        let otherMainWindowControllers = mainWindowControllers.filter { $0 !== mainWindowController }
+        otherMainWindowControllers.forEach { $0.setSpeechEnabled(false) }
     }
 }
 

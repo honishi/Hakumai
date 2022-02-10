@@ -148,12 +148,14 @@
 /// Preference Window
 ///
 /// General
-"browser_in_use" = "\"ブラウザから URL をコピーする\" 機能 (⌘U) で使用するブラウザ";
+"browser_in_use" = "連携するブラウザ";
 "google_chrome" = "Google Chrome";
 "safari" = "Safari";
-"comment_speaking" = "コメント読み上げ";
-"speak_comments" = "コメント読み上げ (macOS 10.14 以降が必要)";
+"comment_speaking" = "コメント読み上げ (macOS 10.14 以降が必要)";
 "speak_volume" = "読み上げボリューム";
+"voicevox_speaker" = "キャラクター (VOICEVOX)";
+"speaker_sample" = "サンプル";
+"voicevox_not_found" = "VOICEVOX 未検出";
 "misc" = "その他";
 "enable_emotion_message" = "エモーションを表示する";
 "enable_live_notification" = "放送への接続や切断を通知する";

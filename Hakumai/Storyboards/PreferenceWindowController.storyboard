@@ -67,14 +67,14 @@
             <objects>
                 <viewController storyboardIdentifier="GeneralViewController" id="wCA-UG-k48" customClass="GeneralViewController" customModule="Hakumai" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="yCS-uV-ZpM">
-                        <rect key="frame" x="0.0" y="0.0" width="500" height="400"/>
+                        <rect key="frame" x="0.0" y="0.0" width="500" height="440"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="16" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="msl-tt-je4">
-                                <rect key="frame" x="20" y="24" width="460" height="356"/>
+                                <rect key="frame" x="20" y="24" width="460" height="396"/>
                                 <subviews>
                                     <box autoresizesSubviews="NO" borderType="line" title="browser_in_use" translatesAutoresizingMaskIntoConstraints="NO" id="MWm-if-ayO">
-                                        <rect key="frame" x="-3" y="252" width="466" height="104"/>
+                                        <rect key="frame" x="-3" y="292" width="466" height="104"/>
                                         <view key="contentView" id="rtk-61-lXP">
                                             <rect key="frame" x="3" y="3" width="460" height="86"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -127,16 +127,16 @@
                                         </constraints>
                                     </box>
                                     <box borderType="line" title="comment_speaking" translatesAutoresizingMaskIntoConstraints="NO" id="ICr-HG-iyb">
-                                        <rect key="frame" x="-3" y="132" width="466" height="108"/>
+                                        <rect key="frame" x="-3" y="132" width="466" height="148"/>
                                         <view key="contentView" id="Mny-of-dvr">
-                                            <rect key="frame" x="3" y="3" width="460" height="90"/>
+                                            <rect key="frame" x="3" y="3" width="460" height="130"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fYb-qO-6pE">
-                                                    <rect key="frame" x="16" y="30" width="428" height="44"/>
+                                                    <rect key="frame" x="16" y="18" width="428" height="96"/>
                                                     <subviews>
                                                         <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2NO-6f-IfF">
-                                                            <rect key="frame" x="0.0" y="28" width="131" height="16"/>
+                                                            <rect key="frame" x="0.0" y="80" width="131" height="16"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lhl-Ab-vvj">
                                                                     <rect key="frame" x="-2" y="0.0" width="94" height="16"/>
@@ -168,7 +168,7 @@
                                                             </customSpacing>
                                                         </stackView>
                                                         <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NBg-Gf-rw0">
-                                                            <rect key="frame" x="-2" y="-6" width="207" height="28"/>
+                                                            <rect key="frame" x="-2" y="46" width="207" height="28"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="203" id="OK4-Sn-4dr"/>
                                                             </constraints>
@@ -177,12 +177,69 @@
                                                                 <binding destination="Ex8-3g-KNv" name="value" keyPath="values.CommentSpeechVolume" id="Bsq-np-X3K"/>
                                                             </connections>
                                                         </slider>
+                                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0RT-z1-Slf">
+                                                            <rect key="frame" x="-2" y="28" width="136" height="16"/>
+                                                            <textFieldCell key="cell" lineBreakMode="clipping" title="Speaker (VOICEVOX):" id="KVg-Cz-8Kd">
+                                                                <font key="font" metaFont="system"/>
+                                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                            </textFieldCell>
+                                                        </textField>
+                                                        <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yut-lC-QY7">
+                                                            <rect key="frame" x="0.0" y="0.0" width="168" height="20"/>
+                                                            <subviews>
+                                                                <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="enO-Zx-XlQ">
+                                                                    <rect key="frame" x="-3" y="-4" width="78" height="25"/>
+                                                                    <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="3D4-I0-qQd" id="MgU-kU-yOQ">
+                                                                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                                        <font key="font" metaFont="menu"/>
+                                                                        <menu key="menu" id="lxh-M6-dQ7">
+                                                                            <items>
+                                                                                <menuItem title="Item 1" state="on" id="3D4-I0-qQd"/>
+                                                                                <menuItem title="Item 2" id="YaZ-dK-Lvw"/>
+                                                                                <menuItem title="Item 3" id="YmO-PA-bUm"/>
+                                                                            </items>
+                                                                        </menu>
+                                                                    </popUpButtonCell>
+                                                                    <connections>
+                                                                        <action selector="speakerPopUpButtonChanged:" target="wCA-UG-k48" id="qq2-0V-SmZ"/>
+                                                                    </connections>
+                                                                </popUpButton>
+                                                                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uUI-9t-9ba">
+                                                                    <rect key="frame" x="72" y="-7" width="79" height="32"/>
+                                                                    <buttonCell key="cell" type="push" title="Sample" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Tit-sQ-zc3">
+                                                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                        <font key="font" metaFont="system"/>
+                                                                    </buttonCell>
+                                                                    <connections>
+                                                                        <action selector="speakSampleButtonPressed:" target="wCA-UG-k48" id="6YH-c2-IIq"/>
+                                                                    </connections>
+                                                                </button>
+                                                                <progressIndicator maxValue="100" displayedWhenStopped="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="o0Y-BZ-UHZ">
+                                                                    <rect key="frame" x="152" y="2" width="16" height="16"/>
+                                                                </progressIndicator>
+                                                            </subviews>
+                                                            <visibilityPriorities>
+                                                                <integer value="1000"/>
+                                                                <integer value="1000"/>
+                                                                <integer value="1000"/>
+                                                            </visibilityPriorities>
+                                                            <customSpacing>
+                                                                <real value="3.4028234663852886e+38"/>
+                                                                <real value="3.4028234663852886e+38"/>
+                                                                <real value="3.4028234663852886e+38"/>
+                                                            </customSpacing>
+                                                        </stackView>
                                                     </subviews>
                                                     <visibilityPriorities>
                                                         <integer value="1000"/>
                                                         <integer value="1000"/>
+                                                        <integer value="1000"/>
+                                                        <integer value="1000"/>
                                                     </visibilityPriorities>
                                                     <customSpacing>
+                                                        <real value="3.4028234663852886e+38"/>
+                                                        <real value="3.4028234663852886e+38"/>
                                                         <real value="3.4028234663852886e+38"/>
                                                         <real value="3.4028234663852886e+38"/>
                                                     </customSpacing>
@@ -195,7 +252,7 @@
                                             </constraints>
                                         </view>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="104" id="Gn5-5M-B8e"/>
+                                            <constraint firstAttribute="height" constant="144" id="Gn5-5M-B8e"/>
                                         </constraints>
                                     </box>
                                     <box title="misc" translatesAutoresizingMaskIntoConstraints="NO" id="nEt-qg-eF7">
@@ -298,9 +355,13 @@
                         <outlet property="enableLiveNotificationButton" destination="ACY-bp-F35" id="XO9-GH-lL6"/>
                         <outlet property="miscBox" destination="nEt-qg-eF7" id="mvL-Ix-z1R"/>
                         <outlet property="safariButtonCell" destination="wGq-x5-Aua" id="lb1-w9-hCF"/>
+                        <outlet property="speakSampleButton" destination="uUI-9t-9ba" id="BLj-ip-Ihi"/>
+                        <outlet property="speakSampleProgressIndicator" destination="o0Y-BZ-UHZ" id="NXI-LK-VZ3"/>
                         <outlet property="speakVolumeSlider" destination="NBg-Gf-rw0" id="gzQ-f2-Xwi"/>
                         <outlet property="speakVolumeTitleTextField" destination="lhl-Ab-vvj" id="STj-TK-3lB"/>
                         <outlet property="speakVolumeValueTextField" destination="TgB-HZ-aF1" id="siC-bI-K7H"/>
+                        <outlet property="speakerPopUpButton" destination="enO-Zx-XlQ" id="YwZ-g9-4OC"/>
+                        <outlet property="speakerTitleTextField" destination="0RT-z1-Slf" id="NYZ-cd-1Xa"/>
                     </connections>
                 </viewController>
                 <customObject id="iZj-NB-vz6" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

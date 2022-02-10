@@ -253,7 +253,7 @@ extension NicoManager {
         }
         userNameResolvingOperationQueue.addOperation { [weak self] in
             guard let me = self else { return }
-            // 1. Again, chech if the user name is resolved in previous operation.
+            // 1. Again, check if the user name is resolved in previous operation.
             if let cachedUsername = me.cachedUserNames[userId] {
                 completion(cachedUsername)
                 return

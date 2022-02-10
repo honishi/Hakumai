@@ -20,28 +20,28 @@ final class SpeechManagerTests: XCTestCase {
 
     // swiftlint:disable function_body_length
     @available(macOS 10.14, *)
-    func testIsAcceptableComment() {
+    func testPreCheckComment() {
         let manager = SpeechManager()
         var comment = ""
-        var result: Bool
+        var result: SpeechManager.CommentPreCheckResult
 
         comment = "無職なのになんでカフェいくの？？？？？？？"
-        result = manager.isAcceptableComment(comment)
-        XCTAssert(result == true)
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .accept)
 
         // length: 71
         comment = "初見です。骨皮筋bsゲス出っ歯人中ロングお未婚お下劣目尻ほうれい線口元シワシワ髪質ゴワゴワ体型貧相性格底辺人間力マイナスのむらマコさんわこつ。"
-        result = manager.isAcceptableComment(comment)
-        XCTAssert(result == true)
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .accept)
 
         // length: 110
         comment = "初見です。骨皮筋bsゲス出っ歯人中ロングお未婚お下劣目尻ほうれい線口元シワシワ髪質ゴワゴワ体型貧相性格底辺人間力マイナスのむらマコさんわこつ。初見です。骨皮筋bsゲス出っ歯人中ロングお未婚お下劣目尻ほうれい線口元シワシワ"
-        result = manager.isAcceptableComment(comment)
-        XCTAssert(result == false)
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .reject(.long))
 
         comment = "👄👈🏻💗💗💗"
-        result = manager.isAcceptableComment(comment)
-        XCTAssert(result == true)
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .accept)
 
         comment = """
             🟥🟧🟨🟩🟦🟪🟥🟧🟨🟩🟦🟪🟥🟧🟨🟩
@@ -49,8 +49,8 @@ final class SpeechManagerTests: XCTestCase {
             🟥🟧🟨🟩🟦🟪もこレインボー🟪🟥🟧🟨🟩
             🟥🟧🟨🟩🟦🟪🟥🟧🟨🟩🟦🟪🟥🟧🟨🟩
             """
-        result = manager.isAcceptableComment(comment)
-        XCTAssert(result == false)
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .reject(.manyEmoji))
 
         comment = """
             .　　 ヾヽ
@@ -60,28 +60,72 @@ final class SpeechManagerTests: XCTestCase {
             ―〃-〃―――
             　　ﾚ,,/
             """
-        result = manager.isAcceptableComment(comment)
-        XCTAssert(result == false)
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .reject(.manyLines))
 
         comment = "粨粨粨粨粨粨粨粨粨粨粨粨粨粨粨粨粨粨"
-        result = manager.isAcceptableComment(comment)
-        XCTAssert(result == false)
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .reject(.manySameKanji))
 
         comment = "鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅"
-        result = manager.isAcceptableComment(comment)
-        XCTAssert(result == false)
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .reject(.manySameKanji))
 
         comment = "えええええええええええええええええええええええええええええええええええｗｗｗｗｗｗｗｗｗｗｗｗ"
-        result = manager.isAcceptableComment(comment)
-        XCTAssert(result == true)
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .accept)
 
         comment = "ｗｗｗｗｗｗｗｗｗｗｗｗ"
-        result = manager.isAcceptableComment(comment)
-        XCTAssert(result == true)
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .accept)
 
         comment = "えええええええええええええええええええええええええええええええええええ"
-        result = manager.isAcceptableComment(comment)
-        XCTAssert(result == true)
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .accept)
+
+        comment = "12345678"
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .accept)
+
+        comment = "123456789"
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .reject(.manyNumber))
+
+        comment = "１２３４５６７８"
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .accept)
+
+        comment = "１２３４５６７８９"
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .reject(.manyNumber))
+
+        comment = "44444444"
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .accept)
+
+        comment = "444444444"
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .reject(.manyNumber))
+
+        comment = "４４４４４４４４"
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .accept)
+
+        comment = "４４４４４４４４４"
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .reject(.manyNumber))
+
+        comment = "これは４４４４４４４４円です"
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .accept)
+
+        comment = "これは４４４４４４４４４円です"
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .reject(.manyNumber))
+
+        comment = "４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４４"
+        result = manager.preCheckComment(comment)
+        XCTAssert(result == .reject(.manyNumber))
     }
     // swiftlint:enable function_body_length
 

@@ -70,6 +70,7 @@
 		DB80CA821A256F9A002636E0 /* MessageContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB80CA811A256F9A002636E0 /* MessageContainer.swift */; };
 		DB82B3A11C0724C000EFE3D9 /* SpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB82B3A01C0724C000EFE3D9 /* SpeechManager.swift */; };
 		DB82B3A41C087BA200EFE3D9 /* SpeechManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB82B3A31C087BA200EFE3D9 /* SpeechManagerTests.swift */; };
+		DB97D90027B146DD0088FF3D /* VoicevoxWrapperModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB97D8FF27B146DD0088FF3D /* VoicevoxWrapperModel.swift */; };
 		DB9EFC741A3E974A0087D302 /* NSWindow+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9EFC731A3E974A0087D302 /* NSWindow+Extensions.swift */; };
 		DB9EFC781A3E9EB10087D302 /* PreferenceWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9EFC771A3E9EB10087D302 /* PreferenceWindow.swift */; };
 		DBA414CC1A1A16F300E0CAD3 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA414CB1A1A16F300E0CAD3 /* String+Extensions.swift */; };
@@ -105,6 +106,8 @@
 		DBE093FF1A5869A2004554FD /* HandleNameManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE093FE1A5869A2004554FD /* HandleNameManagerTests.swift */; };
 		DBE094021A586FFC004554FD /* HandleNameManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE094011A586FFC004554FD /* HandleNameManager.swift */; };
 		DBE59AC227495240005230CE /* NotificationPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE59AC127495240005230CE /* NotificationPresenter.swift */; };
+		DBE619DC27AEF4FE000FFB8E /* VoicevoxWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE619DB27AEF4FE000FFB8E /* VoicevoxWrapper.swift */; };
+		DBE619DE27B00566000FFB8E /* AudioLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE619DD27B00566000FFB8E /* AudioLoader.swift */; };
 		DBFA887B1A1BC25A005349AD /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA887A1A1BC25A005349AD /* Chat.swift */; };
 		DBFA88821A1BC8C9005349AD /* Enum.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA88811A1BC8C9005349AD /* Enum.swift */; };
 		DBFA888B1A1C9A56005349AD /* Live.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA888A1A1C9A56005349AD /* Live.swift */; };
@@ -210,6 +213,7 @@
 		DB80CA811A256F9A002636E0 /* MessageContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageContainer.swift; sourceTree = "<group>"; };
 		DB82B3A01C0724C000EFE3D9 /* SpeechManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechManager.swift; sourceTree = "<group>"; };
 		DB82B3A31C087BA200EFE3D9 /* SpeechManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechManagerTests.swift; sourceTree = "<group>"; };
+		DB97D8FF27B146DD0088FF3D /* VoicevoxWrapperModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoicevoxWrapperModel.swift; sourceTree = "<group>"; };
 		DB9EFC731A3E974A0087D302 /* NSWindow+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSWindow+Extensions.swift"; sourceTree = "<group>"; };
 		DB9EFC771A3E9EB10087D302 /* PreferenceWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferenceWindow.swift; sourceTree = "<group>"; };
 		DBA414CB1A1A16F300E0CAD3 /* String+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
@@ -247,6 +251,8 @@
 		DBE093FE1A5869A2004554FD /* HandleNameManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HandleNameManagerTests.swift; sourceTree = "<group>"; };
 		DBE094011A586FFC004554FD /* HandleNameManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HandleNameManager.swift; sourceTree = "<group>"; };
 		DBE59AC127495240005230CE /* NotificationPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationPresenter.swift; sourceTree = "<group>"; };
+		DBE619DB27AEF4FE000FFB8E /* VoicevoxWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoicevoxWrapper.swift; sourceTree = "<group>"; };
+		DBE619DD27B00566000FFB8E /* AudioLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioLoader.swift; sourceTree = "<group>"; };
 		DBFA887A1A1BC25A005349AD /* Chat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
 		DBFA88811A1BC8C9005349AD /* Enum.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enum.swift; sourceTree = "<group>"; };
 		DBFA888A1A1C9A56005349AD /* Live.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Live.swift; sourceTree = "<group>"; };
@@ -463,6 +469,7 @@
 				DBE093F61A585EC5004554FD /* NicoManager */,
 				DB22A636272D005700E2177D /* RankingManager */,
 				DB82B39F1C07248700EFE3D9 /* SpeechManager */,
+				DB97D8FE27B146C20088FF3D /* VoicevoxWrapper */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -509,9 +516,19 @@
 		DB82B39F1C07248700EFE3D9 /* SpeechManager */ = {
 			isa = PBXGroup;
 			children = (
+				DBE619DD27B00566000FFB8E /* AudioLoader.swift */,
 				DB82B3A01C0724C000EFE3D9 /* SpeechManager.swift */,
 			);
 			path = SpeechManager;
+			sourceTree = "<group>";
+		};
+		DB97D8FE27B146C20088FF3D /* VoicevoxWrapper */ = {
+			isa = PBXGroup;
+			children = (
+				DBE619DB27AEF4FE000FFB8E /* VoicevoxWrapper.swift */,
+				DB97D8FF27B146DD0088FF3D /* VoicevoxWrapperModel.swift */,
+			);
+			path = VoicevoxWrapper;
 			sourceTree = "<group>";
 		};
 		DBA414CA1A1A13FC00E0CAD3 /* Models */ = {
@@ -979,6 +996,7 @@
 				DBAFE966266F501A00538916 /* AFError+Extensions.swift in Sources */,
 				DB2AE0C41A0EE2FD00B1CE4D /* AppDelegate.swift in Sources */,
 				DB761C9B2785768100D794AB /* AppearanceMonitorView.swift in Sources */,
+				DBE619DE27B00566000FFB8E /* AudioLoader.swift in Sources */,
 				DB576ED02657A4980041050A /* AuthManager.swift in Sources */,
 				DB576ED32657A5BC0041050A /* AuthModel.swift in Sources */,
 				DB15AF9A26567AF1009DACBE /* AuthViewController.swift in Sources */,
@@ -1047,6 +1065,8 @@
 				DB414C071A4810A5008D2F40 /* UserViewController.swift in Sources */,
 				DBA541E31A4821D4005FF218 /* UserWindow.swift in Sources */,
 				DB414C091A481138008D2F40 /* UserWindowController.swift in Sources */,
+				DBE619DC27AEF4FE000FFB8E /* VoicevoxWrapper.swift in Sources */,
+				DB97D90027B146DD0088FF3D /* VoicevoxWrapperModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1216,7 +1236,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hakumai/Hakumai.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2120;
+				CURRENT_PROJECT_VERSION = 2130;
 				DEVELOPMENT_TEAM = N4SRN3NAQ3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Hakumai/Info.plist;
@@ -1225,7 +1245,7 @@
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
 				);
-				MARKETING_VERSION = 2.12.0;
+				MARKETING_VERSION = 2.13.0;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1249,7 +1269,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hakumai/Hakumai.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2120;
+				CURRENT_PROJECT_VERSION = 2130;
 				DEVELOPMENT_TEAM = N4SRN3NAQ3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Hakumai/Info.plist;
@@ -1258,7 +1278,7 @@
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
 				);
-				MARKETING_VERSION = 2.12.0;
+				MARKETING_VERSION = 2.13.0;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
