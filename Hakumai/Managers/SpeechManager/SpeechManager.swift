@@ -59,7 +59,7 @@ final class SpeechManager: NSObject {
 
     struct Speech {
         let text: String
-        let audioLoader: AudioLoader
+        let audioLoader: AudioLoaderType
     }
 
     // MARK: - Properties
@@ -314,7 +314,7 @@ private extension SpeechManager {
         return VoiceSpeed(adjusted)
     }
 
-    func listenStateChangeForExclusiveAudioLoad(state: AudioLoader.LoadState, speech: Speech) {
+    func listenStateChangeForExclusiveAudioLoad(state: AudioLoaderState, speech: Speech) {
         switch state {
         case .notLoaded:
             break
@@ -404,11 +404,11 @@ private extension NSRegularExpression {
 }
 
 private extension Array where Element == SpeechManager.Speech {
-    func audioLoaders(state: AudioLoader.LoadState) -> [AudioLoader] {
+    func audioLoaders(state: AudioLoaderState) -> [AudioLoaderType] {
         return map { $0.audioLoader }.filter { $0.state == state }
     }
 
-    func firstAudioLoader(state: AudioLoader.LoadState) -> AudioLoader? {
+    func firstAudioLoader(state: AudioLoaderState) -> AudioLoaderType? {
         return audioLoaders(state: state).first
     }
 

@@ -8,22 +8,35 @@
 
 import Foundation
 
-final class AudioLoader {
-    enum LoadState: Equatable {
-        case notLoaded, loading, loaded(Data), failed
-    }
-    typealias Listener = ((LoadState) -> Void)
+protocol AudioLoaderType {
+    var text: String { get }
+    var state: AudioLoaderState { get }
 
-    private(set) var state: LoadState = .notLoaded
+    func startLoad(speedScale: Float, volumeScale: Float, speaker: Int)
+    func setStateChangeListener(_ listener: AudioLoaderStateChangeListener?)
+}
 
+typealias AudioLoaderStateChangeListener = ((AudioLoaderState) -> Void)
+
+enum AudioLoaderState: Equatable {
+    case notLoaded, loading, loaded(Data), failed
+}
+
+final class AudioLoader: AudioLoaderType {
     let text: String
+    private(set) var state: AudioLoaderState = .notLoaded
 
-    private var listener: Listener?
-    private let voicevoxWrapper: VoicevoxWrapperType = VoicevoxWrapper()
-    private let cache = AudioCache.shared
+    private let voicevoxWrapper: VoicevoxWrapperType
+    private let audioCacher: AudioCacherType
+    private var listener: AudioLoaderStateChangeListener?
 
-    init(text: String) {
+    init(text: String,
+         voicevoxWrapper: VoicevoxWrapperType = VoicevoxWrapper(),
+         audioCacher: AudioCacherType = AudioCacher.shared
+    ) {
         self.text = text
+        self.voicevoxWrapper = voicevoxWrapper
+        self.audioCacher = audioCacher
     }
 
     deinit { log.debug("") }
@@ -32,7 +45,7 @@ final class AudioLoader {
         state = .loading
         listener?(state)
 
-        if let cached = cache.get(
+        if let cached = audioCacher.get(
             speedScale: speedScale,
             volumeScale: volumeScale,
             speaker: speaker,
@@ -66,7 +79,7 @@ final class AudioLoader {
         }
     }
 
-    func setStateChangeListener(_ listener: Listener?) {
+    func setStateChangeListener(_ listener: AudioLoaderStateChangeListener?) {
         self.listener = listener
         self.listener?(state)
     }
@@ -79,71 +92,9 @@ private extension AudioLoader {
             log.debug("Skip caching audio data. (long) [\(text)/\(data)]")
             return
         }
-        cache.set(
+        audioCacher.set(
             speedScale: speedScale, volumeScale: volumeScale,
             speaker: speaker, text: text, data: data)
         log.debug("Cached audio data. [\(text)/\(data)]")
-    }
-}
-
-private class AudioCache: NSObject {
-    class DataWrapper: CustomStringConvertible {
-        let speedScale: Float
-        let volumeScale: Float
-        let speaker: Int
-        let text: String
-        let data: Data
-
-        var description: String { "\(speedScale)/\(volumeScale)/\(speaker)/\(text)/\(data)"}
-
-        init(speedScale: Float, volumeScale: Float, speaker: Int, text: String, data: Data) {
-            self.speedScale = speedScale
-            self.volumeScale = volumeScale
-            self.speaker = speaker
-            self.text = text
-            self.data = data
-        }
-
-        deinit { log.debug("") }
-    }
-
-    static let shared = AudioCache()
-
-    private let cache = NSCache<NSString, DataWrapper>()
-
-    override init() {
-        super.init()
-        cache.delegate = self
-        cache.countLimit = 100
-    }
-
-    deinit { log.debug("") }
-
-    func get(speedScale: Float, volumeScale: Float, speaker: Int, text: String) -> Data? {
-        let key = cacheKey(speedScale, volumeScale, speaker, text)
-        return cache.object(forKey: key)?.data
-    }
-
-    func set(speedScale: Float, volumeScale: Float, speaker: Int, text: String, data: Data) {
-        let key = cacheKey(speedScale, volumeScale, speaker, text)
-        let object = DataWrapper(
-            speedScale: speedScale,
-            volumeScale: volumeScale,
-            speaker: speaker,
-            text: text,
-            data: data)
-        cache.setObject(object, forKey: key)
-    }
-}
-
-extension AudioCache: NSCacheDelegate {
-    func cache(_ cache: NSCache<AnyObject, AnyObject>, willEvictObject obj: Any) {
-        log.debug("Audio cache evicted: \(obj)")
-    }
-}
-
-private extension AudioCache {
-    func cacheKey(_ speedScale: Float, _ volumeScale: Float, _ speaker: Int, _ text: String) -> NSString {
-        return "\(speedScale):\(volumeScale):\(speaker):\(text.hashValue)" as NSString
     }
 }
