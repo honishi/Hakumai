@@ -9,6 +9,8 @@
 import Foundation
 import AVFoundation
 
+let maxCommentLengthSkippingDuplicate = 10
+
 private let dequeuSpeechQueueInterval: TimeInterval = 0.25
 private let maxSpeechCountForRefresh = 30
 private let maxRecentSpeechTextsCount = 50
@@ -224,12 +226,11 @@ extension SpeechManager {
         }
 
         let isUniqueComment = recentSpeechTexts.filter { $0 == comment }.isEmpty
-        let isShortComment = comment.count < 10
-        if !isUniqueComment && !isShortComment {
-            return .reject(.duplicate)
+        let isShortComment = comment.count <= maxCommentLengthSkippingDuplicate
+        if isUniqueComment || isShortComment {
+            return .accept
         }
-
-        return .accept
+        return .reject(.duplicate)
     }
 }
 
