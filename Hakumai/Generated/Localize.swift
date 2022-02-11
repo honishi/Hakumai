@@ -262,6 +262,8 @@ internal enum L10n {
   internal static let voicevoxNotFound = L10n.tr("Localizable", "voicevox_not_found")
   /// Speaker (VOICEVOX)
   internal static let voicevoxSpeaker = L10n.tr("Localizable", "voicevox_speaker")
+  /// VOICEVOX Website
+  internal static let voicevoxWebsite = L10n.tr("Localizable", "voicevox_website")
   /// Window
   internal static let window = L10n.tr("Localizable", "window")
   /// Zoom

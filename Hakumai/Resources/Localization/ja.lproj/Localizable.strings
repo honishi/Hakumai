@@ -156,6 +156,7 @@
 "comment_speaking" = "コメント読み上げ (macOS 10.14 以降が必要)";
 "speak_volume" = "読み上げボリューム";
 "voicevox_speaker" = "キャラクター (VOICEVOX)";
+"voicevox_website" = "VOICEVOX ホームページ";
 "speaker_sample" = "サンプル";
 "voicevox_not_found" = "VOICEVOX 未検出";
 "misc" = "その他";

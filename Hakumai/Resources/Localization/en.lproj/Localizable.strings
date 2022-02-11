@@ -156,6 +156,7 @@
 "comment_speaking" = "Comment Speech (Requires macOS 10.14-)";
 "speak_volume" = "Speech Volume";
 "voicevox_speaker" = "Speaker (VOICEVOX)";
+"voicevox_website" = "VOICEVOX Website";
 "speaker_sample" = "Sample";
 "voicevox_not_found" = "VOICEVOX Not Found";
 "misc" = "Misc";
