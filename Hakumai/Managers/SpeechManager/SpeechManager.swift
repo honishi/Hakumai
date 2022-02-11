@@ -68,9 +68,9 @@ final class SpeechManager: NSObject {
     private var trashQueue: [Speech] = []
 
     // min(normal): 1.0, fast: 2.0
-    private var voiceSpeed: Float = 1.0
+    private var voiceSpeed = VoiceSpeed.default
     // min: 0, max(normal): 100
-    private var voiceVolume = 100
+    private var voiceVolume = VoiceVolume.default
     private var voiceSpeaker = 0
     private var timer: Timer?
 
@@ -130,7 +130,7 @@ extension SpeechManager {
 
     // min/max: 0-100
     func setVoiceVolume(_ volume: Int) {
-        voiceVolume = max(min(volume, 100), 0)
+        voiceVolume = VoiceVolume(volume)
         log.debug("set volume: \(voiceVolume)")
     }
 
@@ -180,13 +180,13 @@ extension SpeechManager {
 
         log.debug("Q:[\(speechQueue.count)] "
                     + "Act:[\(speech.audioLoader.state)] "
-                    + "Sp:[\(voiceSpeed)/\(voiceSpeed.asVoicevoxSpeedScale)/\(voiceSpeed.asAVSpeechSynthesizerSpeedRate)] "
+                    + "Sp:[\(voiceSpeed)/\(voiceSpeed.asVoicevox)/\(voiceSpeed.asAVSpeechSynthesizer)] "
                     + "Tx:[\(speech.text)]")
         switch speech.audioLoader.state {
         case .notLoaded:
             speech.audioLoader.startLoad(
-                speedScale: voiceSpeed.asVoicevoxSpeedScale,
-                volumeScale: voiceVolume.asVoicevoxVolumeScale,
+                speedScale: voiceSpeed.asVoicevox,
+                volumeScale: voiceVolume.asVoicevox,
                 speaker: voiceSpeaker)
             fallthrough
         case .loading:
@@ -275,6 +275,7 @@ private extension SpeechManager {
         guard tooManySpeechesInQueue else { return }
         trashQueue = speechQueue
         speechQueue.removeAll()
+        voiceSpeed = VoiceSpeed.default
         appendToSpeechQueue(text: speechTextRefresh)
     }
 
@@ -294,22 +295,22 @@ private extension SpeechManager {
         if let firstNotLoaded = allSpeeches.firstAudioLoader(state: .notLoaded) {
             logPreloadStatus("Requesting load for [\(firstNotLoaded.text)].")
             firstNotLoaded.startLoad(
-                speedScale: voiceSpeed.asVoicevoxSpeedScale,
-                volumeScale: voiceVolume.asVoicevoxVolumeScale,
+                speedScale: voiceSpeed.asVoicevox,
+                volumeScale: voiceVolume.asVoicevox,
                 speaker: voiceSpeaker)
             return
         }
         logPreloadStatus("Seems no audio needs to request load.")
     }
 
-    func adjustedVoiceSpeed(currentCommentLength current: Int, remainingCommentLength remaining: Int, currentVoiceSpeed: Float) -> Float {
+    func adjustedVoiceSpeed(currentCommentLength current: Int, remainingCommentLength remaining: Int, currentVoiceSpeed: VoiceSpeed) -> VoiceSpeed {
         let total = Float(current) + Float(remaining)
         let averageCommentLength: Float = 20
         let normalCommentCount: Float = 5
         let candidateSpeed = max(min(total / averageCommentLength / normalCommentCount, 2), 1)
-        let adjusted = remaining == 0 ? candidateSpeed : max(currentVoiceSpeed, candidateSpeed)
+        let adjusted = remaining == 0 ? candidateSpeed : max(currentVoiceSpeed.value, candidateSpeed)
         // log.debug("current: \(current) remaining: \(remaining) total: \(total) candidate: \(candidateSpeed) adjusted: \(adjusted)")
-        return adjusted
+        return VoiceSpeed(adjusted)
     }
 
     func listenStateChangeForExclusiveAudioLoad(state: AudioLoader.LoadState, speech: Speech) {
@@ -333,8 +334,8 @@ private extension SpeechManager {
         case .failed:
             speakOnAVSpeechSynthesizer(
                 comment: speech.text,
-                speed: voiceSpeed.asAVSpeechSynthesizerSpeedRate,
-                volume: voiceVolume.asAVSpeechSynthesizerVolume)
+                speed: voiceSpeed.asAVSpeechSynthesizer,
+                volume: voiceVolume.asAVSpeechSynthesizer)
         }
     }
 
@@ -355,26 +356,50 @@ private extension SpeechManager {
     }
 }
 
+private struct VoiceSpeed: CustomStringConvertible {
+    // min~max: 1.0~2.0
+    let value: Float
+    var description: String { String(value) }
+
+    static var `default`: VoiceSpeed { VoiceSpeed(1) }
+
+    init(_ value: Float) {
+        self.value =  max(min(value, 2), 1)
+    }
+}
+
+private extension VoiceSpeed {
+    // min~max: 1.0~2.0 -> 1.0~1.7
+    var asVoicevox: Float { 1.0 + (value - 1) * 0.7 }
+
+    // min~max: 1.0~2.0 -> 0.5~0.75
+    var asAVSpeechSynthesizer: Float { 0.5 + (value - 1) * 0.25 }
+}
+
+private struct VoiceVolume: CustomStringConvertible {
+    // min~max: 0~100
+    let value: Int
+    var description: String { String(value) }
+
+    static var `default`: VoiceVolume { VoiceVolume(100) }
+
+    init(_ value: Int) {
+        self.value = max(min(value, 100), 0)
+    }
+}
+
+private extension VoiceVolume {
+    // min~max: 0~100 -> 0.0~1.0
+    var asVoicevox: Float { Float(value) / 100.0 }
+
+    // min~max: 0~100 -> 0.0~1.0
+    var asAVSpeechSynthesizer: Float { Float(value) / 100.0 }
+}
+
 private extension NSRegularExpression {
     func matchCount(in text: String) -> Int {
         return numberOfMatches(in: text, options: [], range: NSRange(0..<text.count))
     }
-}
-
-private extension Float {
-    // min~max: 1.0~2.0 -> 1.0~1.7
-    var asVoicevoxSpeedScale: Float { 1.0 + (self - 1) * 0.7 }
-
-    // min~max: 1.0~2.0 -> 0.5~0.75
-    var asAVSpeechSynthesizerSpeedRate: Float { 0.5 + (self - 1) * 0.25 }
-}
-
-private extension Int {
-    // min~max: 0~100 -> 0.0~1.0
-    var asVoicevoxVolumeScale: Float { Float(self) / 100 }
-
-    // min~max: 0~100 -> 0.0~1.0
-    var asAVSpeechSynthesizerVolume: Float { Float(self) / 100.0 }
 }
 
 private extension Array where Element == SpeechManager.Speech {
