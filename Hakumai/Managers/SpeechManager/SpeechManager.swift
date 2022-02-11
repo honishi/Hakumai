@@ -9,12 +9,11 @@
 import Foundation
 import AVFoundation
 
-let maxCommentLengthSkippingDuplicate = 10
-
 private let dequeuSpeechQueueInterval: TimeInterval = 0.25
 private let maxSpeechCountForRefresh = 30
 private let maxRecentSpeechTextsCount = 50
 private let maxPreloadAudioCount = 5
+private let maxCommentLengthSkippingDuplicate = 10
 
 // https://stackoverflow.com/a/38409026/13220031
 // See unicode list at https://0g0.org/ or https://0g0.org/unicode-list/
@@ -259,7 +258,10 @@ private extension SpeechManager {
     func appendToSpeechQueue(text: String) {
         let speech = Speech(
             text: text,
-            audioLoader: AudioLoader(text: text)
+            audioLoader: AudioLoader(
+                text: text,
+                maxTextLengthForEnablingCache: maxCommentLengthSkippingDuplicate
+            )
         )
         speechQueue.append(speech)
     }

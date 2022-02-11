@@ -28,15 +28,18 @@ final class AudioLoader: AudioLoaderType {
 
     private let voicevoxWrapper: VoicevoxWrapperType
     private let audioCacher: AudioCacherType
+    private let maxTextLengthForEnablingCache: Int
     private var listener: AudioLoaderStateChangeListener?
 
     init(text: String,
          voicevoxWrapper: VoicevoxWrapperType = VoicevoxWrapper(),
-         audioCacher: AudioCacherType = AudioCacher.shared
+         audioCacher: AudioCacherType = AudioCacher.shared,
+         maxTextLengthForEnablingCache: Int
     ) {
         self.text = text
         self.voicevoxWrapper = voicevoxWrapper
         self.audioCacher = audioCacher
+        self.maxTextLengthForEnablingCache = maxTextLengthForEnablingCache
     }
 
     deinit { log.debug("") }
@@ -107,7 +110,7 @@ private extension AudioLoader {
     }
 
     func cacheDataIfConditionMet(speedScale: Float, volumeScale: Float, speaker: Int, text: String, data: Data) {
-        let isShortComment = text.count <= maxCommentLengthSkippingDuplicate
+        let isShortComment = text.count <= maxTextLengthForEnablingCache
         guard isShortComment else {
             log.debug("Skip caching audio data. (long) [\(text)/\(data)]")
             return
