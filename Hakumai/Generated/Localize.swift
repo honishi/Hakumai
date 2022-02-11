@@ -28,6 +28,8 @@ internal enum L10n {
   internal static let alwaysOnTop = L10n.tr("Localizable", "always_on_top")
   /// Auto URL
   internal static let autoUrl = L10n.tr("Localizable", "auto_url")
+  /// Auto enter URL from browser.
+  internal static let autoUrlDescription = L10n.tr("Localizable", "auto_url_description")
   /// Bring All to Front
   internal static let bringAllToFront = L10n.tr("Localizable", "bring_all_to_front")
   /// Browser to be Integrate With
@@ -228,6 +230,8 @@ internal enum L10n {
   internal static let speak = L10n.tr("Localizable", "speak")
   /// Speech
   internal static let speakComment = L10n.tr("Localizable", "speak_comment")
+  /// Speak comments. VOICEVOX app is used if available.
+  internal static let speakCommentDescription = L10n.tr("Localizable", "speak_comment_description")
   /// Speech Volume
   internal static let speakVolume = L10n.tr("Localizable", "speak_volume")
   /// Sample

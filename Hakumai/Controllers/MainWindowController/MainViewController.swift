@@ -834,7 +834,9 @@ private extension MainViewController {
         giftPointsLabel.stringValue = defaultLabelValue
 
         autoUrlButton.title = L10n.autoUrl
+        autoUrlButton.toolTip = L10n.autoUrlDescription
         speakButton.title = L10n.speakComment
+        speakButton.toolTip = L10n.speakCommentDescription
 
         if #available(macOS 10.14, *) {
             speakButton.isHidden = false
