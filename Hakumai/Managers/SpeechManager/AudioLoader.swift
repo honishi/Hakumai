@@ -57,6 +57,20 @@ final class AudioLoader: AudioLoaderType {
             return
         }
 
+        requestAudio(speedScale: speedScale, volumeScale: volumeScale, speaker: speaker)
+    }
+
+    func setStateChangeListener(_ listener: AudioLoaderStateChangeListener?) {
+        self.listener = listener
+        self.listener?(state)
+    }
+}
+
+private let maxRetryCount = 3
+private let retryDelayInSeconds: Double = 1
+
+private extension AudioLoader {
+    func requestAudio(speedScale: Float, volumeScale: Float, speaker: Int, requestCount: Int = 0) {
         voicevoxWrapper.requestAudio(
             text: text,
             speedScale: speedScale,
@@ -66,26 +80,32 @@ final class AudioLoader: AudioLoaderType {
             guard let me = self else { return }
             switch $0 {
             case .success(let data):
-                log.debug("loaded: \(data), \(me.text)")
+                log.debug("loaded: [\(me.text)] [\(data)]")
                 me.state = .loaded(data)
                 me.cacheDataIfConditionMet(
                     speedScale: speedScale, volumeScale: volumeScale,
                     speaker: speaker, text: me.text, data: data)
             case .failure(let error):
-                log.error("failed: \(error), \(me.text)")
+                log.error("failed: [\(error)] [\(me.text)]")
+                log.debug("retry: \(requestCount)/\(maxRetryCount) [\(me.text)]")
+                if requestCount < maxRetryCount {
+                    let delay = DispatchTime.now() + retryDelayInSeconds
+                    DispatchQueue.global(qos: .default).asyncAfter(deadline: delay) {
+                        me.requestAudio(
+                            speedScale: speedScale,
+                            volumeScale: volumeScale,
+                            speaker: speaker,
+                            requestCount: requestCount + 1)
+                    }
+                    return
+                }
+                log.debug("retry failed: \(requestCount)/\(maxRetryCount) [\(me.text)]")
                 me.state = .failed
             }
             me.listener?(me.state)
         }
     }
 
-    func setStateChangeListener(_ listener: AudioLoaderStateChangeListener?) {
-        self.listener = listener
-        self.listener?(state)
-    }
-}
-
-private extension AudioLoader {
     func cacheDataIfConditionMet(speedScale: Float, volumeScale: Float, speaker: Int, text: String, data: Data) {
         let isShortComment = text.count <= maxCommentLengthSkippingDuplicate
         guard isShortComment else {
