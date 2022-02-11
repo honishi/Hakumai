@@ -83,26 +83,33 @@ private extension AudioLoader {
             guard let me = self else { return }
             switch $0 {
             case .success(let data):
-                log.debug("loaded: [\(me.text)] [\(data)]")
+                log.debug("Loaded: [\(me.text)] [\(data)]")
                 me.state = .loaded(data)
                 me.cacheDataIfConditionMet(
                     speedScale: speedScale, volumeScale: volumeScale,
                     speaker: speaker, text: me.text, data: data)
             case .failure(let error):
-                log.error("failed: [\(error)] [\(me.text)]")
-                log.debug("retry: \(requestCount)/\(maxRetryCount) [\(me.text)]")
-                if requestCount < maxRetryCount {
-                    let delay = DispatchTime.now() + retryDelayInSeconds
-                    DispatchQueue.global(qos: .default).asyncAfter(deadline: delay) {
-                        me.requestAudio(
-                            speedScale: speedScale,
-                            volumeScale: volumeScale,
-                            speaker: speaker,
-                            requestCount: requestCount + 1)
+                log.error("Failed: [\(error)] [\(me.text)]")
+                switch error {
+                case .couldNotConnect:
+                    log.debug("Seems voicevox app is not available.")
+                case .connectionLost:
+                    if requestCount < maxRetryCount {
+                        log.debug("Retrying: \(requestCount)/\(maxRetryCount) [\(me.text)]")
+                        let delay = DispatchTime.now() + retryDelayInSeconds
+                        DispatchQueue.global(qos: .default).asyncAfter(deadline: delay) {
+                            me.requestAudio(
+                                speedScale: speedScale,
+                                volumeScale: volumeScale,
+                                speaker: speaker,
+                                requestCount: requestCount + 1)
+                        }
+                        return
                     }
-                    return
+                case .internal:
+                    break
                 }
-                log.debug("retry failed: \(requestCount)/\(maxRetryCount) [\(me.text)]")
+                log.debug("Finished as failed: \(requestCount)/\(maxRetryCount) [\(me.text)]")
                 me.state = .failed
             }
             me.listener?(me.state)
