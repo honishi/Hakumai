@@ -12,6 +12,7 @@ import AVFoundation
 private let dequeuSpeechQueueInterval: TimeInterval = 0.25
 private let maxSpeechCountForRefresh = 30
 private let maxRecentSpeechTextsCount = 50
+private let maxPreloadAudioCount = 5
 
 // https://stackoverflow.com/a/38409026/13220031
 // See unicode list at https://0g0.org/ or https://0g0.org/unicode-list/
@@ -286,6 +287,10 @@ private extension SpeechManager {
             logPreloadStatus("Audio load is in progress for [\(firstLoading.text)].")
             return
         }
+        if allSpeeches.loadedAudioLoadersCount > maxPreloadAudioCount {
+            logPreloadStatus("Already preloaded enough audio.")
+            return
+        }
         if let firstNotLoaded = allSpeeches.firstAudioLoader(state: .notLoaded) {
             logPreloadStatus("Requesting load for [\(firstNotLoaded.text)].")
             firstNotLoaded.startLoad(
@@ -373,8 +378,20 @@ private extension Int {
 }
 
 private extension Array where Element == SpeechManager.Speech {
+    func audioLoaders(state: AudioLoader.LoadState) -> [AudioLoader] {
+        return map { $0.audioLoader }.filter { $0.state == state }
+    }
+
     func firstAudioLoader(state: AudioLoader.LoadState) -> AudioLoader? {
-        return map { $0.audioLoader }.filter { $0.state == state }.first
+        return audioLoaders(state: state).first
+    }
+
+    var loadedAudioLoadersCount: Int {
+        map { $0.audioLoader }
+            .filter {
+                if case .loaded = $0.state { return true }
+                return false
+            }.count
     }
 }
 
