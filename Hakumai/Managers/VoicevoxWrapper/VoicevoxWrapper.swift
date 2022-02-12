@@ -27,7 +27,7 @@ enum VoicevoxWrapperError: Error {
     // VOICEVOX app is not available.
     case couldNotConnect
     // VOICEVOX app is available and connected but connection has been lost.
-    case connectionLost
+    case lostConnection
     case `internal`
 }
 
@@ -185,7 +185,7 @@ private extension Error {
         guard let code = asSessionTaskFailedErrorCode else { return .internal }
         switch code {
         case -1004: return .couldNotConnect
-        case -1005: return .connectionLost
+        case -1005: return .lostConnection
         default:    return .internal
         }
     }

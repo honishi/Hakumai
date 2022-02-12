@@ -93,7 +93,7 @@ private extension AudioLoader {
                 switch error {
                 case .couldNotConnect:
                     log.debug("Seems voicevox app is not available.")
-                case .connectionLost:
+                case .lostConnection:
                     if requestCount < maxRetryCount {
                         log.debug("Retrying: \(requestCount)/\(maxRetryCount) [\(me.text)]")
                         let delay = DispatchTime.now() + retryDelayInSeconds
