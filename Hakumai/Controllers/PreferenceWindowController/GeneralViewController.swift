@@ -11,6 +11,7 @@ import AppKit
 import AVFoundation
 
 private let sampleVoiceText = "優しく手を差し伸べてくれてる人の声に少しでも耳を傾けてほしい。傷つけようとしてる人より遥かに多いはずなのに"
+private let voicevoxSiteUrl = "https://voicevox.hiroshiba.jp/"
 
 final class GeneralViewController: NSViewController {
     struct SpeakerPopUpItem: Equatable {
@@ -31,6 +32,7 @@ final class GeneralViewController: NSViewController {
     @IBOutlet private weak var speakVolumeValueTextField: NSTextField!
     @IBOutlet private weak var speakVolumeSlider: NSSlider!
     @IBOutlet private weak var speakerTitleTextField: NSTextField!
+    @IBOutlet private weak var voicevoxSiteButton: NSButton!
 
     // XXX: Make the following propeties `weak`.
     // We need to refactor `PreferenceWindowController` which
@@ -80,6 +82,7 @@ private extension GeneralViewController {
         commentSpeakingBox.title = L10n.commentSpeaking
         speakVolumeTitleTextField.stringValue = "\(L10n.speakVolume):"
         speakerTitleTextField.stringValue = "\(L10n.voicevoxSpeaker):"
+        voicevoxSiteButton.title = L10n.voicevoxWebsite
         speakSampleButton.title = L10n.speakerSample
 
         miscBox.title = L10n.misc
@@ -93,6 +96,7 @@ private extension GeneralViewController {
         speakVolumeTitleTextField.isEnabled = false
         speakVolumeValueTextField.isEnabled = false
         speakVolumeSlider.isEnabled = false
+        voicevoxSiteButton.isEnabled = false
     }
 
     func disableSpeakerComponents() {
@@ -148,6 +152,11 @@ private extension GeneralViewController {
 
     @IBAction func speakSampleButtonPressed(_ sender: Any) {
         speakSample()
+    }
+
+    @IBAction func voicevoxSiteButtonPressed(_ sender: Any) {
+        guard let url = URL(string: voicevoxSiteUrl) else { return }
+        NSWorkspace.shared.open(url)
     }
 
     func speakSample() {

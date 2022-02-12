@@ -95,7 +95,9 @@
 "live_title" = "放送タイトル";
 "live_url_text_field_placeholder" = "⌘L (放送URL, 放送番号)";
 "auto_url" = "URL自動入力";
+"auto_url_description" = "ブラウザのURLを自動入力します。";
 "speak_comment" = "読み上げ";
+"speak_comment_description" = "コメントを読み上げます。VOICEVOX が起動していれば使用します。";
 "visitor_count" = "来場者";
 "login_completed" = "ログインしました.";
 "logout_completed" = "ログアウトしました.";
@@ -154,6 +156,7 @@
 "comment_speaking" = "コメント読み上げ (macOS 10.14 以降が必要)";
 "speak_volume" = "読み上げボリューム";
 "voicevox_speaker" = "キャラクター (VOICEVOX)";
+"voicevox_website" = "VOICEVOX ホームページ";
 "speaker_sample" = "サンプル";
 "voicevox_not_found" = "VOICEVOX 未検出";
 "misc" = "その他";

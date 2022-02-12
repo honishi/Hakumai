@@ -4,9 +4,6 @@ layout: default
 
 Niconama Comment Viewer Alternative for macOS.
 
-<a href="https://twitter.com/share" class="twitter-share-button" data-text="Hakumai - Mac用ニコ生コメントビューア">Tweet</a>
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-
 <a href="https://hakumai.s3.amazonaws.com/Hakumai.{{site.binary_version}}.zip" class="button button-primary" onclick="ga('send', 'event', 'app', 'download', 'Hakumai.{{site.binary_version}}.zip');"><i class="fa fa-download"></i>
 Download</a>
 v{{site.binary_version}} / {{site.binary_date}} /
@@ -21,8 +18,9 @@ Hakumai は macOS で動作するニコニコ生放送用のコメントビュ�
 
 ### Requirements
 
-* macOS 10.12 Sierra 以降
-* (コメント読み上げには macOS 10.14 Mojave 以降が必要)
+* macOS 10.14 Mojave 以降
+* VOICEVOX 連携には別途 <a href="https://voicevox.hiroshiba.jp/" target="_blank">VOICEVOX ダウンロード</a>
+* (コメント読み上げ未使用時 macOS 10.12 Sierra 以降)
 
 <img src="./image/food_kome_masu.png" width="160px">
 
@@ -58,7 +56,7 @@ Hakumai は macOS で動作するニコニコ生放送用のコメントビュ�
 
 <div class="small-text thanks">
 
-あすぷす / イノシシ / うまごん / うんさい / 大原直人 / 加瀬ちゃん / きょろちゃん / ジャスティス名川 / とろみ / 七原浩平 / ビッグニート / 向日葵 / ヘクトパスカル山田 / もっちゃん / 森一真 / らみあ
-/ りーこ
+あすぷす / イノシシ / うまごん / うんさい / 加瀬ちゃん / きょろちゃん / ジャスティス名川 / とろみ / 七原浩平 / ビッグニート / 向日葵 / ヘクトパスカル山田 / もっちゃん / 森一真 / らみあ / りーこ
+/ VOICEVOX
 
 </div>

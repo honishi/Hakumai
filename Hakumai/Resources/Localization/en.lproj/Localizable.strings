@@ -95,7 +95,9 @@
 "live_title" = "Live Title";
 "live_url_text_field_placeholder" = "⌘L (Live URL, Live#)";
 "auto_url" = "Auto URL";
+"auto_url_description" = "Auto enter URL from browser.";
 "speak_comment" = "Speech";
+"speak_comment_description" = "Speak comments. VOICEVOX app is used if available.";
 "visitor_count" = "Visitors";
 "login_completed" = "Login completed.";
 "logout_completed" = "Logout completed.";
@@ -154,6 +156,7 @@
 "comment_speaking" = "Comment Speech (Requires macOS 10.14-)";
 "speak_volume" = "Speech Volume";
 "voicevox_speaker" = "Speaker (VOICEVOX)";
+"voicevox_website" = "VOICEVOX Website";
 "speaker_sample" = "Sample";
 "voicevox_not_found" = "VOICEVOX Not Found";
 "misc" = "Misc";

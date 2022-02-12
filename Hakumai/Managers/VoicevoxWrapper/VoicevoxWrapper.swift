@@ -24,7 +24,10 @@ struct VoicevoxSpeaker {
 }
 
 enum VoicevoxWrapperError: Error {
-    // XXX: More cases.
+    // VOICEVOX app is not available.
+    case couldNotConnect
+    // VOICEVOX app is available and connected but connection has been lost.
+    case lostConnection
     case `internal`
 }
 
@@ -80,7 +83,7 @@ private extension VoicevoxWrapper {
             completion(Result.success(decoded.toVoicevoxSpeakers()))
         case .failure(let error):
             log.error(error)
-            completion(Result.failure(.internal))
+            completion(Result.failure(error.asVoicevoxWrapperError))
         }
     }
 
@@ -118,7 +121,7 @@ private extension VoicevoxWrapper {
             requestSynthesis(data: _data, config: config, completion: completion)
         case .failure(let error):
             log.error("[\(config.text)] \(error)")
-            completion(Result.failure(.internal))
+            completion(Result.failure(error.asVoicevoxWrapperError))
         }
     }
 
@@ -144,7 +147,7 @@ private extension VoicevoxWrapper {
             completion(Result.success(data))
         case .failure(let error):
             log.error("[\(config.text)] \(error)")
-            completion(Result.failure(VoicevoxWrapperError.internal))
+            completion(Result.failure(error.asVoicevoxWrapperError))
         }
     }
 }
@@ -163,5 +166,41 @@ private extension Array where Element == VoicevoxSpeakerResponse {
                 )
             }
         }.flatMap { $0 }
+    }
+}
+
+private extension Error {
+    // Sample [Could not connect to the server.]:
+    // -----
+    // sessionTaskFailed(error: Error Domain=NSURLErrorDomain Code=-1004 "Could
+    // not connect to the server." UserInfo={_kCFStreamErrorCodeKey=61,
+    // NSUnderlyingError=0x60000038f810 {Error Domain=kCFErrorDomainCFNetwork ...
+
+    // Sample [The network connection was lost.]:
+    // -----
+    // sessionTaskFailed(error: Error Domain=NSURLErrorDomain Code=-1005 "The
+    // network connection was lost." UserInfo={_kCFStreamErrorCodeKey=-4,
+    // NSUnderlyingError=0x600002c9ec40 {Error Domain=kCFErrorDomainCFNetwork ...
+    var asVoicevoxWrapperError: VoicevoxWrapperError {
+        guard let code = asSessionTaskFailedErrorCode else { return .internal }
+        switch code {
+        case -1004: return .couldNotConnect
+        case -1005: return .lostConnection
+        default:    return .internal
+        }
+    }
+
+    var asSessionTaskFailedErrorCode: Int? {
+        guard let afError = self as? AFError else { return nil }
+        switch afError {
+        case .sessionTaskFailed(error: let error):
+            let nsError = error as NSError
+            if nsError.domain == NSURLErrorDomain {
+                return nsError.code
+            }
+        default:
+            break
+        }
+        return nil
     }
 }

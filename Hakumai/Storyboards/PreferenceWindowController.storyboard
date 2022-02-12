@@ -133,10 +133,10 @@
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fYb-qO-6pE">
-                                                    <rect key="frame" x="16" y="18" width="428" height="96"/>
+                                                    <rect key="frame" x="16" y="14" width="428" height="100"/>
                                                     <subviews>
                                                         <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2NO-6f-IfF">
-                                                            <rect key="frame" x="0.0" y="80" width="131" height="16"/>
+                                                            <rect key="frame" x="0.0" y="84" width="131" height="16"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lhl-Ab-vvj">
                                                                     <rect key="frame" x="-2" y="0.0" width="94" height="16"/>
@@ -168,7 +168,7 @@
                                                             </customSpacing>
                                                         </stackView>
                                                         <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NBg-Gf-rw0">
-                                                            <rect key="frame" x="-2" y="46" width="207" height="28"/>
+                                                            <rect key="frame" x="-2" y="50" width="207" height="28"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="203" id="OK4-Sn-4dr"/>
                                                             </constraints>
@@ -177,14 +177,45 @@
                                                                 <binding destination="Ex8-3g-KNv" name="value" keyPath="values.CommentSpeechVolume" id="Bsq-np-X3K"/>
                                                             </connections>
                                                         </slider>
-                                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0RT-z1-Slf">
-                                                            <rect key="frame" x="-2" y="28" width="136" height="16"/>
-                                                            <textFieldCell key="cell" lineBreakMode="clipping" title="Speaker (VOICEVOX):" id="KVg-Cz-8Kd">
-                                                                <font key="font" metaFont="system"/>
-                                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                            </textFieldCell>
-                                                        </textField>
+                                                        <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="E4y-ct-Gxj">
+                                                            <rect key="frame" x="0.0" y="28" width="428" height="20"/>
+                                                            <subviews>
+                                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0RT-z1-Slf">
+                                                                    <rect key="frame" x="-2" y="4" width="136" height="16"/>
+                                                                    <textFieldCell key="cell" lineBreakMode="clipping" title="Speaker (VOICEVOX):" id="KVg-Cz-8Kd">
+                                                                        <font key="font" metaFont="system"/>
+                                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                    </textFieldCell>
+                                                                </textField>
+                                                                <customView translatesAutoresizingMaskIntoConstraints="NO" id="6Ca-NB-AYv">
+                                                                    <rect key="frame" x="140" y="12" width="244" height="8"/>
+                                                                    <constraints>
+                                                                        <constraint firstAttribute="height" constant="8" id="MHL-mV-Hbn"/>
+                                                                    </constraints>
+                                                                </customView>
+                                                                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="my0-Ed-RnT">
+                                                                    <rect key="frame" x="391" y="-2" width="38" height="23"/>
+                                                                    <buttonCell key="cell" type="roundTextured" title="site" bezelStyle="texturedRounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="hf4-dh-xcI">
+                                                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                        <font key="font" metaFont="system"/>
+                                                                    </buttonCell>
+                                                                    <connections>
+                                                                        <action selector="voicevoxSiteButtonPressed:" target="wCA-UG-k48" id="69N-0q-RBt"/>
+                                                                    </connections>
+                                                                </button>
+                                                            </subviews>
+                                                            <visibilityPriorities>
+                                                                <integer value="1000"/>
+                                                                <integer value="1000"/>
+                                                                <integer value="1000"/>
+                                                            </visibilityPriorities>
+                                                            <customSpacing>
+                                                                <real value="3.4028234663852886e+38"/>
+                                                                <real value="3.4028234663852886e+38"/>
+                                                                <real value="3.4028234663852886e+38"/>
+                                                            </customSpacing>
+                                                        </stackView>
                                                         <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yut-lC-QY7">
                                                             <rect key="frame" x="0.0" y="0.0" width="168" height="20"/>
                                                             <subviews>
@@ -231,6 +262,10 @@
                                                             </customSpacing>
                                                         </stackView>
                                                     </subviews>
+                                                    <constraints>
+                                                        <constraint firstAttribute="trailing" secondItem="E4y-ct-Gxj" secondAttribute="trailing" id="JlS-04-NYU"/>
+                                                        <constraint firstItem="E4y-ct-Gxj" firstAttribute="leading" secondItem="fYb-qO-6pE" secondAttribute="leading" id="w0L-4J-TA4"/>
+                                                    </constraints>
                                                     <visibilityPriorities>
                                                         <integer value="1000"/>
                                                         <integer value="1000"/>
@@ -362,6 +397,7 @@
                         <outlet property="speakVolumeValueTextField" destination="TgB-HZ-aF1" id="siC-bI-K7H"/>
                         <outlet property="speakerPopUpButton" destination="enO-Zx-XlQ" id="YwZ-g9-4OC"/>
                         <outlet property="speakerTitleTextField" destination="0RT-z1-Slf" id="NYZ-cd-1Xa"/>
+                        <outlet property="voicevoxSiteButton" destination="my0-Ed-RnT" id="kH0-xn-wW2"/>
                     </connections>
                 </viewController>
                 <customObject id="iZj-NB-vz6" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
