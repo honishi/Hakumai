@@ -34,6 +34,7 @@ private let cleanCommentPatterns = [
     ("ニコ生(?!放送)", "ニコなま"),
     ("初見", "しょけん"),
     // At last, remove leading, trailing and middle white spaces.
+    // https://stackoverflow.com/a/19020103/13220031
     ("(^\\s+|\\s+$|\\s+(?=\\s))", "")
 ]
 
