@@ -28,11 +28,13 @@ private let repeatedNumberPattern = "[1234567890１２３４５６７８９０]{
 
 private let cleanCommentPatterns = [
     ("https?://[\\w!?/+\\-_~;.,*&@#$%()'\\[\\]=]+", " URL "),
-    ("(w|ｗ){2,}", " わらわら"),
-    ("(w|ｗ)$", " わら"),
+    ("(w|W|ｗ|Ｗ){2,}", " わらわら"),
+    ("(w|W|ｗ|Ｗ)$", " わら"),
     ("(8|８){3,}", "ぱちぱち"),
     ("ニコ生(?!放送)", "ニコなま"),
-    ("初見", "しょけん")
+    ("初見", "しょけん"),
+    // At last, remove leading, trailing and middle white spaces.
+    ("(^\\s+|\\s+$|\\s+(?=\\s))", "")
 ]
 
 private let speechTextSkip = "コメント省略"

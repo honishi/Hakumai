@@ -142,23 +142,43 @@ final class SpeechManagerTests: XCTestCase {
         actual = manager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
 
-        comment = "w"
-        expected = " わら"
+        comment = "w"   // 1文字, 半角, 小文字
+        expected = "わら"
         actual = manager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
 
-        comment = "ｗ"
-        expected = " わら"
+        comment = "W"   // 1文字, 半角, 大文字
+        expected = "わら"
         actual = manager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
 
-        comment = "www"
-        expected = " わらわら"
+        comment = "ｗ"   // 1文字, 全角, 小文字
+        expected = "わら"
         actual = manager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
 
-        comment = "ｗｗｗ"
-        expected = " わらわら"
+        comment = "Ｗ"   // 1文字, 半角, 大文字
+        expected = "わら"
+        actual = manager.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
+
+        comment = "www" // 複数文字, 半角, 小文字
+        expected = "わらわら"
+        actual = manager.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
+
+        comment = "WWW" // 複数文字, 半角, 大文字
+        expected = "わらわら"
+        actual = manager.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
+
+        comment = "ｗｗｗ" // 複数文字, 全角, 小文字
+        expected = "わらわら"
+        actual = manager.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
+
+        comment = "ＷＷＷ" // 複数文字, 全角, 大文字
+        expected = "わらわら"
         actual = manager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
 
@@ -188,17 +208,17 @@ final class SpeechManagerTests: XCTestCase {
         XCTAssert(expected == actual, "")
 
         comment = "これ見てhttps://example.com/aaa"
-        expected = "これ見て URL "
+        expected = "これ見て URL"
         actual = manager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
 
         comment = "これ見てhttps://example.com/aaaこれ"
-        expected = "これ見て URL "
+        expected = "これ見て URL"
         actual = manager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
 
         comment = "これ見てhttps://www.youtube.com/watch?v=9Pg2CDCm34w"
-        expected = "これ見て URL "
+        expected = "これ見て URL"
         actual = manager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
 
@@ -224,6 +244,16 @@ final class SpeechManagerTests: XCTestCase {
 
         comment = "初見"
         expected = "しょけん"
+        actual = manager.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
+
+        comment = "  先頭のスペースを除去  真ん中のスペースも除去  最後のスペースも除去  "
+        expected = "先頭のスペースを除去 真ん中のスペースも除去 最後のスペースも除去"
+        actual = manager.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
+
+        comment = "  space  space  space  "
+        expected = "space space space"
         actual = manager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
     }
