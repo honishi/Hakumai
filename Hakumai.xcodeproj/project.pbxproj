@@ -40,6 +40,7 @@
 		DB414C071A4810A5008D2F40 /* UserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB414C061A4810A5008D2F40 /* UserViewController.swift */; };
 		DB414C091A481138008D2F40 /* UserWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB414C081A481138008D2F40 /* UserWindowController.swift */; };
 		DB414C0B1A4811C4008D2F40 /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB414C0A1A4811C4008D2F40 /* Global.swift */; };
+		DB49963B27C1097E00FD3405 /* PointingHandButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB49963A27C1097E00FD3405 /* PointingHandButton.swift */; };
 		DB49A75A27B6AC550013B626 /* AudioCacher.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB49A75927B6AC550013B626 /* AudioCacher.swift */; };
 		DB5164FC264E662100F809B3 /* CommentTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5164FB264E662100F809B3 /* CommentTableCellView.swift */; };
 		DB5164FE264E664500F809B3 /* CommentTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB5164FD264E664500F809B3 /* CommentTableCellView.xib */; };
@@ -184,6 +185,7 @@
 		DB414C061A4810A5008D2F40 /* UserViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserViewController.swift; sourceTree = "<group>"; };
 		DB414C081A481138008D2F40 /* UserWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserWindowController.swift; sourceTree = "<group>"; };
 		DB414C0A1A4811C4008D2F40 /* Global.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
+		DB49963A27C1097E00FD3405 /* PointingHandButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PointingHandButton.swift; sourceTree = "<group>"; };
 		DB49A75927B6AC550013B626 /* AudioCacher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioCacher.swift; sourceTree = "<group>"; };
 		DB5164FB264E662100F809B3 /* CommentTableCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentTableCellView.swift; sourceTree = "<group>"; };
 		DB5164FD264E664500F809B3 /* CommentTableCellView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CommentTableCellView.xib; sourceTree = "<group>"; };
@@ -456,6 +458,7 @@
 				DB61AD81271B18DA001656F5 /* CircleImageView.swift */,
 				DB1E736F26F237F600A6F4C0 /* ClickTableView.swift */,
 				DB7A9366276373C100C361FF /* LiveThumbnailImageView.swift */,
+				DB49963A27C1097E00FD3405 /* PointingHandButton.swift */,
 			);
 			path = CustomView;
 			sourceTree = "<group>";
@@ -1052,6 +1055,7 @@
 				DB9EFC741A3E974A0087D302 /* NSWindow+Extensions.swift in Sources */,
 				DB3AE44226A1ABCF001681E9 /* OAuthCredential.swift in Sources */,
 				DB682D421A36E6AE00499C72 /* Parameter.swift in Sources */,
+				DB49963B27C1097E00FD3405 /* PointingHandButton.swift in Sources */,
 				DB9EFC781A3E9EB10087D302 /* PreferenceWindow.swift in Sources */,
 				DBFB81511A36B52E00294934 /* PreferenceWindowController.swift in Sources */,
 				DB55AC681A33908300CFAD99 /* PremiumTableCellView.swift in Sources */,

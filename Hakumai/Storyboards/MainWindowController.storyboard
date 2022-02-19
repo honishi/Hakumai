@@ -731,8 +731,8 @@
                                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="250" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="d3A-5T-Fi5">
                                                 <rect key="frame" x="63" y="0.0" width="547" height="55"/>
                                                 <subviews>
-                                                    <textField horizontalHuggingPriority="249" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="65a-aX-RIL">
-                                                        <rect key="frame" x="-2" y="38" width="551" height="17"/>
+                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="65a-aX-RIL">
+                                                        <rect key="frame" x="-2" y="38" width="40" height="17"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="17" id="aX3-eX-5Te"/>
                                                         </constraints>
@@ -745,8 +745,8 @@
                                                     <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DFd-WO-NFi">
                                                         <rect key="frame" x="0.0" y="19" width="547" height="17"/>
                                                         <subviews>
-                                                            <textField horizontalHuggingPriority="249" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="mqT-iT-cC6">
-                                                                <rect key="frame" x="-2" y="0.0" width="462" height="17"/>
+                                                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="mqT-iT-cC6">
+                                                                <rect key="frame" x="-2" y="0.0" width="37" height="17"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" constant="17" id="x00-mC-etv"/>
                                                                 </constraints>
@@ -756,6 +756,12 @@
                                                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                                 </textFieldCell>
                                                             </textField>
+                                                            <customView horizontalHuggingPriority="249" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="RUR-ma-7q9">
+                                                                <rect key="frame" x="41" y="0.0" width="417" height="17"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="height" constant="17" id="Swi-Rs-kHV"/>
+                                                                </constraints>
+                                                            </customView>
                                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OrT-PU-Uk2">
                                                                 <rect key="frame" x="464" y="0.0" width="83" height="18"/>
                                                                 <buttonCell key="cell" type="check" title="Auto URL" bezelStyle="regularSquare" imagePosition="left" inset="2" id="0Gl-Ym-ufF">
@@ -770,8 +776,10 @@
                                                         <visibilityPriorities>
                                                             <integer value="1000"/>
                                                             <integer value="1000"/>
+                                                            <integer value="1000"/>
                                                         </visibilityPriorities>
                                                         <customSpacing>
+                                                            <real value="3.4028234663852886e+38"/>
                                                             <real value="3.4028234663852886e+38"/>
                                                             <real value="3.4028234663852886e+38"/>
                                                         </customSpacing>
@@ -1304,18 +1312,97 @@
                                     <real value="3.4028234663852886e+38"/>
                                 </customSpacing>
                             </stackView>
+                            <button horizontalHuggingPriority="249" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zu5-Ne-Vn1" customClass="PointingHandButton" customModule="Hakumai" customModuleProvider="target">
+                                <rect key="frame" x="10" y="506" width="55" height="55"/>
+                                <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="l2e-L7-AjY">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="openCasterUserPage:" target="XfG-lQ-9wD" id="HNe-Da-coB"/>
+                                </connections>
+                            </button>
+                            <button horizontalHuggingPriority="249" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Bqv-yU-Ld3" customClass="PointingHandButton" customModule="Hakumai" customModuleProvider="target">
+                                <rect key="frame" x="73" y="544" width="36" height="17"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="17" id="yzZ-KB-0Fu"/>
+                                </constraints>
+                                <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="4Il-Hh-9r6">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="openLivePage:" target="XfG-lQ-9wD" id="1lq-Kr-zKC"/>
+                                </connections>
+                            </button>
+                            <button horizontalHuggingPriority="249" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rS8-Te-GhM" customClass="PointingHandButton" customModule="Hakumai" customModuleProvider="target">
+                                <rect key="frame" x="73" y="525" width="33" height="17"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="17" id="tct-vj-F6I"/>
+                                </constraints>
+                                <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="Ws5-3z-UaX">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="openCommunityPage:" target="XfG-lQ-9wD" id="6xE-nB-jKw"/>
+                                </connections>
+                            </button>
+                            <button horizontalHuggingPriority="249" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="baU-oh-9PL" customClass="PointingHandButton" customModule="Hakumai" customModuleProvider="target">
+                                <rect key="frame" x="191" y="507" width="43" height="17"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="17" id="WPm-ls-Wg3"/>
+                                </constraints>
+                                <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="xbG-Fb-UV9">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="openAdPage:" target="XfG-lQ-9wD" id="Ps8-cK-vvU"/>
+                                </connections>
+                            </button>
+                            <button horizontalHuggingPriority="249" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Frh-Sg-L0Y" customClass="PointingHandButton" customModule="Hakumai" customModuleProvider="target">
+                                <rect key="frame" x="250" y="507" width="43" height="17"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="17" id="biH-OG-jNa"/>
+                                </constraints>
+                                <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="oH5-me-gs7">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="openGiftPage:" target="XfG-lQ-9wD" id="RKc-qm-GFR"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="Bqv-yU-Ld3" firstAttribute="centerY" secondItem="65a-aX-RIL" secondAttribute="centerY" id="05r-kG-5bh"/>
+                            <constraint firstItem="Frh-Sg-L0Y" firstAttribute="centerY" secondItem="0IF-gf-Kcz" secondAttribute="centerY" id="5Nw-xr-QmR"/>
+                            <constraint firstItem="rS8-Te-GhM" firstAttribute="centerY" secondItem="DFd-WO-NFi" secondAttribute="centerY" id="683-Gg-Wkk"/>
+                            <constraint firstItem="baU-oh-9PL" firstAttribute="trailing" secondItem="VO6-jf-Ekf" secondAttribute="trailing" id="6Ks-io-KCW"/>
+                            <constraint firstItem="rS8-Te-GhM" firstAttribute="leading" secondItem="DFd-WO-NFi" secondAttribute="leading" id="9Ru-Cw-STM"/>
+                            <constraint firstItem="baU-oh-9PL" firstAttribute="centerY" secondItem="VO6-jf-Ekf" secondAttribute="centerY" id="AAv-wm-gha"/>
+                            <constraint firstItem="Bqv-yU-Ld3" firstAttribute="trailing" secondItem="65a-aX-RIL" secondAttribute="trailing" id="Ewb-yi-6ry"/>
                             <constraint firstAttribute="trailing" secondItem="z38-Lm-gGi" secondAttribute="trailing" constant="8" id="GwQ-WX-Gqm"/>
+                            <constraint firstItem="rS8-Te-GhM" firstAttribute="trailing" secondItem="mqT-iT-cC6" secondAttribute="trailing" id="OUB-ol-seP"/>
                             <constraint firstItem="z38-Lm-gGi" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="8" id="PFN-B3-Bud"/>
+                            <constraint firstItem="zu5-Ne-Vn1" firstAttribute="top" secondItem="NQm-lE-rVr" secondAttribute="top" id="QbT-8J-pXn"/>
+                            <constraint firstItem="zu5-Ne-Vn1" firstAttribute="bottom" secondItem="NQm-lE-rVr" secondAttribute="bottom" id="bm1-uS-4yb"/>
+                            <constraint firstItem="Frh-Sg-L0Y" firstAttribute="leading" secondItem="0IF-gf-Kcz" secondAttribute="leading" id="cDL-Ab-FHT"/>
                             <constraint firstItem="z38-Lm-gGi" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="8" id="cTn-Tx-7Xs"/>
+                            <constraint firstItem="zu5-Ne-Vn1" firstAttribute="trailing" secondItem="NQm-lE-rVr" secondAttribute="trailing" id="dqL-FO-VG3"/>
                             <constraint firstAttribute="bottom" secondItem="z38-Lm-gGi" secondAttribute="bottom" constant="8" id="fLA-Xd-WSw"/>
+                            <constraint firstItem="Frh-Sg-L0Y" firstAttribute="trailing" secondItem="0IF-gf-Kcz" secondAttribute="trailing" id="m3P-50-19p"/>
+                            <constraint firstItem="zu5-Ne-Vn1" firstAttribute="leading" secondItem="NQm-lE-rVr" secondAttribute="leading" id="nOm-rP-4di"/>
+                            <constraint firstItem="baU-oh-9PL" firstAttribute="leading" secondItem="VO6-jf-Ekf" secondAttribute="leading" id="pRR-rB-PpY"/>
+                            <constraint firstItem="Bqv-yU-Ld3" firstAttribute="leading" secondItem="65a-aX-RIL" secondAttribute="leading" id="q7B-za-jwj"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="activeUserChartView" destination="yo1-uX-sTU" id="JBb-lq-f6C"/>
                         <outlet property="activeUserIconImageView" destination="52j-Zb-keG" id="Jc5-9l-rji"/>
                         <outlet property="activeUserValueLabel" destination="09h-Eb-cuW" id="6Lr-4p-RbY"/>
+                        <outlet property="adPointsButton" destination="baU-oh-9PL" id="AsB-Sy-nQB"/>
                         <outlet property="adPointsIconImageView" destination="jC1-XL-axi" id="YJ3-9k-PbS"/>
                         <outlet property="adPointsValueLabel" destination="0qo-uD-qcd" id="fRg-C8-lpp"/>
                         <outlet property="autoUrlButton" destination="OrT-PU-Uk2" id="tin-kS-cwh"/>
@@ -1323,16 +1410,20 @@
                         <outlet property="commentTextField" destination="pml-Sh-s7e" id="JGp-sC-LAL"/>
                         <outlet property="commentsIconImageView" destination="MCs-Zv-FLD" id="fWS-P1-F68"/>
                         <outlet property="commentsValueLabel" destination="vmz-z1-HHp" id="zEw-JV-b7X"/>
+                        <outlet property="communityTitleButton" destination="rS8-Te-GhM" id="yHH-yR-2Bp"/>
                         <outlet property="communityTitleLabel" destination="mqT-iT-cC6" id="JMh-Lc-OmS"/>
                         <outlet property="connectButton" destination="hii-Mo-bho" id="UHG-jK-W7S"/>
                         <outlet property="debugExpireTokenButton" destination="lRV-dk-B0Y" id="rYr-fV-TAS"/>
                         <outlet property="debugReconnectButton" destination="IZs-cK-l0Y" id="neM-ub-baA"/>
                         <outlet property="elapsedTimeIconImageView" destination="e8e-M3-DzU" id="7HC-qY-wzD"/>
                         <outlet property="elapsedTimeValueLabel" destination="p3A-6s-IKD" id="6T8-le-0s2"/>
+                        <outlet property="giftButton" destination="Frh-Sg-L0Y" id="B3o-l2-kjv"/>
                         <outlet property="giftPointsIconImageView" destination="gzt-sF-boU" id="IXz-FO-VGY"/>
                         <outlet property="giftPointsLabel" destination="ak0-Zv-XEq" id="Et0-Xg-T8n"/>
                         <outlet property="grabUrlButton" destination="GRS-m4-7KE" id="WFa-bJ-le5"/>
+                        <outlet property="liveThumbnailButton" destination="zu5-Ne-Vn1" id="5xX-JF-fHa"/>
                         <outlet property="liveThumbnailImageView" destination="NQm-lE-rVr" id="Vlq-76-e8s"/>
+                        <outlet property="liveTitleButton" destination="Bqv-yU-Ld3" id="ixc-kr-hTu"/>
                         <outlet property="liveTitleLabel" destination="65a-aX-RIL" id="uvT-R4-GZO"/>
                         <outlet property="liveUrlTextField" destination="gZN-es-bFO" id="vZe-3V-txV"/>
                         <outlet property="maxActiveUserValueLabel" destination="575-Oj-4dX" id="qIj-Hw-YFs"/>

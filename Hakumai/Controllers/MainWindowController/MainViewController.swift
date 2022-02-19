@@ -59,6 +59,12 @@ final class MainViewController: NSViewController {
     @IBOutlet private weak var autoUrlButton: NSButton!
     @IBOutlet private weak var speakButton: NSButton!
 
+    @IBOutlet private weak var liveThumbnailButton: PointingHandButton!
+    @IBOutlet private weak var liveTitleButton: PointingHandButton!
+    @IBOutlet private weak var communityTitleButton: PointingHandButton!
+    @IBOutlet private weak var adPointsButton: PointingHandButton!
+    @IBOutlet private weak var giftButton: PointingHandButton!
+
     @IBOutlet private weak var scrollView: ButtonScrollView!
     @IBOutlet private(set) weak var tableView: ClickTableView!
 
@@ -1070,6 +1076,26 @@ extension MainViewController {
         } else {
             connectLive(self)
         }
+    }
+
+    @IBAction func openCasterUserPage(_ sender: Any) {
+        log.debug("")
+    }
+
+    @IBAction func openLivePage(_ sender: Any) {
+        log.debug("")
+    }
+
+    @IBAction func openCommunityPage(_ sender: Any) {
+        log.debug("")
+    }
+
+    @IBAction func openAdPage(_ sender: Any) {
+        log.debug("")
+    }
+
+    @IBAction func openGiftPage(_ sender: Any) {
+        log.debug("")
     }
 
     @IBAction func comment(_ sender: AnyObject) {
