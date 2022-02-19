@@ -1312,16 +1312,6 @@
                                     <real value="3.4028234663852886e+38"/>
                                 </customSpacing>
                             </stackView>
-                            <button horizontalHuggingPriority="249" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zu5-Ne-Vn1" customClass="PointingHandButton" customModule="Hakumai" customModuleProvider="target">
-                                <rect key="frame" x="10" y="506" width="55" height="55"/>
-                                <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="l2e-L7-AjY">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="openLivePage:" target="XfG-lQ-9wD" id="F60-Ib-Rj2"/>
-                                </connections>
-                            </button>
                             <button horizontalHuggingPriority="249" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Bqv-yU-Ld3" customClass="PointingHandButton" customModule="Hakumai" customModuleProvider="target">
                                 <rect key="frame" x="73" y="544" width="36" height="17"/>
                                 <constraints>
@@ -1386,14 +1376,10 @@
                             <constraint firstAttribute="trailing" secondItem="z38-Lm-gGi" secondAttribute="trailing" constant="8" id="GwQ-WX-Gqm"/>
                             <constraint firstItem="rS8-Te-GhM" firstAttribute="trailing" secondItem="mqT-iT-cC6" secondAttribute="trailing" id="OUB-ol-seP"/>
                             <constraint firstItem="z38-Lm-gGi" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="8" id="PFN-B3-Bud"/>
-                            <constraint firstItem="zu5-Ne-Vn1" firstAttribute="top" secondItem="NQm-lE-rVr" secondAttribute="top" id="QbT-8J-pXn"/>
-                            <constraint firstItem="zu5-Ne-Vn1" firstAttribute="bottom" secondItem="NQm-lE-rVr" secondAttribute="bottom" id="bm1-uS-4yb"/>
                             <constraint firstItem="Frh-Sg-L0Y" firstAttribute="leading" secondItem="0IF-gf-Kcz" secondAttribute="leading" id="cDL-Ab-FHT"/>
                             <constraint firstItem="z38-Lm-gGi" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="8" id="cTn-Tx-7Xs"/>
-                            <constraint firstItem="zu5-Ne-Vn1" firstAttribute="trailing" secondItem="NQm-lE-rVr" secondAttribute="trailing" id="dqL-FO-VG3"/>
                             <constraint firstAttribute="bottom" secondItem="z38-Lm-gGi" secondAttribute="bottom" constant="8" id="fLA-Xd-WSw"/>
                             <constraint firstItem="Frh-Sg-L0Y" firstAttribute="trailing" secondItem="0IF-gf-Kcz" secondAttribute="trailing" id="m3P-50-19p"/>
-                            <constraint firstItem="zu5-Ne-Vn1" firstAttribute="leading" secondItem="NQm-lE-rVr" secondAttribute="leading" id="nOm-rP-4di"/>
                             <constraint firstItem="baU-oh-9PL" firstAttribute="leading" secondItem="VO6-jf-Ekf" secondAttribute="leading" id="pRR-rB-PpY"/>
                             <constraint firstItem="Bqv-yU-Ld3" firstAttribute="leading" secondItem="65a-aX-RIL" secondAttribute="leading" id="q7B-za-jwj"/>
                         </constraints>
@@ -1421,7 +1407,6 @@
                         <outlet property="giftPointsIconImageView" destination="gzt-sF-boU" id="IXz-FO-VGY"/>
                         <outlet property="giftPointsLabel" destination="ak0-Zv-XEq" id="Et0-Xg-T8n"/>
                         <outlet property="grabUrlButton" destination="GRS-m4-7KE" id="WFa-bJ-le5"/>
-                        <outlet property="liveThumbnailButton" destination="zu5-Ne-Vn1" id="5xX-JF-fHa"/>
                         <outlet property="liveThumbnailImageView" destination="NQm-lE-rVr" id="Vlq-76-e8s"/>
                         <outlet property="liveTitleButton" destination="Bqv-yU-Ld3" id="ixc-kr-hTu"/>
                         <outlet property="liveTitleLabel" destination="65a-aX-RIL" id="uvT-R4-GZO"/>

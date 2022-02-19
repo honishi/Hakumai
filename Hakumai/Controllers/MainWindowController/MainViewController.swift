@@ -59,7 +59,6 @@ final class MainViewController: NSViewController {
     @IBOutlet private weak var autoUrlButton: NSButton!
     @IBOutlet private weak var speakButton: NSButton!
 
-    @IBOutlet private weak var liveThumbnailButton: PointingHandButton!
     @IBOutlet private weak var liveTitleButton: PointingHandButton!
     @IBOutlet private weak var communityTitleButton: PointingHandButton!
     @IBOutlet private weak var adPointsButton: PointingHandButton!
