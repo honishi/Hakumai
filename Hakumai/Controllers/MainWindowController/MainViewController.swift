@@ -59,6 +59,11 @@ final class MainViewController: NSViewController {
     @IBOutlet private weak var autoUrlButton: NSButton!
     @IBOutlet private weak var speakButton: NSButton!
 
+    @IBOutlet private weak var liveTitleButton: PointingHandButton!
+    @IBOutlet private weak var communityTitleButton: PointingHandButton!
+    @IBOutlet private weak var adPointsButton: PointingHandButton!
+    @IBOutlet private weak var giftButton: PointingHandButton!
+
     @IBOutlet private weak var scrollView: ButtonScrollView!
     @IBOutlet private(set) weak var tableView: ClickTableView!
 
@@ -1070,6 +1075,30 @@ extension MainViewController {
         } else {
             connectLive(self)
         }
+    }
+
+    @IBAction func openLivePage(_ sender: Any) {
+        guard let live = live,
+              let url = nicoManager.livePageUrl(for: live.liveProgramId) else { return }
+        NSWorkspace.shared.open(url)
+    }
+
+    @IBAction func openCommunityPage(_ sender: Any) {
+        guard let live = live,
+              let url = nicoManager.communityPageUrl(for: live.communityId) else { return }
+        NSWorkspace.shared.open(url)
+    }
+
+    @IBAction func openAdPage(_ sender: Any) {
+        guard let live = live,
+              let url = nicoManager.adPageUrl(for: live.liveProgramId) else { return }
+        NSWorkspace.shared.open(url)
+    }
+
+    @IBAction func openGiftPage(_ sender: Any) {
+        guard let live = live,
+              let url = nicoManager.giftPageUrl(for: live.liveProgramId) else { return }
+        NSWorkspace.shared.open(url)
     }
 
     @IBAction func comment(_ sender: AnyObject) {
