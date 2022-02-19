@@ -1319,7 +1319,7 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="openCasterUserPage:" target="XfG-lQ-9wD" id="HNe-Da-coB"/>
+                                    <action selector="openLivePage:" target="XfG-lQ-9wD" id="F60-Ib-Rj2"/>
                                 </connections>
                             </button>
                             <button horizontalHuggingPriority="249" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Bqv-yU-Ld3" customClass="PointingHandButton" customModule="Hakumai" customModuleProvider="target">

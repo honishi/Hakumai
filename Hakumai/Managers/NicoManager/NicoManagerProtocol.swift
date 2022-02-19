@@ -27,6 +27,12 @@ protocol NicoManagerType: AnyObject {
     func userPageUrl(for userId: String) -> URL?
     func userIconUrl(for userId: String) -> URL?
 
+    // Misc Methods
+    func livePageUrl(for liveProgramId: String) -> URL?
+    func communityPageUrl(for communityId: String) -> URL?
+    func adPageUrl(for liveProgramId: String) -> URL?
+    func giftPageUrl(for communityId: String) -> URL?
+
     // Debug Methods
     func injectExpiredAccessToken()
 }

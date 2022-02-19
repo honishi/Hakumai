@@ -16,6 +16,10 @@ import XCGLogger
 // General URL:
 private let _userPageUrl = "https://www.nicovideo.jp/user/"
 private let _userIconUrl = "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/"
+private let _livePageUrl = "https://live.nicovideo.jp/watch/"
+private let _communityPageUrl = "https://com.nicovideo.jp/community/"
+private let _adPointPageUrl = "https://nicoad.nicovideo.jp/live/publish/"
+private let _giftPageUrl = "https://nicoad.nicovideo.jp/nage/publish?content_id="
 
 // API URL:
 private let watchProgramsApiUrl = "https://api.live2.nicovideo.jp/api/v1/watch/programs"
@@ -228,6 +232,22 @@ extension NicoManager {
         guard let number = Int(userId) else { return nil }
         let path = number / 10000
         return URL(string: "\(_userIconUrl)\(path)/\(userId).jpg")
+    }
+
+    func livePageUrl(for liveProgramId: String) -> URL? {
+        URL(string: _livePageUrl + liveProgramId)
+    }
+
+    func communityPageUrl(for communityId: String) -> URL? {
+        URL(string: _communityPageUrl + communityId)
+    }
+
+    func adPageUrl(for liveProgramId: String) -> URL? {
+        URL(string: _adPointPageUrl + liveProgramId)
+    }
+
+    func giftPageUrl(for liveProgramId: String) -> URL? {
+        URL(string: _giftPageUrl + liveProgramId)
     }
 
     func injectExpiredAccessToken() {

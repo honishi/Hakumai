@@ -1078,24 +1078,28 @@ extension MainViewController {
         }
     }
 
-    @IBAction func openCasterUserPage(_ sender: Any) {
-        log.debug("")
-    }
-
     @IBAction func openLivePage(_ sender: Any) {
-        log.debug("")
+        guard let live = live,
+              let url = nicoManager.livePageUrl(for: live.liveProgramId) else { return }
+        NSWorkspace.shared.open(url)
     }
 
     @IBAction func openCommunityPage(_ sender: Any) {
-        log.debug("")
+        guard let live = live,
+              let url = nicoManager.communityPageUrl(for: live.communityId) else { return }
+        NSWorkspace.shared.open(url)
     }
 
     @IBAction func openAdPage(_ sender: Any) {
-        log.debug("")
+        guard let live = live,
+              let url = nicoManager.adPageUrl(for: live.liveProgramId) else { return }
+        NSWorkspace.shared.open(url)
     }
 
     @IBAction func openGiftPage(_ sender: Any) {
-        log.debug("")
+        guard let live = live,
+              let url = nicoManager.giftPageUrl(for: live.liveProgramId) else { return }
+        NSWorkspace.shared.open(url)
     }
 
     @IBAction func comment(_ sender: AnyObject) {
