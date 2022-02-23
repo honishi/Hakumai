@@ -1150,24 +1150,20 @@ private extension MainViewController {
             break
         }
 
-        if userWindowController == nil {
+        if userWindowController == nil, let live = live {
             // not exist, so create and cache it
-            var handleName: String?
-            if let live = live,
-               let _handleName = HandleNameManager.shared.handleName(for: chat.userId, in: live.communityId) {
-                handleName = _handleName
-            }
+            let handleName = HandleNameManager.shared.handleName(for: chat.userId, in: live.communityId)
             userWindowController = UserWindowController.make(
                 delegate: self,
                 nicoManager: nicoManager,
                 messageContainer: messageContainer,
                 userId: chat.userId,
-                handleName: handleName)
-            if let uwc = userWindowController {
-                positionUserWindow(uwc.window)
-                log.debug("no existing user-wc found, create it:\(uwc.description)")
-                userWindowControllers.append(uwc)
-            }
+                handleName: handleName,
+                liveTitle: live.title)
+            guard let uwc = userWindowController else { fatalError("This is not going to be happened.") }
+            positionUserWindow(uwc.window)
+            log.debug("no existing user-wc found, create it:\(uwc.description)")
+            userWindowControllers.append(uwc)
         }
         userWindowController?.showWindow(self)
     }
