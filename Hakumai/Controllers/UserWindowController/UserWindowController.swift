@@ -30,12 +30,19 @@ final class UserWindowController: NSWindowController {
 }
 
 extension UserWindowController {
-    static func make(delegate: UserWindowControllerDelegate?, nicoManager: NicoManagerType, messageContainer: MessageContainer, userId: String, handleName: String?) -> UserWindowController {
+    // swiftlint:disable function_parameter_count
+    static func make(delegate: UserWindowControllerDelegate?, nicoManager: NicoManagerType, messageContainer: MessageContainer, userId: String, handleName: String?, liveTitle: String) -> UserWindowController {
         let wc = StoryboardScene.UserWindowController.userWindowController.instantiate()
         wc.delegate = delegate
-        wc.set(nicoManager: nicoManager, messageContainer: messageContainer, userId: userId, handleName: handleName)
+        wc.set(
+            nicoManager: nicoManager,
+            messageContainer: messageContainer,
+            userId: userId,
+            handleName: handleName,
+            liveTitle: liveTitle)
         return wc
     }
+    // swiftlint:enable function_parameter_count
 }
 
 extension UserWindowController: NSWindowDelegate {
@@ -49,10 +56,10 @@ extension UserWindowController: NSWindowDelegate {
 
 // MARK: - Public Functions
 extension UserWindowController {
-    func set(nicoManager: NicoManagerType, messageContainer: MessageContainer, userId: String, handleName: String?) {
+    func set(nicoManager: NicoManagerType, messageContainer: MessageContainer, userId: String, handleName: String?, liveTitle: String) {
         self.userId = userId
         let userName = nicoManager.cachedUserName(for: userId)
-        window?.title = handleName ?? userName ?? userId
+        window?.title = (handleName ?? userName ?? userId) + " (\(liveTitle))"
         guard let userViewController = contentViewController as? UserViewController else { return }
         userViewController.set(nicoManager: nicoManager, messageContainer: messageContainer, userId: userId, handleName: handleName)
     }
