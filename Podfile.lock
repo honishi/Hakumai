@@ -1,8 +1,9 @@
 PODS:
   - Alamofire (5.4.3)
-  - Charts (4.0.0):
-    - Charts/Core (= 4.0.0)
-  - Charts/Core (4.0.0)
+  - Charts (4.0.2):
+    - Charts/Core (= 4.0.2)
+  - Charts/Core (4.0.2):
+    - SwiftAlgorithms (~> 1.0)
   - FMDB (2.7.5):
     - FMDB/standard (= 2.7.5)
   - FMDB/standard (2.7.5)
@@ -15,6 +16,7 @@ PODS:
   - SnapKit (5.0.1)
   - Sparkle (1.26.0)
   - Starscream (4.0.4)
+  - SwiftAlgorithms (1.0.0)
   - SwiftGen (6.4.0)
   - SwiftLint (0.43.1)
   - XCGLogger (7.0.1):
@@ -24,7 +26,7 @@ PODS:
 
 DEPENDENCIES:
   - Alamofire (~> 5.4.3)
-  - Charts (from `https://github.com/danielgindi/Charts.git`, commit `857db248f8eab9293e7845a53900ad109dc5cade`)
+  - Charts (~> 4.0.2)
   - FMDB (~> 2.7.5)
   - Kanna (~> 5.2.7)
   - Kingfisher (~> 6.3.0)
@@ -39,6 +41,7 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - Alamofire
+    - Charts
     - FMDB
     - Kanna
     - Kingfisher
@@ -47,23 +50,14 @@ SPEC REPOS:
     - SnapKit
     - Sparkle
     - Starscream
+    - SwiftAlgorithms
     - SwiftGen
     - SwiftLint
     - XCGLogger
 
-EXTERNAL SOURCES:
-  Charts:
-    :commit: 857db248f8eab9293e7845a53900ad109dc5cade
-    :git: https://github.com/danielgindi/Charts.git
-
-CHECKOUT OPTIONS:
-  Charts:
-    :commit: 857db248f8eab9293e7845a53900ad109dc5cade
-    :git: https://github.com/danielgindi/Charts.git
-
 SPEC CHECKSUMS:
   Alamofire: e447a2774a40c996748296fa2c55112fdbbc42f9
-  Charts: 22f3a1f5993f0769aa5ad380ccb242a1500d6b95
+  Charts: cfa4e911e6dc289582c2fe011a0e87c03d96727f
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   Kanna: 01cfbddc127f5ff0963692f285fcbc8a9d62d234
   Kingfisher: 6c3df386db71d82c0817a429d2c9421a77396529
@@ -72,10 +66,11 @@ SPEC CHECKSUMS:
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
   Sparkle: d56d028f4b0c123577825f5d1004f6140d77f90e
   Starscream: 5178aed56b316f13fa3bc55694e583d35dd414d9
+  SwiftAlgorithms: 38dda4731d19027fdeee1125f973111bf3386b53
   SwiftGen: 67860cc7c3cfc2ed25b9b74cfd55495fc89f9108
   SwiftLint: 99f82d07b837b942dd563c668de129a03fc3fb52
   XCGLogger: 1943831ef907df55108b0b18657953f868de973b
 
-PODFILE CHECKSUM: 96e9be43d123b988f1cb7e35024889aa9f47290e
+PODFILE CHECKSUM: 21efe0d30adced4e131025ff8d5cce90d2a799dd
 
 COCOAPODS: 1.11.3
