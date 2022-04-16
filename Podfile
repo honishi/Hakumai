@@ -14,7 +14,7 @@ target 'Hakumai' do
   pod 'Alamofire', '~> 5.6.0'
   pod 'Starscream', '~> 4.0.4'
   pod 'Kingfisher', '~> 6.3.1'
-  pod 'SnapKit', '~> 5.0.1'
+  pod 'SnapKit', '~> 5.6.0'
   pod 'Charts', '~> 4.0.2'
   pod 'Kanna', '~> 5.2.7'
 
