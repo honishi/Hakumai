@@ -53,8 +53,8 @@ final class HandleNameManagerTests: XCTestCase {
     }
 
     func testUpsertThenSelectHandleName() {
-        let communityId = "co" + String(arc4random() % 100)
-        let userId = String(arc4random() % 100)
+        let communityId = "co" + String(Int.random(in: 0...99))
+        let userId = String(Int.random(in: 0...99))
         let handleName = "山田"
 
         HandleNameManager.shared.upsert(handleName: handleName, for: userId, in: communityId)
