@@ -1246,7 +1246,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hakumai/Hakumai.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2151;
+				CURRENT_PROJECT_VERSION = 2152;
 				DEVELOPMENT_TEAM = N4SRN3NAQ3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Hakumai/Info.plist;
@@ -1255,7 +1255,7 @@
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
 				);
-				MARKETING_VERSION = 2.15.1;
+				MARKETING_VERSION = 2.15.2;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1279,7 +1279,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hakumai/Hakumai.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2151;
+				CURRENT_PROJECT_VERSION = 2152;
 				DEVELOPMENT_TEAM = N4SRN3NAQ3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Hakumai/Info.plist;
@@ -1288,7 +1288,7 @@
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
 				);
-				MARKETING_VERSION = 2.15.1;
+				MARKETING_VERSION = 2.15.2;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
