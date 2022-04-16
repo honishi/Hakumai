@@ -4,19 +4,23 @@ inhibit_all_warnings!
 target 'Hakumai' do
   use_frameworks!
 
-  pod 'SwiftLint', '~> 0.43.1'
-  pod 'SwiftGen', '~> 6.4.0'
+  # Project Infrastructure
+  pod 'Sparkle', '~> 1.26.0'
+  pod 'SwiftLint', '~> 0.47.0'
+  pod 'SwiftGen', '~> 6.5.1'
   pod 'XCGLogger', '~> 7.0.1'
 
-  pod 'Sparkle', '~> 1.26.0'
+  # Infrastructure
+  pod 'Alamofire', '~> 5.6.0'
   pod 'FMDB', '~> 2.7.5'
-  pod 'SAMKeychain', '~> 1.5.3'
-  pod 'Alamofire', '~> 5.4.3'
-  pod 'Starscream', '~> 4.0.4'
-  pod 'Kingfisher', '~> 6.3.0'
-  pod 'SnapKit', '~> 5.0.1'
-  pod 'Charts', '~> 4.0.2'
   pod 'Kanna', '~> 5.2.7'
+  pod 'SAMKeychain', '~> 1.5.3'
+  pod 'Starscream', '~> 4.0.4'
+
+  # User interface
+  pod 'Charts', '~> 4.0.2'
+  pod 'Kingfisher', '~> 6.3.1'
+  pod 'SnapKit', '~> 5.6.0'
 
   target 'HakumaiTests' do
     inherit! :search_paths
