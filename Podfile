@@ -4,7 +4,7 @@ inhibit_all_warnings!
 target 'Hakumai' do
   use_frameworks!
 
-  pod 'SwiftLint', '~> 0.43.1'
+  pod 'SwiftLint', '~> 0.47.0'
   pod 'SwiftGen', '~> 6.4.0'
   pod 'XCGLogger', '~> 7.0.1'
 
