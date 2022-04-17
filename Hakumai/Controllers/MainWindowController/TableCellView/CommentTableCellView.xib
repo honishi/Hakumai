@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19162" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="20037" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19162"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="20037"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -10,25 +10,47 @@
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="c22-O7-iKe" customClass="CommentTableCellView" customModule="Hakumai" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="100" height="50"/>
+            <rect key="frame" x="0.0" y="0.0" width="158" height="50"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" placeholderIntrinsicWidth="96" placeholderIntrinsicHeight="50" translatesAutoresizingMaskIntoConstraints="NO" id="55N-JQ-noR">
-                    <rect key="frame" x="0.0" y="0.0" width="100" height="50"/>
-                    <textFieldCell key="cell" lineBreakMode="charWrapping" title="Label" id="l9o-EY-usC">
-                        <font key="font" usesAppearanceFont="YES"/>
-                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
+                <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xif-AK-BzU">
+                    <rect key="frame" x="2" y="0.0" width="154" height="50"/>
+                    <subviews>
+                        <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="vAR-P9-Cym">
+                            <rect key="frame" x="0.0" y="9" width="32" height="32"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="32" id="Enz-3k-bZQ"/>
+                                <constraint firstAttribute="height" constant="32" id="zHb-zd-txU"/>
+                            </constraints>
+                            <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="H9d-Te-vBb"/>
+                        </imageView>
+                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" placeholderIntrinsicWidth="96" placeholderIntrinsicHeight="50" translatesAutoresizingMaskIntoConstraints="NO" id="55N-JQ-noR">
+                            <rect key="frame" x="38" y="0.0" width="118" height="50"/>
+                            <textFieldCell key="cell" lineBreakMode="charWrapping" title="Label" id="l9o-EY-usC">
+                                <font key="font" usesAppearanceFont="YES"/>
+                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                    </subviews>
+                    <visibilityPriorities>
+                        <integer value="1000"/>
+                        <integer value="1000"/>
+                    </visibilityPriorities>
+                    <customSpacing>
+                        <real value="3.4028234663852886e+38"/>
+                        <real value="3.4028234663852886e+38"/>
+                    </customSpacing>
+                </stackView>
             </subviews>
             <constraints>
-                <constraint firstItem="55N-JQ-noR" firstAttribute="centerY" secondItem="c22-O7-iKe" secondAttribute="centerY" id="WjI-6E-sjm"/>
-                <constraint firstItem="55N-JQ-noR" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" constant="2" id="bN7-Hk-RSn"/>
-                <constraint firstAttribute="trailing" secondItem="55N-JQ-noR" secondAttribute="trailing" constant="2" id="cBG-gT-MXM"/>
+                <constraint firstItem="xif-AK-BzU" firstAttribute="centerY" secondItem="c22-O7-iKe" secondAttribute="centerY" id="7kD-5p-eAA"/>
+                <constraint firstAttribute="trailing" secondItem="xif-AK-BzU" secondAttribute="trailing" constant="2" id="CWN-bM-DTw"/>
+                <constraint firstItem="xif-AK-BzU" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" constant="2" id="MeE-pP-6pt"/>
             </constraints>
             <connections>
                 <outlet property="commentTextField" destination="55N-JQ-noR" id="T99-Hp-0BE"/>
+                <outlet property="giftImageView" destination="vAR-P9-Cym" id="VEG-MZ-gzR"/>
             </connections>
             <point key="canvasLocation" x="69" y="127"/>
         </customView>

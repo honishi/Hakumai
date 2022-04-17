@@ -38,6 +38,23 @@ struct Message {
     }
 }
 
+extension Message {
+    var giftImageUrl: URL? {
+        switch content {
+        case .chat(let chat):
+            guard let slashCommand = chat.slashCommand else { return nil }
+            switch slashCommand {
+            case .gift(let url):
+                return url
+            default:
+                return nil
+            }
+        default:
+            return nil
+        }
+    }
+}
+
 // MARK: - Individual Message
 struct SystemMessage {
     let message: String
@@ -82,6 +99,9 @@ private let commentPreReplacePatterns = [
     ("^(/\\w+ )\"(.+)\"$", "$1$2")
 ]
 
+private let giftIdExtractPattern = ("^/gift (.+?) .*$", "$1")
+private let giftImageUrl = "https://secure-dcdn.cdn.nimg.jp/nicoad/res/nage/thumbnail/%@.png"
+
 private let commentEmojiReplacePatterns = [
     ("^/cruise ", "⚓️ "),
     ("^/emotion ", "💬 "),
@@ -112,8 +132,9 @@ extension String {
     }
 }
 
-enum SlashCommand {
-    case cruise, emotion, gift, info, nicoad, quote, spi, vote
+enum SlashCommand: Equatable {
+    case cruise, emotion, info, nicoad, quote, spi, vote
+    case gift(URL)
     case unknown
 }
 
@@ -146,8 +167,8 @@ extension Chat {
             return .cruise
         } else if comment.hasPrefix("/emotion ") {
             return .emotion
-        } else if comment.hasPrefix("/gift ") {
-            return .gift
+        } else if let gift = comment.toGift() {
+            return gift
         } else if comment.hasPrefix("/info ") {
             return .info
         } else if comment.hasPrefix("/nicoad ") {
@@ -160,5 +181,18 @@ extension Chat {
             return .vote
         }
         return .unknown
+    }
+}
+
+private extension String {
+    func toGift() -> SlashCommand? {
+        guard hasRegexp(pattern: giftIdExtractPattern.0) else { return nil }
+        let giftId = stringByReplacingRegexp(
+            pattern: giftIdExtractPattern.0,
+            with: giftIdExtractPattern.1
+        )
+        let urlString = String(format: giftImageUrl, giftId)
+        guard let url = URL(string: urlString) else { return nil }
+        return .gift(url)
     }
 }
