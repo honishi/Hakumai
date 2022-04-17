@@ -181,11 +181,17 @@ extension MainViewController: NSTableViewDelegate {
         let leadingSpace: CGFloat = 2
         let trailingSpace: CGFloat = 2
         let widthPadding = leadingSpace + trailingSpace
+        let hasGiftImage = message.giftImageUrl != nil
+        let giftImageSize = CommentTableCellView.giftImageViewSize
+        let giftPadding: CGFloat = CommentTableCellView.paddingBetweenGiftImageAndComment
+        let totalWidth = width
+            - widthPadding
+            - (hasGiftImage ? giftImageSize.width + giftPadding : 0)
 
         let (content, attributes) = contentAndAttributes(forMessage: message)
 
         let commentRect = content.boundingRect(
-            with: CGSize(width: width - widthPadding, height: 0),
+            with: CGSize(width: totalWidth, height: 0),
             options: .usesLineFragmentOrigin,
             attributes: attributes)
         // log.debug("\(commentRect.size.width),\(commentRect.size.height)")
@@ -198,7 +204,13 @@ extension MainViewController: NSTableViewDelegate {
                 return chat.hasUserIcon ? iconColumnWidth : 0
             }
         }()
-        return max(iconHeight, max(commentRect.size.height, minimumRowHeight))
+        let giftImageHeight: CGFloat = message.giftImageUrl != nil ? giftImageSize.height : 0
+        return [
+            iconHeight,
+            giftImageHeight,
+            commentRect.size.height,
+            minimumRowHeight
+        ].max() ?? minimumRowHeight
     }
 
     private var iconColumnWidth: CGFloat {
@@ -310,7 +322,10 @@ extension MainViewController: NSTableViewDelegate {
             let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)
             let attributed = NSAttributedString(string: content as String, attributes: attributes)
-            commentView?.configure(attributedString: attributed)
+            commentView?.configure(
+                attributedString: attributed,
+                giftImageUrl: message.giftImageUrl
+            )
         case kUserIdColumnIdentifier:
             let userIdView = view as? UserIdTableCellView
             let handleName = HandleNameManager.shared.handleName(for: chat.userId, in: live.communityId)

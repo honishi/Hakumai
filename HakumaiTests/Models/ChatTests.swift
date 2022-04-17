@@ -13,13 +13,16 @@ class ChatTests: XCTestCase {
     override func setUpWithError() throws {}
     override func tearDownWithError() throws {}
 
+    // swiftlint:disable force_unwrapping
     func testToSlashCommand() throws {
         XCTAssert(Chat.toSlashCommand(from: "") == nil, "")
         XCTAssert(Chat.toSlashCommand(from: "nicoad") == nil, "")
         XCTAssert(Chat.toSlashCommand(from: "nicoad ") == nil, "")
         XCTAssert(Chat.toSlashCommand(from: "/nicoad xxx") == .nicoad, "")
-        XCTAssert(Chat.toSlashCommand(from: "/gift xxx") == .gift, "")
+        let url = URL(string: "https://secure-dcdn.cdn.nimg.jp/nicoad/res/nage/thumbnail/xxx.png")!
+        XCTAssert(Chat.toSlashCommand(from: "/gift xxx ") == .gift(url), "")
         XCTAssert(Chat.toSlashCommand(from: "/vote xxx") == .vote, "")
         XCTAssert(Chat.toSlashCommand(from: "/abc xxx") == .unknown, "")
     }
+    // swiftlint:enable force_unwrapping
 }
