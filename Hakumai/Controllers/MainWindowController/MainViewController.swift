@@ -161,41 +161,16 @@ extension MainViewController: NSTableViewDataSource {
 extension MainViewController: NSTableViewDelegate {
     func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
         let message = messageContainer[row]
-
         if let cached = rowHeightCache[message.messageNo] {
             return cached
         }
-
-        var rowHeight: CGFloat = 0
-
-        guard let commentTableColumn = tableView.tableColumn(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: kCommentColumnIdentifier)) else { return rowHeight }
-        let commentColumnWidth = commentTableColumn.width
-        rowHeight = commentColumnHeight(forMessage: message, width: commentColumnWidth)
-
+        guard let commentTableColumn = tableView.tableColumn(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: kCommentColumnIdentifier)) else { return 0 }
+        let rowHeight = calculateRowHeight(forMessage: message, width: commentTableColumn.width)
         rowHeightCache[message.messageNo] = rowHeight
-
         return rowHeight
     }
 
-    private func commentColumnHeight(forMessage message: Message, width: CGFloat) -> CGFloat {
-        let leadingSpace: CGFloat = 2
-        let trailingSpace: CGFloat = 2
-        let widthPadding = leadingSpace + trailingSpace
-        let hasGiftImage = message.giftImageUrl != nil
-        let giftImageSize = CommentTableCellView.giftImageViewSize
-        let giftPadding: CGFloat = CommentTableCellView.paddingBetweenGiftImageAndComment
-        let totalWidth = width
-            - widthPadding
-            - (hasGiftImage ? giftImageSize.width + giftPadding : 0)
-
-        let (content, attributes) = contentAndAttributes(forMessage: message)
-
-        let commentRect = content.boundingRect(
-            with: CGSize(width: totalWidth, height: 0),
-            options: .usesLineFragmentOrigin,
-            attributes: attributes)
-        // log.debug("\(commentRect.size.width),\(commentRect.size.height)")
-
+    private func calculateRowHeight(forMessage message: Message, width: CGFloat) -> CGFloat {
         let iconHeight: CGFloat = {
             switch message.content {
             case .system, .debug:
@@ -204,11 +179,16 @@ extension MainViewController: NSTableViewDelegate {
                 return chat.hasUserIcon ? iconColumnWidth : 0
             }
         }()
-        let giftImageHeight: CGFloat = message.giftImageUrl != nil ? giftImageSize.height : 0
+        let (content, attributes) = contentAndAttributes(forMessage: message)
+        let commentHeight = CommentTableCellView.calculateHeight(
+            text: content,
+            attributes: attributes,
+            hasGiftImage: message.isGift,
+            columnWidth: width
+        )
         return [
             iconHeight,
-            giftImageHeight,
-            commentRect.size.height,
+            commentHeight,
             minimumRowHeight
         ].max() ?? minimumRowHeight
     }

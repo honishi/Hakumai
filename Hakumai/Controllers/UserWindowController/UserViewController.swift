@@ -69,49 +69,26 @@ extension UserViewController: NSTableViewDataSource, NSTableViewDelegate {
 
     func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
         let message = messages[row]
-
         if let cached = rowHeightCacher[message.messageNo] {
             return cached
         }
-
-        var rowHeight: CGFloat = 0
-
         let itemIdentifier = NSUserInterfaceItemIdentifier(rawValue: kCommentColumnIdentifier)
         guard let commentTableColumn = tableView.tableColumn(withIdentifier: itemIdentifier) else {
-            return rowHeight
+            return 0
         }
-        let commentColumnWidth = commentTableColumn.width
-        rowHeight = commentColumnHeight(forMessage: message, width: commentColumnWidth)
-
+        let rowHeight = calculateRowHeight(forMessage: message, width: commentTableColumn.width)
         rowHeightCacher[message.messageNo] = rowHeight
-
         return rowHeight
     }
 
-    private func commentColumnHeight(forMessage message: Message, width: CGFloat) -> CGFloat {
-        let leadingSpace: CGFloat = 2
-        let trailingSpace: CGFloat = 2
-        let widthPadding = leadingSpace + trailingSpace
-        let hasGiftImage = message.giftImageUrl != nil
-        let giftImageSize = CommentTableCellView.giftImageViewSize
-        let giftPadding: CGFloat = CommentTableCellView.paddingBetweenGiftImageAndComment
-        let totalWidth = width
-            - widthPadding
-            - (hasGiftImage ? giftImageSize.width + giftPadding : 0)
-
+    private func calculateRowHeight(forMessage message: Message, width: CGFloat) -> CGFloat {
         let (content, attributes) = contentAndAttributes(forMessage: message)
-
-        let commentRect = content.boundingRect(
-            with: CGSize(width: totalWidth, height: 0),
-            options: .usesLineFragmentOrigin,
-            attributes: attributes)
-        // log.debug("\(commentRect.size.width),\(commentRect.size.height)")
-        let giftImageHeight: CGFloat = message.giftImageUrl != nil ? giftImageSize.height : 0
-
-        return [
-            giftImageHeight,
-            commentRect.size.height
-        ].max() ?? 0
+        return CommentTableCellView.calculateHeight(
+            text: content,
+            attributes: attributes,
+            hasGiftImage: message.isGift,
+            columnWidth: width
+        )
     }
 
     func tableViewColumnDidResize(_ aNotification: Notification) {
