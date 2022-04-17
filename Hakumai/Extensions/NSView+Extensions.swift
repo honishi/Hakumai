@@ -20,6 +20,13 @@ extension NSView {
         layer?.masksToBounds = true
         layer?.borderColor = NSColor.black.cgColor
     }
+
+    func enableCornerRadius(_ radius: CGFloat = 4) {
+        guard layer?.cornerRadius != radius else { return }
+        wantsLayer = true
+        layer?.cornerRadius = radius
+        layer?.masksToBounds = true
+    }
 }
 
 private let keyPathBackgroundColor = "backgroundColor"

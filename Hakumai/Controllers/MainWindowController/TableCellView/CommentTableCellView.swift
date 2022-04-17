@@ -18,6 +18,11 @@ private let paddingBetweenGiftImageAndComment: CGFloat = 8
 final class CommentTableCellView: NSTableCellView {
     @IBOutlet private weak var giftImageView: NSImageView!
     @IBOutlet private weak var commentTextField: NSTextField!
+
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        giftImageView.enableCornerRadius(4)
+    }
 }
 
 extension CommentTableCellView {
