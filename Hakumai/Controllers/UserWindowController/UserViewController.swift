@@ -69,26 +69,19 @@ extension UserViewController: NSTableViewDataSource, NSTableViewDelegate {
 
     func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
         let message = messages[row]
-
         if let cached = rowHeightCacher[message.messageNo] {
             return cached
         }
-
-        var rowHeight: CGFloat = 0
-
         let itemIdentifier = NSUserInterfaceItemIdentifier(rawValue: kCommentColumnIdentifier)
         guard let commentTableColumn = tableView.tableColumn(withIdentifier: itemIdentifier) else {
-            return rowHeight
+            return 0
         }
-        let commentColumnWidth = commentTableColumn.width
-        rowHeight = commentColumnHeight(forMessage: message, width: commentColumnWidth)
-
+        let rowHeight = calculateRowHeight(forMessage: message, width: commentTableColumn.width)
         rowHeightCacher[message.messageNo] = rowHeight
-
         return rowHeight
     }
 
-    private func commentColumnHeight(forMessage message: Message, width: CGFloat) -> CGFloat {
+    private func calculateRowHeight(forMessage message: Message, width: CGFloat) -> CGFloat {
         let (content, attributes) = contentAndAttributes(forMessage: message)
         return CommentTableCellView.calculateHeight(
             text: content,

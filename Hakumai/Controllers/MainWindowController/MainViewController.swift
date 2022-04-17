@@ -161,23 +161,16 @@ extension MainViewController: NSTableViewDataSource {
 extension MainViewController: NSTableViewDelegate {
     func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
         let message = messageContainer[row]
-
         if let cached = rowHeightCache[message.messageNo] {
             return cached
         }
-
-        var rowHeight: CGFloat = 0
-
-        guard let commentTableColumn = tableView.tableColumn(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: kCommentColumnIdentifier)) else { return rowHeight }
-        let commentColumnWidth = commentTableColumn.width
-        rowHeight = commentColumnHeight(forMessage: message, width: commentColumnWidth)
-
+        guard let commentTableColumn = tableView.tableColumn(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: kCommentColumnIdentifier)) else { return 0 }
+        let rowHeight = calculateRowHeight(forMessage: message, width: commentTableColumn.width)
         rowHeightCache[message.messageNo] = rowHeight
-
         return rowHeight
     }
 
-    private func commentColumnHeight(forMessage message: Message, width: CGFloat) -> CGFloat {
+    private func calculateRowHeight(forMessage message: Message, width: CGFloat) -> CGFloat {
         let iconHeight: CGFloat = {
             switch message.content {
             case .system, .debug:
@@ -197,7 +190,7 @@ extension MainViewController: NSTableViewDelegate {
             iconHeight,
             commentHeight,
             minimumRowHeight
-        ].max() ?? 0
+        ].max() ?? minimumRowHeight
     }
 
     private var iconColumnWidth: CGFloat {
