@@ -25,8 +25,7 @@ extension CommentTableCellView {
         let commentWidth = columnWidth
             - leadingMargin
             - trailingMargin
-            - giftImageViewSize.width
-            - paddingBetweenGiftImageAndComment
+            - (hasGiftImage ? giftImageViewSize.width + paddingBetweenGiftImageAndComment : 0)
         let commentRect = text.boundingRect(
             with: CGSize(width: commentWidth, height: 0),
             options: .usesLineFragmentOrigin,
