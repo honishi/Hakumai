@@ -190,7 +190,7 @@ extension MainViewController: NSTableViewDelegate {
         let commentHeight = CommentTableCellView.calculateHeight(
             text: content,
             attributes: attributes,
-            hasGiftImage: message.giftImageUrl != nil,
+            hasGiftImage: message.isGift,
             columnWidth: width
         )
         return [

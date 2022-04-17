@@ -39,6 +39,8 @@ struct Message {
 }
 
 extension Message {
+    var isGift: Bool { giftImageUrl != nil }
+
     var giftImageUrl: URL? {
         switch content {
         case .chat(let chat):

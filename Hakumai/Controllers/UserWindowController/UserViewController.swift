@@ -93,7 +93,7 @@ extension UserViewController: NSTableViewDataSource, NSTableViewDelegate {
         return CommentTableCellView.calculateHeight(
             text: content,
             attributes: attributes,
-            hasGiftImage: message.giftImageUrl != nil,
+            hasGiftImage: message.isGift,
             columnWidth: width
         )
     }
