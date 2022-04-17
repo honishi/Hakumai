@@ -44,7 +44,7 @@ extension CommentTableCellView {
     func configure(attributedString: NSAttributedString?, giftImageUrl: URL? = nil) {
         commentTextField.attributedStringValue = attributedString ?? NSAttributedString(string: "-")
         giftImageView.image = nil
-        // TODO: set placeholder image
+        // XXX: set placeholder image?
         giftImageView.kf.setImage(with: giftImageUrl)
         giftImageView.isHidden = giftImageUrl == nil
     }
