@@ -1098,6 +1098,7 @@ extension MainViewController {
 
     @IBAction func comment(_ sender: AnyObject) {
         let comment = commentTextField.stringValue
+        logComment(comment)
 
         if comment.isEmpty {
             scrollView.scrollToBottom()
@@ -1105,7 +1106,8 @@ extension MainViewController {
             return
         }
 
-        nicoManager.comment(comment, anonymously: commentAnonymouslyButton.isOn) { comment in
+        let cleaned = comment.stringByRemovingControlCharacters
+        nicoManager.comment(cleaned, anonymously: commentAnonymouslyButton.isOn) { comment in
             if comment == nil {
                 self.logSystemMessageToTable(L10n.failedToComment)
             }
@@ -1116,6 +1118,15 @@ extension MainViewController {
             commentHistory.append(comment)
             commentHistoryIndex = commentHistory.count
         }
+    }
+
+    private func logComment(_ comment: String) {
+        logSystemMessageToTable("comment: [\(comment)]")
+        logSystemMessageToTable("comment.clean: [\(comment.stringByRemovingControlCharacters)]")
+        logSystemMessageToTable("hasControlCharacters: [\(comment.hasControlCharacters)]")
+        logSystemMessageToTable("hasX1c: [\(comment.hasRegexp(pattern: "\\x1c"))]")
+
+        log.debug("[\(comment)] -> [\(comment.stringByRemovingControlCharacters)]")
     }
 
     @IBAction func speakButtonStateChanged(_ sender: Any) {
@@ -1436,5 +1447,15 @@ private extension NicoError {
 
 private extension NSButton {
     var isOn: Bool { self.state == .on }
+}
+
+private extension String {
+    var hasControlCharacters: Bool {
+        hasRegexp(pattern: "\\p{Cntrl}")
+    }
+
+    var stringByRemovingControlCharacters: String {
+        stringByReplacingRegexp(pattern: "\\p{Cntrl}", with: "")
+    }
 }
 // swiftlint:enable file_length
