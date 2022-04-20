@@ -1097,7 +1097,7 @@ extension MainViewController {
     }
 
     @IBAction func comment(_ sender: AnyObject) {
-        let comment = commentTextField.stringValue
+        let comment = commentTextField.stringValue.stringByRemovingControlCharacters
 
         if comment.isEmpty {
             scrollView.scrollToBottom()
@@ -1436,5 +1436,11 @@ private extension NicoError {
 
 private extension NSButton {
     var isOn: Bool { self.state == .on }
+}
+
+private extension String {
+    var stringByRemovingControlCharacters: String {
+        stringByReplacingRegexp(pattern: "\\p{Cntrl}", with: "")
+    }
 }
 // swiftlint:enable file_length
