@@ -17,7 +17,7 @@ target 'Hakumai' do
   pod 'SAMKeychain', '~> 1.5.3'
   pod 'Starscream', '~> 4.0.4'
 
-  # User interface
+  # User Interface
   pod 'Charts', '~> 4.0.2'
   pod 'Kingfisher', '~> 6.3.1'
   pod 'SnapKit', '~> 5.6.0'

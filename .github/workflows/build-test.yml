@@ -1,10 +1,10 @@
 name: Build and Run Tests
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 jobs:
   build:
-    runs-on: macos-11
+    runs-on: macos-12
 
     # checkout
     steps:
@@ -16,45 +16,27 @@ jobs:
           xcodebuild -version
           ls /Applications | grep 'Xcode'
 
-      # setup ruby
+      # setup ruby and bundler
       - name: Setup Ruby
-        uses: actions/setup-ruby@v1
+        uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "2.7"
+          ruby-version: 2.7
+          bundler-cache: true
       - name: Check Ruby version
         run: ruby -v
-
-      # setup bundle
-      - name: Setup cache for bundle
-        uses: actions/cache@v2
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-gem-
-      - name: Install bundler
-        run: |
-          gem install bundler -v 1.17.1
-          bundle --version
-      - name: Install dependencies
-        run: |
-          bundle config path vendor/bundle
-          bundle install --jobs 4 --retry 3
 
       # setup xcode version
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '13.2.1'
+          xcode-version: '13.3.1'
 
       # setup xcode project
       - name: Setup cache for Pods
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: Pods
           key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pods-
       - name: Pod install
         run: |
           # bundle exec pod repo update --silent
@@ -67,10 +49,7 @@ jobs:
         run: cp ./Hakumai/OAuthCredential.sample.swift ./Hakumai/OAuthCredential.swift
 
       # build and run tests
-      # XXX: remove the work around for cocoapods bug (EXPANDED_CODE_SIGN_IDENTITY)
-      # https://github.com/CocoaPods/CocoaPods/issues/7708#issuecomment-423668677
       - name: Build and Run Tests
         run: |
           xcodebuild -version
-          export EXPANDED_CODE_SIGN_IDENTITY=""
           set -o pipefail && xcodebuild -workspace Hakumai.xcworkspace -scheme Hakumai -configuration Debug -destination 'platform=OS X' CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO test | bundle exec xcpretty -c
