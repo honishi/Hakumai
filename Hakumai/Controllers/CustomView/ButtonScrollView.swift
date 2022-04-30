@@ -13,6 +13,7 @@ import SnapKit
 private let defaultButtonWidth = 32
 private let buttonTopBottomMargin: CGFloat = 8
 private let buttonRightMargin: CGFloat = 20
+private let autoHideDuration: TimeInterval = 3
 private let longPressInterval: TimeInterval = 0.5
 
 final class ButtonScrollView: NSScrollView {
@@ -50,15 +51,24 @@ extension ButtonScrollView {
     override func updateTrackingAreas() {
         super.updateTrackingAreas()
         trackingAreas.forEach { removeTrackingArea($0) }
-        let options: NSTrackingArea.Options = [.mouseMoved, .activeAlways]
+        let options: NSTrackingArea.Options = [.mouseEnteredAndExited, .mouseMoved, .activeAlways]
         let trackingArea = NSTrackingArea(
             rect: bounds, options: options, owner: self, userInfo: nil)
         addTrackingArea(trackingArea)
     }
 
+    override func mouseEntered(with event: NSEvent) {
+        // no-op
+    }
+
     override func mouseMoved(with event: NSEvent) {
         guard !isMouseOnButtons else { return }
         showButtons(activateHideTimer: true)
+    }
+
+    override func mouseExited(with event: NSEvent) {
+        hideButtons()
+        isMouseOnButtons = false
     }
 }
 
@@ -72,7 +82,7 @@ private extension ButtonScrollView {
 
         guard activateHideTimer else { return }
         hideButtonsTimer = Timer.scheduledTimer(
-            timeInterval: 3,
+            timeInterval: autoHideDuration,
             target: self,
             selector: #selector(hideButtons),
             userInfo: nil,
@@ -81,6 +91,9 @@ private extension ButtonScrollView {
 
     @objc
     func hideButtons() {
+        hideButtonsTimer?.invalidate()
+        hideButtonsTimer = nil
+
         upButton.isHidden = true
         downButton.isHidden = true
     }
