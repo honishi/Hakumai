@@ -161,18 +161,31 @@ extension AppDelegate {
 extension AppDelegate: BrowserUrlObserverDelegate {
     func browserUrlObserver(_ browserUrlObserver: BrowserUrlObserverType, didGetUrl liveUrl: URL) {
         log.debug(liveUrl)
-        if let liveProgramId = liveUrl.absoluteString.extractLiveProgramId() {
-            browserUrlObserver.ignoreLive(
-                liveProgramId: liveProgramId, seconds: browserUrlIgnoreSeconds)
+        guard let liveProgramId = liveUrl.absoluteString.extractLiveProgramId() else {
+            return
         }
+        // 0. Register to ignore the live for a while.
+        browserUrlObserver.ignoreLive(
+            liveProgramId: liveProgramId,
+            seconds: browserUrlIgnoreSeconds)
+        // 1. Already connected in exsiting windows?
         guard !isConnected(url: liveUrl) else {
             log.debug("Already connected, skip.")
             return
         }
-        if activeMainWindowController?.isEmpty == true {
+        // 2. Is active window empty and can be used?
+        if activeMainWindowController?.hasNeverBeenConnected == true {
             activeMainWindowController?.connectToUrl(liveUrl)
             return
         }
+        // 3. Any other available window for the live?
+        if let wc = mainWindowControllers
+            .filter({ $0.liveProgramIdInUrlTextField == liveProgramId })
+            .first {
+            wc.connectToUrl(liveUrl)
+            return
+        }
+        // 4. No available existing windows, open the new window.
         let commentInputInProgress = mainWindowControllers
             .map { $0.commentInputInProgress }
             .contains(true)
