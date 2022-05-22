@@ -650,9 +650,13 @@ extension MainViewController {
         logSystemMessageToTable(L10n.logoutCompleted)
     }
 
-    var isEmpty: Bool { live == nil }
+    var hasNeverBeenConnected: Bool { live == nil }
 
     var commentInputInProgress: Bool { !commentTextField.stringValue.isEmpty }
+
+    var liveProgramIdInUrlTextField: String? {
+        liveUrlTextField.stringValue.extractLiveProgramId()
+    }
 
     func connectToUrl(_ url: URL) {
         liveUrlTextField.stringValue = url.absoluteString

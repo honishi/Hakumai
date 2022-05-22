@@ -82,9 +82,11 @@ extension MainWindowController {
 
     var live: Live? { mainViewController.live }
 
-    var isEmpty: Bool { mainViewController.isEmpty }
+    var hasNeverBeenConnected: Bool { mainViewController.hasNeverBeenConnected }
 
     var commentInputInProgress: Bool { mainViewController.commentInputInProgress }
+
+    var liveProgramIdInUrlTextField: String? { mainViewController.liveProgramIdInUrlTextField }
 
     func connectToUrl(_ url: URL) {
         mainViewController.connectToUrl(url)
