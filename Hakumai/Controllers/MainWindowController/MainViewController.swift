@@ -27,6 +27,7 @@ private let defaultRankDateText = "--:--"
 // swiftlint:disable file_length
 protocol MainViewControllerDelegate: AnyObject {
     func mainViewControllerDidPrepareLive(_ mainViewController: MainViewController, title: String, community: String)
+    func mainViewControllerDidDisconnect(_ mainViewController: MainViewController, title: String, community: String)
     func mainViewControllerSpeechEnabledChanged(_ mainViewController: MainViewController, isEnabled: Bool)
 }
 
@@ -593,6 +594,12 @@ extension MainViewController: NicoManagerDelegate {
         }
 
         logDebugRankingManagerStatus()
+
+        guard let live = live else { return }
+        delegate?.mainViewControllerDidDisconnect(
+            self,
+            title: live.title,
+            community: live.community.title)
     }
 
     func nicoManagerDidReceiveStatistics(_ nicoManager: NicoManagerType, stat: LiveStatistics) {
