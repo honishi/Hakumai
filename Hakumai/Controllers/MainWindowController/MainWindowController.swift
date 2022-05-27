@@ -50,11 +50,16 @@ extension MainWindowController: NSWindowDelegate {
 
 extension MainWindowController: MainViewControllerDelegate {
     func mainViewControllerDidPrepareLive(_ mainViewController: MainViewController, title: String, community: String) {
-        setWindowTabTitle("🔴 \(title)", toolTip: "\(title) (\(community))")
+        setLiveTitle(title: title, community: community, isConnected: true)
     }
 
     func mainViewControllerDidDisconnect(_ mainViewController: MainViewController, title: String, community: String) {
-        setWindowTabTitle("⚪️ \(title)", toolTip: "\(title) (\(community))")
+        setLiveTitle(title: title, community: community, isConnected: false)
+    }
+
+    private func setLiveTitle(title: String, community: String, isConnected: Bool) {
+        let _title = "\(isConnected ? "⚡️ " : "")\(title)"
+        setWindowTabTitle(_title, toolTip: "\(title) (\(community))")
     }
 
     func mainViewControllerSpeechEnabledChanged(_ mainViewController: MainViewController, isEnabled: Bool) {
