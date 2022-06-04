@@ -775,11 +775,17 @@ private extension NicoManager {
         guard let _chat = try? decoder.decode(WebSocketChatData.self, from: data) else { return }
         // log.debug(_chat)
         let chat = _chat.toChat(roomPosition: roomPosition(of: _chat))
-        guard chatNumbers.maxBeforeReconnect < chat.no else {
-            log.debug("Skip duplicated chat.")
+        guard chat.roomPosition == .arena || (chat.roomPosition != .arena && chat.premium.isUser) else {
+            log.debug("Ignore chat: \(chat)")
             return
         }
-        chatNumbers.latest = chat.no
+        if chat.roomPosition == .arena {
+            guard chatNumbers.maxBeforeReconnect < chat.no else {
+                log.debug("Skip duplicated chat.")
+                return
+            }
+            chatNumbers.latest = chat.no
+        }
         delegate?.nicoManagerDidReceiveChat(self, chat: chat)
         if _chat.isDisconnect {
             disconnect()
