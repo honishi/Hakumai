@@ -29,8 +29,8 @@ private extension RoomPositionTableCellView {
         switch message.content {
         case .system:
             return UIHelper.systemMessageBgColor()
-        case .chat:
-            return UIHelper.arenaRoomColor()
+        case .chat(let chat):
+            return UIHelper.roomColor(roomPosition: chat.roomPosition)
         case .debug:
             return UIHelper.debugMessageBgColor()
         }

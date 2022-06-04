@@ -63,6 +63,7 @@ struct SystemMessage {
 }
 
 struct ChatMessage {
+    let roomPosition: RoomPosition
     let no: Int
     let date: Date
     let userId: String
@@ -144,6 +145,7 @@ enum SlashCommand: Equatable {
 extension Chat {
     func toChatMessage(isFirst: Bool) -> ChatMessage {
         return ChatMessage(
+            roomPosition: roomPosition,
             no: no,
             date: date,
             userId: userId,
