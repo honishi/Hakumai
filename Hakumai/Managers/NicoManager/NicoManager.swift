@@ -26,6 +26,7 @@ private let watchProgramsApiUrl = "https://api.live2.nicovideo.jp/api/v1/watch/p
 private let userinfoApiUrl = "https://oauth.nicovideo.jp/open_id/userinfo"
 private let wsEndpointApiUrl = "https://api.live2.nicovideo.jp/api/v1/wsendpoint"
 private let userNicknameApiUrl = "https://api.live2.nicovideo.jp/api/v1/user/nickname"
+private let programRoomsApiUrl = "https://api.live2.nicovideo.jp/api/v1/unama/programs/rooms"
 
 // HTTP Header:
 private let httpHeaderKeyAuthorization = "Authorization"
@@ -85,6 +86,10 @@ final class NicoManager: NicoManagerType {
             message = Date()
         }
     }
+    struct OpenThreadInfo {
+        let userId: String
+        let threadKey: String
+    }
 
     // Public Properties
     weak var delegate: NicoManagerDelegate?
@@ -121,6 +126,11 @@ final class NicoManager: NicoManagerType {
 
     // App-side Health Check (Text Socket)
     private var textSocketEventCheckTimer: Timer?
+
+    // Program Rooms (Store Thread)
+    private var openThreadInfo: OpenThreadInfo?
+    private var openedRoomCount = 0
+    private var programRoomsCheckTimer: Timer?
 
     // Timeshift Comments
     private var earliestTimeShiftChatDate: Date = .distantFuture
@@ -404,6 +414,9 @@ private extension NicoManager {
             guard let me = self, let isTimeShift = me.live?.isTimeShift else { return }
             switch $0 {
             case .success(let room):
+                me.openThreadInfo = OpenThreadInfo(
+                    userId: userId,
+                    threadKey: room.data.yourPostKey)
                 me.delegate?.nicoManager(me, hasDebugMessgae: "Completed to open watch socket.")
                 if isTimeShift {
                     me.openTimeShiftMessageSocket(userId: userId, room: room, connectContext: connectContext)
@@ -431,6 +444,7 @@ private extension NicoManager {
                 me.connectRequests.lastEstablished = me.connectRequests.onGoing
                 me.connectRequests.onGoing = nil
                 me.isConnected = true
+                me.openedRoomCount = 1
                 me.delegate?.nicoManagerDidConnectToLive(
                     me,
                     roomPosition: RoomPosition.arena,
@@ -474,6 +488,7 @@ private extension NicoManager {
         startWatchSocketKeepSeatTimer(interval: watchSocketKeepSeatInterval)
         startMessageSocketEmptyMessageTimer(interval: messageSocketEmptyMessageInterval)
         startPingPongCheckTimer()
+        startProgramRoomsCheckTimer()
         log.debug("Started all timers.")
     }
 
@@ -482,6 +497,7 @@ private extension NicoManager {
         stopMessageSocketEmptyMessageTimer()
         stopPingPongCheckTimer()
         clearTextSocketEventCheckTimer()
+        stopProgramRoomsCheckTimer()
         log.debug("Stopped all timers.")
     }
 
@@ -503,6 +519,8 @@ private extension NicoManager {
 
         live = nil
         isConnected = false
+        openThreadInfo = nil
+        openedRoomCount = 0
     }
 }
 
@@ -1029,6 +1047,63 @@ private extension NicoManager {
     @objc func textSocketEventCheckTimerFired() {
         log.debug("Seems no comments for a while. Reconnecting...")
         reconnect(reason: .noTexts)
+    }
+}
+
+// MARK: - Private Methods (Program Rooms Check Timer)
+private extension NicoManager {
+    func startProgramRoomsCheckTimer() {
+        programRoomsCheckTimer = Timer.scheduledTimer(
+            timeInterval: 60,
+            target: self,
+            selector: #selector(NicoManager.programRoomsCheckTimerFired),
+            userInfo: nil,
+            repeats: true)
+    }
+
+    func stopProgramRoomsCheckTimer() {
+        programRoomsCheckTimer?.invalidate()
+        programRoomsCheckTimer = nil
+    }
+
+    @objc func programRoomsCheckTimerFired() {
+        log.debug("programRoomsCheckTimerFired fired.")
+        guard let openThreadInfo = openThreadInfo, let live = live else { return }
+        checkProgramRooms(
+            userId: openThreadInfo.userId,
+            liveProgramId: live.liveProgramId)
+    }
+}
+
+private extension NicoManager {
+    func checkProgramRooms(userId: String, liveProgramId: String) {
+        callOAuthEndpoint(
+            url: programRoomsApiUrl,
+            parameters: [
+                "userId": userId,
+                "nicoliveProgramId": liveProgramId
+            ]
+        ) { [weak self] (result: Result<ProgramRoomsResponse, NicoError>) in
+            guard let me = self else { return }
+            switch result {
+            case .success(let data):
+                log.debug("Program rooms: \(data)")
+                for index in me.openedRoomCount..<data.data.count {
+                    let room = data.data[index]
+                    log.debug("Opening store thread (room: \(room)...")
+                    guard let socket = me.messageSocket, let store = me.openThreadInfo else { return }
+                    me.sendThreadMessage(
+                        socket: socket,
+                        userId: userId,
+                        threadId: room.threadId,
+                        resFrom: 0,
+                        threadKey: store.threadKey)
+                    me.openedRoomCount += 1
+                }
+            case .failure(let error):
+                log.error(error)
+            }
+        }
     }
 }
 
