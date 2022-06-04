@@ -23,8 +23,13 @@ final class UIHelper {
         return NSColor(hex: "#0EA50B")
     }
 
-    static func arenaRoomColor() -> NSColor {
-        return NSColor(hex: "#3C49FF")
+    static func roomColor(roomPosition: RoomPosition) -> NSColor {
+        switch roomPosition {
+        case .arena:
+            return NSColor(hex: "#3C49FF")
+        case .standA, .standB, .standC, .standD, .standE, .standF, .standG, .standH, .standI, .standJ:
+            return NSColor(hex: "#CB4C15")
+        }
     }
 
     static func cellViewAdFlashColor() -> NSColor {

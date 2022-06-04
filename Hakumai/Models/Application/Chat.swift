@@ -10,7 +10,7 @@ import Foundation
 
 struct Chat {
     // MARK: - Properties
-    let roomPosition: RoomPosition = .arena
+    let roomPosition: RoomPosition
     let no: Int
     let date: Date
     let dateUsec: Int

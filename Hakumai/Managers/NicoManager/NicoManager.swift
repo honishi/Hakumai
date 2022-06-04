@@ -90,6 +90,11 @@ final class NicoManager: NicoManagerType {
         let userId: String
         let threadKey: String
     }
+    struct ProgramRoom {
+        let name: String
+        let id: Int
+        let threadId: String
+    }
 
     // Public Properties
     weak var delegate: NicoManagerDelegate?
@@ -131,6 +136,7 @@ final class NicoManager: NicoManagerType {
     private var openThreadInfo: OpenThreadInfo?
     private var openedRoomCount = 0
     private var programRoomsCheckTimer: Timer?
+    private var programRooms: [ProgramRoom] = []
 
     // Timeshift Comments
     private var earliestTimeShiftChatDate: Date = .distantFuture
@@ -521,6 +527,7 @@ private extension NicoManager {
         isConnected = false
         openThreadInfo = nil
         openedRoomCount = 0
+        programRooms.removeAll()
     }
 }
 
@@ -767,7 +774,7 @@ private extension NicoManager {
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         guard let _chat = try? decoder.decode(WebSocketChatData.self, from: data) else { return }
         // log.debug(_chat)
-        let chat = _chat.toChat()
+        let chat = _chat.toChat(roomPosition: roomPosition(of: _chat))
         guard chatNumbers.maxBeforeReconnect < chat.no else {
             log.debug("Skip duplicated chat.")
             return
@@ -777,6 +784,12 @@ private extension NicoManager {
         if _chat.isDisconnect {
             disconnect()
         }
+    }
+
+    func roomPosition(of chat: WebSocketChatData) -> RoomPosition {
+        let index = programRooms.map({ $0.threadId }).firstIndex(of: chat.chat.thread)
+        guard let index = index else { return .arena }
+        return RoomPosition(rawValue: index) ?? .arena
     }
 }
 
@@ -918,7 +931,7 @@ private extension NicoManager {
             return .unknown
         }
         guard let chat = try? decoder.decode(WebSocketChatData.self, from: data) else { return .unknown }
-        return .chat(chat.toChat())
+        return .chat(chat.toChat(roomPosition: .arena))
     }
 }
 
@@ -1088,6 +1101,7 @@ private extension NicoManager {
             switch result {
             case .success(let data):
                 log.debug("Program rooms: \(data)")
+                me.programRooms = data.data.toProgramRooms()
                 for index in me.openedRoomCount..<data.data.count {
                     let room = data.data[index]
                     log.debug("Opening store thread (room: \(room)...")
@@ -1137,8 +1151,9 @@ private extension UserInfoResponse {
 }
 
 private extension WebSocketChatData {
-    func toChat() -> Chat {
+    func toChat(roomPosition: RoomPosition) -> Chat {
         Chat(
+            roomPosition: roomPosition,
             no: chat.no,
             date: chat.date.toDateAsTimeIntervalSince1970(),
             dateUsec: chat.dateUsec,
@@ -1167,6 +1182,18 @@ private extension WebSocketStatisticsData {
             adPoints: data.adPoints,
             giftPoints: data.giftPoints
         )
+    }
+}
+
+private extension Array where Element == ProgramRoomsResponse.Data {
+    func toProgramRooms() -> [NicoManager.ProgramRoom] {
+        map {
+            NicoManager.ProgramRoom(
+                name: $0.name,
+                id: $0.id,
+                threadId: $0.threadId
+            )
+        }
     }
 }
 
