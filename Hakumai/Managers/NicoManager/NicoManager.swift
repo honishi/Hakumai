@@ -26,7 +26,7 @@ private let watchProgramsApiUrl = "https://api.live2.nicovideo.jp/api/v1/watch/p
 private let userinfoApiUrl = "https://oauth.nicovideo.jp/open_id/userinfo"
 private let wsEndpointApiUrl = "https://api.live2.nicovideo.jp/api/v1/wsendpoint"
 private let userNicknameApiUrl = "https://api.live2.nicovideo.jp/api/v1/user/nickname"
-private let programRoomsApiUrl = "https://api.live2.nicovideo.jp/api/v1/unama/programs/rooms"
+private let programsRoomsApiUrl = "https://api.live2.nicovideo.jp/api/v1/unama/programs/rooms"
 
 // HTTP Header:
 private let httpHeaderKeyAuthorization = "Authorization"
@@ -122,7 +122,7 @@ final class NicoManager: NicoManagerType {
     private var cachedUserNames = [String: String]()
 
     // Comment Management for Reconnection
-    private var chatNumbers = ChatNumbers(latest: 0, maxBeforeReconnect: 0)
+    private var arenaChatNumbers = ChatNumbers(latest: 0, maxBeforeReconnect: 0)
 
     // App-side Health Check (Last Pong)
     private var lastPongSocketDates: LastSocketDates?
@@ -176,10 +176,10 @@ extension NicoManager {
         // 3. Save chat numbers.
         switch connectContext {
         case .normal:
-            chatNumbers.latest = 0
-            chatNumbers.maxBeforeReconnect = 0
+            arenaChatNumbers.latest = 0
+            arenaChatNumbers.maxBeforeReconnect = 0
         case .reconnect:
-            chatNumbers.maxBeforeReconnect = chatNumbers.latest
+            arenaChatNumbers.maxBeforeReconnect = arenaChatNumbers.latest
         }
 
         // 4. Cleanup current connection, if needed.
@@ -446,11 +446,11 @@ private extension NicoManager {
             switch $0 {
             case .success:
                 me.delegate?.nicoManager(me, hasDebugMessgae: "Completed to open message socket.")
-                me.startAllTimers()
                 me.connectRequests.lastEstablished = me.connectRequests.onGoing
                 me.connectRequests.onGoing = nil
                 me.isConnected = true
                 me.openedRoomCount = 1
+                me.startAllTimers()
                 me.delegate?.nicoManagerDidConnectToLive(
                     me,
                     roomPosition: RoomPosition.arena,
@@ -780,11 +780,11 @@ private extension NicoManager {
             return
         }
         if chat.roomPosition == .arena {
-            guard chatNumbers.maxBeforeReconnect < chat.no else {
+            guard arenaChatNumbers.maxBeforeReconnect < chat.no else {
                 log.debug("Skip duplicated chat.")
                 return
             }
-            chatNumbers.latest = chat.no
+            arenaChatNumbers.latest = chat.no
         }
         delegate?.nicoManagerDidReceiveChat(self, chat: chat)
         if _chat.isDisconnect {
@@ -1072,12 +1072,15 @@ private extension NicoManager {
 // MARK: - Private Methods (Program Rooms Check Timer)
 private extension NicoManager {
     func startProgramRoomsCheckTimer() {
+        stopProgramRoomsCheckTimer()
         programRoomsCheckTimer = Timer.scheduledTimer(
-            timeInterval: 60,
+            timeInterval: 120,
             target: self,
             selector: #selector(NicoManager.programRoomsCheckTimerFired),
             userInfo: nil,
             repeats: true)
+        // For first time, kick the selector manually.
+        programRoomsCheckTimerFired()
     }
 
     func stopProgramRoomsCheckTimer() {
@@ -1097,7 +1100,7 @@ private extension NicoManager {
 private extension NicoManager {
     func checkProgramRooms(userId: String, liveProgramId: String) {
         callOAuthEndpoint(
-            url: programRoomsApiUrl,
+            url: programsRoomsApiUrl,
             parameters: [
                 "userId": userId,
                 "nicoliveProgramId": liveProgramId
