@@ -76,7 +76,14 @@ final class NicoManager: NicoManagerType {
     struct ChatNumbers {
         var latest: Int
         var maxBeforeReconnect: Int
+
+        static var zero: ChatNumbers { ChatNumbers(latest: 0, maxBeforeReconnect: 0) }
+
+        func makeMaxBeforeReconnectToLatest() -> ChatNumbers {
+            ChatNumbers(latest: latest, maxBeforeReconnect: latest)
+        }
     }
+
     struct LastSocketDates {
         var watch: Date
         var message: Date
@@ -122,7 +129,7 @@ final class NicoManager: NicoManagerType {
     private var cachedUserNames = [String: String]()
 
     // Comment Management for Reconnection
-    private var arenaChatNumbers = ChatNumbers(latest: 0, maxBeforeReconnect: 0)
+    private var chatNumbers: [RoomPosition: ChatNumbers] = [:]
 
     // App-side Health Check (Last Pong)
     private var lastPongSocketDates: LastSocketDates?
@@ -174,12 +181,13 @@ extension NicoManager {
         connectRequests.lastEstablished = nil
 
         // 3. Save chat numbers.
-        switch connectContext {
-        case .normal:
-            arenaChatNumbers.latest = 0
-            arenaChatNumbers.maxBeforeReconnect = 0
-        case .reconnect:
-            arenaChatNumbers.maxBeforeReconnect = arenaChatNumbers.latest
+        for room in RoomPosition.allCases {
+            switch connectContext {
+            case .normal:
+                chatNumbers[room] = .zero
+            case .reconnect:
+                chatNumbers[room] = chatNumbers[room]?.makeMaxBeforeReconnectToLatest()
+            }
         }
 
         // 4. Cleanup current connection, if needed.
@@ -774,18 +782,17 @@ private extension NicoManager {
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         guard let _chat = try? decoder.decode(WebSocketChatData.self, from: data) else { return }
         // log.debug(_chat)
-        let chat = _chat.toChat(roomPosition: roomPosition(of: _chat))
-        guard chat.roomPosition == .arena || (chat.roomPosition != .arena && chat.premium.isUser) else {
+        let room = roomPosition(of: _chat)
+        let chat = _chat.toChat(roomPosition: room)
+        guard room == .arena || (room != .arena && chat.premium.isUser) else {
             log.debug("Ignore chat: \(chat)")
             return
         }
-        if chat.roomPosition == .arena {
-            guard arenaChatNumbers.maxBeforeReconnect < chat.no else {
-                log.debug("Skip duplicated chat.")
-                return
-            }
-            arenaChatNumbers.latest = chat.no
+        if let max = chatNumbers[room]?.maxBeforeReconnect, chat.no <= max {
+            log.debug("Skip duplicated chat.")
+            return
         }
+        chatNumbers[room]?.latest = chat.no
         delegate?.nicoManagerDidReceiveChat(self, chat: chat)
         if _chat.isDisconnect {
             disconnect()
