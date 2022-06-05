@@ -12,37 +12,24 @@ enum BrowserType {
     case chrome, safari
 }
 
-enum RoomPosition: Int, CustomStringConvertible {
+enum RoomPosition: Int, CaseIterable {
     case arena = 0
-    case standA, standB, standC, standD, standE, standF, standG, standH, standI, standJ
-
-    var description: String { return "\(rawValue)(\(label()))" }
-
-    // MARK: - Functions
-    func previous() -> RoomPosition? {
-        guard self != .arena else { return nil }
-        return RoomPosition(rawValue: rawValue - 1)
-    }
-
-    func next() -> RoomPosition? {
-        guard self != .standJ else { return nil }
-        return RoomPosition(rawValue: rawValue + 1)
-    }
+    case storeA, storeB, storeC, storeD, storeE, storeF, storeG, storeH, storeI, storeJ
 
     // swiftlint:disable cyclomatic_complexity
     func label() -> String {
         switch self {
         case .arena:    return "アリーナ"
-        case .standA:   return "立ち見1"
-        case .standB:   return "立ち見2"
-        case .standC:   return "立ち見3"
-        case .standD:   return "立ち見4"
-        case .standE:   return "立ち見5"
-        case .standF:   return "立ち見6"
-        case .standG:   return "立ち見7"
-        case .standH:   return "立ち見8"
-        case .standI:   return "立ち見9"
-        case .standJ:   return "立ち見10"
+        case .storeA:   return "Store1"
+        case .storeB:   return "Store2"
+        case .storeC:   return "Store3"
+        case .storeD:   return "Store4"
+        case .storeE:   return "Store5"
+        case .storeF:   return "Store6"
+        case .storeG:   return "Store7"
+        case .storeH:   return "Store8"
+        case .storeI:   return "Store9"
+        case .storeJ:   return "Store10"
         }
     }
     // swiftlint:enable cyclomatic_complexity
@@ -51,16 +38,16 @@ enum RoomPosition: Int, CustomStringConvertible {
     func shortLabel() -> String {
         switch self {
         case .arena:   return "ア"
-        case .standA:  return "1"
-        case .standB:  return "2"
-        case .standC:  return "3"
-        case .standD:  return "4"
-        case .standE:  return "5"
-        case .standF:  return "6"
-        case .standG:  return "7"
-        case .standH:  return "8"
-        case .standI:  return "9"
-        case .standJ:  return "10"
+        case .storeA:  return "1"
+        case .storeB:  return "2"
+        case .storeC:  return "3"
+        case .storeD:  return "4"
+        case .storeE:  return "5"
+        case .storeF:  return "6"
+        case .storeG:  return "7"
+        case .storeH:  return "8"
+        case .storeI:  return "9"
+        case .storeJ:  return "10"
         }
     }
     // swiftlint:enable cyclomatic_complexity

@@ -22,7 +22,7 @@ struct Chat {
 
 extension Chat: CustomStringConvertible {
     var description: String {
-        "Chat: roomPosition[\(roomPosition.description)] no[\(no)] " +
+        "Chat: roomPosition[\(roomPosition)] no[\(no)] " +
             "date[\(date.description)] dateUsec[\(dateUsec)] mail[\(mail ?? [])] userId[\(userId)] " +
             "premium[\(premium.description)] comment[\(comment)]"
     }

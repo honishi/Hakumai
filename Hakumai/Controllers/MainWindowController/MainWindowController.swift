@@ -58,8 +58,9 @@ extension MainWindowController: MainViewControllerDelegate {
     }
 
     private func setLiveTitle(title: String, community: String, isConnected: Bool) {
-        let _title = "\(isConnected ? "⚡️ " : "")\(title)"
-        setWindowTabTitle(_title, toolTip: "\(title) (\(community))")
+        let _title = "\(title) - \(community)"
+        let _tabTitle = "\(isConnected ? "⚡️ " : "")\(title)"
+        setWindowTitle(_title, tabTitle: _tabTitle, tabToolTip: _title)
     }
 
     func mainViewControllerSpeechEnabledChanged(_ mainViewController: MainViewController, isEnabled: Bool) {
@@ -168,7 +169,7 @@ private extension MainWindowController {
     // swiftlint:enable force_cast
 
     func setInitialWindowTabTitle() {
-        setWindowTabTitle(L10n.newLive)
+        setWindowTitle(L10n.newLive, tabTitle: L10n.newLive)
     }
 
     func applyAlwaysOnTop() {
@@ -176,12 +177,10 @@ private extension MainWindowController {
         window?.alwaysOnTop = alwaysOnTop
     }
 
-    func setWindowTabTitle(_ title: String, toolTip: String? = nil) {
-        if #available(macOS 10.13, *) {
-            window?.tab.title = title
-            window?.tab.toolTip = toolTip
-        } else {
-            window?.title = title
-        }
+    func setWindowTitle(_ title: String, tabTitle: String, tabToolTip: String? = nil) {
+        window?.title = title
+        guard #available(macOS 10.13, *) else { return }
+        window?.tab.title = tabTitle
+        window?.tab.toolTip = tabToolTip
     }
 }

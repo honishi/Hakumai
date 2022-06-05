@@ -27,7 +27,7 @@ final class UIHelper {
         switch roomPosition {
         case .arena:
             return NSColor(hex: "#3C49FF")
-        case .standA, .standB, .standC, .standD, .standE, .standF, .standG, .standH, .standI, .standJ:
+        case .storeA, .storeB, .storeC, .storeD, .storeE, .storeF, .storeG, .storeH, .storeI, .storeJ:
             return NSColor(hex: "#CB4C15")
         }
     }
