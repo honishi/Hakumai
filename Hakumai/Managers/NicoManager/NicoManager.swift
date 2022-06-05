@@ -777,6 +777,10 @@ private extension NicoManager {
     }
 
     func processMessageSocketTextEvent(text: String) {
+        guard isConnected else {
+            log.debug("Skip processing message text. (Disconnected already.)")
+            return
+        }
         guard let data = text.data(using: .utf8) else { return }
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
