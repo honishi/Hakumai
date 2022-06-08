@@ -219,14 +219,18 @@ extension AppDelegate: BrowserUrlObserverDelegate {
             log.debug("Browser tab selection sync is NOT enabled. (\(liveProgramId))")
             return
         }
+        guard activeMainWindowController?.window?.isOnActiveSpace == true else {
+            log.debug("Window is NOT on active space. Skip.")
+            return
+        }
         if activeMainWindowController?.window?.isMainWindow == true {
             log.debug("Window has focus. Skip. (\(liveProgramId))")
             return
         }
-        if let wc = mainWindowControllers
+        let wc = mainWindowControllers
             .filter({ $0.isLiveProgramId(liveProgramId) })
-            .first,
-           wc.window?.isOnActiveSpace == true {
+            .first
+        if let wc = wc {
             log.debug("Show window. (\(liveProgramId))")
             wc.showWindow(self)
         }
