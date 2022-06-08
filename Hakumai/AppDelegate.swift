@@ -172,7 +172,7 @@ extension AppDelegate {
 extension AppDelegate: BrowserUrlObserverDelegate {
     func browserUrlObserver(_ browserUrlObserver: BrowserUrlObserverType, didGetUrl liveUrl: URL) {
         log.debug(liveUrl)
-        // logWindows()
+        logWindows()
         guard let liveProgramId = liveUrl.absoluteString.extractLiveProgramId() else {
             return
         }
@@ -222,8 +222,12 @@ extension AppDelegate: BrowserUrlObserverDelegate {
             return
         }
         // 2. Is window on active space?
-        guard activeMainWindowController?.window?.isOnActiveSpace == true else {
-            log.debug("MainWindow is NOT on active space. Skip. (\(liveProgramId))")
+        let areAllWindowsOnActiveSpace = mainWindowControllers
+            .map { $0.window?.isOnActiveSpace }
+            .compactMap { $0 }
+            .allSatisfy { $0 == true }
+        guard areAllWindowsOnActiveSpace else {
+            log.debug("Some MainWindow is NOT on active space. Skip. (\(liveProgramId))")
             return
         }
         // 3. Is window other than MainWindow presenting?
@@ -253,7 +257,7 @@ extension AppDelegate: BrowserUrlObserverDelegate {
             .compactMap { $0 }
             .forEach {
                 guard let live = $0.live, let window = $0.window else { return }
-                log.debug("lv:\(live.liveProgramId), key:\(window.isKeyWindow), main:\(window.isMainWindow), onActiveSpace:\(window.isOnActiveSpace), visible:\(window.isVisible)")
+                log.debug("lv:\(live.liveProgramId), order:\(window.orderedIndex), key:\(window.isKeyWindow), main:\(window.isMainWindow), onActiveSpace:\(window.isOnActiveSpace), visible:\(window.isVisible)")
             }
     }
 }
@@ -331,7 +335,7 @@ private extension AppDelegate {
             Parameters.alwaysOnTop: false,
             Parameters.commentAnonymously: true,
             Parameters.enableBrowserUrlObservation: false,
-            Parameters.enableBrowserTabSelectionSync: true,
+            Parameters.enableBrowserTabSelectionSync: false,
             Parameters.enableLiveNotification: false,
             Parameters.enableEmotionMessage: true,
             Parameters.enableDebugMessage: false]
