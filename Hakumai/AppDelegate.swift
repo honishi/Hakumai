@@ -172,6 +172,7 @@ extension AppDelegate {
 extension AppDelegate: BrowserUrlObserverDelegate {
     func browserUrlObserver(_ browserUrlObserver: BrowserUrlObserverType, didGetUrl liveUrl: URL) {
         log.debug(liveUrl)
+        // logWindows()
         guard let liveProgramId = liveUrl.absoluteString.extractLiveProgramId() else {
             return
         }
@@ -215,25 +216,45 @@ extension AppDelegate: BrowserUrlObserverDelegate {
     }
 
     private func focusWindowIfNeeded(liveProgramId: String) {
+        // 1. Enabled by setting?
         guard enableBrowerTabSelectionSync else {
             log.debug("Browser tab selection sync is NOT enabled. (\(liveProgramId))")
             return
         }
+        // 2. Is window on active space?
         guard activeMainWindowController?.window?.isOnActiveSpace == true else {
-            log.debug("Window is NOT on active space. Skip.")
+            log.debug("MainWindow is NOT on active space. Skip. (\(liveProgramId))")
             return
         }
+        // 3. Is window other than MainWindow presenting?
+        let visibleAppWindows = NSApp.windows.filter({ $0.isVisible })
+        let windowsOtherThanMainWidnow = visibleAppWindows.filter({ !($0 is MainWindow) })
+        if !windowsOtherThanMainWidnow.isEmpty {
+            log.debug("Window except for MainWindow is presenting. Skip. (\(liveProgramId))")
+            return
+        }
+        // 4. Has MainWindow focus?
         if activeMainWindowController?.window?.isMainWindow == true {
-            log.debug("Window has focus. Skip. (\(liveProgramId))")
+            log.debug("MainWindow has focus. Skip. (\(liveProgramId))")
             return
         }
+        // 5. Ok, set focus to window, if possible.
         let wc = mainWindowControllers
             .filter({ $0.isLiveProgramId(liveProgramId) })
             .first
         if let wc = wc {
-            log.debug("Show window. (\(liveProgramId))")
+            log.debug("Show MainWindow. (\(liveProgramId))")
             wc.showWindow(self)
         }
+    }
+
+    func logWindows() {
+        mainWindowControllers
+            .compactMap { $0 }
+            .forEach {
+                guard let live = $0.live, let window = $0.window else { return }
+                log.debug("lv:\(live.liveProgramId), key:\(window.isKeyWindow), main:\(window.isMainWindow), onActiveSpace:\(window.isOnActiveSpace), visible:\(window.isVisible)")
+            }
     }
 }
 
