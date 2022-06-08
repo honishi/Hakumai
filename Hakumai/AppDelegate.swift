@@ -215,12 +215,12 @@ extension AppDelegate: BrowserUrlObserverDelegate {
     }
 
     private func focusWindowIfNeeded(liveProgramId: String) {
-        guard activeMainWindowController?.window?.isMainWindow == false else {
-            log.debug("Window has focus. Skip. (\(liveProgramId))")
-            return
-        }
         guard enableBrowerTabSelectionSync else {
             log.debug("Browser tab selection sync is NOT enabled. (\(liveProgramId))")
+            return
+        }
+        if activeMainWindowController?.window?.isMainWindow == true {
+            log.debug("Window has focus. Skip. (\(liveProgramId))")
             return
         }
         if let wc = mainWindowControllers
