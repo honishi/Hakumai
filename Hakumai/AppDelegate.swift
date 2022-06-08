@@ -11,10 +11,15 @@ import AppKit
 import Kingfisher
 
 private let mainWindowDefaultTopLeftPoint = NSPoint(x: 100, y: 100)
-private let browserUrlIgnoreSeconds: TimeInterval = 120
+private let urlObservationIgnoreSeconds: TimeInterval = 120
 
 @NSApplicationMain
 final class AppDelegate: NSObject, NSApplicationDelegate {
+    struct IgnoreLive {
+        let untilDate: Date
+        let liveProgramId: String
+    }
+
     @IBOutlet weak var speakMenuItem: NSMenuItem!
 
     private let notificationPresenter: NotificationPresenterProtocol = NotificationPresenter.default
@@ -23,6 +28,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var nextMainWindowTopLeftPoint: NSPoint = NSPoint.zero
 
     private let browserUrlObserver: BrowserUrlObserverType = BrowserUrlObserver()
+    private var ignoreLives: [IgnoreLive] = []
 
     // MARK: - NSApplicationDelegate Functions
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -164,28 +170,39 @@ extension AppDelegate: BrowserUrlObserverDelegate {
         guard let liveProgramId = liveUrl.absoluteString.extractLiveProgramId() else {
             return
         }
-        // 0. Register to ignore the live for a while.
-        browserUrlObserver.ignoreLive(
-            liveProgramId: liveProgramId,
-            seconds: browserUrlIgnoreSeconds)
         // 1. Already connected in exsiting windows?
-        guard !isConnected(url: liveUrl) else {
-            log.debug("Already connected, skip.")
+        if isConnected(url: liveUrl) {
+            log.debug("Already connected.")
+            // TODO: Flag
+            if let wc = mainWindowControllers
+                .filter({ $0.isLiveProgramId(liveProgramId) })
+                .first,
+               wc.window?.isOnActiveSpace == true {
+                wc.showWindow(self)
+            }
             return
         }
-        // 2. Is active window empty and can be used?
+        // 2. Update ignore-url list. Skip live if matched.
+        refreshIgnoreLives()
+        let shouldIgnore = ignoreLives.map({ $0.liveProgramId }).contains(liveProgramId)
+        if shouldIgnore {
+            log.debug("Live is recently opened, so skip. (\(liveProgramId))")
+            return
+        }
+        ignoreLive(liveProgramId: liveProgramId, seconds: urlObservationIgnoreSeconds)
+        // 3. Is active window empty and can be used?
         if activeMainWindowController?.hasNeverBeenConnected == true {
             activeMainWindowController?.connectToUrl(liveUrl)
             return
         }
-        // 3. Any other available window for the live?
+        // 4. Any other available window for the live?
         if let wc = mainWindowControllers
             .filter({ $0.liveProgramIdInUrlTextField == liveProgramId })
             .first {
             wc.connectToUrl(liveUrl)
             return
         }
-        // 4. No available existing windows, open the new window.
+        // 5. No available existing windows, open the new window.
         let commentInputInProgress = mainWindowControllers
             .map { $0.commentInputInProgress }
             .contains(true)
@@ -196,6 +213,24 @@ extension AppDelegate: BrowserUrlObserverDelegate {
     private func isConnected(url: URL) -> Bool {
         let liveProgramId = url.absoluteString.extractLiveProgramId()
         return mainWindowControllers.map { $0.live?.liveProgramId }.contains(liveProgramId)
+    }
+}
+
+private extension AppDelegate {
+    func ignoreLive(liveProgramId: String, seconds: TimeInterval) {
+        ignoreLives.append(
+            IgnoreLive(
+                untilDate: Date().addingTimeInterval(seconds),
+                liveProgramId: liveProgramId
+            )
+        )
+    }
+
+    func refreshIgnoreLives() {
+        let origin = Date()
+        ignoreLives = ignoreLives
+            .filter { $0.untilDate.timeIntervalSince(origin) > 0 }
+        // log.debug(ignoreLives)
     }
 }
 
@@ -330,8 +365,7 @@ extension AppDelegate: MainWindowControllerDelegate {
 
     func mainWindowControllerWillClose(_ mainWindowController: MainWindowController) {
         if let liveProgramId = mainWindowController.live?.liveProgramId {
-            browserUrlObserver.ignoreLive(
-                liveProgramId: liveProgramId, seconds: browserUrlIgnoreSeconds)
+            ignoreLive(liveProgramId: liveProgramId, seconds: urlObservationIgnoreSeconds)
         }
         mainWindowControllers.removeAll { $0 == mainWindowController }
         log.debug(mainWindowControllers)

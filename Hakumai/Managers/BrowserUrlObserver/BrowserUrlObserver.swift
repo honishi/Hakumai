@@ -11,15 +11,9 @@ import Foundation
 private let timerInterval: TimeInterval = 3
 
 final class BrowserUrlObserver {
-    struct IgnoreLive {
-        let untilDate: Date
-        let liveProgramId: String
-    }
-
     private(set) var browser: BrowserInUseType = .chrome
     private(set) weak var delegate: BrowserUrlObserverDelegate?
     private var timer: Timer?
-    private var ignoreLives: [IgnoreLive] = []
 }
 
 extension BrowserUrlObserver: BrowserUrlObserverType {
@@ -30,21 +24,11 @@ extension BrowserUrlObserver: BrowserUrlObserverType {
 
     func start(delegate: BrowserUrlObserverDelegate) {
         self.delegate = delegate
-        ignoreLives.removeAll()
         scheduleTimer()
     }
 
     func stop() {
         invalidateTimer()
-    }
-
-    func ignoreLive(liveProgramId: String, seconds: TimeInterval) {
-        ignoreLives.append(
-            IgnoreLive(
-                untilDate: Date().addingTimeInterval(seconds),
-                liveProgramId: liveProgramId
-            )
-        )
     }
 }
 
@@ -67,18 +51,9 @@ private extension BrowserUrlObserver {
 
     @objc
     func timerFired() {
-        refreshIgnoreLives()
         guard let urlString = BrowserHelper.extractUrl(fromBrowser: browser.toBrowserHelperBrowserType),
-              let liveProgramId = urlString.extractLiveProgramId(),
-              !ignoreLives.map({ $0.liveProgramId }).contains(liveProgramId),
+              urlString.isLiveUrl,
               let url = URL(string: urlString) else { return }
         delegate?.browserUrlObserver(self, didGetUrl: url)
-    }
-
-    func refreshIgnoreLives() {
-        let origin = Date()
-        ignoreLives = ignoreLives
-            .filter { $0.untilDate.timeIntervalSince(origin) > 0 }
-        // log.debug(ignoreLives)
     }
 }
