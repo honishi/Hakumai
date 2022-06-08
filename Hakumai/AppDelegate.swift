@@ -29,6 +29,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private let browserUrlObserver: BrowserUrlObserverType = BrowserUrlObserver()
     private var ignoreLives: [IgnoreLive] = []
+    private var enableBrowerTabSelectionSync = false
 
     // MARK: - NSApplicationDelegate Functions
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -150,6 +151,10 @@ extension AppDelegate {
         case (Parameters.enableBrowserUrlObservation, let newValue as Bool):
             setBrowserUrlObservation(newValue)
 
+        case (Parameters.enableBrowserTabSelectionSync, let newValue as Bool):
+            enableBrowerTabSelectionSync = newValue
+            log.debug("enableBrowerTabSelectionSync = \(enableBrowerTabSelectionSync)")
+
         case (Parameters.enableEmotionMessage, let newValue as Bool):
             mainWindowControllers.forEach { $0.changeEnableEmotionMessage(newValue) }
 
@@ -172,14 +177,8 @@ extension AppDelegate: BrowserUrlObserverDelegate {
         }
         // 1. Already connected in exsiting windows?
         if isConnected(url: liveUrl) {
-            log.debug("Already connected.")
-            // TODO: Flag
-            if let wc = mainWindowControllers
-                .filter({ $0.isLiveProgramId(liveProgramId) })
-                .first,
-               wc.window?.isOnActiveSpace == true {
-                wc.showWindow(self)
-            }
+            log.debug("Already connected. (\(liveProgramId))")
+            focusWindowIfNeeded(liveProgramId: liveProgramId)
             return
         }
         // 2. Update ignore-url list. Skip live if matched.
@@ -213,6 +212,24 @@ extension AppDelegate: BrowserUrlObserverDelegate {
     private func isConnected(url: URL) -> Bool {
         let liveProgramId = url.absoluteString.extractLiveProgramId()
         return mainWindowControllers.map { $0.live?.liveProgramId }.contains(liveProgramId)
+    }
+
+    private func focusWindowIfNeeded(liveProgramId: String) {
+        guard activeMainWindowController?.window?.isMainWindow == false else {
+            log.debug("Window has focus. Skip. (\(liveProgramId))")
+            return
+        }
+        guard enableBrowerTabSelectionSync else {
+            log.debug("Browser tab selection sync is NOT enabled. (\(liveProgramId))")
+            return
+        }
+        if let wc = mainWindowControllers
+            .filter({ $0.isLiveProgramId(liveProgramId) })
+            .first,
+           wc.window?.isOnActiveSpace == true {
+            log.debug("Show window. (\(liveProgramId))")
+            wc.showWindow(self)
+        }
     }
 }
 
@@ -289,6 +306,7 @@ private extension AppDelegate {
             Parameters.alwaysOnTop: false,
             Parameters.commentAnonymously: true,
             Parameters.enableBrowserUrlObservation: false,
+            Parameters.enableBrowserTabSelectionSync: true,
             Parameters.enableLiveNotification: false,
             Parameters.enableEmotionMessage: true,
             Parameters.enableDebugMessage: false]
@@ -308,6 +326,7 @@ private extension AppDelegate {
             Parameters.fontSize,
             Parameters.alwaysOnTop,
             Parameters.enableBrowserUrlObservation,
+            Parameters.enableBrowserTabSelectionSync,
             Parameters.enableEmotionMessage,
             Parameters.enableDebugMessage
         ]

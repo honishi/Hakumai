@@ -246,6 +246,8 @@ internal enum L10n {
   internal static let stopSpeaking = L10n.tr("Localizable", "stop_speaking")
   /// Substitutions
   internal static let substitutions = L10n.tr("Localizable", "substitutions")
+  /// Sync window and tab selection state when auto url is enabled
+  internal static let syncBrowserTabSelection = L10n.tr("Localizable", "sync_browser_tab_selection")
   /// Text Replacement
   internal static let textReplacement = L10n.tr("Localizable", "text_replacement")
   /// Transformations

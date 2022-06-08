@@ -28,6 +28,7 @@ struct Parameters {
     static let commentAnonymously = "CommentAnonymously"
     static let fontSize = "FontSize"
     static let enableBrowserUrlObservation = "EnableBrowserUrlObservation"
+    static let enableBrowserTabSelectionSync = "EnableBrowserTabSelectionSync"
     static let enableLiveNotification = "EnableLiveNotification"
     static let enableEmotionMessage = "EnableEmotionMessage"
     static let enableDebugMessage = "EnableDebugMessage"
