@@ -72,6 +72,7 @@
 		DB80CA821A256F9A002636E0 /* MessageContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB80CA811A256F9A002636E0 /* MessageContainer.swift */; };
 		DB82B3A11C0724C000EFE3D9 /* SpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB82B3A01C0724C000EFE3D9 /* SpeechManager.swift */; };
 		DB82B3A41C087BA200EFE3D9 /* SpeechManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB82B3A31C087BA200EFE3D9 /* SpeechManagerTests.swift */; };
+		DB847A26285104950031F1CA /* MainWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB847A25285104950031F1CA /* MainWindow.swift */; };
 		DB97D90027B146DD0088FF3D /* VoicevoxWrapperModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB97D8FF27B146DD0088FF3D /* VoicevoxWrapperModel.swift */; };
 		DB9EFC741A3E974A0087D302 /* NSWindow+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9EFC731A3E974A0087D302 /* NSWindow+Extensions.swift */; };
 		DB9EFC781A3E9EB10087D302 /* PreferenceWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9EFC771A3E9EB10087D302 /* PreferenceWindow.swift */; };
@@ -110,6 +111,8 @@
 		DBE59AC227495240005230CE /* NotificationPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE59AC127495240005230CE /* NotificationPresenter.swift */; };
 		DBE619DC27AEF4FE000FFB8E /* VoicevoxWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE619DB27AEF4FE000FFB8E /* VoicevoxWrapper.swift */; };
 		DBE619DE27B00566000FFB8E /* AudioLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE619DD27B00566000FFB8E /* AudioLoader.swift */; };
+		DBF3E9A1285250480092E962 /* IgnoreLiveRegistryType.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF3E9A0285250480092E962 /* IgnoreLiveRegistryType.swift */; };
+		DBF3E9A3285250810092E962 /* IgnoreLiveRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF3E9A2285250810092E962 /* IgnoreLiveRegistry.swift */; };
 		DBFA887B1A1BC25A005349AD /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA887A1A1BC25A005349AD /* Chat.swift */; };
 		DBFA88821A1BC8C9005349AD /* Enum.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA88811A1BC8C9005349AD /* Enum.swift */; };
 		DBFA888B1A1C9A56005349AD /* Live.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA888A1A1C9A56005349AD /* Live.swift */; };
@@ -217,6 +220,7 @@
 		DB80CA811A256F9A002636E0 /* MessageContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageContainer.swift; sourceTree = "<group>"; };
 		DB82B3A01C0724C000EFE3D9 /* SpeechManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechManager.swift; sourceTree = "<group>"; };
 		DB82B3A31C087BA200EFE3D9 /* SpeechManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechManagerTests.swift; sourceTree = "<group>"; };
+		DB847A25285104950031F1CA /* MainWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainWindow.swift; sourceTree = "<group>"; };
 		DB97D8FF27B146DD0088FF3D /* VoicevoxWrapperModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoicevoxWrapperModel.swift; sourceTree = "<group>"; };
 		DB9EFC731A3E974A0087D302 /* NSWindow+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSWindow+Extensions.swift"; sourceTree = "<group>"; };
 		DB9EFC771A3E9EB10087D302 /* PreferenceWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferenceWindow.swift; sourceTree = "<group>"; };
@@ -257,6 +261,8 @@
 		DBE59AC127495240005230CE /* NotificationPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationPresenter.swift; sourceTree = "<group>"; };
 		DBE619DB27AEF4FE000FFB8E /* VoicevoxWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoicevoxWrapper.swift; sourceTree = "<group>"; };
 		DBE619DD27B00566000FFB8E /* AudioLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioLoader.swift; sourceTree = "<group>"; };
+		DBF3E9A0285250480092E962 /* IgnoreLiveRegistryType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IgnoreLiveRegistryType.swift; sourceTree = "<group>"; };
+		DBF3E9A2285250810092E962 /* IgnoreLiveRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IgnoreLiveRegistry.swift; sourceTree = "<group>"; };
 		DBFA887A1A1BC25A005349AD /* Chat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
 		DBFA88811A1BC8C9005349AD /* Enum.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enum.swift; sourceTree = "<group>"; };
 		DBFA888A1A1C9A56005349AD /* Live.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Live.swift; sourceTree = "<group>"; };
@@ -300,6 +306,8 @@
 			children = (
 				DB0D37A8275F785D0086A7A2 /* BrowserUrlObserver.swift */,
 				DB0D37A6275F78510086A7A2 /* BrowserUrlObserverType.swift */,
+				DBF3E9A2285250810092E962 /* IgnoreLiveRegistry.swift */,
+				DBF3E9A0285250480092E962 /* IgnoreLiveRegistryType.swift */,
 			);
 			path = BrowserUrlObserver;
 			sourceTree = "<group>";
@@ -639,6 +647,7 @@
 				DB7B3DE01A242D4100205470 /* TableCellView */,
 				DB7BA0711A58C021000778CF /* HandleNameAddViewController.swift */,
 				DB2AE0C51A0EE2FD00B1CE4D /* MainViewController.swift */,
+				DB847A25285104950031F1CA /* MainWindow.swift */,
 				DBADF3301A5EFA4D00A3A037 /* MainWindowController.swift */,
 				DBCA40D31A30AD48006299A9 /* MenuDelegate.swift */,
 			);
@@ -1027,6 +1036,8 @@
 				DB7BA0721A58C021000778CF /* HandleNameAddViewController.swift in Sources */,
 				DBE094021A586FFC004554FD /* HandleNameManager.swift in Sources */,
 				DB022ED1271144CF003DC12A /* IconTableCellView.swift in Sources */,
+				DBF3E9A3285250810092E962 /* IgnoreLiveRegistry.swift in Sources */,
+				DBF3E9A1285250480092E962 /* IgnoreLiveRegistryType.swift in Sources */,
 				DBAC3D3921C568B500B09673 /* Images.swift in Sources */,
 				DBB473041A359082002C797E /* Int+Extensions.swift in Sources */,
 				DBAB69621A5C1A70002FCD95 /* KeychainUtility.swift in Sources */,
@@ -1039,6 +1050,7 @@
 				DB2F516726669B3E000A1C58 /* Localize.swift in Sources */,
 				DBB952161A8655AB0059850A /* LoggerHelper.swift in Sources */,
 				DB2AE0C61A0EE2FD00B1CE4D /* MainViewController.swift in Sources */,
+				DB847A26285104950031F1CA /* MainWindow.swift in Sources */,
 				DBADF3311A5EFA4D00A3A037 /* MainWindowController.swift in Sources */,
 				DBCA40D41A30AD48006299A9 /* MenuDelegate.swift in Sources */,
 				DBD65C201A2EB08D00B84C97 /* Message.swift in Sources */,
@@ -1248,7 +1260,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hakumai/Hakumai.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2183;
+				CURRENT_PROJECT_VERSION = 2190;
 				DEVELOPMENT_TEAM = N4SRN3NAQ3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Hakumai/Info.plist;
@@ -1257,7 +1269,7 @@
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
 				);
-				MARKETING_VERSION = 2.18.3;
+				MARKETING_VERSION = 2.19.0;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1281,7 +1293,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hakumai/Hakumai.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2183;
+				CURRENT_PROJECT_VERSION = 2190;
 				DEVELOPMENT_TEAM = N4SRN3NAQ3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Hakumai/Info.plist;
@@ -1290,7 +1302,7 @@
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
 				);
-				MARKETING_VERSION = 2.18.3;
+				MARKETING_VERSION = 2.19.0;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = (
 					"$(inherited)",

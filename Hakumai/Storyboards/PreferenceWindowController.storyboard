@@ -67,23 +67,23 @@
             <objects>
                 <viewController storyboardIdentifier="GeneralViewController" id="wCA-UG-k48" customClass="GeneralViewController" customModule="Hakumai" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="yCS-uV-ZpM">
-                        <rect key="frame" x="0.0" y="0.0" width="500" height="440"/>
+                        <rect key="frame" x="0.0" y="0.0" width="500" height="448"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="16" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="msl-tt-je4">
-                                <rect key="frame" x="20" y="24" width="460" height="396"/>
+                                <rect key="frame" x="20" y="20" width="460" height="408"/>
                                 <subviews>
                                     <box autoresizesSubviews="NO" borderType="line" title="browser_in_use" translatesAutoresizingMaskIntoConstraints="NO" id="MWm-if-ayO">
-                                        <rect key="frame" x="-3" y="292" width="466" height="104"/>
+                                        <rect key="frame" x="-3" y="292" width="466" height="116"/>
                                         <view key="contentView" id="rtk-61-lXP">
-                                            <rect key="frame" x="3" y="3" width="460" height="86"/>
+                                            <rect key="frame" x="3" y="3" width="460" height="98"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZNT-9Y-kyD">
-                                                    <rect key="frame" x="16" y="32" width="428" height="38"/>
+                                                    <rect key="frame" x="16" y="20" width="428" height="62"/>
                                                     <subviews>
                                                         <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" autorecalculatesCellSize="YES" translatesAutoresizingMaskIntoConstraints="NO" id="y0n-lu-hbG">
-                                                            <rect key="frame" x="0.0" y="0.0" width="121" height="38"/>
+                                                            <rect key="frame" x="0.0" y="24" width="121" height="38"/>
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                             <size key="cellSize" width="121" height="18"/>
                                                             <size key="intercellSpacing" width="4" height="2"/>
@@ -107,11 +107,23 @@
                                                                 <binding destination="Ex8-3g-KNv" name="selectedTag" keyPath="values.BrowserInUse" id="PGf-Ji-Wsw"/>
                                                             </connections>
                                                         </matrix>
+                                                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="DNz-lV-KZ6">
+                                                            <rect key="frame" x="-2" y="-1" width="65" height="18"/>
+                                                            <buttonCell key="cell" type="check" title="Check" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="QrL-qP-Yr9">
+                                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                <font key="font" metaFont="system"/>
+                                                            </buttonCell>
+                                                            <connections>
+                                                                <binding destination="Ex8-3g-KNv" name="value" keyPath="values.EnableBrowserTabSelectionSync" id="Fi5-AF-5ev"/>
+                                                            </connections>
+                                                        </button>
                                                     </subviews>
                                                     <visibilityPriorities>
                                                         <integer value="1000"/>
+                                                        <integer value="1000"/>
                                                     </visibilityPriorities>
                                                     <customSpacing>
+                                                        <real value="3.4028234663852886e+38"/>
                                                         <real value="3.4028234663852886e+38"/>
                                                     </customSpacing>
                                                 </stackView>
@@ -123,17 +135,17 @@
                                             </constraints>
                                         </view>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="100" id="VMQ-2n-Vua"/>
+                                            <constraint firstAttribute="height" constant="112" id="VMQ-2n-Vua"/>
                                         </constraints>
                                     </box>
                                     <box borderType="line" title="comment_speaking" translatesAutoresizingMaskIntoConstraints="NO" id="ICr-HG-iyb">
-                                        <rect key="frame" x="-3" y="132" width="466" height="148"/>
+                                        <rect key="frame" x="-3" y="124" width="466" height="156"/>
                                         <view key="contentView" id="Mny-of-dvr">
-                                            <rect key="frame" x="3" y="3" width="460" height="130"/>
+                                            <rect key="frame" x="3" y="3" width="460" height="138"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fYb-qO-6pE">
-                                                    <rect key="frame" x="16" y="14" width="428" height="100"/>
+                                                    <rect key="frame" x="16" y="22" width="428" height="100"/>
                                                     <subviews>
                                                         <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2NO-6f-IfF">
                                                             <rect key="frame" x="0.0" y="84" width="131" height="16"/>
@@ -287,17 +299,17 @@
                                             </constraints>
                                         </view>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="144" id="Gn5-5M-B8e"/>
+                                            <constraint firstAttribute="height" constant="152" id="Gn5-5M-B8e"/>
                                         </constraints>
                                     </box>
                                     <box title="misc" translatesAutoresizingMaskIntoConstraints="NO" id="nEt-qg-eF7">
-                                        <rect key="frame" x="-3" y="-4" width="466" height="124"/>
+                                        <rect key="frame" x="-3" y="-4" width="466" height="116"/>
                                         <view key="contentView" id="GGm-m8-776">
-                                            <rect key="frame" x="3" y="3" width="460" height="106"/>
+                                            <rect key="frame" x="3" y="3" width="460" height="98"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Uwv-0k-kzX">
-                                                    <rect key="frame" x="16" y="26" width="428" height="64"/>
+                                                    <rect key="frame" x="16" y="18" width="428" height="64"/>
                                                     <subviews>
                                                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gzI-bE-fXB">
                                                             <rect key="frame" x="-2" y="47" width="65" height="18"/>
@@ -349,7 +361,7 @@
                                             </constraints>
                                         </view>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="120" id="kek-ht-XVI"/>
+                                            <constraint firstAttribute="height" constant="112" id="kek-ht-XVI"/>
                                         </constraints>
                                     </box>
                                 </subviews>
@@ -385,6 +397,7 @@
                         <outlet property="browserInUseMatrix" destination="y0n-lu-hbG" id="Dee-Od-G0x"/>
                         <outlet property="chromeButtonCell" destination="Ici-yj-KuI" id="ZIX-rJ-KYV"/>
                         <outlet property="commentSpeakingBox" destination="ICr-HG-iyb" id="6y6-k7-mqr"/>
+                        <outlet property="enableBrowserTabSelectionSyncButton" destination="DNz-lV-KZ6" id="KfY-Tm-nDv"/>
                         <outlet property="enableDebugMessageButton" destination="7lf-Wg-9jA" id="S63-js-K9y"/>
                         <outlet property="enableEmotionMessageButton" destination="gzI-bE-fXB" id="0E5-AF-tJr"/>
                         <outlet property="enableLiveNotificationButton" destination="ACY-bp-F35" id="XO9-GH-lL6"/>

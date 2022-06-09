@@ -24,6 +24,7 @@ final class GeneralViewController: NSViewController {
 
     @IBOutlet private weak var browserInUseBox: NSBox!
     @IBOutlet private weak var browserInUseMatrix: NSMatrix!
+    @IBOutlet private weak var enableBrowserTabSelectionSyncButton: NSButton!
     @IBOutlet private weak var chromeButtonCell: NSButtonCell!
     @IBOutlet private weak var safariButtonCell: NSButtonCell!
 
@@ -78,6 +79,7 @@ private extension GeneralViewController {
         browserInUseBox.title = L10n.browserInUse
         chromeButtonCell.title = L10n.googleChrome
         safariButtonCell.title = L10n.safari
+        enableBrowserTabSelectionSyncButton.title = L10n.syncBrowserTabSelection
 
         commentSpeakingBox.title = L10n.commentSpeaking
         speakVolumeTitleTextField.stringValue = "\(L10n.speakVolume):"

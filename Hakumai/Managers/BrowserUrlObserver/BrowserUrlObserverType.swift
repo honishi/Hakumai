@@ -12,7 +12,6 @@ protocol BrowserUrlObserverType {
     func setBrowserType(_ browser: BrowserInUseType)
     func start(delegate: BrowserUrlObserverDelegate)
     func stop()
-    func ignoreLive(liveProgramId: String, seconds: TimeInterval)
 }
 
 protocol BrowserUrlObserverDelegate: AnyObject {

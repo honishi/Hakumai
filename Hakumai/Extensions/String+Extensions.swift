@@ -96,6 +96,8 @@ extension String {
         return nil
     }
 
+    var isLiveUrl: Bool { extractLiveProgramId() != nil }
+
     func extractUrlString() -> String? {
         return extractRegexp(pattern: "(https?://[\\w/:%#\\$&\\?\\(\\)~\\.=\\+\\-]+)")
     }

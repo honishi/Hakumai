@@ -153,6 +153,7 @@
 "browser_in_use" = "連携するブラウザ";
 "google_chrome" = "Google Chrome";
 "safari" = "Safari";
+"sync_browser_tab_selection" = "URL自動入力のとき、ウィンドウとタブの選択状態も同期する";
 "comment_speaking" = "コメント読み上げ (macOS 10.14 以降が必要)";
 "speak_volume" = "読み上げボリューム";
 "voicevox_speaker" = "キャラクター (VOICEVOX)";
