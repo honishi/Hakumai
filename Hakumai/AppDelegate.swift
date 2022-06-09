@@ -171,7 +171,7 @@ extension AppDelegate {
 // MARK: BrowserUrlObserverDelegate Methods
 extension AppDelegate: BrowserUrlObserverDelegate {
     func browserUrlObserver(_ browserUrlObserver: BrowserUrlObserverType, didGetUrl liveUrl: URL) {
-        // log.debug(liveUrl)
+        log.debug(liveUrl)
         guard let liveProgramId = liveUrl.absoluteString.extractLiveProgramId() else {
             return
         }
@@ -221,20 +221,20 @@ extension AppDelegate: BrowserUrlObserverDelegate {
             return
         }
         // 2. Is window on active space?
-        let isOnActiveSpace = mainWindowControllers
+        let isTopmostWindowOnActiveSpace = mainWindowControllers
             .map { $0.window }
             .compactMap { $0 }
             .sorted { $0.orderedIndex < $1.orderedIndex }
             .first?
             .isOnActiveSpace ?? false
-        guard isOnActiveSpace else {
+        guard isTopmostWindowOnActiveSpace else {
             log.debug("MainWindow is NOT on active space. Skip. (\(liveProgramId))")
             return
         }
         // 3. Is window other than MainWindow presenting?
         let visibleAppWindows = NSApp.windows.filter({ $0.isVisible })
         let windowsOtherThanMainWidnow = visibleAppWindows.filter({ !($0 is MainWindow) })
-        if !windowsOtherThanMainWidnow.isEmpty {
+        guard windowsOtherThanMainWidnow.isEmpty else {
             log.debug("Window except for MainWindow is presenting. Skip. (\(liveProgramId))")
             return
         }
