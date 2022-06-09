@@ -15,11 +15,6 @@ private let urlObservationIgnoreSeconds: TimeInterval = 120
 
 @NSApplicationMain
 final class AppDelegate: NSObject, NSApplicationDelegate {
-    struct IgnoreLive {
-        let untilDate: Date
-        let liveProgramId: String
-    }
-
     @IBOutlet weak var speakMenuItem: NSMenuItem!
 
     private let notificationPresenter: NotificationPresenterProtocol = NotificationPresenter.default
@@ -28,7 +23,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var nextMainWindowTopLeftPoint: NSPoint = NSPoint.zero
 
     private let browserUrlObserver: BrowserUrlObserverType = BrowserUrlObserver()
-    private var ignoreLives: [IgnoreLive] = []
+    private let ignoreLiveRegistry: IgnoreLiveRegistryType = IgnoreLiveRegistry()
     private var enableBrowerTabSelectionSync = false
 
     // MARK: - NSApplicationDelegate Functions
@@ -182,13 +177,13 @@ extension AppDelegate: BrowserUrlObserverDelegate {
             return
         }
         // 2. Update ignore-url list. Skip live if matched.
-        refreshIgnoreLives()
-        let shouldIgnore = ignoreLives.map({ $0.liveProgramId }).contains(liveProgramId)
-        if shouldIgnore {
+        if ignoreLiveRegistry.shouldIgnore(liveProgramId: liveProgramId) {
             log.debug("Live is recently opened, so skip. (\(liveProgramId))")
             return
         }
-        ignoreLive(liveProgramId: liveProgramId, seconds: urlObservationIgnoreSeconds)
+        ignoreLiveRegistry.add(
+            liveProgramId: liveProgramId,
+            seconds: urlObservationIgnoreSeconds)
         // 3. Is active window empty and can be used?
         if activeMainWindowController?.hasNeverBeenConnected == true {
             activeMainWindowController?.connectToUrl(liveUrl)
@@ -251,24 +246,6 @@ extension AppDelegate: BrowserUrlObserverDelegate {
             log.debug("Show MainWindow. (\(liveProgramId))")
             wc.showWindow(self)
         }
-    }
-}
-
-private extension AppDelegate {
-    func ignoreLive(liveProgramId: String, seconds: TimeInterval) {
-        ignoreLives.append(
-            IgnoreLive(
-                untilDate: Date().addingTimeInterval(seconds),
-                liveProgramId: liveProgramId
-            )
-        )
-    }
-
-    func refreshIgnoreLives() {
-        let origin = Date()
-        ignoreLives = ignoreLives
-            .filter { $0.untilDate.timeIntervalSince(origin) > 0 }
-        // log.debug(ignoreLives)
     }
 }
 
@@ -405,7 +382,9 @@ extension AppDelegate: MainWindowControllerDelegate {
 
     func mainWindowControllerWillClose(_ mainWindowController: MainWindowController) {
         if let liveProgramId = mainWindowController.live?.liveProgramId {
-            ignoreLive(liveProgramId: liveProgramId, seconds: urlObservationIgnoreSeconds)
+            ignoreLiveRegistry.add(
+                liveProgramId: liveProgramId,
+                seconds: urlObservationIgnoreSeconds)
         }
         mainWindowControllers.removeAll { $0 == mainWindowController }
         log.debug(mainWindowControllers)
