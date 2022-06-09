@@ -171,8 +171,7 @@ extension AppDelegate {
 // MARK: BrowserUrlObserverDelegate Methods
 extension AppDelegate: BrowserUrlObserverDelegate {
     func browserUrlObserver(_ browserUrlObserver: BrowserUrlObserverType, didGetUrl liveUrl: URL) {
-        log.debug(liveUrl)
-        logWindows()
+        // log.debug(liveUrl)
         guard let liveProgramId = liveUrl.absoluteString.extractLiveProgramId() else {
             return
         }
@@ -222,12 +221,14 @@ extension AppDelegate: BrowserUrlObserverDelegate {
             return
         }
         // 2. Is window on active space?
-        let areAllWindowsOnActiveSpace = mainWindowControllers
-            .map { $0.window?.isOnActiveSpace }
+        let isOnActiveSpace = mainWindowControllers
+            .map { $0.window }
             .compactMap { $0 }
-            .allSatisfy { $0 == true }
-        guard areAllWindowsOnActiveSpace else {
-            log.debug("Some MainWindow is NOT on active space. Skip. (\(liveProgramId))")
+            .sorted { $0.orderedIndex < $1.orderedIndex }
+            .first?
+            .isOnActiveSpace ?? false
+        guard isOnActiveSpace else {
+            log.debug("MainWindow is NOT on active space. Skip. (\(liveProgramId))")
             return
         }
         // 3. Is window other than MainWindow presenting?
@@ -250,15 +251,6 @@ extension AppDelegate: BrowserUrlObserverDelegate {
             log.debug("Show MainWindow. (\(liveProgramId))")
             wc.showWindow(self)
         }
-    }
-
-    func logWindows() {
-        mainWindowControllers
-            .compactMap { $0 }
-            .forEach {
-                guard let live = $0.live, let window = $0.window else { return }
-                log.debug("lv:\(live.liveProgramId), order:\(window.orderedIndex), key:\(window.isKeyWindow), main:\(window.isMainWindow), onActiveSpace:\(window.isOnActiveSpace), visible:\(window.isVisible)")
-            }
     }
 }
 
