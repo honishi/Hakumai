@@ -46,7 +46,7 @@ extension KusaChecker: KusaCheckerType {
     }
 
     func add(chat: Chat) {
-        guard !chat.isSlashCommand else { return }
+        if chat.isSlashCommand { return }
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
         chats.append(chat)
