@@ -19,6 +19,8 @@ final class MainWindowController: NSWindowController {
     // MARK: - Properties
     private weak var delegate: MainWindowControllerDelegate?
 
+    private var kusaTimer: Timer?
+
     // MARK: - NSWindowController Overrides
     override func windowDidLoad() {
         super.windowDidLoad()
@@ -50,21 +52,42 @@ extension MainWindowController: NSWindowDelegate {
 
 extension MainWindowController: MainViewControllerDelegate {
     func mainViewControllerDidPrepareLive(_ mainViewController: MainViewController, title: String, community: String) {
-        setLiveTitle(title: title, community: community, isConnected: true)
+        setLiveTitle(title: title, community: community, isConnected: true, isKusa: false)
     }
 
     func mainViewControllerDidDisconnect(_ mainViewController: MainViewController, title: String, community: String) {
-        setLiveTitle(title: title, community: community, isConnected: false)
-    }
-
-    private func setLiveTitle(title: String, community: String, isConnected: Bool) {
-        let _title = "\(title) - \(community)"
-        let _tabTitle = "\(isConnected ? "⚡️ " : "")\(title)"
-        setWindowTitle(_title, tabTitle: _tabTitle, tabToolTip: _title)
+        invalidateKusaTimer()
+        setLiveTitle(title: title, community: community, isConnected: false, isKusa: false)
     }
 
     func mainViewControllerSpeechEnabledChanged(_ mainViewController: MainViewController, isEnabled: Bool) {
         delegate?.mainWindowControllerSpeechEnabledChanged(self, isEnabled: isEnabled)
+    }
+
+    func mainViewControllerDidDetectKusa(_ mainViewController: MainViewController, title: String, community: String) {
+        invalidateKusaTimer()
+        setLiveTitle(title: title, community: community, isConnected: true, isKusa: true)
+        kusaTimer = Timer.scheduledTimer(
+            withTimeInterval: 3,
+            repeats: false,
+            block: { [weak self] _ in
+                self?.setLiveTitle(title: title, community: community, isConnected: true, isKusa: false)
+            })
+    }
+    
+    private func setLiveTitle(title: String, community: String, isConnected: Bool, isKusa: Bool) {
+        let _title = "\(title) - \(community)"
+        let _tabTitle = [
+            isConnected ? "⚡️" : nil,
+            isKusa ? "🌿" : nil,
+            title
+        ].compactMap({ $0 }).joined(separator: " ")
+        setWindowTitle(_title, tabTitle: _tabTitle, tabToolTip: _title)
+    }
+    
+    private func invalidateKusaTimer() {
+        kusaTimer?.invalidate()
+        kusaTimer = nil
     }
 }
 
