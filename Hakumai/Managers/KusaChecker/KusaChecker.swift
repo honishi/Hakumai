@@ -9,7 +9,7 @@
 import Foundation
 
 private let kusaCheckInterval: TimeInterval = 2
-private let kusaDetectRate = 0.2
+private let kusaDetectRate = 0.3
 
 final class KusaChecker {
     private weak var delegate: KusaCheckerDelegate?
@@ -18,7 +18,9 @@ final class KusaChecker {
 
     // swiftlint:disable force_try
     private let kusaRegexp = try! NSRegularExpression(pattern: "^(w|W|ｗ|Ｗ){1,}$", options: [])
+    private let waraRegexp = try! NSRegularExpression(pattern: "^.+(w|W|ｗ|Ｗ){1,}$", options: [])
     private let aRegexp = try! NSRegularExpression(pattern: "^あ$", options: [])
+    private let eRegexp = try! NSRegularExpression(pattern: "^え$", options: [])
     private let noRegexp = try! NSRegularExpression(pattern: "^ノ$", options: [])
     // swiftlint:enable force_try
 }
@@ -44,6 +46,7 @@ extension KusaChecker: KusaCheckerType {
     }
 
     func add(chat: Chat) {
+        guard !chat.isSlashCommand else { return }
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
         chats.append(chat)
@@ -76,7 +79,7 @@ private extension KusaChecker {
     }
 
     func calcurateKusaRate() -> Double {
-        if chats.isEmpty || chats.count < 3 {
+        if chats.isEmpty || chats.count < 5 {
             return 0
         }
         let kusaChats = chats.filter { isKusaComment($0.comment) }
@@ -87,18 +90,24 @@ private extension KusaChecker {
         // Is matched in these?: "ｗ", "ｗｗ", ..., "あ", "ノ"
         return (
             comment.isMatched(regexp: kusaRegexp) ||
+                comment.isMatched(regexp: waraRegexp) ||
                 comment.isMatched(regexp: aRegexp) ||
+                comment.isMatched(regexp: eRegexp) ||
                 comment.isMatched(regexp: noRegexp)
         )
     }
 
     func debugLog(rate: Double) {
         log.debug("========= ========= ========= ========= ========= =========")
-        log.debug("rate:\(Int(rate * 100)), count:\(chats.count), last:\(chats.last?.comment ?? "")")
+        log.debug("rate: \(Int(rate * 100)) %, count: \(chats.count)")
         chats.forEach {
-            log.debug("\(isKusaComment($0.comment)), \($0.comment)")
+            log.debug("\(isKusaComment($0.comment) ? "🔵 true" : "⚪️ false"), \($0.comment)")
         }
     }
+}
+
+extension Chat {
+    var isSlashCommand: Bool { premium == .caster && comment.starts(with: "/") }
 }
 
 extension String {
