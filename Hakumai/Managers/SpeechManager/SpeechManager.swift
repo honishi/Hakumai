@@ -33,6 +33,9 @@ private let cleanCommentPatterns = [
     ("(8|８){3,}", "ぱちぱち"),
     ("ニコ生(?!放送)", "ニコなま"),
     ("初見", "しょけん"),
+    // Removing Kao-moji.
+    // https://qiita.com/sanma_ow/items/b49b39ad5699bbcac0e9
+    ("\\([^あ-ん\\u30A1-\\u30F4\\u2E80-\\u2FDF\\u3005-\\u3007\\u3400-\\u4DBF\\u4E00-\\u9FFF\\uF900-\\uFAFF\\U00020000-\\U0002EBEF]+?\\)", ""),
     // At last, remove leading, trailing and middle white spaces.
     // https://stackoverflow.com/a/19020103/13220031
     ("(^\\s+|\\s+$|\\s+(?=\\s))", "")
