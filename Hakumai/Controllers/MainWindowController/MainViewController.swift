@@ -95,11 +95,11 @@ final class MainViewController: NSViewController {
     private let liveThumbnailManager: LiveThumbnailManagerType = LiveThumbnailManager()
     private let rankingManager: RankingManagerType = RankingManager.shared
     private let notificationPresenter: NotificationPresenterProtocol = NotificationPresenter.default
+    private let kusaChecker: KusaCheckerType = KusaChecker()
 
     private(set) var live: Live?
     private var connectedToLive = false
     private var liveStartedDate: Date?
-    private var recentChats: [Chat] = []
 
     // row-height cache
     private var rowHeightCache = [Int: CGFloat]()
@@ -127,11 +127,6 @@ final class MainViewController: NSViewController {
     // UserWindowControllers
     private var userWindowControllers = [UserWindowController]()
     private var nextUserWindowTopLeftPoint: NSPoint = NSPoint.zero
-
-    // Misc
-    // swiftlint:disable force_try
-    private let kusaRegexp = try! NSRegularExpression(pattern: "(w|W|ｗ|Ｗ){1,}$", options: [])
-    // swiftlint:enable force_try
 
     deinit { log.debug("deinit") }
 }
@@ -492,7 +487,7 @@ extension MainViewController: NicoManagerDelegate {
         switch connectContext {
         case .normal:
             liveThumbnailManager.start(for: live.liveProgramId, delegate: self)
-            resetRecentChats()
+            kusaChecker.start(delegate: self)
             resetCellViewFlashedStatus()
             resetActiveUser()
             rankingManager.addDelegate(self, for: live.liveProgramId)
@@ -509,6 +504,7 @@ extension MainViewController: NicoManagerDelegate {
         logSystemMessageToTable(L10n.failedToPrepareLive(error.toMessage))
         updateMainControlViews(status: .disconnected)
         liveThumbnailManager.stop()
+        kusaChecker.stop()
         rankingManager.removeDelegate(self)
         logDebugRankingManagerStatus()
     }
@@ -546,7 +542,7 @@ extension MainViewController: NicoManagerDelegate {
             }
         }
 
-        checkKusaInChat(chat)
+        kusaChecker.add(chat: chat)
     }
 
     func nicoManagerWillReconnectToLive(_ nicoManager: NicoManagerType, reason: NicoReconnectReason) {
@@ -597,6 +593,7 @@ extension MainViewController: NicoManagerDelegate {
         case .normal:
             updateMainControlViews(status: .disconnected)
             liveThumbnailManager.stop()
+            kusaChecker.stop()
             rankingManager.removeDelegate(self)
         case .reconnect:
             updateMainControlViews(status: .connecting)
@@ -627,6 +624,17 @@ extension MainViewController: LiveThumbnailManagerDelegate {
             with: thumbnailUrl,
             placeholder: liveThumbnailImageView.image
         )
+    }
+}
+
+extension MainViewController: KusaCheckerDelegate {
+    func kusaCheckerDidDetectKusa(_ kusaChecker: KusaCheckerType) {
+        guard let live = live else { return }
+        delegate?.mainViewControllerDidDetectKusa(self, title: live.title, community: live.community.title)
+    }
+
+    func kusaChecker(_ kusaChecker: KusaCheckerType, hasDebugMessage message: String) {
+        logDebugMessageToTable(message)
     }
 }
 
@@ -1311,50 +1319,6 @@ private extension MainViewController {
         DispatchQueue.global(qos: .background).async {
             self.speechManager.enqueue(chat: chat)
         }
-    }
-}
-
-// MARK: Kusa Checker
-private extension MainViewController {
-    func resetRecentChats() {
-        recentChats.removeAll()
-    }
-
-    func checkKusaInChat(_ chat: Chat) {
-        guard let live = live else { return }
-        recentChats.append(chat)
-        // Refresh chats array as follows:
-        // * Discards old chats.
-        // * Filter by unique user id.
-        // * Pick some latest chats only.
-        recentChats = recentChats
-            .filter { -10 < $0.date.timeIntervalSinceNow }
-            .reduce([]) { $0.map({ $0.userId }).contains($1.userId) ? $0 : $0 + [$1] }
-            .suffix(20)
-        // log.debug("\(recentChats.count), \(recentChats.last?.comment ?? "")")
-        if detectedLotsOfKusa() {
-            delegate?.mainViewControllerDidDetectKusa(
-                self,
-                title: live.title,
-                community: live.community.title)
-        }
-    }
-
-    func detectedLotsOfKusa() -> Bool {
-        if recentChats.isEmpty || recentChats.count < 3 {
-            return false
-        }
-        let kusaChats = recentChats
-            .filter {
-                let matched = kusaRegexp.firstMatch(
-                    in: $0.comment,
-                    options: [],
-                    range: NSRange(location: 0, length: $0.comment.count))
-                return matched != nil
-            }
-        let kusaRate = Double(kusaChats.count) / Double(recentChats.count)
-        log.debug("\(live?.title.prefix(5) ?? ""), \(kusaRate)")
-        return kusaRate > 0.3
     }
 }
 

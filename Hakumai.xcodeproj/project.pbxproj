@@ -23,6 +23,8 @@
 		DB1E32C91A2CC85C00CD874A /* UserIdTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1E32C81A2CC85C00CD874A /* UserIdTableCellView.swift */; };
 		DB1E32CB1A2CC87200CD874A /* UserIdTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB1E32CA1A2CC87200CD874A /* UserIdTableCellView.xib */; };
 		DB1E737026F237F600A6F4C0 /* ClickTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1E736F26F237F600A6F4C0 /* ClickTableView.swift */; };
+		DB2168022854A27A00FD1F44 /* KusaCheckerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2168012854A27A00FD1F44 /* KusaCheckerType.swift */; };
+		DB2168042854A28300FD1F44 /* KusaChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2168032854A28300FD1F44 /* KusaChecker.swift */; };
 		DB22A638272D006900E2177D /* RankingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB22A637272D006900E2177D /* RankingManager.swift */; };
 		DB22A63A272D011000E2177D /* RankingManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB22A639272D011000E2177D /* RankingManagerProtocol.swift */; };
 		DB2AE0C41A0EE2FD00B1CE4D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0C31A0EE2FD00B1CE4D /* AppDelegate.swift */; };
@@ -162,6 +164,8 @@
 		DB1E32C81A2CC85C00CD874A /* UserIdTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserIdTableCellView.swift; sourceTree = "<group>"; };
 		DB1E32CA1A2CC87200CD874A /* UserIdTableCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UserIdTableCellView.xib; sourceTree = "<group>"; };
 		DB1E736F26F237F600A6F4C0 /* ClickTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickTableView.swift; sourceTree = "<group>"; };
+		DB2168012854A27A00FD1F44 /* KusaCheckerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KusaCheckerType.swift; sourceTree = "<group>"; };
+		DB2168032854A28300FD1F44 /* KusaChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KusaChecker.swift; sourceTree = "<group>"; };
 		DB22A637272D006900E2177D /* RankingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RankingManager.swift; sourceTree = "<group>"; };
 		DB22A639272D011000E2177D /* RankingManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RankingManagerProtocol.swift; sourceTree = "<group>"; };
 		DB2AE0BE1A0EE2FD00B1CE4D /* Hakumai.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hakumai.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -330,6 +334,15 @@
 			path = MessageContainer;
 			sourceTree = "<group>";
 		};
+		DB2168002854A26000FD1F44 /* KusaChecker */ = {
+			isa = PBXGroup;
+			children = (
+				DB2168032854A28300FD1F44 /* KusaChecker.swift */,
+				DB2168012854A27A00FD1F44 /* KusaCheckerType.swift */,
+			);
+			path = KusaChecker;
+			sourceTree = "<group>";
+		};
 		DB22A636272D005700E2177D /* RankingManager */ = {
 			isa = PBXGroup;
 			children = (
@@ -477,6 +490,7 @@
 				DB576ECE2657A4860041050A /* AuthManager */,
 				DB0D37A5275F70C80086A7A2 /* BrowserUrlObserver */,
 				DBE093F91A5867A7004554FD /* HandleNameManager */,
+				DB2168002854A26000FD1F44 /* KusaChecker */,
 				DB34F831275BB15900180C7A /* LiveThumbnailManager */,
 				DB1E32C41A2C0CCE00CD874A /* MessageContainer */,
 				DBE093F61A585EC5004554FD /* NicoManager */,
@@ -1041,6 +1055,8 @@
 				DBAC3D3921C568B500B09673 /* Images.swift in Sources */,
 				DBB473041A359082002C797E /* Int+Extensions.swift in Sources */,
 				DBAB69621A5C1A70002FCD95 /* KeychainUtility.swift in Sources */,
+				DB2168042854A28300FD1F44 /* KusaChecker.swift in Sources */,
+				DB2168022854A27A00FD1F44 /* KusaCheckerType.swift in Sources */,
 				DB1DBD8F2668FB1900435D85 /* L10n+Extensions.swift in Sources */,
 				DBFA888B1A1C9A56005349AD /* Live.swift in Sources */,
 				DBB4730B1A35951C002C797E /* LiveStatistics.swift in Sources */,
