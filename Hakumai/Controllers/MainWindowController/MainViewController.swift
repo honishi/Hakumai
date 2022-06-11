@@ -27,9 +27,10 @@ private let defaultRankDateText = "--:--"
 // swiftlint:disable file_length
 protocol MainViewControllerDelegate: AnyObject {
     func mainViewControllerDidPrepareLive(_ mainViewController: MainViewController, title: String, community: String)
-    func mainViewControllerDidDisconnect(_ mainViewController: MainViewController, title: String, community: String)
+    func mainViewControllerDidDisconnect(_ mainViewController: MainViewController)
     func mainViewControllerSpeechEnabledChanged(_ mainViewController: MainViewController, isEnabled: Bool)
-    func mainViewControllerDidDetectKusa(_ mainViewController: MainViewController, title: String, community: String)
+    func mainViewControllerDidDetectKusa(_ mainViewController: MainViewController)
+    func mainViewControllerDidReceiveGift(_ mainViewController: MainViewController)
 }
 
 final class MainViewController: NSViewController {
@@ -543,6 +544,9 @@ extension MainViewController: NicoManagerDelegate {
         }
 
         kusaChecker.add(chat: chat)
+        if chat.isGift {
+            delegate?.mainViewControllerDidReceiveGift(self)
+        }
     }
 
     func nicoManagerWillReconnectToLive(_ nicoManager: NicoManagerType, reason: NicoReconnectReason) {
@@ -601,11 +605,7 @@ extension MainViewController: NicoManagerDelegate {
 
         logDebugRankingManagerStatus()
 
-        guard let live = live else { return }
-        delegate?.mainViewControllerDidDisconnect(
-            self,
-            title: live.title,
-            community: live.community.title)
+        delegate?.mainViewControllerDidDisconnect(self)
     }
 
     func nicoManagerDidReceiveStatistics(_ nicoManager: NicoManagerType, stat: LiveStatistics) {
@@ -629,8 +629,7 @@ extension MainViewController: LiveThumbnailManagerDelegate {
 
 extension MainViewController: KusaCheckerDelegate {
     func kusaCheckerDidDetectKusa(_ kusaChecker: KusaCheckerType) {
-        guard let live = live else { return }
-        delegate?.mainViewControllerDidDetectKusa(self, title: live.title, community: live.community.title)
+        delegate?.mainViewControllerDidDetectKusa(self)
     }
 
     func kusaChecker(_ kusaChecker: KusaCheckerType, hasDebugMessage message: String) {
@@ -1449,6 +1448,10 @@ private extension MainViewController {
     func logDebugRankingManagerStatus() {
         logDebugMessageToTable("RankingManager \(rankingManager.isRunning ? "started" : "stopped").")
     }
+}
+
+private extension Chat {
+    var isGift: Bool { premium == .caster && comment.starts(with: "/gift ") }
 }
 
 private extension NicoError {
