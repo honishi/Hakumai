@@ -16,9 +16,17 @@ protocol MainWindowControllerDelegate: AnyObject {
 }
 
 final class MainWindowController: NSWindowController {
+    struct TitleAttribute {
+        let title: String
+        let community: String
+        let isConnected: Bool
+        let detectedKusa: Bool
+    }
+
     // MARK: - Properties
     private weak var delegate: MainWindowControllerDelegate?
 
+    private var titleAttribute: TitleAttribute = .initial
     private var kusaTimer: Timer?
 
     // MARK: - NSWindowController Overrides
@@ -52,12 +60,20 @@ extension MainWindowController: NSWindowDelegate {
 
 extension MainWindowController: MainViewControllerDelegate {
     func mainViewControllerDidPrepareLive(_ mainViewController: MainViewController, title: String, community: String) {
-        setLiveTitle(title: title, community: community, isConnected: true, isKusa: false)
+        titleAttribute = TitleAttribute(
+            title: title,
+            community: community,
+            isConnected: true,
+            detectedKusa: false)
+        updateLiveTitle(titleAttribute)
     }
 
     func mainViewControllerDidDisconnect(_ mainViewController: MainViewController, title: String, community: String) {
         invalidateKusaTimer()
-        setLiveTitle(title: title, community: community, isConnected: false, isKusa: false)
+        titleAttribute = titleAttribute.copyWith(
+            isConnected: false,
+            detectedKusa: false)
+        updateLiveTitle(titleAttribute)
     }
 
     func mainViewControllerSpeechEnabledChanged(_ mainViewController: MainViewController, isEnabled: Bool) {
@@ -66,21 +82,24 @@ extension MainWindowController: MainViewControllerDelegate {
 
     func mainViewControllerDidDetectKusa(_ mainViewController: MainViewController, title: String, community: String) {
         invalidateKusaTimer()
-        setLiveTitle(title: title, community: community, isConnected: true, isKusa: true)
+        titleAttribute = titleAttribute.copyWith(detectedKusa: true)
+        updateLiveTitle(titleAttribute)
         kusaTimer = Timer.scheduledTimer(
             withTimeInterval: 10,
             repeats: false,
             block: { [weak self] _ in
-                self?.setLiveTitle(title: title, community: community, isConnected: true, isKusa: false)
+                guard let me = self else { return }
+                me.titleAttribute = me.titleAttribute.copyWith(detectedKusa: false)
+                me.updateLiveTitle(me.titleAttribute)
             })
     }
 
-    private func setLiveTitle(title: String, community: String, isConnected: Bool, isKusa: Bool) {
-        let _title = "\(title) - \(community)"
+    private func updateLiveTitle(_ titleAttribute: TitleAttribute) {
+        let _title = "\(titleAttribute.title) - \(titleAttribute.community)"
         let _tabTitle = [
-            isConnected ? "⚡️" : nil,
-            isKusa ? "🌿" : nil,
-            title
+            titleAttribute.isConnected ? "⚡️" : nil,
+            titleAttribute.detectedKusa ? "☘️" : nil,
+            titleAttribute.title
         ].compactMap({ $0 }).joined(separator: " ")
         setWindowTitle(_title, tabTitle: _tabTitle, tabToolTip: _title)
     }
@@ -205,5 +224,20 @@ private extension MainWindowController {
         guard #available(macOS 10.13, *) else { return }
         window?.tab.title = tabTitle
         window?.tab.toolTip = tabToolTip
+    }
+}
+
+private extension MainWindowController.TitleAttribute {
+    static var initial: MainWindowController.TitleAttribute {
+        .init(title: "", community: "", isConnected: false, detectedKusa: false)
+    }
+
+    func copyWith(isConnected: Bool? = nil, detectedKusa: Bool? = nil) -> MainWindowController.TitleAttribute {
+        return MainWindowController.TitleAttribute(
+            title: title,
+            community: community,
+            isConnected: isConnected ?? self.isConnected,
+            detectedKusa: detectedKusa ?? self.detectedKusa
+        )
     }
 }
