@@ -16,8 +16,28 @@ protocol MainWindowControllerDelegate: AnyObject {
 }
 
 final class MainWindowController: NSWindowController {
+    struct TitleAttribute {
+        let title: String
+        let community: String
+        let isConnected: Bool
+        let detectedKusa: Bool
+        let receivedGift: Bool
+
+        init(title: String, community: String, isConnected: Bool, detectedKusa: Bool = false, receivedGift: Bool = false) {
+            self.title = title
+            self.community = community
+            self.isConnected = isConnected
+            self.detectedKusa = detectedKusa
+            self.receivedGift = receivedGift
+        }
+    }
+
     // MARK: - Properties
     private weak var delegate: MainWindowControllerDelegate?
+
+    private var titleAttribute: TitleAttribute = .initial
+    private var kusaTitleUpdateTimer: Timer?
+    private var giftTitleUpdateTimer: Timer?
 
     // MARK: - NSWindowController Overrides
     override func windowDidLoad() {
@@ -50,21 +70,77 @@ extension MainWindowController: NSWindowDelegate {
 
 extension MainWindowController: MainViewControllerDelegate {
     func mainViewControllerDidPrepareLive(_ mainViewController: MainViewController, title: String, community: String) {
-        setLiveTitle(title: title, community: community, isConnected: true)
+        titleAttribute = TitleAttribute(
+            title: title,
+            community: community,
+            isConnected: true)
+        updateLiveTitle(titleAttribute)
     }
 
-    func mainViewControllerDidDisconnect(_ mainViewController: MainViewController, title: String, community: String) {
-        setLiveTitle(title: title, community: community, isConnected: false)
-    }
-
-    private func setLiveTitle(title: String, community: String, isConnected: Bool) {
-        let _title = "\(title) - \(community)"
-        let _tabTitle = "\(isConnected ? "⚡️ " : "")\(title)"
-        setWindowTitle(_title, tabTitle: _tabTitle, tabToolTip: _title)
+    func mainViewControllerDidDisconnect(_ mainViewController: MainViewController) {
+        invalidateKusaTitleUpdateTimer()
+        invalidateGiftTitleUpdateTimer()
+        titleAttribute = titleAttribute.copyWith(
+            isConnected: false,
+            detectedKusa: false,
+            receivedGift: false)
+        updateLiveTitle(titleAttribute)
     }
 
     func mainViewControllerSpeechEnabledChanged(_ mainViewController: MainViewController, isEnabled: Bool) {
         delegate?.mainWindowControllerSpeechEnabledChanged(self, isEnabled: isEnabled)
+    }
+
+    func mainViewControllerDidDetectKusa(_ mainViewController: MainViewController) {
+        invalidateKusaTitleUpdateTimer()
+        titleAttribute = titleAttribute.copyWith(detectedKusa: true)
+        updateLiveTitle(titleAttribute)
+        kusaTitleUpdateTimer = makeTitleUpdateTimer { [weak self] _ in
+            guard let me = self else { return }
+            me.titleAttribute = me.titleAttribute.copyWith(detectedKusa: false)
+            me.updateLiveTitle(me.titleAttribute)
+        }
+    }
+
+    func mainViewControllerDidReceiveGift(_ mainViewController: MainViewController) {
+        invalidateGiftTitleUpdateTimer()
+        titleAttribute = titleAttribute.copyWith(receivedGift: true)
+        updateLiveTitle(titleAttribute)
+        giftTitleUpdateTimer = makeTitleUpdateTimer { [weak self] _ in
+            guard let me = self else { return }
+            me.titleAttribute = me.titleAttribute.copyWith(receivedGift: false)
+            me.updateLiveTitle(me.titleAttribute)
+        }
+    }
+}
+
+private extension MainWindowController {
+    func makeTitleUpdateTimer(block: @escaping (Timer) -> Void) -> Timer {
+        return Timer.scheduledTimer(
+            withTimeInterval: 5,
+            repeats: false,
+            block: block)
+    }
+
+    func updateLiveTitle(_ titleAttribute: TitleAttribute) {
+        let _title = "\(titleAttribute.title) - \(titleAttribute.community)"
+        let _tabTitle = [
+            titleAttribute.isConnected ? "⚡️" : nil,
+            titleAttribute.detectedKusa ? "☘️" : nil,
+            titleAttribute.receivedGift ? "🎁" : nil,
+            titleAttribute.title
+        ].compactMap({ $0 }).joined(separator: " ")
+        setWindowTitle(_title, tabTitle: _tabTitle, tabToolTip: _title)
+    }
+
+    func invalidateKusaTitleUpdateTimer() {
+        kusaTitleUpdateTimer?.invalidate()
+        kusaTitleUpdateTimer = nil
+    }
+
+    func invalidateGiftTitleUpdateTimer() {
+        giftTitleUpdateTimer?.invalidate()
+        giftTitleUpdateTimer = nil
     }
 }
 
@@ -182,5 +258,21 @@ private extension MainWindowController {
         guard #available(macOS 10.13, *) else { return }
         window?.tab.title = tabTitle
         window?.tab.toolTip = tabToolTip
+    }
+}
+
+private extension MainWindowController.TitleAttribute {
+    static var initial: MainWindowController.TitleAttribute {
+        .init(title: "", community: "", isConnected: false, detectedKusa: false, receivedGift: false)
+    }
+
+    func copyWith(isConnected: Bool? = nil, detectedKusa: Bool? = nil, receivedGift: Bool? = nil) -> MainWindowController.TitleAttribute {
+        return MainWindowController.TitleAttribute(
+            title: title,
+            community: community,
+            isConnected: isConnected ?? self.isConnected,
+            detectedKusa: detectedKusa ?? self.detectedKusa,
+            receivedGift: receivedGift ?? self.receivedGift
+        )
     }
 }

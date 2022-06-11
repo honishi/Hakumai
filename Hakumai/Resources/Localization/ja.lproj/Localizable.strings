@@ -121,6 +121,7 @@
 "error_no_live_info" = "放送情報の取得に失敗しました.";
 "error_no_message_server_info" = "Message Server の情報が取得できませんでした.";
 "error_failed_to_open_message_server" = "Message Server に接続できませんでした.";
+"error_live_not_started" = "放送開始前です.";
 
 /// Handle Add
 "set_update_handle_name" = "ハンドル名を設定・更新";

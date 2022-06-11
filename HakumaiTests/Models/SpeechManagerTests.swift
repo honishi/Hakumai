@@ -198,9 +198,14 @@ final class SpeechManagerTests: XCTestCase {
         XCTAssert(expected == actual, "")
 
         comment = "いよいよ就寝か。。　(ﾟ∀ﾟ)"
-        expected = "いよいよ就寝か。。　"
+        expected = "いよいよ就寝か。。"
         actual = manager.cleanComment(from: comment)
-        // XCTAssert(expected == actual, "")
+        XCTAssert(expected == actual, "")
+
+        comment = "こりゃひ度い(´・ω・`)"
+        expected = "こりゃひ度い"
+        actual = manager.cleanComment(from: comment)
+        XCTAssert(expected == actual, "")
 
         comment = "8888888888888888888888888888888888888888888888888"
         expected = "ぱちぱち"

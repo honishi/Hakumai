@@ -20,6 +20,9 @@ struct WatchProgramsResponse: Codable {
     }
 
     enum ProgramStatus: String, Codable {
+        // https://github.com/niconamaworkshop/api/blob/master/oauth/watch/_program.md
+        case beforeRelease = "BEFORE_RELEASE"
+        case released = "RELEASED"
         case onAir = "ON_AIR"
         case ended = "ENDED"
     }

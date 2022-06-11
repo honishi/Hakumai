@@ -347,6 +347,10 @@ private extension NicoManager {
             guard let me = self else { return }
             switch result {
             case .success(let data):
+                if data.isNotStarted {
+                    me.delegate?.nicoManagerDidFailToPrepareLive(me, error: .notStarted)
+                    return
+                }
                 me.delegate?.nicoManager(me, hasDebugMessgae: "Completed to request live info.")
                 me.requestUserInfo(
                     liveProgramId: liveProgramId,
@@ -1143,6 +1147,10 @@ private extension NicoManager {
 
 // MARK: - Private Extensions
 private extension WatchProgramsResponse {
+    var isNotStarted: Bool {
+        [.beforeRelease, .released].contains(data.program.schedule.status)
+    }
+
     func toLive(with nicoliveProgramId: String) -> Live {
         Live(
             liveProgramId: nicoliveProgramId,

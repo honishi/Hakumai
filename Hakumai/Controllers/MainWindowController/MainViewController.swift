@@ -27,8 +27,10 @@ private let defaultRankDateText = "--:--"
 // swiftlint:disable file_length
 protocol MainViewControllerDelegate: AnyObject {
     func mainViewControllerDidPrepareLive(_ mainViewController: MainViewController, title: String, community: String)
-    func mainViewControllerDidDisconnect(_ mainViewController: MainViewController, title: String, community: String)
+    func mainViewControllerDidDisconnect(_ mainViewController: MainViewController)
     func mainViewControllerSpeechEnabledChanged(_ mainViewController: MainViewController, isEnabled: Bool)
+    func mainViewControllerDidDetectKusa(_ mainViewController: MainViewController)
+    func mainViewControllerDidReceiveGift(_ mainViewController: MainViewController)
 }
 
 final class MainViewController: NSViewController {
@@ -94,10 +96,10 @@ final class MainViewController: NSViewController {
     private let liveThumbnailManager: LiveThumbnailManagerType = LiveThumbnailManager()
     private let rankingManager: RankingManagerType = RankingManager.shared
     private let notificationPresenter: NotificationPresenterProtocol = NotificationPresenter.default
+    private let kusaChecker: KusaCheckerType = KusaChecker()
 
     private(set) var live: Live?
     private var connectedToLive = false
-    private var chats = [Chat]()
     private var liveStartedDate: Date?
 
     // row-height cache
@@ -486,6 +488,7 @@ extension MainViewController: NicoManagerDelegate {
         switch connectContext {
         case .normal:
             liveThumbnailManager.start(for: live.liveProgramId, delegate: self)
+            kusaChecker.start(delegate: self)
             resetCellViewFlashedStatus()
             resetActiveUser()
             rankingManager.addDelegate(self, for: live.liveProgramId)
@@ -502,6 +505,7 @@ extension MainViewController: NicoManagerDelegate {
         logSystemMessageToTable(L10n.failedToPrepareLive(error.toMessage))
         updateMainControlViews(status: .disconnected)
         liveThumbnailManager.stop()
+        kusaChecker.stop()
         rankingManager.removeDelegate(self)
         logDebugRankingManagerStatus()
     }
@@ -537,6 +541,11 @@ extension MainViewController: NicoManagerDelegate {
             DispatchQueue.main.async {
                 userWindowController.reloadMessages()
             }
+        }
+
+        kusaChecker.add(chat: chat)
+        if chat.isGift {
+            delegate?.mainViewControllerDidReceiveGift(self)
         }
     }
 
@@ -588,6 +597,7 @@ extension MainViewController: NicoManagerDelegate {
         case .normal:
             updateMainControlViews(status: .disconnected)
             liveThumbnailManager.stop()
+            kusaChecker.stop()
             rankingManager.removeDelegate(self)
         case .reconnect:
             updateMainControlViews(status: .connecting)
@@ -595,11 +605,7 @@ extension MainViewController: NicoManagerDelegate {
 
         logDebugRankingManagerStatus()
 
-        guard let live = live else { return }
-        delegate?.mainViewControllerDidDisconnect(
-            self,
-            title: live.title,
-            community: live.community.title)
+        delegate?.mainViewControllerDidDisconnect(self)
     }
 
     func nicoManagerDidReceiveStatistics(_ nicoManager: NicoManagerType, stat: LiveStatistics) {
@@ -618,6 +624,16 @@ extension MainViewController: LiveThumbnailManagerDelegate {
             with: thumbnailUrl,
             placeholder: liveThumbnailImageView.image
         )
+    }
+}
+
+extension MainViewController: KusaCheckerDelegate {
+    func kusaCheckerDidDetectKusa(_ kusaChecker: KusaCheckerType) {
+        delegate?.mainViewControllerDidDetectKusa(self)
+    }
+
+    func kusaChecker(_ kusaChecker: KusaCheckerType, hasDebugMessage message: String) {
+        logDebugMessageToTable(message)
     }
 }
 
@@ -1430,8 +1446,12 @@ private extension MainViewController {
     }
 
     func logDebugRankingManagerStatus() {
-        logDebugMessageToTable("RankingManager is \(rankingManager.isRunning ? "running" : "stopped").")
+        logDebugMessageToTable("RankingManager \(rankingManager.isRunning ? "started" : "stopped").")
     }
+}
+
+private extension Chat {
+    var isGift: Bool { premium == .caster && comment.starts(with: "/gift ") }
 }
 
 private extension NicoError {
@@ -1441,6 +1461,7 @@ private extension NicoError {
         case .noLiveInfo:               return L10n.errorNoLiveInfo
         case .noMessageServerInfo:      return L10n.errorNoMessageServerInfo
         case .openMessageServerFailed:  return L10n.errorFailedToOpenMessageServer
+        case .notStarted:               return L10n.errorLiveNotStarted
         }
     }
 }
