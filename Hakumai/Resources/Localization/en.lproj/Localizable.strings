@@ -121,6 +121,7 @@
 "error_no_live_info" = "Failed to load live info.";
 "error_no_message_server_info" = "Failed to load message server info.";
 "error_failed_to_open_message_server" = "Failed to open message server.";
+"error_live_not_started" = "Live not started.";
 
 /// Handle Add
 "set_update_handle_name" = "Set/Update Handle Name";

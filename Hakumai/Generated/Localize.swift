@@ -100,6 +100,8 @@ internal enum L10n {
   internal static let errorFailedToOpenMessageServer = L10n.tr("Localizable", "error_failed_to_open_message_server")
   /// Internal Error.
   internal static let errorInternal = L10n.tr("Localizable", "error_internal")
+  /// Live not started.
+  internal static let errorLiveNotStarted = L10n.tr("Localizable", "error_live_not_started")
   /// Failed to load live info.
   internal static let errorNoLiveInfo = L10n.tr("Localizable", "error_no_live_info")
   /// Failed to load message server info.

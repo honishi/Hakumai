@@ -71,6 +71,7 @@ enum NicoError: Error {
     case noLiveInfo
     case noMessageServerInfo
     case openMessageServerFailed
+    case notStarted
 }
 
 enum NicoConnectContext {

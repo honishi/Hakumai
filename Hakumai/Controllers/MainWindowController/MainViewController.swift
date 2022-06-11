@@ -1441,6 +1441,7 @@ private extension NicoError {
         case .noLiveInfo:               return L10n.errorNoLiveInfo
         case .noMessageServerInfo:      return L10n.errorNoMessageServerInfo
         case .openMessageServerFailed:  return L10n.errorFailedToOpenMessageServer
+        case .notStarted:               return L10n.errorLiveNotStarted
         }
     }
 }
