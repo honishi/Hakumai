@@ -130,7 +130,7 @@ final class MainViewController: NSViewController {
 
     // Misc
     // swiftlint:disable force_try
-    private let kusaRegexp = try! NSRegularExpression(pattern: "(w|W|ｗ|Ｗ){2,}$", options: [])
+    private let kusaRegexp = try! NSRegularExpression(pattern: "(w|W|ｗ|Ｗ){1,}$", options: [])
     // swiftlint:enable force_try
 
     deinit { log.debug("deinit") }
