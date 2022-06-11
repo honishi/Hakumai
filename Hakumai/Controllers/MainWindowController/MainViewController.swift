@@ -548,7 +548,7 @@ extension MainViewController: NicoManagerDelegate {
 
         checkKusaInChat(chat)
     }
-    
+
     func nicoManagerWillReconnectToLive(_ nicoManager: NicoManagerType, reason: NicoReconnectReason) {
         switch reason {
         case .normal:

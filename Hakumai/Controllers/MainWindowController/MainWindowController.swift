@@ -74,7 +74,7 @@ extension MainWindowController: MainViewControllerDelegate {
                 self?.setLiveTitle(title: title, community: community, isConnected: true, isKusa: false)
             })
     }
-    
+
     private func setLiveTitle(title: String, community: String, isConnected: Bool, isKusa: Bool) {
         let _title = "\(title) - \(community)"
         let _tabTitle = [
@@ -84,7 +84,7 @@ extension MainWindowController: MainViewControllerDelegate {
         ].compactMap({ $0 }).joined(separator: " ")
         setWindowTitle(_title, tabTitle: _tabTitle, tabToolTip: _title)
     }
-    
+
     private func invalidateKusaTimer() {
         kusaTimer?.invalidate()
         kusaTimer = nil
