@@ -1447,7 +1447,7 @@ private extension MainViewController {
     }
 
     func logDebugRankingManagerStatus() {
-        logDebugMessageToTable("RankingManager is \(rankingManager.isRunning ? "running" : "stopped").")
+        logDebugMessageToTable("RankingManager \(rankingManager.isRunning ? "started" : "stopped").")
     }
 }
 
