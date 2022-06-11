@@ -68,7 +68,7 @@ extension MainWindowController: MainViewControllerDelegate {
         invalidateKusaTimer()
         setLiveTitle(title: title, community: community, isConnected: true, isKusa: true)
         kusaTimer = Timer.scheduledTimer(
-            withTimeInterval: 3,
+            withTimeInterval: 5,
             repeats: false,
             block: { [weak self] _ in
                 self?.setLiveTitle(title: title, community: community, isConnected: true, isKusa: false)

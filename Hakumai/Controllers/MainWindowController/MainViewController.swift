@@ -1323,7 +1323,14 @@ private extension MainViewController {
     func checkKusaInChat(_ chat: Chat) {
         guard let live = live else { return }
         recentChats.append(chat)
-        recentChats = recentChats.filter { -10 < $0.date.timeIntervalSinceNow }
+        // Refresh chats array as follows:
+        // * Discards old chats.
+        // * Filter by unique user id.
+        // * Pick some latest chats only.
+        recentChats = recentChats
+            .filter { -10 < $0.date.timeIntervalSinceNow }
+            .reduce([]) { $0.map({ $0.userId }).contains($1.userId) ? $0 : $0 + [$1] }
+            .suffix(10)
         // log.debug("\(recentChats.count), \(recentChats.last?.comment ?? "")")
         if detectedLotsOfKusa() {
             delegate?.mainViewControllerDidDetectKusa(
@@ -1334,7 +1341,7 @@ private extension MainViewController {
     }
 
     func detectedLotsOfKusa() -> Bool {
-        if recentChats.isEmpty {
+        if recentChats.isEmpty || recentChats.count < 3 {
             return false
         }
         let kusaChats = recentChats
@@ -1346,7 +1353,7 @@ private extension MainViewController {
                 return matched != nil
             }
         let kusaRate = Double(kusaChats.count) / Double(recentChats.count)
-        // log.debug(kusaRate)
+        log.debug("\(live?.title.prefix(5) ?? ""), \(kusaRate)")
         return kusaRate > 0.3
     }
 }
