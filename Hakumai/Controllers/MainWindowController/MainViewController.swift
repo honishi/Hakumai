@@ -1330,7 +1330,7 @@ private extension MainViewController {
         recentChats = recentChats
             .filter { -10 < $0.date.timeIntervalSinceNow }
             .reduce([]) { $0.map({ $0.userId }).contains($1.userId) ? $0 : $0 + [$1] }
-            .suffix(10)
+            .suffix(20)
         // log.debug("\(recentChats.count), \(recentChats.last?.comment ?? "")")
         if detectedLotsOfKusa() {
             delegate?.mainViewControllerDidDetectKusa(
