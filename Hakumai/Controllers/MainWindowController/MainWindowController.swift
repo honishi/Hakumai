@@ -106,7 +106,7 @@ extension MainWindowController: MainViewControllerDelegate {
         invalidateGiftTitleUpdateTimer()
         titleAttribute = titleAttribute.copyWith(receivedGift: true)
         updateLiveTitle(titleAttribute)
-        kusaTitleUpdateTimer = makeTitleUpdateTimer { [weak self] _ in
+        giftTitleUpdateTimer = makeTitleUpdateTimer { [weak self] _ in
             guard let me = self else { return }
             me.titleAttribute = me.titleAttribute.copyWith(receivedGift: false)
             me.updateLiveTitle(me.titleAttribute)
