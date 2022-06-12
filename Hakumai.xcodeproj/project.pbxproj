@@ -16,6 +16,8 @@
 		DB0E10641A39B6C200A10E00 /* GeneralViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0E10631A39B6C200A10E00 /* GeneralViewController.swift */; };
 		DB0E10681A39B6DD00A10E00 /* MuteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0E10671A39B6DD00A10E00 /* MuteViewController.swift */; };
 		DB0F0ECD1A16441D00F8BDC5 /* NicoManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0F0ECC1A16441D00F8BDC5 /* NicoManagerTests.swift */; };
+		DB0F878F2856393C005FDF40 /* StoreCommentDetectorType.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0F878E2856393C005FDF40 /* StoreCommentDetectorType.swift */; };
+		DB0F879128563944005FDF40 /* StoreCommentDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0F879028563944005FDF40 /* StoreCommentDetector.swift */; };
 		DB15AF9626567A18009DACBE /* AuthWindowController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DB15AF9526567A18009DACBE /* AuthWindowController.storyboard */; };
 		DB15AF9826567A9D009DACBE /* AuthWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB15AF9726567A9D009DACBE /* AuthWindowController.swift */; };
 		DB15AF9A26567AF1009DACBE /* AuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB15AF9926567AF1009DACBE /* AuthViewController.swift */; };
@@ -157,6 +159,8 @@
 		DB0E10631A39B6C200A10E00 /* GeneralViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralViewController.swift; sourceTree = "<group>"; };
 		DB0E10671A39B6DD00A10E00 /* MuteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MuteViewController.swift; sourceTree = "<group>"; };
 		DB0F0ECC1A16441D00F8BDC5 /* NicoManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicoManagerTests.swift; sourceTree = "<group>"; };
+		DB0F878E2856393C005FDF40 /* StoreCommentDetectorType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreCommentDetectorType.swift; sourceTree = "<group>"; };
+		DB0F879028563944005FDF40 /* StoreCommentDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreCommentDetector.swift; sourceTree = "<group>"; };
 		DB15AF9526567A18009DACBE /* AuthWindowController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = AuthWindowController.storyboard; sourceTree = "<group>"; };
 		DB15AF9726567A9D009DACBE /* AuthWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthWindowController.swift; sourceTree = "<group>"; };
 		DB15AF9926567AF1009DACBE /* AuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewController.swift; sourceTree = "<group>"; };
@@ -339,6 +343,8 @@
 			children = (
 				DB2168032854A28300FD1F44 /* KusaCommentDetector.swift */,
 				DB2168012854A27A00FD1F44 /* KusaCommentDetectorType.swift */,
+				DB0F879028563944005FDF40 /* StoreCommentDetector.swift */,
+				DB0F878E2856393C005FDF40 /* StoreCommentDetectorType.swift */,
 			);
 			path = CommentDetector;
 			sourceTree = "<group>";
@@ -1093,6 +1099,8 @@
 				DB22A63A272D011000E2177D /* RankingManagerProtocol.swift in Sources */,
 				DB7EB8A21A24AA5100C3BFB5 /* RoomPositionTableCellView.swift in Sources */,
 				DB82B3A11C0724C000EFE3D9 /* SpeechManager.swift in Sources */,
+				DB0F879128563944005FDF40 /* StoreCommentDetector.swift in Sources */,
+				DB0F878F2856393C005FDF40 /* StoreCommentDetectorType.swift in Sources */,
 				DBAC3D3B21C569A900B09673 /* StoryBoards.swift in Sources */,
 				DBA414CC1A1A16F300E0CAD3 /* String+Extensions.swift in Sources */,
 				DB7B3DE51A2434FB00205470 /* TimeTableCellView.swift in Sources */,

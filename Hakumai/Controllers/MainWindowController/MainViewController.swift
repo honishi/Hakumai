@@ -29,7 +29,8 @@ protocol MainViewControllerDelegate: AnyObject {
     func mainViewControllerDidPrepareLive(_ mainViewController: MainViewController, title: String, community: String)
     func mainViewControllerDidDisconnect(_ mainViewController: MainViewController)
     func mainViewControllerSpeechEnabledChanged(_ mainViewController: MainViewController, isEnabled: Bool)
-    func mainViewControllerDidDetectKusa(_ mainViewController: MainViewController)
+    func mainViewControllerDidDetectStoreComment(_ mainViewController: MainViewController)
+    func mainViewControllerDidDetectKusaComment(_ mainViewController: MainViewController)
     func mainViewControllerDidReceiveGift(_ mainViewController: MainViewController)
 }
 
@@ -97,6 +98,7 @@ final class MainViewController: NSViewController {
     private let rankingManager: RankingManagerType = RankingManager.shared
     private let notificationPresenter: NotificationPresenterProtocol = NotificationPresenter.default
     private let kusaCommentDetector: KusaCommentDetectorType = KusaCommentDetector()
+    private let storeCommentDetector: StoreCommentDetectorType = StoreCommentDetector()
 
     private(set) var live: Live?
     private var connectedToLive = false
@@ -543,6 +545,9 @@ extension MainViewController: NicoManagerDelegate {
             }
         }
 
+        if storeCommentDetector.isStoreComment(chat: chat) {
+            delegate?.mainViewControllerDidDetectStoreComment(self)
+        }
         kusaCommentDetector.add(chat: chat)
         if chat.isGift {
             delegate?.mainViewControllerDidReceiveGift(self)
@@ -629,7 +634,7 @@ extension MainViewController: LiveThumbnailManagerDelegate {
 
 extension MainViewController: KusaCommentDetectorDelegate {
     func kusaCommentDetectorDidDetectKusa(_ kusaCommentDetector: KusaCommentDetectorType) {
-        delegate?.mainViewControllerDidDetectKusa(self)
+        delegate?.mainViewControllerDidDetectKusaComment(self)
     }
 
     func kusaCommentDetector(_ kusaCommentDetector: KusaCommentDetectorType, hasDebugMessage message: String) {
