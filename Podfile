@@ -5,7 +5,7 @@ target 'Hakumai' do
   use_frameworks!
 
   # Project Infrastructure
-  pod 'Sparkle', '~> 1.26.0'
+  pod 'Sparkle', '~> 2.1.0'
   pod 'SwiftLint', '~> 0.47.0'
   pod 'SwiftGen', '~> 6.5.1'
   pod 'XCGLogger', '~> 7.0.1'

@@ -32,7 +32,7 @@
                                                 <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="check_for_update"/>
                                             </userDefinedRuntimeAttributes>
                                             <connections>
-                                                <action selector="checkForUpdates:" target="zCO-sh-zt2" id="spw-5V-d7y"/>
+                                                <action selector="checkForUpdates:" target="zCO-sh-zt2" id="vKQ-Lt-Bdc"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="preferences" keyEquivalent="," id="BOF-NM-1cW">
@@ -599,7 +599,7 @@
                 </customObject>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <userDefaultsController id="Qbm-2t-1Py"/>
-                <customObject id="zCO-sh-zt2" customClass="SUUpdater"/>
+                <customObject id="zCO-sh-zt2" customClass="SPUStandardUpdaterController"/>
                 <userDefaultsController id="v7j-s9-O0w"/>
             </objects>
             <point key="canvasLocation" x="-469" y="630"/>

@@ -16,6 +16,8 @@
 		DB0E10641A39B6C200A10E00 /* GeneralViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0E10631A39B6C200A10E00 /* GeneralViewController.swift */; };
 		DB0E10681A39B6DD00A10E00 /* MuteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0E10671A39B6DD00A10E00 /* MuteViewController.swift */; };
 		DB0F0ECD1A16441D00F8BDC5 /* NicoManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0F0ECC1A16441D00F8BDC5 /* NicoManagerTests.swift */; };
+		DB0F878F2856393C005FDF40 /* StoreCommentDetectorType.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0F878E2856393C005FDF40 /* StoreCommentDetectorType.swift */; };
+		DB0F879128563944005FDF40 /* StoreCommentDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0F879028563944005FDF40 /* StoreCommentDetector.swift */; };
 		DB15AF9626567A18009DACBE /* AuthWindowController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DB15AF9526567A18009DACBE /* AuthWindowController.storyboard */; };
 		DB15AF9826567A9D009DACBE /* AuthWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB15AF9726567A9D009DACBE /* AuthWindowController.swift */; };
 		DB15AF9A26567AF1009DACBE /* AuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB15AF9926567AF1009DACBE /* AuthViewController.swift */; };
@@ -23,8 +25,8 @@
 		DB1E32C91A2CC85C00CD874A /* UserIdTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1E32C81A2CC85C00CD874A /* UserIdTableCellView.swift */; };
 		DB1E32CB1A2CC87200CD874A /* UserIdTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB1E32CA1A2CC87200CD874A /* UserIdTableCellView.xib */; };
 		DB1E737026F237F600A6F4C0 /* ClickTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1E736F26F237F600A6F4C0 /* ClickTableView.swift */; };
-		DB2168022854A27A00FD1F44 /* KusaCheckerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2168012854A27A00FD1F44 /* KusaCheckerType.swift */; };
-		DB2168042854A28300FD1F44 /* KusaChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2168032854A28300FD1F44 /* KusaChecker.swift */; };
+		DB2168022854A27A00FD1F44 /* KusaCommentDetectorType.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2168012854A27A00FD1F44 /* KusaCommentDetectorType.swift */; };
+		DB2168042854A28300FD1F44 /* KusaCommentDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2168032854A28300FD1F44 /* KusaCommentDetector.swift */; };
 		DB22A638272D006900E2177D /* RankingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB22A637272D006900E2177D /* RankingManager.swift */; };
 		DB22A63A272D011000E2177D /* RankingManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB22A639272D011000E2177D /* RankingManagerProtocol.swift */; };
 		DB2AE0C41A0EE2FD00B1CE4D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0C31A0EE2FD00B1CE4D /* AppDelegate.swift */; };
@@ -157,6 +159,8 @@
 		DB0E10631A39B6C200A10E00 /* GeneralViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralViewController.swift; sourceTree = "<group>"; };
 		DB0E10671A39B6DD00A10E00 /* MuteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MuteViewController.swift; sourceTree = "<group>"; };
 		DB0F0ECC1A16441D00F8BDC5 /* NicoManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NicoManagerTests.swift; sourceTree = "<group>"; };
+		DB0F878E2856393C005FDF40 /* StoreCommentDetectorType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreCommentDetectorType.swift; sourceTree = "<group>"; };
+		DB0F879028563944005FDF40 /* StoreCommentDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreCommentDetector.swift; sourceTree = "<group>"; };
 		DB15AF9526567A18009DACBE /* AuthWindowController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = AuthWindowController.storyboard; sourceTree = "<group>"; };
 		DB15AF9726567A9D009DACBE /* AuthWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthWindowController.swift; sourceTree = "<group>"; };
 		DB15AF9926567AF1009DACBE /* AuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewController.swift; sourceTree = "<group>"; };
@@ -164,8 +168,8 @@
 		DB1E32C81A2CC85C00CD874A /* UserIdTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserIdTableCellView.swift; sourceTree = "<group>"; };
 		DB1E32CA1A2CC87200CD874A /* UserIdTableCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UserIdTableCellView.xib; sourceTree = "<group>"; };
 		DB1E736F26F237F600A6F4C0 /* ClickTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickTableView.swift; sourceTree = "<group>"; };
-		DB2168012854A27A00FD1F44 /* KusaCheckerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KusaCheckerType.swift; sourceTree = "<group>"; };
-		DB2168032854A28300FD1F44 /* KusaChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KusaChecker.swift; sourceTree = "<group>"; };
+		DB2168012854A27A00FD1F44 /* KusaCommentDetectorType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KusaCommentDetectorType.swift; sourceTree = "<group>"; };
+		DB2168032854A28300FD1F44 /* KusaCommentDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KusaCommentDetector.swift; sourceTree = "<group>"; };
 		DB22A637272D006900E2177D /* RankingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RankingManager.swift; sourceTree = "<group>"; };
 		DB22A639272D011000E2177D /* RankingManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RankingManagerProtocol.swift; sourceTree = "<group>"; };
 		DB2AE0BE1A0EE2FD00B1CE4D /* Hakumai.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hakumai.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -334,13 +338,15 @@
 			path = MessageContainer;
 			sourceTree = "<group>";
 		};
-		DB2168002854A26000FD1F44 /* KusaChecker */ = {
+		DB2168002854A26000FD1F44 /* CommentDetector */ = {
 			isa = PBXGroup;
 			children = (
-				DB2168032854A28300FD1F44 /* KusaChecker.swift */,
-				DB2168012854A27A00FD1F44 /* KusaCheckerType.swift */,
+				DB2168032854A28300FD1F44 /* KusaCommentDetector.swift */,
+				DB2168012854A27A00FD1F44 /* KusaCommentDetectorType.swift */,
+				DB0F879028563944005FDF40 /* StoreCommentDetector.swift */,
+				DB0F878E2856393C005FDF40 /* StoreCommentDetectorType.swift */,
 			);
-			path = KusaChecker;
+			path = CommentDetector;
 			sourceTree = "<group>";
 		};
 		DB22A636272D005700E2177D /* RankingManager */ = {
@@ -489,8 +495,8 @@
 			children = (
 				DB576ECE2657A4860041050A /* AuthManager */,
 				DB0D37A5275F70C80086A7A2 /* BrowserUrlObserver */,
+				DB2168002854A26000FD1F44 /* CommentDetector */,
 				DBE093F91A5867A7004554FD /* HandleNameManager */,
-				DB2168002854A26000FD1F44 /* KusaChecker */,
 				DB34F831275BB15900180C7A /* LiveThumbnailManager */,
 				DB1E32C41A2C0CCE00CD874A /* MessageContainer */,
 				DBE093F61A585EC5004554FD /* NicoManager */,
@@ -763,7 +769,6 @@
 				DB2AE0BC1A0EE2FD00B1CE4D /* Resources */,
 				DB0FC12F1A262CF0000FADDD /* Embed Frameworks */,
 				1720CD095F2EF064B1086037 /* [CP] Embed Pods Frameworks */,
-				DBD940CF1BF6EA76001BDB47 /* Sparkle Script */,
 				DBAC3D2F21C414AB00B09673 /* SwiftLint Script */,
 			);
 			buildRules = (
@@ -985,20 +990,6 @@
 			shellPath = /bin/sh;
 			shellScript = "if which \"$PODS_ROOT/SwiftGen/bin/swiftgen\" >/dev/null; then\n\"$PODS_ROOT/SwiftGen/bin/swiftgen\"\nelse\necho \"warning: SwiftGen not installed, download it from https://github.com/SwiftGen/SwiftGen\"\nfi\n";
 		};
-		DBD940CF1BF6EA76001BDB47 /* Sparkle Script */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Sparkle Script";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "#\n# code sign script, based on http://sparkle-project.org/documentation/cocoapods/\n#\nLOCATION=\"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\n\n# Usually set by Xcode\n# CODE_SIGN_IDENTITY=\"xDeveloper ID Application: XXX\"\n\necho \"Code Signing Sparkle.framework with Identity \\\"$CODE_SIGN_IDENTITY\\\"\"\n\n# for ci, allow signing error by using '|| true'\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Sparkle.framework/Versions/A\" || true\n";
-		};
 		FAA9E0AD040E4264620CB42D /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1055,8 +1046,8 @@
 				DBAC3D3921C568B500B09673 /* Images.swift in Sources */,
 				DBB473041A359082002C797E /* Int+Extensions.swift in Sources */,
 				DBAB69621A5C1A70002FCD95 /* KeychainUtility.swift in Sources */,
-				DB2168042854A28300FD1F44 /* KusaChecker.swift in Sources */,
-				DB2168022854A27A00FD1F44 /* KusaCheckerType.swift in Sources */,
+				DB2168042854A28300FD1F44 /* KusaCommentDetector.swift in Sources */,
+				DB2168022854A27A00FD1F44 /* KusaCommentDetectorType.swift in Sources */,
 				DB1DBD8F2668FB1900435D85 /* L10n+Extensions.swift in Sources */,
 				DBFA888B1A1C9A56005349AD /* Live.swift in Sources */,
 				DBB4730B1A35951C002C797E /* LiveStatistics.swift in Sources */,
@@ -1093,6 +1084,8 @@
 				DB22A63A272D011000E2177D /* RankingManagerProtocol.swift in Sources */,
 				DB7EB8A21A24AA5100C3BFB5 /* RoomPositionTableCellView.swift in Sources */,
 				DB82B3A11C0724C000EFE3D9 /* SpeechManager.swift in Sources */,
+				DB0F879128563944005FDF40 /* StoreCommentDetector.swift in Sources */,
+				DB0F878F2856393C005FDF40 /* StoreCommentDetectorType.swift in Sources */,
 				DBAC3D3B21C569A900B09673 /* StoryBoards.swift in Sources */,
 				DBA414CC1A1A16F300E0CAD3 /* String+Extensions.swift in Sources */,
 				DB7B3DE51A2434FB00205470 /* TimeTableCellView.swift in Sources */,
@@ -1276,7 +1269,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hakumai/Hakumai.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2200;
+				CURRENT_PROJECT_VERSION = 2211;
 				DEVELOPMENT_TEAM = N4SRN3NAQ3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Hakumai/Info.plist;
@@ -1285,7 +1278,7 @@
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
 				);
-				MARKETING_VERSION = 2.20.0;
+				MARKETING_VERSION = 2.21.1;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1309,7 +1302,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hakumai/Hakumai.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2200;
+				CURRENT_PROJECT_VERSION = 2211;
 				DEVELOPMENT_TEAM = N4SRN3NAQ3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Hakumai/Info.plist;
@@ -1318,7 +1311,7 @@
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
 				);
-				MARKETING_VERSION = 2.20.0;
+				MARKETING_VERSION = 2.21.1;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = (
 					"$(inherited)",

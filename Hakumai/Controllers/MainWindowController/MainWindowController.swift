@@ -20,24 +20,31 @@ final class MainWindowController: NSWindowController {
         let title: String
         let community: String
         let isConnected: Bool
-        let detectedKusa: Bool
+        let detectedStoreComment: Bool
+        let detectedKusaComment: Bool
         let receivedGift: Bool
 
-        init(title: String, community: String, isConnected: Bool, detectedKusa: Bool = false, receivedGift: Bool = false) {
+        init(title: String, community: String, isConnected: Bool, detectedStoreComment: Bool = false, detectedKusaComment: Bool = false, receivedGift: Bool = false) {
             self.title = title
             self.community = community
             self.isConnected = isConnected
-            self.detectedKusa = detectedKusa
+            self.detectedStoreComment = detectedStoreComment
+            self.detectedKusaComment = detectedKusaComment
             self.receivedGift = receivedGift
         }
+    }
+
+    struct TitleUpdateTimers {
+        var store: Timer?
+        var kusa: Timer?
+        var gift: Timer?
     }
 
     // MARK: - Properties
     private weak var delegate: MainWindowControllerDelegate?
 
     private var titleAttribute: TitleAttribute = .initial
-    private var kusaTitleUpdateTimer: Timer?
-    private var giftTitleUpdateTimer: Timer?
+    private var titleUpdateTimers: TitleUpdateTimers = .initial
 
     // MARK: - NSWindowController Overrides
     override func windowDidLoad() {
@@ -78,11 +85,11 @@ extension MainWindowController: MainViewControllerDelegate {
     }
 
     func mainViewControllerDidDisconnect(_ mainViewController: MainViewController) {
-        invalidateKusaTitleUpdateTimer()
-        invalidateGiftTitleUpdateTimer()
+        invalidateAllTitleUpdateTimers()
         titleAttribute = titleAttribute.copyWith(
             isConnected: false,
-            detectedKusa: false,
+            detectedStoreComment: false,
+            detectedKusaComment: false,
             receivedGift: false)
         updateLiveTitle(titleAttribute)
     }
@@ -91,13 +98,24 @@ extension MainWindowController: MainViewControllerDelegate {
         delegate?.mainWindowControllerSpeechEnabledChanged(self, isEnabled: isEnabled)
     }
 
-    func mainViewControllerDidDetectKusa(_ mainViewController: MainViewController) {
-        invalidateKusaTitleUpdateTimer()
-        titleAttribute = titleAttribute.copyWith(detectedKusa: true)
+    func mainViewControllerDidDetectStoreComment(_ mainViewController: MainViewController) {
+        invalidateStoreTitleUpdateTimer()
+        titleAttribute = titleAttribute.copyWith(detectedStoreComment: true)
         updateLiveTitle(titleAttribute)
-        kusaTitleUpdateTimer = makeTitleUpdateTimer { [weak self] _ in
+        titleUpdateTimers.store = makeTitleUpdateTimer { [weak self] _ in
             guard let me = self else { return }
-            me.titleAttribute = me.titleAttribute.copyWith(detectedKusa: false)
+            me.titleAttribute = me.titleAttribute.copyWith(detectedStoreComment: false)
+            me.updateLiveTitle(me.titleAttribute)
+        }
+    }
+
+    func mainViewControllerDidDetectKusaComment(_ mainViewController: MainViewController) {
+        invalidateKusaTitleUpdateTimer()
+        titleAttribute = titleAttribute.copyWith(detectedKusaComment: true)
+        updateLiveTitle(titleAttribute)
+        titleUpdateTimers.kusa = makeTitleUpdateTimer { [weak self] _ in
+            guard let me = self else { return }
+            me.titleAttribute = me.titleAttribute.copyWith(detectedKusaComment: false)
             me.updateLiveTitle(me.titleAttribute)
         }
     }
@@ -106,7 +124,7 @@ extension MainWindowController: MainViewControllerDelegate {
         invalidateGiftTitleUpdateTimer()
         titleAttribute = titleAttribute.copyWith(receivedGift: true)
         updateLiveTitle(titleAttribute)
-        giftTitleUpdateTimer = makeTitleUpdateTimer { [weak self] _ in
+        titleUpdateTimers.gift = makeTitleUpdateTimer { [weak self] _ in
             guard let me = self else { return }
             me.titleAttribute = me.titleAttribute.copyWith(receivedGift: false)
             me.updateLiveTitle(me.titleAttribute)
@@ -126,21 +144,33 @@ private extension MainWindowController {
         let _title = "\(titleAttribute.title) - \(titleAttribute.community)"
         let _tabTitle = [
             titleAttribute.isConnected ? "⚡️" : nil,
-            titleAttribute.detectedKusa ? "☘️" : nil,
+            titleAttribute.detectedStoreComment ? "🗯" : nil,
+            titleAttribute.detectedKusaComment ? "☘️" : nil,
             titleAttribute.receivedGift ? "🎁" : nil,
             titleAttribute.title
         ].compactMap({ $0 }).joined(separator: " ")
         setWindowTitle(_title, tabTitle: _tabTitle, tabToolTip: _title)
     }
 
+    func invalidateAllTitleUpdateTimers() {
+        invalidateStoreTitleUpdateTimer()
+        invalidateKusaTitleUpdateTimer()
+        invalidateGiftTitleUpdateTimer()
+    }
+
+    func invalidateStoreTitleUpdateTimer() {
+        titleUpdateTimers.store?.invalidate()
+        titleUpdateTimers.store = nil
+    }
+
     func invalidateKusaTitleUpdateTimer() {
-        kusaTitleUpdateTimer?.invalidate()
-        kusaTitleUpdateTimer = nil
+        titleUpdateTimers.kusa?.invalidate()
+        titleUpdateTimers.kusa = nil
     }
 
     func invalidateGiftTitleUpdateTimer() {
-        giftTitleUpdateTimer?.invalidate()
-        giftTitleUpdateTimer = nil
+        titleUpdateTimers.gift?.invalidate()
+        titleUpdateTimers.gift = nil
     }
 }
 
@@ -263,16 +293,30 @@ private extension MainWindowController {
 
 private extension MainWindowController.TitleAttribute {
     static var initial: MainWindowController.TitleAttribute {
-        .init(title: "", community: "", isConnected: false, detectedKusa: false, receivedGift: false)
+        .init(
+            title: "",
+            community: "",
+            isConnected: false,
+            detectedStoreComment: false,
+            detectedKusaComment: false,
+            receivedGift: false
+        )
     }
 
-    func copyWith(isConnected: Bool? = nil, detectedKusa: Bool? = nil, receivedGift: Bool? = nil) -> MainWindowController.TitleAttribute {
+    func copyWith(isConnected: Bool? = nil, detectedStoreComment: Bool? = nil, detectedKusaComment: Bool? = nil, receivedGift: Bool? = nil) -> MainWindowController.TitleAttribute {
         return MainWindowController.TitleAttribute(
             title: title,
             community: community,
             isConnected: isConnected ?? self.isConnected,
-            detectedKusa: detectedKusa ?? self.detectedKusa,
+            detectedStoreComment: detectedStoreComment ?? self.detectedStoreComment,
+            detectedKusaComment: detectedKusaComment ?? self.detectedKusaComment,
             receivedGift: receivedGift ?? self.receivedGift
         )
+    }
+}
+
+private extension MainWindowController.TitleUpdateTimers {
+    static var initial: MainWindowController.TitleUpdateTimers {
+        .init(store: nil, kusa: nil, gift: nil)
     }
 }

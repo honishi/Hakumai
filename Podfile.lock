@@ -14,7 +14,7 @@ PODS:
   - ObjcExceptionBridging/ObjcExceptionBridging (1.0.1)
   - SAMKeychain (1.5.3)
   - SnapKit (5.6.0)
-  - Sparkle (1.26.0)
+  - Sparkle (2.1.0)
   - Starscream (4.0.4)
   - SwiftAlgorithms (1.0.0)
   - SwiftGen (6.5.1)
@@ -32,7 +32,7 @@ DEPENDENCIES:
   - Kingfisher (~> 6.3.1)
   - SAMKeychain (~> 1.5.3)
   - SnapKit (~> 5.6.0)
-  - Sparkle (~> 1.26.0)
+  - Sparkle (~> 2.1.0)
   - Starscream (~> 4.0.4)
   - SwiftGen (~> 6.5.1)
   - SwiftLint (~> 0.47.0)
@@ -64,13 +64,13 @@ SPEC CHECKSUMS:
   ObjcExceptionBridging: c30e00eb3700467e695faeea30e26e18bd445001
   SAMKeychain: 483e1c9f32984d50ca961e26818a534283b4cd5c
   SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
-  Sparkle: d56d028f4b0c123577825f5d1004f6140d77f90e
+  Sparkle: 7f5f6d4328458515e23272f4138e610c1fa3e32d
   Starscream: 5178aed56b316f13fa3bc55694e583d35dd414d9
   SwiftAlgorithms: 38dda4731d19027fdeee1125f973111bf3386b53
   SwiftGen: a6d22010845f08fe18fbdf3a07a8e380fd22e0ea
   SwiftLint: d41cc46a2ae58ac6d9f26954bc89f1d72e71fdef
   XCGLogger: 1943831ef907df55108b0b18657953f868de973b
 
-PODFILE CHECKSUM: e42e35817acdd55042fa7ad165333ecfbf88f46c
+PODFILE CHECKSUM: 4325cdd5f4fc4198e53f167bcfbe9b11385b9253
 
 COCOAPODS: 1.11.3

@@ -43,8 +43,6 @@ jobs:
           bundle exec pod install
 
       # before test
-      - name: Disable Sparkle
-        run: ./script/disable_sparkle.sh
       - name: Copy sample credential file
         run: cp ./Hakumai/OAuthCredential.sample.swift ./Hakumai/OAuthCredential.swift
 

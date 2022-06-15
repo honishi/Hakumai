@@ -1,5 +1,5 @@
 //
-//  KusaChecker.swift
+//  KusaCommentDetector.swift
 //  Hakumai
 //
 //  Created by Hiroyuki Onishi on 2022/06/11.
@@ -11,8 +11,8 @@ import Foundation
 private let kusaCheckInterval: TimeInterval = 2
 private let kusaDetectRate = 0.3
 
-final class KusaChecker {
-    private weak var delegate: KusaCheckerDelegate?
+final class KusaCommentDetector {
+    private weak var delegate: KusaCommentDetectorDelegate?
     private var chats: [Chat] = []
     private var timer: Timer?
 
@@ -25,8 +25,8 @@ final class KusaChecker {
     // swiftlint:enable force_try
 }
 
-extension KusaChecker: KusaCheckerType {
-    func start(delegate: KusaCheckerDelegate) {
+extension KusaCommentDetector: KusaCommentDetectorType {
+    func start(delegate: KusaCommentDetectorDelegate) {
         self.delegate = delegate
         chats.removeAll()
         timer?.invalidate()
@@ -36,13 +36,13 @@ extension KusaChecker: KusaCheckerType {
             selector: #selector(kusaCheckTimerFired),
             userInfo: nil,
             repeats: true)
-        delegate.kusaChecker(self, hasDebugMessage: "KusaChecker started.")
+        delegate.kusaCommentDetector(self, hasDebugMessage: "KusaChecker started.")
     }
 
     func stop() {
         timer?.invalidate()
         timer = nil
-        delegate?.kusaChecker(self, hasDebugMessage: "KusaChecker stopped.")
+        delegate?.kusaCommentDetector(self, hasDebugMessage: "KusaChecker stopped.")
     }
 
     func add(chat: Chat) {
@@ -53,14 +53,14 @@ extension KusaChecker: KusaCheckerType {
     }
 }
 
-private extension KusaChecker {
+private extension KusaCommentDetector {
     @objc
     func kusaCheckTimerFired() {
         refreshChats()
         let rate = calcurateKusaRate()
-        delegate?.kusaChecker(self, hasDebugMessage: "Kusa rate: \(Int(rate * 100))")
+        delegate?.kusaCommentDetector(self, hasDebugMessage: "Kusa rate: \(Int(rate * 100)) %")
         if rate > kusaDetectRate {
-            delegate?.kusaCheckerDidDetectKusa(self)
+            delegate?.kusaCommentDetectorDidDetectKusa(self)
         }
         debugLog(rate: rate)
     }

@@ -29,7 +29,8 @@ protocol MainViewControllerDelegate: AnyObject {
     func mainViewControllerDidPrepareLive(_ mainViewController: MainViewController, title: String, community: String)
     func mainViewControllerDidDisconnect(_ mainViewController: MainViewController)
     func mainViewControllerSpeechEnabledChanged(_ mainViewController: MainViewController, isEnabled: Bool)
-    func mainViewControllerDidDetectKusa(_ mainViewController: MainViewController)
+    func mainViewControllerDidDetectStoreComment(_ mainViewController: MainViewController)
+    func mainViewControllerDidDetectKusaComment(_ mainViewController: MainViewController)
     func mainViewControllerDidReceiveGift(_ mainViewController: MainViewController)
 }
 
@@ -96,7 +97,8 @@ final class MainViewController: NSViewController {
     private let liveThumbnailManager: LiveThumbnailManagerType = LiveThumbnailManager()
     private let rankingManager: RankingManagerType = RankingManager.shared
     private let notificationPresenter: NotificationPresenterProtocol = NotificationPresenter.default
-    private let kusaChecker: KusaCheckerType = KusaChecker()
+    private let kusaCommentDetector: KusaCommentDetectorType = KusaCommentDetector()
+    private let storeCommentDetector: StoreCommentDetectorType = StoreCommentDetector()
 
     private(set) var live: Live?
     private var connectedToLive = false
@@ -488,7 +490,7 @@ extension MainViewController: NicoManagerDelegate {
         switch connectContext {
         case .normal:
             liveThumbnailManager.start(for: live.liveProgramId, delegate: self)
-            kusaChecker.start(delegate: self)
+            kusaCommentDetector.start(delegate: self)
             resetCellViewFlashedStatus()
             resetActiveUser()
             rankingManager.addDelegate(self, for: live.liveProgramId)
@@ -505,7 +507,7 @@ extension MainViewController: NicoManagerDelegate {
         logSystemMessageToTable(L10n.failedToPrepareLive(error.toMessage))
         updateMainControlViews(status: .disconnected)
         liveThumbnailManager.stop()
-        kusaChecker.stop()
+        kusaCommentDetector.stop()
         rankingManager.removeDelegate(self)
         logDebugRankingManagerStatus()
     }
@@ -543,7 +545,10 @@ extension MainViewController: NicoManagerDelegate {
             }
         }
 
-        kusaChecker.add(chat: chat)
+        if storeCommentDetector.isStoreComment(chat: chat) {
+            delegate?.mainViewControllerDidDetectStoreComment(self)
+        }
+        kusaCommentDetector.add(chat: chat)
         if chat.isGift {
             delegate?.mainViewControllerDidReceiveGift(self)
         }
@@ -597,7 +602,7 @@ extension MainViewController: NicoManagerDelegate {
         case .normal:
             updateMainControlViews(status: .disconnected)
             liveThumbnailManager.stop()
-            kusaChecker.stop()
+            kusaCommentDetector.stop()
             rankingManager.removeDelegate(self)
         case .reconnect:
             updateMainControlViews(status: .connecting)
@@ -627,12 +632,12 @@ extension MainViewController: LiveThumbnailManagerDelegate {
     }
 }
 
-extension MainViewController: KusaCheckerDelegate {
-    func kusaCheckerDidDetectKusa(_ kusaChecker: KusaCheckerType) {
-        delegate?.mainViewControllerDidDetectKusa(self)
+extension MainViewController: KusaCommentDetectorDelegate {
+    func kusaCommentDetectorDidDetectKusa(_ kusaCommentDetector: KusaCommentDetectorType) {
+        delegate?.mainViewControllerDidDetectKusaComment(self)
     }
 
-    func kusaChecker(_ kusaChecker: KusaCheckerType, hasDebugMessage message: String) {
+    func kusaCommentDetector(_ kusaCommentDetector: KusaCommentDetectorType, hasDebugMessage message: String) {
         logDebugMessageToTable(message)
     }
 }
