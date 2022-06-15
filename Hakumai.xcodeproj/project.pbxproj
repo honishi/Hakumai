@@ -769,7 +769,6 @@
 				DB2AE0BC1A0EE2FD00B1CE4D /* Resources */,
 				DB0FC12F1A262CF0000FADDD /* Embed Frameworks */,
 				1720CD095F2EF064B1086037 /* [CP] Embed Pods Frameworks */,
-				DBD940CF1BF6EA76001BDB47 /* Sparkle Script */,
 				DBAC3D2F21C414AB00B09673 /* SwiftLint Script */,
 			);
 			buildRules = (
@@ -990,20 +989,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if which \"$PODS_ROOT/SwiftGen/bin/swiftgen\" >/dev/null; then\n\"$PODS_ROOT/SwiftGen/bin/swiftgen\"\nelse\necho \"warning: SwiftGen not installed, download it from https://github.com/SwiftGen/SwiftGen\"\nfi\n";
-		};
-		DBD940CF1BF6EA76001BDB47 /* Sparkle Script */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Sparkle Script";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "#\n# code sign script, based on http://sparkle-project.org/documentation/cocoapods/\n#\nLOCATION=\"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\n\n# Usually set by Xcode\n# CODE_SIGN_IDENTITY=\"xDeveloper ID Application: XXX\"\n\necho \"Code Signing Sparkle.framework with Identity \\\"$CODE_SIGN_IDENTITY\\\"\"\n\n# for ci, allow signing error by using '|| true'\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Sparkle.framework/Versions/A\" || true\n";
 		};
 		FAA9E0AD040E4264620CB42D /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
