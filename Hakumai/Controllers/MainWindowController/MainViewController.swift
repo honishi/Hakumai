@@ -759,6 +759,10 @@ extension MainViewController {
         updateSpeechManagerState()
     }
 
+    func copyAllComments() {
+        // TODO:
+    }
+
     func setVoiceVolume(_ volume: Int) {
         speechManager.setVoiceVolume(volume)
     }
@@ -770,6 +774,7 @@ extension MainViewController {
 
 // MARK: Utility
 extension MainViewController {
+
     func changeFontSize(_ fontSize: Float) {
         tableViewFontSize = CGFloat(fontSize)
 

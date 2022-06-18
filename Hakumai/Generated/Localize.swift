@@ -62,6 +62,8 @@ internal enum L10n {
   internal static let connectedToLive = L10n.tr("Localizable", "connected_to_live")
   /// Copy
   internal static let copy = L10n.tr("Localizable", "copy")
+  /// Copy All Comments
+  internal static let copyAllComments = L10n.tr("Localizable", "copy_all_comments")
   /// Copy Comment
   internal static let copyComment = L10n.tr("Localizable", "copy_comment")
   /// Copy URL in Comment
