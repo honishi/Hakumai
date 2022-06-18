@@ -767,7 +767,10 @@ extension MainViewController {
             nicoManager: nicoManager,
             handleNameManager: .shared
         )
-        copier.copy()
+        progressIndicator.startAnimation(self)
+        copier.copy { [weak self] in
+            DispatchQueue.main.async { self?.progressIndicator.stopAnimation(self) }
+        }
     }
 
     func setVoiceVolume(_ volume: Int) {

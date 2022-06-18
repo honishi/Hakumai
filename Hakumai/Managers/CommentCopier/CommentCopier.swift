@@ -32,12 +32,68 @@ extension CommentCopier {
         return copier
     }
 
-    func copy() {
+    func copy(completion: (() -> Void)?) {
+        preCacheUserIds {
+            self.copyMessages()
+            completion?()
+        }
+    }
+}
+
+private extension CommentCopier {
+    func preCacheUserIds(completion: @escaping () -> Void) {
+        let userIds = messageContainer
+            .filteredMessages
+            .toRawUserIds()
+        log.debug(userIds)
+        resolveUserIds(userIds) { completion() }
+    }
+
+    func resolveUserIds(_ userIds: [String], completion: @escaping () -> Void) {
+        guard let userId = userIds.first else {
+            completion()
+            return
+        }
+        let resolveOnceCompleted = {
+            var _userIds = userIds
+            _userIds.removeFirst()
+            DispatchQueue.global(qos: .default).async {
+                self.resolveUserIds(_userIds, completion: completion)
+            }
+        }
+        if let cached = nicoManager.cachedUserName(for: userId) {
+            log.debug("Already cached: \(cached)")
+            resolveOnceCompleted()
+            return
+        }
+        nicoManager.resolveUsername(for: userId) {
+            log.debug("Pre-cached: \($0 ?? "")")
+            resolveOnceCompleted()
+        }
+    }
+
+    func copyMessages() {
         let comments = messageContainer
             .filteredMessages
             .map { $0.toComment(live: live, nicoManager: nicoManager, handleNameManager: handleNameManager) }
             .reduce("") { $0 + "\($1)\n" }
         comments.copyToPasteBoard()
+    }
+}
+
+private extension Array where Element == Message {
+    func toRawUserIds() -> [String] {
+        let userIds = map { message -> String? in
+            switch message.content {
+            case .system, .debug:
+                return nil
+            case .chat(let chat):
+                return chat.userId
+            }
+        }
+        .compactMap { $0 }
+        .filter { $0.isRawUserId }
+        return [String](Set(userIds))
     }
 }
 
@@ -57,7 +113,7 @@ private extension Message {
                 live: live,
                 nicoManager: nicoManager,
                 handleNameManager: handleNameManager)
-            premium = message.toResolvedPremium()
+            premium = message.premium.label()
         case .debug(let message):
             comment = message.message
         }
@@ -75,10 +131,6 @@ private extension ChatMessage {
             resolved = "\(accountName) (\(userId))"
         }
         return resolved
-    }
-
-    func toResolvedPremium() -> String {
-        return premium.label()
     }
 }
 

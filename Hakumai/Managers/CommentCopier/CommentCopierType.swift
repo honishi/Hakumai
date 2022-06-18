@@ -10,5 +10,5 @@ import Foundation
 
 protocol CommentCopierType {
     static func make(live: Live, messageContainer: MessageContainer, nicoManager: NicoManagerType, handleNameManager: HandleNameManager) -> CommentCopierType
-    func copy()
+    func copy(completion: (() -> Void)?)
 }
