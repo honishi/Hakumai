@@ -82,6 +82,8 @@
 		DB9EFC781A3E9EB10087D302 /* PreferenceWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9EFC771A3E9EB10087D302 /* PreferenceWindow.swift */; };
 		DBA414CC1A1A16F300E0CAD3 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA414CB1A1A16F300E0CAD3 /* String+Extensions.swift */; };
 		DBA414D21A1A176E00E0CAD3 /* StringExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA414D11A1A176E00E0CAD3 /* StringExtensionTests.swift */; };
+		DBA4FA0C285E1100000BB6C4 /* CommentCopierType.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA4FA0B285E1100000BB6C4 /* CommentCopierType.swift */; };
+		DBA4FA0E285E110C000BB6C4 /* CommentCopier.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA4FA0D285E110C000BB6C4 /* CommentCopier.swift */; };
 		DBA541E31A4821D4005FF218 /* UserWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA541E21A4821D4005FF218 /* UserWindow.swift */; };
 		DBA541E81A483710005FF218 /* UserWindowController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DBA541E71A483710005FF218 /* UserWindowController.storyboard */; };
 		DBA541EA1A4838F4005FF218 /* PreferenceWindowController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DBA541E91A4838F4005FF218 /* PreferenceWindowController.storyboard */; };
@@ -234,6 +236,8 @@
 		DB9EFC771A3E9EB10087D302 /* PreferenceWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferenceWindow.swift; sourceTree = "<group>"; };
 		DBA414CB1A1A16F300E0CAD3 /* String+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		DBA414D11A1A176E00E0CAD3 /* StringExtensionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtensionTests.swift; sourceTree = "<group>"; };
+		DBA4FA0B285E1100000BB6C4 /* CommentCopierType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentCopierType.swift; sourceTree = "<group>"; };
+		DBA4FA0D285E110C000BB6C4 /* CommentCopier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentCopier.swift; sourceTree = "<group>"; };
 		DBA541E21A4821D4005FF218 /* UserWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserWindow.swift; sourceTree = "<group>"; };
 		DBA541E71A483710005FF218 /* UserWindowController.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = UserWindowController.storyboard; sourceTree = "<group>"; };
 		DBA541E91A4838F4005FF218 /* PreferenceWindowController.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = PreferenceWindowController.storyboard; sourceTree = "<group>"; };
@@ -495,6 +499,7 @@
 			children = (
 				DB576ECE2657A4860041050A /* AuthManager */,
 				DB0D37A5275F70C80086A7A2 /* BrowserUrlObserver */,
+				DBA4FA0A285E10E8000BB6C4 /* CommentCopier */,
 				DB2168002854A26000FD1F44 /* CommentDetector */,
 				DBE093F91A5867A7004554FD /* HandleNameManager */,
 				DB34F831275BB15900180C7A /* LiveThumbnailManager */,
@@ -613,6 +618,15 @@
 				DBA414D11A1A176E00E0CAD3 /* StringExtensionTests.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		DBA4FA0A285E10E8000BB6C4 /* CommentCopier */ = {
+			isa = PBXGroup;
+			children = (
+				DBA4FA0D285E110C000BB6C4 /* CommentCopier.swift */,
+				DBA4FA0B285E1100000BB6C4 /* CommentCopierType.swift */,
+			);
+			path = CommentCopier;
 			sourceTree = "<group>";
 		};
 		DBAB69601A5C1A2F002FCD95 /* Keychain */ = {
@@ -1032,6 +1046,8 @@
 				DB61AD82271B18DA001656F5 /* CircleImageView.swift in Sources */,
 				DB1E737026F237F600A6F4C0 /* ClickTableView.swift in Sources */,
 				DB7B3DDC1A23B35300205470 /* ColoredView.swift in Sources */,
+				DBA4FA0E285E110C000BB6C4 /* CommentCopier.swift in Sources */,
+				DBA4FA0C285E1100000BB6C4 /* CommentCopierType.swift in Sources */,
 				DB5164FC264E662100F809B3 /* CommentTableCellView.swift in Sources */,
 				DB7F21B01A210017008D17E0 /* Community.swift in Sources */,
 				DBDBA086277B40A3000EE2F2 /* DatabaseValueCacher.swift in Sources */,
@@ -1269,7 +1285,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hakumai/Hakumai.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2211;
+				CURRENT_PROJECT_VERSION = 2220;
 				DEVELOPMENT_TEAM = N4SRN3NAQ3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Hakumai/Info.plist;
@@ -1278,7 +1294,7 @@
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
 				);
-				MARKETING_VERSION = 2.21.1;
+				MARKETING_VERSION = 2.22.0;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1302,7 +1318,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hakumai/Hakumai.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2211;
+				CURRENT_PROJECT_VERSION = 2220;
 				DEVELOPMENT_TEAM = N4SRN3NAQ3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Hakumai/Info.plist;
@@ -1311,7 +1327,7 @@
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/system",
 				);
-				MARKETING_VERSION = 2.21.1;
+				MARKETING_VERSION = 2.22.0;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = (
 					"$(inherited)",

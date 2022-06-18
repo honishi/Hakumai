@@ -25,8 +25,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let browserUrlObserver: BrowserUrlObserverType = BrowserUrlObserver()
     private let ignoreLiveRegistry: IgnoreLiveRegistryType = IgnoreLiveRegistry()
     private var enableBrowerTabSelectionSync = false
+}
 
-    // MARK: - NSApplicationDelegate Functions
+// MARK: - NSApplicationDelegate Functions
+extension AppDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         LoggerHelper.setupLogger(log)
         migrateApplicationVersion()
@@ -88,6 +90,10 @@ extension AppDelegate {
 
     @IBAction func toggleSpeech(_ sender: Any) {
         activeMainWindowController?.toggleSpeech()
+    }
+
+    @IBAction func copyAllComments(_ sender: Any) {
+        activeMainWindowController?.copyAllComments()
     }
 
     @IBAction func zoomDefault(_ sender: AnyObject) {

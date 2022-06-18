@@ -759,6 +759,20 @@ extension MainViewController {
         updateSpeechManagerState()
     }
 
+    func copyAllComments() {
+        guard let live = live else { return }
+        let copier: CommentCopierType = CommentCopier(
+            live: live,
+            messageContainer: messageContainer,
+            nicoManager: nicoManager,
+            handleNameManager: .shared
+        )
+        progressIndicator.startAnimation(self)
+        copier.copy { [weak self] in
+            DispatchQueue.main.async { self?.progressIndicator.stopAnimation(self) }
+        }
+    }
+
     func setVoiceVolume(_ volume: Int) {
         speechManager.setVoiceVolume(volume)
     }
@@ -770,6 +784,7 @@ extension MainViewController {
 
 // MARK: Utility
 extension MainViewController {
+
     func changeFontSize(_ fontSize: Float) {
         tableViewFontSize = CGFloat(fontSize)
 

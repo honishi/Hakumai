@@ -43,6 +43,7 @@
 "paste" = "Paste";
 "delete" = "Delete";
 "select_all" = "Select All";
+"copy_all_comments" = "Copy All Comments";
 "spelling_and_grammar" = "Spelling and Grammar";
 "show_spelling_and_grammar" = "Show Spelling and Grammar";
 "check_document_now" = "Check Document Now";

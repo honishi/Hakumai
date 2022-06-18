@@ -232,6 +232,10 @@ extension MainWindowController {
         mainViewController.setSpeechEnabled(isEnabled)
     }
 
+    func copyAllComments() {
+        mainViewController.copyAllComments()
+    }
+
     func setVoiceVolume(_ volume: Int) {
         mainViewController.setVoiceVolume(volume)
     }

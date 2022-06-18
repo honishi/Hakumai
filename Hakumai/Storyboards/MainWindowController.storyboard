@@ -250,6 +250,16 @@
                                                 <action selector="selectAll:" target="Ady-hI-5gd" id="VNm-Mi-diN"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="ayV-eO-fvK"/>
+                                        <menuItem title="copy_all_comments" keyEquivalent="C" id="BFk-OQ-QMk">
+                                            <modifierMask key="keyEquivalentModifierMask" shift="YES" command="YES"/>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="copy_all_comments"/>
+                                            </userDefinedRuntimeAttributes>
+                                            <connections>
+                                                <action selector="copyAllComments:" target="Voe-Tx-rLC" id="oZJ-9g-H0Z"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem isSeparatorItem="YES" id="uyl-h8-XO2"/>
                                         <menuItem title="Find" hidden="YES" id="4EN-yA-p0u">
                                             <modifierMask key="keyEquivalentModifierMask"/>

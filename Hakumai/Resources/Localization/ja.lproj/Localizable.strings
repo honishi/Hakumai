@@ -43,6 +43,7 @@
 "paste" = "ペースト";
 "delete" = "削除";
 "select_all" = "すべて選択";
+"copy_all_comments" = "すべてのコメントをコピー";
 "spelling_and_grammar" = "スペルと文法";
 "show_spelling_and_grammar" = "スペルと文法を表示";
 "check_document_now" = "書類を今すぐチェック";
