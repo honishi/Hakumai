@@ -19,13 +19,12 @@ final class MessageContainer {
     var enableEmotionMessage = true
     var enableDebugMessage = false
 
+    private(set) var filteredMessages = [Message]()
+
     // MARK: Private
     private var messageNo = 0
     private var sourceMessages = [Message]()
-    private var filteredMessages = [Message]()
-
     private var firstChat = [String: Bool]()
-
     private var rebuildingFilteredMessages = false
     private var calculatingActive = false
 }

@@ -760,7 +760,14 @@ extension MainViewController {
     }
 
     func copyAllComments() {
-        // TODO:
+        guard let live = live else { return }
+        let copier: CommentCopierType = CommentCopier(
+            live: live,
+            messageContainer: messageContainer,
+            nicoManager: nicoManager,
+            handleNameManager: .shared
+        )
+        copier.copy()
     }
 
     func setVoiceVolume(_ volume: Int) {
