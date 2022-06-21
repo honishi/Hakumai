@@ -68,6 +68,12 @@ extension AppDelegate {
         closeWindow()
     }
 
+    @IBAction func closeInactiveWindows(_ sender: Any) {
+        mainWindowControllers
+            .filter { !$0.connectedToLive }
+            .forEach { $0.window?.close() }
+    }
+
     @IBAction func openPreferences(_ sender: AnyObject) {
         PreferenceWindowController.shared.showWindow(self)
     }

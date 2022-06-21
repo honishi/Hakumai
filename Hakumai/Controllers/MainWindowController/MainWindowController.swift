@@ -198,6 +198,8 @@ extension MainWindowController {
 
     var live: Live? { mainViewController.live }
 
+    var connectedToLive: Bool { mainViewController.connectedToLive }
+
     var hasNeverBeenConnected: Bool { mainViewController.hasNeverBeenConnected }
 
     var commentInputInProgress: Bool { mainViewController.commentInputInProgress }
