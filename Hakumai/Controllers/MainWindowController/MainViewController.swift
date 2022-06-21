@@ -101,7 +101,7 @@ final class MainViewController: NSViewController {
     private let storeCommentDetector: StoreCommentDetectorType = StoreCommentDetector()
 
     private(set) var live: Live?
-    private var connectedToLive = false
+    private(set) var connectedToLive = false
     private var liveStartedDate: Date?
 
     // row-height cache

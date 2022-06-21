@@ -137,6 +137,15 @@
                                                 <action selector="closeWindow:" target="Voe-Tx-rLC" id="Rpv-eb-6hx"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="close_inactive_windows" keyEquivalent="W" id="S7A-lJ-BSj">
+                                            <modifierMask key="keyEquivalentModifierMask" shift="YES" command="YES"/>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="close_inactive_windows"/>
+                                            </userDefinedRuntimeAttributes>
+                                            <connections>
+                                                <action selector="closeInactiveWindows:" target="Voe-Tx-rLC" id="HCG-pn-mfI"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem isSeparatorItem="YES" id="jDW-Ca-K2x"/>
                                         <menuItem title="open_url" keyEquivalent="l" id="Ywy-4g-xSA">
                                             <userDefinedRuntimeAttributes>

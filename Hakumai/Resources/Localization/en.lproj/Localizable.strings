@@ -31,6 +31,7 @@
 "open_new_window" = "Open New Window";
 "open_new_tab" = "Open New Tab";
 "close_window" = "Close Window/Tab";
+"close_inactive_windows" = "Close All Inactive Windows/Tabs";
 "open_url" = "Open URL";
 "grab_url_from_browser" = "Grab URL from Browser";
 "new_comment" = "New Comment";
