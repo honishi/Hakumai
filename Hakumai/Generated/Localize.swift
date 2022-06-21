@@ -46,7 +46,7 @@ internal enum L10n {
   internal static let checkGrammarWithSpelling = L10n.tr("Localizable", "check_grammar_with_spelling")
   /// Check Spelling While Typing
   internal static let checkSpellingWhileTyping = L10n.tr("Localizable", "check_spelling_while_typing")
-  /// Close Inactive Windows/Tabs
+  /// Close All Inactive Windows/Tabs
   internal static let closeInactiveWindows = L10n.tr("Localizable", "close_inactive_windows")
   /// Close Window/Tab
   internal static let closeWindow = L10n.tr("Localizable", "close_window")
