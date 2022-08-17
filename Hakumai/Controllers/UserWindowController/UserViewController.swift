@@ -28,6 +28,7 @@ final class UserViewController: NSViewController {
 
     // MARK: Basics
     private var nicoManager: NicoManagerType!
+    private var live: Live!
     private var messageContainer: MessageContainer!
     private var userId: String = ""
     private var handleName: String?
@@ -118,10 +119,11 @@ extension UserViewController: NSTableViewDataSource, NSTableViewDelegate {
 }
 
 extension UserViewController {
-    func set(nicoManager: NicoManagerType, messageContainer: MessageContainer, userId: String, handleName: String?) {
+    func set(nicoManager: NicoManagerType, live: Live, messageContainer: MessageContainer, userId: String, handleName: String?) {
         reset()
 
         self.nicoManager = nicoManager
+        self.live = live
         self.messageContainer = messageContainer
         self.userId = userId
         self.handleName = handleName
@@ -190,7 +192,7 @@ private extension UserViewController {
             let roomPositionView = view as? RoomPositionTableCellView
             roomPositionView?.configure(message: message)
         case kTimeColumnIdentifier:
-            (view as? TimeTableCellView)?.configure(live: nicoManager.live, message: message)
+            (view as? TimeTableCellView)?.configure(live: live, message: message)
         case kCommentColumnIdentifier:
             let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)
