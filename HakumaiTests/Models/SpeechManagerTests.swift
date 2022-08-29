@@ -262,5 +262,41 @@ final class SpeechManagerTests: XCTestCase {
         actual = manager.cleanComment(from: comment)
         XCTAssert(expected == actual, "")
     }
+
+    func testStringUtility() {
+        var comment = ""
+        var expected = ""
+        var actual = ""
+
+        comment = "🎁 東野マタさんがギフト「応援メガホン 青(5pt)」を贈りました"
+        expected = "東野マタさんがギフト「応援メガホン 青(5pt)」を贈りました"
+        actual = comment.stringByRemovingHeadingEmojiSpace
+        XCTAssert(expected == actual, "")
+
+        comment = "📣 【広告貢献2位】rideさんが1000ptニコニ広告しました"
+        expected = "【広告貢献2位】rideさんが1000ptニコニ広告しました"
+        actual = comment.stringByRemovingHeadingEmojiSpace
+        XCTAssert(expected == actual, "")
+
+        comment = "あいうえお"
+        expected = "あいうえお"
+        actual = comment.stringByRemovingHeadingEmojiSpace
+        XCTAssert(expected == actual, "")
+
+        comment = "あ いうえお"
+        expected = "あ いうえお"
+        actual = comment.stringByRemovingHeadingEmojiSpace
+        XCTAssert(expected == actual, "")
+
+        comment = "abc"
+        expected = "abc"
+        actual = comment.stringByRemovingHeadingEmojiSpace
+        XCTAssert(expected == actual, "")
+
+        comment = "a bc"
+        expected = "a bc"
+        actual = comment.stringByRemovingHeadingEmojiSpace
+        XCTAssert(expected == actual, "")
+    }
     // swiftlint:enable function_body_length
 }

@@ -32,6 +32,9 @@ final class GeneralViewController: NSViewController {
     @IBOutlet private weak var speakVolumeTitleTextField: NSTextField!
     @IBOutlet private weak var speakVolumeValueTextField: NSTextField!
     @IBOutlet private weak var speakVolumeSlider: NSSlider!
+    @IBOutlet private weak var enableSpeakNameButton: NSButton!
+    @IBOutlet private weak var enableSpeakGiftButton: NSButton!
+    @IBOutlet private weak var enableSpeakAdButton: NSButton!
     @IBOutlet private weak var speakerTitleTextField: NSTextField!
     @IBOutlet private weak var voicevoxSiteButton: NSButton!
 
@@ -83,6 +86,9 @@ private extension GeneralViewController {
 
         commentSpeakingBox.title = L10n.commentSpeaking
         speakVolumeTitleTextField.stringValue = "\(L10n.speakVolume):"
+        enableSpeakNameButton.title = L10n.enableSpeakName
+        enableSpeakGiftButton.title = L10n.enableSpeakGift
+        enableSpeakAdButton.title = L10n.enableSpeakAd
         speakerTitleTextField.stringValue = "\(L10n.voicevoxSpeaker):"
         voicevoxSiteButton.title = L10n.voicevoxWebsite
         speakSampleButton.title = L10n.speakerSample

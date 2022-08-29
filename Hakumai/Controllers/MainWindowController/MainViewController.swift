@@ -122,6 +122,10 @@ final class MainViewController: NSViewController {
 
     private var cellViewFlashed: [String: Bool] = [:]
 
+    private var speechNameEnabled = false
+    private var speechGiftEnabled = false
+    private var speechAdEnabled = false
+
     // AuthWindowController
     private lazy var authWindowController: AuthWindowController = {
         AuthWindowController.make(delegate: self)
@@ -149,6 +153,7 @@ extension MainViewController {
         configureMute()
         configureFontSize()
         configureAnonymouslyButton()
+        configureSpeech()
         configureEmotionMessage()
         configureDebugMessage()
         DispatchQueue.main.async { self.focusLiveTextField() }
@@ -759,6 +764,18 @@ extension MainViewController {
         updateSpeechManagerState()
     }
 
+    func setSpeechNameEnabled(_ isEnabled: Bool) {
+        speechNameEnabled = isEnabled
+    }
+
+    func setSpeechGiftEnabled(_ isEnabled: Bool) {
+        speechGiftEnabled = isEnabled
+    }
+
+    func setSpeechAdEnabled(_ isEnabled: Bool) {
+        speechAdEnabled = isEnabled
+    }
+
     func copyAllComments() {
         guard let live = live else { return }
         let copier: CommentCopierType = CommentCopier(
@@ -965,6 +982,12 @@ private extension MainViewController {
         commentAnonymouslyButton.state = anonymous ? .on : .off
     }
 
+    func configureSpeech() {
+        speechNameEnabled = UserDefaults.standard.bool(forKey: Parameters.commentSpeechEnableName)
+        speechGiftEnabled = UserDefaults.standard.bool(forKey: Parameters.commentSpeechEnableGift)
+        speechAdEnabled = UserDefaults.standard.bool(forKey: Parameters.commentSpeechEnableAd)
+    }
+
     func configureEmotionMessage() {
         let enabled = UserDefaults.standard.bool(forKey: Parameters.enableEmotionMessage)
         changeEnableEmotionMessage(enabled)
@@ -1012,8 +1035,8 @@ private extension MainViewController {
         DispatchQueue.main.async {
             let result = self.messageContainer.append(chat: chat)
             self._updateTable(appended: result.appended, messageCount: result.count)
-            guard result.appended else { return }
-            self.handleSpeech(chat: chat)
+            guard result.appended, let message = result.message else { return }
+            self.handleSpeech(message: message)
         }
     }
 
@@ -1322,10 +1345,11 @@ private extension MainViewController {
         delegate?.mainViewControllerSpeechEnabledChanged(self, isEnabled: speakButton.isOn)
     }
 
-    func handleSpeech(chat: Chat) {
+    func handleSpeech(message: Message) {
         guard #available(macOS 10.14, *) else { return }
         guard speakButton.isOn else { return }
-        guard live?.isTimeShift == false else {
+        guard let live = live,
+              !live.isTimeShift else {
             // log.debug("Skip enqueing since speech for time shift program is not supported.")
             return
         }
@@ -1336,9 +1360,49 @@ private extension MainViewController {
             log.debug("Skip enqueuing early chats.")
             return
         }
-        DispatchQueue.global(qos: .background).async {
-            self.speechManager.enqueue(chat: chat)
+        switch message.content {
+        case .chat(let chat):
+            // 1. Is gift? ad?
+            let shouldSpeechGift = speechGiftEnabled && message.isGift
+            let shouldSpeechAd = speechAdEnabled && message.isAd
+            if shouldSpeechGift || shouldSpeechAd {
+                DispatchQueue.global(qos: .background).async {
+                    self.speechManager.enqueue(
+                        comment: chat.comment.stringByRemovingHeadingEmojiSpace,
+                        skipIfDuplicated: false
+                    )
+                }
+                return
+            }
+            // 2. Is user comment?
+            guard [.ippan, .premium, .ippanTransparent].contains(chat.premium) else { return }
+            // 3. Name enabled?
+            if speechNameEnabled {
+                resolveSpeechName(userId: chat.userId, communityId: live.communityId) { name in
+                    DispatchQueue.global(qos: .background).async {
+                        self.speechManager.enqueue(
+                            comment: chat.comment,
+                            name: name
+                        )
+                    }
+                }
+                return
+            }
+            // 4. Name not enabled.
+            DispatchQueue.global(qos: .background).async {
+                self.speechManager.enqueue(comment: chat.comment)
+            }
+        case .system, .debug:
+            break
         }
+    }
+
+    func resolveSpeechName(userId: String, communityId: String, completion: @escaping (String?) -> Void) {
+        if let name = HandleNameManager.shared.handleName(for: userId, in: communityId) {
+            completion(name)
+            return
+        }
+        nicoManager.resolveUsername(for: userId) { completion($0) }
     }
 }
 

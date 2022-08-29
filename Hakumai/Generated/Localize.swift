@@ -98,6 +98,12 @@ internal enum L10n {
   internal static let enableMuteUserIds = L10n.tr("Localizable", "enable_mute_user_ids")
   /// Enable Mute Words
   internal static let enableMuteWords = L10n.tr("Localizable", "enable_mute_words")
+  /// Read Ad Comment
+  internal static let enableSpeakAd = L10n.tr("Localizable", "enable_speak_ad")
+  /// Read Gift Comment
+  internal static let enableSpeakGift = L10n.tr("Localizable", "enable_speak_gift")
+  /// Read User Name
+  internal static let enableSpeakName = L10n.tr("Localizable", "enable_speak_name")
   /// Enter Mute User Id / Word
   internal static let enterMuteUserIdWord = L10n.tr("Localizable", "enter_mute_user_id_word")
   /// Failed to open message server.

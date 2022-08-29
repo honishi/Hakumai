@@ -146,17 +146,19 @@ extension SpeechManager {
         log.debug("set speaker: \(speaker)")
     }
 
-    func enqueue(chat: Chat) {
-        guard [.ippan, .premium, .ippanTransparent].contains(chat.premium) else { return }
-
-        let clean = cleanComment(from: chat.comment)
-        let text = checkAndMakeText(clean)
+    func enqueue(comment: String, name: String? = nil, skipIfDuplicated: Bool = true) {
+        let clean = cleanComment(from: comment)
+        let text = [name, checkAndMakeText(clean)]
+            .compactMap { $0 }
+            .joined(separator: " ")
 
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
 
         appendToSpeechQueue(text: text)
-        appendToRecentSpeechTexts(text)
+        if skipIfDuplicated {
+            appendToRecentSpeechTexts(text)
+        }
         refreshSpeechQueueIfNeeded()
     }
 
@@ -362,6 +364,12 @@ private extension SpeechManager {
         guard let player = try? AVAudioPlayer(data: data) else { return }
         self.player = player
         self.player.play()
+    }
+}
+
+extension String {
+    var stringByRemovingHeadingEmojiSpace: String {
+        stringByReplacingRegexp(pattern: "^\(emojiPattern)\\s", with: "")
     }
 }
 
