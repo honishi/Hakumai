@@ -159,6 +159,9 @@
 "sync_browser_tab_selection" = "URL自動入力のとき、ウィンドウとタブの選択状態も同期する";
 "comment_speaking" = "コメント読み上げ (macOS 10.14 以降が必要)";
 "speak_volume" = "読み上げボリューム";
+"enable_speak_name" = "ユーザー名を読む";
+"enable_speak_gift" = "ギフトコメントを読む";
+"enable_speak_ad" = "広告コメントを読む";
 "voicevox_speaker" = "キャラクター (VOICEVOX)";
 "voicevox_website" = "VOICEVOX ホームページ";
 "speaker_sample" = "サンプル";

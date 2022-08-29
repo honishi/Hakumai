@@ -234,6 +234,18 @@ extension MainWindowController {
         mainViewController.setSpeechEnabled(isEnabled)
     }
 
+    func setSpeechNameEnabled(_ isEnabled: Bool) {
+        mainViewController.setSpeechNameEnabled(isEnabled)
+    }
+
+    func setSpeechGiftEnabled(_ isEnabled: Bool) {
+        mainViewController.setSpeechGiftEnabled(isEnabled)
+    }
+
+    func setSpeechAdEnabled(_ isEnabled: Bool) {
+        mainViewController.setSpeechAdEnabled(isEnabled)
+    }
+
     func copyAllComments() {
         mainViewController.copyAllComments()
     }

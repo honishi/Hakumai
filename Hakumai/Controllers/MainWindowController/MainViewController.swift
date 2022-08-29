@@ -122,6 +122,10 @@ final class MainViewController: NSViewController {
 
     private var cellViewFlashed: [String: Bool] = [:]
 
+    private var speechNameEnabled = false
+    private var speechGiftEnabled = false
+    private var speechAdEnabled = false
+
     // AuthWindowController
     private lazy var authWindowController: AuthWindowController = {
         AuthWindowController.make(delegate: self)
@@ -149,6 +153,7 @@ extension MainViewController {
         configureMute()
         configureFontSize()
         configureAnonymouslyButton()
+        configureSpeech()
         configureEmotionMessage()
         configureDebugMessage()
         DispatchQueue.main.async { self.focusLiveTextField() }
@@ -759,6 +764,18 @@ extension MainViewController {
         updateSpeechManagerState()
     }
 
+    func setSpeechNameEnabled(_ isEnabled: Bool) {
+        speechNameEnabled = isEnabled
+    }
+
+    func setSpeechGiftEnabled(_ isEnabled: Bool) {
+        speechGiftEnabled = isEnabled
+    }
+
+    func setSpeechAdEnabled(_ isEnabled: Bool) {
+        speechAdEnabled = isEnabled
+    }
+
     func copyAllComments() {
         guard let live = live else { return }
         let copier: CommentCopierType = CommentCopier(
@@ -963,6 +980,12 @@ private extension MainViewController {
     func configureAnonymouslyButton() {
         let anonymous = UserDefaults.standard.bool(forKey: Parameters.commentAnonymously)
         commentAnonymouslyButton.state = anonymous ? .on : .off
+    }
+
+    func configureSpeech() {
+        speechNameEnabled = UserDefaults.standard.bool(forKey: Parameters.commentSpeechEnableName)
+        speechGiftEnabled = UserDefaults.standard.bool(forKey: Parameters.commentSpeechEnableGift)
+        speechAdEnabled = UserDefaults.standard.bool(forKey: Parameters.commentSpeechEnableAd)
     }
 
     func configureEmotionMessage() {
@@ -1337,10 +1360,12 @@ private extension MainViewController {
             log.debug("Skip enqueuing early chats.")
             return
         }
-        // TODO: Introduce feature flag.
         switch message.content {
         case .chat(let chat):
-            if message.isGift || message.isAd {
+            // 1. Is gift? ad?
+            let shouldSpeechGift = speechGiftEnabled && message.isGift
+            let shouldSpeechAd = speechAdEnabled && message.isAd
+            if shouldSpeechGift || shouldSpeechAd {
                 DispatchQueue.global(qos: .background).async {
                     self.speechManager.enqueue(
                         comment: chat.comment.stringByRemovingHeadingEmojiSpace,
@@ -1349,14 +1374,23 @@ private extension MainViewController {
                 }
                 return
             }
+            // 2. Is user comment?
             guard [.ippan, .premium, .ippanTransparent].contains(chat.premium) else { return }
-            resolveSpeechName(userId: chat.userId, communityId: live.communityId) { name in
-                DispatchQueue.global(qos: .background).async {
-                    self.speechManager.enqueue(
-                        comment: chat.comment,
-                        name: name
-                    )
+            // 3. Name enabled?
+            if speechNameEnabled {
+                resolveSpeechName(userId: chat.userId, communityId: live.communityId) { name in
+                    DispatchQueue.global(qos: .background).async {
+                        self.speechManager.enqueue(
+                            comment: chat.comment,
+                            name: name
+                        )
+                    }
                 }
+                return
+            }
+            // 4. Name not enabled.
+            DispatchQueue.global(qos: .background).async {
+                self.speechManager.enqueue(comment: chat.comment)
             }
         case .system, .debug:
             break

@@ -134,6 +134,15 @@ extension AppDelegate {
         case (Parameters.commentSpeechVolume, let changed as Int):
             mainWindowControllers.forEach { $0.setVoiceVolume(changed) }
 
+        case (Parameters.commentSpeechEnableName, let changed as Bool):
+            mainWindowControllers.forEach { $0.setSpeechNameEnabled(changed) }
+
+        case (Parameters.commentSpeechEnableGift, let changed as Bool):
+            mainWindowControllers.forEach { $0.setSpeechGiftEnabled(changed) }
+
+        case (Parameters.commentSpeechEnableAd, let changed as Bool):
+            mainWindowControllers.forEach { $0.setSpeechAdEnabled(changed) }
+
         case (Parameters.commentSpeechVoicevoxSpeaker, let changed as Int):
             mainWindowControllers.forEach { $0.setVoiceSpeaker(changed) }
 
@@ -310,6 +319,9 @@ private extension AppDelegate {
             Parameters.browserInUse: BrowserInUseType.chrome.rawValue,
             Parameters.fontSize: kDefaultFontSize,
             Parameters.commentSpeechVolume: 100,
+            Parameters.commentSpeechEnableName: false,
+            Parameters.commentSpeechEnableGift: false,
+            Parameters.commentSpeechEnableAd: false,
             Parameters.commentSpeechVoicevoxSpeaker: 0,
             Parameters.enableMuteUserIds: true,
             Parameters.enableMuteWords: true,
@@ -327,7 +339,11 @@ private extension AppDelegate {
         let keyPaths = [
             // general
             Parameters.browserInUse,
+            // speech
             Parameters.commentSpeechVolume,
+            Parameters.commentSpeechEnableName,
+            Parameters.commentSpeechEnableGift,
+            Parameters.commentSpeechEnableAd,
             Parameters.commentSpeechVoicevoxSpeaker,
             // mute
             Parameters.enableMuteUserIds, Parameters.muteUserIds,

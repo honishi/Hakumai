@@ -159,6 +159,9 @@
 "sync_browser_tab_selection" = "Sync window and tab selection state when auto url is enabled";
 "comment_speaking" = "Comment Speech (Requires macOS 10.14-)";
 "speak_volume" = "Speech Volume";
+"enable_speak_name" = "Read User Name";
+"enable_speak_gift" = "Read Gift Comment";
+"enable_speak_ad" = "Read Ad Comment";
 "voicevox_speaker" = "Speaker (VOICEVOX)";
 "voicevox_website" = "VOICEVOX Website";
 "speaker_sample" = "Sample";
