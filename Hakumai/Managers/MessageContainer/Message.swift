@@ -55,6 +55,15 @@ extension Message {
             return nil
         }
     }
+
+    var isAd: Bool {
+        switch content {
+        case .chat(let chat):
+            return chat.slashCommand == .nicoad
+        default:
+            return false
+        }
+    }
 }
 
 // MARK: - Individual Message

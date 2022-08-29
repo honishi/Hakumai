@@ -41,7 +41,7 @@ extension MessageContainer {
     }
 
     @discardableResult
-    func append(chat: Chat) -> (appended: Bool, count: Int) {
+    func append(chat: Chat) -> (appended: Bool, count: Int, message: Message?) {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
         let isFirst = chat.premium.isUser && firstChat[chat.userId] == nil
@@ -49,7 +49,12 @@ extension MessageContainer {
             firstChat[chat.userId] = true
         }
         let message = Message(messageNo: messageNo, chat: chat, isFirst: isFirst)
-        return append(message: message)
+        let appendResult = append(message: message)
+        return (
+            appendResult.appended,
+            appendResult.count,
+            appendResult.appended ? message : nil
+        )
     }
 
     @discardableResult

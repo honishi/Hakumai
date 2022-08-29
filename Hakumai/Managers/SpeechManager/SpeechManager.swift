@@ -146,10 +146,8 @@ extension SpeechManager {
         log.debug("set speaker: \(speaker)")
     }
 
-    func enqueue(chat: Chat, name: String? = nil) {
-        guard [.ippan, .premium, .ippanTransparent].contains(chat.premium) else { return }
-
-        let clean = cleanComment(from: chat.comment)
+    func enqueue(comment: String, name: String? = nil, skipIfDuplicated: Bool = true) {
+        let clean = cleanComment(from: comment)
         let text = [name, checkAndMakeText(clean)]
             .compactMap { $0 }
             .joined(separator: " ")
@@ -158,7 +156,9 @@ extension SpeechManager {
         defer { objc_sync_exit(self) }
 
         appendToSpeechQueue(text: text)
-        appendToRecentSpeechTexts(text)
+        if skipIfDuplicated {
+            appendToRecentSpeechTexts(text)
+        }
         refreshSpeechQueueIfNeeded()
     }
 

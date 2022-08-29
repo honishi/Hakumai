@@ -1012,8 +1012,8 @@ private extension MainViewController {
         DispatchQueue.main.async {
             let result = self.messageContainer.append(chat: chat)
             self._updateTable(appended: result.appended, messageCount: result.count)
-            guard result.appended else { return }
-            self.handleSpeech(chat: chat)
+            guard result.appended, let message = result.message else { return }
+            self.handleSpeech(message: message)
         }
     }
 
@@ -1322,7 +1322,7 @@ private extension MainViewController {
         delegate?.mainViewControllerSpeechEnabledChanged(self, isEnabled: speakButton.isOn)
     }
 
-    func handleSpeech(chat: Chat) {
+    func handleSpeech(message: Message) {
         guard #available(macOS 10.14, *) else { return }
         guard speakButton.isOn else { return }
         guard let live = live,
@@ -1337,10 +1337,23 @@ private extension MainViewController {
             log.debug("Skip enqueuing early chats.")
             return
         }
-        resolveSpeechName(userId: chat.userId, communityId: live.communityId) { name in
-            DispatchQueue.global(qos: .background).async {
-                self.speechManager.enqueue(chat: chat, name: name)
+        // TODO: Introduce feature flag.
+        switch message.content {
+        case .chat(let chat):
+            if message.isGift || message.isAd {
+                DispatchQueue.global(qos: .background).async {
+                    self.speechManager.enqueue(comment: chat.comment, skipIfDuplicated: false)
+                }
+                return
             }
+            guard [.ippan, .premium, .ippanTransparent].contains(chat.premium) else { return }
+            resolveSpeechName(userId: chat.userId, communityId: live.communityId) { name in
+                DispatchQueue.global(qos: .background).async {
+                    self.speechManager.enqueue(comment: chat.comment, name: name)
+                }
+            }
+        case .system, .debug:
+            break
         }
     }
 
