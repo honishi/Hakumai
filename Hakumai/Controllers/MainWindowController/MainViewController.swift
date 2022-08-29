@@ -1325,7 +1325,8 @@ private extension MainViewController {
     func handleSpeech(chat: Chat) {
         guard #available(macOS 10.14, *) else { return }
         guard speakButton.isOn else { return }
-        guard live?.isTimeShift == false else {
+        guard let live = live,
+              !live.isTimeShift else {
             // log.debug("Skip enqueing since speech for time shift program is not supported.")
             return
         }
@@ -1336,9 +1337,19 @@ private extension MainViewController {
             log.debug("Skip enqueuing early chats.")
             return
         }
-        DispatchQueue.global(qos: .background).async {
-            self.speechManager.enqueue(chat: chat)
+        resolveSpeechName(userId: chat.userId, communityId: live.communityId) { name in
+            DispatchQueue.global(qos: .background).async {
+                self.speechManager.enqueue(chat: chat, name: name)
+            }
         }
+    }
+
+    func resolveSpeechName(userId: String, communityId: String, completion: @escaping (String?) -> Void) {
+        if let name = HandleNameManager.shared.handleName(for: userId, in: communityId) {
+            completion(name)
+            return
+        }
+        nicoManager.resolveUsername(for: userId) { completion($0) }
     }
 }
 

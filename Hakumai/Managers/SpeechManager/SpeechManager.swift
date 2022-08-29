@@ -146,11 +146,13 @@ extension SpeechManager {
         log.debug("set speaker: \(speaker)")
     }
 
-    func enqueue(chat: Chat) {
+    func enqueue(chat: Chat, name: String? = nil) {
         guard [.ippan, .premium, .ippanTransparent].contains(chat.premium) else { return }
 
         let clean = cleanComment(from: chat.comment)
-        let text = checkAndMakeText(clean)
+        let text = [name, checkAndMakeText(clean)]
+            .compactMap { $0 }
+            .joined(separator: " ")
 
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
