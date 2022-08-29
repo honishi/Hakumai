@@ -1342,14 +1342,20 @@ private extension MainViewController {
         case .chat(let chat):
             if message.isGift || message.isAd {
                 DispatchQueue.global(qos: .background).async {
-                    self.speechManager.enqueue(comment: chat.comment, skipIfDuplicated: false)
+                    self.speechManager.enqueue(
+                        comment: chat.comment.stringByRemovingHeadingEmojiSpace,
+                        skipIfDuplicated: false
+                    )
                 }
                 return
             }
             guard [.ippan, .premium, .ippanTransparent].contains(chat.premium) else { return }
             resolveSpeechName(userId: chat.userId, communityId: live.communityId) { name in
                 DispatchQueue.global(qos: .background).async {
-                    self.speechManager.enqueue(comment: chat.comment, name: name)
+                    self.speechManager.enqueue(
+                        comment: chat.comment,
+                        name: name
+                    )
                 }
             }
         case .system, .debug:

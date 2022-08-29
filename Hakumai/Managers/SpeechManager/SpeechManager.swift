@@ -367,6 +367,12 @@ private extension SpeechManager {
     }
 }
 
+extension String {
+    var stringByRemovingHeadingEmojiSpace: String {
+        stringByReplacingRegexp(pattern: "^\(emojiPattern)\\s", with: "")
+    }
+}
+
 private struct VoiceSpeed: CustomStringConvertible {
     // min~max: 1.0~2.0
     let value: Float
