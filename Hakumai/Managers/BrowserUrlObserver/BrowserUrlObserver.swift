@@ -51,9 +51,12 @@ private extension BrowserUrlObserver {
 
     @objc
     func timerFired() {
-        guard let urlString = BrowserHelper.extractUrl(fromBrowser: browser.toBrowserHelperBrowserType),
-              urlString.isLiveUrl,
-              let url = URL(string: urlString) else { return }
-        delegate?.browserUrlObserver(self, didGetUrl: url)
+        BrowserHelper.extractUrl(from: browser.toBrowserHelperBrowserType) { [weak self] in
+            guard let self = self,
+                  let urlString = $0,
+                  urlString.isLiveUrl,
+                  let url = URL(string: urlString) else { return }
+            self.delegate?.browserUrlObserver(self, didGetUrl: url)
+        }
     }
 }

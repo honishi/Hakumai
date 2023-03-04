@@ -31,7 +31,13 @@ final class BrowserHelper {
     }
 
     // http://stackoverflow.com/a/6111592
-    static func extractUrl(fromBrowser browserType: BrowserType) -> String? {
+    static func extractUrl(from browserType: BrowserType, completion: @escaping (String?) -> Void) {
+        DispatchQueue.global(qos: .background).async {
+            _extractUrl(from: browserType, completion: completion)
+        }
+    }
+
+    static func _extractUrl(from browserType: BrowserType, completion: @escaping (String?) -> Void) {
         let source = { () -> String in
             switch browserType {
             case .chrome:   return chromeScript
@@ -45,7 +51,8 @@ final class BrowserHelper {
 
         guard scriptError == nil else {
             log.error(scriptError)
-            return nil
+            DispatchQueue.main.async { completion(nil) }
+            return
         }
 
         var result: String?
@@ -53,7 +60,7 @@ final class BrowserHelper {
             let data = unicode.data
             result = NSString(characters: (data as NSData).bytes.assumingMemoryBound(to: unichar.self), length: (data.count / MemoryLayout<unichar>.size)) as String
         }
-        return result
+        DispatchQueue.main.async { completion(result) }
     }
 }
 

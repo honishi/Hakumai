@@ -1106,9 +1106,11 @@ extension MainViewController {
     @IBAction func grabUrlFromBrowser(_ sender: AnyObject) {
         let rawValue = UserDefaults.standard.integer(forKey: Parameters.browserInUse)
         guard let browser = BrowserInUseType(rawValue: rawValue) else { return }
-        guard let url = BrowserHelper.extractUrl(fromBrowser: browser.toBrowserHelperBrowserType) else { return }
-        liveUrlTextField.stringValue = url
-        connectLive(self)
+        BrowserHelper.extractUrl(from: browser.toBrowserHelperBrowserType) { [weak self] in
+            guard let self = self, let url = $0 else { return }
+            self.liveUrlTextField.stringValue = url
+            self.connectLive(self)
+        }
     }
 
     @IBAction func debugReconnectButtonPressed(_ sender: Any) {
