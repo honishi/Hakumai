@@ -1,8 +1,8 @@
 PODS:
   - Alamofire (5.6.0)
-  - Charts (4.0.2):
-    - Charts/Core (= 4.0.2)
-  - Charts/Core (4.0.2):
+  - Charts (4.1.0):
+    - Charts/Core (= 4.1.0)
+  - Charts/Core (4.1.0):
     - SwiftAlgorithms (~> 1.0)
   - FMDB (2.7.5):
     - FMDB/standard (= 2.7.5)
@@ -26,7 +26,7 @@ PODS:
 
 DEPENDENCIES:
   - Alamofire (~> 5.6.0)
-  - Charts (~> 4.0.2)
+  - Charts (~> 4.1.0)
   - FMDB (~> 2.7.5)
   - Kanna (~> 5.2.7)
   - Kingfisher (~> 6.3.1)
@@ -57,7 +57,7 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   Alamofire: 0c07058209f211e3d32824f8e0766d7c44ac83b3
-  Charts: cfa4e911e6dc289582c2fe011a0e87c03d96727f
+  Charts: 354f86803d11d9c35de280587fef50d1af063978
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   Kanna: 01cfbddc127f5ff0963692f285fcbc8a9d62d234
   Kingfisher: 016c8b653a35add51dd34a3aba36b580041acc74
@@ -71,6 +71,6 @@ SPEC CHECKSUMS:
   SwiftLint: d41cc46a2ae58ac6d9f26954bc89f1d72e71fdef
   XCGLogger: 1943831ef907df55108b0b18657953f868de973b
 
-PODFILE CHECKSUM: 4325cdd5f4fc4198e53f167bcfbe9b11385b9253
+PODFILE CHECKSUM: 5129e3c52120685a2f212c544fc68d4f0f57b629
 
 COCOAPODS: 1.11.3

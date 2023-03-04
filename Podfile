@@ -1,4 +1,4 @@
-platform :osx, '10.12'
+platform :osx, '10.13'
 inhibit_all_warnings!
 
 target 'Hakumai' do
@@ -18,7 +18,7 @@ target 'Hakumai' do
   pod 'Starscream', '~> 4.0.4'
 
   # User Interface
-  pod 'Charts', '~> 4.0.2'
+  pod 'Charts', '~> 4.1.0'
   pod 'Kingfisher', '~> 6.3.1'
   pod 'SnapKit', '~> 5.6.0'
 
@@ -30,7 +30,7 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
-      config.build_settings['MACOSX_DEPLOYMENT_TARGET'] = '10.12'
+      config.build_settings['MACOSX_DEPLOYMENT_TARGET'] = '10.13'
     end
   end
 end
