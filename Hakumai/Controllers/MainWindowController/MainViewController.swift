@@ -99,6 +99,7 @@ final class MainViewController: NSViewController {
     private let notificationPresenter: NotificationPresenterProtocol = NotificationPresenter.default
     private let kusaCommentDetector: KusaCommentDetectorType = KusaCommentDetector()
     private let storeCommentDetector: StoreCommentDetectorType = StoreCommentDetector()
+    private let chatGPTManager: ChatGPTManagerType = ChatGPTManager()
 
     private(set) var live: Live?
     private(set) var connectedToLive = false
@@ -743,6 +744,12 @@ extension MainViewController {
     func toggleCommentAnonymouslyButtonState() {
         commentAnonymouslyButton.state = commentAnonymouslyButton.isOn ? .off : .on  // set "toggled" state
         commentAnonymouslyButtonStateChanged(self)
+    }
+
+    func generateComment() {
+        chatGPTManager.generateComment(type: .greeting, sampleComments: []) {
+            log.debug($0)
+        }
     }
 
     func disconnect() {

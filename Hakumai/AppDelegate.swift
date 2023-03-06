@@ -94,6 +94,10 @@ extension AppDelegate {
         activeMainWindowController?.toggleCommentAnonymouslyButtonState()
     }
 
+    @IBAction func generateComment(_ sender: Any) {
+        activeMainWindowController?.generateComment()
+    }
+
     @IBAction func toggleSpeech(_ sender: Any) {
         activeMainWindowController?.toggleSpeech()
     }

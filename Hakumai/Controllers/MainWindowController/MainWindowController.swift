@@ -230,6 +230,10 @@ extension MainWindowController {
         mainViewController.toggleCommentAnonymouslyButtonState()
     }
 
+    func generateComment() {
+        mainViewController.generateComment()
+    }
+
     func setSpeechEnabled(_ isEnabled: Bool) {
         mainViewController.setSpeechEnabled(isEnabled)
     }
