@@ -55,6 +55,7 @@
 		DB576ED32657A5BC0041050A /* AuthModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB576ED22657A5BC0041050A /* AuthModel.swift */; };
 		DB6135DB29B6414900AF08AA /* ChatGPTManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6135DA29B6414900AF08AA /* ChatGPTManagerProtocol.swift */; };
 		DB6135DD29B6415700AF08AA /* ChatGPTManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6135DC29B6415700AF08AA /* ChatGPTManager.swift */; };
+		DB6135DF29B7618600AF08AA /* OpenAICredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6135DE29B7618600AF08AA /* OpenAICredential.swift */; };
 		DB61AD82271B18DA001656F5 /* CircleImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB61AD81271B18DA001656F5 /* CircleImageView.swift */; };
 		DB682D421A36E6AE00499C72 /* Parameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB682D411A36E6AE00499C72 /* Parameter.swift */; };
 		DB690973266372230081F24F /* ButtonScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB690972266372230081F24F /* ButtonScrollView.swift */; };
@@ -211,6 +212,8 @@
 		DB576ED22657A5BC0041050A /* AuthModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthModel.swift; sourceTree = "<group>"; };
 		DB6135DA29B6414900AF08AA /* ChatGPTManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatGPTManagerProtocol.swift; sourceTree = "<group>"; };
 		DB6135DC29B6415700AF08AA /* ChatGPTManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatGPTManager.swift; sourceTree = "<group>"; };
+		DB6135DE29B7618600AF08AA /* OpenAICredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAICredential.swift; sourceTree = "<group>"; };
+		DB6135E029B761C800AF08AA /* OpenAICredential.sample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAICredential.sample.swift; sourceTree = "<group>"; };
 		DB61AD81271B18DA001656F5 /* CircleImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleImageView.swift; sourceTree = "<group>"; };
 		DB682D411A36E6AE00499C72 /* Parameter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Parameter.swift; sourceTree = "<group>"; };
 		DB690972266372230081F24F /* ButtonScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonScrollView.swift; sourceTree = "<group>"; };
@@ -408,6 +411,8 @@
 				DB3AF8F22645A92500A52987 /* Hakumai.entitlements */,
 				DB3AE44526A1ACB9001681E9 /* OAuthCredential.sample.swift */,
 				DB3AE44126A1ABCF001681E9 /* OAuthCredential.swift */,
+				DB6135E029B761C800AF08AA /* OpenAICredential.sample.swift */,
+				DB6135DE29B7618600AF08AA /* OpenAICredential.swift */,
 				DB682D411A36E6AE00499C72 /* Parameter.swift */,
 			);
 			path = Hakumai;
@@ -1110,6 +1115,7 @@
 				DBD7A1E9265D5863001C87E0 /* NSView+Extensions.swift in Sources */,
 				DB9EFC741A3E974A0087D302 /* NSWindow+Extensions.swift in Sources */,
 				DB3AE44226A1ABCF001681E9 /* OAuthCredential.swift in Sources */,
+				DB6135DF29B7618600AF08AA /* OpenAICredential.swift in Sources */,
 				DB682D421A36E6AE00499C72 /* Parameter.swift in Sources */,
 				DB49963B27C1097E00FD3405 /* PointingHandButton.swift in Sources */,
 				DB9EFC781A3E9EB10087D302 /* PreferenceWindow.swift in Sources */,

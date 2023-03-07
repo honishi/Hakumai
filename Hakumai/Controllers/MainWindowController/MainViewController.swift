@@ -747,8 +747,24 @@ extension MainViewController {
     }
 
     func generateComment() {
-        chatGPTManager.generateComment(type: .greeting, sampleComments: []) {
+        let recentComments = messageContainer
+            .filteredMessages
+            .suffix(20)
+            .map({ $0.userComment })
+            .compactMap({ $0 })
+        let _recentComments = Array(recentComments)
+        progressIndicator.startAnimation(self)
+        commentTextField.stringValue = "⚡️... コメント生成中 ...⚡️"
+        commentTextField.isEnabled = false
+        chatGPTManager.generateComment(type: .greeting, sampleComments: _recentComments) { [weak self] in
             log.debug($0)
+            let generated = $0
+            DispatchQueue.main.async {
+                self?.progressIndicator.stopAnimation(self)
+                self?.commentTextField.stringValue = ""
+                self?.commentTextField.isEnabled = true
+                self?.showGeneratedComments(generated)
+            }
         }
     }
 
@@ -808,7 +824,6 @@ extension MainViewController {
 
 // MARK: Utility
 extension MainViewController {
-
     func changeFontSize(_ fontSize: Float) {
         tableViewFontSize = CGFloat(fontSize)
 
@@ -1504,6 +1519,24 @@ private extension MainViewController {
             liveProgramId: live.liveProgramId,
             jpegImageUrl: live.community.thumbnailUrl
         )
+    }
+}
+
+// MARK: Generated Comment Utility
+private extension MainViewController {
+    func showGeneratedComments(_ comments: [String]) {
+        guard !comments.isEmpty else { return }
+        let menu = NSMenu()
+        comments.forEach {
+            menu.addItem(withTitle: $0, action: #selector(submitGeneratedComment(_:)), keyEquivalent: "")
+        }
+        menu.popUp(positioning: nil, at: NSPoint(x: 100, y: 0), in: commentTextField)
+    }
+
+    @objc
+    func submitGeneratedComment(_ sender: NSMenuItem) {
+        commentTextField.stringValue = sender.title
+        comment(self)
     }
 }
 

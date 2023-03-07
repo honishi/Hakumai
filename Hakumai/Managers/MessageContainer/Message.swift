@@ -64,6 +64,15 @@ extension Message {
             return false
         }
     }
+
+    var userComment: String? {
+        switch content {
+        case .chat(let chat):
+            return chat.isUser ? chat.comment : nil
+        default:
+            return nil
+        }
+    }
 }
 
 // MARK: - Individual Message

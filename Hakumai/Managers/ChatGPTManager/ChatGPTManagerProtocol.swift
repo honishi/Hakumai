@@ -9,7 +9,7 @@
 import Foundation
 
 protocol ChatGPTManagerType {
-    func generateComment(type: ChatGPTManagerCommentType, sampleComments: [String], completion: (String) -> Void)
+    func generateComment(type: ChatGPTManagerCommentType, sampleComments: [String], completion: @escaping ([String]) -> Void)
 }
 
 enum ChatGPTManagerCommentType {
