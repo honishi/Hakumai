@@ -749,7 +749,7 @@ extension MainViewController {
     func generateComment() {
         let recentComments = messageContainer
             .filteredMessages
-            .suffix(20)
+            .suffix(30)
             .map({ $0.userComment })
             .compactMap({ $0 })
         let _recentComments = Array(recentComments)
@@ -1530,7 +1530,8 @@ private extension MainViewController {
         comments.forEach {
             menu.addItem(withTitle: $0, action: #selector(submitGeneratedComment(_:)), keyEquivalent: "")
         }
-        menu.popUp(positioning: nil, at: NSPoint(x: 100, y: 0), in: commentTextField)
+        commentTextField.menu = menu
+        commentTextField.accessibilityPerformShowMenu()
     }
 
     @objc
