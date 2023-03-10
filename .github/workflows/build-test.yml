@@ -43,8 +43,10 @@ jobs:
           bundle exec pod install
 
       # before test
-      - name: Copy sample credential file
-        run: cp ./Hakumai/OAuthCredential.sample.swift ./Hakumai/OAuthCredential.swift
+      - name: Copy sample credential files
+        run: |
+          cp ./Hakumai/OAuthCredential.sample.swift ./Hakumai/OAuthCredential.swift
+          cp ./Hakumai/OpenAICredential.sample.swift ./Hakumai/OpenAICredential.swift
 
       # build and run tests
       - name: Build and Run Tests
