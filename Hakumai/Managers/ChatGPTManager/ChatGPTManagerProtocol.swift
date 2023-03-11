@@ -10,9 +10,5 @@ import Foundation
 
 protocol ChatGPTManagerType {
     func transcribeAudio(_ data: Data, completion: @escaping (String?) -> Void)
-    func generateComment(type: ChatGPTManagerCommentType, sampleComments: [String], completion: @escaping ([String]) -> Void)
-}
-
-enum ChatGPTManagerCommentType {
-    case greeting
+    func generateComment(spokeText: String, comments: [String], completion: @escaping ([String]) -> Void)
 }

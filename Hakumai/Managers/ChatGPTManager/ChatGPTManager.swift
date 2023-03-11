@@ -56,14 +56,14 @@ extension ChatGPTManager: ChatGPTManagerType {
             }
     }
 
-    func generateComment(type: ChatGPTManagerCommentType, sampleComments: [String], completion: @escaping ([String]) -> Void) {
+    func generateComment(spokeText: String, comments: [String], completion: @escaping ([String]) -> Void) {
         let urlString = "https://" + apiHost + apiPath
         guard let url = URL(string: urlString) else { return }
         var request = URLRequest(url: url)
         request.method = .post
         request.setValue(httpHeaderValueApplicationJson, forHTTPHeaderField: httpHeaderKeyContentType)
         request.setValue("Bearer \(openAIAPIToken)", forHTTPHeaderField: httpHeaderKeyAuthorization)
-        let payload = makeRequestPayload(message: "", samples: sampleComments)
+        let payload = makeRequestPayload(spokeText: spokeText, comments: comments)
         guard let encoded = try? JSONEncoder().encode(payload) else {
             fatalError()
         }
@@ -84,7 +84,7 @@ extension ChatGPTManager: ChatGPTManagerType {
 }
 
 private extension ChatGPTManager {
-    func makeRequestPayload(message: String, samples: [String]) -> ChatCompletionRequest {
+    func makeRequestPayload(spokeText: String, comments: [String]) -> ChatCompletionRequest {
         return ChatCompletionRequest(
             model: "gpt-3.5-turbo",
             messages: [
@@ -95,11 +95,11 @@ private extension ChatGPTManager {
                 ChatCompletionRequestMessage(
                     role: "user",
                     content:
-                        "悪友が次の発言をしました。これに対するコメントを10個考えてください。コメントは日本語で40文字以内で煽り口調、数字付きの箇条書きで答えてください。\n\n発言: \(samples.first ?? "")"
-                    /*
-                     "いま生放送には次のようなコメントが流れています。これらを参考にして、自分もリスナーになった気分でコメントを考えてください。コメントは日本語で100文字以内、命令調、10個、数字付きの箇条書きで答えてください。\n\n" +
-                     samples.map({"* \($0)"}).joined(separator: "\n")
-                     */
+                        "悪友が次の発言をしました。\n" +
+                        "悪友の発言: \(spokeText)\n\n" +
+                        "それを聞いた友人たちは以下の発言をしました。\n" +
+                        comments.joined(by: "\n") + "\n" +
+                        "これに対するあなたのコメントを10個考えてください。コメントは日本語で40文字以内で煽り口調、数字付きの箇条書きで答えてください。"
                 )
             ]
         )

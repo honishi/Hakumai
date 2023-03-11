@@ -669,31 +669,6 @@ extension MainViewController: UserWindowControllerDelegate {
     }
 }
 
-// MARK: - AudioCaptureManagerDelegate Functions
-extension MainViewController: AudioCaptureManagerDelegate {
-    func audioCaptureManager(_ audioCaptureManager: AudioCaptureManagerType, didCapture data: Data) {
-        log.debug(data)
-        logSystemMessageToTable("🔵 Captured audio, transcribing...")
-
-        chatGPTManager.transcribeAudio(data) { [weak self] in
-            let text = $0 ?? ""
-            log.debug(text)
-            self?.logSystemMessageToTable("🔵 Transcribed: \(text)")
-            self?.logSystemMessageToTable("🔵 Generating comments...")
-            self?.chatGPTManager.generateComment(type: .greeting, sampleComments: [text]) { [weak self] in
-                log.debug($0)
-                self?.logSystemMessageToTable("🔵 Generated comments.")
-                self?.progressIndicator.stopAnimation(self)
-                let generated = $0
-                DispatchQueue.main.async {
-                    self?.showGeneratedComments(generated)
-                }
-            }
-
-        }
-    }
-}
-
 // MARK: - Public Functions
 extension MainViewController {
     func login() {
@@ -773,28 +748,34 @@ extension MainViewController {
     }
 
     func generateComment() {
-        progressIndicator.startAnimation(self)
-        logSystemMessageToTable("🔵 Capturing audio from the stream...")
-        audioCaptureManager.start(self)
-        return
+        guard let data = audioCaptureManager.latestCapture else {
+            log.debug("no audio captures yet...")
+            return
+        }
 
         let recentComments = messageContainer
             .filteredMessages
-            .suffix(30)
+            .suffix(10)
             .map({ $0.userComment })
             .compactMap({ $0 })
         let _recentComments = Array(recentComments)
+
+        logSystemMessageToTable("🔵 Transcribing...")
         progressIndicator.startAnimation(self)
-        commentTextField.stringValue = "⚡️... コメント生成中 ...⚡️"
-        commentTextField.isEnabled = false
-        chatGPTManager.generateComment(type: .greeting, sampleComments: _recentComments) { [weak self] in
-            log.debug($0)
-            let generated = $0
-            DispatchQueue.main.async {
+
+        chatGPTManager.transcribeAudio(data) { [weak self] in
+            let text = $0 ?? ""
+            log.debug(text)
+            self?.logSystemMessageToTable("🔵 Transcribed: \(text)")
+            self?.logSystemMessageToTable("🔵 Generating comments...")
+            self?.chatGPTManager.generateComment(spokeText: text, comments: _recentComments) { [weak self] in
+                log.debug($0)
+                self?.logSystemMessageToTable("🔵 Generated comments.")
                 self?.progressIndicator.stopAnimation(self)
-                self?.commentTextField.stringValue = ""
-                self?.commentTextField.isEnabled = true
-                self?.showGeneratedComments(generated)
+                let generated = $0
+                DispatchQueue.main.async {
+                    self?.showGeneratedComments(generated)
+                }
             }
         }
     }
@@ -1252,8 +1233,12 @@ extension MainViewController {
         UserDefaults.standard.setValue(isOn, forKey: Parameters.commentAnonymously)
     }
 
-    @IBAction func generateAIComment(_ sender: Any) {
-        generateComment()
+    @IBAction func toggleAudioCapture(_ sender: Any) {
+        if audioCaptureManager.isRunning {
+            audioCaptureManager.stop()
+        } else {
+            audioCaptureManager.start(interval: 20)
+        }
     }
 }
 

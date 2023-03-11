@@ -10,77 +10,118 @@ import Foundation
 import AudioToolbox
 import AVFoundation
 
+private let audioFileName = "hakumai-audio"
+
 final class AudioCaptureManager {
-    private(set) weak var delegate: AudioCaptureManagerDelegate?
-    private var recorder: AudioQueueRecorder!
+    private var recorder: AudioQueueRecorder?
+    private(set) var captures: [Data] = []
+    private var timer: Timer?
 
     init() {}
-    deinit {}
+
+    deinit {
+        stop()
+    }
 }
 
 extension AudioCaptureManager: AudioCaptureManagerType {
-    func start(_ delegate: AudioCaptureManagerDelegate) {
-        self.delegate = delegate
-        recorder = AudioQueueRecorder()
-        recorder.prepare()
-        recorder.prepareQueue()
-        recorder.setupBuffer()
-        recorder.startRecord()
-        // self.delegate = delegate
-        // startRecord()
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 10) {
-            self.recorder.stopRecord()
-            let documentDirectories = FileManager.default.urls(
-                for: FileManager.SearchPathDirectory.documentDirectory,
-                in: FileManager.SearchPathDomainMask.userDomainMask)
-            let docDirectory = (documentDirectories.first)!
-
-            var importFilePathURL = docDirectory.appendingPathComponent("audiotest")
-            importFilePathURL.appendPathExtension("aiff")
-
-            var exportFilePathURL = docDirectory.appendingPathComponent("audiotest")
-            exportFilePathURL.appendPathExtension("m4a")
-
-            let fileManager = FileManager.default
-            try? fileManager.removeItem(at: exportFilePathURL)
-
-            let asset = AVURLAsset(url: importFilePathURL)
-            guard let exportSession = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetAppleM4A) else {
-                print("Failed to create export session")
-                return
-            }
-            exportSession.outputURL = exportFilePathURL
-            exportSession.outputFileType = .m4a
-            exportSession.exportAsynchronously {
-                switch exportSession.status {
-                case .completed:
-                    print("Export completed")
-                    guard let data = try? Data(contentsOf: exportFilePathURL) else { return }
-                    self.delegate?.audioCaptureManager(self, didCapture: data)
-                case .failed, .unknown, .exporting, .waiting, .cancelled:
-                    if let error = exportSession.error {
-                        print("Export failed: \(error.localizedDescription)")
-                    } else {
-                        print("Export failed")
-                    }
-                @unknown default:
-                    print("Export failed with unknown status")
-                }
+    func start(interval: TimeInterval) {
+        guard !isRunning else { return }
+        startCapture()
+        timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
+            self?.endCapture {
+                self?.startCapture()
             }
         }
     }
 
-    func stop() {}
+    func stop() {
+        endCapture {}
+        timer?.invalidate()
+        timer = nil
+    }
+
+    var isRunning: Bool { timer != nil }
+    var latestCapture: Data? { captures.last }
 }
 
-private extension AudioCaptureManager {}
+private extension AudioCaptureManager {
+    func startCapture() {
+        recorder = AudioQueueRecorder()
+        guard let recorder = recorder else { return }
+        recorder.prepare()
+        recorder.prepareQueue()
+        recorder.setupBuffer()
+        recorder.startRecord()
+    }
+
+    func endCapture(completion: @escaping () -> Void) {
+        guard let recorder = recorder else {
+            completion()
+            return
+        }
+        recorder.stopRecord()
+
+        // Library/Caches
+        let directories = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)
+        guard let cacheDirectory = directories.first else {
+            completion()
+            return
+        }
+
+        guard let recordedAiffFileUrl = recorder.audioFileUrl else { return }
+
+        var m4aFileUrl = cacheDirectory.appendingPathComponent(audioFileName)
+        m4aFileUrl.appendPathExtension("m4a")
+
+        convert(aiffFileUrl: recordedAiffFileUrl, toM4aFileUrl: m4aFileUrl) { [weak self] in
+            guard let self = self,
+                  $0 == .completed,
+                  let data = try? Data(contentsOf: m4aFileUrl) else {
+                completion()
+                return
+            }
+            if self.captures.count > 5 {
+                self.captures.removeFirst()
+            }
+            self.captures.append(data)
+            log.debug(self.captures)
+            completion()
+        }
+    }
+
+    func convert(aiffFileUrl: URL, toM4aFileUrl m4aFileUrl: URL, completion: @escaping (AVAssetExportSession.Status) -> Void) {
+        try? FileManager.default.removeItem(at: m4aFileUrl)
+
+        let asset = AVURLAsset(url: aiffFileUrl)
+        guard let exportSession = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetAppleM4A) else {
+            log.error("Failed to create export session")
+            return
+        }
+        exportSession.outputURL = m4aFileUrl
+        exportSession.outputFileType = .m4a
+        exportSession.exportAsynchronously {
+            switch exportSession.status {
+            case .completed:
+                log.debug("Export completed")
+            case .failed, .unknown, .exporting, .waiting, .cancelled:
+                log.error("Export failed: \(exportSession.error?.localizedDescription ?? "-")")
+            @unknown default:
+                log.error("Export failed with unknown status")
+            }
+            completion(exportSession.status)
+        }
+    }
+}
 
 private extension AudioCaptureManager {}
 
 // swiftlint:disable all
 import AudioToolbox
 
-class AudioQueueRecorder {
+private class AudioQueueRecorder {
+    private(set) var audioFileUrl: URL?
+
     private var dataFormat: AudioStreamBasicDescription!
     private var audioQueue: AudioQueueRef!
     private var buffers: [AudioQueueBufferRef]
@@ -128,12 +169,11 @@ class AudioQueueRecorder {
             numberOfPackets: inNumPackets ,
             inPacketDesc: inPacketDesc)
 
-        if !(receivedUserData.isRunning) {
+        if !receivedUserData.isRunning {
             return
         }
 
         AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, nil)
-
     }
 
     func prepare() {
@@ -141,29 +181,27 @@ class AudioQueueRecorder {
 
         var aAudioFileID: AudioFileID?
 
-        let documentDirectories = FileManager.default.urls(
-            for: FileManager.SearchPathDirectory.documentDirectory,
-            in: FileManager.SearchPathDomainMask.userDomainMask)
-        let docDirectory = (documentDirectories.first)!
+        // Library/Caches
+        let directories = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)
+        guard let cacheDirectory = directories.first else { return }
 
-        var audioFilePathURL = docDirectory.appendingPathComponent("audiotest")
-        audioFilePathURL.appendPathExtension("aiff")
+        var audioFileUrl = cacheDirectory.appendingPathComponent(audioFileName)
+        audioFileUrl.appendPathExtension("aiff")
+        self.audioFileUrl = audioFileUrl
+        log.debug(audioFileUrl)
 
-        let fileManager = FileManager.default
-        try? fileManager.removeItem(at: audioFilePathURL)
-
-        let result = AudioFileCreateWithURL(audioFilePathURL as CFURL,
-                                            kAudioFileAIFFType,
-                                            &currentMusicDataFormat,
-                                            AudioFileFlags.eraseFile,
-                                            &aAudioFileID)
+        try? FileManager.default.removeItem(at: audioFileUrl)
+        let result = AudioFileCreateWithURL(
+            audioFileUrl as CFURL,
+            kAudioFileAIFFType,
+            &currentMusicDataFormat,
+            AudioFileFlags.eraseFile,
+            &aAudioFileID)
         log.debug("result: \(result)")
-
-        audioFile = aAudioFileID!
+        audioFile = aAudioFileID
     }
 
     func prepareQueue() {
-
         var aQueue: AudioQueueRef!
 
         AudioQueueNewInput(
@@ -175,10 +213,8 @@ class AudioQueueRecorder {
             0,
             &aQueue)
 
-        if let aQueue = aQueue {
-            audioQueue = aQueue
-        }
-
+        guard let aQueue = aQueue else { return }
+        audioQueue = aQueue
     }
 
     func startRecord() {
@@ -197,6 +233,7 @@ class AudioQueueRecorder {
     func writeToFile(buffer: UnsafeMutablePointer<AudioQueueBuffer>, numberOfPackets: UInt32, inPacketDesc: Optional<UnsafePointer<AudioStreamPacketDescription>>) {
 
         guard let audioFile = audioFile else {
+            // TODO: Crash here when close main window...
             assert(false, "no audio data...")
             return
         }
@@ -222,13 +259,11 @@ class AudioQueueRecorder {
         if writeResult != noErr {
             // handle error
         }
-
     }
 
     func closeFile() {
-        if let audioFile = audioFile {
-            AudioFileClose(audioFile)
-        }
+        guard let audioFile = audioFile else { return }
+        AudioFileClose(audioFile)
     }
 
     func setupBuffer() {
@@ -240,21 +275,11 @@ class AudioQueueRecorder {
 
         for i in 0..<kNumberBuffers {
             var newBuffer: AudioQueueBufferRef?
-
-            AudioQueueAllocateBuffer(
-                audioQueue,
-                bufferByteSize,
-                &newBuffer)
-
+            AudioQueueAllocateBuffer(audioQueue, bufferByteSize, &newBuffer)
             if let newBuffer = newBuffer {
                 buffers.append(newBuffer)
             }
-
-            AudioQueueEnqueueBuffer(
-                audioQueue,
-                buffers[i],
-                0,
-                nil)
+            AudioQueueEnqueueBuffer(audioQueue, buffers[i], 0, nil)
         }
     }
 

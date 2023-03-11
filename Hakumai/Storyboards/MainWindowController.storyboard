@@ -1288,12 +1288,12 @@
                                             </customView>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="754-F2-zn3">
                                                 <rect key="frame" x="528" y="-7" width="53" height="32"/>
-                                                <buttonCell key="cell" type="push" title="💭" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="OfW-Hr-RvU">
+                                                <buttonCell key="cell" type="push" title="🦻" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="OfW-Hr-RvU">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="system"/>
                                                 </buttonCell>
                                                 <connections>
-                                                    <action selector="generateAIComment:" target="XfG-lQ-9wD" id="ovI-8d-IrV"/>
+                                                    <action selector="toggleAudioCapture:" target="XfG-lQ-9wD" id="6Yv-jD-Ma3"/>
                                                 </connections>
                                             </button>
                                             <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="A3m-ux-Ivm">

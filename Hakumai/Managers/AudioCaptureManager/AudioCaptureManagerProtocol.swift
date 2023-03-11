@@ -9,11 +9,8 @@
 import Foundation
 
 protocol AudioCaptureManagerType {
-    func start(_ delegate: AudioCaptureManagerDelegate)
+    func start(interval: TimeInterval)
     func stop()
-    // var isRunning: Bool { get }
-}
-
-protocol AudioCaptureManagerDelegate: AnyObject {
-    func audioCaptureManager(_ audioCaptureManager: AudioCaptureManagerType, didCapture data: Data)
+    var isRunning: Bool { get }
+    var latestCapture: Data? { get }
 }
