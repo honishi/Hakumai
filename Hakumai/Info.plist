@@ -53,6 +53,8 @@
 All rights reserved.</string>
 	<key>NSMainStoryboardFile</key>
 	<string>MainWindowController</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Analyze stream context from audio</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>SUEnableAutomaticChecks</key>

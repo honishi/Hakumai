@@ -120,6 +120,8 @@
 		DBE59AC227495240005230CE /* NotificationPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE59AC127495240005230CE /* NotificationPresenter.swift */; };
 		DBE619DC27AEF4FE000FFB8E /* VoicevoxWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE619DB27AEF4FE000FFB8E /* VoicevoxWrapper.swift */; };
 		DBE619DE27B00566000FFB8E /* AudioLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE619DD27B00566000FFB8E /* AudioLoader.swift */; };
+		DBF09E5729BC22C700146FB4 /* AudioCaptureManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF09E5629BC22C700146FB4 /* AudioCaptureManagerProtocol.swift */; };
+		DBF09E5929BC237300146FB4 /* AudioCaptureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF09E5829BC237300146FB4 /* AudioCaptureManager.swift */; };
 		DBF3E9A1285250480092E962 /* IgnoreLiveRegistryType.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF3E9A0285250480092E962 /* IgnoreLiveRegistryType.swift */; };
 		DBF3E9A3285250810092E962 /* IgnoreLiveRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF3E9A2285250810092E962 /* IgnoreLiveRegistry.swift */; };
 		DBFA887B1A1BC25A005349AD /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFA887A1A1BC25A005349AD /* Chat.swift */; };
@@ -280,6 +282,8 @@
 		DBE59AC127495240005230CE /* NotificationPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationPresenter.swift; sourceTree = "<group>"; };
 		DBE619DB27AEF4FE000FFB8E /* VoicevoxWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoicevoxWrapper.swift; sourceTree = "<group>"; };
 		DBE619DD27B00566000FFB8E /* AudioLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioLoader.swift; sourceTree = "<group>"; };
+		DBF09E5629BC22C700146FB4 /* AudioCaptureManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioCaptureManagerProtocol.swift; sourceTree = "<group>"; };
+		DBF09E5829BC237300146FB4 /* AudioCaptureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioCaptureManager.swift; sourceTree = "<group>"; };
 		DBF3E9A0285250480092E962 /* IgnoreLiveRegistryType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IgnoreLiveRegistryType.swift; sourceTree = "<group>"; };
 		DBF3E9A2285250810092E962 /* IgnoreLiveRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IgnoreLiveRegistry.swift; sourceTree = "<group>"; };
 		DBFA887A1A1BC25A005349AD /* Chat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
@@ -515,6 +519,7 @@
 		DB6DD2A62650E958009A9574 /* Managers */ = {
 			isa = PBXGroup;
 			children = (
+				DBF09E5529BC229300146FB4 /* AudioCaptureManager */,
 				DB576ECE2657A4860041050A /* AuthManager */,
 				DB0D37A5275F70C80086A7A2 /* BrowserUrlObserver */,
 				DB6135D929B6411F00AF08AA /* ChatGPTManager */,
@@ -738,6 +743,15 @@
 				DB7B3DE71A246EE200205470 /* UIHelper.swift */,
 			);
 			path = Controllers;
+			sourceTree = "<group>";
+		};
+		DBF09E5529BC229300146FB4 /* AudioCaptureManager */ = {
+			isa = PBXGroup;
+			children = (
+				DBF09E5829BC237300146FB4 /* AudioCaptureManager.swift */,
+				DBF09E5629BC22C700146FB4 /* AudioCaptureManagerProtocol.swift */,
+			);
+			path = AudioCaptureManager;
 			sourceTree = "<group>";
 		};
 		DBFA887D1A1BC264005349AD /* Application */ = {
@@ -1055,6 +1069,8 @@
 				DB2AE0C41A0EE2FD00B1CE4D /* AppDelegate.swift in Sources */,
 				DB761C9B2785768100D794AB /* AppearanceMonitorView.swift in Sources */,
 				DB49A75A27B6AC550013B626 /* AudioCacher.swift in Sources */,
+				DBF09E5929BC237300146FB4 /* AudioCaptureManager.swift in Sources */,
+				DBF09E5729BC22C700146FB4 /* AudioCaptureManagerProtocol.swift in Sources */,
 				DBE619DE27B00566000FFB8E /* AudioLoader.swift in Sources */,
 				DB576ED02657A4980041050A /* AuthManager.swift in Sources */,
 				DB576ED32657A5BC0041050A /* AuthModel.swift in Sources */,

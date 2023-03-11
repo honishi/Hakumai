@@ -99,6 +99,7 @@ final class MainViewController: NSViewController {
     private let notificationPresenter: NotificationPresenterProtocol = NotificationPresenter.default
     private let kusaCommentDetector: KusaCommentDetectorType = KusaCommentDetector()
     private let storeCommentDetector: StoreCommentDetectorType = StoreCommentDetector()
+    private let audioCaptureManager: AudioCaptureManagerType = AudioCaptureManager()
     private let chatGPTManager: ChatGPTManagerType = ChatGPTManager()
 
     private(set) var live: Live?
@@ -668,6 +669,31 @@ extension MainViewController: UserWindowControllerDelegate {
     }
 }
 
+// MARK: - AudioCaptureManagerDelegate Functions
+extension MainViewController: AudioCaptureManagerDelegate {
+    func audioCaptureManager(_ audioCaptureManager: AudioCaptureManagerType, didCapture data: Data) {
+        log.debug(data)
+        logSystemMessageToTable("🔵 Captured audio, transcribing...")
+
+        chatGPTManager.transcribeAudio(data) { [weak self] in
+            let text = $0 ?? ""
+            log.debug(text)
+            self?.logSystemMessageToTable("🔵 Transcribed: \(text)")
+            self?.logSystemMessageToTable("🔵 Generating comments...")
+            self?.chatGPTManager.generateComment(type: .greeting, sampleComments: [text]) { [weak self] in
+                log.debug($0)
+                self?.logSystemMessageToTable("🔵 Generated comments.")
+                self?.progressIndicator.stopAnimation(self)
+                let generated = $0
+                DispatchQueue.main.async {
+                    self?.showGeneratedComments(generated)
+                }
+            }
+
+        }
+    }
+}
+
 // MARK: - Public Functions
 extension MainViewController {
     func login() {
@@ -747,6 +773,11 @@ extension MainViewController {
     }
 
     func generateComment() {
+        progressIndicator.startAnimation(self)
+        logSystemMessageToTable("🔵 Capturing audio from the stream...")
+        audioCaptureManager.start(self)
+        return
+
         let recentComments = messageContainer
             .filteredMessages
             .suffix(30)
@@ -1219,6 +1250,10 @@ extension MainViewController {
     @IBAction func commentAnonymouslyButtonStateChanged(_ sender: Any) {
         let isOn = commentAnonymouslyButton.state == .on
         UserDefaults.standard.setValue(isOn, forKey: Parameters.commentAnonymously)
+    }
+
+    @IBAction func generateAIComment(_ sender: Any) {
+        generateComment()
     }
 }
 
