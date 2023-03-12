@@ -748,11 +748,16 @@ extension MainViewController {
     }
 
     func generateComment() {
-        guard let data = audioCaptureManager.latestCapture else {
-            log.debug("no audio captures yet...")
-            return
+        audioCaptureManager.requestLatestCapture { [weak self] in
+            guard let self = self, let data = $0 else {
+                log.debug("no audio captures yet...")
+                return
+            }
+            self.generateComment(from: data)
         }
+    }
 
+    private func generateComment(from data: Data) {
         let recentComments = messageContainer
             .filteredMessages
             .suffix(10)
@@ -1237,7 +1242,7 @@ extension MainViewController {
         if audioCaptureManager.isRunning {
             audioCaptureManager.stop()
         } else {
-            audioCaptureManager.start(interval: 20)
+            audioCaptureManager.start()
         }
     }
 }

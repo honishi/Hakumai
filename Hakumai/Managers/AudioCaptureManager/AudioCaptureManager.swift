@@ -13,11 +13,49 @@ import AVFoundation
 private let audioFileName = "hakumai-audio"
 
 final class AudioCaptureManager {
-    private var recorder: AudioQueueRecorder?
-    private(set) var captures: [Data] = []
-    private var timer: Timer?
+    private var audioStreamDescription: AudioStreamBasicDescription
+    private var audioQueue: AudioQueueRef?
+    private var audioQueueBuffers: [AudioQueueBufferRef] = []
 
-    init() {}
+    // swiftlint:disable all
+    private let audioQueueInputCallback: AudioQueueInputCallback = { (
+        inUserData: UnsafeMutableRawPointer?,
+        inAQ: AudioQueueRef,
+        inBuffer: UnsafeMutablePointer<AudioQueueBuffer>,
+        _: UnsafePointer<AudioTimeStamp>,
+        inNumPackets: UInt32,
+        inPacketDesc: Optional<UnsafePointer<AudioStreamPacketDescription>>
+    ) -> Void in
+        // swiftlint:enable all
+        guard let userData = inUserData else {
+            fatalError("no user data...")
+        }
+        let unManagedUserData = Unmanaged<AudioCaptureManager>.fromOpaque(userData)
+        let receivedUserData = unManagedUserData.takeUnretainedValue()
+        receivedUserData.handleAudioQueueInputs(
+            buffer: inBuffer,
+            numberOfPackets: inNumPackets,
+            inPacketDesc: inPacketDesc
+        )
+    }
+
+    init() {
+        audioStreamDescription = AudioStreamBasicDescription(
+            mSampleRate: 44100,
+            mFormatID: kAudioFormatLinearPCM,
+            mFormatFlags: AudioFormatFlags(
+                kLinearPCMFormatFlagIsBigEndian |
+                    kLinearPCMFormatFlagIsSignedInteger |
+                    kLinearPCMFormatFlagIsPacked
+            ),
+            mBytesPerPacket: 4,
+            mFramesPerPacket: 1,
+            mBytesPerFrame: 4,
+            mChannelsPerFrame: 2,
+            mBitsPerChannel: 16,
+            mReserved: 0
+        )
+    }
 
     deinit {
         stop()
@@ -25,71 +63,143 @@ final class AudioCaptureManager {
 }
 
 extension AudioCaptureManager: AudioCaptureManagerType {
-    func start(interval: TimeInterval) {
-        guard !isRunning else { return }
-        startCapture()
-        timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
-            self?.endCapture {
-                self?.startCapture()
-            }
-        }
+    func start() {
+        setupAudioQueue()
+        setupAudioQueueBuffer()
+        startAudioQueue()
     }
 
     func stop() {
-        endCapture {}
-        timer?.invalidate()
-        timer = nil
+        endAudioQueue()
     }
 
-    var isRunning: Bool { timer != nil }
-    var latestCapture: Data? { captures.last }
+    func requestLatestCapture(completion: (Data?) -> Void) {
+        _requestLatestCapture(completion: completion)
+    }
+
+    var isRunning: Bool { audioQueue != nil }
 }
 
 private extension AudioCaptureManager {
-    func startCapture() {
-        recorder = AudioQueueRecorder()
-        guard let recorder = recorder else { return }
-        recorder.prepareFile()
-        recorder.prepareQueue()
-        recorder.setupBuffer()
-        recorder.startRecord()
+    func setupAudioQueue() {
+        guard audioQueue == nil else {
+            log.debug("audio queue already prepared.")
+            return
+        }
+        var audioQueue: AudioQueueRef!
+        let result = AudioQueueNewInput(
+            &audioStreamDescription,
+            audioQueueInputCallback,
+            unsafeBitCast(self, to: UnsafeMutableRawPointer.self),
+            .none,
+            CFRunLoopMode.commonModes.rawValue,
+            0,
+            &audioQueue
+        )
+        log.debug("AudioQueueNewInput: \(result)")
+        guard let audioQueue = audioQueue else { return }
+        self.audioQueue = audioQueue
     }
 
-    func endCapture(completion: @escaping () -> Void) {
-        guard let recorder = recorder else {
-            completion()
-            return
-        }
-        recorder.stopRecord()
+    func setupAudioQueueBuffer() {
+        guard let audioQueue = audioQueue else { return }
+        let kNumberBuffers: Int = 3 // typically 3
 
-        // Library/Caches
-        let directories = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)
-        guard let cacheDirectory = directories.first else {
-            completion()
-            return
-        }
+        let bufferByteSize = deriveBufferSize(
+            audioQueue: audioQueue,
+            audioStreamDescription: audioStreamDescription,
+            seconds: 0.5    // typically 0.5
+        )
 
-        guard let recordedAiffFileUrl = recorder.audioFileUrl else { return }
-
-        var m4aFileUrl = cacheDirectory.appendingPathComponent(audioFileName)
-        m4aFileUrl.appendPathExtension("m4a")
-
-        convert(aiffFileUrl: recordedAiffFileUrl, toM4aFileUrl: m4aFileUrl) { [weak self] in
-            guard let self = self,
-                  $0 == .completed,
-                  let data = try? Data(contentsOf: m4aFileUrl) else {
-                completion()
-                return
-            }
-            if self.captures.count > 5 {
-                self.captures.removeFirst()
-            }
-            self.captures.append(data)
-            log.debug(self.captures)
-            completion()
+        for _ in 0..<kNumberBuffers {
+            var buffer: AudioQueueBufferRef?
+            let allocateResult = AudioQueueAllocateBuffer(audioQueue, bufferByteSize, &buffer)
+            log.debug("AudioQueueAllocateBuffer: \(allocateResult)")
+            guard let buffer = buffer else { continue }
+            audioQueueBuffers.append(buffer)
+            let enqueuResult = AudioQueueEnqueueBuffer(audioQueue, buffer, 0, nil)
+            log.debug("AudioQueueEnqueueBuffer: \(enqueuResult)")
         }
     }
 
+    func deriveBufferSize(
+        audioQueue: AudioQueueRef,
+        audioStreamDescription: AudioStreamBasicDescription,
+        seconds: Float64
+    ) -> UInt32 {
+        let maxBufferSize: UInt32 = 0x50000
+        var maxPacketSize: UInt32 = audioStreamDescription.mBytesPerPacket
+
+        if maxPacketSize == 0 {
+            var maxVBRPacketSize = UInt32(MemoryLayout<UInt32>.size)
+            AudioQueueGetProperty(audioQueue, kAudioQueueProperty_MaximumOutputPacketSize, &maxPacketSize, &maxVBRPacketSize)
+        }
+
+        let numBytesForTime = UInt32(Float64(audioStreamDescription.mSampleRate) * Float64(maxPacketSize) * Float64(seconds))
+        let outBufferSize = UInt32(numBytesForTime < maxBufferSize ? numBytesForTime : maxBufferSize)
+
+        return outBufferSize
+    }
+
+    func startAudioQueue() {
+        guard let audioQueue = audioQueue else { return }
+        AudioQueueStart(audioQueue, nil)
+    }
+
+    func endAudioQueue() {
+        guard let audioQueue = audioQueue else { return }
+        AudioQueueStop(audioQueue, true)
+        AudioQueueDispose(audioQueue, true)
+        self.audioQueue = nil
+    }
+
+    func _requestLatestCapture(completion: (Data?) -> Void) {
+        completion(nil)
+
+        /*
+         // Library/Caches
+         let directories = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)
+         guard let cacheDirectory = directories.first else {
+         return
+         }
+
+         guard let recordedAiffFileUrl = recorder.audioFileUrl else { return }
+
+         var m4aFileUrl = cacheDirectory.appendingPathComponent(audioFileName)
+         m4aFileUrl.appendPathExtension("m4a")
+
+         convert(aiffFileUrl: recordedAiffFileUrl, toM4aFileUrl: m4aFileUrl) { /* [weak self] */ _ in
+         guard let self = self,
+         $0 == .completed,
+         let data = try? Data(contentsOf: m4aFileUrl) else {
+         return
+         }
+         if self.captures.count > 5 {
+         self.captures.removeFirst()
+         }
+         self.captures.append(data)
+         log.debug(self.captures)
+         }
+         */
+    }
+}
+
+private extension AudioCaptureManager {
+    // swiftlint:disable all
+    func handleAudioQueueInputs(
+        buffer: UnsafeMutablePointer<AudioQueueBuffer>,
+        numberOfPackets: UInt32,
+        inPacketDesc: Optional<UnsafePointer<AudioStreamPacketDescription>>
+    ) {
+        // swiftlint:enable all
+        log.debug(numberOfPackets)
+
+        guard let audioQueue = audioQueue else { return }
+        AudioQueueEnqueueBuffer(audioQueue, buffer, 0, nil)
+    }
+}
+
+private extension AudioCaptureManager {
     func convert(aiffFileUrl: URL, toM4aFileUrl m4aFileUrl: URL, completion: @escaping (AVAssetExportSession.Status) -> Void) {
         try? FileManager.default.removeItem(at: m4aFileUrl)
 
@@ -114,10 +224,9 @@ private extension AudioCaptureManager {
     }
 }
 
-private extension AudioCaptureManager {}
-
 // Based on https://www.toyship.org/2020/05/04/095135
 private class AudioQueueRecorder {
+    private(set) var isRunning: Bool
     private(set) var audioFileUrl: URL?
 
     private var dataFormat: AudioStreamBasicDescription!
@@ -126,7 +235,20 @@ private class AudioQueueRecorder {
     private var audioFile: AudioFileID!
     private var bufferByteSize: UInt32
     private var currentPacket: Int64
-    private var isRunning: Bool
+
+    private var audioQueueInputs: [AudioQueueInput] = []
+    private var isWritingFile = false
+
+    // swiftlint:disable all
+    struct AudioQueueInput {
+        let date: Date
+        let inUserData: UnsafeMutableRawPointer?
+        let inAQ: AudioQueueRef
+        let inBuffer: UnsafeMutablePointer<AudioQueueBuffer>
+        let inNumPackets: UInt32
+        let inPacketDesc: Optional<UnsafePointer<AudioStreamPacketDescription>>
+    }
+    // swiftlint:enable all
 
     init() {
         buffers = []
@@ -164,16 +286,27 @@ private class AudioQueueRecorder {
         let unManagedUserData = Unmanaged<AudioQueueRecorder>.fromOpaque(userData)
         let receivedUserData = unManagedUserData.takeUnretainedValue()
 
-        receivedUserData.writeToFile(
-            buffer: inBuffer,
-            numberOfPackets: inNumPackets ,
-            inPacketDesc: inPacketDesc)
+        /*
+         receivedUserData.appendToAudioQueueInputs(
+         buffer: inBuffer,
+         numberOfPackets: inNumPackets,
+         inPacketDesc: inPacketDesc
+         )
+         */
+    }
 
-        guard receivedUserData.isRunning else { return }
-        AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, nil)
+    func prepareIfNeeded() {
+        guard audioQueue == nil else {
+            log.debug("alread prepared.")
+            return
+        }
+        prepareQueue()
+        setupBuffer()
     }
 
     func startRecord() {
+        prepareIfNeeded()
+
         currentPacket = 0
         isRunning = true
         AudioQueueStart(audioQueue, nil)
@@ -184,6 +317,12 @@ private class AudioQueueRecorder {
         AudioQueueStop(audioQueue, true)
         AudioQueueDispose(audioQueue, true)
         closeFile()
+    }
+
+    func requestLatestFile(completion: @escaping (URL?) -> Void) {
+        DispatchQueue.global(qos: .default).async {
+            self._requestLatestFile(completion: completion)
+        }
     }
 }
 
@@ -209,15 +348,18 @@ private extension AudioQueueRecorder {
         let kNumberBuffers: Int = 3
 
         // typically 0.5
-        bufferByteSize = deriveBufferSize(audioQueue: audioQueue, audioDataFormat: currentAudioDataFormat, seconds: 0.5)
+        let bufferByteSize = deriveBufferSize(
+            audioQueue: audioQueue,
+            audioDataFormat: currentAudioDataFormat,
+            seconds: 0.5
+        )
 
-        for i in 0..<kNumberBuffers {
-            var newBuffer: AudioQueueBufferRef?
-            AudioQueueAllocateBuffer(audioQueue, bufferByteSize, &newBuffer)
-            if let newBuffer = newBuffer {
-                buffers.append(newBuffer)
-            }
-            AudioQueueEnqueueBuffer(audioQueue, buffers[i], 0, nil)
+        for _ in 0..<kNumberBuffers {
+            var buffer: AudioQueueBufferRef?
+            AudioQueueAllocateBuffer(audioQueue, bufferByteSize, &buffer)
+            guard let buffer = buffer else { continue }
+            buffers.append(buffer)
+            AudioQueueEnqueueBuffer(audioQueue, buffer, 0, nil)
         }
     }
 
@@ -238,7 +380,28 @@ private extension AudioQueueRecorder {
 }
 
 private extension AudioQueueRecorder {
-    func prepareFile() {
+    func _requestLatestFile(completion: (URL?) -> Void) {
+        isWritingFile = true
+
+        openFile()
+
+        /*
+         receivedUserData.writeToFile(
+         buffer: inBuffer,
+         numberOfPackets: inNumPackets,
+         inPacketDesc: inPacketDesc
+         )
+         guard receivedUserData.isRunning else { return }
+         AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, nil)
+         */
+    }
+
+    func openFile() {
+        guard audioFile == nil else {
+            log.warning("audio file already opened.")
+            return
+        }
+
         dataFormat = currentAudioDataFormat
 
         var aAudioFileID: AudioFileID?
@@ -264,9 +427,12 @@ private extension AudioQueueRecorder {
     }
 
     // swiftlint:disable all
-    func writeToFile(buffer: UnsafeMutablePointer<AudioQueueBuffer>, numberOfPackets: UInt32, inPacketDesc: Optional<UnsafePointer<AudioStreamPacketDescription>>) {
+    func writeToFile(
+        buffer: UnsafeMutablePointer<AudioQueueBuffer>,
+        numberOfPackets: UInt32,
+        inPacketDesc: Optional<UnsafePointer<AudioStreamPacketDescription>>
+    ) {
         // swiftlint:enable all
-
         guard let audioFile = audioFile else {
             // TODO: Crash here when close main window...
             assert(false, "no audio data...")

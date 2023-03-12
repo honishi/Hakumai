@@ -9,8 +9,8 @@
 import Foundation
 
 protocol AudioCaptureManagerType {
-    func start(interval: TimeInterval)
+    func start()
     func stop()
+    func requestLatestCapture(completion: (Data?) -> Void)
     var isRunning: Bool { get }
-    var latestCapture: Data? { get }
 }
