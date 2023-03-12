@@ -11,6 +11,6 @@ import Foundation
 protocol AudioCaptureManagerType {
     func start()
     func stop()
-    func requestLatestCapture(completion: (Data?) -> Void)
+    func requestLatestCapture(completion: @escaping (Data?) -> Void)
     var isRunning: Bool { get }
 }

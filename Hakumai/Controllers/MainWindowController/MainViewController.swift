@@ -766,7 +766,9 @@ extension MainViewController {
         let _recentComments = Array(recentComments)
 
         logSystemMessageToTable("🔵 Transcribing...")
-        progressIndicator.startAnimation(self)
+        DispatchQueue.main.async {
+            self.progressIndicator.startAnimation(self)
+        }
 
         chatGPTManager.transcribeAudio(data) { [weak self] in
             let text = $0 ?? ""
@@ -776,9 +778,9 @@ extension MainViewController {
             self?.chatGPTManager.generateComment(spokeText: text, comments: _recentComments) { [weak self] in
                 log.debug($0)
                 self?.logSystemMessageToTable("🔵 Generated comments.")
-                self?.progressIndicator.stopAnimation(self)
                 let generated = $0
                 DispatchQueue.main.async {
+                    self?.progressIndicator.stopAnimation(self)
                     self?.showGeneratedComments(generated)
                 }
             }
