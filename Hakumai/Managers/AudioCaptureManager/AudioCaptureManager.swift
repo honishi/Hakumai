@@ -49,7 +49,7 @@ private extension AudioCaptureManager {
     func startCapture() {
         recorder = AudioQueueRecorder()
         guard let recorder = recorder else { return }
-        recorder.prepare()
+        recorder.prepareFile()
         recorder.prepareQueue()
         recorder.setupBuffer()
         recorder.startRecord()
@@ -116,9 +116,7 @@ private extension AudioCaptureManager {
 
 private extension AudioCaptureManager {}
 
-// swiftlint:disable all
-import AudioToolbox
-
+// Based on https://www.toyship.org/2020/05/04/095135
 private class AudioQueueRecorder {
     private(set) var audioFileUrl: URL?
 
@@ -137,7 +135,7 @@ private class AudioQueueRecorder {
         isRunning = false
     }
 
-    var currentMusicDataFormat = AudioStreamBasicDescription(
+    private var currentAudioDataFormat = AudioStreamBasicDescription(
         mSampleRate: 44100,
         mFormatID: kAudioFormatLinearPCM,
         mFormatFlags: AudioFormatFlags(kLinearPCMFormatFlagIsBigEndian|kLinearPCMFormatFlagIsSignedInteger|kLinearPCMFormatFlagIsPacked),
@@ -148,13 +146,15 @@ private class AudioQueueRecorder {
         mBitsPerChannel: 16,
         mReserved: 0)
 
-    let myAudioCallback: AudioQueueInputCallback = { (
+    // swiftlint:disable all
+    private let audioQueueInputCallback: AudioQueueInputCallback = { (
         inUserData: UnsafeMutableRawPointer?,
         inAQ: AudioQueueRef,
         inBuffer: UnsafeMutablePointer<AudioQueueBuffer>,
         _: UnsafePointer<AudioTimeStamp>,
         inNumPackets: UInt32,
-        inPacketDesc: Optional<UnsafePointer<AudioStreamPacketDescription>>) -> Void  in
+        inPacketDesc: Optional<UnsafePointer<AudioStreamPacketDescription>>) -> Void in
+        // swiftlint:enable all
 
         guard let userData = inUserData else {
             assert(false, "no user data...")
@@ -169,52 +169,8 @@ private class AudioQueueRecorder {
             numberOfPackets: inNumPackets ,
             inPacketDesc: inPacketDesc)
 
-        if !receivedUserData.isRunning {
-            return
-        }
-
+        guard receivedUserData.isRunning else { return }
         AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, nil)
-    }
-
-    func prepare() {
-        dataFormat = currentMusicDataFormat
-
-        var aAudioFileID: AudioFileID?
-
-        // Library/Caches
-        let directories = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)
-        guard let cacheDirectory = directories.first else { return }
-
-        var audioFileUrl = cacheDirectory.appendingPathComponent(audioFileName)
-        audioFileUrl.appendPathExtension("aiff")
-        self.audioFileUrl = audioFileUrl
-        log.debug(audioFileUrl)
-
-        try? FileManager.default.removeItem(at: audioFileUrl)
-        let result = AudioFileCreateWithURL(
-            audioFileUrl as CFURL,
-            kAudioFileAIFFType,
-            &currentMusicDataFormat,
-            AudioFileFlags.eraseFile,
-            &aAudioFileID)
-        log.debug("result: \(result)")
-        audioFile = aAudioFileID
-    }
-
-    func prepareQueue() {
-        var aQueue: AudioQueueRef!
-
-        AudioQueueNewInput(
-            &currentMusicDataFormat,
-            myAudioCallback,
-            unsafeBitCast(self, to: UnsafeMutableRawPointer.self),
-            .none,
-            CFRunLoopMode.commonModes.rawValue,
-            0,
-            &aQueue)
-
-        guard let aQueue = aQueue else { return }
-        audioQueue = aQueue
     }
 
     func startRecord() {
@@ -229,41 +185,23 @@ private class AudioQueueRecorder {
         AudioQueueDispose(audioQueue, true)
         closeFile()
     }
+}
 
-    func writeToFile(buffer: UnsafeMutablePointer<AudioQueueBuffer>, numberOfPackets: UInt32, inPacketDesc: Optional<UnsafePointer<AudioStreamPacketDescription>>) {
+private extension AudioQueueRecorder {
+    func prepareQueue() {
+        var aQueue: AudioQueueRef!
 
-        guard let audioFile = audioFile else {
-            // TODO: Crash here when close main window...
-            assert(false, "no audio data...")
-            return
-        }
+        AudioQueueNewInput(
+            &currentAudioDataFormat,
+            audioQueueInputCallback,
+            unsafeBitCast(self, to: UnsafeMutableRawPointer.self),
+            .none,
+            CFRunLoopMode.commonModes.rawValue,
+            0,
+            &aQueue)
 
-        var newNumPackets: UInt32 = numberOfPackets
-        if numberOfPackets == 0 && dataFormat.mBytesPerPacket != 0 {
-            newNumPackets = buffer.pointee.mAudioDataByteSize / dataFormat.mBytesPerPacket
-        }
-
-        let inNumPointer = UnsafeMutablePointer<UInt32>.allocate(capacity: 1)
-        inNumPointer.initialize(from: &newNumPackets, count: 1)
-
-        let writeResult = AudioFileWritePackets(audioFile,
-                                                false,
-                                                buffer.pointee.mAudioDataByteSize,
-                                                inPacketDesc,
-                                                currentPacket,
-                                                inNumPointer,
-                                                buffer.pointee.mAudioData)
-
-        currentPacket += Int64(numberOfPackets)
-
-        if writeResult != noErr {
-            // handle error
-        }
-    }
-
-    func closeFile() {
-        guard let audioFile = audioFile else { return }
-        AudioFileClose(audioFile)
+        guard let aQueue = aQueue else { return }
+        audioQueue = aQueue
     }
 
     func setupBuffer() {
@@ -271,7 +209,7 @@ private class AudioQueueRecorder {
         let kNumberBuffers: Int = 3
 
         // typically 0.5
-        bufferByteSize = deriveBufferSize(audioQueue: audioQueue, audioDataFormat: currentMusicDataFormat, seconds: 0.5)
+        bufferByteSize = deriveBufferSize(audioQueue: audioQueue, audioDataFormat: currentAudioDataFormat, seconds: 0.5)
 
         for i in 0..<kNumberBuffers {
             var newBuffer: AudioQueueBufferRef?
@@ -296,5 +234,69 @@ private class AudioQueueRecorder {
         let outBufferSize = UInt32(numBytesForTime < maxBufferSize ? numBytesForTime : maxBufferSize)
 
         return outBufferSize
+    }
+}
+
+private extension AudioQueueRecorder {
+    func prepareFile() {
+        dataFormat = currentAudioDataFormat
+
+        var aAudioFileID: AudioFileID?
+
+        // Library/Caches
+        let directories = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)
+        guard let cacheDirectory = directories.first else { return }
+
+        var audioFileUrl = cacheDirectory.appendingPathComponent(audioFileName)
+        audioFileUrl.appendPathExtension("aiff")
+        self.audioFileUrl = audioFileUrl
+        log.debug(audioFileUrl)
+
+        try? FileManager.default.removeItem(at: audioFileUrl)
+        let result = AudioFileCreateWithURL(
+            audioFileUrl as CFURL,
+            kAudioFileAIFFType,
+            &currentAudioDataFormat,
+            AudioFileFlags.eraseFile,
+            &aAudioFileID)
+        log.debug("result: \(result)")
+        audioFile = aAudioFileID
+    }
+
+    // swiftlint:disable all
+    func writeToFile(buffer: UnsafeMutablePointer<AudioQueueBuffer>, numberOfPackets: UInt32, inPacketDesc: Optional<UnsafePointer<AudioStreamPacketDescription>>) {
+        // swiftlint:enable all
+
+        guard let audioFile = audioFile else {
+            // TODO: Crash here when close main window...
+            assert(false, "no audio data...")
+            return
+        }
+
+        var newNumPackets: UInt32 = numberOfPackets
+        if numberOfPackets == 0 && dataFormat.mBytesPerPacket != 0 {
+            newNumPackets = buffer.pointee.mAudioDataByteSize / dataFormat.mBytesPerPacket
+        }
+
+        let inNumPointer = UnsafeMutablePointer<UInt32>.allocate(capacity: 1)
+        inNumPointer.initialize(from: &newNumPackets, count: 1)
+
+        let writeResult = AudioFileWritePackets(audioFile,
+                                                false,
+                                                buffer.pointee.mAudioDataByteSize,
+                                                inPacketDesc,
+                                                currentPacket,
+                                                inNumPointer,
+                                                buffer.pointee.mAudioData)
+        currentPacket += Int64(numberOfPackets)
+
+        if writeResult != noErr {
+            // handle error
+        }
+    }
+
+    func closeFile() {
+        guard let audioFile = audioFile else { return }
+        AudioFileClose(audioFile)
     }
 }
