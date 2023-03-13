@@ -13,6 +13,8 @@ import AVFoundation
 private let audioFileName = "hakumai-audio"
 
 final class AudioCaptureManager {
+    static let shared = AudioCaptureManager()
+
     private var audioStreamDescription: AudioStreamBasicDescription
     private var audioQueue: AudioQueueRef?
     private var audioQueueBuffers: [AudioQueueBufferRef] = []

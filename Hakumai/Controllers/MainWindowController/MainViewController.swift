@@ -85,6 +85,9 @@ final class MainViewController: NSViewController {
     @IBOutlet private weak var rankingDateLabel: NSTextField!
     @IBOutlet private weak var progressIndicator: NSProgressIndicator!
 
+    @IBOutlet weak var audioCaptureButton: NSButton!
+    @IBOutlet weak var generateCommentButton: NSButton!
+
     // MARK: Menu Delegate
     // swiftlint:disable weak_delegate
     @IBOutlet var menuDelegate: MenuDelegate!
@@ -99,7 +102,7 @@ final class MainViewController: NSViewController {
     private let notificationPresenter: NotificationPresenterProtocol = NotificationPresenter.default
     private let kusaCommentDetector: KusaCommentDetectorType = KusaCommentDetector()
     private let storeCommentDetector: StoreCommentDetectorType = StoreCommentDetector()
-    private let audioCaptureManager: AudioCaptureManagerType = AudioCaptureManager()
+    private let audioCaptureManager: AudioCaptureManagerType = AudioCaptureManager.shared
     private let chatGPTManager: ChatGPTManagerType = ChatGPTManager()
 
     private(set) var live: Live?
@@ -767,6 +770,7 @@ extension MainViewController {
 
         logSystemMessageToTable("🔵 Transcribing...")
         DispatchQueue.main.async {
+            self.generateCommentButton.isEnabled = false
             self.progressIndicator.startAnimation(self)
         }
 
@@ -780,6 +784,7 @@ extension MainViewController {
                 self?.logSystemMessageToTable("🔵 Generated comments.")
                 let generated = $0
                 DispatchQueue.main.async {
+                    self?.generateCommentButton.isEnabled = true
                     self?.progressIndicator.stopAnimation(self)
                     self?.showGeneratedComments(generated)
                 }
@@ -1243,9 +1248,16 @@ extension MainViewController {
     @IBAction func toggleAudioCapture(_ sender: Any) {
         if audioCaptureManager.isRunning {
             audioCaptureManager.stop()
+            audioCaptureButton.title = "👂"
         } else {
             audioCaptureManager.start()
+            audioCaptureButton.title = "✋"
         }
+        generateCommentButton.isEnabled = audioCaptureManager.isRunning
+    }
+
+    @IBAction func generateCommentButtonPressed(_ sender: Any) {
+        generateComment()
     }
 }
 

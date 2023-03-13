@@ -95,11 +95,11 @@ private extension ChatGPTManager {
                 ChatCompletionRequestMessage(
                     role: "user",
                     content:
-                        "悪友が次の発言をしました。\n" +
-                        "悪友の発言: \(spokeText)\n\n" +
-                        "それを聞いた友人たちは以下の発言をしました。\n" +
-                        comments.joined(by: "\n") + "\n" +
-                        "これに対するあなたのコメントを10個考えてください。コメントは日本語で40文字以内で煽り口調、数字付きの箇条書きで答えてください。"
+                        "友人が次の発言をしました。\n" +
+                        "発言: \(spokeText)\n\n" +
+                        // "それを聞いた友人たちは以下の発言をしました。\n" +
+                        // comments.joined(by: "\n") + "\n" +
+                        "これに対するあなたのコメントを10個考えてください。コメントは日本語で30文字以内で煽り口調、数字付きの箇条書きで答えてください。"
                 )
             ]
         )
