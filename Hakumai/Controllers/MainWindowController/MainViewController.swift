@@ -775,8 +775,15 @@ extension MainViewController {
         }
 
         chatGPTManager.transcribeAudio(data) { [weak self] in
-            let text = $0 ?? ""
-            log.debug(text)
+            log.debug($0)
+            guard let text = $0 else {
+                self?.logSystemMessageToTable("🔵 Failed to transcribe.")
+                DispatchQueue.main.async {
+                    self?.generateCommentButton.isEnabled = true
+                    self?.progressIndicator.stopAnimation(self)
+                }
+                return
+            }
             self?.logSystemMessageToTable("🔵 Transcribed: \(text)")
             self?.logSystemMessageToTable("🔵 Generating comments...")
             self?.chatGPTManager.generateComment(spokeText: text, comments: _recentComments) { [weak self] in
@@ -1576,7 +1583,8 @@ private extension MainViewController {
     @objc
     func submitGeneratedComment(_ sender: NSMenuItem) {
         commentTextField.stringValue = sender.title
-        comment(self)
+        commentTextField.becomeFirstResponder()
+        commentTextField.moveCursorToEndOfText()
     }
 }
 
@@ -1640,6 +1648,13 @@ private extension NSButton {
 private extension String {
     var stringByRemovingControlCharacters: String {
         stringByReplacingRegexp(pattern: "\\p{Cntrl}", with: "")
+    }
+}
+
+private extension NSTextField {
+    func moveCursorToEndOfText() {
+        guard let fieldEditor = window?.fieldEditor(true, for: self) as? NSTextView else { return }
+        fieldEditor.setSelectedRange(NSRange(location: stringValue.count, length: 0))
     }
 }
 // swiftlint:enable file_length
