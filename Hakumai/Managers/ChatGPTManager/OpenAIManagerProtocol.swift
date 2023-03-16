@@ -1,5 +1,5 @@
 //
-//  ChatGPTManagerProtocol.swift
+//  OpenAIManagerProtocol.swift
 //  Hakumai
 //
 //  Created by Hiroyuki Onishi on 2023/03/07.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol ChatGPTManagerType {
+protocol OpenAIManagerType {
     func transcribeAudio(_ data: Data, completion: @escaping (String?) -> Void)
-    func generateComment(spokeText: String, comments: [String], completion: @escaping ([String]) -> Void)
+    func generateComment(spokeText: String, comments: [String], completion: @escaping ([String]?) -> Void)
 }

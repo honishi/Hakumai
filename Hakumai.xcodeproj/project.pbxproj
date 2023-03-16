@@ -53,8 +53,8 @@
 		DB55AC681A33908300CFAD99 /* PremiumTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB55AC671A33908300CFAD99 /* PremiumTableCellView.swift */; };
 		DB576ED02657A4980041050A /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB576ECF2657A4980041050A /* AuthManager.swift */; };
 		DB576ED32657A5BC0041050A /* AuthModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB576ED22657A5BC0041050A /* AuthModel.swift */; };
-		DB6135DB29B6414900AF08AA /* ChatGPTManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6135DA29B6414900AF08AA /* ChatGPTManagerProtocol.swift */; };
-		DB6135DD29B6415700AF08AA /* ChatGPTManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6135DC29B6415700AF08AA /* ChatGPTManager.swift */; };
+		DB6135DB29B6414900AF08AA /* OpenAIManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6135DA29B6414900AF08AA /* OpenAIManagerProtocol.swift */; };
+		DB6135DD29B6415700AF08AA /* OpenAIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6135DC29B6415700AF08AA /* OpenAIManager.swift */; };
 		DB6135DF29B7618600AF08AA /* OpenAICredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6135DE29B7618600AF08AA /* OpenAICredential.swift */; };
 		DB61AD82271B18DA001656F5 /* CircleImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB61AD81271B18DA001656F5 /* CircleImageView.swift */; };
 		DB682D421A36E6AE00499C72 /* Parameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB682D411A36E6AE00499C72 /* Parameter.swift */; };
@@ -212,8 +212,8 @@
 		DB55AC671A33908300CFAD99 /* PremiumTableCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PremiumTableCellView.swift; sourceTree = "<group>"; };
 		DB576ECF2657A4980041050A /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
 		DB576ED22657A5BC0041050A /* AuthModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthModel.swift; sourceTree = "<group>"; };
-		DB6135DA29B6414900AF08AA /* ChatGPTManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatGPTManagerProtocol.swift; sourceTree = "<group>"; };
-		DB6135DC29B6415700AF08AA /* ChatGPTManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatGPTManager.swift; sourceTree = "<group>"; };
+		DB6135DA29B6414900AF08AA /* OpenAIManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIManagerProtocol.swift; sourceTree = "<group>"; };
+		DB6135DC29B6415700AF08AA /* OpenAIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIManager.swift; sourceTree = "<group>"; };
 		DB6135DE29B7618600AF08AA /* OpenAICredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAICredential.swift; sourceTree = "<group>"; };
 		DB6135E029B761C800AF08AA /* OpenAICredential.sample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAICredential.sample.swift; sourceTree = "<group>"; };
 		DB61AD81271B18DA001656F5 /* CircleImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleImageView.swift; sourceTree = "<group>"; };
@@ -497,8 +497,8 @@
 		DB6135D929B6411F00AF08AA /* ChatGPTManager */ = {
 			isa = PBXGroup;
 			children = (
-				DB6135DC29B6415700AF08AA /* ChatGPTManager.swift */,
-				DB6135DA29B6414900AF08AA /* ChatGPTManagerProtocol.swift */,
+				DB6135DC29B6415700AF08AA /* OpenAIManager.swift */,
+				DB6135DA29B6414900AF08AA /* OpenAIManagerProtocol.swift */,
 			);
 			path = ChatGPTManager;
 			sourceTree = "<group>";
@@ -1081,8 +1081,6 @@
 				DB0D37A7275F78510086A7A2 /* BrowserUrlObserverType.swift in Sources */,
 				DB690973266372230081F24F /* ButtonScrollView.swift in Sources */,
 				DBFA887B1A1BC25A005349AD /* Chat.swift in Sources */,
-				DB6135DD29B6415700AF08AA /* ChatGPTManager.swift in Sources */,
-				DB6135DB29B6414900AF08AA /* ChatGPTManagerProtocol.swift in Sources */,
 				DB61AD82271B18DA001656F5 /* CircleImageView.swift in Sources */,
 				DB1E737026F237F600A6F4C0 /* ClickTableView.swift in Sources */,
 				DB7B3DDC1A23B35300205470 /* ColoredView.swift in Sources */,
@@ -1132,6 +1130,8 @@
 				DB9EFC741A3E974A0087D302 /* NSWindow+Extensions.swift in Sources */,
 				DB3AE44226A1ABCF001681E9 /* OAuthCredential.swift in Sources */,
 				DB6135DF29B7618600AF08AA /* OpenAICredential.swift in Sources */,
+				DB6135DD29B6415700AF08AA /* OpenAIManager.swift in Sources */,
+				DB6135DB29B6414900AF08AA /* OpenAIManagerProtocol.swift in Sources */,
 				DB682D421A36E6AE00499C72 /* Parameter.swift in Sources */,
 				DB49963B27C1097E00FD3405 /* PointingHandButton.swift in Sources */,
 				DB9EFC781A3E9EB10087D302 /* PreferenceWindow.swift in Sources */,

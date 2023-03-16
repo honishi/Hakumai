@@ -103,7 +103,7 @@ final class MainViewController: NSViewController {
     private let kusaCommentDetector: KusaCommentDetectorType = KusaCommentDetector()
     private let storeCommentDetector: StoreCommentDetectorType = StoreCommentDetector()
     private let audioCaptureManager: AudioCaptureManagerType = AudioCaptureManager.shared
-    private let chatGPTManager: ChatGPTManagerType = ChatGPTManager()
+    private let openAIManager: OpenAIManagerType = OpenAIManager()
 
     private(set) var live: Live?
     private(set) var connectedToLive = false
@@ -750,17 +750,39 @@ extension MainViewController {
         commentAnonymouslyButtonStateChanged(self)
     }
 
-    func generateComment() {
+    func transcribeAudio() {
         audioCaptureManager.requestLatestCapture { [weak self] in
             guard let self = self, let data = $0 else {
                 log.debug("no audio captures yet...")
                 return
             }
-            self.generateComment(from: data)
+            self.transcribeAudio(from: data)
         }
     }
 
-    private func generateComment(from data: Data) {
+    private func transcribeAudio(from data: Data) {
+        DispatchQueue.main.async {
+            self.generateCommentButton.isEnabled = false
+            self.progressIndicator.startAnimation(self)
+        }
+        logSystemMessageToTable("🔵 Transcribing...")
+
+        openAIManager.transcribeAudio(data) { [weak self] in
+            log.debug($0)
+            DispatchQueue.main.async {
+                self?.generateCommentButton.isEnabled = true
+                self?.progressIndicator.stopAnimation(self)
+            }
+            guard let text = $0 else {
+                self?.logSystemMessageToTable("🔵 Failed to transcribe.")
+                return
+            }
+            self?.logSystemMessageToTable("🔵 Transcribed: \(text)")
+            self?.generateComment(spokenText: text)
+        }
+    }
+
+    func generateComment(spokenText: String) {
         let recentComments = messageContainer
             .filteredMessages
             .suffix(10)
@@ -768,33 +790,25 @@ extension MainViewController {
             .compactMap({ $0 })
         let _recentComments = Array(recentComments)
 
-        logSystemMessageToTable("🔵 Transcribing...")
         DispatchQueue.main.async {
             self.generateCommentButton.isEnabled = false
             self.progressIndicator.startAnimation(self)
         }
+        logSystemMessageToTable("🔵 Generating comments...")
 
-        chatGPTManager.transcribeAudio(data) { [weak self] in
+        openAIManager.generateComment(spokeText: spokenText, comments: _recentComments) { [weak self] in
             log.debug($0)
-            guard let text = $0 else {
-                self?.logSystemMessageToTable("🔵 Failed to transcribe.")
-                DispatchQueue.main.async {
-                    self?.generateCommentButton.isEnabled = true
-                    self?.progressIndicator.stopAnimation(self)
-                }
+            DispatchQueue.main.async {
+                self?.generateCommentButton.isEnabled = true
+                self?.progressIndicator.stopAnimation(self)
+            }
+            guard let generated = $0 else {
+                self?.logSystemMessageToTable("🔵 Failed to generate comments.")
                 return
             }
-            self?.logSystemMessageToTable("🔵 Transcribed: \(text)")
-            self?.logSystemMessageToTable("🔵 Generating comments...")
-            self?.chatGPTManager.generateComment(spokeText: text, comments: _recentComments) { [weak self] in
-                log.debug($0)
-                self?.logSystemMessageToTable("🔵 Generated comments.")
-                let generated = $0
-                DispatchQueue.main.async {
-                    self?.generateCommentButton.isEnabled = true
-                    self?.progressIndicator.stopAnimation(self)
-                    self?.showGeneratedComments(generated)
-                }
+            self?.logSystemMessageToTable("🔵 Generated comments.")
+            DispatchQueue.main.async {
+                self?.showGeneratedComments(generated)
             }
         }
     }
@@ -1263,8 +1277,8 @@ extension MainViewController {
         generateCommentButton.isEnabled = audioCaptureManager.isRunning
     }
 
-    @IBAction func generateCommentButtonPressed(_ sender: Any) {
-        generateComment()
+    @IBAction func transcribeAudioThenGenerateComment(_ sender: Any) {
+        transcribeAudio()
     }
 }
 

@@ -1306,7 +1306,7 @@
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
                                                         <connections>
-                                                            <action selector="generateCommentButtonPressed:" target="XfG-lQ-9wD" id="Ks7-aM-c7z"/>
+                                                            <action selector="transcribeAudioThenGenerateComment:" target="XfG-lQ-9wD" id="abQ-hV-Nm9"/>
                                                         </connections>
                                                     </button>
                                                 </subviews>

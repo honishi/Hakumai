@@ -231,7 +231,7 @@ extension MainWindowController {
     }
 
     func generateComment() {
-        mainViewController.generateComment()
+        mainViewController.transcribeAudio()
     }
 
     func setSpeechEnabled(_ isEnabled: Bool) {

@@ -228,7 +228,7 @@ private extension AudioCaptureManager {
         let olds = audioQueueInputs.filter { origin.timeIntervalSince($0.date) > secondsForKeep }
         olds.forEach { deallocateAudioQueueInput($0) }
         audioQueueInputs = audioQueueInputs.filter { origin.timeIntervalSince($0.date) <= secondsForKeep }
-        log.debug(audioQueueInputs.count)
+        // log.debug(audioQueueInputs.count)
     }
 
     func removeAllAudioQueueInputs() {

@@ -1,5 +1,5 @@
 //
-//  ChatGPTManager.swift
+//  OpenAIManager.swift
 //  Hakumai
 //
 //  Created by Hiroyuki Onishi on 2023/03/07.
@@ -9,28 +9,27 @@
 import Foundation
 import Alamofire
 
-private let apiHost = "api.openai.com"
-private let apiPath = "/v1/chat/completions"
-private let whisperApiPath = "/v1/audio/transcriptions"
+private let openAIApiHost = "api.openai.com"
+private let chatCompletionApiPath = "/v1/chat/completions"
+private let audioTranscriptionApiPath = "/v1/audio/transcriptions"
 private let httpHeaderKeyContentType = "Content-Type"
 private let httpHeaderKeyAuthorization = "Authorization"
 private let httpHeaderValueApplicationJson = "application/json"
 
-final class ChatGPTManager {
-    static let shared = ChatGPTManager()
+final class OpenAIManager {
+    static let shared = OpenAIManager()
 }
 
-extension ChatGPTManager: ChatGPTManagerType {
+extension OpenAIManager: OpenAIManagerType {
     func transcribeAudio(_ data: Data, completion: @escaping (String?) -> Void) {
-        let urlString = "https://" + apiHost + whisperApiPath
+        let urlString = "https://" + openAIApiHost + audioTranscriptionApiPath
         guard let url = URL(string: urlString) else { return }
         AF.upload(
             multipartFormData: {
                 guard let model = "whisper-1".data(using: .utf8),
                       let text = "text".data(using: .utf8) else { return }
                 $0.append(model, withName: "model")
-                // $0.append(data, withName: "file", fileName: "audio.m4a", mimeType: "audio/wav")
-                $0.append(data, withName: "file", fileName: "audio.mp4", mimeType: "video/mp4")
+                $0.append(data, withName: "file", fileName: "audio.m4a", mimeType: "audio/mpeg")
                 $0.append(text, withName: "response_format")
             },
             to: url,
@@ -42,28 +41,29 @@ extension ChatGPTManager: ChatGPTManagerType {
             .responseString {
                 log.debug($0)
                 switch $0.result {
-                case .success(let str):
-                    let text = str.trimmingCharacters(in: .whitespacesAndNewlines)
-                    log.debug(text)
-                    completion(text)
+                case .success(let text):
+                    let _text = text.trimmingCharacters(in: .whitespacesAndNewlines)
+                    log.debug(_text)
+                    completion(_text)
                 case .failure(let error):
                     log.error(error)
-                    log.error(error.errorDescription)
-                    log.error($0.data)
+                    // log.error(error.errorDescription)
+                    // log.error($0.data)
                     guard let data = $0.data else { return }
                     log.error(String(data: data, encoding: .utf8))
+                    completion(nil)
                 }
             }
     }
 
-    func generateComment(spokeText: String, comments: [String], completion: @escaping ([String]) -> Void) {
-        let urlString = "https://" + apiHost + apiPath
+    func generateComment(spokeText: String, comments: [String], completion: @escaping ([String]?) -> Void) {
+        let urlString = "https://" + openAIApiHost + chatCompletionApiPath
         guard let url = URL(string: urlString) else { return }
         var request = URLRequest(url: url)
         request.method = .post
         request.setValue(httpHeaderValueApplicationJson, forHTTPHeaderField: httpHeaderKeyContentType)
         request.setValue("Bearer \(openAIAPIToken)", forHTTPHeaderField: httpHeaderKeyAuthorization)
-        let payload = makeRequestPayload(spokeText: spokeText, comments: comments)
+        let payload = makeChatCompletionRequest(spokeText: spokeText, comments: comments)
         guard let encoded = try? JSONEncoder().encode(payload) else {
             fatalError()
         }
@@ -75,16 +75,16 @@ extension ChatGPTManager: ChatGPTManagerType {
                 log.debug($0)
                 switch $0.result {
                 case .success(let data):
-                    self?.handleResponse(data: data, completion: completion)
+                    self?.handleChatCompletionResponse(data: data, completion: completion)
                 case .failure:
-                    completion([])
+                    completion(nil)
                 }
             }
     }
 }
 
-private extension ChatGPTManager {
-    func makeRequestPayload(spokeText: String, comments: [String]) -> ChatCompletionRequest {
+private extension OpenAIManager {
+    func makeChatCompletionRequest(spokeText: String, comments: [String]) -> ChatCompletionRequest {
         return ChatCompletionRequest(
             model: "gpt-3.5-turbo",
             messages: [
@@ -122,7 +122,7 @@ private extension ChatGPTManager {
         )
     }
 
-    func handleResponse(data: Data, completion: @escaping ([String]) -> Void) {
+    func handleChatCompletionResponse(data: Data, completion: @escaping ([String]?) -> Void) {
         guard let response = try? JSONDecoder().decode(ChatCompletionResponse.self, from: data),
               let content = response.choices.first?.message.content else {
             return
@@ -137,25 +137,25 @@ private extension ChatGPTManager {
     }
 }
 
-struct ChatCompletionRequest: Codable {
+private struct ChatCompletionRequest: Codable {
     let model: String
     let messages: [ChatCompletionRequestMessage]
 }
 
-struct ChatCompletionRequestMessage: Codable {
+private struct ChatCompletionRequestMessage: Codable {
     let role: String
     let content: String
 }
 
-struct ChatCompletionResponse: Codable {
+private struct ChatCompletionResponse: Codable {
     let choices: [ChatCompletionResponseChoice]
 }
 
-struct ChatCompletionResponseChoice: Codable {
+private struct ChatCompletionResponseChoice: Codable {
     let message: ChatCompletionResponseMessage
 }
 
-struct ChatCompletionResponseMessage: Codable {
+private struct ChatCompletionResponseMessage: Codable {
     let role: String
     let content: String
 }
