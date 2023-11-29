@@ -632,7 +632,8 @@ extension MainViewController: LiveThumbnailManagerDelegate {
         log.debug(thumbnailUrl)
         liveThumbnailImageView.kf.setImage(
             with: thumbnailUrl,
-            placeholder: liveThumbnailImageView.image
+            placeholder: liveThumbnailImageView.image,
+            options: [.forceRefresh]
         )
     }
 }
