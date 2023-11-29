@@ -1,4 +1,4 @@
-platform :osx, '10.12'
+platform :osx, '10.13'
 inhibit_all_warnings!
 
 target 'Hakumai' do
@@ -18,7 +18,7 @@ target 'Hakumai' do
   pod 'Starscream', '~> 4.0.4'
 
   # User Interface
-  pod 'Charts', '~> 4.0.2'
+  pod 'DGCharts', '~> 5.0.0'
   pod 'Kingfisher', '~> 6.3.1'
   pod 'SnapKit', '~> 5.6.0'
 

@@ -8,7 +8,7 @@
 
 import Foundation
 import AppKit
-import Charts
+import DGCharts
 import Kingfisher
 import SnapKit
 
