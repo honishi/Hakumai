@@ -11,7 +11,7 @@ import Alamofire
 import Kanna
 
 private let livePageBaseUrl = "https://live.nicovideo.jp/watch/"
-private let timerInterval: TimeInterval = 15
+private let timerInterval: TimeInterval = 60
 
 final class LiveThumbnailManager {
     private var liveProgramId: String?
@@ -111,12 +111,17 @@ private extension LiveThumbnailManager {
     }
 
     func constructThumbnailUrl(from thumbnailUrl: URL, for date: Date) -> URL? {
-        let timePattern = "\\?t=\\d+$"
-        let urlString = thumbnailUrl.absoluteString
-        guard urlString.hasRegexp(pattern: timePattern) else { return nil }
-        let baseUrl = urlString.stringByRemovingRegexp(pattern: timePattern)
-        let time = Int(date.timeIntervalSince1970 * 1000)
-        return URL(string: baseUrl + "?t=\(time)")
+        // 2023/11 update:
+        // Seems this construction is no longer needed. So just use original url.
+        return thumbnailUrl
+        /*
+         let timePattern = "\\?t=\\d+$"
+         let urlString = thumbnailUrl.absoluteString
+         guard urlString.hasRegexp(pattern: timePattern) else { return nil }
+         let baseUrl = urlString.stringByRemovingRegexp(pattern: timePattern)
+         let time = Int(date.timeIntervalSince1970 * 1000)
+         return URL(string: baseUrl + "?t=\(time)")
+         */
     }
 }
 

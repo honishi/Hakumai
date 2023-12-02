@@ -20,7 +20,7 @@ Hakumai は macOS で動作するニコニコ生放送用のコメントビュ�
 
 * macOS 10.14 Mojave 以降
 * VOICEVOX 連携には別途 <a href="https://voicevox.hiroshiba.jp/" target="_blank">VOICEVOX ダウンロード</a>
-* (コメント読み上げ未使用時 macOS 10.12 Sierra 以降)
+* (コメント読み上げ未使用時 macOS 10.13 High Sierra 以降)
 
 <img src="./image/food_kome_masu.png" width="160px">
 
@@ -34,6 +34,10 @@ Hakumai は macOS で動作するニコニコ生放送用のコメントビュ�
 ```
 
 <img src="./image/imfull.png" width="160px">
+
+## Old Versions
+
+* [v2.24.1](https://hakumai.s3.amazonaws.com/Hakumai.2.24.1.zip) ... macOS 10.12 Sierra 対応最終版
 
 ## Donation
 

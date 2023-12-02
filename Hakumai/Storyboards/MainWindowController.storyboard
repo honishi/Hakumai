@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="20037" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="22155" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="20037"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22155"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -660,20 +660,20 @@
                                         <subviews>
                                             <button toolTip="Grab URL from Browser (⌘U)" translatesAutoresizingMaskIntoConstraints="NO" id="GRS-m4-7KE">
                                                 <rect key="frame" x="0.0" y="0.0" width="23" height="23"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="23" id="QDB-d2-UO4"/>
-                                                    <constraint firstAttribute="width" constant="23" id="eGg-Kp-cGi"/>
-                                                </constraints>
                                                 <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="link_black" imagePosition="overlaps" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="T07-Jf-o94">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="cellTitle"/>
                                                 </buttonCell>
                                                 <color key="contentTintColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="23" id="QDB-d2-UO4"/>
+                                                    <constraint firstAttribute="width" constant="23" id="eGg-Kp-cGi"/>
+                                                </constraints>
                                                 <connections>
                                                     <action selector="grabUrlFromBrowser:" target="XfG-lQ-9wD" id="yJa-cb-vIG"/>
                                                 </connections>
                                             </button>
-                                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="gZN-es-bFO">
+                                            <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="gZN-es-bFO">
                                                 <rect key="frame" x="31" y="1" width="353" height="21"/>
                                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="iDS-0h-Uje">
                                                     <font key="font" metaFont="system"/>
@@ -706,15 +706,15 @@
                                             </button>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hii-Mo-bho">
                                                 <rect key="frame" x="591" y="0.0" width="23" height="23"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="width" constant="23" id="sHU-9D-NQq"/>
-                                                    <constraint firstAttribute="height" constant="23" id="tRB-ro-kon"/>
-                                                </constraints>
                                                 <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="play_arrow_black" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="WjB-ei-g5l">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="cellTitle"/>
                                                 </buttonCell>
                                                 <color key="contentTintColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="23" id="sHU-9D-NQq"/>
+                                                    <constraint firstAttribute="height" constant="23" id="tRB-ro-kon"/>
+                                                </constraints>
                                                 <connections>
                                                     <action selector="connectButtonPressed:" target="XfG-lQ-9wD" id="eXA-Cn-O87"/>
                                                 </connections>
@@ -750,7 +750,7 @@
                                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="250" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="d3A-5T-Fi5">
                                                 <rect key="frame" x="63" y="0.0" width="547" height="55"/>
                                                 <subviews>
-                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="65a-aX-RIL">
+                                                    <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="65a-aX-RIL">
                                                         <rect key="frame" x="-2" y="38" width="40" height="17"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="17" id="aX3-eX-5Te"/>
@@ -764,7 +764,7 @@
                                                     <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DFd-WO-NFi">
                                                         <rect key="frame" x="0.0" y="19" width="547" height="17"/>
                                                         <subviews>
-                                                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="mqT-iT-cC6">
+                                                            <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="mqT-iT-cC6">
                                                                 <rect key="frame" x="-2" y="0.0" width="37" height="17"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" constant="17" id="x00-mC-etv"/>
@@ -818,7 +818,7 @@
                                                                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="visitor_count" id="AdX-xG-emm"/>
                                                                         <color key="contentTintColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                                     </imageView>
-                                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8WA-yo-AuZ">
+                                                                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8WA-yo-AuZ">
                                                                         <rect key="frame" x="22" y="0.0" width="23" height="16"/>
                                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="---" id="38Q-Sg-SN7">
                                                                             <font key="font" metaFont="system"/>
@@ -848,7 +848,7 @@
                                                                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="comment_count" id="lzv-ac-tqv"/>
                                                                         <color key="contentTintColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                                     </imageView>
-                                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vmz-z1-HHp">
+                                                                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vmz-z1-HHp">
                                                                         <rect key="frame" x="22" y="0.0" width="23" height="16"/>
                                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="---" id="7FK-MT-WVK">
                                                                             <font key="font" metaFont="system"/>
@@ -878,7 +878,7 @@
                                                                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="ad_points" id="zvx-5J-F9k"/>
                                                                         <color key="contentTintColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                                     </imageView>
-                                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0qo-uD-qcd">
+                                                                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0qo-uD-qcd">
                                                                         <rect key="frame" x="22" y="0.0" width="23" height="16"/>
                                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="---" id="euk-cZ-YoJ">
                                                                             <font key="font" metaFont="system"/>
@@ -908,7 +908,7 @@
                                                                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="gift_points" id="tVv-Uz-rYt"/>
                                                                         <color key="contentTintColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                                     </imageView>
-                                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ak0-Zv-XEq">
+                                                                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ak0-Zv-XEq">
                                                                         <rect key="frame" x="22" y="0.0" width="23" height="16"/>
                                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="---" id="Pl9-dT-D1d">
                                                                             <font key="font" metaFont="system"/>
@@ -1096,7 +1096,7 @@
                                     <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalCompressionResistancePriority="250" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OKI-Gn-3JM">
                                         <rect key="frame" x="0.0" y="24" width="614" height="21"/>
                                         <subviews>
-                                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="pml-Sh-s7e">
+                                            <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="pml-Sh-s7e">
                                                 <rect key="frame" x="0.0" y="0.0" width="559" height="21"/>
                                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="39S-6e-1RP">
                                                     <font key="font" metaFont="system"/>
@@ -1143,7 +1143,7 @@
                                                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="schedule_black" id="bW5-og-ITC"/>
                                                         <color key="contentTintColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                     </imageView>
-                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="p3A-6s-IKD">
+                                                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="p3A-6s-IKD">
                                                         <rect key="frame" x="22" y="0.0" width="62" height="16"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="58" id="Lvw-WX-8bI"/>
@@ -1179,7 +1179,7 @@
                                                     <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ekE-tz-Is1">
                                                         <rect key="frame" x="24" y="0.0" width="74" height="16"/>
                                                         <subviews>
-                                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="09h-Eb-cuW">
+                                                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="09h-Eb-cuW">
                                                                 <rect key="frame" x="-2" y="0.0" width="37" height="16"/>
                                                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="0000" id="Gc8-kb-8sm">
                                                                     <font key="font" metaFont="system"/>
@@ -1187,7 +1187,7 @@
                                                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                                 </textFieldCell>
                                                             </textField>
-                                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="k8C-Ua-KhI">
+                                                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="k8C-Ua-KhI">
                                                                 <rect key="frame" x="33" y="0.0" width="8" height="16"/>
                                                                 <textFieldCell key="cell" lineBreakMode="clipping" title="/" id="uuw-ZN-PlY">
                                                                     <font key="font" metaFont="system"/>
@@ -1195,7 +1195,7 @@
                                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                                 </textFieldCell>
                                                             </textField>
-                                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="575-Oj-4dX">
+                                                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="575-Oj-4dX">
                                                                 <rect key="frame" x="39" y="0.0" width="37" height="16"/>
                                                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="0000" id="uE0-SO-Tvq">
                                                                     <font key="font" metaFont="system"/>
@@ -1225,7 +1225,7 @@
                                                     <real value="3.4028234663852886e+38"/>
                                                 </customSpacing>
                                             </stackView>
-                                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="yo1-uX-sTU" customClass="LineChartView" customModule="Charts">
+                                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="yo1-uX-sTU" customClass="LineChartView" customModule="DGCharts">
                                                 <rect key="frame" x="228" y="0.0" width="96" height="16"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="16" id="ds4-hH-uvc"/>
@@ -1244,7 +1244,7 @@
                                                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="military_tech_black" id="s2o-rn-Smp"/>
                                                         <color key="contentTintColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                     </imageView>
-                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oF2-Tt-DUQ">
+                                                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oF2-Tt-DUQ">
                                                         <rect key="frame" x="22" y="0.0" width="37" height="16"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="justified" title="#000" id="wxK-Ft-enZ">
                                                             <font key="font" metaFont="system"/>
@@ -1252,7 +1252,7 @@
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="TMc-34-Gof">
+                                                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="TMc-34-Gof">
                                                         <rect key="frame" x="63" y="0.0" width="71" height="16"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="justified" title="[00:00:00]" id="HQh-jK-ufH">
                                                             <font key="font" metaFont="system"/>
@@ -1333,52 +1333,52 @@
                             </stackView>
                             <button horizontalHuggingPriority="249" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Bqv-yU-Ld3" customClass="PointingHandButton" customModule="Hakumai" customModuleProvider="target">
                                 <rect key="frame" x="73" y="544" width="36" height="17"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="17" id="yzZ-KB-0Fu"/>
-                                </constraints>
                                 <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="4Il-Hh-9r6">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="17" id="yzZ-KB-0Fu"/>
+                                </constraints>
                                 <connections>
                                     <action selector="openLivePage:" target="XfG-lQ-9wD" id="1lq-Kr-zKC"/>
                                 </connections>
                             </button>
                             <button horizontalHuggingPriority="249" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rS8-Te-GhM" customClass="PointingHandButton" customModule="Hakumai" customModuleProvider="target">
                                 <rect key="frame" x="73" y="525" width="33" height="17"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="17" id="tct-vj-F6I"/>
-                                </constraints>
                                 <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="Ws5-3z-UaX">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="17" id="tct-vj-F6I"/>
+                                </constraints>
                                 <connections>
                                     <action selector="openCommunityPage:" target="XfG-lQ-9wD" id="6xE-nB-jKw"/>
                                 </connections>
                             </button>
                             <button horizontalHuggingPriority="249" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="baU-oh-9PL" customClass="PointingHandButton" customModule="Hakumai" customModuleProvider="target">
                                 <rect key="frame" x="191" y="507" width="43" height="17"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="17" id="WPm-ls-Wg3"/>
-                                </constraints>
                                 <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="xbG-Fb-UV9">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="17" id="WPm-ls-Wg3"/>
+                                </constraints>
                                 <connections>
                                     <action selector="openAdPage:" target="XfG-lQ-9wD" id="Ps8-cK-vvU"/>
                                 </connections>
                             </button>
                             <button horizontalHuggingPriority="249" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Frh-Sg-L0Y" customClass="PointingHandButton" customModule="Hakumai" customModuleProvider="target">
                                 <rect key="frame" x="250" y="507" width="43" height="17"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="17" id="biH-OG-jNa"/>
-                                </constraints>
                                 <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="oH5-me-gs7">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="17" id="biH-OG-jNa"/>
+                                </constraints>
                                 <connections>
                                     <action selector="openGiftPage:" target="XfG-lQ-9wD" id="RKc-qm-GFR"/>
                                 </connections>
@@ -1538,7 +1538,7 @@
                             <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NRC-9G-OKz">
                                 <rect key="frame" x="20" y="24" width="250" height="73"/>
                                 <subviews>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gR0-0B-UDL">
+                                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gR0-0B-UDL">
                                         <rect key="frame" x="-2" y="57" width="166" height="16"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Add/Update Handle Name:" id="aQh-PC-Qu6">
                                             <font key="font" metaFont="system"/>
@@ -1546,7 +1546,7 @@
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oTt-jC-Q27">
+                                    <textField focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oTt-jC-Q27">
                                         <rect key="frame" x="0.0" y="28" width="250" height="21"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="aZf-eF-6vH">
                                             <font key="font" metaFont="system"/>
@@ -1570,10 +1570,6 @@
                                             </customView>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zwB-Mb-UaV">
                                                 <rect key="frame" x="75" y="-7" width="94" height="32"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="20" id="umB-MR-YJQ"/>
-                                                    <constraint firstAttribute="width" constant="80" id="zBI-HR-aGf"/>
-                                                </constraints>
                                                 <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="a7x-T3-7pR">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="system"/>
@@ -1581,20 +1577,24 @@
 Gw
 </string>
                                                 </buttonCell>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="20" id="umB-MR-YJQ"/>
+                                                    <constraint firstAttribute="width" constant="80" id="zBI-HR-aGf"/>
+                                                </constraints>
                                                 <connections>
                                                     <action selector="cancelToAdd:" target="2hv-da-cfM" id="8Rp-ue-Fha"/>
                                                 </connections>
                                             </button>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Sw7-sV-cSm">
                                                 <rect key="frame" x="163" y="-7" width="94" height="32"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="height" constant="20" id="lbF-zf-MSi"/>
-                                                    <constraint firstAttribute="width" constant="80" id="ziN-GD-Mir"/>
-                                                </constraints>
                                                 <buttonCell key="cell" type="push" title="Add" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xCk-aI-qVP">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="system"/>
                                                 </buttonCell>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="20" id="lbF-zf-MSi"/>
+                                                    <constraint firstAttribute="width" constant="80" id="ziN-GD-Mir"/>
+                                                </constraints>
                                                 <connections>
                                                     <action selector="addHandleName:" target="2hv-da-cfM" id="Rjb-LB-b3q"/>
                                                     <binding destination="2hv-da-cfM" name="enabled" keyPath="self.handleName.length" id="OQ0-Mz-k2r"/>
