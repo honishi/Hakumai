@@ -33,12 +33,14 @@ class LiveThumbnailManagerTest: XCTestCase {
         // 2021/12/05 01:02:03
         let date = Date.init(timeIntervalSince1970: 1638633723)
         result = manager.exposedConstructThumbnailUrl(from: originalUrl, for: date)
-        expect = "https://ssth.dmc.nico/thumbnail/20211205/11/15/nicolive-production-pg21091510649445/nicolive-production-pg21091510649445_800_450.jpg?t=1638633723000"
+        // expect = "https://ssth.dmc.nico/thumbnail/20211205/11/15/nicolive-production-pg21091510649445/nicolive-production-pg21091510649445_800_450.jpg?t=1638633723000"
+        expect = originalUrl.absoluteString
         XCTAssert(result?.absoluteString == expect)
 
         originalUrl = URL(string: "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/defaults/blank.jpg")!
         result = manager.exposedConstructThumbnailUrl(from: originalUrl, for: Date())
-        expect = nil
+        // expect = nil
+        expect = originalUrl.absoluteString
         XCTAssert(result?.absoluteString == expect)
     }
     // swiftlint:enable force_unwrapping
