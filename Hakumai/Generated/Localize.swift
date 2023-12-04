@@ -52,7 +52,7 @@ internal enum L10n {
   internal static let closeWindow = L10n.tr("Localizable", "close_window")
   /// Comments
   internal static let commentCount = L10n.tr("Localizable", "comment_count")
-  /// Comment Speech (Requires macOS 10.14-)
+  /// Comment Speech
   internal static let commentSpeaking = L10n.tr("Localizable", "comment_speaking")
   /// ⌘O (Empty ⏎ to scroll to bottom)
   internal static let commentTextFieldPlaceholder = L10n.tr("Localizable", "comment_text_field_placeholder")

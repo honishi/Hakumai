@@ -65,9 +65,7 @@ extension GeneralViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
-        disableSpeakComponentsIfNeeded()
         disableSpeakerComponents()
-        disableNotificationComponentsIfNeeded()
     }
 
     override func viewDidAppear() {
@@ -99,14 +97,6 @@ private extension GeneralViewController {
         enableDebugMessageButton.title = L10n.enableDebugMessage
     }
 
-    func disableSpeakComponentsIfNeeded() {
-        if #available(macOS 10.14, *) { return }
-        speakVolumeTitleTextField.isEnabled = false
-        speakVolumeValueTextField.isEnabled = false
-        speakVolumeSlider.isEnabled = false
-        voicevoxSiteButton.isEnabled = false
-    }
-
     func disableSpeakerComponents() {
         speakerPopUpButton.isEnabled = false
         speakSampleButton.isEnabled = false
@@ -114,13 +104,7 @@ private extension GeneralViewController {
         speakerPopUpButton.addItems(withTitles: [L10n.voicevoxNotFound])
     }
 
-    func disableNotificationComponentsIfNeeded() {
-        if #available(macOS 10.14, *) { return }
-        enableLiveNotificationButton.isHidden = true
-    }
-
     func updateSpeakerPopUpButton() {
-        guard #available(macOS 10.14, *) else { return }
         disableSpeakerComponents()
         voicevoxWrapper.requestSpeakers { [weak self] in
             guard let me = self else { return }

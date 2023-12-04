@@ -671,7 +671,7 @@ private extension NicoManager {
             reconnect()
         case .reconnectSuggested:
             reconnect()
-        case .binary, .cancelled, .disconnected, .ping, .viabilityChanged:
+        case .binary, .cancelled, .disconnected, .ping, .viabilityChanged, .peerClosed:
             break
         }
     }
@@ -768,7 +768,7 @@ private extension NicoManager {
             reconnect()
         case .reconnectSuggested:
             reconnect()
-        case .binary, .cancelled, .disconnected, .ping, .viabilityChanged:
+        case .binary, .cancelled, .disconnected, .ping, .viabilityChanged, .peerClosed:
             break
         }
     }
@@ -915,7 +915,7 @@ private extension NicoManager {
             case .unknown:
                 break
             }
-        case .binary, .cancelled, .disconnected, .error, .ping, .pong, .reconnectSuggested, .viabilityChanged:
+        case .binary, .cancelled, .disconnected, .error, .ping, .pong, .reconnectSuggested, .viabilityChanged, .peerClosed:
             break
         }
     }
