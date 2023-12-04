@@ -15,7 +15,7 @@ target 'Hakumai' do
   pod 'FMDB', '~> 2.7.5'
   pod 'Kanna', '~> 5.2.7'
   pod 'SAMKeychain', '~> 1.5.3'
-  pod 'Starscream', '~> 4.0.4'
+  pod 'Starscream', '~> 4.0.6'
 
   # User Interface
   pod 'DGCharts', '~> 5.0.0'
