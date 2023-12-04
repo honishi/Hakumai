@@ -157,7 +157,7 @@
 "google_chrome" = "Google Chrome";
 "safari" = "Safari";
 "sync_browser_tab_selection" = "Sync window and tab selection state when auto url is enabled";
-"comment_speaking" = "Comment Speech (Requires macOS 10.14-)";
+"comment_speaking" = "Comment Speech";
 "speak_volume" = "Speech Volume";
 "enable_speak_name" = "Read user name";
 "enable_speak_gift" = "Read gift comments";
