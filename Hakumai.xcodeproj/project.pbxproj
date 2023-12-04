@@ -1307,7 +1307,7 @@
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-Wl,-rpath,@loader_path/../Frameworks",
+					"-Wl",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.honishi.$(PRODUCT_NAME:rfc1034identifier)";
@@ -1345,7 +1345,7 @@
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-Wl,-rpath,@loader_path/../Frameworks",
+					"-Wl",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.honishi.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
