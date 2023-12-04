@@ -1,4 +1,4 @@
-platform :osx, '10.13'
+platform :osx, '10.14'
 inhibit_all_warnings!
 
 target 'Hakumai' do
@@ -30,7 +30,7 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
-      config.build_settings['MACOSX_DEPLOYMENT_TARGET'] = '10.13'
+      config.build_settings['MACOSX_DEPLOYMENT_TARGET'] = '10.14'
     end
   end
 end
