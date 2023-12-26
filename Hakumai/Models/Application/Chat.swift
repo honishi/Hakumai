@@ -18,6 +18,8 @@ struct Chat {
     let userId: String
     let comment: String
     let premium: Premium
+
+    var isDisconnect: Bool { premium == .system && comment == "/disconnect" }
 }
 
 extension Chat: CustomStringConvertible {
