@@ -55,9 +55,9 @@ protocol NicoManagerDelegate: AnyObject {
     func nicoManagerWillReconnectToLive(_ nicoManager: NicoManagerType, reason: NicoReconnectReason)
     func nicoManagerDidReceiveStatistics(_ nicoManager: NicoManagerType, stat: LiveStatistics)
 
-    // Timeshift.
-    func nicoManagerReceivingTimeShiftChats(_ nicoManager: NicoManagerType, requestCount: Int, totalChatCount: Int)
-    func nicoManagerDidReceiveTimeShiftChats(_ nicoManager: NicoManagerType, chats: [Chat])
+    // History.
+    func nicoManagerReceivingChatHistory(_ nicoManager: NicoManagerType, requestCount: Int, totalChatCount: Int)
+    func nicoManagerDidReceiveChatHistory(_ nicoManager: NicoManagerType, chats: [Chat])
 
     // Disconnect.
     func nicoManagerDidDisconnect(_ nicoManager: NicoManagerType, disconnectContext: NicoDisconnectContext)
@@ -77,6 +77,15 @@ enum NicoError: Error {
 enum NicoConnectContext {
     case normal
     case reconnect(NicoReconnectReason)
+
+    var isReconnect: Bool {
+        switch self {
+        case .normal:
+            return false
+        case .reconnect:
+            return true
+        }
+    }
 }
 
 enum NicoDisconnectContext {

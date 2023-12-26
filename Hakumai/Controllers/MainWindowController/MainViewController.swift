@@ -570,20 +570,22 @@ extension MainViewController: NicoManagerDelegate {
         logDebugReconnectReason(reason)
     }
 
-    func nicoManagerReceivingTimeShiftChats(_ nicoManager: NicoManagerType, requestCount: Int, totalChatCount: Int) {
-        let shouldLog = requestCount % 5 == 0
+    func nicoManagerReceivingChatHistory(_ nicoManager: NicoManagerType, requestCount: Int, totalChatCount: Int) {
+        let shouldLog = requestCount % 2 == 0
         guard shouldLog else { return }
         logSystemMessageToTable(L10n.receivingComments(totalChatCount))
     }
 
-    func nicoManagerDidReceiveTimeShiftChats(_ nicoManager: NicoManagerType, chats: [Chat]) {
-        logSystemMessageToTable(L10n.receivedComments(chats.count))
+    func nicoManagerDidReceiveChatHistory(_ nicoManager: NicoManagerType, chats: [Chat]) {
+        if !chats.isEmpty {
+            logSystemMessageToTable(L10n.receivedComments(chats.count))
+        }
         guard let live = live else { return }
         chats.forEach {
             HandleNameManager.shared.extractAndUpdateHandleName(
                 from: $0.comment, for: $0.userId, in: live.communityId)
         }
-        bulkAppendToTable(chats: chats)
+        bulkAppendToTable(chats: chats, scrollToBottom: !live.isTimeShift)
     }
 
     func nicoManagerDidDisconnect(_ nicoManager: NicoManagerType, disconnectContext: NicoDisconnectContext) {
@@ -1066,14 +1068,20 @@ private extension MainViewController {
         scrollView.flashScrollers()
     }
 
-    func bulkAppendToTable(chats: [Chat]) {
+    func bulkAppendToTable(chats: [Chat], scrollToBottom: Bool) {
         DispatchQueue.main.async {
             chats.forEach {
                 self.messageContainer.append(chat: $0)
             }
             self.tableView.reloadData()
-            self.scrollView.flashScrollers()
-            self.scrollView.updateButtonEnables()
+
+            DispatchQueue.main.async {
+                if scrollToBottom {
+                    self.scrollView.scrollToBottom()
+                }
+                self.scrollView.flashScrollers()
+                self.scrollView.updateButtonEnables()
+            }
         }
     }
 }

@@ -62,7 +62,7 @@ private extension KusaCommentDetector {
         if rate > kusaDetectRate {
             delegate?.kusaCommentDetectorDidDetectKusa(self)
         }
-        debugLog(rate: rate)
+        // debugLog(rate: rate)
     }
 
     func refreshChats() {
