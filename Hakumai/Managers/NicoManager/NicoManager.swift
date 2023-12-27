@@ -896,7 +896,12 @@ private extension NicoManager {
         guard let _chat = try? decoder.decode(WebSocketChatData.self, from: data) else { return nil }
         // log.debug(_chat)
         let room = roomPosition(of: _chat)
-        return _chat.toChat(roomPosition: room)
+        let chat = _chat.toChat(roomPosition: room)
+        guard room == .arena || (room != .arena && chat.premium.isUser) else {
+            log.debug("Ignore chat: \(chat)")
+            return nil
+        }
+        return chat
     }
 
     func roomPosition(of chat: WebSocketChatData) -> RoomPosition {
@@ -906,12 +911,7 @@ private extension NicoManager {
     }
 
     func updateChatNumbers(chat: Chat) {
-        let room = chat.roomPosition
-        guard room == .arena || (room != .arena && chat.premium.isUser) else {
-            log.debug("Ignore chat: \(chat)")
-            return
-        }
-        chatNumbers[room]?.latest = chat.no
+        chatNumbers[chat.roomPosition]?.latest = chat.no
     }
 
     func resetChatHistoryVariables() {
