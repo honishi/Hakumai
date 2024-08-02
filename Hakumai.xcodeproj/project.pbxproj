@@ -822,7 +822,7 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftMigration = 0700;
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 1540;
 				ORGANIZATIONNAME = "Hiroyuki Onishi";
 				TargetAttributes = {
 					DB2AE0BD1A0EE2FD00B1CE4D = {
