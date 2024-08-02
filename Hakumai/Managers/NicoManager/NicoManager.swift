@@ -555,7 +555,7 @@ private extension NicoManager {
             guard let me = self else { return }
             switch $0.result {
             case .success(let data):
-                log.debug(String(data: data, encoding: .utf8))
+                log.debug(String(decoding: data, as: UTF8.self))
                 guard let response: T = me.decodeApiResponse(from: data) else {
                     completion(.failure(.internal))
                     return

@@ -101,7 +101,7 @@ extension AuthManager {
 
         var request = URLRequest(url: refreshTokenApiUrl)
         request.method = .post
-        request.httpBody = "refresh_token=\(refreshToken)".data(using: .utf8)
+        request.httpBody = Data("refresh_token=\(refreshToken)".utf8)
         session.request(request)
             .cURLDescription { log.debug($0) }
             .validate()
