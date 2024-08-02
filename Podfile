@@ -6,7 +6,7 @@ target 'Hakumai' do
 
   # Project Infrastructure
   pod 'Sparkle', '~> 2.1.0'
-  pod 'SwiftLint', '~> 0.47.0'
+  pod 'SwiftLint', '~> 0.55.1'
   pod 'SwiftGen', '~> 6.5.1'
   pod 'XCGLogger', '~> 7.0.1'
 
