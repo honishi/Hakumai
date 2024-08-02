@@ -1303,7 +1303,7 @@ private extension MainViewController {
     }
 
     @objc func calculateAndUpdateActiveUser() {
-        messageContainer.calculateActive { (active: Int?) -> Void in
+        messageContainer.calculateActive { (active: Int?) in
             guard let active = active else { return }
             self.updateActiveUser(active: active)
             DispatchQueue.main.async {
