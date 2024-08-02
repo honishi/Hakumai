@@ -9,7 +9,6 @@
 import XCTest
 @testable import Hakumai
 
-// swiftlint:disable type_body_length
 final class SpeechManagerTests: XCTestCase {
     override func setUp() {
         super.setUp()
@@ -301,4 +300,3 @@ final class SpeechManagerTests: XCTestCase {
     }
     // swiftlint:enable function_body_length
 }
-// swiftlint:enable type_body_length

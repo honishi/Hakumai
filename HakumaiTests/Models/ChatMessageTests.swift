@@ -36,7 +36,6 @@ final class ChatMessageTests: XCTestCase {
         XCTAssert(expected == actual, "")
     }
 
-    // swiftlint:disable function_body_length
     func testReplaceComment() {
         var comment = ""
         var expected = ""
@@ -103,5 +102,4 @@ final class ChatMessageTests: XCTestCase {
         actual = comment.slashCommandReplaced(premium: caster)
         XCTAssert(expected == actual, "")
     }
-    // swiftlint:enable function_body_length
 }
