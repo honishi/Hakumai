@@ -157,6 +157,9 @@ extension MainViewController {
         configureEmotionMessage()
         configureDebugMessage()
         DispatchQueue.main.async { self.focusLiveTextField() }
+
+        // temporary call
+        nicoManager.connect(liveProgramId: "")
     }
 }
 

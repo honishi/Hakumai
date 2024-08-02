@@ -35,6 +35,8 @@
 		DB2AE0D71A0EE2FD00B1CE4D /* HakumaiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2AE0D61A0EE2FD00B1CE4D /* HakumaiTests.swift */; };
 		DB2F516126669675000A1C58 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DB2F516326669675000A1C58 /* Localizable.strings */; };
 		DB2F516726669B3E000A1C58 /* Localize.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2F516626669B3E000A1C58 /* Localize.swift */; };
+		DB3091102C5D736900B9F7AA /* NdgrClientProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB30910F2C5D736900B9F7AA /* NdgrClientProtocol.swift */; };
+		DB3091122C5D737800B9F7AA /* NdgrClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB3091112C5D737800B9F7AA /* NdgrClient.swift */; };
 		DB346B9C1A548C3B00137639 /* CommunityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB346B9B1A548C3B00137639 /* CommunityTests.swift */; };
 		DB34F833275BB18100180C7A /* LiveThumbnailManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB34F832275BB18100180C7A /* LiveThumbnailManagerType.swift */; };
 		DB34F835275BB18D00180C7A /* LiveThumbnailManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB34F834275BB18D00180C7A /* LiveThumbnailManager.swift */; };
@@ -187,6 +189,8 @@
 		DB2F516226669675000A1C58 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		DB2F5164266696FD000A1C58 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		DB2F516626669B3E000A1C58 /* Localize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Localize.swift; sourceTree = "<group>"; };
+		DB30910F2C5D736900B9F7AA /* NdgrClientProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrClientProtocol.swift; sourceTree = "<group>"; };
+		DB3091112C5D737800B9F7AA /* NdgrClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrClient.swift; sourceTree = "<group>"; };
 		DB346B9B1A548C3B00137639 /* CommunityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommunityTests.swift; sourceTree = "<group>"; };
 		DB34F830275BAF7200180C7A /* live_page.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = live_page.html; sourceTree = "<group>"; };
 		DB34F832275BB18100180C7A /* LiveThumbnailManagerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveThumbnailManagerType.swift; sourceTree = "<group>"; };
@@ -691,6 +695,8 @@
 		DBE093F61A585EC5004554FD /* NicoManager */ = {
 			isa = PBXGroup;
 			children = (
+				DB3091112C5D737800B9F7AA /* NdgrClient.swift */,
+				DB30910F2C5D736900B9F7AA /* NdgrClientProtocol.swift */,
 				DBAAA7501A0FDA4500981004 /* NicoManager.swift */,
 				DB6DD2AD2650F1B0009A9574 /* NicoManagerProtocol.swift */,
 			);
@@ -1082,6 +1088,8 @@
 				DB80CA821A256F9A002636E0 /* MessageContainer.swift in Sources */,
 				DB73A38C1A4F43F6008423D0 /* MuteAddViewController.swift in Sources */,
 				DB0E10681A39B6DD00A10E00 /* MuteViewController.swift in Sources */,
+				DB3091122C5D737800B9F7AA /* NdgrClient.swift in Sources */,
+				DB3091102C5D736900B9F7AA /* NdgrClientProtocol.swift in Sources */,
 				DBAAA7511A0FDA4500981004 /* NicoManager.swift in Sources */,
 				DB6DD2AE2650F1B0009A9574 /* NicoManagerProtocol.swift in Sources */,
 				DBBE416C266CB939004002F1 /* NicoOAuthApiModel.swift in Sources */,

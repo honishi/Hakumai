@@ -109,6 +109,8 @@ final class NicoManager: NicoManagerType {
 
     // Private Properties
     private let authManager: AuthManagerProtocol
+    private let ndgrClient: NdgrClientType
+
     private var isConnected = false
     private var connectRequests: ConnectRequests =
         ConnectRequests(
@@ -152,8 +154,9 @@ final class NicoManager: NicoManagerType {
     private var historyChats: [Chat] = []
     private var receivedAllHistoryChats = false
 
-    init(authManager: AuthManagerProtocol = AuthManager.shared) {
+    init(authManager: AuthManagerProtocol = AuthManager.shared, ndgrClient: NdgrClientType = NdgrClient()) {
         self.authManager = authManager
+        self.ndgrClient = ndgrClient
         session = {
             let configuration = URLSessionConfiguration.af.default
             configuration.headers.add(.userAgent(commonUserAgentValue))
@@ -166,7 +169,12 @@ final class NicoManager: NicoManagerType {
 // MARK: - Public Methods (Main)
 extension NicoManager {
     func connect(liveProgramId: String) {
-        connect(liveProgramId: liveProgramId, connectContext: .normal)
+        ndgrClient.delegate = self
+        let viewUrl = "https://mpn.live.nicovideo.jp/api/view/v4/BBzTnvpwOxt2NVatE27Xd62YTmUHyd3qTreNp9VcFKkGwmMfP4Wad7IviqekX03Dzf_8"
+        guard let url = URL(string: viewUrl) else { return }
+        ndgrClient.connect(viewUri: url)
+        // TODO: reactivate
+        // connect(liveProgramId: liveProgramId, connectContext: .normal)
     }
 
     func connect(liveProgramId: String, connectContext: NicoConnectContext) {
@@ -329,6 +337,13 @@ extension NicoManager {
             }
             log.info("Userid[\(userId)] -> [\(me.cachedUserNames[userId] ?? "-")] QueueCount: \(me.userNameResolvingOperationQueue.operationCount)")
         }
+    }
+}
+
+// MARK: - NdgrClientDelegate Methods
+extension NicoManager: NdgrClientDelegate {
+    func ndgrClientDidConnect(_ ndgrClient: any NdgrClientType) {
+        log.info("ndgr client connected.")
     }
 }
 
