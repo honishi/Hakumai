@@ -17,6 +17,7 @@ PODS:
   - Starscream (4.0.6)
   - SwiftGen (6.5.1)
   - SwiftLint (0.55.1)
+  - SwiftProtobuf (1.27.1)
   - XCGLogger (7.0.1):
     - XCGLogger/Core (= 7.0.1)
   - XCGLogger/Core (7.0.1):
@@ -34,6 +35,7 @@ DEPENDENCIES:
   - Starscream (~> 4.0.6)
   - SwiftGen (~> 6.5.1)
   - SwiftLint (~> 0.55.1)
+  - SwiftProtobuf (~> 1.0)
   - XCGLogger (~> 7.0.1)
 
 SPEC REPOS:
@@ -50,6 +52,7 @@ SPEC REPOS:
     - Starscream
     - SwiftGen
     - SwiftLint
+    - SwiftProtobuf
     - XCGLogger
 
 SPEC CHECKSUMS:
@@ -65,8 +68,9 @@ SPEC CHECKSUMS:
   Starscream: fb2c4510bebf908c62bd383bcf05e673720e91fd
   SwiftGen: a6d22010845f08fe18fbdf3a07a8e380fd22e0ea
   SwiftLint: 3fe909719babe5537c552ee8181c0031392be933
+  SwiftProtobuf: b109bd17979d7993a84da14b1e1fdd8b0ded934a
   XCGLogger: 1943831ef907df55108b0b18657953f868de973b
 
-PODFILE CHECKSUM: 9ff3b715f332f040d36123917268cd072efc2ac8
+PODFILE CHECKSUM: 408b02cc692f1ccfde14748ba78e992f8cb91119
 
 COCOAPODS: 1.14.3
