@@ -159,6 +159,17 @@ extension MainViewController {
         DispatchQueue.main.async { self.focusLiveTextField() }
 
         // temporary call
+        live = Live(
+            liveProgramId: "",
+            title: "",
+            community: Community(communityId: "", title: "", level: 0, thumbnailUrl: nil),
+            baseTime: Date(),
+            openTime: Date(),
+            beginTime: Date(),
+            isTimeShift: false
+        )
+        liveStartedDate = Date()
+        connectedToLive = true
         DispatchQueue.main.asyncAfter(deadline: .now()) {
             self.nicoManager.connect(liveProgramId: "")
         }

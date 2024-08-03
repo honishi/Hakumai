@@ -19,4 +19,5 @@ protocol NdgrClientType: AnyObject {
 protocol NdgrClientDelegate: AnyObject {
     // Main connection sequence.
     func ndgrClientDidConnect(_ ndgrClient: NdgrClientType)
+    func ndgrClientDidReceiveChat(_ ndgrClient: NdgrClientType, chat: Chat)
 }
