@@ -159,7 +159,9 @@ extension MainViewController {
         DispatchQueue.main.async { self.focusLiveTextField() }
 
         // temporary call
-        nicoManager.connect(liveProgramId: "")
+        DispatchQueue.main.asyncAfter(deadline: .now()) {
+            self.nicoManager.connect(liveProgramId: "")
+        }
     }
 }
 

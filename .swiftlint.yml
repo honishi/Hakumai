@@ -16,6 +16,7 @@ excluded:
   - Hakumai.xcodeproj
   - Hakumai.xcworkspace
   - Hakumai/Generated
+  - Hakumai/Models/dwango
 
 line_length: 
   warning: 400
