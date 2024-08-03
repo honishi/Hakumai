@@ -16,6 +16,9 @@ final class NdgrClient: NdgrClientType {
 
     // Private Properties
     private let session: Session
+    private let g_play_start = Int(Date().timeIntervalSince1970 * 1_000)
+    private let g_play_from = Int(Date().timeIntervalSince1970 * 1_000)
+    private let g_play_rate = 1.0
 
     init(delegate: NdgrClientDelegate? = nil) {
         self.delegate = delegate
@@ -47,27 +50,39 @@ private extension NdgrClient {
         while next != nil {
             let url = uri.appending(
                 "at",
-                value: { // () -> String in
+                value: {
                     guard let next = next else { return "now" }
                     return String(describing: next)
                 }()
             )
+            log.debug("🪞 view")
             let entries = _retrieve(
                 uri: url,
                 messageType: Dwango_Nicolive_Chat_Service_Edge_ChunkedEntry.self
             )
             for await entry in entries {
-                log.info(entry)
-                guard let entry = entry.entry else { continue }
+                // log.info(entry)
+                guard let entry = entry.entry else {
+                    log.error("entry.entry is nil")
+                    continue
+                }
                 switch entry {
-                case .backward(let backward):
-                    break
-                case .previous(let previous):
-                    break
+                case .backward:
+                    log.info("⏮️ backward")
+                case .previous:
+                    log.info("⏮️ previous")
                 case .segment(let segment):
-                    guard let url = URL(string: segment.uri) else { continue }
-                    await _pull_messages(uri: url)
+                    log.info("📩 segment")
+                    // await _sleep_until(timestamp: segment.from, prefetch: 10_000)
+                    guard let url = URL(string: segment.uri) else {
+                        log.error("failed to create url: \(segment.uri)")
+                        continue
+                    }
+                    Task {
+                        await _pull_messages(uri: url)
+                    }
                 case .next(let _next):
+                    log.info("⏭️ next -> \(_next.at)")
                     next = Int(_next.at)
                 }
             }
@@ -81,7 +96,7 @@ private extension NdgrClient {
             messageType: Dwango_Nicolive_Chat_Service_Edge_ChunkedMessage.self
         )
         for await message in messages {
-            log.info(message)
+            // await _sleep_until(timestamp: message.meta.at)
             guard let payload = message.payload else { continue }
             switch payload {
             case .message(let message):
@@ -96,9 +111,9 @@ private extension NdgrClient {
                     premium: .ippan
                 )
                 delegate?.ndgrClientDidReceiveChat(self, chat: chat)
-            case .state(let state):
+            case .state:
                 break
-            case .signal(let signal):
+            case .signal:
                 break
             }
         }
@@ -109,44 +124,96 @@ private extension NdgrClient {
         uri: URL,
         messageType: T.Type
     ) -> AsyncStream<T> {
-        AsyncStream { continuation in
-            session.streamRequest(
+        // log.debug("\(uri.absoluteString)")
+        return AsyncStream { continuation in
+            let request = session.streamRequest(
                 uri,
                 method: .get
             )
             .validate()
+            // TODO: handleResponseStream()
             .responseStream {
                 switch $0.event {
                 case let .stream(result):
+                    log.debug("📦 stream (\(messageType))")
                     switch result {
                     case let .success(data):
-                        // log.debug(data)
-                        // log.debug(data.hexEncodedString())
-                        do {
-                            let stream = InputStream(data: data)
-                            stream.open()
-                            let parsed = try BinaryDelimited.parse(
-                                messageType: messageType,
-                                from: stream,
-                                partial: true
-                            )
-                            // log.debug(parsed)
-                            stream.close()
-                            // onStream(parsed)
-                            continuation.yield(parsed)
-                        } catch {
-                            log.error(error)
-                            log.error(error.localizedDescription)
+                        let stream = InputStream(data: data)
+                        stream.open()
+                        defer { stream.close() }
+
+                        while stream.hasBytesAvailable {
+                            do {
+                                let parsed = try BinaryDelimited.parse(
+                                    messageType: messageType,
+                                    from: stream
+                                )
+                                continuation.yield(parsed)
+                            } catch {
+                                if stream.hasBytesAvailable {
+                                    log.error("メッセージの解析中にエラーが発生しました: \(error)")
+                                } else {
+                                    // ストリームの終わりに達した場合は正常
+                                    break
+                                }
+                            }
                         }
+                    case .failure(let error):
+                        log.error(error)
                     }
                 case .complete:
-                    // print(completion)
-                    // log.debug("done.")
-                    // onComplete()
                     continuation.finish()
                 }
             }
+            continuation.onTermination = { @Sendable _ in
+                request.cancel()
+            }
         }
+    }
+
+    // timestamp(protobuf)のprefetchミリ秒前までsleep
+    func _sleep_until(timestamp: Google_Protobuf_Timestamp, prefetch: Int = 0) async {
+        let until = _unix_ts(timestamp: timestamp)
+        let now = Int(Date().timeIntervalSince1970 * 1_000)
+
+        // 現在の再生位置
+        let play_at = _play_pos(at: now)
+        // 遅延してたら即時返す
+        if until <= play_at { return }
+        // 因果律の壁(再生時刻は現在時刻を追い越せない) until >= ab >= play_at
+        let ab = max(
+            play_at,
+            min(
+                until,
+                // Int(Double(now - play_at) * g_play_rate / (g_play_rate - 1)) + play_at
+                play_at
+            )
+        )
+        // abまでのdelay
+        let delay_a = Int(Double(ab - play_at) / g_play_rate)
+        // ab以降のdelay
+        let delay_b = Int(Double(until - ab) / min(1, g_play_rate))
+
+        await _sleep_ms(ms: delay_a + delay_b - prefetch)
+    }
+
+    // at: milliseconds
+    func _play_pos(at: Int) -> Int {
+        let elapsed = Double(at - g_play_start)
+        return min(Int(Double(g_play_from) + elapsed * g_play_rate), at)
+    }
+
+    // unix ts (seconds) -> milliseconds
+    func _unix_ts(timestamp: Google_Protobuf_Timestamp) -> Int {
+        return Int(timestamp.seconds * 1_000) + Int(timestamp.nanos / 1_000_000)
+    }
+
+    // ms: milliseconds
+    func _sleep_ms(ms: Int) async {
+        // log.debug("_sleep_ms: \(ms)")
+        if ms <= 0 { return }
+        // TODO: extension toNanosecondsFromMilliseconds
+        try? await Task.sleep(nanoseconds: UInt64(ms * 1_000_000))
     }
 }
 
