@@ -16,9 +16,6 @@ final class NdgrClient: NdgrClientType {
 
     // Private Properties
     private let session: Session
-    private let g_play_start = Int(Date().timeIntervalSince1970 * 1_000)
-    private let g_play_from = Int(Date().timeIntervalSince1970 * 1_000)
-    private let g_play_rate = 1.0
 
     init(delegate: NdgrClientDelegate? = nil) {
         self.delegate = delegate
@@ -33,35 +30,24 @@ final class NdgrClient: NdgrClientType {
 // MARK: - Public Functions
 extension NdgrClient {
     func connect(viewUri: URL) {
-        _connect(viewUri: viewUri)
+        Task {
+            await forward_playlist(uri: viewUri, from: Int(Date().timeIntervalSince1970))
+        }
     }
 }
 
 // MARK: - Private Functions
 private extension NdgrClient {
-    func _connect(viewUri: URL) {
-        Task {
-            await _forward_playlist(uri: viewUri, from: Int(Date().timeIntervalSince1970))
-        }
-    }
-
-    func _forward_playlist(uri: URL, from: Int?) async {
+    func forward_playlist(uri: URL, from: Int?) async {
         var next: Int? = from
         while next != nil {
-            let url = uri.appending(
-                "at",
-                value: {
-                    guard let next = next else { return "now" }
-                    return String(describing: next)
-                }()
-            )
             log.debug("🪞 view")
-            let entries = _retrieve(
-                uri: url,
+            let entries = retrieve(
+                uri: uri.appending("at", value: next.toAtParameter()),
                 messageType: Dwango_Nicolive_Chat_Service_Edge_ChunkedEntry.self
             )
+            next = nil
             for await entry in entries {
-                // log.info(entry)
                 guard let entry = entry.entry else {
                     log.error("entry.entry is nil")
                     continue
@@ -73,13 +59,12 @@ private extension NdgrClient {
                     log.info("⏮️ previous")
                 case .segment(let segment):
                     log.info("📩 segment")
-                    // await _sleep_until(timestamp: segment.from, prefetch: 10_000)
                     guard let url = URL(string: segment.uri) else {
                         log.error("failed to create url: \(segment.uri)")
                         continue
                     }
                     Task {
-                        await _pull_messages(uri: url)
+                        await pull_messages(uri: url)
                     }
                 case .next(let _next):
                     log.info("⏭️ next -> \(_next.at)")
@@ -90,13 +75,12 @@ private extension NdgrClient {
         log.info("done: _forward_playlist")
     }
 
-    func _pull_messages(uri: URL) async {
-        let messages = _retrieve(
+    func pull_messages(uri: URL) async {
+        let messages = retrieve(
             uri: uri,
             messageType: Dwango_Nicolive_Chat_Service_Edge_ChunkedMessage.self
         )
         for await message in messages {
-            // await _sleep_until(timestamp: message.meta.at)
             guard let payload = message.payload else { continue }
             switch payload {
             case .message(let message):
@@ -120,7 +104,7 @@ private extension NdgrClient {
         log.info("done: _pull_messages")
     }
 
-    func _retrieve<T: SwiftProtobuf.Message>(
+    func retrieve<T: SwiftProtobuf.Message>(
         uri: URL,
         messageType: T.Type
     ) -> AsyncStream<T> {
@@ -131,32 +115,15 @@ private extension NdgrClient {
                 method: .get
             )
             .validate()
-            // TODO: handleResponseStream()
-            .responseStream {
+            .responseStream { [weak self] in
+                guard let me = self else { return }
                 switch $0.event {
                 case let .stream(result):
                     log.debug("📦 stream (\(messageType))")
                     switch result {
                     case let .success(data):
-                        let stream = InputStream(data: data)
-                        stream.open()
-                        defer { stream.close() }
-
-                        while stream.hasBytesAvailable {
-                            do {
-                                let parsed = try BinaryDelimited.parse(
-                                    messageType: messageType,
-                                    from: stream
-                                )
-                                continuation.yield(parsed)
-                            } catch {
-                                if stream.hasBytesAvailable {
-                                    log.error("メッセージの解析中にエラーが発生しました: \(error)")
-                                } else {
-                                    // ストリームの終わりに達した場合は正常
-                                    break
-                                }
-                            }
+                        for message in me.decode(data: data, messageType: T.self) {
+                            continuation.yield(message)
                         }
                     case .failure(let error):
                         log.error(error)
@@ -171,53 +138,44 @@ private extension NdgrClient {
         }
     }
 
-    // timestamp(protobuf)のprefetchミリ秒前までsleep
-    func _sleep_until(timestamp: Google_Protobuf_Timestamp, prefetch: Int = 0) async {
-        let until = _unix_ts(timestamp: timestamp)
-        let now = Int(Date().timeIntervalSince1970 * 1_000)
+    func decode<T: SwiftProtobuf.Message>(data: Data, messageType: T.Type) -> [T] {
+        let stream = InputStream(data: data)
+        stream.open()
+        defer { stream.close() }
 
-        // 現在の再生位置
-        let play_at = _play_pos(at: now)
-        // 遅延してたら即時返す
-        if until <= play_at { return }
-        // 因果律の壁(再生時刻は現在時刻を追い越せない) until >= ab >= play_at
-        let ab = max(
-            play_at,
-            min(
-                until,
-                // Int(Double(now - play_at) * g_play_rate / (g_play_rate - 1)) + play_at
-                play_at
-            )
-        )
-        // abまでのdelay
-        let delay_a = Int(Double(ab - play_at) / g_play_rate)
-        // ab以降のdelay
-        let delay_b = Int(Double(until - ab) / min(1, g_play_rate))
-
-        await _sleep_ms(ms: delay_a + delay_b - prefetch)
-    }
-
-    // at: milliseconds
-    func _play_pos(at: Int) -> Int {
-        let elapsed = Double(at - g_play_start)
-        return min(Int(Double(g_play_from) + elapsed * g_play_rate), at)
-    }
-
-    // unix ts (seconds) -> milliseconds
-    func _unix_ts(timestamp: Google_Protobuf_Timestamp) -> Int {
-        return Int(timestamp.seconds * 1_000) + Int(timestamp.nanos / 1_000_000)
-    }
-
-    // ms: milliseconds
-    func _sleep_ms(ms: Int) async {
-        // log.debug("_sleep_ms: \(ms)")
-        if ms <= 0 { return }
-        // TODO: extension toNanosecondsFromMilliseconds
-        try? await Task.sleep(nanoseconds: UInt64(ms * 1_000_000))
+        var messages: [T] = []
+        while stream.hasBytesAvailable {
+            do {
+                let parsed = try BinaryDelimited.parse(
+                    messageType: messageType,
+                    from: stream
+                )
+                messages.append(parsed)
+            } catch {
+                if stream.hasBytesAvailable {
+                    log.error("メッセージの解析中にエラーが発生しました: \(error)")
+                } else {
+                    // ストリームの終わりに達した場合は正常
+                    break
+                }
+            }
+        }
+        return messages
     }
 }
 
-extension Data {
+private extension Optional<Int> {
+    func toAtParameter() -> String {
+        switch self {
+        case .none:
+            return "now"
+        case .some(let value):
+            return String(describing: value)
+        }
+    }
+}
+
+private extension Data {
     struct HexEncodingOptions: OptionSet {
         let rawValue: Int
         static let upperCase = HexEncodingOptions(rawValue: 1 << 0)
@@ -229,7 +187,7 @@ extension Data {
     }
 }
 
-extension URL {
+private extension URL {
     // https://stackoverflow.com/a/50990443
     func appending(_ queryItem: String, value: String?) -> URL {
         guard var urlComponents = URLComponents(string: absoluteString) else { return absoluteURL }
@@ -237,7 +195,10 @@ extension URL {
         let queryItem = URLQueryItem(name: queryItem, value: value)
         queryItems.append(queryItem)
         urlComponents.queryItems = queryItems
-        guard let url = urlComponents.url else { return self }
+        guard let url = urlComponents.url else {
+            log.error("failed to make url.")
+            return self
+        }
         return url
     }
 }
