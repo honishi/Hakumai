@@ -92,17 +92,7 @@ private extension NdgrClient {
             guard let payload = message.payload else { continue }
             switch payload {
             case .message(let message):
-                let chat = Chat(
-                    roomPosition: .arena,
-                    no: Int(message.chat.no),
-                    date: Date(),
-                    dateUsec: 10,
-                    mail: [],
-                    userId: message.chat.hashedUserID,
-                    comment: message.chat.content,
-                    premium: .ippan
-                )
-                delegate?.ndgrClientDidReceiveChat(self, chat: chat)
+                delegate?.ndgrClientDidReceiveChat(self, chat: message.toChat())
             case .state:
                 break
             case .signal:
@@ -208,5 +198,29 @@ private extension URL {
             return self
         }
         return url
+    }
+}
+
+private extension Dwango_Nicolive_Chat_Data_NicoliveMessage {
+    func toChat() -> Chat {
+        return Chat(
+            roomPosition: .arena,
+            no: Int(chat.no),
+            date: Date(),
+            dateUsec: 0,
+            mail: [],
+            userId: chat.hasRawUserID ? String(chat.rawUserID) : chat.hashedUserID,
+            comment: chat.content,
+            premium: {
+                switch chat.accountStatus {
+                case .standard:
+                    return .ippan
+                case .premium:
+                    return .premium
+                case .UNRECOGNIZED:
+                    return .ippan
+                }
+            }()
+        )
     }
 }
