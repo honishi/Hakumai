@@ -349,6 +349,10 @@ extension NicoManager: NdgrClientDelegate {
     func ndgrClientDidReceiveChat(_ ndgrClient: any NdgrClientType, chat: Chat) {
         delegate?.nicoManagerDidReceiveChat(self, chat: chat)
     }
+
+    func ndgrClientDidDisconnect(_ ndgrClient: any NdgrClientType) {
+        log.info("ndgr client disconnected.")
+    }
 }
 
 // MARK: - Private Methods

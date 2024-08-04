@@ -32,6 +32,14 @@ extension NdgrClient {
     func connect(viewUri: URL) {
         Task {
             await forward_playlist(uri: viewUri, from: Int(Date().timeIntervalSince1970))
+            self.delegate?.ndgrClientDidDisconnect(self)
+        }
+    }
+
+    func disconnect() {
+        session.cancelAllRequests { [weak self] in
+            guard let self = self else { return }
+            self.delegate?.ndgrClientDidDisconnect(self)
         }
     }
 }
@@ -116,13 +124,13 @@ private extension NdgrClient {
             )
             .validate()
             .responseStream { [weak self] in
-                guard let me = self else { return }
+                guard let self = self else { return }
                 switch $0.event {
                 case let .stream(result):
-                    log.debug("📦 stream (\(messageType))")
+                    // log.debug("📦 stream (\(messageType))")
                     switch result {
                     case let .success(data):
-                        for message in me.decode(data: data, messageType: T.self) {
+                        for message in self.decode(data: data, messageType: T.self) {
                             continuation.yield(message)
                         }
                     case .failure(let error):

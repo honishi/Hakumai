@@ -14,10 +14,12 @@ protocol NdgrClientType: AnyObject {
 
     // Main Methods
     func connect(viewUri: URL)
+    func disconnect()
 }
 
 protocol NdgrClientDelegate: AnyObject {
     // Main connection sequence.
     func ndgrClientDidConnect(_ ndgrClient: NdgrClientType)
     func ndgrClientDidReceiveChat(_ ndgrClient: NdgrClientType, chat: Chat)
+    func ndgrClientDidDisconnect(_ ndgrClient: NdgrClientType)
 }
