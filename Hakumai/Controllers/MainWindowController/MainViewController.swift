@@ -157,22 +157,6 @@ extension MainViewController {
         configureEmotionMessage()
         configureDebugMessage()
         DispatchQueue.main.async { self.focusLiveTextField() }
-
-        // temporary call
-        live = Live(
-            liveProgramId: "",
-            title: "",
-            community: Community(communityId: "", title: "", level: 0, thumbnailUrl: nil),
-            baseTime: Date(),
-            openTime: Date(),
-            beginTime: Date(),
-            isTimeShift: false
-        )
-        liveStartedDate = Date()
-        connectedToLive = true
-        DispatchQueue.main.asyncAfter(deadline: .now()) {
-            self.nicoManager.connect(liveProgramId: "")
-        }
     }
 }
 
@@ -1359,6 +1343,10 @@ private extension MainViewController {
 // MARK: Speech Handlers
 private extension MainViewController {
     func updateSpeechManagerState() {
+        DispatchQueue.main.async { self._updateSpeechManagerState() }
+    }
+
+    func _updateSpeechManagerState() {
         guard #available(macOS 10.14, *) else { return }
         if speakButton.isOn && connectedToLive && live?.isTimeShift == false {
             speechManager.startManager()

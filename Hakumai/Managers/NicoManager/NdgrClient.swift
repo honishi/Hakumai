@@ -31,6 +31,8 @@ final class NdgrClient: NdgrClientType {
 extension NdgrClient {
     func connect(viewUri: URL) {
         Task {
+            // TODO: 厳密には ndgrClientDidConnect はこの位置ではない。
+            self.delegate?.ndgrClientDidConnect(self)
             await forward_playlist(uri: viewUri, from: Int(Date().timeIntervalSince1970))
             self.delegate?.ndgrClientDidDisconnect(self)
         }
@@ -92,7 +94,11 @@ private extension NdgrClient {
             guard let payload = message.payload else { continue }
             switch payload {
             case .message(let message):
-                delegate?.ndgrClientDidReceiveChat(self, chat: message.toChat())
+                guard let chat = message.toChat() else {
+                    log.warning("need to handle this message. (\(String(describing: message.data)))")
+                    break
+                }
+                delegate?.ndgrClientDidReceiveChat(self, chat: chat)
             case .state:
                 break
             case .signal:
@@ -202,17 +208,43 @@ private extension URL {
 }
 
 private extension Dwango_Nicolive_Chat_Data_NicoliveMessage {
+    func toChat() -> Chat? {
+        guard let data = data else { return nil }
+        switch data {
+        case .chat(let chat):
+            return chat.toChat()
+        case .simpleNotification(let notification):
+            return notification.toChat()
+        case .gift:
+            return nil
+        case .nicoad:
+            return nil
+        case .gameUpdate:
+            return nil
+        case .tagUpdated:
+            return nil
+        case .moderatorUpdated:
+            return nil
+        case .ssngUpdated:
+            return nil
+        case .overflowedChat:
+            return nil
+        }
+    }
+}
+
+private extension Dwango_Nicolive_Chat_Data_Chat {
     func toChat() -> Chat {
         return Chat(
             roomPosition: .arena,
-            no: Int(chat.no),
+            no: Int(no),
             date: Date(),
             dateUsec: 0,
             mail: [],
-            userId: chat.hasRawUserID ? String(chat.rawUserID) : chat.hashedUserID,
-            comment: chat.content,
+            userId: hasRawUserID ? String(rawUserID) : hashedUserID,
+            comment: content,
             premium: {
-                switch chat.accountStatus {
+                switch accountStatus {
                 case .standard:
                     return .ippan
                 case .premium:
@@ -221,6 +253,42 @@ private extension Dwango_Nicolive_Chat_Data_NicoliveMessage {
                     return .ippan
                 }
             }()
+        )
+    }
+}
+
+private extension Dwango_Nicolive_Chat_Data_SimpleNotification {
+    func toChat() -> Chat? {
+        guard let message = message else { return nil }
+        let text = {
+            switch message {
+            case .ichiba(let text):
+                return text
+            case .quote(let text):
+                return text
+            case .emotion(let text):
+                return text
+            case .cruise(let text):
+                return text
+            case .programExtended(let text):
+                return text
+            case .rankingIn(let text):
+                return text
+            case .rankingUpdated(let text):
+                return text
+            case .visited(let text):
+                return text
+            }
+        }()
+        return Chat(
+            roomPosition: .arena,
+            no: 0,
+            date: Date(),
+            dateUsec: 0,
+            mail: [],
+            userId: "-",
+            comment: text,
+            premium: .system
         )
     }
 }
