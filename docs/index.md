@@ -18,7 +18,7 @@ Hakumai は macOS で動作するニコニコ生放送用のコメントビュ�
 
 ### Requirements
 
-* macOS 10.14 Mojave 以降
+* macOS 10.15 Catalina 以降
 * VOICEVOX 連携には別途 <a href="https://voicevox.hiroshiba.jp/" target="_blank">VOICEVOX ダウンロード</a>
 
 <img src="./image/food_kome_masu.png" width="160px">
@@ -33,10 +33,6 @@ Hakumai は macOS で動作するニコニコ生放送用のコメントビュ�
 ```
 
 <img src="./image/imfull.png" width="160px">
-
-## Old Versions
-
-* [v2.24.1](https://hakumai.s3.amazonaws.com/Hakumai.2.24.1.zip) ... macOS 10.12 / 10.13 対応最終版
 
 ## Donation
 
@@ -58,6 +54,6 @@ Hakumai は macOS で動作するニコニコ生放送用のコメントビュ�
 
 <div class="small-text thanks">
 
-イノシシ / うまごん / うんさい / きょろちゃん / ジャスティス名川 / 田中アオ / 七原くん / ビーナス(おかまる) / 向日葵 / 藤澤タック / ヘクトパスカル山田 / もっちゃん
+あああ / イノシシ / うまごん / うんさい / きょろちゃん / ジャスティス名川 / ジュディア / 田中アオ / 七原くん / 向日葵 / 藤澤タック / もっちゃん
 
 </div>
