@@ -227,16 +227,16 @@ private extension Dwango_Nicolive_Chat_Data_NicoliveMessage {
             return nil
         case .ssngUpdated:
             return nil
-        case .overflowedChat:
-            return nil
+        case .overflowedChat(let chat):
+            return chat.toChat(isOverflowed: true)
         }
     }
 }
 
 private extension Dwango_Nicolive_Chat_Data_Chat {
-    func toChat() -> Chat {
+    func toChat(isOverflowed: Bool = false) -> Chat {
         return Chat(
-            roomPosition: .arena,
+            roomPosition: isOverflowed ? .storeA : .arena,
             no: Int(no),
             date: Date(),
             dateUsec: 0,
