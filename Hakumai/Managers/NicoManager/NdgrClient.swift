@@ -29,11 +29,11 @@ final class NdgrClient: NdgrClientType {
 
 // MARK: - Public Functions
 extension NdgrClient {
-    func connect(viewUri: URL) {
+    func connect(viewUri: URL, beginTime: Date) {
         Task {
             // TODO: 厳密には ndgrClientDidConnect はこの位置ではない。
             self.delegate?.ndgrClientDidConnect(self)
-            await forward_playlist(uri: viewUri, from: Int(Date().timeIntervalSince1970))
+            await forward_playlist(uri: viewUri, from: Int(beginTime.timeIntervalSince1970))
             self.delegate?.ndgrClientDidDisconnect(self)
         }
     }

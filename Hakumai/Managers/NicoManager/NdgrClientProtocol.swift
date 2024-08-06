@@ -13,7 +13,7 @@ protocol NdgrClientType: AnyObject {
     var delegate: NdgrClientDelegate? { get set }
 
     // Main Methods
-    func connect(viewUri: URL)
+    func connect(viewUri: URL, beginTime: Date)
     func disconnect()
 }
 

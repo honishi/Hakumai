@@ -465,7 +465,7 @@ private extension NicoManager {
     func openWatchSocket(webSocketUrl: URL, userId: String, connectContext: NicoConnectContext) {
         delegate?.nicoManager(self, hasDebugMessgae: "Opening watch socket...")
         openWatchSocket(webSocketUrl: webSocketUrl) { [weak self] in
-            guard let me = self, let isTimeShift = me.live?.isTimeShift else { return }
+            guard let me = self, let live = me.live else { return }
             switch $0 {
             case .success(let messageServer):
                 me.openThreadInfo = OpenThreadInfo(
@@ -473,7 +473,13 @@ private extension NicoManager {
                     threadKey: "room.data.yourPostKey")
                 me.delegate?.nicoManager(me, hasDebugMessgae: "Completed to open watch socket.")
                 // me.openMessageSocket(userId: userId, room: room, connectContext: connectContext, isTimeShift: isTimeShift)
-                me.connectToNdgrServer(userId: userId, messageServer: messageServer, connectContext: connectContext, isTimeShift: isTimeShift)
+                me.connectToNdgrServer(
+                    userId: userId,
+                    messageServer: messageServer,
+                    connectContext: connectContext,
+                    beginTime: live.beginTime,
+                    isTimeShift: live.isTimeShift
+                )
             case .failure(let error):
                 me.delegate?.nicoManager(
                     me,
@@ -484,13 +490,19 @@ private extension NicoManager {
     }
 
     // #5/5. Finally, connect to ndgr server.
-    func connectToNdgrServer(userId: String, messageServer: WebSocketMessageServerData, connectContext: NicoConnectContext, isTimeShift: Bool) {
+    func connectToNdgrServer(
+        userId: String,
+        messageServer: WebSocketMessageServerData,
+        connectContext: NicoConnectContext,
+        beginTime: Date,
+        isTimeShift: Bool
+    ) {
         delegate?.nicoManager(self, hasDebugMessgae: "Connecting to ngdr server...")
         guard let url = URL(string: messageServer.data.viewUri) else {
             log.error("viewuri parse error.")
             return
         }
-        ndgrClient.connect(viewUri: url)
+        ndgrClient.connect(viewUri: url, beginTime: beginTime)
         /*
          openMessageSocket(userId: userId, room: room, connectContext: connectContext, isTimeShift: isTimeShift) { [weak self] in
          guard let me = self else { return }
