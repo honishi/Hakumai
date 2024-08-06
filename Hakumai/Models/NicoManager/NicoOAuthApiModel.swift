@@ -74,15 +74,3 @@ struct WsEndpointResponse: Codable {
     let meta: MetaResponse
     let data: Data
 }
-
-struct ProgramRoomsResponse: Codable {
-    struct Data: Codable {
-        let webSocketUri: URL
-        let name: String
-        let id: Int
-        let threadId: String
-    }
-
-    let meta: MetaResponse
-    let data: [Data]
-}

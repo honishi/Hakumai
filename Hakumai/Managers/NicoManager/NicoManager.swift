@@ -93,15 +93,6 @@ final class NicoManager: NicoManagerType {
             message = Date()
         }
     }
-    struct OpenThreadInfo {
-        let userId: String
-        let threadKey: String
-    }
-    struct ProgramRoom {
-        let name: String
-        let id: Int
-        let threadId: String
-    }
 
     // Public Properties
     weak var delegate: NicoManagerDelegate?
@@ -140,12 +131,6 @@ final class NicoManager: NicoManagerType {
 
     // App-side Health Check (Text Socket)
     private var textSocketEventCheckTimer: Timer?
-
-    // Program Rooms (Store Thread)
-    private var openThreadInfo: OpenThreadInfo?
-    private var openedRoomCount = 0
-    private var programRoomsCheckTimer: Timer?
-    private var programRooms: [ProgramRoom] = []
 
     // History Comments
     private var earliestHistoryChatDate: Date = .distantFuture
@@ -347,7 +332,6 @@ extension NicoManager: NdgrClientDelegate {
         connectRequests.lastEstablished = connectRequests.onGoing
         connectRequests.onGoing = nil
         isConnected = true
-        openedRoomCount = 1
         startBasicTimers()
         delegate?.nicoManagerDidConnectToLive(
             self,
@@ -468,11 +452,7 @@ private extension NicoManager {
             guard let me = self, let live = me.live else { return }
             switch $0 {
             case .success(let messageServer):
-                me.openThreadInfo = OpenThreadInfo(
-                    userId: userId,
-                    threadKey: "room.data.yourPostKey")
                 me.delegate?.nicoManager(me, hasDebugMessgae: "Completed to open watch socket.")
-                // me.openMessageSocket(userId: userId, room: room, connectContext: connectContext, isTimeShift: isTimeShift)
                 me.connectToNdgrServer(
                     userId: userId,
                     messageServer: messageServer,
@@ -535,7 +515,6 @@ private extension NicoManager {
         startWatchSocketKeepSeatTimer(interval: watchSocketKeepSeatInterval)
         startMessageSocketEmptyMessageTimer(interval: messageSocketEmptyMessageInterval)
         startPingPongCheckTimer()
-        // startProgramRoomsCheckTimer()
         log.debug("Started all timers.")
     }
 
@@ -544,7 +523,6 @@ private extension NicoManager {
         stopMessageSocketEmptyMessageTimer()
         stopPingPongCheckTimer()
         clearTextSocketEventCheckTimer()
-        stopProgramRoomsCheckTimer()
         log.debug("Stopped all timers.")
     }
 
@@ -566,9 +544,6 @@ private extension NicoManager {
 
         live = nil
         isConnected = false
-        openThreadInfo = nil
-        openedRoomCount = 0
-        programRooms.removeAll()
     }
 }
 
@@ -887,7 +862,6 @@ private extension NicoManager {
                 if isTimeShift {
                     disconnect()
                 } else {
-                    startProgramRoomsCheckTimer()
                     setTextSocketEventCheckTimer(delay: textEventDisconnectDetectDelay)
                 }
                 receivedAllHistoryChats = true
@@ -963,9 +937,12 @@ private extension NicoManager {
     }
 
     func roomPosition(of chat: WebSocketChatData) -> RoomPosition {
-        let index = programRooms.map({ $0.threadId }).firstIndex(of: chat.chat.thread)
-        guard let index = index else { return .arena }
-        return RoomPosition(rawValue: index) ?? .arena
+        return .arena
+        /*
+         let index = programRooms.map({ $0.threadId }).firstIndex(of: chat.chat.thread)
+         guard let index = index else { return .arena }
+         return RoomPosition(rawValue: index) ?? .arena
+         */
     }
 
     func updateChatNumbers(chat: Chat) {
@@ -1127,68 +1104,6 @@ private extension NicoManager {
     }
 }
 
-// MARK: - Private Methods (Program Rooms Check Timer)
-private extension NicoManager {
-    func startProgramRoomsCheckTimer() {
-        stopProgramRoomsCheckTimer()
-        programRoomsCheckTimer = Timer.scheduledTimer(
-            timeInterval: 120,
-            target: self,
-            selector: #selector(NicoManager.programRoomsCheckTimerFired),
-            userInfo: nil,
-            repeats: true)
-        // For first time, kick the selector manually.
-        programRoomsCheckTimerFired()
-    }
-
-    func stopProgramRoomsCheckTimer() {
-        programRoomsCheckTimer?.invalidate()
-        programRoomsCheckTimer = nil
-    }
-
-    @objc func programRoomsCheckTimerFired() {
-        log.debug("programRoomsCheckTimerFired fired.")
-        guard let openThreadInfo = openThreadInfo, let live = live else { return }
-        checkProgramRooms(
-            userId: openThreadInfo.userId,
-            liveProgramId: live.liveProgramId)
-    }
-}
-
-private extension NicoManager {
-    func checkProgramRooms(userId: String, liveProgramId: String) {
-        callOAuthEndpoint(
-            url: programsRoomsApiUrl,
-            parameters: [
-                "userId": userId,
-                "nicoliveProgramId": liveProgramId
-            ]
-        ) { [weak self] (result: Result<ProgramRoomsResponse, NicoError>) in
-            guard let me = self else { return }
-            switch result {
-            case .success(let data):
-                log.debug("Program rooms: \(data)")
-                me.programRooms = data.data.toProgramRooms()
-                for index in me.openedRoomCount..<data.data.count {
-                    let room = data.data[index]
-                    log.debug("Opening store thread (room: \(room)...")
-                    guard let socket = me.messageSocket, let store = me.openThreadInfo else { return }
-                    me.sendInitialThreadMessage(
-                        socket: socket,
-                        userId: userId,
-                        threadId: room.threadId,
-                        resFrom: 0,
-                        threadKey: store.threadKey
-                    )
-                    me.openedRoomCount += 1
-                }
-            case .failure(let error):
-                log.error(error)
-            }
-        }
-    }
-}
-
 // MARK: - Private Extensions
 private extension WatchProgramsResponse {
     var isNotStarted: Bool {
@@ -1254,18 +1169,6 @@ private extension WebSocketStatisticsData {
             adPoints: data.adPoints,
             giftPoints: data.giftPoints
         )
-    }
-}
-
-private extension Array where Element == ProgramRoomsResponse.Data {
-    func toProgramRooms() -> [NicoManager.ProgramRoom] {
-        map {
-            NicoManager.ProgramRoom(
-                name: $0.name,
-                id: $0.id,
-                threadId: $0.threadId
-            )
-        }
     }
 }
 
