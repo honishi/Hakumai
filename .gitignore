@@ -6,6 +6,9 @@
 ### IntelliJ ###
 .idea
 
+### VSCode ###
+.vscode
+
 ### Bundler ###
 vendor/
 .bundle
