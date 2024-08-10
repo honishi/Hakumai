@@ -617,7 +617,9 @@ extension MainViewController: NicoManagerDelegate {
 
         logDebugRankingManagerStatus()
 
-        delegate?.mainViewControllerDidDisconnect(self)
+        DispatchQueue.main.async {
+            self.delegate?.mainViewControllerDidDisconnect(self)
+        }
     }
 
     func nicoManagerDidReceiveStatistics(_ nicoManager: NicoManagerType, stat: LiveStatistics) {

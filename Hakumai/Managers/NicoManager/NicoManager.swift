@@ -348,6 +348,7 @@ extension NicoManager: NdgrClientDelegate {
 
     func ndgrClientDidDisconnect(_ ndgrClient: any NdgrClientType) {
         log.info("ndgr client disconnected.")
+        delegate?.nicoManagerDidDisconnect(self, disconnectContext: .normal)
     }
 }
 

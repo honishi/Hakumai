@@ -99,8 +99,16 @@ private extension NdgrClient {
                     break
                 }
                 delegate?.ndgrClientDidReceiveChat(self, chat: chat)
-            case .state:
-                break
+            case .state(let state):
+                if state.isDisconnect() {
+                    disconnect()
+                    break
+                }
+                guard let chat = state.toChat() else {
+                    log.warning("need to handle this state. (\(String(describing: state)))")
+                    break
+                }
+                delegate?.ndgrClientDidReceiveChat(self, chat: chat)
             case .signal:
                 break
             }
@@ -157,7 +165,7 @@ private extension NdgrClient {
                 messages.append(parsed)
             } catch {
                 if stream.hasBytesAvailable {
-                    log.error("メッセージの解析中にエラーが発生しました: \(error)")
+                    log.error("Failed to parse message: \(error)")
                 } else {
                     // ストリームの終わりに達した場合は正常
                     break
@@ -253,6 +261,41 @@ private extension Dwango_Nicolive_Chat_Data_Chat {
                     return .ippan
                 }
             }()
+        )
+    }
+}
+
+private extension Dwango_Nicolive_Chat_Data_NicoliveState {
+    func isDisconnect() -> Bool {
+        guard hasProgramStatus else { return false }
+        switch programStatus.state {
+        case .ended:
+            return true
+        case .unknown, .UNRECOGNIZED:
+            return false
+        }
+    }
+    
+    func toChat() -> Chat? {
+        if hasMarquee {
+            return marquee.toChat()
+        }
+        // TODO: その他の state を処理する。
+        return nil
+    }
+}
+
+private extension Dwango_Nicolive_Chat_Data_Marquee {
+    func toChat() -> Chat {
+        return Chat(
+            roomPosition: .arena,
+            no: 0,
+            date: Date(),
+            dateUsec: 0,
+            mail: [],
+            userId: "",
+            comment: hasDisplay && display.hasOperatorComment ? display.operatorComment.content : "",
+            premium: .caster
         )
     }
 }
