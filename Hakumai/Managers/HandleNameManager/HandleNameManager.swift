@@ -40,6 +40,8 @@ final class HandleNameManager {
     }
 }
 
+// TODO: communityId のかわりに providerId を使う。
+
 // MARK: - Public Functions
 extension HandleNameManager {
     func extractAndUpdateHandleName(from comment: String, for userId: String, in communityId: String) {

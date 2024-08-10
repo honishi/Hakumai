@@ -50,7 +50,7 @@ final class MainViewController: NSViewController {
 
     @IBOutlet private weak var liveThumbnailImageView: LiveThumbnailImageView!
     @IBOutlet private weak var liveTitleLabel: NSTextField!
-    @IBOutlet private weak var communityTitleLabel: NSTextField!
+    @IBOutlet private weak var providerNameLabel: NSTextField!
 
     @IBOutlet private weak var visitorsIconImageView: NSImageView!
     @IBOutlet private weak var visitorsValueLabel: NSTextField!
@@ -478,7 +478,7 @@ extension MainViewController: NicoManagerDelegate {
             title: live.title,
             community: live.community.title)
 
-        updateCommunityViews(for: live)
+        updateLiveTitleViews(for: live)
 
         if live.isTimeShift {
             liveThumbnailManager.start(for: live.liveProgramId, delegate: self)
@@ -888,7 +888,7 @@ private extension MainViewController {
         liveUrlTextField.placeholderString = L10n.liveUrlTextFieldPlaceholder
 
         liveTitleLabel.stringValue = "[\(L10n.liveTitle)]"
-        communityTitleLabel.stringValue = "[\(L10n.communityName)]"
+        providerNameLabel.stringValue = "[\(L10n.userName)]"
 
         visitorsIconImageView.toolTip = L10n.visitorCount
         visitorsValueLabel.toolTip = L10n.visitorCount
@@ -1024,13 +1024,13 @@ private extension MainViewController {
         }
     }
 
-    func updateCommunityViews(for live: Live) {
+    func updateLiveTitleViews(for live: Live) {
         DispatchQueue.main.async { self._updateCommunityViews(for: live) }
     }
 
     func _updateCommunityViews(for live: Live) {
         liveTitleLabel.stringValue = live.title
-        communityTitleLabel.stringValue = live.community.title
+        providerNameLabel.stringValue = live.providerName
     }
 }
 
@@ -1159,10 +1159,9 @@ extension MainViewController {
         NSWorkspace.shared.open(url)
     }
 
-    @IBAction func openCommunityPage(_ sender: Any) {
-        guard let live = live,
-              let url = nicoManager.communityPageUrl(for: live.communityId) else { return }
-        NSWorkspace.shared.open(url)
+    @IBAction func openUserPage(_ sender: Any) {
+        guard let live = live else { return }
+        NSWorkspace.shared.open(live.providerProfileUrl)
     }
 
     @IBAction func openAdPage(_ sender: Any) {

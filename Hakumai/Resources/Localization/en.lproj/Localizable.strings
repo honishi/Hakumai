@@ -93,6 +93,7 @@
 "comment_text_field_placeholder" = "⌘O (Empty ⏎ to scroll to bottom)";
 "community_id" = "Community Id";
 "community_name" = "Community Name";
+"user_name" = "User Name";
 "elapsed_time" = "Elapsed Time";
 "live_title" = "Live Title";
 "live_url_text_field_placeholder" = "⌘L (Live URL, Live#)";
