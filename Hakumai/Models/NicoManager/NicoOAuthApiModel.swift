@@ -16,6 +16,8 @@ struct MetaResponse: Codable {
 struct WatchProgramsResponse: Codable {
     struct Data: Codable {
         let program: Program
+        let programProvider: ProgramProvider
+        // TODO: 削除する。
         let socialGroup: SocialGroup
     }
 
@@ -40,6 +42,15 @@ struct WatchProgramsResponse: Codable {
         let title: String
         let description: String
         let schedule: Schedule
+    }
+
+    // https://github.com/niconamaworkshop/api/blob/master/oauth/watch/_programProvider.md
+    struct ProgramProvider: Codable {
+        let name: String
+        let profileUrl: URL
+        let programProviderId: String
+        let type: String
+        let userLevel: Int?
     }
 
     struct SocialGroup: Codable {
