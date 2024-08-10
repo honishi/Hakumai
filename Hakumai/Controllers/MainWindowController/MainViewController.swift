@@ -589,6 +589,8 @@ extension MainViewController: NicoManagerDelegate {
     }
 
     func nicoManagerDidDisconnect(_ nicoManager: NicoManagerType, disconnectContext: NicoDisconnectContext) {
+        guard connectedToLive else { return }
+
         switch disconnectContext {
         case .normal:
             logSystemMessageToTable(L10n.liveClosed)

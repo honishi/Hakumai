@@ -275,7 +275,7 @@ private extension Dwango_Nicolive_Chat_Data_NicoliveState {
             return false
         }
     }
-    
+
     func toChat() -> Chat? {
         if hasMarquee {
             return marquee.toChat()
