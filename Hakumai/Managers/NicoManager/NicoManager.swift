@@ -362,8 +362,7 @@ private extension NicoManager {
             url: watchProgramsApiUrl,
             parameters: [
                 "nicoliveProgramId": liveProgramId,
-                // TODO: socialGroup を削除する。
-                "fields": "program,programProvider,socialGroup"
+                "fields": "program,programProvider"
             ]
         ) { [weak self] (result: Result<WatchProgramsResponse, NicoError>) in
             guard let me = self else { return }
@@ -1116,12 +1115,6 @@ private extension WatchProgramsResponse {
         Live(
             liveProgramId: nicoliveProgramId,
             title: data.program.title,
-            community: Community(
-                communityId: data.socialGroup.socialGroupId,
-                title: data.socialGroup.name,
-                level: data.socialGroup.level ?? 0,
-                thumbnailUrl: data.socialGroup.thumbnail
-            ),
             baseTime: data.program.schedule.vposBaseTime,
             openTime: data.program.schedule.openTime,
             beginTime: data.program.schedule.beginTime,
@@ -1136,7 +1129,17 @@ private extension WatchProgramsResponse.ProgramProvider {
         ProgramProvider(
             programProviderId: programProviderId,
             name: name,
-            profileUrl: profileUrl
+            profileUrl: profileUrl,
+            icons: icons.toProgramProviderIcons()
+        )
+    }
+}
+
+private extension WatchProgramsResponse.ProgramProvider.Icons {
+    func toProgramProviderIcons() -> ProgramProvider.Icons {
+        ProgramProvider.Icons(
+            uri150x150: uri150x150,
+            uri50x50: uri50x50
         )
     }
 }

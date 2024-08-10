@@ -6,6 +6,10 @@
 //  Copyright (c) 2015 Hiroyuki Onishi. All rights reserved.
 //
 
+// NOTE: コミュニティ廃止に伴い、本来は HandleNameManager の communityId はすべて providerId に置き換えるべき。
+// ただし、communityId はデータベースのカラム名にまで使われているため、改修が面倒なため、引き続き communityId を使う。
+// HandleNameManager の利用側で、communityId に providerId を設定することで、暫定的な対処とする。
+
 import Foundation
 import FMDB
 
@@ -39,8 +43,6 @@ final class HandleNameManager {
         deleteObsoleteRows()
     }
 }
-
-// TODO: communityId のかわりに providerId を使う。
 
 // MARK: - Public Functions
 extension HandleNameManager {

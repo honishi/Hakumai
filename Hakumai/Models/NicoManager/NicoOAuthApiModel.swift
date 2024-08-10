@@ -17,8 +17,6 @@ struct WatchProgramsResponse: Codable {
     struct Data: Codable {
         let program: Program
         let programProvider: ProgramProvider
-        // TODO: 削除する。
-        let socialGroup: SocialGroup
     }
 
     enum ProgramStatus: String, Codable {
@@ -51,16 +49,14 @@ struct WatchProgramsResponse: Codable {
         let programProviderId: String
         let type: String
         let userLevel: Int?
-    }
+        let icons: Icons
 
-    struct SocialGroup: Codable {
-        let type: String
-        let socialGroupId: String
-        let description: String
-        let name: String
-        let thumbnail: URL
-        let thumbnailSmall: URL
-        let level: Int?
+        // swiftlint:disable nesting
+        struct Icons: Codable {
+            let uri150x150: URL
+            let uri50x50: URL
+        }
+        // swiftlint:enable nesting
     }
 
     let meta: MetaResponse
