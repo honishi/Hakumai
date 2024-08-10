@@ -223,10 +223,10 @@ private extension Dwango_Nicolive_Chat_Data_NicoliveMessage {
             return chat.toChat()
         case .simpleNotification(let notification):
             return notification.toChat()
-        case .gift:
-            return nil
-        case .nicoad:
-            return nil
+        case .gift(let gift):
+            return gift.toChat()
+        case .nicoad(let nicoad):
+            return nicoad.toChat()
         case .gameUpdate:
             return nil
         case .tagUpdated:
@@ -332,6 +332,47 @@ private extension Dwango_Nicolive_Chat_Data_SimpleNotification {
             userId: "-",
             comment: text,
             premium: .system
+        )
+    }
+}
+
+// TODO: 想像で実装しただけなので、機能が実際に使えるようになったら動作確認する。
+private extension Dwango_Nicolive_Chat_Data_Gift {
+    func toChat() -> Chat? {
+        return Chat(
+            roomPosition: .arena,
+            no: 0,
+            date: Date(),
+            dateUsec: 0,
+            mail: [],
+            userId: "-",
+            comment: message,
+            premium: .caster
+        )
+    }
+}
+
+// TODO: 想像で実装しただけなので、機能が実際に使えるようになったら動作確認する。
+private extension Dwango_Nicolive_Chat_Data_Nicoad {
+    func toChat() -> Chat? {
+        guard let versions = versions else { return nil }
+        let text = {
+            switch versions {
+            case .v0(let v0):
+                return v0.hasLatest && v0.latest.hasMessage ? v0.latest.message : "-"
+            case .v1(let v1):
+                return v1.message
+            }
+        }()
+        return Chat(
+            roomPosition: .arena,
+            no: 0,
+            date: Date(),
+            dateUsec: 0,
+            mail: [],
+            userId: "-",
+            comment: text,
+            premium: .caster
         )
     }
 }
