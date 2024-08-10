@@ -1126,9 +1126,17 @@ private extension WatchProgramsResponse {
             openTime: data.program.schedule.openTime,
             beginTime: data.program.schedule.beginTime,
             isTimeShift: data.program.schedule.status == .ended,
-            providerId: data.programProvider.programProviderId,
-            providerName: data.programProvider.name,
-            providerProfileUrl: data.programProvider.profileUrl
+            programProvider: data.programProvider.toProgramProvider()
+        )
+    }
+}
+
+private extension WatchProgramsResponse.ProgramProvider {
+    func toProgramProvider() -> ProgramProvider {
+        ProgramProvider(
+            programProviderId: programProviderId,
+            name: name,
+            profileUrl: profileUrl
         )
     }
 }

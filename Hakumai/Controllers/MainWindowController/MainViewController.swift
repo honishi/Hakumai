@@ -1030,7 +1030,7 @@ private extension MainViewController {
 
     func _updateCommunityViews(for live: Live) {
         liveTitleLabel.stringValue = live.title
-        providerNameLabel.stringValue = live.providerName
+        providerNameLabel.stringValue = live.programProvider.name
     }
 }
 
@@ -1161,7 +1161,7 @@ extension MainViewController {
 
     @IBAction func openUserPage(_ sender: Any) {
         guard let live = live else { return }
-        NSWorkspace.shared.open(live.providerProfileUrl)
+        NSWorkspace.shared.open(live.programProvider.profileUrl)
     }
 
     @IBAction func openAdPage(_ sender: Any) {

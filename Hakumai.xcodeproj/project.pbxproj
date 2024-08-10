@@ -62,6 +62,7 @@
 		DB576ED02657A4980041050A /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB576ECF2657A4980041050A /* AuthManager.swift */; };
 		DB576ED32657A5BC0041050A /* AuthModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB576ED22657A5BC0041050A /* AuthModel.swift */; };
 		DB61AD82271B18DA001656F5 /* CircleImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB61AD81271B18DA001656F5 /* CircleImageView.swift */; };
+		DB6337E12C67C647001B1B5E /* ProgramProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6337E02C67C647001B1B5E /* ProgramProvider.swift */; };
 		DB682D421A36E6AE00499C72 /* Parameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB682D411A36E6AE00499C72 /* Parameter.swift */; };
 		DB690973266372230081F24F /* ButtonScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB690972266372230081F24F /* ButtonScrollView.swift */; };
 		DB6C73142662894B0026A8C0 /* NSScrollView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6C73132662894B0026A8C0 /* NSScrollView+Extensions.swift */; };
@@ -224,6 +225,7 @@
 		DB576ECF2657A4980041050A /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
 		DB576ED22657A5BC0041050A /* AuthModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthModel.swift; sourceTree = "<group>"; };
 		DB61AD81271B18DA001656F5 /* CircleImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleImageView.swift; sourceTree = "<group>"; };
+		DB6337E02C67C647001B1B5E /* ProgramProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgramProvider.swift; sourceTree = "<group>"; };
 		DB682D411A36E6AE00499C72 /* Parameter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Parameter.swift; sourceTree = "<group>"; };
 		DB690972266372230081F24F /* ButtonScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonScrollView.swift; sourceTree = "<group>"; };
 		DB6C73132662894B0026A8C0 /* NSScrollView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSScrollView+Extensions.swift"; sourceTree = "<group>"; };
@@ -809,6 +811,7 @@
 				DBFA88811A1BC8C9005349AD /* Enum.swift */,
 				DBFA888A1A1C9A56005349AD /* Live.swift */,
 				DBB4730A1A35951C002C797E /* LiveStatistics.swift */,
+				DB6337E02C67C647001B1B5E /* ProgramProvider.swift */,
 				DB52B0AC1A2102C700E78C6A /* User.swift */,
 			);
 			path = Application;
@@ -1187,6 +1190,7 @@
 				DB9EFC781A3E9EB10087D302 /* PreferenceWindow.swift in Sources */,
 				DBFB81511A36B52E00294934 /* PreferenceWindowController.swift in Sources */,
 				DB55AC681A33908300CFAD99 /* PremiumTableCellView.swift in Sources */,
+				DB6337E12C67C647001B1B5E /* ProgramProvider.swift in Sources */,
 				DB22A638272D006900E2177D /* RankingManager.swift in Sources */,
 				DB22A63A272D011000E2177D /* RankingManagerProtocol.swift in Sources */,
 				DB7EB8A21A24AA5100C3BFB5 /* RoomPositionTableCellView.swift in Sources */,

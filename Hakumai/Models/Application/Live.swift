@@ -20,9 +20,7 @@ struct Live {
     let openTime: Date
     let beginTime: Date
     let isTimeShift: Bool
-    let providerId: String
-    let providerName: String
-    let providerProfileUrl: URL
+    let programProvider: ProgramProvider
 
     var communityId: String { community.communityId }
     var liveUrlString: String { liveBaseUrl + liveProgramId }
@@ -33,7 +31,6 @@ extension Live: CustomStringConvertible {
         "Live: liveId[\(liveProgramId)] title[\(title)] community[\(community.description)] " +
             "baseTime[\(baseTime.description)] openTime[\(openTime.description)] " +
             "beginTime[\(beginTime.description)] isTimeShift[\(isTimeShift)] " +
-            "providerId[\(providerId)] providerName[\(providerName)] " +
-            "providerProfileUrl[\(providerProfileUrl)]"
+            "programProvider[\(programProvider)]"
     }
 }
