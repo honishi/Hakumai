@@ -48,7 +48,7 @@ extension NdgrClient {
 
 // MARK: - Private Functions
 private extension NdgrClient {
-    // swiftlint:disable function_body_length
+    // swiftlint:disable function_body_length cyclomatic_complexity
     func forwardPlaylist(uri: URL, from: Int?) async {
         var next: Int? = from
 
@@ -64,6 +64,9 @@ private extension NdgrClient {
                 messageType: Dwango_Nicolive_Chat_Service_Edge_ChunkedEntry.self
             )
             let isFetchingHistory = (next ?? 0) < latestHistoryTime
+            if !isFetchingHistory {
+                emitChatHistoryIfNeeded(historyChat: historyChat)
+            }
             next = nil
             for await entry in entries {
                 guard let entry = entry.entry else {
@@ -108,7 +111,7 @@ private extension NdgrClient {
         }
         log.info("done: _forward_playlist")
     }
-    // swiftlint:enable function_body_length
+    // swiftlint:enable function_body_length cyclomatic_complexity
 
     func emitChatHistoryIfNeeded(historyChat: HistoryChat) {
         guard !historyChat.isEmpty else { return }
@@ -123,7 +126,6 @@ private extension NdgrClient {
                 historyChat.append(chat)
                 return
             }
-            emitChatHistoryIfNeeded(historyChat: historyChat)
             delegate?.ndgrClientDidReceiveChat(self, chat: chat)
         }
         let messages = retrieve(
