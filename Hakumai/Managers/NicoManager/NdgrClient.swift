@@ -54,8 +54,8 @@ private extension NdgrClient {
 
         var segmentCount = 0
         let historyChat = HistoryChat()
-        // 現在時刻より少し前 (1segment = 16sec) で history chat としての読み込みをやめる
-        let latestHistoryTime = Int(Date().timeIntervalSince1970) - 16
+        // 現在時刻より少し前 (1segment = 16sec * 2) で history chat としての読み込みをやめる
+        let latestHistoryTime = Int(Date().timeIntervalSince1970) - 16 * 2
 
         while next != nil {
             log.debug("🪞 view")
@@ -75,9 +75,11 @@ private extension NdgrClient {
                 }
                 switch entry {
                 case .backward:
-                    log.info("⏮️ backward")
+                    // log.info("⏮️ backward")
+                    continue
                 case .previous:
-                    log.info("⏮️ previous")
+                    // log.info("⏮️ previous")
+                    continue
                 case .segment(let segment):
                     log.info("📩 segment")
                     segmentCount += 1
@@ -89,8 +91,7 @@ private extension NdgrClient {
                     Task {
                         await pullMessages(
                             uri: url,
-                            isFetchingHistory: isFetchingHistory,
-                            historyChat: historyChat
+                            historyChat: isFetchingHistory ? historyChat : nil
                         )
                         if isFetchingHistory {
                             delegate?.ndgrClientReceivingChatHistory(
@@ -119,15 +120,17 @@ private extension NdgrClient {
         historyChat.removeAll()
     }
 
-    func pullMessages(uri: URL, isFetchingHistory: Bool, historyChat: HistoryChat) async {
+    // swiftlint:disable cyclomatic_complexity
+    func pullMessages(uri: URL, historyChat: HistoryChat?) async {
         let onReceiveChat = { [weak self] (chat: Chat) in
-            guard let self = self else { return }
-            if isFetchingHistory {
+            if let historyChat = historyChat {
                 historyChat.append(chat)
                 return
             }
+            guard let self = self else { return }
             delegate?.ndgrClientDidReceiveChat(self, chat: chat)
         }
+        var detectedDisconnection = false
         let messages = retrieve(
             uri: uri,
             messageType: Dwango_Nicolive_Chat_Service_Edge_ChunkedMessage.self
@@ -143,7 +146,7 @@ private extension NdgrClient {
                 onReceiveChat(chat)
             case .state(let state):
                 if state.isDisconnect() {
-                    disconnect()
+                    detectedDisconnection = true
                     continue
                 }
                 guard let chat = state.toChat() else {
@@ -155,8 +158,12 @@ private extension NdgrClient {
                 continue
             }
         }
+        if detectedDisconnection {
+            disconnect()
+        }
         log.info("done: _pull_messages")
     }
+    // swiftlint:enable cyclomatic_complexity
 
     func retrieve<T: SwiftProtobuf.Message>(
         uri: URL,

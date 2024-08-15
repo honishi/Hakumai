@@ -583,7 +583,7 @@ extension MainViewController: NicoManagerDelegate {
     func nicoManagerReceivingChatHistory(_ nicoManager: NicoManagerType, requestCount: Int, totalChatCount: Int) {
         let shouldLog = requestCount % 20 == 0
         guard shouldLog else { return }
-        logSystemMessageToTable(L10n.receivingComments(totalChatCount))
+        logSystemMessageToTable(L10n.receivingComments(requestCount, totalChatCount))
     }
 
     func nicoManagerDidReceiveChatHistory(_ nicoManager: NicoManagerType, chats: [Chat]) {
@@ -598,7 +598,7 @@ extension MainViewController: NicoManagerDelegate {
                 in: live.programProvider.programProviderId
             )
         }
-        bulkAppendToTable(chats: chats, scrollToBottom: !live.isTimeShift)
+        bulkAppendToTable(chats: chats, scrollToBottom: true)
     }
 
     func nicoManagerDidDisconnect(_ nicoManager: NicoManagerType, disconnectContext: NicoDisconnectContext) {

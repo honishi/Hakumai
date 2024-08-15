@@ -116,7 +116,7 @@
 "reconnecting" = "Reconnecting...";
 "reconnected" = "Reconnected.";
 "failed_to_comment" = "Failed to comment.";
-"receiving_comments" = "Receiving comments... (%d)";
+"receiving_comments" = "Receiving comments... (%d: %d)";
 "received_comments" = "Received %d comments.";
 
 /// Error
