@@ -116,8 +116,12 @@ private extension NdgrClient {
 
     func emitChatHistoryIfNeeded(historyChat: HistoryChat) {
         guard !historyChat.isEmpty else { return }
-        delegate?.ndgrClientDidReceiveChatHistory(self, chats: historyChat.chats)
-        historyChat.removeAll()
+        let count = historyChat.chats.count
+        delegate?.ndgrClientDidReceiveChatHistory(
+            self,
+            chats: Array(historyChat.chats.prefix(count))
+        )
+        historyChat.dropFirst(count)
     }
 
     // swiftlint:disable cyclomatic_complexity
@@ -154,7 +158,8 @@ private extension NdgrClient {
                     continue
                 }
                 onReceiveChat(chat)
-            case .signal:
+            case .signal(let signal):
+                log.debug("FLUSHED (\(signal == .flushed))")
                 continue
             }
         }
@@ -359,10 +364,11 @@ private final class HistoryChat: @unchecked Sendable {
         _chats.append(chat)
     }
 
-    func removeAll() {
+    func dropFirst(_ count: Int) {
         lock.lock()
         defer { lock.unlock() }
-        _chats.removeAll()
+        let remainingCount = _chats.count - count
+        _chats = Array(_chats.suffix(remainingCount))
     }
 }
 
