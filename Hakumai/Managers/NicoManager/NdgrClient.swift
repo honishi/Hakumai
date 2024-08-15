@@ -33,7 +33,7 @@ extension NdgrClient {
         Task {
             // TODO: 厳密には ndgrClientDidConnect はこの位置ではない。
             delegate?.ndgrClientDidConnect(self)
-            await forward_playlist(uri: viewUri, from: Int(beginTime.timeIntervalSince1970))
+            await forwardPlaylist(uri: viewUri, from: Int(beginTime.timeIntervalSince1970))
             delegate?.ndgrClientDidDisconnect(self)
         }
     }
@@ -48,19 +48,14 @@ extension NdgrClient {
 
 // MARK: - Private Functions
 private extension NdgrClient {
-    func forward_playlist(uri: URL, from: Int?) async {
+    // swiftlint:disable function_body_length
+    func forwardPlaylist(uri: URL, from: Int?) async {
         var next: Int? = from
 
-        let now = Int(Date().timeIntervalSince1970) - 20
-        var isReadingHistory = true
-        let historyChat = HistoryChat()
         var segmentCount = 0
-
-        let emitChatHistoryIfNeeded = { [weak self] in
-            guard let self = self, !historyChat.isEmpty else { return }
-            self.delegate?.ndgrClientDidReceiveChatHistory(self, chats: historyChat.chats)
-            historyChat.removeAll()
-        }
+        let historyChat = HistoryChat()
+        // 現在時刻より少し前 (1segment = 16sec) で history chat としての読み込みをやめる
+        let latestHistoryTime = Int(Date().timeIntervalSince1970) - 16
 
         while next != nil {
             log.debug("🪞 view")
@@ -68,6 +63,7 @@ private extension NdgrClient {
                 uri: uri.appending("at", value: next.toAtParameter()),
                 messageType: Dwango_Nicolive_Chat_Service_Edge_ChunkedEntry.self
             )
+            let isFetchingHistory = (next ?? 0) < latestHistoryTime
             next = nil
             for await entry in entries {
                 guard let entry = entry.entry else {
@@ -86,44 +82,49 @@ private extension NdgrClient {
                         log.error("failed to create url: \(segment.uri)")
                         continue
                     }
-                    let _isReadingHistory = isReadingHistory
+                    let _segmentCount = segmentCount
                     Task {
-                        await pull_messages(
+                        await pullMessages(
                             uri: url,
-                            isReadingHistory: _isReadingHistory,
-                            historyChat: historyChat,
-                            onPreDisconnection: emitChatHistoryIfNeeded
+                            isFetchingHistory: isFetchingHistory,
+                            historyChat: historyChat
                         )
-                    }
-                    if isReadingHistory {
-                        delegate?.ndgrClientReceivingChatHistory(
-                            self,
-                            requestCount: segmentCount,
-                            totalChatCount: historyChat.chats.count
-                        )
+                        if isFetchingHistory {
+                            delegate?.ndgrClientReceivingChatHistory(
+                                self,
+                                requestCount: _segmentCount,
+                                totalChatCount: historyChat.chats.count
+                            )
+                        }
                     }
                 case .next(let _next):
                     log.info("⏭️ next -> \(_next.at)")
                     next = Int(_next.at)
                 }
             }
-            let previousIsReadingHistory = isReadingHistory
-            isReadingHistory = (next ?? 0) < now
-            if previousIsReadingHistory != isReadingHistory {
-                emitChatHistoryIfNeeded()
+            if next == nil {
+                emitChatHistoryIfNeeded(historyChat: historyChat)
             }
         }
         log.info("done: _forward_playlist")
     }
+    // swiftlint:enable function_body_length
 
-    func pull_messages(uri: URL, isReadingHistory: Bool, historyChat: HistoryChat, onPreDisconnection: () -> Void) async {
+    func emitChatHistoryIfNeeded(historyChat: HistoryChat) {
+        guard !historyChat.isEmpty else { return }
+        delegate?.ndgrClientDidReceiveChatHistory(self, chats: historyChat.chats)
+        historyChat.removeAll()
+    }
+
+    func pullMessages(uri: URL, isFetchingHistory: Bool, historyChat: HistoryChat) async {
         let onReceiveChat = { [weak self] (chat: Chat) in
             guard let self = self else { return }
-            if isReadingHistory {
+            if isFetchingHistory {
                 historyChat.append(chat)
                 return
             }
-            self.delegate?.ndgrClientDidReceiveChat(self, chat: chat)
+            emitChatHistoryIfNeeded(historyChat: historyChat)
+            delegate?.ndgrClientDidReceiveChat(self, chat: chat)
         }
         let messages = retrieve(
             uri: uri,
@@ -135,22 +136,21 @@ private extension NdgrClient {
             case .message(let message):
                 guard let chat = message.toChat() else {
                     log.warning("need to handle this message. (\(String(describing: message.data)))")
-                    break
+                    continue
                 }
                 onReceiveChat(chat)
             case .state(let state):
                 if state.isDisconnect() {
-                    onPreDisconnection()
                     disconnect()
-                    break
+                    continue
                 }
                 guard let chat = state.toChat() else {
                     log.warning("need to handle this state. (\(String(describing: state)))")
-                    break
+                    continue
                 }
                 onReceiveChat(chat)
             case .signal:
-                break
+                continue
             }
         }
         log.info("done: _pull_messages")
