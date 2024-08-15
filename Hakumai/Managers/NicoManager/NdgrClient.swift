@@ -216,7 +216,7 @@ private extension NdgrClient {
     }
 }
 
-final class HistoryChat: @unchecked Sendable {
+private final class HistoryChat: @unchecked Sendable {
     private var _chats: [Chat]
     private let lock = NSLock()
 
