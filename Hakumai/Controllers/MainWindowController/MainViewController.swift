@@ -587,9 +587,6 @@ extension MainViewController: NicoManagerDelegate {
     }
 
     func nicoManagerDidReceiveChatHistory(_ nicoManager: NicoManagerType, chats: [Chat]) {
-        if !chats.isEmpty {
-            logSystemMessageToTable(L10n.receivedComments(chats.count))
-        }
         guard let live = live else { return }
         chats.forEach {
             HandleNameManager.shared.extractAndUpdateHandleName(
@@ -599,6 +596,9 @@ extension MainViewController: NicoManagerDelegate {
             )
         }
         bulkAppendToTable(chats: chats, scrollToBottom: true)
+        if !chats.isEmpty {
+            logSystemMessageToTable(L10n.receivedComments(chats.count))
+        }
     }
 
     func nicoManagerDidDisconnect(_ nicoManager: NicoManagerType, disconnectContext: NicoDisconnectContext) {
