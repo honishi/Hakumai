@@ -170,6 +170,8 @@ private extension NdgrClient {
         messageType: T.Type
     ) -> AsyncStream<T> {
         // log.debug("\(uri.absoluteString)")
+        var truncatedData: Data?
+
         return AsyncStream { continuation in
             let request = session.streamRequest(
                 uri,
@@ -183,7 +185,20 @@ private extension NdgrClient {
                     // log.debug("📦 stream (\(messageType))")
                     switch result {
                     case let .success(data):
-                        for message in self.decode(data: data, messageType: T.self) {
+                        log.debug("data from stream: \(data)")
+                        let decodeResult = self.decode(
+                            truncatedData: truncatedData,
+                            data: data,
+                            messageType: T.self
+                        )
+                        truncatedData = decodeResult.truncatedData
+                        if (truncatedData?.count ?? 0) > 2048 {
+                            log.debug("XXX: truncatedData too large (\(truncatedData?.count ?? 0)), drop.")
+                            truncatedData = nil
+                        }
+                        log.debug("XXX: truncatedData (\(truncatedData?.count ?? 0)).")
+                        log.debug("XXX: \(truncatedData)")
+                        for message in decodeResult.messages {
                             continuation.yield(message)
                         }
                     case .failure(let error):
@@ -199,29 +214,122 @@ private extension NdgrClient {
         }
     }
 
-    func decode<T: SwiftProtobuf.Message>(data: Data, messageType: T.Type) -> [T] {
-        let stream = InputStream(data: data)
-        stream.open()
-        defer { stream.close() }
+    struct DecodeResult<T> {
+        let messages: [T]
+        let truncatedData: Data?
+    }
+
+    func decode<T: SwiftProtobuf.Message>(
+        truncatedData: Data?,
+        data: Data,
+        messageType: T.Type
+    ) -> DecodeResult<T> {
+        // log.debug("start decode: \(data.hexDump())")
+
+        let splitResult = splitLengthDelimitedData(
+            truncatedData: truncatedData,
+            data: data
+        )
+        // truncatedData = splitResult.truncatedData
+        // log.debug(splitResult)
 
         var messages: [T] = []
-        while stream.hasBytesAvailable {
+        for chunk in splitResult.chunks {
+            guard let message = try? T.init(serializedBytes: chunk) else { continue }
+            messages.append(message)
+        }
+        return DecodeResult(
+            messages: messages,
+            truncatedData: splitResult.truncatedData
+        )
+    }
+
+    struct SplitLengthDelimitedDataResult {
+        let chunks: [Data]
+        let truncatedData: Data?
+    }
+
+    func splitLengthDelimitedData(truncatedData: Data?, data _data: Data) -> SplitLengthDelimitedDataResult {
+        log.debug("===========")
+        // TODO: truncated data が大きすぎる場合は、なにかおかしいので捨てる。
+
+        // log.debug("truncatedData: \(truncatedData == nil ? nil : String(describing: truncatedData!)) data: \(_data)")
+        let data = {
+            guard let truncatedData = truncatedData else { return _data }
+            return truncatedData + _data
+        }()
+
+        var chunks: [Data] = []
+        var _truncatedData: Data?
+        var offset = 0
+        while offset < data.count {
             do {
-                let parsed = try BinaryDelimited.parse(
-                    messageType: messageType,
-                    from: stream
-                )
-                messages.append(parsed)
-            } catch {
-                if stream.hasBytesAvailable {
-                    log.error("Failed to parse message: \(error)")
-                } else {
-                    // ストリームの終わりに達した場合は正常
+                let varintResult = try decodeVarint(data, offset: offset)
+                // log.debug(varintResult)
+                let length = Int(varintResult.value)
+                // TODO: length の現実的な範囲 (1k-2k?) を超えていたら処理を諦めてしまっていいかも。
+                let remainingDataLength = data.count - offset - varintResult.bytesRead
+                if remainingDataLength < length {
+                    _truncatedData = data.subdata(in: offset..<data.count)
+                    // log.debug("truncatedData: \(_truncatedData)")
                     break
                 }
+                offset += varintResult.bytesRead
+                let delimitedData = data.subdata(in: offset..<(offset + length))
+                offset += delimitedData.count
+                chunks.append(delimitedData)
+                // log.debug("data: \(delimitedData)")
+            } catch BinaryDecodingError.truncated {
+                log.error("Truncated Error, reuse.")
+                _truncatedData = data.subdata(in: offset..<data.count)
+                log.debug("truncatedData: \(_truncatedData)")
+            } catch BinaryDecodingError.malformedProtobuf {
+                log.error("Malformed Error, skip")
+            } catch {
+                log.error("Error: \(error)")
             }
         }
-        return messages
+        let result = SplitLengthDelimitedDataResult(
+            chunks: chunks,
+            truncatedData: _truncatedData
+        )
+        log.debug(result)
+        return result
+    }
+
+    struct VarintResult {
+        let value: UInt64
+        let bytesRead: Int
+    }
+
+    func decodeVarint(_ data: Data, offset fromOffset: Int) throws -> VarintResult {
+        var offset = fromOffset
+        var totalBytesRead = 0
+
+        var value: UInt64 = 0
+        var shift: UInt64 = 0
+        while true {
+            guard offset < data.count else {
+                if shift == 0 {
+                    throw SwiftProtobufError.BinaryStreamDecoding.noBytesAvailable()
+                }
+                log.debug("guard let c = try nextByte() else")
+                throw BinaryDelimited.Error.truncated
+            }
+            let c = data[offset]
+            totalBytesRead += 1
+            value |= UInt64(c & 0x7f) << shift
+            if c & 0x80 == 0 {
+                break
+            }
+            shift += 7
+            if shift > 63 {
+                log.debug("shift > 63")
+                throw BinaryDecodingError.malformedProtobuf
+            }
+            offset += 1
+        }
+        return VarintResult(value: value, bytesRead: totalBytesRead)
     }
 }
 
