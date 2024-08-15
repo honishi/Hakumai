@@ -27,25 +27,6 @@ final class NdgrClient: NdgrClientType {
     }
 }
 
-final class HistoryChat: @unchecked Sendable {
-    private(set) var chats: [Chat] = []
-    private let lock = NSLock()
-
-    var isEmpty: Bool { chats.isEmpty }
-
-    func append(_ chat: Chat) {
-        lock.withLock {
-            chats.append(chat)
-        }
-    }
-
-    func removeAll() {
-        lock.withLock {
-            chats.removeAll()
-        }
-    }
-}
-
 // MARK: - Public Functions
 extension NdgrClient {
     func connect(viewUri: URL, beginTime: Date) {
@@ -232,6 +213,39 @@ private extension NdgrClient {
             }
         }
         return messages
+    }
+}
+
+final class HistoryChat: @unchecked Sendable {
+    private var _chats: [Chat]
+    private let lock = NSLock()
+
+    init() {
+        self._chats = []
+    }
+
+    var isEmpty: Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        return _chats.isEmpty
+    }
+
+    var chats: [Chat] {
+        lock.lock()
+        defer { lock.unlock() }
+        return _chats
+    }
+
+    func append(_ chat: Chat) {
+        lock.lock()
+        defer { lock.unlock() }
+        _chats.append(chat)
+    }
+
+    func removeAll() {
+        lock.lock()
+        defer { lock.unlock() }
+        _chats.removeAll()
     }
 }
 
