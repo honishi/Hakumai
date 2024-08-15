@@ -194,7 +194,7 @@ internal enum L10n {
   internal static func receivedComments(_ p1: Int) -> String {
     return L10n.tr("Localizable", "received_comments", p1)
   }
-  /// Receiving comments... (%d: %d)
+  /// Receiving comments... (%d / %d)
   internal static func receivingComments(_ p1: Int, _ p2: Int) -> String {
     return L10n.tr("Localizable", "receiving_comments", p1, p2)
   }

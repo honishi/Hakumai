@@ -583,7 +583,7 @@ extension MainViewController: NicoManagerDelegate {
     func nicoManagerReceivingChatHistory(_ nicoManager: NicoManagerType, requestCount: Int, totalChatCount: Int) {
         let shouldLog = requestCount % 20 == 0
         guard shouldLog else { return }
-        logSystemMessageToTable(L10n.receivingComments(requestCount, totalChatCount))
+        logSystemMessageToTable(L10n.receivingComments(totalChatCount, requestCount))
     }
 
     func nicoManagerDidReceiveChatHistory(_ nicoManager: NicoManagerType, chats: [Chat]) {
