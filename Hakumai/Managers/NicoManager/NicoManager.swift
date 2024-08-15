@@ -342,6 +342,14 @@ extension NicoManager: NdgrClientDelegate {
         )
     }
 
+    func ndgrClientReceivingChatHistory(_ ndgrClient: any NdgrClientType, requestCount: Int, totalChatCount: Int) {
+        delegate?.nicoManagerReceivingChatHistory(self, requestCount: requestCount, totalChatCount: totalChatCount)
+    }
+
+    func ndgrClientDidReceiveChatHistory(_ ndgrClient: any NdgrClientType, chats: [Chat]) {
+        delegate?.nicoManagerDidReceiveChatHistory(self, chats: chats)
+    }
+
     func ndgrClientDidReceiveChat(_ ndgrClient: any NdgrClientType, chat: Chat) {
         delegate?.nicoManagerDidReceiveChat(self, chat: chat)
     }

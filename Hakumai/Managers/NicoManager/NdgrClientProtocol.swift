@@ -22,4 +22,8 @@ protocol NdgrClientDelegate: AnyObject {
     func ndgrClientDidConnect(_ ndgrClient: NdgrClientType)
     func ndgrClientDidReceiveChat(_ ndgrClient: NdgrClientType, chat: Chat)
     func ndgrClientDidDisconnect(_ ndgrClient: NdgrClientType)
+
+    // History.
+    func ndgrClientReceivingChatHistory(_ ndgrClient: NdgrClientType, requestCount: Int, totalChatCount: Int)
+    func ndgrClientDidReceiveChatHistory(_ ndgrClient: NdgrClientType, chats: [Chat])
 }

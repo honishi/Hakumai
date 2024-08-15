@@ -27,14 +27,33 @@ final class NdgrClient: NdgrClientType {
     }
 }
 
+final class HistoryChat: @unchecked Sendable {
+    private(set) var chats: [Chat] = []
+    private let lock = NSLock()
+
+    var isEmpty: Bool { chats.isEmpty }
+
+    func append(_ chat: Chat) {
+        lock.withLock {
+            chats.append(chat)
+        }
+    }
+
+    func removeAll() {
+        lock.withLock {
+            chats.removeAll()
+        }
+    }
+}
+
 // MARK: - Public Functions
 extension NdgrClient {
     func connect(viewUri: URL, beginTime: Date) {
         Task {
             // TODO: 厳密には ndgrClientDidConnect はこの位置ではない。
-            self.delegate?.ndgrClientDidConnect(self)
+            delegate?.ndgrClientDidConnect(self)
             await forward_playlist(uri: viewUri, from: Int(beginTime.timeIntervalSince1970))
-            self.delegate?.ndgrClientDidDisconnect(self)
+            delegate?.ndgrClientDidDisconnect(self)
         }
     }
 
@@ -50,6 +69,18 @@ extension NdgrClient {
 private extension NdgrClient {
     func forward_playlist(uri: URL, from: Int?) async {
         var next: Int? = from
+
+        let now = Int(Date().timeIntervalSince1970) - 20
+        var isReadingHistory = true
+        let historyChat = HistoryChat()
+        var segmentCount = 0
+
+        let emitChatHistoryIfNeeded = { [weak self] in
+            guard let self = self, !historyChat.isEmpty else { return }
+            self.delegate?.ndgrClientDidReceiveChatHistory(self, chats: historyChat.chats)
+            historyChat.removeAll()
+        }
+
         while next != nil {
             log.debug("🪞 view")
             let entries = retrieve(
@@ -69,23 +100,50 @@ private extension NdgrClient {
                     log.info("⏮️ previous")
                 case .segment(let segment):
                     log.info("📩 segment")
+                    segmentCount += 1
                     guard let url = URL(string: segment.uri) else {
                         log.error("failed to create url: \(segment.uri)")
                         continue
                     }
+                    let _isReadingHistory = isReadingHistory
                     Task {
-                        await pull_messages(uri: url)
+                        await pull_messages(
+                            uri: url,
+                            isReadingHistory: _isReadingHistory,
+                            historyChat: historyChat,
+                            onPreDisconnection: emitChatHistoryIfNeeded
+                        )
+                    }
+                    if isReadingHistory {
+                        delegate?.ndgrClientReceivingChatHistory(
+                            self,
+                            requestCount: segmentCount,
+                            totalChatCount: historyChat.chats.count
+                        )
                     }
                 case .next(let _next):
                     log.info("⏭️ next -> \(_next.at)")
                     next = Int(_next.at)
                 }
             }
+            let previousIsReadingHistory = isReadingHistory
+            isReadingHistory = (next ?? 0) < now
+            if previousIsReadingHistory != isReadingHistory {
+                emitChatHistoryIfNeeded()
+            }
         }
         log.info("done: _forward_playlist")
     }
 
-    func pull_messages(uri: URL) async {
+    func pull_messages(uri: URL, isReadingHistory: Bool, historyChat: HistoryChat, onPreDisconnection: () -> Void) async {
+        let onReceiveChat = { [weak self] (chat: Chat) in
+            guard let self = self else { return }
+            if isReadingHistory {
+                historyChat.append(chat)
+                return
+            }
+            self.delegate?.ndgrClientDidReceiveChat(self, chat: chat)
+        }
         let messages = retrieve(
             uri: uri,
             messageType: Dwango_Nicolive_Chat_Service_Edge_ChunkedMessage.self
@@ -98,9 +156,10 @@ private extension NdgrClient {
                     log.warning("need to handle this message. (\(String(describing: message.data)))")
                     break
                 }
-                delegate?.ndgrClientDidReceiveChat(self, chat: chat)
+                onReceiveChat(chat)
             case .state(let state):
                 if state.isDisconnect() {
+                    onPreDisconnection()
                     disconnect()
                     break
                 }
@@ -108,7 +167,7 @@ private extension NdgrClient {
                     log.warning("need to handle this state. (\(String(describing: state)))")
                     break
                 }
-                delegate?.ndgrClientDidReceiveChat(self, chat: chat)
+                onReceiveChat(chat)
             case .signal:
                 break
             }
