@@ -48,24 +48,25 @@ extension NdgrClient {
 
 // MARK: - Private Functions
 private extension NdgrClient {
-    // swiftlint:disable function_body_length cyclomatic_complexity
+    // swiftlint:disable function_body_length
     func forwardPlaylist(uri: URL, from: Int?) async {
         var next: Int? = from
 
         var segmentCount = 0
-        let historyChat = HistoryChat()
+        let chatHistory = ChatHistory()
         // 現在時刻より少し前 (1segment = 16sec * 2) で history chat としての読み込みをやめる
         let latestHistoryTime = Int(Date().timeIntervalSince1970) - 16 * 2
 
         while next != nil {
-            log.debug("🪞 view")
+            let current = next ?? 0
+            log.debug("🪞 view: \(current)")
             let entries = retrieve(
                 uri: uri.appending("at", value: next.toAtParameter()),
                 messageType: Dwango_Nicolive_Chat_Service_Edge_ChunkedEntry.self
             )
-            let isFetchingHistory = (next ?? 0) < latestHistoryTime
+            let isFetchingHistory = current < latestHistoryTime
             if !isFetchingHistory {
-                emitChatHistoryIfNeeded(historyChat: historyChat)
+                emitChatHistoryIfNeeded(chatHistory: chatHistory)
             }
             next = nil
             for await entry in entries {
@@ -75,13 +76,13 @@ private extension NdgrClient {
                 }
                 switch entry {
                 case .backward:
-                    // log.info("⏮️ backward")
+                    // log.info("⏮️ backward: \(current)")
                     continue
                 case .previous:
-                    // log.info("⏮️ previous")
+                    // log.info("⏮️ previous: \(current)")
                     continue
                 case .segment(let segment):
-                    log.info("📩 segment")
+                    log.info("📩 segment: \(current)")
                     segmentCount += 1
                     guard let url = URL(string: segment.uri) else {
                         log.error("failed to create url: \(segment.uri)")
@@ -91,45 +92,45 @@ private extension NdgrClient {
                     Task {
                         await pullMessages(
                             uri: url,
-                            historyChat: isFetchingHistory ? historyChat : nil
+                            chatHistory: isFetchingHistory ? chatHistory : nil
                         )
                         if isFetchingHistory {
                             delegate?.ndgrClientReceivingChatHistory(
                                 self,
                                 requestCount: _segmentCount,
-                                totalChatCount: historyChat.chats.count
+                                totalChatCount: chatHistory.chats.count
                             )
                         }
                     }
                 case .next(let _next):
-                    log.info("⏭️ next -> \(_next.at)")
+                    log.info("⏭️ next: \(current) -> \(_next.at)")
                     next = Int(_next.at)
                 }
             }
-            if next == nil {
-                emitChatHistoryIfNeeded(historyChat: historyChat)
-            }
         }
-        log.info("done: _forward_playlist")
+        emitChatHistoryIfNeeded(chatHistory: chatHistory)
+        log.debug("done: \(next ?? 0)")
     }
-    // swiftlint:enable function_body_length cyclomatic_complexity
+    // swiftlint:enable function_body_length
 
-    func emitChatHistoryIfNeeded(historyChat: HistoryChat) {
-        guard !historyChat.isEmpty else { return }
-        let count = historyChat.chats.count
+    func emitChatHistoryIfNeeded(chatHistory: ChatHistory) {
+        guard !chatHistory.isEmpty else { return }
+        // chat history はパラレルに操作される可能性があるので、安全のため最初に操作対象を確定させる。
+        let count = chatHistory.chats.count
         delegate?.ndgrClientDidReceiveChatHistory(
             self,
-            chats: Array(historyChat.chats.prefix(count))
+            chats: Array(chatHistory.chats.prefix(count))
         )
-        historyChat.dropFirst(count)
+        chatHistory.dropFirst(count)
     }
 
     // swiftlint:disable cyclomatic_complexity
-    func pullMessages(uri: URL, historyChat: HistoryChat?) async {
+    func pullMessages(uri: URL, chatHistory: ChatHistory?) async {
         let onReceiveChat = { [weak self] (chat: Chat) in
             // TODO: まだ chat 消失のケースがある。
-            if let historyChat = historyChat {
-                historyChat.append(chat)
+            log.debug(chat)
+            if let chatHistory = chatHistory {
+                chatHistory.append(chat)
                 return
             }
             guard let self = self else { return }
@@ -160,23 +161,28 @@ private extension NdgrClient {
                 }
                 onReceiveChat(chat)
             case .signal(let signal):
-                log.debug("FLUSHED (\(signal == .flushed))")
+                log.debug("flushed: (\(signal == .flushed))")
                 continue
             }
         }
         if detectedDisconnection {
             disconnect()
         }
-        log.info("done: _pull_messages")
+        log.debug("done")
     }
     // swiftlint:enable cyclomatic_complexity
+}
 
+// Low layer for chunked network I/O.
+private extension NdgrClient {
+    // #1. 指定された uri を stream として listen しつつ、
+    // 逐一 protobuf message として parse したものを stream として返す。
     func retrieve<T: SwiftProtobuf.Message>(
         uri: URL,
         messageType: T.Type
     ) -> AsyncStream<T> {
         // log.debug("\(uri.absoluteString)")
-        var truncatedData: Data?
+        var unread: Data?
 
         return AsyncStream { continuation in
             let request = session.streamRequest(
@@ -192,19 +198,19 @@ private extension NdgrClient {
                     switch result {
                     case let .success(data):
                         log.debug("data from stream: \(data)")
-                        let decodeResult = self.decode(
-                            truncatedData: truncatedData,
+                        let decoded = self.decode(
+                            unread: unread,
                             data: data,
                             messageType: T.self
                         )
-                        truncatedData = decodeResult.truncatedData
-                        if (truncatedData?.count ?? 0) > 10240 {
-                            log.debug("XXX: truncatedData too large (\(truncatedData?.count ?? 0)), drop.")
-                            truncatedData = nil
+                        unread = decoded.truncated
+                        log.debug("unread: (\(unread?.count ?? 0)).")
+                        if (unread?.count ?? 0) > 10_240 {
+                            log.error("unread data too large (\(unread?.count ?? 0)), drop.")
+                            unread = nil
                         }
-                        log.debug("XXX: truncatedData (\(truncatedData?.count ?? 0)).")
-                        log.debug("XXX: \(truncatedData)")
-                        for message in decodeResult.messages {
+                        log.debug("unread: \(String(describing: unread))")
+                        for message in decoded.messages {
                             continuation.yield(message)
                         }
                     case .failure(let error):
@@ -220,127 +226,134 @@ private extension NdgrClient {
         }
     }
 
+    // #2. stream data を protobuf messages として parse する。
+    // data がちぎれていた場合は、truncated として返して次回 parse に回す。
     struct DecodeResult<T> {
         let messages: [T]
-        let truncatedData: Data?
+        let truncated: Data?
     }
 
     func decode<T: SwiftProtobuf.Message>(
-        truncatedData: Data?,
+        unread: Data?,
         data: Data,
         messageType: T.Type
     ) -> DecodeResult<T> {
-        // log.debug("start decode: \(data.hexDump())")
-
-        let splitResult = splitLengthDelimitedData(
-            truncatedData: truncatedData,
+        let splitted = splitLengthDelimitedData(
+            unread: unread,
             data: data
         )
-        // truncatedData = splitResult.truncatedData
-        // log.debug(splitResult)
 
         var messages: [T] = []
-        for chunk in splitResult.chunks {
+        for chunk in splitted.chunks {
             guard let message = try? T.init(serializedBytes: chunk) else { continue }
             messages.append(message)
         }
+
         return DecodeResult(
             messages: messages,
-            truncatedData: splitResult.truncatedData
+            truncated: splitted.truncated
         )
     }
 
+    // #3. 生の data を length delimited なものとして parse して chunk data を返す。
     struct SplitLengthDelimitedDataResult {
         let chunks: [Data]
-        let truncatedData: Data?
+        let truncated: Data?
     }
 
-    func splitLengthDelimitedData(truncatedData: Data?, data _data: Data) -> SplitLengthDelimitedDataResult {
-        log.debug("===========")
-        // TODO: truncated data が大きすぎる場合は、なにかおかしいので捨てる。
-
-        // log.debug("truncatedData: \(truncatedData == nil ? nil : String(describing: truncatedData!)) data: \(_data)")
-        let data = {
-            guard let truncatedData = truncatedData else { return _data }
-            return truncatedData + _data
+    func splitLengthDelimitedData(unread: Data?, data: Data) -> SplitLengthDelimitedDataResult {
+        let concatenated = {
+            guard let unread = unread else { return data }
+            return unread + data
         }()
 
         var chunks: [Data] = []
-        var _truncatedData: Data?
+        var truncated: Data?
         var offset = 0
-        while offset < data.count {
+        while offset < concatenated.count {
             do {
-                let varintResult = try decodeVarint(data, offset: offset)
-                // log.debug(varintResult)
-                let length = Int(varintResult.value)
-                // TODO: length の現実的な範囲 (1k-2k?) を超えていたら処理を諦めてしまっていいかも。
-                let remainingDataLength = data.count - offset - varintResult.bytesRead
-                if remainingDataLength < length {
-                    _truncatedData = data.subdata(in: offset..<data.count)
-                    // log.debug("truncatedData: \(_truncatedData)")
+                let varint = try decodeVarint(concatenated, offset: offset)
+                let length = varint.value
+                // 予防保守として、varint の値があまりに大きな場合はなにかおかしいので、ここで処理をやめる。
+                if length > 102_400 {
+                    log.error("varint value too large (\(length)), drop.")
                     break
                 }
-                offset += varintResult.bytesRead
-                let delimitedData = data.subdata(in: offset..<(offset + length))
+                let remainingDataLength = concatenated.count - offset - varint.bytesRead
+                if remainingDataLength < length {
+                    // data がちぎれているので、次回 parse に持ち越す。
+                    truncated = concatenated.subdata(in: offset..<concatenated.count)
+                    break
+                }
+                offset += varint.bytesRead
+                let delimitedData = concatenated.subdata(in: offset..<(offset + length))
                 offset += delimitedData.count
                 chunks.append(delimitedData)
-                // log.debug("data: \(delimitedData)")
-                // TODO: この辺のエラー定義を書き直す
-            } catch BinaryDelimited.Error.truncated {
-                log.error("Truncated Error, reuse.")
-                _truncatedData = data.subdata(in: offset..<data.count)
-                log.debug("truncatedData: \(_truncatedData)")
-            } catch BinaryDecodingError.malformedProtobuf {
-                log.error("Malformed Error, skip")
+            } catch DecodeVarintError.truncated {
+                log.warning("detected truncated data, reuse.")
+                truncated = concatenated.subdata(in: offset..<concatenated.count)
+                log.debug("reuse next decode: \(String(describing: truncated))")
+                break
+            } catch DecodeVarintError.malformedProtobuf {
+                log.error("detected malformed data, skip")
+                break
             } catch {
-                log.error("Error: \(error)")
+                log.error("detected decode error: \(error)")
+                break
             }
         }
         let result = SplitLengthDelimitedDataResult(
             chunks: chunks,
-            truncatedData: _truncatedData
+            truncated: truncated
         )
         log.debug(result)
         return result
     }
 
+    // #4. length delimited data の varint type を parse する。
     struct VarintResult {
-        let value: UInt64
+        let value: Int
         let bytesRead: Int
+    }
+
+    enum DecodeVarintError: Swift.Error {
+        case malformedProtobuf
+        case noBytesAvailable
+        case truncated
     }
 
     func decodeVarint(_ data: Data, offset fromOffset: Int) throws -> VarintResult {
         var offset = fromOffset
-        var totalBytesRead = 0
+        var bytesRead = 0
 
         var value: UInt64 = 0
         var shift: UInt64 = 0
         while true {
             guard offset < data.count else {
-                if shift == 0 {
-                    throw SwiftProtobufError.BinaryStreamDecoding.noBytesAvailable()
-                }
-                log.debug("guard let c = try nextByte() else")
-                throw BinaryDelimited.Error.truncated
+                throw shift == 0
+                ? DecodeVarintError.noBytesAvailable
+                : DecodeVarintError.truncated
             }
             let c = data[offset]
-            totalBytesRead += 1
+            bytesRead += 1
             value |= UInt64(c & 0x7f) << shift
             if c & 0x80 == 0 {
                 break
             }
             shift += 7
             if shift > 63 {
-                log.debug("shift > 63")
-                throw BinaryDecodingError.malformedProtobuf
+                throw DecodeVarintError.malformedProtobuf
             }
             offset += 1
         }
-        return VarintResult(value: value, bytesRead: totalBytesRead)
+        return VarintResult(
+            value: Int(value),
+            bytesRead: bytesRead
+        )
     }
 }
 
-private final class HistoryChat: @unchecked Sendable {
+private final class ChatHistory: @unchecked Sendable {
     private var _chats: [Chat]
     private let lock = NSLock()
 
