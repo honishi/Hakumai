@@ -127,6 +127,7 @@ private extension NdgrClient {
     // swiftlint:disable cyclomatic_complexity
     func pullMessages(uri: URL, historyChat: HistoryChat?) async {
         let onReceiveChat = { [weak self] (chat: Chat) in
+            // TODO: まだ chat 消失のケースがある。
             if let historyChat = historyChat {
                 historyChat.append(chat)
                 return
@@ -197,7 +198,7 @@ private extension NdgrClient {
                             messageType: T.self
                         )
                         truncatedData = decodeResult.truncatedData
-                        if (truncatedData?.count ?? 0) > 2048 {
+                        if (truncatedData?.count ?? 0) > 10240 {
                             log.debug("XXX: truncatedData too large (\(truncatedData?.count ?? 0)), drop.")
                             truncatedData = nil
                         }
@@ -284,7 +285,8 @@ private extension NdgrClient {
                 offset += delimitedData.count
                 chunks.append(delimitedData)
                 // log.debug("data: \(delimitedData)")
-            } catch BinaryDecodingError.truncated {
+                // TODO: この辺のエラー定義を書き直す
+            } catch BinaryDelimited.Error.truncated {
                 log.error("Truncated Error, reuse.")
                 _truncatedData = data.subdata(in: offset..<data.count)
                 log.debug("truncatedData: \(_truncatedData)")
