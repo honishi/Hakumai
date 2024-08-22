@@ -268,7 +268,9 @@ private extension MessageContainer {
         if enableEmotionMessage {
             return true
         }
-        let isEmotion = chat.slashCommand == .emotion
-        return !isEmotion
+        // TODO: emotion を判定する
+        // let isEmotion = chat.slashCommand == .emotion
+        // return !isEmotion
+        return true
     }
 }

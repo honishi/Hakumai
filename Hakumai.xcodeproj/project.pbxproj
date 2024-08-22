@@ -69,7 +69,6 @@
 		DB6DD2AE2650F1B0009A9574 /* NicoManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6DD2AD2650F1B0009A9574 /* NicoManagerProtocol.swift */; };
 		DB73A38C1A4F43F6008423D0 /* MuteAddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB73A38B1A4F43F6008423D0 /* MuteAddViewController.swift */; };
 		DB74B86C1A6E790C0064AC28 /* BrowserHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB74B86B1A6E790C0064AC28 /* BrowserHelper.swift */; };
-		DB761C992785662B00D794AB /* ChatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB761C982785662B00D794AB /* ChatTests.swift */; };
 		DB761C9B2785768100D794AB /* AppearanceMonitorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB761C9A2785768100D794AB /* AppearanceMonitorView.swift */; };
 		DB7A9367276373C100C361FF /* LiveThumbnailImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7A9366276373C100C361FF /* LiveThumbnailImageView.swift */; };
 		DB7B3DDC1A23B35300205470 /* ColoredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7B3DDB1A23B35300205470 /* ColoredView.swift */; };
@@ -230,7 +229,6 @@
 		DB6DD2AD2650F1B0009A9574 /* NicoManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoManagerProtocol.swift; sourceTree = "<group>"; };
 		DB73A38B1A4F43F6008423D0 /* MuteAddViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MuteAddViewController.swift; sourceTree = "<group>"; };
 		DB74B86B1A6E790C0064AC28 /* BrowserHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrowserHelper.swift; sourceTree = "<group>"; };
-		DB761C982785662B00D794AB /* ChatTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatTests.swift; sourceTree = "<group>"; };
 		DB761C9A2785768100D794AB /* AppearanceMonitorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceMonitorView.swift; sourceTree = "<group>"; };
 		DB7A9366276373C100C361FF /* LiveThumbnailImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveThumbnailImageView.swift; sourceTree = "<group>"; };
 		DB7B3DDB1A23B35300205470 /* ColoredView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColoredView.swift; sourceTree = "<group>"; };
@@ -675,7 +673,6 @@
 			isa = PBXGroup;
 			children = (
 				DB7BA06D1A58B6B7000778CF /* ChatMessageTests.swift */,
-				DB761C982785662B00D794AB /* ChatTests.swift */,
 				DBDBA087277B45AB000EE2F2 /* DatabaseValueCacherTests.swift */,
 				DBE093FE1A5869A2004554FD /* HandleNameManagerTests.swift */,
 				DB34F836275BB37600180C7A /* LiveThumbnailManagerTest.swift */,
@@ -1211,7 +1208,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				DB7BA06E1A58B6B7000778CF /* ChatMessageTests.swift in Sources */,
-				DB761C992785662B00D794AB /* ChatTests.swift in Sources */,
 				DBDBA088277B45AB000EE2F2 /* DatabaseValueCacherTests.swift in Sources */,
 				DB2AE0D71A0EE2FD00B1CE4D /* HakumaiTests.swift in Sources */,
 				DBE093FF1A5869A2004554FD /* HandleNameManagerTests.swift in Sources */,
