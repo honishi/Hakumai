@@ -522,21 +522,21 @@ private extension Dwango_Nicolive_Chat_Data_SimpleNotification {
         let text = {
             switch message {
             case .ichiba(let text):
-                return text
+                return "🎮 \(text)"
             case .quote(let text):
-                return text
+                return "⛴ \(text)"
             case .emotion(let text):
-                return text
+                return "💬 \(text)"
             case .cruise(let text):
-                return text
+                return "⚓️ \(text)"
             case .programExtended(let text):
-                return text
+                return "ℹ️ \(text)"
             case .rankingIn(let text):
-                return text
+                return "📈 \(text)"
             case .rankingUpdated(let text):
-                return text
+                return "📈 \(text)"
             case .visited(let text):
-                return text
+                return "👥 \(text)"
             }
         }()
         return Chat(
@@ -568,7 +568,7 @@ private extension Dwango_Nicolive_Chat_Data_Gift {
             mail: [],
             userId: "-",
             // 【ギフト貢献2位】カクれんぼさんがギフト「出前館福引チケット(並)（5000pt）」を贈りました
-            comment: "\(advertiserName)さんがギフト「\(itemName)（\(String(point))pt）」を贈りました",
+            comment: "🎁 \(advertiserName)さんがギフト「\(itemName)（\(String(point))pt）」を贈りました",
             premium: .system,
             chatType: .gift(imageUrl: imageUrl)
         )
@@ -594,7 +594,7 @@ private extension Dwango_Nicolive_Chat_Data_Nicoad {
             dateUsec: 0,
             mail: [],
             userId: "-",
-            comment: text,
+            comment: "📣 \(text)",
             premium: .system,
             chatType: .nicoad
         )

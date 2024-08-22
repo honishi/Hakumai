@@ -99,18 +99,6 @@ extension ChatMessage {
     var isCasterComment: Bool { premium == .caster }
 }
 
-// TODO: ndgr client に移行する。
-private let commentEmojiReplacePatterns = [
-    ("^/cruise ", "⚓️ "),
-    ("^/emotion ", "💬 "),
-    ("^/gift ", "🎁 "),
-    ("^/info ", "ℹ️ "),
-    ("^/nicoad ", "📣 "),
-    ("^/quote ", "⛴ "),
-    ("^/spi ", "🎮 "),
-    ("^/vote ", "🙋‍♂️ ")
-]
-
 extension String {
     func htmlTagRemoved(premium: Premium) -> String {
         guard premium == .caster, hasRegexp(pattern: "https?://") else { return self }
