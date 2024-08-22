@@ -1178,7 +1178,8 @@ private extension WebSocketChatData {
                 guard let value = chat.premium,
                       let premium = Premium(rawValue: value) else { return .ippan }
                 return premium
-            }()
+            }(),
+            chatType: .other
         )
     }
 

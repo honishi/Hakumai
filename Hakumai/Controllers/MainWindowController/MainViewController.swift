@@ -358,17 +358,12 @@ extension MainViewController: NSTableViewDelegate {
         guard !isCellViewFlashed(messageNo: messageNo, tableColumnIdentifier: tableColumnId) else { return }
 
         let flashColor: NSColor?
-        switch chat.slashCommand {
-        case .some(let slashCommand):
-            switch slashCommand {
-            case .gift:
-                flashColor = UIHelper.cellViewGiftFlashColor()
-            case .nicoad:
-                flashColor = UIHelper.cellViewAdFlashColor()
-            case .cruise, .emotion, .info, .quote, .spi, .vote, .unknown:
-                flashColor = nil
-            }
-        case .none:
+        switch chat.chatType {
+        case .gift:
+            flashColor = UIHelper.cellViewGiftFlashColor()
+        case .nicoad:
+            flashColor = UIHelper.cellViewAdFlashColor()
+        case .other:
             flashColor = nil
         }
         if let flashColor = flashColor {

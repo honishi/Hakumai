@@ -44,11 +44,10 @@ extension Message {
     var giftImageUrl: URL? {
         switch content {
         case .chat(let chat):
-            guard let slashCommand = chat.slashCommand else { return nil }
-            switch slashCommand {
-            case .gift(let url):
-                return url
-            default:
+            switch chat.chatType {
+            case .gift(imageUrl: let imageUrl):
+                return imageUrl
+            case .nicoad, .other:
                 return nil
             }
         default:
@@ -59,7 +58,12 @@ extension Message {
     var isAd: Bool {
         switch content {
         case .chat(let chat):
-            return chat.slashCommand == .nicoad
+            switch chat.chatType {
+            case .nicoad:
+                return true
+            case .gift, .other:
+                return false
+            }
         default:
             return false
         }
@@ -80,6 +84,7 @@ struct ChatMessage {
     let premium: Premium
     let isFirst: Bool
     let slashCommand: SlashCommand?
+    let chatType: ChatType
 }
 
 struct DebugMessage {
@@ -163,7 +168,8 @@ extension Chat {
                 .slashCommandReplaced(premium: premium),
             premium: premium,
             isFirst: isFirst,
-            slashCommand: toSlashCommand()
+            slashCommand: toSlashCommand(),
+            chatType: chatType
         )
     }
 

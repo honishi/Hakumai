@@ -474,7 +474,8 @@ private extension Dwango_Nicolive_Chat_Data_Chat {
                 case .UNRECOGNIZED:
                     return .ippan
                 }
-            }()
+            }(),
+            chatType: .other
         )
     }
 }
@@ -509,7 +510,8 @@ private extension Dwango_Nicolive_Chat_Data_Marquee {
             mail: [],
             userId: "",
             comment: hasDisplay && display.hasOperatorComment ? display.operatorComment.content : "",
-            premium: .caster
+            premium: .caster,
+            chatType: .other
         )
     }
 }
@@ -545,14 +547,19 @@ private extension Dwango_Nicolive_Chat_Data_SimpleNotification {
             mail: [],
             userId: "-",
             comment: text,
-            premium: .system
+            premium: .system,
+            chatType: .other
         )
     }
 }
 
 // TODO: 想像で実装しただけなので、機能が実際に使えるようになったら動作確認する。
+private let giftImageUrl = "https://secure-dcdn.cdn.nimg.jp/nicoad/res/nage/thumbnail/%@.png"
+
 private extension Dwango_Nicolive_Chat_Data_Gift {
     func toChat() -> Chat? {
+        let imageUrlString = String(format: giftImageUrl, itemID)
+        guard let imageUrl = URL(string: imageUrlString) else { return nil }
         return Chat(
             roomPosition: .arena,
             no: 0,
@@ -560,8 +567,10 @@ private extension Dwango_Nicolive_Chat_Data_Gift {
             dateUsec: 0,
             mail: [],
             userId: "-",
-            comment: message,
-            premium: .caster
+            // 【ギフト貢献2位】カクれんぼさんがギフト「出前館福引チケット(並)（5000pt）」を贈りました
+            comment: "\(advertiserName)さんがギフト「\(itemName)（\(String(point))pt）」を贈りました",
+            premium: .system,
+            chatType: .gift(imageUrl: imageUrl)
         )
     }
 }
@@ -586,7 +595,8 @@ private extension Dwango_Nicolive_Chat_Data_Nicoad {
             mail: [],
             userId: "-",
             comment: text,
-            premium: .caster
+            premium: .system,
+            chatType: .nicoad
         )
     }
 }
