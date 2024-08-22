@@ -595,7 +595,7 @@ extension MainViewController: NicoManagerDelegate {
                 in: live.programProvider.programProviderId
             )
         }
-        bulkAppendToTable(chats: chats, scrollToBottom: true)
+        bulkAppendToTable(chats: chats)
         if !chats.isEmpty {
             logSystemMessageToTable(L10n.receivedComments(chats.count))
         }
@@ -1089,18 +1089,20 @@ private extension MainViewController {
         scrollView.flashScrollers()
     }
 
-    func bulkAppendToTable(chats: [Chat], scrollToBottom: Bool) {
+    func bulkAppendToTable(chats: [Chat]) {
         DispatchQueue.main.async {
+            let shouldScroll = self.scrollView.isReachedToBottom
             chats.forEach {
                 self.messageContainer.append(chat: $0)
             }
             self.tableView.reloadData()
 
             DispatchQueue.main.async {
-                if scrollToBottom {
+                if shouldScroll {
                     self.scrollView.scrollToBottom()
+                } else {
+                    self.scrollView.flashScrollers()
                 }
-                self.scrollView.flashScrollers()
                 self.scrollView.updateButtonEnables()
             }
         }

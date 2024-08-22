@@ -54,8 +54,8 @@ private extension NdgrClient {
 
         var segmentCount = 0
         let chatHistory = ChatHistory()
-        // 現在時刻より少し前 (1segment = 16sec * 2) で history chat としての読み込みをやめる
-        let latestHistoryTime = Int(Date().timeIntervalSince1970) - 16 * 2
+        // 現在時刻より少し前 (1segment = 16sec * n) で history chat としての読み込みをやめる
+        let latestHistoryTime = Int(Date().timeIntervalSince1970) - 16 * 4
 
         while next != nil {
             let current = next ?? 0
@@ -64,9 +64,9 @@ private extension NdgrClient {
                 uri: uri.appending("at", value: next.toAtParameter()),
                 messageType: Dwango_Nicolive_Chat_Service_Edge_ChunkedEntry.self
             )
-            let isFetchingHistory = current < latestHistoryTime
-            if !isFetchingHistory {
-                emitChatHistoryIfNeeded(chatHistory: chatHistory)
+            chatHistory.isFetching = current < latestHistoryTime
+            if !chatHistory.isFetching {
+                emitChatHistoryIfExists(chatHistory: chatHistory)
             }
             next = nil
             for await entry in entries {
@@ -90,11 +90,8 @@ private extension NdgrClient {
                     }
                     let _segmentCount = segmentCount
                     Task {
-                        await pullMessages(
-                            uri: url,
-                            chatHistory: isFetchingHistory ? chatHistory : nil
-                        )
-                        if isFetchingHistory {
+                        await pullMessages(uri: url, chatHistory: chatHistory)
+                        if chatHistory.isFetching {
                             delegate?.ndgrClientReceivingChatHistory(
                                 self,
                                 requestCount: _segmentCount,
@@ -108,28 +105,23 @@ private extension NdgrClient {
                 }
             }
         }
-        emitChatHistoryIfNeeded(chatHistory: chatHistory)
+        emitChatHistoryIfExists(chatHistory: chatHistory)
         log.debug("done: \(next ?? 0)")
     }
     // swiftlint:enable function_body_length
 
-    func emitChatHistoryIfNeeded(chatHistory: ChatHistory) {
+    func emitChatHistoryIfExists(chatHistory: ChatHistory) {
         guard !chatHistory.isEmpty else { return }
-        // chat history はパラレルに操作される可能性があるので、安全のため最初に操作対象を確定させる。
-        let count = chatHistory.chats.count
-        delegate?.ndgrClientDidReceiveChatHistory(
-            self,
-            chats: Array(chatHistory.chats.prefix(count))
-        )
-        chatHistory.dropFirst(count)
+        delegate?.ndgrClientDidReceiveChatHistory(self, chats: chatHistory.chats)
+        chatHistory.removeAll()
     }
 
     // swiftlint:disable cyclomatic_complexity
-    func pullMessages(uri: URL, chatHistory: ChatHistory?) async {
+    func pullMessages(uri: URL, chatHistory: ChatHistory) async {
         let onReceiveChat = { [weak self] (chat: Chat) in
             // TODO: まだ chat 消失のケースがある。
             log.debug(chat)
-            if let chatHistory = chatHistory {
+            if chatHistory.isFetching {
                 chatHistory.append(chat)
                 return
             }
@@ -354,12 +346,24 @@ private extension NdgrClient {
 }
 
 private final class ChatHistory: @unchecked Sendable {
-    private var _chats: [Chat]
+    private var _isFetching = true
+    private var _chats: [Chat] = []
     private let lock = NSLock()
 
-    init() {
-        self._chats = []
+    var isFetching: Bool {
+        get {
+            lock.lock()
+            defer { lock.unlock() }
+            return _isFetching
+        }
+        set(value) {
+            lock.lock()
+            defer { lock.unlock() }
+            _isFetching = value
+        }
     }
+
+    init() {}
 
     var isEmpty: Bool {
         lock.lock()
@@ -379,11 +383,10 @@ private final class ChatHistory: @unchecked Sendable {
         _chats.append(chat)
     }
 
-    func dropFirst(_ count: Int) {
+    func removeAll() {
         lock.lock()
         defer { lock.unlock() }
-        let remainingCount = _chats.count - count
-        _chats = Array(_chats.suffix(remainingCount))
+        _chats.removeAll()
     }
 }
 
