@@ -21,10 +21,20 @@ struct Chat {
     // ndgr 暫定対応のための仮プロパティ
     let chatType: ChatType
 
+    var isComment: Bool {
+        switch chatType {
+        case .comment:
+            return true
+        case .gift, .nicoad, .other:
+            return false
+        }
+    }
+
     var isDisconnect: Bool { premium == .system && comment == "/disconnect" }
 }
 
 enum ChatType {
+    case comment
     case gift(imageUrl: URL)
     case nicoad
     case other

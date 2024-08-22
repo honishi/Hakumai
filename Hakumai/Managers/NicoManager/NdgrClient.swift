@@ -475,7 +475,7 @@ private extension Dwango_Nicolive_Chat_Data_Chat {
                     return .ippan
                 }
             }(),
-            chatType: .other
+            chatType: .comment
         )
     }
 }

@@ -363,7 +363,7 @@ extension MainViewController: NSTableViewDelegate {
             flashColor = UIHelper.cellViewGiftFlashColor()
         case .nicoad:
             flashColor = UIHelper.cellViewAdFlashColor()
-        case .other:
+        case .comment, .other:
             flashColor = nil
         }
         if let flashColor = flashColor {

@@ -47,7 +47,7 @@ extension Message {
             switch chat.chatType {
             case .gift(imageUrl: let imageUrl):
                 return imageUrl
-            case .nicoad, .other:
+            case .comment, .nicoad, .other:
                 return nil
             }
         default:
@@ -61,7 +61,7 @@ extension Message {
             switch chat.chatType {
             case .nicoad:
                 return true
-            case .gift, .other:
+            case .comment, .gift, .other:
                 return false
             }
         default:
