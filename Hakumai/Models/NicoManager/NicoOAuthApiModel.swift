@@ -46,10 +46,10 @@ struct WatchProgramsResponse: Codable {
     struct ProgramProvider: Codable {
         let name: String
         let profileUrl: URL
-        let programProviderId: String
+        let programProviderId: String?
         let type: String
         let userLevel: Int?
-        let icons: Icons
+        let icons: Icons?
 
         // swiftlint:disable nesting
         struct Icons: Codable {

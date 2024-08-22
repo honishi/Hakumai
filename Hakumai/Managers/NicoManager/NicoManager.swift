@@ -1134,11 +1134,19 @@ private extension WatchProgramsResponse {
 
 private extension WatchProgramsResponse.ProgramProvider {
     func toProgramProvider() -> ProgramProvider {
-        ProgramProvider(
-            programProviderId: programProviderId,
+        // "http://ch.nicovideo.jp/channel/ch2648853" -> "ch2648853"
+        let providerId = String(profileUrl.absoluteString.split(separator: "/").last ?? "")
+        log.debug(providerId)
+        return ProgramProvider(
+            // チャンネルは programProviderId が nil になるので、provide id を生成して使用する。
+            programProviderId: programProviderId ?? providerId,
             name: name,
             profileUrl: profileUrl,
-            icons: icons.toProgramProviderIcons()
+            // チャンネルは icons が nil になるので、適当に profileUrl を詰める。
+            icons: icons?.toProgramProviderIcons() ?? ProgramProvider.Icons(
+                uri150x150: profileUrl,
+                uri50x50: profileUrl
+            )
         )
     }
 }
