@@ -11,7 +11,7 @@ import Alamofire
 import Kanna
 
 private let queryInterval: TimeInterval = 60
-private let chikuranUrl = "http://www.chikuwachan.com/live/"
+private let chikuranUrl = "http://www.chikuwachan.com/live/ajax.cgi?column=1&sites=NCU"
 private let maxPage = 5
 
 final class RankingManager {
@@ -128,7 +128,7 @@ private extension RankingManager {
         if page == 1 {
             urlString = chikuranUrl
         } else {
-            urlString = chikuranUrl + "index.cgi?page=\(page)"
+            urlString = chikuranUrl + "&page=\(page)"
         }
         guard let url = URL(string: urlString) else {
             fatalError("This case is not going to be happened.")
@@ -139,10 +139,10 @@ private extension RankingManager {
     func extractRankMap(from html: String) -> [String: Int] {
         var map: [String: Int] = [:]
         guard let doc = try? HTML(html: html, encoding: .utf8) else { return map }
-        for live in doc.xpath("//div[contains(@class, \"live\")]") {
+        for live in doc.xpath("//li[contains(@class, \"live\")]") {
             guard let rankText = live.xpath("//div[@class=\"rank\"]").first?.text,
                   let rank = Int(rankText),
-                  let linkText = live.xpath("//div[@class=\"title\"]/a").first?["href"],
+                  let linkText = live.xpath("//a[@class=\"liveurl\"]").first?["href"],
                   let liveId = linkText.extractLiveProgramId() else { continue }
             map[liveId] = rank
         }
