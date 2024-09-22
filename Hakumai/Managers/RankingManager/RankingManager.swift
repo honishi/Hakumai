@@ -11,7 +11,7 @@ import Alamofire
 import Kanna
 
 private let queryInterval: TimeInterval = 60
-private let chikuranUrl = "http://www.chikuwachan.com/live/ajax.cgi?column=1&sites=NCU"
+private let chikuranUrl = "https://www.chikuwachan.com/live/ajax.cgi?column=1&sites=NCU"
 private let maxPage = 5
 
 final class RankingManager {
@@ -124,12 +124,9 @@ private extension RankingManager {
     }
 
     func rankingUrl(for page: Int) -> URL {
-        let urlString: String
-        if page == 1 {
-            urlString = chikuranUrl
-        } else {
-            urlString = chikuranUrl + "&page=\(page)"
-        }
+        let urlString = chikuranUrl
+            + (page == 1 ? "" : "&page=\(page)")
+            + "&_=\(Int(Date().timeIntervalSince1970 * 1000))"
         guard let url = URL(string: urlString) else {
             fatalError("This case is not going to be happened.")
         }
