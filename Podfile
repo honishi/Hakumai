@@ -1,4 +1,4 @@
-platform :osx, '10.14'
+platform :osx, '10.15'
 inhibit_all_warnings!
 
 target 'Hakumai' do
@@ -6,8 +6,9 @@ target 'Hakumai' do
 
   # Project Infrastructure
   pod 'Sparkle', '~> 2.1.0'
-  pod 'SwiftLint', '~> 0.47.0'
+  pod 'SwiftLint', '~> 0.55.1'
   pod 'SwiftGen', '~> 6.5.1'
+  pod 'SwiftProtobuf', '~> 1.0'
   pod 'XCGLogger', '~> 7.0.1'
 
   # Infrastructure
@@ -30,7 +31,7 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
-      config.build_settings['MACOSX_DEPLOYMENT_TARGET'] = '10.14'
+      config.build_settings['MACOSX_DEPLOYMENT_TARGET'] = '10.15'
     end
   end
 end

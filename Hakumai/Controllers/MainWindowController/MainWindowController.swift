@@ -18,15 +18,15 @@ protocol MainWindowControllerDelegate: AnyObject {
 final class MainWindowController: NSWindowController {
     struct TitleAttribute {
         let title: String
-        let community: String
+        let providerName: String
         let isConnected: Bool
         let detectedStoreComment: Bool
         let detectedKusaComment: Bool
         let receivedGift: Bool
 
-        init(title: String, community: String, isConnected: Bool, detectedStoreComment: Bool = false, detectedKusaComment: Bool = false, receivedGift: Bool = false) {
+        init(title: String, providerName: String, isConnected: Bool, detectedStoreComment: Bool = false, detectedKusaComment: Bool = false, receivedGift: Bool = false) {
             self.title = title
-            self.community = community
+            self.providerName = providerName
             self.isConnected = isConnected
             self.detectedStoreComment = detectedStoreComment
             self.detectedKusaComment = detectedKusaComment
@@ -76,11 +76,12 @@ extension MainWindowController: NSWindowDelegate {
 }
 
 extension MainWindowController: MainViewControllerDelegate {
-    func mainViewControllerDidPrepareLive(_ mainViewController: MainViewController, title: String, community: String) {
+    func mainViewControllerDidPrepareLive(_ mainViewController: MainViewController, title: String, providerName: String) {
         titleAttribute = TitleAttribute(
             title: title,
-            community: community,
-            isConnected: true)
+            providerName: providerName,
+            isConnected: true
+        )
         updateLiveTitle(titleAttribute)
     }
 
@@ -141,7 +142,7 @@ private extension MainWindowController {
     }
 
     func updateLiveTitle(_ titleAttribute: TitleAttribute) {
-        let _title = "\(titleAttribute.title) - \(titleAttribute.community)"
+        let _title = "\(titleAttribute.title) - \(titleAttribute.providerName)"
         let _tabTitle = [
             titleAttribute.isConnected ? "⚡️" : nil,
             titleAttribute.detectedStoreComment ? "🗯" : nil,
@@ -313,7 +314,7 @@ private extension MainWindowController.TitleAttribute {
     static var initial: MainWindowController.TitleAttribute {
         .init(
             title: "",
-            community: "",
+            providerName: "",
             isConnected: false,
             detectedStoreComment: false,
             detectedKusaComment: false,
@@ -324,7 +325,7 @@ private extension MainWindowController.TitleAttribute {
     func copyWith(isConnected: Bool? = nil, detectedStoreComment: Bool? = nil, detectedKusaComment: Bool? = nil, receivedGift: Bool? = nil) -> MainWindowController.TitleAttribute {
         return MainWindowController.TitleAttribute(
             title: title,
-            community: community,
+            providerName: providerName,
             isConnected: isConnected ?? self.isConnected,
             detectedStoreComment: detectedStoreComment ?? self.detectedStoreComment,
             detectedKusaComment: detectedKusaComment ?? self.detectedKusaComment,

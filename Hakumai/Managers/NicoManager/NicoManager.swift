@@ -93,15 +93,6 @@ final class NicoManager: NicoManagerType {
             message = Date()
         }
     }
-    struct OpenThreadInfo {
-        let userId: String
-        let threadKey: String
-    }
-    struct ProgramRoom {
-        let name: String
-        let id: Int
-        let threadId: String
-    }
 
     // Public Properties
     weak var delegate: NicoManagerDelegate?
@@ -109,6 +100,8 @@ final class NicoManager: NicoManagerType {
 
     // Private Properties
     private let authManager: AuthManagerProtocol
+    private let ndgrClient: NdgrClientType
+
     private var isConnected = false
     private var connectRequests: ConnectRequests =
         ConnectRequests(
@@ -139,12 +132,6 @@ final class NicoManager: NicoManagerType {
     // App-side Health Check (Text Socket)
     private var textSocketEventCheckTimer: Timer?
 
-    // Program Rooms (Store Thread)
-    private var openThreadInfo: OpenThreadInfo?
-    private var openedRoomCount = 0
-    private var programRoomsCheckTimer: Timer?
-    private var programRooms: [ProgramRoom] = []
-
     // History Comments
     private var earliestHistoryChatDate: Date = .distantFuture
     private var historyThreadRequestCount = 0
@@ -152,8 +139,9 @@ final class NicoManager: NicoManagerType {
     private var historyChats: [Chat] = []
     private var receivedAllHistoryChats = false
 
-    init(authManager: AuthManagerProtocol = AuthManager.shared) {
+    init(authManager: AuthManagerProtocol = AuthManager.shared, ndgrClient: NdgrClientType = NdgrClient()) {
         self.authManager = authManager
+        self.ndgrClient = ndgrClient
         session = {
             let configuration = URLSessionConfiguration.af.default
             configuration.headers.add(.userAgent(commonUserAgentValue))
@@ -170,6 +158,9 @@ extension NicoManager {
     }
 
     func connect(liveProgramId: String, connectContext: NicoConnectContext) {
+        // 0. Configure delegate.
+        ndgrClient.delegate = self
+
         // 1. Check if the token is existing.
         guard authManager.hasToken else {
             delegate?.nicoManagerNeedsToken(self)
@@ -206,6 +197,7 @@ extension NicoManager {
     }
 
     func disconnect(disconnectContext: NicoDisconnectContext) {
+        ndgrClient.disconnect()
         disconnectSocketsAndResetState()
         delegate?.nicoManagerDidDisconnect(self, disconnectContext: disconnectContext)
     }
@@ -332,6 +324,42 @@ extension NicoManager {
     }
 }
 
+// MARK: - NdgrClientDelegate Methods
+extension NicoManager: NdgrClientDelegate {
+    func ndgrClientDidConnect(_ ndgrClient: any NdgrClientType) {
+        log.info("ndgr client connected.")
+        delegate?.nicoManager(self, hasDebugMessgae: "Completed to open message socket.")
+        connectRequests.lastEstablished = connectRequests.onGoing
+        connectRequests.onGoing = nil
+        isConnected = true
+        startBasicTimers()
+        delegate?.nicoManagerDidConnectToLive(
+            self,
+            roomPosition: RoomPosition.arena,
+            // TODO: context を正しく渡す必要があるか検討
+            // connectContext: connectContext
+            connectContext: .normal
+        )
+    }
+
+    func ndgrClientReceivingChatHistory(_ ndgrClient: any NdgrClientType, requestCount: Int, totalChatCount: Int) {
+        delegate?.nicoManagerReceivingChatHistory(self, requestCount: requestCount, totalChatCount: totalChatCount)
+    }
+
+    func ndgrClientDidReceiveChatHistory(_ ndgrClient: any NdgrClientType, chats: [Chat]) {
+        delegate?.nicoManagerDidReceiveChatHistory(self, chats: chats)
+    }
+
+    func ndgrClientDidReceiveChat(_ ndgrClient: any NdgrClientType, chat: Chat) {
+        delegate?.nicoManagerDidReceiveChat(self, chat: chat)
+    }
+
+    func ndgrClientDidDisconnect(_ ndgrClient: any NdgrClientType) {
+        log.info("ndgr client disconnected.")
+        delegate?.nicoManagerDidDisconnect(self, disconnectContext: .normal)
+    }
+}
+
 // MARK: - Private Methods
 // Main connect sequence.
 private extension NicoManager {
@@ -342,7 +370,7 @@ private extension NicoManager {
             url: watchProgramsApiUrl,
             parameters: [
                 "nicoliveProgramId": liveProgramId,
-                "fields": "program,socialGroup"
+                "fields": "program,programProvider"
             ]
         ) { [weak self] (result: Result<WatchProgramsResponse, NicoError>) in
             guard let me = self else { return }
@@ -430,14 +458,17 @@ private extension NicoManager {
     func openWatchSocket(webSocketUrl: URL, userId: String, connectContext: NicoConnectContext) {
         delegate?.nicoManager(self, hasDebugMessgae: "Opening watch socket...")
         openWatchSocket(webSocketUrl: webSocketUrl) { [weak self] in
-            guard let me = self, let isTimeShift = me.live?.isTimeShift else { return }
+            guard let me = self, let live = me.live else { return }
             switch $0 {
-            case .success(let room):
-                me.openThreadInfo = OpenThreadInfo(
-                    userId: userId,
-                    threadKey: room.data.yourPostKey)
+            case .success(let messageServer):
                 me.delegate?.nicoManager(me, hasDebugMessgae: "Completed to open watch socket.")
-                me.openMessageSocket(userId: userId, room: room, connectContext: connectContext, isTimeShift: isTimeShift)
+                me.connectToNdgrServer(
+                    userId: userId,
+                    messageServer: messageServer,
+                    connectContext: connectContext,
+                    beginTime: live.beginTime,
+                    isTimeShift: live.isTimeShift
+                )
             case .failure(let error):
                 me.delegate?.nicoManager(
                     me,
@@ -447,30 +478,43 @@ private extension NicoManager {
         }
     }
 
-    // #5/5. Finally, open message socket.
-    func openMessageSocket(userId: String, room: WebSocketRoomData, connectContext: NicoConnectContext, isTimeShift: Bool) {
-        delegate?.nicoManager(self, hasDebugMessgae: "Opening message socket...")
-        openMessageSocket(userId: userId, room: room, connectContext: connectContext, isTimeShift: isTimeShift) { [weak self] in
-            guard let me = self else { return }
-            switch $0 {
-            case .success:
-                me.delegate?.nicoManager(me, hasDebugMessgae: "Completed to open message socket.")
-                me.connectRequests.lastEstablished = me.connectRequests.onGoing
-                me.connectRequests.onGoing = nil
-                me.isConnected = true
-                me.openedRoomCount = 1
-                me.startBasicTimers()
-                me.delegate?.nicoManagerDidConnectToLive(
-                    me,
-                    roomPosition: RoomPosition.arena,
-                    connectContext: connectContext)
-            case .failure(let error):
-                me.delegate?.nicoManager(
-                    me,
-                    hasDebugMessgae: "Failed to open message socket. (\(error))")
-                me.delegate?.nicoManagerDidFailToPrepareLive(me, error: .openMessageServerFailed)
-            }
+    // #5/5. Finally, connect to ndgr server.
+    func connectToNdgrServer(
+        userId: String,
+        messageServer: WebSocketMessageServerData,
+        connectContext: NicoConnectContext,
+        beginTime: Date,
+        isTimeShift: Bool
+    ) {
+        delegate?.nicoManager(self, hasDebugMessgae: "Connecting to ngdr server...")
+        guard let url = URL(string: messageServer.data.viewUri) else {
+            log.error("viewuri parse error.")
+            return
         }
+        ndgrClient.connect(viewUri: url, beginTime: beginTime)
+        /*
+         openMessageSocket(userId: userId, room: room, connectContext: connectContext, isTimeShift: isTimeShift) { [weak self] in
+         guard let me = self else { return }
+         switch $0 {
+         case .success:
+         me.delegate?.nicoManager(me, hasDebugMessgae: "Completed to open message socket.")
+         me.connectRequests.lastEstablished = me.connectRequests.onGoing
+         me.connectRequests.onGoing = nil
+         me.isConnected = true
+         me.openedRoomCount = 1
+         me.startBasicTimers()
+         me.delegate?.nicoManagerDidConnectToLive(
+         me,
+         roomPosition: RoomPosition.arena,
+         connectContext: connectContext)
+         case .failure(let error):
+         me.delegate?.nicoManager(
+         me,
+         hasDebugMessgae: "Failed to open message socket. (\(error))")
+         me.delegate?.nicoManagerDidFailToPrepareLive(me, error: .openMessageServerFailed)
+         }
+         }
+         */
     }
 }
 
@@ -480,7 +524,6 @@ private extension NicoManager {
         startWatchSocketKeepSeatTimer(interval: watchSocketKeepSeatInterval)
         startMessageSocketEmptyMessageTimer(interval: messageSocketEmptyMessageInterval)
         startPingPongCheckTimer()
-        // startProgramRoomsCheckTimer()
         log.debug("Started all timers.")
     }
 
@@ -489,7 +532,6 @@ private extension NicoManager {
         stopMessageSocketEmptyMessageTimer()
         stopPingPongCheckTimer()
         clearTextSocketEventCheckTimer()
-        stopProgramRoomsCheckTimer()
         log.debug("Stopped all timers.")
     }
 
@@ -511,9 +553,6 @@ private extension NicoManager {
 
         live = nil
         isConnected = false
-        openThreadInfo = nil
-        openedRoomCount = 0
-        programRooms.removeAll()
     }
 }
 
@@ -555,7 +594,7 @@ private extension NicoManager {
             guard let me = self else { return }
             switch $0.result {
             case .success(let data):
-                log.debug(String(data: data, encoding: .utf8))
+                log.debug(String(decoding: data, as: UTF8.self))
                 guard let response: T = me.decodeApiResponse(from: data) else {
                     completion(.failure(.internal))
                     return
@@ -616,7 +655,7 @@ private extension NicoManager {
 
 // MARK: Private Methods (Watch Socket)
 private extension NicoManager {
-    func openWatchSocket(webSocketUrl: URL, completion: @escaping (Result<WebSocketRoomData, NicoError>) -> Void) {
+    func openWatchSocket(webSocketUrl: URL, completion: @escaping (Result<WebSocketMessageServerData, NicoError>) -> Void) {
         var request = URLRequest(url: webSocketUrl)
         request.applyDefaultWatchSocketSetting()
         let socket = WebSocket(request: request)
@@ -631,12 +670,13 @@ private extension NicoManager {
         watchSocket = socket
     }
 
-    func handleWatchSocketEvent(socket: WebSocket, event: WebSocketEvent, completion: (Result<WebSocketRoomData, NicoError>) -> Void) {
+    func handleWatchSocketEvent(socket: WebSocket, event: WebSocketEvent, completion: (Result<WebSocketMessageServerData, NicoError>) -> Void) {
         log.debug(event)
         switch event {
         case .connected:
             socket.write(string: startWatchingMessage)
         case .text(let text):
+            log.debug(text)
             processWatchSocketTextEvent(text: text, socket: socket, completion: completion)
         case .pong:
             lastPongSocketDates?.watch = Date()
@@ -650,15 +690,15 @@ private extension NicoManager {
         }
     }
 
-    func processWatchSocketTextEvent(text: String, socket: WebSocket, completion: (Result<WebSocketRoomData, NicoError>) -> Void) {
+    func processWatchSocketTextEvent(text: String, socket: WebSocket, completion: (Result<WebSocketMessageServerData, NicoError>) -> Void) {
         guard let decoded = decodeWebSocketData(text: text) else { return }
         switch decoded {
         case let seat as WebSocketSeatData:
             log.debug(seat)
             watchSocketKeepSeatInterval = seat.data.keepIntervalSec
-        case let room as WebSocketRoomData:
-            log.debug(room)
-            completion(Result.success(room))
+        case let messageServer as WebSocketMessageServerData:
+            log.debug(messageServer)
+            completion(Result.success(messageServer))
         case is WebSocketPingData:
             socket.write(string: pongMessage)
             log.debug("pong: \(pongMessage)")
@@ -683,8 +723,8 @@ private extension NicoManager {
             return try? decoder.decode(WebSocketPingData.self, from: data)
         case .seat:
             return try? decoder.decode(WebSocketSeatData.self, from: data)
-        case .room:
-            return try? decoder.decode(WebSocketRoomData.self, from: data)
+        case .messageServer:
+            return try? decoder.decode(WebSocketMessageServerData.self, from: data)
         case .statistics:
             return try? decoder.decode(WebSocketStatisticsData.self, from: data)
         case .disconnect:
@@ -697,34 +737,36 @@ private extension NicoManager {
 
 // MARK: - Private Methods (Message Socket)
 private extension NicoManager {
-    func openMessageSocket(userId: String, room: WebSocketRoomData, connectContext: NicoConnectContext, isTimeShift: Bool, completion: @escaping (Result<Void, NicoError>) -> Void) {
-        guard let url = URL(string: room.data.messageServer.uri) else {
-            completion(Result.failure(NicoError.internal))
-            return
-        }
-        if !connectContext.isReconnect {
-            resetChatHistoryVariables()
-        }
-        var request = URLRequest(url: url)
-        request.applyDefaultMessageSocketSetting()
-        let socket = WebSocket(request: request)
-        socket.onEvent = { [weak self, weak socket] in
-            guard let me = self, let socket = socket else { return }
-            me.handleMessageSocketEvent(
-                socket: socket,
-                event: $0,
-                userId: userId,
-                threadId: room.data.threadId,
-                resFrom: defaultResFrom,
-                threadKey: room.data.yourPostKey,
-                isReconnect: connectContext.isReconnect,
-                isTimeShift: isTimeShift,
-                completion: completion
-            )
-        }
-        socket.connect()
-        messageSocket = socket
-    }
+    /*
+     func openMessageSocket(userId: String, room: WebSocketRoomData, connectContext: NicoConnectContext, isTimeShift: Bool, completion: @escaping (Result<Void, NicoError>) -> Void) {
+     guard let url = URL(string: room.data.messageServer.uri) else {
+     completion(Result.failure(NicoError.internal))
+     return
+     }
+     if !connectContext.isReconnect {
+     resetChatHistoryVariables()
+     }
+     var request = URLRequest(url: url)
+     request.applyDefaultMessageSocketSetting()
+     let socket = WebSocket(request: request)
+     socket.onEvent = { [weak self, weak socket] in
+     guard let me = self, let socket = socket else { return }
+     me.handleMessageSocketEvent(
+     socket: socket,
+     event: $0,
+     userId: userId,
+     threadId: room.data.threadId,
+     resFrom: defaultResFrom,
+     threadKey: room.data.yourPostKey,
+     isReconnect: connectContext.isReconnect,
+     isTimeShift: isTimeShift,
+     completion: completion
+     )
+     }
+     socket.connect()
+     messageSocket = socket
+     }
+     */
 
     // swiftlint:disable function_parameter_count
     func handleMessageSocketEvent(
@@ -829,7 +871,6 @@ private extension NicoManager {
                 if isTimeShift {
                     disconnect()
                 } else {
-                    startProgramRoomsCheckTimer()
                     setTextSocketEventCheckTimer(delay: textEventDisconnectDetectDelay)
                 }
                 receivedAllHistoryChats = true
@@ -905,9 +946,12 @@ private extension NicoManager {
     }
 
     func roomPosition(of chat: WebSocketChatData) -> RoomPosition {
-        let index = programRooms.map({ $0.threadId }).firstIndex(of: chat.chat.thread)
-        guard let index = index else { return .arena }
-        return RoomPosition(rawValue: index) ?? .arena
+        return .arena
+        /*
+         let index = programRooms.map({ $0.threadId }).firstIndex(of: chat.chat.thread)
+         guard let index = index else { return .arena }
+         return RoomPosition(rawValue: index) ?? .arena
+         */
     }
 
     func updateChatNumbers(chat: Chat) {
@@ -1069,68 +1113,6 @@ private extension NicoManager {
     }
 }
 
-// MARK: - Private Methods (Program Rooms Check Timer)
-private extension NicoManager {
-    func startProgramRoomsCheckTimer() {
-        stopProgramRoomsCheckTimer()
-        programRoomsCheckTimer = Timer.scheduledTimer(
-            timeInterval: 120,
-            target: self,
-            selector: #selector(NicoManager.programRoomsCheckTimerFired),
-            userInfo: nil,
-            repeats: true)
-        // For first time, kick the selector manually.
-        programRoomsCheckTimerFired()
-    }
-
-    func stopProgramRoomsCheckTimer() {
-        programRoomsCheckTimer?.invalidate()
-        programRoomsCheckTimer = nil
-    }
-
-    @objc func programRoomsCheckTimerFired() {
-        log.debug("programRoomsCheckTimerFired fired.")
-        guard let openThreadInfo = openThreadInfo, let live = live else { return }
-        checkProgramRooms(
-            userId: openThreadInfo.userId,
-            liveProgramId: live.liveProgramId)
-    }
-}
-
-private extension NicoManager {
-    func checkProgramRooms(userId: String, liveProgramId: String) {
-        callOAuthEndpoint(
-            url: programsRoomsApiUrl,
-            parameters: [
-                "userId": userId,
-                "nicoliveProgramId": liveProgramId
-            ]
-        ) { [weak self] (result: Result<ProgramRoomsResponse, NicoError>) in
-            guard let me = self else { return }
-            switch result {
-            case .success(let data):
-                log.debug("Program rooms: \(data)")
-                me.programRooms = data.data.toProgramRooms()
-                for index in me.openedRoomCount..<data.data.count {
-                    let room = data.data[index]
-                    log.debug("Opening store thread (room: \(room)...")
-                    guard let socket = me.messageSocket, let store = me.openThreadInfo else { return }
-                    me.sendInitialThreadMessage(
-                        socket: socket,
-                        userId: userId,
-                        threadId: room.threadId,
-                        resFrom: 0,
-                        threadKey: store.threadKey
-                    )
-                    me.openedRoomCount += 1
-                }
-            case .failure(let error):
-                log.error(error)
-            }
-        }
-    }
-}
-
 // MARK: - Private Extensions
 private extension WatchProgramsResponse {
     var isNotStarted: Bool {
@@ -1141,16 +1123,39 @@ private extension WatchProgramsResponse {
         Live(
             liveProgramId: nicoliveProgramId,
             title: data.program.title,
-            community: Community(
-                communityId: data.socialGroup.socialGroupId,
-                title: data.socialGroup.name,
-                level: data.socialGroup.level ?? 0,
-                thumbnailUrl: data.socialGroup.thumbnail
-            ),
             baseTime: data.program.schedule.vposBaseTime,
             openTime: data.program.schedule.openTime,
             beginTime: data.program.schedule.beginTime,
-            isTimeShift: data.program.schedule.status == .ended
+            isTimeShift: data.program.schedule.status == .ended,
+            programProvider: data.programProvider.toProgramProvider()
+        )
+    }
+}
+
+private extension WatchProgramsResponse.ProgramProvider {
+    func toProgramProvider() -> ProgramProvider {
+        // "http://ch.nicovideo.jp/channel/ch2648853" -> "ch2648853"
+        let providerId = String(profileUrl.absoluteString.split(separator: "/").last ?? "")
+        log.debug(providerId)
+        return ProgramProvider(
+            // チャンネルは programProviderId が nil になるので、provide id を生成して使用する。
+            programProviderId: programProviderId ?? providerId,
+            name: name,
+            profileUrl: profileUrl,
+            // チャンネルは icons が nil になるので、適当に profileUrl を詰める。
+            icons: icons?.toProgramProviderIcons() ?? ProgramProvider.Icons(
+                uri150x150: profileUrl,
+                uri50x50: profileUrl
+            )
+        )
+    }
+}
+
+private extension WatchProgramsResponse.ProgramProvider.Icons {
+    func toProgramProviderIcons() -> ProgramProvider.Icons {
+        ProgramProvider.Icons(
+            uri150x150: uri150x150,
+            uri50x50: uri50x50
         )
     }
 }
@@ -1181,7 +1186,8 @@ private extension WebSocketChatData {
                 guard let value = chat.premium,
                       let premium = Premium(rawValue: value) else { return .ippan }
                 return premium
-            }()
+            }(),
+            chatType: .other
         )
     }
 
@@ -1196,18 +1202,6 @@ private extension WebSocketStatisticsData {
             adPoints: data.adPoints,
             giftPoints: data.giftPoints
         )
-    }
-}
-
-private extension Array where Element == ProgramRoomsResponse.Data {
-    func toProgramRooms() -> [NicoManager.ProgramRoom] {
-        map {
-            NicoManager.ProgramRoom(
-                name: $0.name,
-                id: $0.id,
-                threadId: $0.threadId
-            )
-        }
     }
 }
 

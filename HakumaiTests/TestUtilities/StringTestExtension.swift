@@ -20,7 +20,7 @@ extension String {
 
     func resourceFileToString() -> String {
         let data = resourceFileToData()
-        return String(data: data, encoding: .utf8)!
+        return String(decoding: data, as: UTF8.self)
     }
 }
 // swiftlint:enable force_unwrapping

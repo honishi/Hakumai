@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: - WebSocket (Watch, Generic Model)
 enum WebSocketDataType: String, Codable {
-    case ping, seat, room, statistics, disconnect, reconnect
+    case ping, seat, messageServer, statistics, disconnect, reconnect
 }
 
 struct WebSocketData: Codable {
@@ -31,19 +31,12 @@ struct WebSocketSeatData: Codable {
     let data: Data
 }
 
-struct WebSocketRoomData: Codable {
+// {"type":"messageServer","data":{"viewUri":"https://mpn.live.nicovideo.jp/api/view/v4/BBzh6D87sTyygFaji0QUuxYWeJbYqgeRcbK7DumuGq4bnH4mCSWhNCjr_Y2D6X6ksyGVx9swrDbd","vposBaseTime":"2024-08-05T17:00:00+09:00","hashedUserId":"a:U5xlhzXQVY6YzMW1"}}
+struct WebSocketMessageServerData: Codable {
     struct Data: Codable {
-        let name: String
-        let messageServer: MessageServer
-        let threadId: String
-        let yourPostKey: String
-        let isFirst: Bool
-        let waybackkey: String
-    }
-
-    struct MessageServer: Codable {
-        let uri: String
-        let type: String
+        let viewUri: String
+        let vposBaseTime: String
+        let hashedUserId: String
     }
 
     let type: WebSocketDataType

@@ -26,7 +26,7 @@ private let defaultRankDateText = "--:--"
 
 // swiftlint:disable file_length
 protocol MainViewControllerDelegate: AnyObject {
-    func mainViewControllerDidPrepareLive(_ mainViewController: MainViewController, title: String, community: String)
+    func mainViewControllerDidPrepareLive(_ mainViewController: MainViewController, title: String, providerName: String)
     func mainViewControllerDidDisconnect(_ mainViewController: MainViewController)
     func mainViewControllerSpeechEnabledChanged(_ mainViewController: MainViewController, isEnabled: Bool)
     func mainViewControllerDidDetectStoreComment(_ mainViewController: MainViewController)
@@ -50,7 +50,7 @@ final class MainViewController: NSViewController {
 
     @IBOutlet private weak var liveThumbnailImageView: LiveThumbnailImageView!
     @IBOutlet private weak var liveTitleLabel: NSTextField!
-    @IBOutlet private weak var communityTitleLabel: NSTextField!
+    @IBOutlet private weak var providerNameLabel: NSTextField!
 
     @IBOutlet private weak var visitorsIconImageView: NSImageView!
     @IBOutlet private weak var visitorsValueLabel: NSTextField!
@@ -318,7 +318,10 @@ extension MainViewController: NSTableViewDelegate {
             )
         case kUserIdColumnIdentifier:
             let userIdView = view as? UserIdTableCellView
-            let handleName = HandleNameManager.shared.handleName(for: chat.userId, in: live.communityId)
+            let handleName = HandleNameManager.shared.handleName(
+                for: chat.userId,
+                in: live.programProvider.programProviderId
+            )
             userIdView?.configure(info: (
                 nicoManager: nicoManager,
                 handleName: handleName,
@@ -344,7 +347,10 @@ extension MainViewController: NSTableViewDelegate {
     private func colorizeOrFlashIfNeeded(view: NSTableCellView, message: Message, tableColumn: NSTableColumn) {
         guard let live = live, case let .chat(chat) = message.content else { return }
 
-        let bgColor = HandleNameManager.shared.color(for: chat.userId, in: live.communityId)
+        let bgColor = HandleNameManager.shared.color(
+            for: chat.userId,
+            in: live.programProvider.programProviderId
+        )
         view.setBackgroundColor(bgColor)
 
         let messageNo = message.messageNo
@@ -352,17 +358,12 @@ extension MainViewController: NSTableViewDelegate {
         guard !isCellViewFlashed(messageNo: messageNo, tableColumnIdentifier: tableColumnId) else { return }
 
         let flashColor: NSColor?
-        switch chat.slashCommand {
-        case .some(let slashCommand):
-            switch slashCommand {
-            case .gift:
-                flashColor = UIHelper.cellViewGiftFlashColor()
-            case .nicoad:
-                flashColor = UIHelper.cellViewAdFlashColor()
-            case .cruise, .emotion, .info, .quote, .spi, .vote, .unknown:
-                flashColor = nil
-            }
-        case .none:
+        switch chat.chatType {
+        case .gift:
+            flashColor = UIHelper.cellViewGiftFlashColor()
+        case .nicoad:
+            flashColor = UIHelper.cellViewAdFlashColor()
+        case .comment, .other:
             flashColor = nil
         }
         if let flashColor = flashColor {
@@ -476,9 +477,10 @@ extension MainViewController: NicoManagerDelegate {
         delegate?.mainViewControllerDidPrepareLive(
             self,
             title: live.title,
-            community: live.community.title)
+            providerName: live.programProvider.name
+        )
 
-        updateCommunityViews(for: live)
+        updateLiveTitleViews(for: live)
 
         if live.isTimeShift {
             liveThumbnailManager.start(for: live.liveProgramId, delegate: self)
@@ -541,7 +543,10 @@ extension MainViewController: NicoManagerDelegate {
         // log.debug("\(chat.mail),\(chat.comment)")
         guard let live = live else { return }
         HandleNameManager.shared.extractAndUpdateHandleName(
-            from: chat.comment, for: chat.userId, in: live.communityId)
+            from: chat.comment,
+            for: chat.userId,
+            in: live.programProvider.programProviderId
+        )
         appendToTable(chat: chat)
 
         for userWindowController in userWindowControllers where chat.userId == userWindowController.userId {
@@ -571,24 +576,29 @@ extension MainViewController: NicoManagerDelegate {
     }
 
     func nicoManagerReceivingChatHistory(_ nicoManager: NicoManagerType, requestCount: Int, totalChatCount: Int) {
-        let shouldLog = requestCount % 2 == 0
+        let shouldLog = requestCount % 20 == 0
         guard shouldLog else { return }
-        logSystemMessageToTable(L10n.receivingComments(totalChatCount))
+        logSystemMessageToTable(L10n.receivingComments(totalChatCount, requestCount))
     }
 
     func nicoManagerDidReceiveChatHistory(_ nicoManager: NicoManagerType, chats: [Chat]) {
-        if !chats.isEmpty {
-            logSystemMessageToTable(L10n.receivedComments(chats.count))
-        }
         guard let live = live else { return }
         chats.forEach {
             HandleNameManager.shared.extractAndUpdateHandleName(
-                from: $0.comment, for: $0.userId, in: live.communityId)
+                from: $0.comment,
+                for: $0.userId,
+                in: live.programProvider.programProviderId
+            )
         }
-        bulkAppendToTable(chats: chats, scrollToBottom: !live.isTimeShift)
+        bulkAppendToTable(chats: chats)
+        if !chats.isEmpty {
+            logSystemMessageToTable(L10n.receivedComments(chats.count))
+        }
     }
 
     func nicoManagerDidDisconnect(_ nicoManager: NicoManagerType, disconnectContext: NicoDisconnectContext) {
+        guard connectedToLive else { return }
+
         switch disconnectContext {
         case .normal:
             logSystemMessageToTable(L10n.liveClosed)
@@ -617,7 +627,9 @@ extension MainViewController: NicoManagerDelegate {
 
         logDebugRankingManagerStatus()
 
-        delegate?.mainViewControllerDidDisconnect(self)
+        DispatchQueue.main.async {
+            self.delegate?.mainViewControllerDidDisconnect(self)
+        }
     }
 
     func nicoManagerDidReceiveStatistics(_ nicoManager: NicoManagerType, stat: LiveStatistics) {
@@ -706,7 +718,10 @@ extension MainViewController {
             guard let me = self, let vc = vc else { return }
             if !cancelled, let handleName = handleName {
                 HandleNameManager.shared.setHandleName(
-                    name: handleName, for: chat.userId, in: live.communityId)
+                    name: handleName,
+                    for: chat.userId,
+                    in: live.programProvider.programProviderId
+                )
                 me.reloadTableView()
             }
             me.dismiss(vc)
@@ -716,7 +731,10 @@ extension MainViewController {
 
     private func defaultHandleName(live: Live, chat: ChatMessage) -> String? {
         var defaultHandleName: String?
-        if let handleName = HandleNameManager.shared.handleName(for: chat.userId, in: live.communityId) {
+        if let handleName = HandleNameManager.shared.handleName(
+            for: chat.userId,
+            in: live.programProvider.programProviderId
+        ) {
             defaultHandleName = handleName
         } else if let userName = nicoManager.cachedUserName(for: chat.userId) {
             defaultHandleName = userName
@@ -875,7 +893,6 @@ private extension MainViewController {
 
 // MARK: Configure Views
 private extension MainViewController {
-    // swiftlint:disable function_body_length
     func configureViews() {
         liveThumbnailImageView.addBorder()
         [debugReconnectButton, debugExpireTokenButton].forEach {
@@ -885,7 +902,7 @@ private extension MainViewController {
         liveUrlTextField.placeholderString = L10n.liveUrlTextFieldPlaceholder
 
         liveTitleLabel.stringValue = "[\(L10n.liveTitle)]"
-        communityTitleLabel.stringValue = "[\(L10n.communityName)]"
+        providerNameLabel.stringValue = "[\(L10n.userName)]"
 
         visitorsIconImageView.toolTip = L10n.visitorCount
         visitorsValueLabel.toolTip = L10n.visitorCount
@@ -935,7 +952,6 @@ private extension MainViewController {
         }
         view.addSubview(appearanceMonitorView)
     }
-    // swiftlint:enable function_body_length
 
     func configureTableView() {
         tableView.setClickAction(
@@ -1022,13 +1038,13 @@ private extension MainViewController {
         }
     }
 
-    func updateCommunityViews(for live: Live) {
+    func updateLiveTitleViews(for live: Live) {
         DispatchQueue.main.async { self._updateCommunityViews(for: live) }
     }
 
     func _updateCommunityViews(for live: Live) {
         liveTitleLabel.stringValue = live.title
-        communityTitleLabel.stringValue = live.community.title
+        providerNameLabel.stringValue = live.programProvider.name
     }
 }
 
@@ -1068,18 +1084,20 @@ private extension MainViewController {
         scrollView.flashScrollers()
     }
 
-    func bulkAppendToTable(chats: [Chat], scrollToBottom: Bool) {
+    func bulkAppendToTable(chats: [Chat]) {
         DispatchQueue.main.async {
+            let shouldScroll = self.scrollView.isReachedToBottom
             chats.forEach {
                 self.messageContainer.append(chat: $0)
             }
             self.tableView.reloadData()
 
             DispatchQueue.main.async {
-                if scrollToBottom {
+                if shouldScroll {
                     self.scrollView.scrollToBottom()
+                } else {
+                    self.scrollView.flashScrollers()
                 }
-                self.scrollView.flashScrollers()
                 self.scrollView.updateButtonEnables()
             }
         }
@@ -1157,10 +1175,9 @@ extension MainViewController {
         NSWorkspace.shared.open(url)
     }
 
-    @IBAction func openCommunityPage(_ sender: Any) {
-        guard let live = live,
-              let url = nicoManager.communityPageUrl(for: live.communityId) else { return }
-        NSWorkspace.shared.open(url)
+    @IBAction func openUserPage(_ sender: Any) {
+        guard let live = live else { return }
+        NSWorkspace.shared.open(live.programProvider.profileUrl)
     }
 
     @IBAction func openAdPage(_ sender: Any) {
@@ -1226,7 +1243,10 @@ private extension MainViewController {
 
         if userWindowController == nil, let live = live {
             // not exist, so create and cache it
-            let handleName = HandleNameManager.shared.handleName(for: chat.userId, in: live.communityId)
+            let handleName = HandleNameManager.shared.handleName(
+                for: chat.userId,
+                in: live.programProvider.programProviderId
+            )
             userWindowController = UserWindowController.make(
                 delegate: self,
                 nicoManager: nicoManager,
@@ -1303,7 +1323,7 @@ private extension MainViewController {
     }
 
     @objc func calculateAndUpdateActiveUser() {
-        messageContainer.calculateActive { (active: Int?) -> Void in
+        messageContainer.calculateActive { (active: Int?) in
             guard let active = active else { return }
             self.updateActiveUser(active: active)
             DispatchQueue.main.async {
@@ -1345,6 +1365,10 @@ private extension MainViewController {
 // MARK: Speech Handlers
 private extension MainViewController {
     func updateSpeechManagerState() {
+        DispatchQueue.main.async { self._updateSpeechManagerState() }
+    }
+
+    func _updateSpeechManagerState() {
         guard #available(macOS 10.14, *) else { return }
         if speakButton.isOn && connectedToLive && live?.isTimeShift == false {
             speechManager.startManager()
@@ -1387,7 +1411,10 @@ private extension MainViewController {
             guard [.ippan, .premium, .ippanTransparent].contains(chat.premium) else { return }
             // 3. Name enabled?
             if speechNameEnabled {
-                resolveSpeechName(userId: chat.userId, communityId: live.communityId) { name in
+                resolveSpeechName(
+                    userId: chat.userId,
+                    providerId: live.programProvider.programProviderId
+                ) { name in
                     DispatchQueue.global(qos: .background).async {
                         self.speechManager.enqueue(
                             comment: chat.comment,
@@ -1406,8 +1433,8 @@ private extension MainViewController {
         }
     }
 
-    func resolveSpeechName(userId: String, communityId: String, completion: @escaping (String?) -> Void) {
-        if let name = HandleNameManager.shared.handleName(for: userId, in: communityId) {
+    func resolveSpeechName(userId: String, providerId: String, completion: @escaping (String?) -> Void) {
+        if let name = HandleNameManager.shared.handleName(for: userId, in: providerId) {
             completion(name)
             return
         }
@@ -1500,9 +1527,9 @@ private extension MainViewController {
         guard enabled, let live = live, !live.isTimeShift else { return }
         notificationPresenter.show(
             title: title,
-            body: "\(live.title)\n\(live.community.title)",
+            body: "\(live.title)\n\(live.programProvider.name)",
             liveProgramId: live.liveProgramId,
-            jpegImageUrl: live.community.thumbnailUrl
+            jpegImageUrl: live.programProvider.icons.uri150x150
         )
     }
 }

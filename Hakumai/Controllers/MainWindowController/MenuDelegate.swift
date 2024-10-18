@@ -50,11 +50,17 @@ extension MenuDelegate: NSMenuItemValidation {
             return chat.isUser
         case removeHandleNameMenuItem:
             guard let live = currentLive else { return false }
-            let hasHandleName = HandleNameManager.shared.handleName(for: chat.userId, in: live.communityId) != nil
+            let hasHandleName = HandleNameManager.shared.handleName(
+                for: chat.userId,
+                in: live.programProvider.programProviderId
+            ) != nil
             return hasHandleName
         case removeUserColorMenuItem:
             guard let live = currentLive else { return false }
-            let hasColor = HandleNameManager.shared.color(for: chat.userId, in: live.communityId) != nil
+            let hasColor = HandleNameManager.shared.color(
+                for: chat.userId,
+                in: live.programProvider.programProviderId
+            ) != nil
             return hasColor
         case addToMuteUserMenuItem:
             return chat.isUser
@@ -97,27 +103,36 @@ extension MenuDelegate {
     @IBAction func removeHandleName(_ sender: AnyObject) {
         guard let live = currentLive,
               case let .chat(chat) = clickedMessage?.content else { return }
-        HandleNameManager.shared.removeHandleName(for: chat.userId, in: live.communityId)
+        HandleNameManager.shared.removeHandleName(
+            for: chat.userId,
+            in: live.programProvider.programProviderId
+        )
         mainViewController.reloadTableView()
     }
 
     @IBAction func setUserColor(_ sender: Any) {
         guard let live = currentLive,
               case let .chat(chat) = clickedMessage?.content else { return }
-        userColorPanel.targetUser = UserColorPanel.User(userId: chat.userId, communityId: live.communityId)
+        userColorPanel.targetUser = UserColorPanel.User(
+            userId: chat.userId,
+            providerId: live.programProvider.programProviderId
+        )
         userColorPanel.makeKeyAndOrderFront(nil)
     }
 
     @objc private func userColorSelected(_ sender: UserColorPanel) {
         guard let user = sender.targetUser else { return }
-        HandleNameManager.shared.setColor(sender.color, for: user.userId, in: user.communityId)
+        HandleNameManager.shared.setColor(sender.color, for: user.userId, in: user.providerId)
         mainViewController.reloadTableView()
     }
 
     @IBAction func removeUserColor(_ sender: Any) {
         guard let live = currentLive,
               case let .chat(chat) = clickedMessage?.content else { return }
-        HandleNameManager.shared.removeColor(for: chat.userId, in: live.communityId)
+        HandleNameManager.shared.removeColor(
+            for: chat.userId,
+            in: live.programProvider.programProviderId
+        )
         mainViewController.reloadTableView()
     }
 
@@ -162,7 +177,7 @@ private extension MenuDelegate {
 private final class UserColorPanel: NSColorPanel {
     struct User {
         let userId: String
-        let communityId: String
+        let providerId: String
     }
     var targetUser: User?
 }

@@ -93,6 +93,7 @@
 "comment_text_field_placeholder" = "⌘O (リターンのみで最下行にスクロール)";
 "community_id" = "コミュニティID";
 "community_name" = "コミュニティ名";
+"user_name" = "ユーザー名";
 "elapsed_time" = "経過時間";
 "live_title" = "放送タイトル";
 "live_url_text_field_placeholder" = "⌘L (放送URL, 放送番号)";
@@ -115,7 +116,7 @@
 "reconnecting" = "再接続します...";
 "reconnected" = "再接続しました.";
 "failed_to_comment" = "コメントに失敗しました.";
-"receiving_comments" = "コメントを取得中... (%d)";
+"receiving_comments" = "コメントを取得中... (%d / %d)";
 "received_comments" = "%d コメントを取得しました.";
 
 /// Error

@@ -46,7 +46,7 @@ extension KusaCommentDetector: KusaCommentDetectorType {
     }
 
     func add(chat: Chat) {
-        if chat.isSlashCommand { return }
+        guard chat.isComment else { return }
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
         chats.append(chat)
@@ -104,10 +104,6 @@ private extension KusaCommentDetector {
             log.debug("\(isKusaComment($0.comment) ? "🔵 true" : "⚪️ false"), \($0.comment)")
         }
     }
-}
-
-extension Chat {
-    var isSlashCommand: Bool { premium == .caster && comment.starts(with: "/") }
 }
 
 extension String {

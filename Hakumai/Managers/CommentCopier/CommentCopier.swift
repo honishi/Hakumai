@@ -125,7 +125,7 @@ private extension Message {
 private extension ChatMessage {
     func toResolvedUserId(live: Live, nicoManager: NicoManagerType, handleNameManager: HandleNameManager) -> String {
         var resolved = userId
-        if let handleName = handleNameManager.handleName(for: userId, in: live.communityId) {
+        if let handleName = handleNameManager.handleName(for: userId, in: live.programProvider.programProviderId) {
             resolved = "\(handleName) (\(userId))"
         } else if userId.isRawUserId, let accountName = nicoManager.cachedUserName(for: userId) {
             resolved = "\(accountName) (\(userId))"

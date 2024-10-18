@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="22155" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22155"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22690"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -1354,7 +1354,7 @@
                                     <constraint firstAttribute="height" constant="17" id="tct-vj-F6I"/>
                                 </constraints>
                                 <connections>
-                                    <action selector="openCommunityPage:" target="XfG-lQ-9wD" id="6xE-nB-jKw"/>
+                                    <action selector="openUserPage:" target="XfG-lQ-9wD" id="6xE-nB-jKw"/>
                                 </connections>
                             </button>
                             <button horizontalHuggingPriority="249" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="baU-oh-9PL" customClass="PointingHandButton" customModule="Hakumai" customModuleProvider="target">
@@ -1416,7 +1416,6 @@
                         <outlet property="commentsIconImageView" destination="MCs-Zv-FLD" id="fWS-P1-F68"/>
                         <outlet property="commentsValueLabel" destination="vmz-z1-HHp" id="zEw-JV-b7X"/>
                         <outlet property="communityTitleButton" destination="rS8-Te-GhM" id="yHH-yR-2Bp"/>
-                        <outlet property="communityTitleLabel" destination="mqT-iT-cC6" id="JMh-Lc-OmS"/>
                         <outlet property="connectButton" destination="hii-Mo-bho" id="UHG-jK-W7S"/>
                         <outlet property="debugExpireTokenButton" destination="lRV-dk-B0Y" id="rYr-fV-TAS"/>
                         <outlet property="debugReconnectButton" destination="IZs-cK-l0Y" id="neM-ub-baA"/>
@@ -1433,6 +1432,7 @@
                         <outlet property="maxActiveUserValueLabel" destination="575-Oj-4dX" id="qIj-Hw-YFs"/>
                         <outlet property="menuDelegate" destination="Riw-FG-ugq" id="l3S-iG-Ve5"/>
                         <outlet property="progressIndicator" destination="A3m-ux-Ivm" id="bCp-rD-QNX"/>
+                        <outlet property="providerNameLabel" destination="mqT-iT-cC6" id="JMh-Lc-OmS"/>
                         <outlet property="rankingDateLabel" destination="TMc-34-Gof" id="GEM-Ah-gDq"/>
                         <outlet property="rankingIconImageView" destination="klh-VF-mT9" id="bwl-AE-bzj"/>
                         <outlet property="rankingValueLabel" destination="oF2-Tt-DUQ" id="0dL-7f-Akl"/>

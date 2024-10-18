@@ -150,7 +150,7 @@ extension SpeechManager {
         let clean = cleanComment(from: comment)
         let text = [name, checkAndMakeText(clean)]
             .compactMap { $0 }
-            .joined(separator: " ")
+            .joined(separator: "、") // 読点を入れて名前とコメントに少し間隔を入れる
 
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }

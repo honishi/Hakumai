@@ -16,7 +16,7 @@ struct MetaResponse: Codable {
 struct WatchProgramsResponse: Codable {
     struct Data: Codable {
         let program: Program
-        let socialGroup: SocialGroup
+        let programProvider: ProgramProvider
     }
 
     enum ProgramStatus: String, Codable {
@@ -42,14 +42,21 @@ struct WatchProgramsResponse: Codable {
         let schedule: Schedule
     }
 
-    struct SocialGroup: Codable {
-        let type: String
-        let socialGroupId: String
-        let description: String
+    // https://github.com/niconamaworkshop/api/blob/master/oauth/watch/_programProvider.md
+    struct ProgramProvider: Codable {
         let name: String
-        let thumbnail: URL
-        let thumbnailSmall: URL
-        let level: Int?
+        let profileUrl: URL
+        let programProviderId: String?
+        let type: String
+        let userLevel: Int?
+        let icons: Icons?
+
+        // swiftlint:disable nesting
+        struct Icons: Codable {
+            let uri150x150: URL
+            let uri50x50: URL
+        }
+        // swiftlint:enable nesting
     }
 
     let meta: MetaResponse
@@ -73,16 +80,4 @@ struct WsEndpointResponse: Codable {
 
     let meta: MetaResponse
     let data: Data
-}
-
-struct ProgramRoomsResponse: Codable {
-    struct Data: Codable {
-        let webSocketUri: URL
-        let name: String
-        let id: Int
-        let threadId: String
-    }
-
-    let meta: MetaResponse
-    let data: [Data]
 }

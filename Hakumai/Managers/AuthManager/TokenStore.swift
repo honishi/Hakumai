@@ -30,8 +30,8 @@ final class TokenStore: TokenStoreProtocol {}
 
 extension TokenStore {
     func saveToken(_ storedToken: StoredToken) {
-        guard let encoded = try? JSONEncoder().encode(storedToken),
-              let jsonString = String(data: encoded, encoding: .utf8) else { return }
+        guard let encoded = try? JSONEncoder().encode(storedToken) else { return }
+        let jsonString = String(decoding: encoded, as: UTF8.self)
         log.debug(jsonString)
         let success = SAMKeychain.setPassword(
             jsonString,

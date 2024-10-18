@@ -18,14 +18,32 @@ struct Chat {
     let userId: String
     let comment: String
     let premium: Premium
+    // ndgr 暫定対応のための仮プロパティ
+    let chatType: ChatType
+
+    var isComment: Bool {
+        switch chatType {
+        case .comment:
+            return true
+        case .gift, .nicoad, .other:
+            return false
+        }
+    }
 
     var isDisconnect: Bool { premium == .system && comment == "/disconnect" }
+}
+
+enum ChatType {
+    case comment
+    case gift(imageUrl: URL)
+    case nicoad
+    case other
 }
 
 extension Chat: CustomStringConvertible {
     var description: String {
         "Chat: roomPosition[\(roomPosition)] no[\(no)] " +
             "date[\(date.description)] dateUsec[\(dateUsec)] mail[\(mail ?? [])] userId[\(userId)] " +
-            "premium[\(premium.description)] comment[\(comment)]"
+            "premium[\(premium.description)] comment[\(comment) chatType[\(String(describing: chatType))]]"
     }
 }

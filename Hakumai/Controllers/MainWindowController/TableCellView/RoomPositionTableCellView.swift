@@ -30,7 +30,12 @@ private extension RoomPositionTableCellView {
         case .system:
             return UIHelper.systemMessageBgColor()
         case .chat(let chat):
-            return UIHelper.roomColor(roomPosition: chat.roomPosition)
+            switch chat.chatType {
+            case .comment:
+                return UIHelper.roomColor(roomPosition: chat.roomPosition)
+            case .gift, .nicoad, .other:
+                return UIHelper.systemMessageBgColor()
+            }
         case .debug:
             return UIHelper.debugMessageBgColor()
         }
@@ -38,6 +43,9 @@ private extension RoomPositionTableCellView {
 
     func string(for message: Message?) -> String {
         guard case let .chat(chat) = message?.content else { return "" }
+        if chat.no == 0 {
+            return ""
+        }
         return String(chat.no).numberStringWithSeparatorComma()
     }
 
