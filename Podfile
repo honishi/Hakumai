@@ -12,7 +12,7 @@ target 'Hakumai' do
   pod 'XCGLogger', '~> 7.0.1'
 
   # Infrastructure
-  pod 'Alamofire', '~> 5.6.0'
+  pod 'Alamofire', '~> 5.10.2'
   pod 'FMDB', '~> 2.7.5'
   pod 'Kanna', '~> 5.2.7'
   pod 'SAMKeychain', '~> 1.5.3'

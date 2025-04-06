@@ -1,5 +1,5 @@
 PODS:
-  - Alamofire (5.6.0)
+  - Alamofire (5.10.2)
   - DGCharts (5.0.0):
     - DGCharts/Core (= 5.0.0)
   - DGCharts/Core (5.0.0)
@@ -24,7 +24,7 @@ PODS:
     - ObjcExceptionBridging
 
 DEPENDENCIES:
-  - Alamofire (~> 5.6.0)
+  - Alamofire (~> 5.10.2)
   - DGCharts (~> 5.0.0)
   - FMDB (~> 2.7.5)
   - Kanna (~> 5.2.7)
@@ -56,7 +56,7 @@ SPEC REPOS:
     - XCGLogger
 
 SPEC CHECKSUMS:
-  Alamofire: 0c07058209f211e3d32824f8e0766d7c44ac83b3
+  Alamofire: 7193b3b92c74a07f85569e1a6c4f4237291e7496
   DGCharts: 6e0cf2644e8f81ad13f04caa8bc18502870a1c54
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   Kanna: 01cfbddc127f5ff0963692f285fcbc8a9d62d234
@@ -71,6 +71,6 @@ SPEC CHECKSUMS:
   SwiftProtobuf: b109bd17979d7993a84da14b1e1fdd8b0ded934a
   XCGLogger: 1943831ef907df55108b0b18657953f868de973b
 
-PODFILE CHECKSUM: 734152b0caebe3a557739f47ac8c07708e8aaac9
+PODFILE CHECKSUM: 57ab28ced641ad2a8f4aed30f6b09eb66b0a413f
 
-COCOAPODS: 1.14.3
+COCOAPODS: 1.16.2
