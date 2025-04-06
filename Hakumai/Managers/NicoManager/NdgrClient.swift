@@ -16,13 +16,16 @@ final class NdgrClient: NdgrClientType {
 
     // Private Properties
     private let session: Session
+    private var receivedMessageMetaIds = Set<String>()
+    private let metaIdCheckLock = NSLock()
 
     init(delegate: NdgrClientDelegate? = nil) {
         self.delegate = delegate
         session = {
             let configuration = URLSessionConfiguration.af.default
             configuration.headers.add(.userAgent(commonUserAgentValue))
-            return Session(configuration: configuration)
+            let interceptor = Interceptor(retriers: [NdgrRequestRetrier()])
+            return Session(configuration: configuration, interceptor: interceptor)
         }()
     }
 }
@@ -134,6 +137,9 @@ private extension NdgrClient {
             messageType: Dwango_Nicolive_Chat_Service_Edge_ChunkedMessage.self
         )
         for await message in messages {
+            if checkIfMessageIsReceived(metaId: message.meta.id) {
+                continue
+            }
             guard let payload = message.payload else { continue }
             switch payload {
             case .message(let message):
@@ -163,6 +169,18 @@ private extension NdgrClient {
         log.debug("done")
     }
     // swiftlint:enable cyclomatic_complexity
+
+    func checkIfMessageIsReceived(metaId: String) -> Bool {
+        guard !metaId.isEmpty else {
+            return false
+        }
+        metaIdCheckLock.lock()
+        defer { metaIdCheckLock.unlock() }
+        let alreadyReceived = receivedMessageMetaIds.contains(metaId)
+        // log.info("is received meta-id: \(alreadyReceived) (\(metaId))")
+        receivedMessageMetaIds.insert(metaId)
+        return alreadyReceived
+    }
 }
 
 // Low layer for chunked network I/O.
@@ -598,5 +616,29 @@ private extension Dwango_Nicolive_Chat_Data_Nicoad {
             premium: .system,
             chatType: .nicoad
         )
+    }
+}
+
+final class NdgrRequestRetrier: RequestRetrier {
+    func retry(
+        _ request: Request,
+        for session: Session,
+        dueTo error: Error,
+        completion: @escaping (RetryResult) -> Void
+    ) {
+        log.debug("RequestRetrier > request: \(request) error: \(error)")
+        guard
+            let afError = error.asAFError,
+            case .sessionTaskFailed(let underlyingError) = afError,
+            // Code=-1005 "The network connection was lost."
+            (underlyingError as NSError).code == -1005
+        else {
+            log.debug("RequestRetrier > not retry")
+            completion(.doNotRetry)
+            return
+        }
+        log.debug("RequestRetrier > perform retry")
+        // すでに1回リトライしていたら再試行しない、そうでなければリトライする
+        completion(request.retryCount >= 1 ? .doNotRetry : .retry)
     }
 }
