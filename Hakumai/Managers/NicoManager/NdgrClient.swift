@@ -630,8 +630,9 @@ final class NdgrRequestRetrier: RequestRetrier {
         guard
             let afError = error.asAFError,
             case .sessionTaskFailed(let underlyingError) = afError,
+            // Code=-1001 "The request timed out."
             // Code=-1005 "The network connection was lost."
-            (underlyingError as NSError).code == -1005
+            [-1001, -1005].contains((underlyingError as NSError).code)
         else {
             log.debug("RequestRetrier > not retry")
             completion(.doNotRetry)
