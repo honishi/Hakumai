@@ -46,3 +46,6 @@ Pods/
 
 # Credential
 OAuthCredential.swift
+
+# Claude
+.claude/*.local.json
