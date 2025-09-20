@@ -53,6 +53,7 @@
 		DB414C0B1A4811C4008D2F40 /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB414C0A1A4811C4008D2F40 /* Global.swift */; };
 		DB49963B27C1097E00FD3405 /* PointingHandButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB49963A27C1097E00FD3405 /* PointingHandButton.swift */; };
 		DB49A75A27B6AC550013B626 /* AudioCacher.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB49A75927B6AC550013B626 /* AudioCacher.swift */; };
+		DB4D5ACB2E7EE051000524FC /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = DB4D5ACA2E7EE051000524FC /* AppIcon.icon */; };
 		DB5164FC264E662100F809B3 /* CommentTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5164FB264E662100F809B3 /* CommentTableCellView.swift */; };
 		DB5164FE264E664500F809B3 /* CommentTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB5164FD264E664500F809B3 /* CommentTableCellView.xib */; };
 		DB52B0AD1A2102C700E78C6A /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB52B0AC1A2102C700E78C6A /* User.swift */; };
@@ -213,6 +214,7 @@
 		DB414C0A1A4811C4008D2F40 /* Global.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
 		DB49963A27C1097E00FD3405 /* PointingHandButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PointingHandButton.swift; sourceTree = "<group>"; };
 		DB49A75927B6AC550013B626 /* AudioCacher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioCacher.swift; sourceTree = "<group>"; };
+		DB4D5ACA2E7EE051000524FC /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 		DB5164FB264E662100F809B3 /* CommentTableCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentTableCellView.swift; sourceTree = "<group>"; };
 		DB5164FD264E664500F809B3 /* CommentTableCellView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CommentTableCellView.xib; sourceTree = "<group>"; };
 		DB52B0AC1A2102C700E78C6A /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
@@ -724,6 +726,7 @@
 			isa = PBXGroup;
 			children = (
 				DB2F51652666998F000A1C58 /* Localization */,
+				DB4D5ACA2E7EE051000524FC /* AppIcon.icon */,
 				DB2AE0C71A0EE2FD00B1CE4D /* Images.xcassets */,
 			);
 			path = Resources;
@@ -938,6 +941,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB4D5ACB2E7EE051000524FC /* AppIcon.icon in Resources */,
 				DB15AF9626567A18009DACBE /* AuthWindowController.storyboard in Resources */,
 				DB5164FE264E664500F809B3 /* CommentTableCellView.xib in Resources */,
 				DB022ED3271144F8003DC12A /* IconTableCellView.xib in Resources */,
