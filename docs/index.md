@@ -39,8 +39,7 @@ Hakumai は macOS で動作するニコニコ生放送用のコメントビュ�
 <div style="text-align: center;">
 <img src="./image/job_kome_nouka.png" width="160px"><br>
 <div class="middle-text">
-🌾 <a href="https://donation.yahoo.co.jp/" target="_blank">ドネーション</a>
-🌾 <a href="https://www.amazon.co.jp/b?node=8443136051" target="_blank">ほしい物リスト</a> 🌾
+🌾 <a href="https://ko-fi.com/honishi" target="_blank">Ko-fi</a> 🌾
 </div>
 </div>
 
