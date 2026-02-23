@@ -281,11 +281,15 @@ extension MainViewController: NSTableViewDelegate {
         case kCommentColumnIdentifier:
             let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)
-            let attributed = NSAttributedString(string: content, attributes: attributes)
+            let attributed = highlightedAttributedString(
+                text: content,
+                baseAttributes: attributes
+            )
             commentView?.configure(attributedString: attributed)
         case kUserIdColumnIdentifier:
             let userIdView = view as? UserIdTableCellView
             userIdView?.configure(info: nil)
+            userIdView?.highlightQuery = activeCommentSearchQuery
             userIdView?.fontSize = nil
         case kPremiumColumnIdentifier:
             let premiumView = view as? PremiumTableCellView
@@ -319,7 +323,10 @@ extension MainViewController: NSTableViewDelegate {
         case kCommentColumnIdentifier:
             let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)
-            let attributed = NSAttributedString(string: content as String, attributes: attributes)
+            let attributed = highlightedAttributedString(
+                text: content,
+                baseAttributes: attributes
+            )
             commentView?.configure(
                 attributedString: attributed,
                 giftImageUrl: message.giftImageUrl
@@ -337,6 +344,7 @@ extension MainViewController: NSTableViewDelegate {
                 premium: chat.premium,
                 comment: chat.comment
             ))
+            userIdView?.highlightQuery = activeCommentSearchQuery
             userIdView?.fontSize = tableViewFontSize
         case kPremiumColumnIdentifier:
             let premiumView = view as? PremiumTableCellView
@@ -448,6 +456,12 @@ extension MainViewController: NSControlTextEditingDelegate, NSSearchFieldDelegat
             return true
         }
         return false
+    }
+
+    func controlTextDidChange(_ obj: Notification) {
+        guard let control = obj.object as? NSControl else { return }
+        guard control === commentSearchField else { return }
+        tableView.reloadData()
     }
 
     private func handleCommentTextFieldKeyUpDown(isMovedUp: Bool, isMovedDown: Bool) {
@@ -855,6 +869,15 @@ extension MainViewController {
 
 // MARK: Comment Search
 private extension MainViewController {
+    var activeCommentSearchQuery: String? {
+        guard !commentSearchContainerView.isHidden else { return nil }
+        let query = commentSearchField.stringValue.trimmingCharacters(
+            in: .whitespacesAndNewlines
+        )
+        guard !query.isEmpty else { return nil }
+        return query
+    }
+
     @objc func commentSearchFieldSubmitted(_ sender: NSSearchField) {
         _ = findComment(direction: .forward)
     }
@@ -863,12 +886,51 @@ private extension MainViewController {
         guard commentSearchContainerView.isHidden else { return }
         commentSearchContainerView.isHidden = false
         scrollView.contentInsets.top = commentSearchBarHeight + commentSearchBarTopPadding
+        tableView.reloadData()
     }
 
     func hideCommentSearchIfNeeded() {
         guard !commentSearchContainerView.isHidden else { return }
         commentSearchContainerView.isHidden = true
         scrollView.contentInsets.top = 0
+        tableView.reloadData()
+    }
+
+    func highlightedAttributedString(
+        text: String,
+        baseAttributes: [NSAttributedString.Key: Any]
+    ) -> NSAttributedString {
+        let attributed = NSMutableAttributedString(
+            string: text,
+            attributes: baseAttributes
+        )
+        guard let query = activeCommentSearchQuery else { return attributed }
+
+        let nsText = text as NSString
+        var searchRange = NSRange(location: 0, length: nsText.length)
+        while searchRange.length > 0 {
+            let foundRange = nsText.range(
+                of: query,
+                options: [.caseInsensitive],
+                range: searchRange
+            )
+            if foundRange.location == NSNotFound {
+                break
+            }
+            attributed.addAttribute(
+                .backgroundColor,
+                value: UIHelper.searchMatchHighlightColor(),
+                range: foundRange
+            )
+
+            let nextLocation = foundRange.location + foundRange.length
+            guard nextLocation <= nsText.length else { break }
+            searchRange = NSRange(
+                location: nextLocation,
+                length: nsText.length - nextLocation
+            )
+        }
+        return attributed
     }
 
     @discardableResult
