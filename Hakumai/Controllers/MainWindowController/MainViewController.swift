@@ -425,8 +425,18 @@ private extension MainViewController {
 }
 
 // MARK: - NSControlTextEditingDelegate Functions
-extension MainViewController: NSControlTextEditingDelegate {
+extension MainViewController: NSControlTextEditingDelegate, NSSearchFieldDelegate {
     func control(_ control: NSControl, textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
+        if control === commentSearchField &&
+            commandSelector == #selector(NSResponder.cancelOperation(_:)) {
+            hideCommentSearchIfNeeded()
+            return true
+        }
+
+        guard control === commentTextField else {
+            return false
+        }
+
         let isMovedUp = commandSelector == #selector(NSResponder.moveUp(_:))
         let isMovedDown = commandSelector == #selector(NSResponder.moveDown(_:))
         if isMovedUp || isMovedDown {
@@ -855,6 +865,12 @@ private extension MainViewController {
         scrollView.contentInsets.top = commentSearchBarHeight + commentSearchBarTopPadding
     }
 
+    func hideCommentSearchIfNeeded() {
+        guard !commentSearchContainerView.isHidden else { return }
+        commentSearchContainerView.isHidden = true
+        scrollView.contentInsets.top = 0
+    }
+
     @discardableResult
     func findComment(direction: CommentSearchDirection) -> Bool {
         let query = commentSearchField.stringValue.trimmingCharacters(
@@ -1080,6 +1096,7 @@ private extension MainViewController {
         commentSearchField.placeholderString = L10n.searchCommentsOrUsernames
         commentSearchField.sendsSearchStringImmediately = false
         commentSearchField.sendsWholeSearchString = true
+        commentSearchField.delegate = self
         commentSearchField.target = self
         commentSearchField.action = #selector(commentSearchFieldSubmitted(_:))
 
