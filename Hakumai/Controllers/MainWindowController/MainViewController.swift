@@ -23,6 +23,10 @@ private let defaultElapsedTimeValue = "--:--:--"
 private let defaultLabelValue = "---"
 private let defaultChartText = "-----"
 private let defaultRankDateText = "--:--"
+private let commentSearchBarHeight: CGFloat = 32
+private let commentSearchBarTopPadding: CGFloat = 6
+private let commentSearchBarSidePadding: CGFloat = 8
+private let commentSearchFieldPadding: CGFloat = 6
 
 // swiftlint:disable file_length
 protocol MainViewControllerDelegate: AnyObject {
@@ -37,6 +41,7 @@ protocol MainViewControllerDelegate: AnyObject {
 final class MainViewController: NSViewController {
     // MARK: Types
     enum ConnectionStatus { case disconnected, connecting, connected }
+    enum CommentSearchDirection { case forward, backward }
 
     // MARK: Properties
     weak var delegate: MainViewControllerDelegate?
@@ -125,6 +130,9 @@ final class MainViewController: NSViewController {
     private var speechNameEnabled = false
     private var speechGiftEnabled = false
     private var speechAdEnabled = false
+
+    private let commentSearchContainerView = NSVisualEffectView()
+    private let commentSearchField = NSSearchField()
 
     // AuthWindowController
     private lazy var authWindowController: AuthWindowController = {
@@ -756,6 +764,21 @@ extension MainViewController {
         commentTextField.becomeFirstResponder()
     }
 
+    func showCommentSearch() {
+        showCommentSearchIfNeeded()
+        commentSearchField.selectText(self)
+    }
+
+    func findNextComment() {
+        showCommentSearchIfNeeded()
+        _ = findComment(direction: .forward)
+    }
+
+    func findPreviousComment() {
+        showCommentSearchIfNeeded()
+        _ = findComment(direction: .backward)
+    }
+
     func toggleSpeech() {
         speakButton.state = speakButton.isOn ? .off : .on   // set "toggled" state
         speakButtonStateChanged(self)
@@ -817,6 +840,91 @@ extension MainViewController {
 
     func setVoiceSpeaker(_ speaker: Int) {
         speechManager.setVoiceSpeaker(speaker)
+    }
+}
+
+// MARK: Comment Search
+private extension MainViewController {
+    @objc func commentSearchFieldSubmitted(_ sender: NSSearchField) {
+        _ = findComment(direction: .forward)
+    }
+
+    func showCommentSearchIfNeeded() {
+        guard commentSearchContainerView.isHidden else { return }
+        commentSearchContainerView.isHidden = false
+        scrollView.contentInsets.top = commentSearchBarHeight + commentSearchBarTopPadding
+    }
+
+    @discardableResult
+    func findComment(direction: CommentSearchDirection) -> Bool {
+        let query = commentSearchField.stringValue.trimmingCharacters(
+            in: .whitespacesAndNewlines
+        )
+        guard !query.isEmpty else {
+            NSSound.beep()
+            return false
+        }
+
+        let count = messageContainer.count()
+        guard count > 0 else {
+            NSSound.beep()
+            return false
+        }
+
+        let normalized = query.lowercased()
+        let selectedRow = tableView.selectedRow
+        let start: Int = {
+            switch direction {
+            case .forward:
+                return selectedRow >= 0 ? selectedRow + 1 : 0
+            case .backward:
+                return selectedRow >= 0 ? selectedRow - 1 : count - 1
+            }
+        }()
+
+        for offset in 0..<count {
+            let row: Int = {
+                switch direction {
+                case .forward:
+                    return (start + offset + count) % count
+                case .backward:
+                    return (start - offset + count) % count
+                }
+            }()
+            guard isSearchMatched(message: messageContainer[row], query: normalized) else { continue }
+            selectSearchResultRow(row)
+            return true
+        }
+
+        NSSound.beep()
+        return false
+    }
+
+    func isSearchMatched(message: Message, query: String) -> Bool {
+        searchableText(for: message).lowercased().contains(query)
+    }
+
+    func searchableText(for message: Message) -> String {
+        switch message.content {
+        case .system(let system):
+            return system.message
+        case .debug(let debug):
+            return debug.message
+        case .chat(let chat):
+            let providerId = live?.programProvider.programProviderId
+            let handleName = providerId.flatMap {
+                HandleNameManager.shared.handleName(for: chat.userId, in: $0)
+            }
+            let userName = nicoManager.cachedUserName(for: chat.userId)
+            let userLabel = handleName ?? userName ?? chat.userId
+            return "\(chat.comment) \(userLabel)"
+        }
+    }
+
+    func selectSearchResultRow(_ row: Int) {
+        tableView.selectRowIndexes(IndexSet(integer: row), byExtendingSelection: false)
+        tableView.scrollRowToVisible(row)
+        scrollView.flashScrollers()
     }
 }
 
@@ -942,6 +1050,7 @@ private extension MainViewController {
 
         scrollView.enableScrollButtons()
         configureTableView()
+        configureCommentSearchView()
         registerNibs()
 
         configureActiveUserChart()
@@ -958,6 +1067,34 @@ private extension MainViewController {
             clickHandler: nil,
             doubleClickHandler: { [weak self] in self?.openUserWindow() }
         )
+    }
+
+    func configureCommentSearchView() {
+        commentSearchContainerView.isHidden = true
+        if #available(macOS 10.14, *) {
+            commentSearchContainerView.material = .headerView
+            commentSearchContainerView.blendingMode = .withinWindow
+            commentSearchContainerView.state = .active
+        }
+
+        commentSearchField.placeholderString = L10n.searchCommentsOrUsernames
+        commentSearchField.sendsSearchStringImmediately = false
+        commentSearchField.sendsWholeSearchString = true
+        commentSearchField.target = self
+        commentSearchField.action = #selector(commentSearchFieldSubmitted(_:))
+
+        commentSearchContainerView.addSubview(commentSearchField)
+        view.addSubview(commentSearchContainerView)
+
+        commentSearchContainerView.snp.makeConstraints { make in
+            make.top.equalTo(scrollView.snp.top).offset(commentSearchBarTopPadding)
+            make.leading.equalTo(scrollView.snp.leading).offset(commentSearchBarSidePadding)
+            make.trailing.equalTo(scrollView.snp.trailing).offset(-commentSearchBarSidePadding)
+            make.height.equalTo(commentSearchBarHeight)
+        }
+        commentSearchField.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(commentSearchFieldPadding)
+        }
     }
 
     func registerNibs() {

@@ -91,6 +91,7 @@
 "ranking_description" = "ちくらんの順位 (500位以内に入っている場合のみ表示)";
 "comment_count" = "コメント";
 "comment_text_field_placeholder" = "⌘O (リターンのみで最下行にスクロール)";
+"search_comments_or_usernames" = "コメント・ユーザー名を検索";
 "community_id" = "コミュニティID";
 "community_name" = "コミュニティ名";
 "user_name" = "ユーザー名";

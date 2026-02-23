@@ -212,6 +212,8 @@ internal enum L10n {
   internal static let scrollDownButton = L10n.tr("Localizable", "scroll_down_button")
   /// Press to scroll up / long press to scroll to top
   internal static let scrollUpButton = L10n.tr("Localizable", "scroll_up_button")
+  /// Search comments and usernames
+  internal static let searchCommentsOrUsernames = L10n.tr("Localizable", "search_comments_or_usernames")
   /// Select All
   internal static let selectAll = L10n.tr("Localizable", "select_all")
   /// Services
