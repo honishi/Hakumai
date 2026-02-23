@@ -104,11 +104,14 @@ private extension UserIdTableCellView {
 
     func attributedUserIdLabel(_ text: String) -> NSAttributedString {
         let size = fontSize ?? CGFloat(kDefaultFontSize)
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineBreakMode = .byTruncatingTail
         let attributed = NSMutableAttributedString(
             string: text,
             attributes: [
                 .font: NSFont.systemFont(ofSize: size),
-                .foregroundColor: NSColor.labelColor
+                .foregroundColor: NSColor.labelColor,
+                .paragraphStyle: paragraphStyle
             ]
         )
         let query = (highlightQuery ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
