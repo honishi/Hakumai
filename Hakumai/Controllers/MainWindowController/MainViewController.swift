@@ -132,7 +132,9 @@ final class MainViewController: NSViewController {
     private var speechAdEnabled = false
 
     private let commentSearchContainerView = NSVisualEffectView()
+    private let commentSearchStackView = NSStackView()
     private let commentSearchField = NSSearchField()
+    private let commentSearchStatusLabel = NSTextField(labelWithString: "0 of 0")
 
     // AuthWindowController
     private lazy var authWindowController: AuthWindowController = {
@@ -263,6 +265,10 @@ extension MainViewController: NSTableViewDelegate {
         }
 
         return view
+    }
+
+    func tableViewSelectionDidChange(_ notification: Notification) {
+        updateCommentSearchStatusLabel()
     }
 
     private func configure(view: NSTableCellView, forSystemAndDebug message: Message, withTableColumn tableColumn: NSTableColumn) {
@@ -462,6 +468,7 @@ extension MainViewController: NSControlTextEditingDelegate, NSSearchFieldDelegat
         guard let control = obj.object as? NSControl else { return }
         guard control === commentSearchField else { return }
         tableView.reloadData()
+        updateCommentSearchStatusLabel()
     }
 
     private func handleCommentTextFieldKeyUpDown(isMovedUp: Bool, isMovedDown: Bool) {
@@ -777,6 +784,7 @@ extension MainViewController {
     func reloadTableView() {
         tableView.reloadData()
         scrollView.flashScrollers()
+        updateCommentSearchStatusLabel()
     }
 
     // MARK: Hotkeys
@@ -887,6 +895,7 @@ private extension MainViewController {
         commentSearchContainerView.isHidden = false
         scrollView.contentInsets.top = commentSearchBarHeight + commentSearchBarTopPadding
         tableView.reloadData()
+        updateCommentSearchStatusLabel()
     }
 
     func hideCommentSearchIfNeeded() {
@@ -894,6 +903,23 @@ private extension MainViewController {
         commentSearchContainerView.isHidden = true
         scrollView.contentInsets.top = 0
         tableView.reloadData()
+    }
+
+    func updateCommentSearchStatusLabel() {
+        guard !commentSearchContainerView.isHidden else { return }
+        guard let query = activeCommentSearchQuery else {
+            commentSearchStatusLabel.stringValue = "0 of 0"
+            return
+        }
+        let matchedRows = matchedRowIndexes(query: query)
+        let total = matchedRows.count
+        guard total > 0 else {
+            commentSearchStatusLabel.stringValue = "0 of 0"
+            return
+        }
+        let selectedRow = tableView.selectedRow
+        let current = (matchedRows.firstIndex(of: selectedRow).map { $0 + 1 }) ?? 0
+        commentSearchStatusLabel.stringValue = "\(current) of \(total)"
     }
 
     func highlightedAttributedString(
@@ -935,47 +961,45 @@ private extension MainViewController {
 
     @discardableResult
     func findComment(direction: CommentSearchDirection) -> Bool {
-        let query = commentSearchField.stringValue.trimmingCharacters(
-            in: .whitespacesAndNewlines
-        )
-        guard !query.isEmpty else {
+        guard let query = activeCommentSearchQuery else {
             NSSound.beep()
+            updateCommentSearchStatusLabel()
             return false
         }
 
-        let count = messageContainer.count()
-        guard count > 0 else {
+        let matchedRows = matchedRowIndexes(query: query)
+        guard !matchedRows.isEmpty else {
             NSSound.beep()
+            updateCommentSearchStatusLabel()
             return false
         }
 
-        let normalized = query.lowercased()
         let selectedRow = tableView.selectedRow
-        let start: Int = {
+        let targetRow: Int = {
             switch direction {
             case .forward:
-                return selectedRow >= 0 ? selectedRow + 1 : 0
+                guard let index = matchedRows.firstIndex(of: selectedRow) else {
+                    return matchedRows.first ?? 0
+                }
+                return matchedRows[(index + 1) % matchedRows.count]
             case .backward:
-                return selectedRow >= 0 ? selectedRow - 1 : count - 1
+                guard let index = matchedRows.firstIndex(of: selectedRow) else {
+                    return matchedRows.last ?? 0
+                }
+                return matchedRows[(index - 1 + matchedRows.count) % matchedRows.count]
             }
         }()
 
-        for offset in 0..<count {
-            let row: Int = {
-                switch direction {
-                case .forward:
-                    return (start + offset + count) % count
-                case .backward:
-                    return (start - offset + count) % count
-                }
-            }()
-            guard isSearchMatched(message: messageContainer[row], query: normalized) else { continue }
-            selectSearchResultRow(row)
-            return true
-        }
+        selectSearchResultRow(targetRow)
+        return true
+    }
 
-        NSSound.beep()
-        return false
+    func matchedRowIndexes(query: String) -> [Int] {
+        let normalized = query.lowercased()
+        let count = messageContainer.count()
+        guard count > 0 else { return [] }
+        return (0..<count)
+            .filter { isSearchMatched(message: messageContainer[$0], query: normalized) }
     }
 
     func isSearchMatched(message: Message, query: String) -> Bool {
@@ -1003,6 +1027,7 @@ private extension MainViewController {
         tableView.selectRowIndexes(IndexSet(integer: row), byExtendingSelection: false)
         tableView.scrollRowToVisible(row)
         scrollView.flashScrollers()
+        updateCommentSearchStatusLabel()
     }
 }
 
@@ -1016,6 +1041,7 @@ extension MainViewController {
         tableView.rowHeight = minimumRowHeight
         rowHeightCache.removeAll(keepingCapacity: false)
         tableView.reloadData()
+        updateCommentSearchStatusLabel()
     }
 
     func changeEnableMuteUserIds(_ enabled: Bool) {
@@ -1060,6 +1086,7 @@ extension MainViewController {
             let shouldScroll = self.scrollView.isReachedToBottom
             self.messageContainer.rebuildFilteredMessages {
                 self.tableView.reloadData()
+                self.updateCommentSearchStatusLabel()
                 if shouldScroll {
                     self.scrollView.scrollToBottom()
                 }
@@ -1155,14 +1182,38 @@ private extension MainViewController {
             commentSearchContainerView.state = .active
         }
 
+        commentSearchStackView.orientation = .horizontal
+        commentSearchStackView.alignment = .centerY
+        commentSearchStackView.spacing = 8
+
         commentSearchField.placeholderString = L10n.searchCommentsOrUsernames
         commentSearchField.sendsSearchStringImmediately = false
         commentSearchField.sendsWholeSearchString = true
         commentSearchField.delegate = self
         commentSearchField.target = self
         commentSearchField.action = #selector(commentSearchFieldSubmitted(_:))
+        commentSearchField.setContentCompressionResistancePriority(
+            .defaultLow,
+            for: .horizontal
+        )
+        commentSearchField.setContentHuggingPriority(
+            .defaultLow,
+            for: .horizontal
+        )
 
-        commentSearchContainerView.addSubview(commentSearchField)
+        commentSearchStatusLabel.alignment = .right
+        commentSearchStatusLabel.font = NSFont.monospacedDigitSystemFont(
+            ofSize: NSFont.smallSystemFontSize,
+            weight: .regular
+        )
+        commentSearchStatusLabel.textColor = NSColor.secondaryLabelColor
+        commentSearchStatusLabel.setContentHuggingPriority(.required, for: .horizontal)
+        commentSearchStatusLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+
+        commentSearchStackView.addArrangedSubview(commentSearchField)
+        commentSearchStackView.addArrangedSubview(commentSearchStatusLabel)
+
+        commentSearchContainerView.addSubview(commentSearchStackView)
         view.addSubview(commentSearchContainerView)
 
         commentSearchContainerView.snp.makeConstraints { make in
@@ -1171,7 +1222,7 @@ private extension MainViewController {
             make.trailing.equalTo(scrollView.snp.trailing).offset(-commentSearchBarSidePadding)
             make.height.equalTo(commentSearchBarHeight)
         }
-        commentSearchField.snp.makeConstraints { make in
+        commentSearchStackView.snp.makeConstraints { make in
             make.edges.equalToSuperview().inset(commentSearchFieldPadding)
         }
     }
@@ -1298,6 +1349,7 @@ private extension MainViewController {
             scrollView.scrollToBottom()
         }
         scrollView.flashScrollers()
+        updateCommentSearchStatusLabel()
     }
 
     func bulkAppendToTable(chats: [Chat]) {
@@ -1307,6 +1359,7 @@ private extension MainViewController {
                 self.messageContainer.append(chat: $0)
             }
             self.tableView.reloadData()
+            self.updateCommentSearchStatusLabel()
 
             DispatchQueue.main.async {
                 if shouldScroll {
@@ -1756,6 +1809,7 @@ private extension MainViewController {
         messageContainer.removeAll()
         rowHeightCache.removeAll(keepingCapacity: false)
         tableView.reloadData()
+        updateCommentSearchStatusLabel()
     }
 
     func showAuthWindowController() {
