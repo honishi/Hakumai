@@ -45,6 +45,10 @@
 "delete" = "削除";
 "select_all" = "すべて選択";
 "copy_all_comments" = "すべてのコメントをコピー";
+"copy_all_comments_format_title" = "コピー形式を選択";
+"copy_all_comments_format_message" = "コピーする列を選択してください。";
+"copy_all_comments_format_all_columns" = "すべての列をコピー";
+"copy_all_comments_format_number_and_comment" = "コメント番号とコメントのみコピー";
 "spelling_and_grammar" = "スペルと文法";
 "show_spelling_and_grammar" = "スペルと文法を表示";
 "check_document_now" = "書類を今すぐチェック";

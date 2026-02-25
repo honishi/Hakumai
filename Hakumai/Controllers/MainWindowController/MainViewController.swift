@@ -850,6 +850,7 @@ extension MainViewController {
 
     func copyAllComments() {
         guard let live = live else { return }
+        guard let format = selectCommentCopyFormat() else { return }
         let copier: CommentCopierType = CommentCopier(
             live: live,
             messageContainer: messageContainer,
@@ -857,7 +858,7 @@ extension MainViewController {
             handleNameManager: .shared
         )
         progressIndicator.startAnimation(self)
-        copier.copy { [weak self] in
+        copier.copy(format: format) { [weak self] in
             DispatchQueue.main.async { self?.progressIndicator.stopAnimation(self) }
         }
     }
@@ -1022,6 +1023,27 @@ private extension MainViewController {
         tableView.scrollRowToVisible(row)
         scrollView.flashScrollers()
         updateCommentSearchStatusLabel()
+    }
+}
+
+private extension MainViewController {
+    func selectCommentCopyFormat() -> CommentCopyFormat? {
+        let alert = NSAlert()
+        alert.messageText = L10n.copyAllCommentsFormatTitle
+        alert.informativeText = L10n.copyAllCommentsFormatMessage
+        alert.addButton(withTitle: L10n.copyAllCommentsFormatAllColumns)
+        alert.addButton(withTitle: L10n.copyAllCommentsFormatNumberAndComment)
+        alert.addButton(withTitle: L10n.cancel)
+        alert.alertStyle = .informational
+        let response = alert.runModal()
+        switch response {
+        case .alertFirstButtonReturn:
+            return .allColumns
+        case .alertSecondButtonReturn:
+            return .numberAndCommentOnly
+        default:
+            return nil
+        }
     }
 }
 
