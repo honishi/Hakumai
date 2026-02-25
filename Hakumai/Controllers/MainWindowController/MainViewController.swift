@@ -799,7 +799,7 @@ extension MainViewController {
 
     func copyAllComments() {
         guard let live = live else { return }
-        let format = selectCommentCopyFormat()
+        guard let format = selectCommentCopyFormat() else { return }
         let copier: CommentCopierType = CommentCopier(
             live: live,
             messageContainer: messageContainer,
@@ -822,19 +822,22 @@ extension MainViewController {
 }
 
 private extension MainViewController {
-    func selectCommentCopyFormat() -> CommentCopyFormat {
+    func selectCommentCopyFormat() -> CommentCopyFormat? {
         let alert = NSAlert()
         alert.messageText = L10n.copyAllCommentsFormatTitle
         alert.informativeText = L10n.copyAllCommentsFormatMessage
         alert.addButton(withTitle: L10n.copyAllCommentsFormatAllColumns)
         alert.addButton(withTitle: L10n.copyAllCommentsFormatNumberAndComment)
+        alert.addButton(withTitle: L10n.cancel)
         alert.alertStyle = .informational
         let response = alert.runModal()
         switch response {
         case .alertFirstButtonReturn:
             return .allColumns
-        default:
+        case .alertSecondButtonReturn:
             return .numberAndCommentOnly
+        default:
+            return nil
         }
     }
 }
