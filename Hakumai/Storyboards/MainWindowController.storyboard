@@ -986,6 +986,12 @@
                                             <real value="3.4028234663852886e+38"/>
                                         </customSpacing>
                                     </stackView>
+                                    <customView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HjV-R5-7lC">
+                                        <rect key="frame" x="0.0" y="552" width="614" height="32"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="32" id="6kW-oe-4kE"/>
+                                        </constraints>
+                                    </customView>
                                     <scrollView wantsLayer="YES" horizontalHuggingPriority="249" verticalHuggingPriority="249" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" horizontalScrollElasticity="none" verticalScrollElasticity="allowed" translatesAutoresizingMaskIntoConstraints="NO" id="3lG-BL-Thc" customClass="ButtonScrollView" customModule="Hakumai" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="64" width="614" height="425"/>
                                         <clipView key="contentView" id="2u9-qQ-bep">
@@ -1315,6 +1321,8 @@
                                     <constraint firstItem="3lG-BL-Thc" firstAttribute="leading" secondItem="z38-Lm-gGi" secondAttribute="leading" id="ggT-ox-TR8"/>
                                     <constraint firstItem="heY-85-Bud" firstAttribute="leading" secondItem="z38-Lm-gGi" secondAttribute="leading" id="ilD-qB-bd2"/>
                                     <constraint firstItem="sqR-k0-9ll" firstAttribute="leading" secondItem="z38-Lm-gGi" secondAttribute="leading" id="jgO-Of-Hhm"/>
+                                    <constraint firstItem="HjV-R5-7lC" firstAttribute="leading" secondItem="z38-Lm-gGi" secondAttribute="leading" id="m2i-1w-WD5"/>
+                                    <constraint firstAttribute="trailing" secondItem="HjV-R5-7lC" secondAttribute="trailing" id="nUG-Mf-b2S"/>
                                 </constraints>
                                 <visibilityPriorities>
                                     <integer value="1000"/>
@@ -1322,8 +1330,10 @@
                                     <integer value="1000"/>
                                     <integer value="1000"/>
                                     <integer value="1000"/>
+                                    <integer value="1000"/>
                                 </visibilityPriorities>
                                 <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
@@ -1412,6 +1422,7 @@
                         <outlet property="adPointsValueLabel" destination="0qo-uD-qcd" id="fRg-C8-lpp"/>
                         <outlet property="autoUrlButton" destination="OrT-PU-Uk2" id="tin-kS-cwh"/>
                         <outlet property="commentAnonymouslyButton" destination="UtQ-bi-lar" id="ugQ-Jr-d3b"/>
+                        <outlet property="commentSearchContainerView" destination="HjV-R5-7lC" id="o2F-cf-l6J"/>
                         <outlet property="commentTextField" destination="pml-Sh-s7e" id="JGp-sC-LAL"/>
                         <outlet property="commentsIconImageView" destination="MCs-Zv-FLD" id="fWS-P1-F68"/>
                         <outlet property="commentsValueLabel" destination="vmz-z1-HHp" id="zEw-JV-b7X"/>

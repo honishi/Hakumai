@@ -10,7 +10,6 @@ import Foundation
 import AppKit
 import DGCharts
 import Kingfisher
-import SnapKit
 
 private let userWindowDefaultTopLeftPoint = NSPoint(x: 100, y: 100)
 private let calculateActiveUserInterval: TimeInterval = 5
@@ -23,9 +22,6 @@ private let defaultElapsedTimeValue = "--:--:--"
 private let defaultLabelValue = "---"
 private let defaultChartText = "-----"
 private let defaultRankDateText = "--:--"
-private let commentSearchBarHeight: CGFloat = 32
-private let commentSearchBarTopPadding: CGFloat = 6
-private let commentSearchBarSidePadding: CGFloat = 8
 private let commentSearchFieldPadding: CGFloat = 6
 
 // swiftlint:disable file_length
@@ -75,6 +71,7 @@ final class MainViewController: NSViewController {
 
     @IBOutlet private weak var scrollView: ButtonScrollView!
     @IBOutlet private(set) weak var tableView: ClickTableView!
+    @IBOutlet private weak var commentSearchContainerView: NSView!
 
     @IBOutlet private weak var commentTextField: NSTextField!
     @IBOutlet private weak var commentAnonymouslyButton: NSButton!
@@ -131,7 +128,6 @@ final class MainViewController: NSViewController {
     private var speechGiftEnabled = false
     private var speechAdEnabled = false
 
-    private let commentSearchContainerView = NSVisualEffectView()
     private let commentSearchStackView = NSStackView()
     private let commentSearchField = NSSearchField()
     private let commentSearchStatusLabel = NSTextField(labelWithString: "0 of 0")
@@ -893,7 +889,6 @@ private extension MainViewController {
     func showCommentSearchIfNeeded() {
         guard commentSearchContainerView.isHidden else { return }
         commentSearchContainerView.isHidden = false
-        scrollView.contentInsets.top = commentSearchBarHeight + commentSearchBarTopPadding
         tableView.reloadData()
         updateCommentSearchStatusLabel()
     }
@@ -901,7 +896,6 @@ private extension MainViewController {
     func hideCommentSearchIfNeeded() {
         guard !commentSearchContainerView.isHidden else { return }
         commentSearchContainerView.isHidden = true
-        scrollView.contentInsets.top = 0
         tableView.reloadData()
     }
 
@@ -1176,15 +1170,11 @@ private extension MainViewController {
 
     func configureCommentSearchView() {
         commentSearchContainerView.isHidden = true
-        if #available(macOS 10.14, *) {
-            commentSearchContainerView.material = .headerView
-            commentSearchContainerView.blendingMode = .withinWindow
-            commentSearchContainerView.state = .active
-        }
 
         commentSearchStackView.orientation = .horizontal
         commentSearchStackView.alignment = .centerY
         commentSearchStackView.spacing = 8
+        commentSearchStackView.translatesAutoresizingMaskIntoConstraints = false
 
         commentSearchField.placeholderString = L10n.searchCommentsOrUsernames
         commentSearchField.sendsSearchStringImmediately = false
@@ -1214,17 +1204,24 @@ private extension MainViewController {
         commentSearchStackView.addArrangedSubview(commentSearchStatusLabel)
 
         commentSearchContainerView.addSubview(commentSearchStackView)
-        view.addSubview(commentSearchContainerView)
-
-        commentSearchContainerView.snp.makeConstraints { make in
-            make.top.equalTo(scrollView.snp.top).offset(commentSearchBarTopPadding)
-            make.leading.equalTo(scrollView.snp.leading).offset(commentSearchBarSidePadding)
-            make.trailing.equalTo(scrollView.snp.trailing).offset(-commentSearchBarSidePadding)
-            make.height.equalTo(commentSearchBarHeight)
-        }
-        commentSearchStackView.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(commentSearchFieldPadding)
-        }
+        NSLayoutConstraint.activate([
+            commentSearchStackView.topAnchor.constraint(
+                equalTo: commentSearchContainerView.topAnchor,
+                constant: commentSearchFieldPadding
+            ),
+            commentSearchStackView.leadingAnchor.constraint(
+                equalTo: commentSearchContainerView.leadingAnchor,
+                constant: commentSearchFieldPadding
+            ),
+            commentSearchStackView.trailingAnchor.constraint(
+                equalTo: commentSearchContainerView.trailingAnchor,
+                constant: -commentSearchFieldPadding
+            ),
+            commentSearchStackView.bottomAnchor.constraint(
+                equalTo: commentSearchContainerView.bottomAnchor,
+                constant: -commentSearchFieldPadding
+            )
+        ])
     }
 
     func registerNibs() {
