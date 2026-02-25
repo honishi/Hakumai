@@ -40,6 +40,10 @@ final class UIHelper {
         return colorIf(light: "#E5444F", dark: "#D01C24")
     }
 
+    static func searchMatchHighlightColor() -> NSColor {
+        return colorIf(light: "#FFE46B", dark: "#8A6B00")
+    }
+
     static func casterCommentColor() -> NSColor {
         return colorIf(light: "#D22E1B", dark: "#FF8170")
     }

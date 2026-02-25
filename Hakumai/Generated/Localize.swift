@@ -124,6 +124,12 @@ internal enum L10n {
   }
   /// File
   internal static let file = L10n.tr("Localizable", "file")
+  /// Find
+  internal static let find = L10n.tr("Localizable", "find")
+  /// Find Next Comment
+  internal static let findNextComment = L10n.tr("Localizable", "find_next_comment")
+  /// Find Previous Comment
+  internal static let findPreviousComment = L10n.tr("Localizable", "find_previous_comment")
   /// Gift
   internal static let giftPoints = L10n.tr("Localizable", "gift_points")
   /// Google Chrome
@@ -212,6 +218,10 @@ internal enum L10n {
   internal static let scrollDownButton = L10n.tr("Localizable", "scroll_down_button")
   /// Press to scroll up / long press to scroll to top
   internal static let scrollUpButton = L10n.tr("Localizable", "scroll_up_button")
+  /// Search comments and usernames
+  internal static let searchCommentsOrUsernames = L10n.tr("Localizable", "search_comments_or_usernames")
+  /// Search Comments or Usernames
+  internal static let searchCommentsOrUsernamesMenu = L10n.tr("Localizable", "search_comments_or_usernames_menu")
   /// Select All
   internal static let selectAll = L10n.tr("Localizable", "select_all")
   /// Services

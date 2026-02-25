@@ -251,6 +251,18 @@ extension MainWindowController {
         mainViewController.copyAllComments()
     }
 
+    func showCommentSearch() {
+        mainViewController.showCommentSearch()
+    }
+
+    func findNextComment() {
+        mainViewController.findNextComment()
+    }
+
+    func findPreviousComment() {
+        mainViewController.findPreviousComment()
+    }
+
     func setVoiceVolume(_ volume: Int) {
         mainViewController.setVoiceVolume(volume)
     }

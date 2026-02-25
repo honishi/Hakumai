@@ -10,7 +10,6 @@ import Foundation
 import AppKit
 import DGCharts
 import Kingfisher
-import SnapKit
 
 private let userWindowDefaultTopLeftPoint = NSPoint(x: 100, y: 100)
 private let calculateActiveUserInterval: TimeInterval = 5
@@ -23,6 +22,7 @@ private let defaultElapsedTimeValue = "--:--:--"
 private let defaultLabelValue = "---"
 private let defaultChartText = "-----"
 private let defaultRankDateText = "--:--"
+private let commentSearchFieldPadding: CGFloat = 6
 
 // swiftlint:disable file_length
 protocol MainViewControllerDelegate: AnyObject {
@@ -37,6 +37,7 @@ protocol MainViewControllerDelegate: AnyObject {
 final class MainViewController: NSViewController {
     // MARK: Types
     enum ConnectionStatus { case disconnected, connecting, connected }
+    enum CommentSearchDirection { case forward, backward }
 
     // MARK: Properties
     weak var delegate: MainViewControllerDelegate?
@@ -70,6 +71,7 @@ final class MainViewController: NSViewController {
 
     @IBOutlet private weak var scrollView: ButtonScrollView!
     @IBOutlet private(set) weak var tableView: ClickTableView!
+    @IBOutlet private weak var commentSearchContainerView: NSView!
 
     @IBOutlet private weak var commentTextField: NSTextField!
     @IBOutlet private weak var commentAnonymouslyButton: NSButton!
@@ -125,6 +127,10 @@ final class MainViewController: NSViewController {
     private var speechNameEnabled = false
     private var speechGiftEnabled = false
     private var speechAdEnabled = false
+
+    private let commentSearchStackView = NSStackView()
+    private let commentSearchField = NSSearchField()
+    private let commentSearchStatusLabel = NSTextField(labelWithString: "0 of 0")
 
     // AuthWindowController
     private lazy var authWindowController: AuthWindowController = {
@@ -257,6 +263,10 @@ extension MainViewController: NSTableViewDelegate {
         return view
     }
 
+    func tableViewSelectionDidChange(_ notification: Notification) {
+        updateCommentSearchStatusLabel()
+    }
+
     private func configure(view: NSTableCellView, forSystemAndDebug message: Message, withTableColumn tableColumn: NSTableColumn) {
         switch tableColumn.identifier.rawValue {
         case kRoomPositionColumnIdentifier:
@@ -273,11 +283,15 @@ extension MainViewController: NSTableViewDelegate {
         case kCommentColumnIdentifier:
             let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)
-            let attributed = NSAttributedString(string: content, attributes: attributes)
+            let attributed = highlightedAttributedString(
+                text: content,
+                baseAttributes: attributes
+            )
             commentView?.configure(attributedString: attributed)
         case kUserIdColumnIdentifier:
             let userIdView = view as? UserIdTableCellView
             userIdView?.configure(info: nil)
+            userIdView?.highlightQuery = activeCommentSearchQuery
             userIdView?.fontSize = nil
         case kPremiumColumnIdentifier:
             let premiumView = view as? PremiumTableCellView
@@ -311,7 +325,10 @@ extension MainViewController: NSTableViewDelegate {
         case kCommentColumnIdentifier:
             let commentView = view as? CommentTableCellView
             let (content, attributes) = contentAndAttributes(forMessage: message)
-            let attributed = NSAttributedString(string: content as String, attributes: attributes)
+            let attributed = highlightedAttributedString(
+                text: content,
+                baseAttributes: attributes
+            )
             commentView?.configure(
                 attributedString: attributed,
                 giftImageUrl: message.giftImageUrl
@@ -329,6 +346,7 @@ extension MainViewController: NSTableViewDelegate {
                 premium: chat.premium,
                 comment: chat.comment
             ))
+            userIdView?.highlightQuery = activeCommentSearchQuery
             userIdView?.fontSize = tableViewFontSize
         case kPremiumColumnIdentifier:
             let premiumView = view as? PremiumTableCellView
@@ -417,8 +435,18 @@ private extension MainViewController {
 }
 
 // MARK: - NSControlTextEditingDelegate Functions
-extension MainViewController: NSControlTextEditingDelegate {
+extension MainViewController: NSControlTextEditingDelegate, NSSearchFieldDelegate {
     func control(_ control: NSControl, textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
+        if control === commentSearchField &&
+            commandSelector == #selector(NSResponder.cancelOperation(_:)) {
+            hideCommentSearchIfNeeded()
+            return true
+        }
+
+        guard control === commentTextField else {
+            return false
+        }
+
         let isMovedUp = commandSelector == #selector(NSResponder.moveUp(_:))
         let isMovedDown = commandSelector == #selector(NSResponder.moveDown(_:))
         if isMovedUp || isMovedDown {
@@ -430,6 +458,13 @@ extension MainViewController: NSControlTextEditingDelegate {
             return true
         }
         return false
+    }
+
+    func controlTextDidChange(_ obj: Notification) {
+        guard let control = obj.object as? NSControl else { return }
+        guard control === commentSearchField else { return }
+        tableView.reloadData()
+        updateCommentSearchStatusLabel()
     }
 
     private func handleCommentTextFieldKeyUpDown(isMovedUp: Bool, isMovedDown: Bool) {
@@ -745,6 +780,7 @@ extension MainViewController {
     func reloadTableView() {
         tableView.reloadData()
         scrollView.flashScrollers()
+        updateCommentSearchStatusLabel()
     }
 
     // MARK: Hotkeys
@@ -754,6 +790,21 @@ extension MainViewController {
 
     func focusCommentTextField() {
         commentTextField.becomeFirstResponder()
+    }
+
+    func showCommentSearch() {
+        showCommentSearchIfNeeded()
+        commentSearchField.selectText(self)
+    }
+
+    func findNextComment() {
+        showCommentSearchIfNeeded()
+        _ = findComment(direction: .forward)
+    }
+
+    func findPreviousComment() {
+        showCommentSearchIfNeeded()
+        _ = findComment(direction: .backward)
     }
 
     func toggleSpeech() {
@@ -820,6 +871,160 @@ extension MainViewController {
     }
 }
 
+// MARK: Comment Search
+private extension MainViewController {
+    var activeCommentSearchQuery: String? {
+        guard !commentSearchContainerView.isHidden else { return nil }
+        let query = commentSearchField.stringValue.trimmingCharacters(
+            in: .whitespacesAndNewlines
+        )
+        guard !query.isEmpty else { return nil }
+        return query
+    }
+
+    @objc func commentSearchFieldSubmitted(_ sender: NSSearchField) {
+        _ = findComment(direction: .forward)
+    }
+
+    func showCommentSearchIfNeeded() {
+        guard commentSearchContainerView.isHidden else { return }
+        commentSearchContainerView.isHidden = false
+        tableView.reloadData()
+        updateCommentSearchStatusLabel()
+    }
+
+    func hideCommentSearchIfNeeded() {
+        guard !commentSearchContainerView.isHidden else { return }
+        commentSearchContainerView.isHidden = true
+        tableView.reloadData()
+    }
+
+    func updateCommentSearchStatusLabel() {
+        guard !commentSearchContainerView.isHidden else { return }
+        guard let query = activeCommentSearchQuery else {
+            commentSearchStatusLabel.stringValue = "0 of 0"
+            return
+        }
+        let matchedRows = matchedRowIndexes(query: query)
+        let total = matchedRows.count
+        guard total > 0 else {
+            commentSearchStatusLabel.stringValue = "0 of 0"
+            return
+        }
+        let selectedRow = tableView.selectedRow
+        let current = (matchedRows.firstIndex(of: selectedRow).map { $0 + 1 }) ?? 0
+        commentSearchStatusLabel.stringValue = "\(current) of \(total)"
+    }
+
+    func highlightedAttributedString(
+        text: String,
+        baseAttributes: [NSAttributedString.Key: Any]
+    ) -> NSAttributedString {
+        let attributed = NSMutableAttributedString(
+            string: text,
+            attributes: baseAttributes
+        )
+        guard let query = activeCommentSearchQuery else { return attributed }
+
+        let nsText = text as NSString
+        var searchRange = NSRange(location: 0, length: nsText.length)
+        while searchRange.length > 0 {
+            let foundRange = nsText.range(
+                of: query,
+                options: [.caseInsensitive],
+                range: searchRange
+            )
+            if foundRange.location == NSNotFound {
+                break
+            }
+            attributed.addAttribute(
+                .backgroundColor,
+                value: UIHelper.searchMatchHighlightColor(),
+                range: foundRange
+            )
+
+            let nextLocation = foundRange.location + foundRange.length
+            guard nextLocation <= nsText.length else { break }
+            searchRange = NSRange(
+                location: nextLocation,
+                length: nsText.length - nextLocation
+            )
+        }
+        return attributed
+    }
+
+    @discardableResult
+    func findComment(direction: CommentSearchDirection) -> Bool {
+        guard let query = activeCommentSearchQuery else {
+            NSSound.beep()
+            updateCommentSearchStatusLabel()
+            return false
+        }
+
+        let matchedRows = matchedRowIndexes(query: query)
+        guard !matchedRows.isEmpty else {
+            NSSound.beep()
+            updateCommentSearchStatusLabel()
+            return false
+        }
+
+        let selectedRow = tableView.selectedRow
+        let targetRow: Int = {
+            switch direction {
+            case .forward:
+                guard let index = matchedRows.firstIndex(of: selectedRow) else {
+                    return matchedRows.first ?? 0
+                }
+                return matchedRows[(index + 1) % matchedRows.count]
+            case .backward:
+                guard let index = matchedRows.firstIndex(of: selectedRow) else {
+                    return matchedRows.last ?? 0
+                }
+                return matchedRows[(index - 1 + matchedRows.count) % matchedRows.count]
+            }
+        }()
+
+        selectSearchResultRow(targetRow)
+        return true
+    }
+
+    func matchedRowIndexes(query: String) -> [Int] {
+        let normalized = query.lowercased()
+        let count = messageContainer.count()
+        guard count > 0 else { return [] }
+        return (0..<count)
+            .filter { isSearchMatched(message: messageContainer[$0], query: normalized) }
+    }
+
+    func isSearchMatched(message: Message, query: String) -> Bool {
+        searchableText(for: message).lowercased().contains(query)
+    }
+
+    func searchableText(for message: Message) -> String {
+        switch message.content {
+        case .system(let system):
+            return system.message
+        case .debug(let debug):
+            return debug.message
+        case .chat(let chat):
+            let providerId = live?.programProvider.programProviderId
+            let handleName = providerId.flatMap {
+                HandleNameManager.shared.handleName(for: chat.userId, in: $0)
+            }
+            let userName = nicoManager.cachedUserName(for: chat.userId)
+            let userLabel = handleName ?? userName ?? chat.userId
+            return "\(chat.comment) \(userLabel)"
+        }
+    }
+
+    func selectSearchResultRow(_ row: Int) {
+        tableView.selectRowIndexes(IndexSet(integer: row), byExtendingSelection: false)
+        tableView.scrollRowToVisible(row)
+        scrollView.flashScrollers()
+        updateCommentSearchStatusLabel()
+    }
+}
+
 // MARK: Utility
 extension MainViewController {
 
@@ -830,6 +1035,7 @@ extension MainViewController {
         tableView.rowHeight = minimumRowHeight
         rowHeightCache.removeAll(keepingCapacity: false)
         tableView.reloadData()
+        updateCommentSearchStatusLabel()
     }
 
     func changeEnableMuteUserIds(_ enabled: Bool) {
@@ -874,6 +1080,7 @@ extension MainViewController {
             let shouldScroll = self.scrollView.isReachedToBottom
             self.messageContainer.rebuildFilteredMessages {
                 self.tableView.reloadData()
+                self.updateCommentSearchStatusLabel()
                 if shouldScroll {
                     self.scrollView.scrollToBottom()
                 }
@@ -942,6 +1149,7 @@ private extension MainViewController {
 
         scrollView.enableScrollButtons()
         configureTableView()
+        configureCommentSearchView()
         registerNibs()
 
         configureActiveUserChart()
@@ -958,6 +1166,62 @@ private extension MainViewController {
             clickHandler: nil,
             doubleClickHandler: { [weak self] in self?.openUserWindow() }
         )
+    }
+
+    func configureCommentSearchView() {
+        commentSearchContainerView.isHidden = true
+
+        commentSearchStackView.orientation = .horizontal
+        commentSearchStackView.alignment = .centerY
+        commentSearchStackView.spacing = 8
+        commentSearchStackView.translatesAutoresizingMaskIntoConstraints = false
+
+        commentSearchField.placeholderString = L10n.searchCommentsOrUsernames
+        commentSearchField.sendsSearchStringImmediately = false
+        commentSearchField.sendsWholeSearchString = true
+        commentSearchField.delegate = self
+        commentSearchField.target = self
+        commentSearchField.action = #selector(commentSearchFieldSubmitted(_:))
+        commentSearchField.setContentCompressionResistancePriority(
+            .defaultLow,
+            for: .horizontal
+        )
+        commentSearchField.setContentHuggingPriority(
+            .defaultLow,
+            for: .horizontal
+        )
+
+        commentSearchStatusLabel.alignment = .right
+        commentSearchStatusLabel.font = NSFont.monospacedDigitSystemFont(
+            ofSize: NSFont.smallSystemFontSize,
+            weight: .regular
+        )
+        commentSearchStatusLabel.textColor = NSColor.secondaryLabelColor
+        commentSearchStatusLabel.setContentHuggingPriority(.required, for: .horizontal)
+        commentSearchStatusLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+
+        commentSearchStackView.addArrangedSubview(commentSearchField)
+        commentSearchStackView.addArrangedSubview(commentSearchStatusLabel)
+
+        commentSearchContainerView.addSubview(commentSearchStackView)
+        NSLayoutConstraint.activate([
+            commentSearchStackView.topAnchor.constraint(
+                equalTo: commentSearchContainerView.topAnchor,
+                constant: commentSearchFieldPadding
+            ),
+            commentSearchStackView.leadingAnchor.constraint(
+                equalTo: commentSearchContainerView.leadingAnchor,
+                constant: commentSearchFieldPadding
+            ),
+            commentSearchStackView.trailingAnchor.constraint(
+                equalTo: commentSearchContainerView.trailingAnchor,
+                constant: -commentSearchFieldPadding
+            ),
+            commentSearchStackView.bottomAnchor.constraint(
+                equalTo: commentSearchContainerView.bottomAnchor,
+                constant: -commentSearchFieldPadding
+            )
+        ])
     }
 
     func registerNibs() {
@@ -1082,6 +1346,7 @@ private extension MainViewController {
             scrollView.scrollToBottom()
         }
         scrollView.flashScrollers()
+        updateCommentSearchStatusLabel()
     }
 
     func bulkAppendToTable(chats: [Chat]) {
@@ -1091,6 +1356,7 @@ private extension MainViewController {
                 self.messageContainer.append(chat: $0)
             }
             self.tableView.reloadData()
+            self.updateCommentSearchStatusLabel()
 
             DispatchQueue.main.async {
                 if shouldScroll {
@@ -1540,6 +1806,7 @@ private extension MainViewController {
         messageContainer.removeAll()
         rowHeightCache.removeAll(keepingCapacity: false)
         tableView.reloadData()
+        updateCommentSearchStatusLabel()
     }
 
     func showAuthWindowController() {
