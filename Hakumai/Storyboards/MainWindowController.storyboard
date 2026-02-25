@@ -270,44 +270,6 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="uyl-h8-XO2"/>
-                                        <menuItem title="Find" hidden="YES" id="4EN-yA-p0u">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <menu key="submenu" title="Find" id="1b7-l0-nxx">
-                                                <items>
-                                                    <menuItem title="Find…" tag="1" keyEquivalent="f" id="Xz5-n4-O0W">
-                                                        <connections>
-                                                            <action selector="performFindPanelAction:" target="Ady-hI-5gd" id="cD7-Qs-BN4"/>
-                                                        </connections>
-                                                    </menuItem>
-                                                    <menuItem title="Find and Replace…" tag="12" keyEquivalent="f" id="YEy-JH-Tfz">
-                                                        <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
-                                                        <connections>
-                                                            <action selector="performFindPanelAction:" target="Ady-hI-5gd" id="WD3-Gg-5AJ"/>
-                                                        </connections>
-                                                    </menuItem>
-                                                    <menuItem title="Find Next" tag="2" keyEquivalent="g" id="q09-fT-Sye">
-                                                        <connections>
-                                                            <action selector="performFindPanelAction:" target="Ady-hI-5gd" id="NDo-RZ-v9R"/>
-                                                        </connections>
-                                                    </menuItem>
-                                                    <menuItem title="Find Previous" tag="3" keyEquivalent="G" id="OwM-mh-QMV">
-                                                        <connections>
-                                                            <action selector="performFindPanelAction:" target="Ady-hI-5gd" id="HOh-sY-3ay"/>
-                                                        </connections>
-                                                    </menuItem>
-                                                    <menuItem title="Use Selection for Find" tag="7" keyEquivalent="e" id="buJ-ug-pKt">
-                                                        <connections>
-                                                            <action selector="performFindPanelAction:" target="Ady-hI-5gd" id="U76-nv-p5D"/>
-                                                        </connections>
-                                                    </menuItem>
-                                                    <menuItem title="Jump to Selection" keyEquivalent="j" id="S0p-oC-mLd">
-                                                        <connections>
-                                                            <action selector="centerSelectionInVisibleArea:" target="Ady-hI-5gd" id="IOG-6D-g5B"/>
-                                                        </connections>
-                                                    </menuItem>
-                                                </items>
-                                            </menu>
-                                        </menuItem>
                                         <menuItem title="spelling_and_grammar" id="Dv1-io-Yv7">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <menu key="submenu" title="spelling_and_grammar" id="3IN-sU-3Bg">
@@ -506,6 +468,43 @@
                                         <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="edit"/>
                                     </userDefinedRuntimeAttributes>
                                 </menu>
+                            </menuItem>
+                            <menuItem title="find" id="4EN-yA-p0u">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="find" id="1b7-l0-nxx">
+                                    <items>
+                                        <menuItem title="search_comments_or_usernames_menu" tag="1" keyEquivalent="f" id="Xz5-n4-O0W">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="search_comments_or_usernames_menu"/>
+                                            </userDefinedRuntimeAttributes>
+                                            <connections>
+                                                <action selector="showCommentSearch:" target="Voe-Tx-rLC" id="fuV-9v-U5w"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="find_next_comment" tag="2" keyEquivalent="g" id="q09-fT-Sye">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="find_next_comment"/>
+                                            </userDefinedRuntimeAttributes>
+                                            <connections>
+                                                <action selector="findNextComment:" target="Voe-Tx-rLC" id="1uX-b9-8fI"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="find_previous_comment" tag="3" keyEquivalent="G" id="OwM-mh-QMV">
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="find_previous_comment"/>
+                                            </userDefinedRuntimeAttributes>
+                                            <connections>
+                                                <action selector="findPreviousComment:" target="Voe-Tx-rLC" id="H5x-09-w7i"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                    <userDefinedRuntimeAttributes>
+                                        <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="find"/>
+                                    </userDefinedRuntimeAttributes>
+                                </menu>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="localizedKey" value="find"/>
+                                </userDefinedRuntimeAttributes>
                             </menuItem>
                             <menuItem title="View" id="KHJ-TJ-2hd">
                                 <modifierMask key="keyEquivalentModifierMask"/>
