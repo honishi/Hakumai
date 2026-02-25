@@ -45,6 +45,10 @@
 "delete" = "Delete";
 "select_all" = "Select All";
 "copy_all_comments" = "Copy All Comments";
+"copy_all_comments_format_title" = "Choose Copy Format";
+"copy_all_comments_format_message" = "Select which columns to copy.";
+"copy_all_comments_format_all_columns" = "Copy All Columns";
+"copy_all_comments_format_number_and_comment" = "Copy Number and Comment Only";
 "spelling_and_grammar" = "Spelling and Grammar";
 "show_spelling_and_grammar" = "Show Spelling and Grammar";
 "check_document_now" = "Check Document Now";

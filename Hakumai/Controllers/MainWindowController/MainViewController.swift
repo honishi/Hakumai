@@ -799,6 +799,7 @@ extension MainViewController {
 
     func copyAllComments() {
         guard let live = live else { return }
+        let format = selectCommentCopyFormat()
         let copier: CommentCopierType = CommentCopier(
             live: live,
             messageContainer: messageContainer,
@@ -806,7 +807,7 @@ extension MainViewController {
             handleNameManager: .shared
         )
         progressIndicator.startAnimation(self)
-        copier.copy { [weak self] in
+        copier.copy(format: format) { [weak self] in
             DispatchQueue.main.async { self?.progressIndicator.stopAnimation(self) }
         }
     }
@@ -817,6 +818,24 @@ extension MainViewController {
 
     func setVoiceSpeaker(_ speaker: Int) {
         speechManager.setVoiceSpeaker(speaker)
+    }
+}
+
+private extension MainViewController {
+    func selectCommentCopyFormat() -> CommentCopyFormat {
+        let alert = NSAlert()
+        alert.messageText = L10n.copyAllCommentsFormatTitle
+        alert.informativeText = L10n.copyAllCommentsFormatMessage
+        alert.addButton(withTitle: L10n.copyAllCommentsFormatAllColumns)
+        alert.addButton(withTitle: L10n.copyAllCommentsFormatNumberAndComment)
+        alert.alertStyle = .informational
+        let response = alert.runModal()
+        switch response {
+        case .alertFirstButtonReturn:
+            return .allColumns
+        default:
+            return .numberAndCommentOnly
+        }
     }
 }
 
