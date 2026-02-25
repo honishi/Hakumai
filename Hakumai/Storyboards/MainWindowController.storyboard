@@ -985,20 +985,20 @@
                                             <real value="3.4028234663852886e+38"/>
                                         </customSpacing>
                                     </stackView>
-                                    <customView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HjV-R5-7lC">
-                                        <rect key="frame" x="0.0" y="552" width="614" height="32"/>
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="HjV-R5-7lC">
+                                        <rect key="frame" x="0.0" y="457" width="614" height="32"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="32" id="6kW-oe-4kE"/>
                                         </constraints>
                                     </customView>
                                     <scrollView wantsLayer="YES" horizontalHuggingPriority="249" verticalHuggingPriority="249" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" horizontalScrollElasticity="none" verticalScrollElasticity="allowed" translatesAutoresizingMaskIntoConstraints="NO" id="3lG-BL-Thc" customClass="ButtonScrollView" customModule="Hakumai" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="64" width="614" height="425"/>
+                                        <rect key="frame" x="0.0" y="64" width="614" height="385"/>
                                         <clipView key="contentView" id="2u9-qQ-bep">
-                                            <rect key="frame" x="1" y="1" width="612" height="423"/>
+                                            <rect key="frame" x="1" y="1" width="612" height="383"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="none" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveName="MainTableView" rowSizeStyle="automatic" headerView="cl3-1e-Mq0" viewBased="YES" id="21S-OF-mg3" customClass="ClickTableView" customModule="Hakumai" customModuleProvider="target">
-                                                    <rect key="frame" x="0.0" y="0.0" width="612" height="400"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="612" height="360"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <size key="intercellSpacing" width="6" height="2"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
