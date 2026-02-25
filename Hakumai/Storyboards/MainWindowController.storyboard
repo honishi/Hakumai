@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="24506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22690"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24506"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -656,10 +656,10 @@
                                 <rect key="frame" x="8" y="8" width="614" height="584"/>
                                 <subviews>
                                     <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalCompressionResistancePriority="250" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sqR-k0-9ll">
-                                        <rect key="frame" x="0.0" y="561" width="614" height="23"/>
+                                        <rect key="frame" x="0.0" y="560" width="614" height="24"/>
                                         <subviews>
                                             <button toolTip="Grab URL from Browser (⌘U)" translatesAutoresizingMaskIntoConstraints="NO" id="GRS-m4-7KE">
-                                                <rect key="frame" x="0.0" y="0.0" width="23" height="23"/>
+                                                <rect key="frame" x="0.0" y="1" width="23" height="23"/>
                                                 <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="link_black" imagePosition="overlaps" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="T07-Jf-o94">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="cellTitle"/>
@@ -674,7 +674,7 @@
                                                 </connections>
                                             </button>
                                             <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="gZN-es-bFO">
-                                                <rect key="frame" x="31" y="1" width="353" height="21"/>
+                                                <rect key="frame" x="31" y="0.0" width="346" height="24"/>
                                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="iDS-0h-Uje">
                                                     <font key="font" metaFont="system"/>
                                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -685,7 +685,7 @@
                                                 </connections>
                                             </textField>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="IZs-cK-l0Y">
-                                                <rect key="frame" x="385" y="-5" width="99" height="32"/>
+                                                <rect key="frame" x="385" y="0.0" width="89" height="24"/>
                                                 <buttonCell key="cell" type="push" title="Reconnect" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kUI-oS-7wC">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="system"/>
@@ -695,7 +695,7 @@
                                                 </connections>
                                             </button>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lRV-dk-B0Y">
-                                                <rect key="frame" x="478" y="-5" width="112" height="32"/>
+                                                <rect key="frame" x="482" y="0.0" width="101" height="24"/>
                                                 <buttonCell key="cell" type="push" title="Expire Token" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="bVG-kr-zeU">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="system"/>
@@ -705,7 +705,7 @@
                                                 </connections>
                                             </button>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hii-Mo-bho">
-                                                <rect key="frame" x="591" y="0.0" width="23" height="23"/>
+                                                <rect key="frame" x="591" y="1" width="23" height="23"/>
                                                 <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="play_arrow_black" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="WjB-ei-g5l">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="cellTitle"/>
@@ -736,7 +736,7 @@
                                         </customSpacing>
                                     </stackView>
                                     <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalCompressionResistancePriority="250" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jZp-vI-7KI">
-                                        <rect key="frame" x="2" y="498" width="610" height="55"/>
+                                        <rect key="frame" x="2" y="497" width="610" height="55"/>
                                         <subviews>
                                             <imageView wantsLayer="YES" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="55" placeholderIntrinsicHeight="55" translatesAutoresizingMaskIntoConstraints="NO" id="NQm-lE-rVr" customClass="LiveThumbnailImageView" customModule="Hakumai" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="0.0" width="55" height="55"/>
@@ -776,13 +776,13 @@
                                                                 </textFieldCell>
                                                             </textField>
                                                             <customView horizontalHuggingPriority="249" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="RUR-ma-7q9">
-                                                                <rect key="frame" x="41" y="0.0" width="417" height="17"/>
+                                                                <rect key="frame" x="41" y="0.0" width="419" height="17"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" constant="17" id="Swi-Rs-kHV"/>
                                                                 </constraints>
                                                             </customView>
                                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OrT-PU-Uk2">
-                                                                <rect key="frame" x="464" y="0.0" width="83" height="18"/>
+                                                                <rect key="frame" x="468" y="1" width="79" height="16"/>
                                                                 <buttonCell key="cell" type="check" title="Auto URL" bezelStyle="regularSquare" imagePosition="left" inset="2" id="0Gl-Ym-ufF">
                                                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                                     <font key="font" metaFont="system"/>
@@ -927,10 +927,10 @@
                                                                 </customSpacing>
                                                             </stackView>
                                                             <customView horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Gr6-qH-sQ4">
-                                                                <rect key="frame" x="236" y="0.0" width="214" height="17"/>
+                                                                <rect key="frame" x="236" y="0.0" width="216" height="17"/>
                                                             </customView>
                                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="QmJ-8z-tPW">
-                                                                <rect key="frame" x="464" y="0.0" width="83" height="18"/>
+                                                                <rect key="frame" x="468" y="1" width="79" height="16"/>
                                                                 <buttonCell key="cell" type="check" title="Speak" bezelStyle="regularSquare" imagePosition="left" inset="2" id="EpQ-m0-lHg">
                                                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                                     <font key="font" metaFont="system"/>
@@ -987,13 +987,13 @@
                                         </customSpacing>
                                     </stackView>
                                     <scrollView wantsLayer="YES" horizontalHuggingPriority="249" verticalHuggingPriority="249" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" horizontalScrollElasticity="none" verticalScrollElasticity="allowed" translatesAutoresizingMaskIntoConstraints="NO" id="3lG-BL-Thc" customClass="ButtonScrollView" customModule="Hakumai" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="53" width="614" height="437"/>
+                                        <rect key="frame" x="0.0" y="64" width="614" height="425"/>
                                         <clipView key="contentView" id="2u9-qQ-bep">
-                                            <rect key="frame" x="1" y="1" width="612" height="435"/>
+                                            <rect key="frame" x="1" y="1" width="612" height="423"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="none" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveName="MainTableView" rowSizeStyle="automatic" headerView="cl3-1e-Mq0" viewBased="YES" id="21S-OF-mg3" customClass="ClickTableView" customModule="Hakumai" customModuleProvider="target">
-                                                    <rect key="frame" x="0.0" y="0.0" width="612" height="412"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="612" height="400"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <size key="intercellSpacing" width="6" height="2"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -1094,10 +1094,10 @@
                                         </tableHeaderView>
                                     </scrollView>
                                     <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalCompressionResistancePriority="250" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OKI-Gn-3JM">
-                                        <rect key="frame" x="0.0" y="24" width="614" height="21"/>
+                                        <rect key="frame" x="0.0" y="24" width="614" height="32"/>
                                         <subviews>
                                             <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="pml-Sh-s7e">
-                                                <rect key="frame" x="0.0" y="0.0" width="559" height="21"/>
+                                                <rect key="frame" x="0.0" y="4" width="562" height="24"/>
                                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="39S-6e-1RP">
                                                     <font key="font" metaFont="system"/>
                                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -1109,7 +1109,7 @@
                                                 </connections>
                                             </textField>
                                             <button toolTip="Toggle 184 (⌘8)" horizontalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UtQ-bi-lar">
-                                                <rect key="frame" x="565" y="2" width="49" height="18"/>
+                                                <rect key="frame" x="570" y="0.0" width="44" height="32"/>
                                                 <buttonCell key="cell" type="check" title="184" bezelStyle="regularSquare" imagePosition="left" alignment="right" state="on" inset="2" id="XOy-JF-DaI">
                                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                     <font key="font" metaFont="system"/>
@@ -1332,7 +1332,7 @@
                                 </customSpacing>
                             </stackView>
                             <button horizontalHuggingPriority="249" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Bqv-yU-Ld3" customClass="PointingHandButton" customModule="Hakumai" customModuleProvider="target">
-                                <rect key="frame" x="73" y="544" width="36" height="17"/>
+                                <rect key="frame" x="73" y="543" width="36" height="17"/>
                                 <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="4Il-Hh-9r6">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -1345,7 +1345,7 @@
                                 </connections>
                             </button>
                             <button horizontalHuggingPriority="249" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rS8-Te-GhM" customClass="PointingHandButton" customModule="Hakumai" customModuleProvider="target">
-                                <rect key="frame" x="73" y="525" width="33" height="17"/>
+                                <rect key="frame" x="73" y="524" width="33" height="17"/>
                                 <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="Ws5-3z-UaX">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -1358,7 +1358,7 @@
                                 </connections>
                             </button>
                             <button horizontalHuggingPriority="249" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="baU-oh-9PL" customClass="PointingHandButton" customModule="Hakumai" customModuleProvider="target">
-                                <rect key="frame" x="191" y="507" width="43" height="17"/>
+                                <rect key="frame" x="191" y="506" width="43" height="17"/>
                                 <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="xbG-Fb-UV9">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -1371,7 +1371,7 @@
                                 </connections>
                             </button>
                             <button horizontalHuggingPriority="249" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Frh-Sg-L0Y" customClass="PointingHandButton" customModule="Hakumai" customModuleProvider="target">
-                                <rect key="frame" x="250" y="507" width="43" height="17"/>
+                                <rect key="frame" x="250" y="506" width="43" height="17"/>
                                 <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="oH5-me-gs7">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -1536,10 +1536,10 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NRC-9G-OKz">
-                                <rect key="frame" x="20" y="24" width="250" height="73"/>
+                                <rect key="frame" x="20" y="21" width="250" height="76"/>
                                 <subviews>
                                     <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gR0-0B-UDL">
-                                        <rect key="frame" x="-2" y="57" width="166" height="16"/>
+                                        <rect key="frame" x="-2" y="60" width="166" height="16"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Add/Update Handle Name:" id="aQh-PC-Qu6">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1547,7 +1547,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <textField focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oTt-jC-Q27">
-                                        <rect key="frame" x="0.0" y="28" width="250" height="21"/>
+                                        <rect key="frame" x="0.0" y="28" width="250" height="24"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="aZf-eF-6vH">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -1569,7 +1569,7 @@
                                                 <rect key="frame" x="0.0" y="0.0" width="74" height="20"/>
                                             </customView>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zwB-Mb-UaV">
-                                                <rect key="frame" x="75" y="-7" width="94" height="32"/>
+                                                <rect key="frame" x="82" y="0.0" width="80" height="20"/>
                                                 <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="a7x-T3-7pR">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="system"/>
@@ -1586,7 +1586,7 @@ Gw
                                                 </connections>
                                             </button>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Sw7-sV-cSm">
-                                                <rect key="frame" x="163" y="-7" width="94" height="32"/>
+                                                <rect key="frame" x="170" y="0.0" width="80" height="20"/>
                                                 <buttonCell key="cell" type="push" title="Add" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xCk-aI-qVP">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="system"/>
