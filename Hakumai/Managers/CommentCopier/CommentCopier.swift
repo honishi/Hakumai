@@ -81,6 +81,7 @@ private extension CommentCopier {
     func copyMessages(format: CommentCopyFormat) {
         let comments = messageContainer
             .filteredMessages
+            .filter { !$0.isSystemMessage }
             .map { $0.toComment(live: live, nicoManager: nicoManager, handleNameManager: handleNameManager, format: format) }
             .reduce("") { $0 + "\($1)\n" }
         comments.copyToPasteBoard()
@@ -104,6 +105,15 @@ private extension Array where Element == Message {
 }
 
 private extension Message {
+    var isSystemMessage: Bool {
+        switch content {
+        case .system:
+            return true
+        case .chat, .debug:
+            return false
+        }
+    }
+
     func toComment(live: Live, nicoManager: NicoManagerType, handleNameManager: HandleNameManager, format: CommentCopyFormat) -> String {
         var number = ""
         var comment = ""
