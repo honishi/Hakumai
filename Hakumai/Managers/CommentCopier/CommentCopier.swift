@@ -32,9 +32,15 @@ extension CommentCopier {
         return copier
     }
 
-    func copy(completion: (() -> Void)?) {
-        preCacheUserIds {
-            self.copyMessages()
+    func copy(format: CommentCopyFormat, completion: (() -> Void)?) {
+        switch format {
+        case .allColumns:
+            preCacheUserIds {
+                self.copyMessages(format: format)
+                completion?()
+            }
+        case .numberAndCommentOnly:
+            copyMessages(format: format)
             completion?()
         }
     }
@@ -72,10 +78,11 @@ private extension CommentCopier {
         }
     }
 
-    func copyMessages() {
+    func copyMessages(format: CommentCopyFormat) {
         let comments = messageContainer
             .filteredMessages
-            .map { $0.toComment(live: live, nicoManager: nicoManager, handleNameManager: handleNameManager) }
+            .filter { !$0.isSystemMessage }
+            .map { $0.toComment(live: live, nicoManager: nicoManager, handleNameManager: handleNameManager, format: format) }
             .reduce("") { $0 + "\($1)\n" }
         comments.copyToPasteBoard()
     }
@@ -98,7 +105,16 @@ private extension Array where Element == Message {
 }
 
 private extension Message {
-    func toComment(live: Live, nicoManager: NicoManagerType, handleNameManager: HandleNameManager) -> String {
+    var isSystemMessage: Bool {
+        switch content {
+        case .system:
+            return true
+        case .chat, .debug:
+            return false
+        }
+    }
+
+    func toComment(live: Live, nicoManager: NicoManagerType, handleNameManager: HandleNameManager, format: CommentCopyFormat) -> String {
         var number = ""
         var comment = ""
         var user = ""
@@ -118,7 +134,12 @@ private extension Message {
             comment = message.message
         }
         comment = comment.trimEnter()
-        return "\(number)\t\(comment)\t\(user)\t\(premium)"
+        switch format {
+        case .allColumns:
+            return "\(number)\t\(comment)\t\(user)\t\(premium)"
+        case .numberAndCommentOnly:
+            return "\(number)\t\(comment)"
+        }
     }
 }
 

@@ -102,6 +102,18 @@ extension AppDelegate {
         activeMainWindowController?.copyAllComments()
     }
 
+    @IBAction func showCommentSearch(_ sender: Any) {
+        activeMainWindowController?.showCommentSearch()
+    }
+
+    @IBAction func findNextComment(_ sender: Any) {
+        activeMainWindowController?.findNextComment()
+    }
+
+    @IBAction func findPreviousComment(_ sender: Any) {
+        activeMainWindowController?.findPreviousComment()
+    }
+
     @IBAction func zoomDefault(_ sender: AnyObject) {
         setFontSize(kDefaultFontSize)
     }

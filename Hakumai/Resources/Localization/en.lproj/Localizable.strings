@@ -45,6 +45,10 @@
 "delete" = "Delete";
 "select_all" = "Select All";
 "copy_all_comments" = "Copy All Comments";
+"copy_all_comments_format_title" = "Choose Copy Format";
+"copy_all_comments_format_message" = "Select which columns to copy.";
+"copy_all_comments_format_all_columns" = "Copy All Columns";
+"copy_all_comments_format_number_and_comment" = "Copy Number and Comment Only";
 "spelling_and_grammar" = "Spelling and Grammar";
 "show_spelling_and_grammar" = "Show Spelling and Grammar";
 "check_document_now" = "Check Document Now";
@@ -66,6 +70,12 @@
 "speech" = "Speech";
 "start_speaking" = "Start Speaking";
 "stop_speaking" = "Stop Speaking";
+
+/// Find Menu
+"find" = "Find";
+"search_comments_or_usernames_menu" = "Search Comments or Usernames";
+"find_next_comment" = "Find Next Comment";
+"find_previous_comment" = "Find Previous Comment";
 
 /// View Menu
 "default_zoom" = "Default Zoom";
@@ -91,6 +101,7 @@
 "ranking_description" = "Chikuran Rank (Show only when ranked in top 500)";
 "comment_count" = "Comments";
 "comment_text_field_placeholder" = "⌘O (Empty ⏎ to scroll to bottom)";
+"search_comments_or_usernames" = "Search comments and usernames";
 "community_id" = "Community Id";
 "community_name" = "Community Name";
 "user_name" = "User Name";

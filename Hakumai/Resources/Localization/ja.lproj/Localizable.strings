@@ -45,6 +45,10 @@
 "delete" = "削除";
 "select_all" = "すべて選択";
 "copy_all_comments" = "すべてのコメントをコピー";
+"copy_all_comments_format_title" = "コピー形式を選択";
+"copy_all_comments_format_message" = "コピーする列を選択してください。";
+"copy_all_comments_format_all_columns" = "すべての列をコピー";
+"copy_all_comments_format_number_and_comment" = "コメント番号とコメントのみコピー";
 "spelling_and_grammar" = "スペルと文法";
 "show_spelling_and_grammar" = "スペルと文法を表示";
 "check_document_now" = "書類を今すぐチェック";
@@ -66,6 +70,12 @@
 "speech" = "スピーチ";
 "start_speaking" = "読み上げを開始";
 "stop_speaking" = "読み上げを停止";
+
+/// Find Menu
+"find" = "検索";
+"search_comments_or_usernames_menu" = "コメント・ユーザー名を検索";
+"find_next_comment" = "次を検索";
+"find_previous_comment" = "前を検索";
 
 /// View Menu
 "default_zoom" = "標準のサイズ";
@@ -91,6 +101,7 @@
 "ranking_description" = "ちくらんの順位 (500位以内に入っている場合のみ表示)";
 "comment_count" = "コメント";
 "comment_text_field_placeholder" = "⌘O (リターンのみで最下行にスクロール)";
+"search_comments_or_usernames" = "コメント・ユーザー名を検索";
 "community_id" = "コミュニティID";
 "community_name" = "コミュニティ名";
 "user_name" = "ユーザー名";

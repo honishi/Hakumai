@@ -16,10 +16,12 @@ final class UserIdTableCellView: NSTableCellView {
     @IBOutlet weak var userIdImageView: NSImageView!
 
     var fontSize: CGFloat? { didSet { set(fontSize: fontSize) } }
+    var highlightQuery: String? { didSet { setUserIdLabelText(currentLabel) } }
 
     // XXX: remove this non presentation layer instance..
     private var nicoManager: NicoManagerType?
     private var currentUserId: String?
+    private var currentLabel: String = ""
 }
 
 extension UserIdTableCellView {
@@ -28,7 +30,7 @@ extension UserIdTableCellView {
         currentUserId = info?.userId
         guard let userId = info?.userId, let premium = info?.premium else {
             userIdImageView.image = nil
-            userIdTextField.stringValue = ""
+            setUserIdLabelText("")
             return
         }
         userIdImageView.image = image(forHandleName: info?.handleName, userId: userId, premium: premium)
@@ -50,15 +52,15 @@ private extension UserIdTableCellView {
 
     func setUserIdLabel(userId: String, premium: Premium, handleName: String?) {
         // set default name
-        userIdTextField.stringValue = premium.isSystem ?
-            systemUserLabel :
-            concatUserName(userId: userId, userName: nil, handleName: handleName)
+        setUserIdLabelText(premium.isSystem ?
+                            systemUserLabel :
+                            concatUserName(userId: userId, userName: nil, handleName: handleName))
 
         // if needed, then resolve userid
         guard handleName == nil, premium.isUser, userId.isRawUserId else { return }
 
         if let userName = nicoManager?.cachedUserName(for: userId) {
-            userIdTextField.stringValue = concatUserName(userId: userId, userName: userName, handleName: handleName)
+            setUserIdLabelText(concatUserName(userId: userId, userName: userName, handleName: handleName))
             return
         }
 
@@ -72,8 +74,9 @@ private extension UserIdTableCellView {
             }
             guard let userName = $0 else { return }
             DispatchQueue.main.async {
-                me.userIdTextField.stringValue =
+                me.setUserIdLabelText(
                     me.concatUserName(userId: userId, userName: userName, handleName: handleName)
+                )
             }
         }
     }
@@ -91,7 +94,52 @@ private extension UserIdTableCellView {
     }
 
     func set(fontSize: CGFloat?) {
+        setUserIdLabelText(currentLabel)
+    }
+
+    func setUserIdLabelText(_ text: String) {
+        currentLabel = text
+        userIdTextField.attributedStringValue = attributedUserIdLabel(text)
+    }
+
+    func attributedUserIdLabel(_ text: String) -> NSAttributedString {
         let size = fontSize ?? CGFloat(kDefaultFontSize)
-        userIdTextField.font = NSFont.systemFont(ofSize: size)
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineBreakMode = .byTruncatingTail
+        let attributed = NSMutableAttributedString(
+            string: text,
+            attributes: [
+                .font: NSFont.systemFont(ofSize: size),
+                .foregroundColor: NSColor.labelColor,
+                .paragraphStyle: paragraphStyle
+            ]
+        )
+        let query = (highlightQuery ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return attributed }
+
+        let nsText = text as NSString
+        var searchRange = NSRange(location: 0, length: nsText.length)
+        while searchRange.length > 0 {
+            let foundRange = nsText.range(
+                of: query,
+                options: [.caseInsensitive],
+                range: searchRange
+            )
+            if foundRange.location == NSNotFound {
+                break
+            }
+            attributed.addAttribute(
+                .backgroundColor,
+                value: UIHelper.searchMatchHighlightColor(),
+                range: foundRange
+            )
+            let nextLocation = foundRange.location + foundRange.length
+            guard nextLocation <= nsText.length else { break }
+            searchRange = NSRange(
+                location: nextLocation,
+                length: nsText.length - nextLocation
+            )
+        }
+        return attributed
     }
 }

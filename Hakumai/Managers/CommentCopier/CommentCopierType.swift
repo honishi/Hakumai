@@ -8,7 +8,12 @@
 
 import Foundation
 
+enum CommentCopyFormat {
+    case allColumns
+    case numberAndCommentOnly
+}
+
 protocol CommentCopierType {
     static func make(live: Live, messageContainer: MessageContainer, nicoManager: NicoManagerType, handleNameManager: HandleNameManager) -> CommentCopierType
-    func copy(completion: (() -> Void)?)
+    func copy(format: CommentCopyFormat, completion: (() -> Void)?)
 }
