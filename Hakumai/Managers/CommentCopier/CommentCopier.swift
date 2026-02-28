@@ -79,12 +79,23 @@ private extension CommentCopier {
     }
 
     func copyMessages(format: CommentCopyFormat) {
-        let comments = messageContainer
+        let copiedLines = messageContainer
             .filteredMessages
             .filter { !$0.isSystemMessage }
             .map { $0.toComment(live: live, nicoManager: nicoManager, handleNameManager: handleNameManager, format: format) }
-            .reduce("") { $0 + "\($1)\n" }
+        let comments = ([format.headerLine] + copiedLines).joined(separator: "\n")
         comments.copyToPasteBoard()
+    }
+}
+
+private extension CommentCopyFormat {
+    var headerLine: String {
+        switch self {
+        case .allColumns:
+            return "コメント番号\tコメント\tユーザー\t種別"
+        case .numberAndCommentOnly:
+            return "コメント番号\tコメント"
+        }
     }
 }
 
