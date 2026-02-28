@@ -83,7 +83,12 @@ private extension CommentCopier {
             .filteredMessages
             .filter { !$0.isSystemMessage }
             .map { $0.toComment(live: live, nicoManager: nicoManager, handleNameManager: handleNameManager, format: format) }
-        let comments = ([format.headerLine] + copiedLines).joined(separator: "\n")
+        let prefixLines = [
+            "放送タイトル：\(live.title)",
+            "配信者名：\(live.programProvider.name)",
+            ""
+        ]
+        let comments = (prefixLines + [format.headerLine] + copiedLines).joined(separator: "\n")
         comments.copyToPasteBoard()
     }
 }
