@@ -52,57 +52,69 @@ extension HandleNameManager {
     }
 
     func setHandleName(name: String, for userId: String, in communityId: String) {
-        upsert(handleName: name, for: userId, in: communityId)
-        handleNameCacher.update(value: name, for: userId, in: communityId)
+        synchronized {
+            upsert(handleName: name, for: userId, in: communityId)
+            handleNameCacher.update(value: name, for: userId, in: communityId)
+        }
     }
 
     func removeHandleName(for userId: String, in communityId: String) {
-        updateHandleNameToNull(for: userId, in: communityId)
-        deleteRowIfHasNoData(for: userId, in: communityId)
-        handleNameCacher.updateValueAsNil(for: userId, in: communityId)
+        synchronized {
+            updateHandleNameToNull(for: userId, in: communityId)
+            deleteRowIfHasNoData(for: userId, in: communityId)
+            handleNameCacher.updateValueAsNil(for: userId, in: communityId)
+        }
     }
 
     func handleName(for userId: String, in communityId: String) -> String? {
-        let cached = handleNameCacher.cachedValue(for: userId, in: communityId)
-        switch cached {
-        case .cached(let handleName):
-            // log.debug("handleName: cached: \(handleName ?? "nil")")
-            return handleName
-        case .notCached:
-            // log.debug("handleName: not cached")
-            break
+        synchronized {
+            let cached = handleNameCacher.cachedValue(for: userId, in: communityId)
+            switch cached {
+            case .cached(let handleName):
+                // log.debug("handleName: cached: \(handleName ?? "nil")")
+                return handleName
+            case .notCached:
+                // log.debug("handleName: not cached")
+                break
+            }
+            let queried = selectHandleName(for: userId, in: communityId)
+            handleNameCacher.update(value: queried, for: userId, in: communityId)
+            // log.debug("handleName: update cache: \(queried ?? "nil")")
+            return queried
         }
-        let queried = selectHandleName(for: userId, in: communityId)
-        handleNameCacher.update(value: queried, for: userId, in: communityId)
-        // log.debug("handleName: update cache: \(queried ?? "nil")")
-        return queried
     }
 
     func setColor(_ color: NSColor, for userId: String, in communityId: String) {
-        upsert(color: color, for: userId, in: communityId)
-        colorCacher.update(value: color, for: userId, in: communityId)
+        synchronized {
+            upsert(color: color, for: userId, in: communityId)
+            colorCacher.update(value: color, for: userId, in: communityId)
+        }
     }
 
     func removeColor(for userId: String, in communityId: String) {
-        updateColorToNull(for: userId, in: communityId)
-        deleteRowIfHasNoData(for: userId, in: communityId)
-        colorCacher.updateValueAsNil(for: userId, in: communityId)
+        synchronized {
+            updateColorToNull(for: userId, in: communityId)
+            deleteRowIfHasNoData(for: userId, in: communityId)
+            colorCacher.updateValueAsNil(for: userId, in: communityId)
+        }
     }
 
     func color(for userId: String, in communityId: String) -> NSColor? {
-        let cached = colorCacher.cachedValue(for: userId, in: communityId)
-        switch cached {
-        case .cached(let color):
-            // log.debug("color: cached: \(color?.description ?? "nil")")
-            return color
-        case .notCached:
-            // log.debug("color: not cached")
-            break
+        synchronized {
+            let cached = colorCacher.cachedValue(for: userId, in: communityId)
+            switch cached {
+            case .cached(let color):
+                // log.debug("color: cached: \(color?.description ?? "nil")")
+                return color
+            case .notCached:
+                // log.debug("color: not cached")
+                break
+            }
+            let queried = selectColor(for: userId, in: communityId)
+            colorCacher.update(value: queried, for: userId, in: communityId)
+            // log.debug("color: update cache: \(queried?.description ?? "nil")")
+            return queried
         }
-        let queried = selectColor(for: userId, in: communityId)
-        colorCacher.update(value: queried, for: userId, in: communityId)
-        // log.debug("color: update cache: \(queried?.description ?? "nil")")
-        return queried
     }
 }
 
@@ -145,6 +157,14 @@ extension HandleNameManager {
         let string = select(column: "color", for: userId, in: communityId)
         guard let _string = string, _string.isValidHexString else { return nil }
         return NSColor(hex: _string)
+    }
+}
+
+private extension HandleNameManager {
+    func synchronized<T>(_ block: () -> T) -> T {
+        objc_sync_enter(self)
+        defer { objc_sync_exit(self) }
+        return block()
     }
 }
 
