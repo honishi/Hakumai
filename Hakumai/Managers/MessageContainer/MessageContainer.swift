@@ -82,6 +82,13 @@ extension MessageContainer {
         return count
     }
 
+    func filteredMessagesSnapshot() -> [Message] {
+        objc_sync_enter(self)
+        let snapshot = filteredMessages
+        objc_sync_exit(self)
+        return snapshot
+    }
+
     subscript (index: Int) -> Message {
         objc_sync_enter(self)
         let content = filteredMessages[index]
