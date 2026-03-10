@@ -52,6 +52,16 @@ internal enum L10n {
   internal static let closeWindow = L10n.tr("Localizable", "close_window")
   /// Comments
   internal static let commentCount = L10n.tr("Localizable", "comment_count")
+  /// 0 of 0
+  internal static let commentSearchStatusEmpty = L10n.tr("Localizable", "comment_search_status_empty")
+  /// %1$d of %2$d
+  internal static func commentSearchStatusPosition(_ p1: Int, _ p2: Int) -> String {
+    return L10n.tr("Localizable", "comment_search_status_position", p1, p2)
+  }
+  /// Searching...
+  internal static let commentSearchStatusSearching = L10n.tr("Localizable", "comment_search_status_searching")
+  /// Press Enter to search
+  internal static let commentSearchStatusSubmit = L10n.tr("Localizable", "comment_search_status_submit")
   /// Comment Speech
   internal static let commentSpeaking = L10n.tr("Localizable", "comment_speaking")
   /// ⌘O (Empty ⏎ to scroll to bottom)

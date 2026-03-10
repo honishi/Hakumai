@@ -34,6 +34,178 @@ protocol MainViewControllerDelegate: AnyObject {
     func mainViewControllerDidReceiveGift(_ mainViewController: MainViewController)
 }
 
+struct CommentSearchState {
+    struct SearchRequest {
+        let normalizedQuery: String
+        let generation: Int
+    }
+
+    var typedQuery: String?
+    var appliedQuery: String?
+    var normalizedQuery: String?
+    var matchedRows = [Int]()
+    var isSearching = false
+    var generation = 0
+
+    private var pendingMatchedRows = [Int]()
+
+    var hasPendingTypedQuery: Bool { typedQuery != appliedQuery }
+    var needsSearchExecution: Bool { typedQuery != nil && appliedQuery == nil }
+
+    var highlightQuery: String? {
+        guard !isSearching, !hasPendingTypedQuery else { return nil }
+        return appliedQuery
+    }
+
+    var incrementalNormalizedQuery: String? {
+        guard !hasPendingTypedQuery else { return nil }
+        return normalizedQuery
+    }
+
+    mutating func updateTypedQuery(_ query: String?) {
+        guard typedQuery != query else { return }
+        typedQuery = query
+        appliedQuery = nil
+        normalizedQuery = nil
+        matchedRows.removeAll(keepingCapacity: false)
+        pendingMatchedRows.removeAll(keepingCapacity: false)
+        isSearching = false
+        generation += 1
+    }
+
+    mutating func resetKeepingTypedQuery() {
+        appliedQuery = nil
+        normalizedQuery = nil
+        matchedRows.removeAll(keepingCapacity: false)
+        pendingMatchedRows.removeAll(keepingCapacity: false)
+        isSearching = false
+        generation += 1
+    }
+
+    mutating func beginSearch() -> SearchRequest? {
+        guard let typedQuery else {
+            resetKeepingTypedQuery()
+            return nil
+        }
+
+        let normalizedQuery = typedQuery.lowercased()
+        appliedQuery = typedQuery
+        self.normalizedQuery = normalizedQuery
+        matchedRows.removeAll(keepingCapacity: false)
+        pendingMatchedRows.removeAll(keepingCapacity: false)
+        isSearching = true
+        generation += 1
+
+        return SearchRequest(
+            normalizedQuery: normalizedQuery,
+            generation: generation
+        )
+    }
+
+    @discardableResult
+    mutating func finishSearch(matchedRows: [Int], generation: Int) -> Bool {
+        guard generation == self.generation else { return false }
+        isSearching = false
+        self.matchedRows = matchedRows + pendingMatchedRows
+        pendingMatchedRows.removeAll(keepingCapacity: false)
+        return true
+    }
+
+    mutating func appendMatchedRows(_ rows: [Int]) {
+        guard !rows.isEmpty else { return }
+        if isSearching {
+            pendingMatchedRows.append(contentsOf: rows)
+        } else {
+            matchedRows.append(contentsOf: rows)
+        }
+    }
+}
+
+struct CommentSearchMatcher {
+    typealias HandleNameResolver = (_ userId: String, _ providerId: String) -> String?
+    typealias CachedUserNameResolver = (_ userId: String) -> String?
+
+    struct ResolverContext {
+        let providerId: String?
+        let handleNameResolver: HandleNameResolver
+        let cachedUserNameResolver: CachedUserNameResolver
+    }
+
+    static func matchedRowIndexes(
+        messages: [Message],
+        normalizedQuery: String,
+        providerId: String?,
+        handleNameResolver: @escaping HandleNameResolver,
+        cachedUserNameResolver: @escaping CachedUserNameResolver
+    ) -> [Int] {
+        guard !normalizedQuery.isEmpty else { return [] }
+
+        let context = ResolverContext(
+            providerId: providerId,
+            handleNameResolver: handleNameResolver,
+            cachedUserNameResolver: cachedUserNameResolver
+        )
+        var userLabelCache = [String: String]()
+        return messages.enumerated().compactMap { index, message in
+            isMatched(
+                message: message,
+                normalizedQuery: normalizedQuery,
+                context: context,
+                userLabelCache: &userLabelCache
+            ) ? index : nil
+        }
+    }
+
+    static func isMatched(
+        message: Message,
+        normalizedQuery: String,
+        context: ResolverContext,
+        userLabelCache: inout [String: String]
+    ) -> Bool {
+        searchableText(
+            for: message,
+            context: context,
+            userLabelCache: &userLabelCache
+        ).lowercased().contains(normalizedQuery)
+    }
+
+    static func searchableText(
+        for message: Message,
+        context: ResolverContext,
+        userLabelCache: inout [String: String]
+    ) -> String {
+        switch message.content {
+        case .system(let system):
+            return system.message
+        case .debug(let debug):
+            return debug.message
+        case .chat(let chat):
+            let userLabel = resolvedUserLabel(
+                for: chat.userId,
+                context: context,
+                userLabelCache: &userLabelCache
+            )
+            return "\(chat.comment) \(userLabel)"
+        }
+    }
+
+    private static func resolvedUserLabel(
+        for userId: String,
+        context: ResolverContext,
+        userLabelCache: inout [String: String]
+    ) -> String {
+        if let cached = userLabelCache[userId] {
+            return cached
+        }
+
+        let handleName = context.providerId.flatMap { context.handleNameResolver(userId, $0) }
+        let cachedUserName = context.cachedUserNameResolver(userId)
+        let resolved = handleName ?? cachedUserName ?? userId
+        userLabelCache[userId] = resolved
+        return resolved
+    }
+}
+
 final class MainViewController: NSViewController {
     // MARK: Types
     enum ConnectionStatus { case disconnected, connecting, connected }
@@ -130,7 +302,13 @@ final class MainViewController: NSViewController {
 
     private let commentSearchStackView = NSStackView()
     private let commentSearchField = NSSearchField()
-    private let commentSearchStatusLabel = NSTextField(labelWithString: "0 of 0")
+    private let commentSearchStatusLabel = NSTextField(labelWithString: L10n.commentSearchStatusEmpty)
+    private let commentSearchQueue = DispatchQueue(
+        label: "jp.hakumai.comment-search",
+        qos: .userInitiated
+    )
+    private var commentSearchState = CommentSearchState()
+    private var pendingCommentSearchDirection: CommentSearchDirection?
 
     // AuthWindowController
     private lazy var authWindowController: AuthWindowController = {
@@ -291,7 +469,7 @@ extension MainViewController: NSTableViewDelegate {
         case kUserIdColumnIdentifier:
             let userIdView = view as? UserIdTableCellView
             userIdView?.configure(info: nil)
-            userIdView?.highlightQuery = activeCommentSearchQuery
+            userIdView?.highlightQuery = currentCommentSearchHighlightQuery
             userIdView?.fontSize = nil
         case kPremiumColumnIdentifier:
             let premiumView = view as? PremiumTableCellView
@@ -346,7 +524,7 @@ extension MainViewController: NSTableViewDelegate {
                 premium: chat.premium,
                 comment: chat.comment
             ))
-            userIdView?.highlightQuery = activeCommentSearchQuery
+            userIdView?.highlightQuery = currentCommentSearchHighlightQuery
             userIdView?.fontSize = tableViewFontSize
         case kPremiumColumnIdentifier:
             let premiumView = view as? PremiumTableCellView
@@ -463,7 +641,9 @@ extension MainViewController: NSControlTextEditingDelegate, NSSearchFieldDelegat
     func controlTextDidChange(_ obj: Notification) {
         guard let control = obj.object as? NSControl else { return }
         guard control === commentSearchField else { return }
-        tableView.reloadData()
+        syncTypedCommentSearchQueryFromField()
+        pendingCommentSearchDirection = nil
+        reloadVisibleCommentSearchColumns()
         updateCommentSearchStatusLabel()
     }
 
@@ -874,13 +1054,28 @@ extension MainViewController {
 
 // MARK: Comment Search
 private extension MainViewController {
-    var activeCommentSearchQuery: String? {
+    var currentCommentSearchHighlightQuery: String? {
         guard !commentSearchContainerView.isHidden else { return nil }
-        let query = commentSearchField.stringValue.trimmingCharacters(
-            in: .whitespacesAndNewlines
-        )
-        guard !query.isEmpty else { return nil }
-        return query
+        return commentSearchState.highlightQuery
+    }
+
+    var currentCommentSearchProviderId: String? {
+        live?.programProvider.programProviderId
+    }
+
+    func normalizedCommentSearchQuery(from value: String) -> String? {
+        let query = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        return query.isEmpty ? nil : query
+    }
+
+    func syncTypedCommentSearchQueryFromField() {
+        let query = normalizedCommentSearchQuery(from: commentSearchField.stringValue)
+        commentSearchState.updateTypedQuery(query)
+    }
+
+    func resetCommentSearchResults() {
+        pendingCommentSearchDirection = nil
+        commentSearchState.resetKeepingTypedQuery()
     }
 
     @objc func commentSearchFieldSubmitted(_ sender: NSSearchField) {
@@ -890,31 +1085,43 @@ private extension MainViewController {
     func showCommentSearchIfNeeded() {
         guard commentSearchContainerView.isHidden else { return }
         commentSearchContainerView.isHidden = false
-        tableView.reloadData()
+        syncTypedCommentSearchQueryFromField()
         updateCommentSearchStatusLabel()
     }
 
     func hideCommentSearchIfNeeded() {
         guard !commentSearchContainerView.isHidden else { return }
+        resetCommentSearchResults()
         commentSearchContainerView.isHidden = true
-        tableView.reloadData()
+        reloadVisibleCommentSearchColumns()
     }
 
     func updateCommentSearchStatusLabel() {
         guard !commentSearchContainerView.isHidden else { return }
-        guard let query = activeCommentSearchQuery else {
-            commentSearchStatusLabel.stringValue = "0 of 0"
+        guard let typedQuery = commentSearchState.typedQuery else {
+            commentSearchStatusLabel.stringValue = L10n.commentSearchStatusEmpty
             return
         }
-        let matchedRows = matchedRowIndexes(query: query)
-        let total = matchedRows.count
+
+        if commentSearchState.isSearching {
+            commentSearchStatusLabel.stringValue = L10n.commentSearchStatusSearching
+            return
+        }
+
+        guard typedQuery == commentSearchState.appliedQuery else {
+            commentSearchStatusLabel.stringValue = L10n.commentSearchStatusSubmit
+            return
+        }
+
+        let total = commentSearchState.matchedRows.count
         guard total > 0 else {
-            commentSearchStatusLabel.stringValue = "0 of 0"
+            commentSearchStatusLabel.stringValue = L10n.commentSearchStatusEmpty
             return
         }
+
         let selectedRow = tableView.selectedRow
-        let current = (matchedRows.firstIndex(of: selectedRow).map { $0 + 1 }) ?? 0
-        commentSearchStatusLabel.stringValue = "\(current) of \(total)"
+        let current = (commentSearchState.matchedRows.firstIndex(of: selectedRow).map { $0 + 1 }) ?? 0
+        commentSearchStatusLabel.stringValue = L10n.commentSearchStatusPosition(current, total)
     }
 
     func highlightedAttributedString(
@@ -925,7 +1132,7 @@ private extension MainViewController {
             string: text,
             attributes: baseAttributes
         )
-        guard let query = activeCommentSearchQuery else { return attributed }
+        guard let query = currentCommentSearchHighlightQuery else { return attributed }
 
         let nsText = text as NSString
         var searchRange = NSRange(location: 0, length: nsText.length)
@@ -956,18 +1163,91 @@ private extension MainViewController {
 
     @discardableResult
     func findComment(direction: CommentSearchDirection) -> Bool {
-        guard let query = activeCommentSearchQuery else {
+        syncTypedCommentSearchQueryFromField()
+
+        guard commentSearchState.typedQuery != nil else {
             NSSound.beep()
+            pendingCommentSearchDirection = nil
             updateCommentSearchStatusLabel()
             return false
         }
 
-        let matchedRows = matchedRowIndexes(query: query)
-        guard !matchedRows.isEmpty else {
-            NSSound.beep()
+        pendingCommentSearchDirection = direction
+
+        if commentSearchState.needsSearchExecution {
+            startCommentSearch()
+            return false
+        }
+
+        guard !commentSearchState.isSearching else {
             updateCommentSearchStatusLabel()
             return false
         }
+
+        let didSelect = selectCachedCommentSearchResult(direction: direction)
+        pendingCommentSearchDirection = nil
+        if !didSelect {
+            NSSound.beep()
+            updateCommentSearchStatusLabel()
+        }
+        return didSelect
+    }
+
+    func startCommentSearch() {
+        guard let request = commentSearchState.beginSearch() else {
+            updateCommentSearchStatusLabel()
+            return
+        }
+
+        let messages = messageContainer.filteredMessagesSnapshot()
+        let providerId = currentCommentSearchProviderId
+        updateCommentSearchStatusLabel()
+
+        commentSearchQueue.async { [weak self] in
+            guard let self else { return }
+            let matchedRows = CommentSearchMatcher.matchedRowIndexes(
+                messages: messages,
+                normalizedQuery: request.normalizedQuery,
+                providerId: providerId,
+                handleNameResolver: { HandleNameManager.shared.handleName(for: $0, in: $1) },
+                cachedUserNameResolver: { self.nicoManager.cachedUserName(for: $0) }
+            )
+
+            DispatchQueue.main.async {
+                self.finishCommentSearch(
+                    matchedRows: matchedRows,
+                    request: request
+                )
+            }
+        }
+    }
+
+    func finishCommentSearch(matchedRows: [Int], request: CommentSearchState.SearchRequest) {
+        guard commentSearchState.finishSearch(
+            matchedRows: matchedRows,
+            generation: request.generation
+        ) else {
+            return
+        }
+
+        reloadVisibleCommentSearchColumns()
+
+        guard let direction = pendingCommentSearchDirection else {
+            updateCommentSearchStatusLabel()
+            return
+        }
+
+        pendingCommentSearchDirection = nil
+        guard selectCachedCommentSearchResult(direction: direction) else {
+            NSSound.beep()
+            updateCommentSearchStatusLabel()
+            return
+        }
+    }
+
+    func selectCachedCommentSearchResult(direction: CommentSearchDirection) -> Bool {
+        let matchedRows = commentSearchState.matchedRows
+        guard !matchedRows.isEmpty else { return false }
 
         let selectedRow = tableView.selectedRow
         let targetRow: Int = {
@@ -989,33 +1269,68 @@ private extension MainViewController {
         return true
     }
 
-    func matchedRowIndexes(query: String) -> [Int] {
-        let normalized = query.lowercased()
-        let count = messageContainer.count()
-        guard count > 0 else { return [] }
-        return (0..<count)
-            .filter { isSearchMatched(message: messageContainer[$0], query: normalized) }
+    func matchedRowIndexes(
+        for messages: [Message],
+        normalizedQuery: String
+    ) -> [Int] {
+        CommentSearchMatcher.matchedRowIndexes(
+            messages: messages,
+            normalizedQuery: normalizedQuery,
+            providerId: currentCommentSearchProviderId,
+            handleNameResolver: { HandleNameManager.shared.handleName(for: $0, in: $1) },
+            cachedUserNameResolver: { self.nicoManager.cachedUserName(for: $0) }
+        )
     }
 
-    func isSearchMatched(message: Message, query: String) -> Bool {
-        searchableText(for: message).lowercased().contains(query)
+    func updateCommentSearchMatchesForAppendedMessages(
+        _ messages: [Message],
+        startingRow: Int
+    ) {
+        guard let normalizedQuery = commentSearchState.incrementalNormalizedQuery else { return }
+        guard !messages.isEmpty else { return }
+
+        let matchedOffsets = matchedRowIndexes(
+            for: messages,
+            normalizedQuery: normalizedQuery
+        )
+        let matchedRows = matchedOffsets.map { startingRow + $0 }
+        commentSearchState.appendMatchedRows(matchedRows)
     }
 
-    func searchableText(for message: Message) -> String {
-        switch message.content {
-        case .system(let system):
-            return system.message
-        case .debug(let debug):
-            return debug.message
-        case .chat(let chat):
-            let providerId = live?.programProvider.programProviderId
-            let handleName = providerId.flatMap {
-                HandleNameManager.shared.handleName(for: chat.userId, in: $0)
-            }
-            let userName = nicoManager.cachedUserName(for: chat.userId)
-            let userLabel = handleName ?? userName ?? chat.userId
-            return "\(chat.comment) \(userLabel)"
+    func reloadVisibleCommentSearchColumns() {
+        let rows = visibleCommentRowIndexes()
+        let columns = commentSearchColumnIndexes()
+        guard !rows.isEmpty, !columns.isEmpty else {
+            updateCommentSearchStatusLabel()
+            return
         }
+
+        tableView.reloadData(forRowIndexes: rows, columnIndexes: columns)
+        updateCommentSearchStatusLabel()
+    }
+
+    func visibleCommentRowIndexes() -> IndexSet {
+        let visibleRange = tableView.rows(in: tableView.visibleRect)
+        guard visibleRange.length > 0 else { return [] }
+
+        let upperBound = min(
+            visibleRange.location + visibleRange.length,
+            messageContainer.count()
+        )
+        guard visibleRange.location < upperBound else { return [] }
+        return IndexSet(integersIn: visibleRange.location..<upperBound)
+    }
+
+    func commentSearchColumnIndexes() -> IndexSet {
+        let identifiers = [
+            kCommentColumnIdentifier,
+            kUserIdColumnIdentifier
+        ]
+        let indexes = identifiers.compactMap {
+            let index = tableView.column(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: $0))
+            return index == -1 ? nil : index
+        }
+        return IndexSet(indexes)
     }
 
     func selectSearchResultRow(_ row: Int) {
@@ -1101,6 +1416,7 @@ extension MainViewController {
             self.progressIndicator.startAnimation(self)
             let shouldScroll = self.scrollView.isReachedToBottom
             self.messageContainer.rebuildFilteredMessages {
+                self.resetCommentSearchResults()
                 self.tableView.reloadData()
                 self.updateCommentSearchStatusLabel()
                 if shouldScroll {
@@ -1339,6 +1655,12 @@ private extension MainViewController {
     func appendToTable(chat: Chat) {
         DispatchQueue.main.async {
             let result = self.messageContainer.append(chat: chat)
+            if result.appended, let message = result.message {
+                self.updateCommentSearchMatchesForAppendedMessages(
+                    [message],
+                    startingRow: result.count - 1
+                )
+            }
             self._updateTable(appended: result.appended, messageCount: result.count)
             guard result.appended, let message = result.message else { return }
             self.handleSpeech(message: message)
@@ -1348,6 +1670,13 @@ private extension MainViewController {
     func appendToTable(systemMessage: String) {
         DispatchQueue.main.async {
             let result = self.messageContainer.append(systemMessage: systemMessage)
+            if result.appended {
+                let rowIndex = result.count - 1
+                self.updateCommentSearchMatchesForAppendedMessages(
+                    [self.messageContainer[rowIndex]],
+                    startingRow: rowIndex
+                )
+            }
             self._updateTable(appended: result.appended, messageCount: result.count)
         }
     }
@@ -1355,6 +1684,13 @@ private extension MainViewController {
     func appendToTable(debugMessage: String) {
         DispatchQueue.main.async {
             let result = self.messageContainer.append(debug: debugMessage)
+            if result.appended {
+                let rowIndex = result.count - 1
+                self.updateCommentSearchMatchesForAppendedMessages(
+                    [self.messageContainer[rowIndex]],
+                    startingRow: rowIndex
+                )
+            }
             self._updateTable(appended: result.appended, messageCount: result.count)
         }
     }
@@ -1374,9 +1710,18 @@ private extension MainViewController {
     func bulkAppendToTable(chats: [Chat]) {
         DispatchQueue.main.async {
             let shouldScroll = self.scrollView.isReachedToBottom
+            let startingRow = self.messageContainer.count()
+            var appendedMessages = [Message]()
             chats.forEach {
-                self.messageContainer.append(chat: $0)
+                let result = self.messageContainer.append(chat: $0)
+                if result.appended, let message = result.message {
+                    appendedMessages.append(message)
+                }
             }
+            self.updateCommentSearchMatchesForAppendedMessages(
+                appendedMessages,
+                startingRow: startingRow
+            )
             self.tableView.reloadData()
             self.updateCommentSearchStatusLabel()
 
@@ -1826,6 +2171,7 @@ private extension MainViewController {
 private extension MainViewController {
     func clearAllChats() {
         messageContainer.removeAll()
+        resetCommentSearchResults()
         rowHeightCache.removeAll(keepingCapacity: false)
         tableView.reloadData()
         updateCommentSearchStatusLabel()

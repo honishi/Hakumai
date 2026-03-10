@@ -102,6 +102,10 @@
 "comment_count" = "コメント";
 "comment_text_field_placeholder" = "⌘O (リターンのみで最下行にスクロール)";
 "search_comments_or_usernames" = "コメント・ユーザー名を検索";
+"comment_search_status_empty" = "0 / 0";
+"comment_search_status_position" = "%1$d / %2$d";
+"comment_search_status_searching" = "検索中…";
+"comment_search_status_submit" = "Enterで検索";
 "community_id" = "コミュニティID";
 "community_name" = "コミュニティ名";
 "user_name" = "ユーザー名";

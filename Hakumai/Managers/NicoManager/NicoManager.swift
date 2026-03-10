@@ -276,6 +276,8 @@ extension NicoManager {
 extension NicoManager {
     func cachedUserName(for userId: String) -> String? {
         guard userId.isRawUserId else { return nil }
+        objc_sync_enter(self)
+        defer { objc_sync_exit(self) }
         return cachedUserNames[userId]
     }
 
@@ -284,14 +286,14 @@ extension NicoManager {
             completion(nil)
             return
         }
-        if let cachedUsername = cachedUserNames[userId] {
+        if let cachedUsername = cachedUserName(for: userId) {
             completion(cachedUsername)
             return
         }
         userNameResolvingOperationQueue.addOperation { [weak self] in
             guard let me = self else { return }
             // 1. Again, check if the user name is resolved in previous operation.
-            if let cachedUsername = me.cachedUserNames[userId] {
+            if let cachedUsername = me.cachedUserName(for: userId) {
                 completion(cachedUsername)
                 return
             }
@@ -312,14 +314,16 @@ extension NicoManager {
                         return
                     }
                     let username = decoded.data.nickname
+                    objc_sync_enter(me)
                     me.cachedUserNames[userId] = username
+                    objc_sync_exit(me)
                     completion(username)
                 case .failure:
                     log.error("error in resolving username")
                     completion(nil)
                 }
             }
-            log.info("Userid[\(userId)] -> [\(me.cachedUserNames[userId] ?? "-")] QueueCount: \(me.userNameResolvingOperationQueue.operationCount)")
+            log.info("Userid[\(userId)] -> [\(me.cachedUserName(for: userId) ?? "-")] QueueCount: \(me.userNameResolvingOperationQueue.operationCount)")
         }
     }
 }

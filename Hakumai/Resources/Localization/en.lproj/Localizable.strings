@@ -102,6 +102,10 @@
 "comment_count" = "Comments";
 "comment_text_field_placeholder" = "⌘O (Empty ⏎ to scroll to bottom)";
 "search_comments_or_usernames" = "Search comments and usernames";
+"comment_search_status_empty" = "0 of 0";
+"comment_search_status_position" = "%1$d of %2$d";
+"comment_search_status_searching" = "Searching...";
+"comment_search_status_submit" = "Press Enter to search";
 "community_id" = "Community Id";
 "community_name" = "Community Name";
 "user_name" = "User Name";
