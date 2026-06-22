@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Cocoa
 import XCTest
 @testable import Hakumai
 
@@ -61,5 +62,35 @@ final class HandleNameManagerTests: XCTestCase {
 
         let resolved = HandleNameManager.shared.selectHandleName(for: userId, in: communityId)
         XCTAssert(resolved == handleName, "")
+    }
+
+    func testColorHexOmitsOpaqueAlpha() {
+        let color = NSColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 1.0)
+
+        XCTAssertEqual(color.hex, "#FF8000")
+    }
+
+    func testColorHexIncludesNonOpaqueAlpha() {
+        let color = NSColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 0.5)
+
+        XCTAssertEqual(color.hex, "#FF800080")
+    }
+
+    func testUpsertThenSelectColorPreservesAlpha() {
+        let communityId = "co" + UUID().uuidString
+        let userId = UUID().uuidString
+        let color = NSColor(red: 0.25, green: 0.5, blue: 0.75, alpha: 0.5)
+
+        HandleNameManager.shared.upsert(color: color, for: userId, in: communityId)
+
+        guard let resolved = HandleNameManager.shared.selectColor(for: userId, in: communityId)?
+                .usingColorSpace(.sRGB) else {
+            XCTFail("failed to resolve color")
+            return
+        }
+        XCTAssertEqual(resolved.redComponent, color.redComponent, accuracy: 1.0 / 255.0)
+        XCTAssertEqual(resolved.greenComponent, color.greenComponent, accuracy: 1.0 / 255.0)
+        XCTAssertEqual(resolved.blueComponent, color.blueComponent, accuracy: 1.0 / 255.0)
+        XCTAssertEqual(resolved.alphaComponent, color.alphaComponent, accuracy: 1.0 / 255.0)
     }
 }

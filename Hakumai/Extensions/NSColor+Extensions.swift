@@ -54,7 +54,13 @@ extension NSColor {
         let red = Int(round(rgbColor.redComponent * 0xFF))
         let green = Int(round(rgbColor.greenComponent * 0xFF))
         let blue = Int(round(rgbColor.blueComponent * 0xFF))
-        let hexString = NSString(format: "#%02X%02X%02X", red, green, blue)
+        let alpha = Int(round(rgbColor.alphaComponent * 0xFF))
+        let hexString: NSString
+        if alpha == 0xFF {
+            hexString = NSString(format: "#%02X%02X%02X", red, green, blue)
+        } else {
+            hexString = NSString(format: "#%02X%02X%02X%02X", red, green, blue, alpha)
+        }
         return hexString as String
     }
 }
