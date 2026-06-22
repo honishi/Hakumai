@@ -95,11 +95,18 @@ extension StringExtensionTests {
         XCTAssert("#789ABC".isValidHexString == true, "")
         XCTAssert("#ffffff".isValidHexString == true, "")
         XCTAssert("#FFFFFF".isValidHexString == true, "")
+        XCTAssert("#00000000".isValidHexString == true, "")
+        XCTAssert("#12345678".isValidHexString == true, "")
+        XCTAssert("#abcdef12".isValidHexString == true, "")
+        XCTAssert("#ABCDEF12".isValidHexString == true, "")
         XCTAssert("#000".isValidHexString == false, "")
         XCTAssert("#fff".isValidHexString == false, "")
         XCTAssert("#FFF".isValidHexString == false, "")
         XCTAssert("#1234567".isValidHexString == false, "")
         XCTAssert("#fffffff".isValidHexString == false, "")
         XCTAssert("#FFFFFFF".isValidHexString == false, "")
+        XCTAssert("#123456789".isValidHexString == false, "")
+        XCTAssert("#GGGGGG".isValidHexString == false, "")
+        XCTAssert("#GGGGGG00".isValidHexString == false, "")
     }
 }

@@ -102,7 +102,7 @@ extension String {
         return extractRegexp(pattern: "(https?://[\\w/:%#\\$&\\?\\(\\)~\\.=\\+\\-]+)")
     }
 
-    var isValidHexString: Bool { hasRegexp(pattern: "^#[0-9a-fA-F]{6}$") }
+    var isValidHexString: Bool { hasRegexp(pattern: "^#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$") }
 }
 
 extension String {

@@ -171,6 +171,7 @@ private extension MenuDelegate {
         userColorPanel.setTarget(self)
         userColorPanel.setAction(#selector(userColorSelected(_:)))
         userColorPanel.isContinuous = true
+        userColorPanel.showsAlpha = true
     }
 }
 
