@@ -79,11 +79,14 @@ private extension KusaCommentDetector {
     }
 
     func calcurateKusaRate() -> Double {
-        if chats.isEmpty || chats.count < 5 {
+        objc_sync_enter(self)
+        let snapshot = chats
+        objc_sync_exit(self)
+        if snapshot.count < 5 {
             return 0
         }
-        let kusaChats = chats.filter { isKusaComment($0.comment) }
-        return Double(kusaChats.count) / Double(chats.count)
+        let kusaChats = snapshot.filter { isKusaComment($0.comment) }
+        return Double(kusaChats.count) / Double(snapshot.count)
     }
 
     func isKusaComment(_ comment: String) -> Bool {
