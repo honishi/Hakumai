@@ -232,7 +232,7 @@ private extension UserViewController {
             content = chat.comment
             attributes = UIHelper.commentAttributes(isBold: chat.isFirst)
         case .debug(let debug):
-            content = debug.message
+            content = debug.displayMessage
             attributes = UIHelper.commentAttributes()
         }
 

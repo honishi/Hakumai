@@ -37,7 +37,8 @@ extension MessageContainer {
         defer { objc_sync_exit(self) }
 
         let message = Message(messageNo: messageNo, system: systemMessage)
-        return append(message: message)
+        let result = append(message: message)
+        return (result.appended, result.count)
     }
 
     @discardableResult
@@ -58,7 +59,7 @@ extension MessageContainer {
     }
 
     @discardableResult
-    func append(debug: String) -> (appended: Bool, count: Int) {
+    func append(debug: String) -> (appended: Bool, count: Int, updatedRow: Int?) {
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
 
@@ -66,13 +67,13 @@ extension MessageContainer {
         return append(message: message)
     }
 
-    private func append(message: Message) -> (appended: Bool, count: Int) {
+    private func append(message: Message) -> (appended: Bool, count: Int, updatedRow: Int?) {
         messageNo += 1
         sourceMessages.append(message)
-        let appended = appendIfConditionMet(
+        let result = appendIfConditionMet(
             message: message, into: &filteredMessages)
         let count = filteredMessages.count
-        return (appended, count)
+        return (result.appended, count, result.updatedRow)
     }
 
     func count() -> Int {
@@ -182,12 +183,15 @@ extension MessageContainer {
         DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async {
             // log.debug("started 1st pass rebuilding filtered messages (bg section)")
 
+            objc_sync_enter(self)
+            let sourceSnapshot = self.sourceMessages
+            objc_sync_exit(self)
             var workingMessages = [Message]()
-            let sourceCount = self.sourceMessages.count
+            let sourceCount = sourceSnapshot.count
 
             for i in 0..<sourceCount {
                 self.appendIfConditionMet(
-                    message: self.sourceMessages[i],
+                    message: sourceSnapshot[i],
                     into: &workingMessages)
             }
 
@@ -230,13 +234,22 @@ extension MessageContainer {
 private extension MessageContainer {
     // MARK: Filtered Message Append Utility
     @discardableResult
-    func appendIfConditionMet(message: Message, into messages: inout [Message]) -> Bool {
-        var appended = false
-        if shouldAppend(message: message) {
-            messages.append(message)
-            appended = true
+    func appendIfConditionMet(message: Message, into messages: inout [Message]) -> (appended: Bool, updatedRow: Int?) {
+        guard shouldAppend(message: message) else { return (false, nil) }
+        if case .debug(let debug) = message.content,
+           var previous = messages.last,
+           case .debug(var previousDebug) = previous.content,
+           previousDebug.message == debug.message,
+           previous.messageNo + previousDebug.repeatCount == message.messageNo {
+            // 非表示のコメントが間にある場合も別の行にするため、元の連番で判定する。
+            previousDebug.repeatCount += 1
+            previous.content = .debug(previousDebug)
+            let row = messages.count - 1
+            messages[row] = previous
+            return (false, row)
         }
-        return appended
+        messages.append(message)
+        return (true, nil)
     }
 
     func shouldAppend(message: Message) -> Bool {

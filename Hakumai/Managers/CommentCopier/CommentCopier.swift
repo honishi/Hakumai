@@ -147,7 +147,7 @@ private extension Message {
                 handleNameManager: handleNameManager)
             premium = message.premium.label()
         case .debug(let message):
-            comment = message.message
+            comment = message.displayMessage
         }
         comment = comment.trimEnter()
         switch format {

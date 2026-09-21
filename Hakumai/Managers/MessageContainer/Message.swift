@@ -18,7 +18,7 @@ struct Message {
 
     // MARK: - Properties
     let messageNo: Int
-    let content: ContentType
+    var content: ContentType
     let date: Date = Date()
 
     // MARK: - Object Lifecycle
@@ -88,6 +88,11 @@ struct ChatMessage {
 
 struct DebugMessage {
     let message: String
+    var repeatCount = 1
+
+    var displayMessage: String {
+        repeatCount > 1 ? "\(message) x\(repeatCount)" : message
+    }
 }
 
 // MARK: - ChatMessage Extension
