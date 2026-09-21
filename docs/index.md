@@ -18,7 +18,7 @@ Hakumai は macOS で動作するニコニコ生放送用のコメントビュ�
 
 ### Requirements
 
-* macOS 10.15 Catalina 以降
+* macOS 12.0 Monterey 以降
 * VOICEVOX 連携には別途 <a href="https://voicevox.hiroshiba.jp/" target="_blank">VOICEVOX ダウンロード</a>
 
 <img src="./image/food_kome_masu.png" width="160px">
