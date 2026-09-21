@@ -56,6 +56,7 @@ protocol NicoManagerDelegate: AnyObject {
     func nicoManagerDidReceiveStatistics(_ nicoManager: NicoManagerType, stat: LiveStatistics)
 
     // History.
+    func nicoManagerDidFinishChatHistory(_ nicoManager: NicoManagerType, totalChatCount: Int)
     func nicoManagerReceivingChatHistory(_ nicoManager: NicoManagerType, requestCount: Int, totalChatCount: Int)
     func nicoManagerDidReceiveChatHistory(_ nicoManager: NicoManagerType, chats: [Chat])
 

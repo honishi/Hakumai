@@ -829,9 +829,10 @@ extension MainViewController: NicoManagerDelegate {
             )
         }
         bulkAppendToTable(chats: chats)
-        if !chats.isEmpty {
-            logSystemMessageToTable(L10n.receivedComments(chats.count))
-        }
+    }
+
+    func nicoManagerDidFinishChatHistory(_ nicoManager: NicoManagerType, totalChatCount: Int) {
+        logSystemMessageToTable(L10n.receivedComments(totalChatCount))
     }
 
     func nicoManagerDidDisconnect(_ nicoManager: NicoManagerType, disconnectContext: NicoDisconnectContext) {

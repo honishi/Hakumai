@@ -401,6 +401,29 @@ extension NicoManagerTests {
         manager.disconnect()
     }
 
+    func testHistoryBatchesAreDeliveredIncrementallyWithOneSummary() {
+        let fixture = RecoveryFixture()
+        fixture.beginAt = String(Int(Date().timeIntervalSince1970) - 10_000)
+        let now = Int64(Date().timeIntervalSince1970)
+        fixture.view = { count, _ in
+            if count == 3 { return .ok(try RecoveryFixture.playlist(segment: "end")) }
+            return .ok(try RecoveryFixture.playlist(segment: "history\(count)", next: count == 1 ? 100 : now))
+        }
+        fixture.segment = { path in
+            if path == "/end" { return .ok(try RecoveryFixture.end()) }
+            return .ok(try RecoveryFixture.comment(id: path, text: path))
+        }
+        let recorder = RecoveryRecorder()
+        let ended = expectation(description: "履歴を分割表示し件数はまとめる")
+        recorder.onDisconnect = { if case .normal = $0 { ended.fulfill() } }
+        let manager = fixture.manager(recorder: recorder)
+        manager.connect(liveProgramId: "lv1")
+        wait(for: [ended], timeout: 5)
+        XCTAssertEqual(recorder.comments, ["/history1", "/history2"])
+        XCTAssertEqual(recorder.historyBatchCount, 2)
+        XCTAssertEqual(recorder.historySummaries, [2])
+    }
+
     func testCompletedHistoryIsNotLostWhenWatchConnectionRestarts() {
         let fixture = RecoveryFixture()
         fixture.beginAt = String(Int(Date().timeIntervalSince1970) - 10_000)
@@ -423,6 +446,7 @@ extension NicoManagerTests {
         manager.connect(liveProgramId: "lv1")
         wait(for: [ended], timeout: 5)
         XCTAssertEqual(recorder.comments, ["history"])
+        XCTAssertEqual(recorder.historySummaries, [1])
         XCTAssertEqual(fixture.viewPositions, [fixture.beginAt, "100", "100"])
         XCTAssertTrue(recorder.logs.contains { $0.contains("旧コメントWSの空送信・Ping監視タイマーは起動しない") })
     }
@@ -664,6 +688,8 @@ private final class RecoveryRecorder: NicoManagerDelegate {
     var disconnections: [NicoDisconnectContext] = []
     var onDisconnect: ((NicoDisconnectContext) -> Void)?
     var onLog: ((String) -> Void)?
+    var historySummaries: [Int] = []
+    var historyBatchCount = 0
     var preparationFailures = 0
     var onPreparationFailure: (() -> Void)?
     func nicoManagerNeedsToken(_ nicoManager: NicoManagerType) {}
@@ -679,7 +705,13 @@ private final class RecoveryRecorder: NicoManagerDelegate {
     func nicoManagerWillReconnectToLive(_ nicoManager: NicoManagerType, reason: NicoReconnectReason) {}
     func nicoManagerDidReceiveStatistics(_ nicoManager: NicoManagerType, stat: LiveStatistics) {}
     func nicoManagerReceivingChatHistory(_ nicoManager: NicoManagerType, requestCount: Int, totalChatCount: Int) {}
-    func nicoManagerDidReceiveChatHistory(_ nicoManager: NicoManagerType, chats: [Chat]) { comments += chats.map(\.comment) }
+    func nicoManagerDidReceiveChatHistory(_ nicoManager: NicoManagerType, chats: [Chat]) {
+        comments += chats.map(\.comment)
+        historyBatchCount += 1
+    }
+    func nicoManagerDidFinishChatHistory(_ nicoManager: NicoManagerType, totalChatCount: Int) {
+        historySummaries.append(totalChatCount)
+    }
     func nicoManagerDidDisconnect(_ nicoManager: NicoManagerType, disconnectContext: NicoDisconnectContext) {
         disconnections.append(disconnectContext)
         onDisconnect?(disconnectContext)

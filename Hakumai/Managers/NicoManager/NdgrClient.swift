@@ -101,14 +101,14 @@ private extension NdgrClient {
         var next: Int? = from
         var segmentCount = 0
         let chatHistory = ChatHistory()
-        defer { emitChatHistoryIfExists(chatHistory: chatHistory, diagnostics: diagnostics) }
+        defer { finishChatHistory(chatHistory, diagnostics: diagnostics) }
         let latestHistoryTime = Int(Date().timeIntervalSince1970) - 16 * 4
 
         while let current = next {
             try Task.checkCancellation()
             chatHistory.isFetching = current < latestHistoryTime
             if !chatHistory.isFetching {
-                emitChatHistoryIfExists(chatHistory: chatHistory, diagnostics: diagnostics)
+                finishChatHistory(chatHistory, diagnostics: diagnostics)
             }
             let result = try await forwardView(uri: uri.appending("at", value: String(current)),
                                                chatHistory: chatHistory, diagnostics: diagnostics, session: session)
@@ -116,7 +116,7 @@ private extension NdgrClient {
             next = result.next
             if chatHistory.isFetching {
                 delegate?.ndgrClientReceivingChatHistory(self, requestCount: segmentCount,
-                                                         totalChatCount: chatHistory.chats.count, diagnostics: diagnostics)
+                                                         totalChatCount: chatHistory.totalCount, diagnostics: diagnostics)
             }
             // 再開位置より前の履歴は通知済みにする。途中停止で未通知の履歴を飛ばさないため。
             emitChatHistoryIfExists(chatHistory: chatHistory, diagnostics: diagnostics)
@@ -194,6 +194,14 @@ private extension NdgrClient {
             view.fail(error)
             throw error
         }
+    }
+
+    @MainActor
+    func finishChatHistory(_ history: ChatHistory, diagnostics: ConnectionDiagnostics) {
+        guard activeDiagnostics === diagnostics, !history.didFinish else { return }
+        emitChatHistoryIfExists(chatHistory: history, diagnostics: diagnostics)
+        history.didFinish = true
+        delegate?.ndgrClientDidFinishChatHistory(self, diagnostics: diagnostics)
     }
 
     @MainActor
@@ -469,10 +477,15 @@ private extension NdgrClient {
 private final class ChatHistory {
     var metaIds = Set<String>()
     var isFetching = true
+    var didFinish = false
+    private(set) var totalCount = 0
     private(set) var chats: [Chat] = []
     var isEmpty: Bool { chats.isEmpty }
 
-    func append(_ chat: Chat) { chats.append(chat) }
+    func append(_ chat: Chat) {
+        chats.append(chat)
+        totalCount += 1
+    }
 
     func removeAll() {
         chats.removeAll()

@@ -116,6 +116,8 @@ final class NicoManager: NicoManagerType {
     private var activeProgramId: String?
     private var currentConnectContext: NicoConnectContext = .normal
     private var recoveryAttempt = 0
+    // View ごとの履歴は即時表示し、件数の案内だけを履歴取得の区切りまで集計する。
+    private var pendingHistoryCount = 0
     private var recoveryStartedAt: TimeInterval?
     private var recoveryWorkItem: DispatchWorkItem?
     private var watchSetupTimeout: DispatchWorkItem?
@@ -222,6 +224,7 @@ extension NicoManager {
             return
         }
         (connectionDiagnostics ?? recoveryDiagnostics)?.emit("切断実行: context=\(disconnectContext), 復旧予約を取り消す")
+        reportReceivedHistory()
         let wasActive = activeProgramId != nil
         activeProgramId = nil
         recoveryStartedAt = nil
@@ -414,7 +417,21 @@ extension NicoManager: NdgrClientDelegate {
 
     func ndgrClientDidReceiveChatHistory(_ ndgrClient: any NdgrClientType, chats: [Chat], diagnostics: ConnectionDiagnostics) {
         guard connectionDiagnostics === diagnostics else { return }
+        pendingHistoryCount += chats.count
         delegate?.nicoManagerDidReceiveChatHistory(self, chats: chats)
+    }
+
+    func ndgrClientDidFinishChatHistory(_ ndgrClient: NdgrClientType, diagnostics: ConnectionDiagnostics) {
+        guard connectionDiagnostics === diagnostics else { return }
+        reportReceivedHistory()
+    }
+
+    private func reportReceivedHistory() {
+        guard pendingHistoryCount > 0 else { return }
+        let count = pendingHistoryCount
+        pendingHistoryCount = 0
+        (connectionDiagnostics ?? recoveryDiagnostics)?.emit("履歴コメント受信集計: \(count)件、通常メッセージで一度だけ通知")
+        delegate?.nicoManagerDidFinishChatHistory(self, totalChatCount: count)
     }
 
     func ndgrClientDidReceiveChat(_ ndgrClient: any NdgrClientType, chat: Chat, diagnostics: ConnectionDiagnostics) {
