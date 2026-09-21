@@ -37,7 +37,8 @@ final class ConnectionDiagnosticsTests: XCTestCase {
             underlying,
             AFError.sessionTaskFailed(error: underlying),
             WSError(type: .serverError, message: secret, code: 1006),
-            NSError(domain: secret, code: 99)
+            NSError(domain: secret, code: 99),
+            NicoError.transport(AFError.sessionTaskFailed(error: underlying))
         ]
         for error in errors {
             let summary = ConnectionDiagnostics.errorSummary(error)
@@ -56,7 +57,7 @@ final class ConnectionDiagnosticsTests: XCTestCase {
         let retry = try XCTUnwrap(messages.firstIndex { $0.contains("1回目の再試行を実行") })
         let exhausted = try XCTUnwrap(messages.firstIndex { $0.contains("再試行上限に到達") })
         let completed = try XCTUnwrap(messages.firstIndex { $0.contains("完了 status=") })
-        let ended = try XCTUnwrap(messages.firstIndex { $0.contains("NDGR終了通知: View取得ループ終了") })
+        let ended = try XCTUnwrap(messages.firstIndex { $0.contains("NDGR終了通知: 通信・解析失敗") })
         XCTAssertLessThan(retry, exhausted)
         XCTAssertLessThan(exhausted, completed)
         XCTAssertLessThan(completed, ended)
@@ -124,12 +125,12 @@ private final class DiagnosticNDGRDelegate: NdgrClientDelegate {
     }
 
     func ndgrClientDidConnect(_ ndgrClient: NdgrClientType, diagnostics: ConnectionDiagnostics) {}
-    func ndgrClientDidReceiveChat(_ ndgrClient: NdgrClientType, chat: Chat) {}
-    func ndgrClientReceivingChatHistory(_ ndgrClient: NdgrClientType, requestCount: Int, totalChatCount: Int) {}
-    func ndgrClientDidReceiveChatHistory(_ ndgrClient: NdgrClientType, chats: [Chat]) {}
+    func ndgrClientDidReceiveChat(_ ndgrClient: NdgrClientType, chat: Chat, diagnostics: ConnectionDiagnostics) {}
+    func ndgrClientReceivingChatHistory(_ ndgrClient: NdgrClientType, requestCount: Int, totalChatCount: Int, diagnostics: ConnectionDiagnostics) {}
+    func ndgrClientDidReceiveChatHistory(_ ndgrClient: NdgrClientType, chats: [Chat], diagnostics: ConnectionDiagnostics) {}
 
-    func ndgrClientDidDisconnect(_ ndgrClient: NdgrClientType, diagnostics: ConnectionDiagnostics?) {
-        endedConnectionID = diagnostics?.id
+    func ndgrClientDidDisconnect(_ ndgrClient: NdgrClientType, diagnostics: ConnectionDiagnostics, reason: NdgrTermination) {
+        endedConnectionID = diagnostics.id
         finished.fulfill()
     }
 }

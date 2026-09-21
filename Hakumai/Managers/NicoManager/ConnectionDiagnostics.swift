@@ -75,6 +75,9 @@ final class ConnectionDiagnostics {
     /// localizedDescription / userInfo / URLには認証情報が入るため、分類と数値だけを出す。
     static func errorSummary(_ error: Error?) -> String {
         guard let error = error else { return "なし" }
+        if let cause = (error as? NicoError)?.underlyingError {
+            return errorSummary(cause)
+        }
         if let error = error as? AFError {
             switch error {
             case .sessionTaskFailed(let underlyingError):
@@ -94,13 +97,9 @@ final class ConnectionDiagnostics {
             return "WebSocketエラー(type=\(error.type), code=\(error.code))"
         }
         let nsError = error as NSError
-        let domain: String
-        switch nsError.domain {
-        case NSURLErrorDomain, NSPOSIXErrorDomain, NSCocoaErrorDomain, "kCFErrorDomainCFNetwork", "kCFStreamErrorDomainSSL":
-            domain = nsError.domain
-        default:
-            domain = "その他"
-        }
+        let knownDomains = [NSURLErrorDomain, NSPOSIXErrorDomain, NSCocoaErrorDomain,
+                            "kCFErrorDomainCFNetwork", "kCFStreamErrorDomainSSL"]
+        let domain = knownDomains.contains(nsError.domain) ? nsError.domain : "その他"
         return "\(domain)(code=\(nsError.code))"
     }
 
@@ -114,5 +113,30 @@ final class ConnectionDiagnostics {
             "CONNECT_ERROR", "CONTENT_NOT_READY", "NO_ROOM_AVAILABLE"
         ]
         return knownReasons.contains(value) ? value : "未知の理由（本文省略）"
+    }
+}
+
+/// 再取得しても改善しない認証・権限エラーや手動キャンセルは再試行しない。
+enum NicoRecoveryPolicy {
+    static func shouldRetry(_ error: Error) -> Bool {
+        if let cause = (error as? NicoError)?.underlyingError {
+            return shouldRetry(cause)
+        }
+        if let error = error as? AFError {
+            switch error {
+            case .sessionTaskFailed(let cause): return shouldRetry(cause)
+            case .responseValidationFailed(let reason):
+                if case .unacceptableStatusCode(let status) = reason {
+                    return status == 429 || (500..<600).contains(status)
+                }
+                return false
+            default: return false
+            }
+        }
+        let error = error as NSError
+        return error.domain == NSURLErrorDomain && [
+            NSURLErrorTimedOut, NSURLErrorNetworkConnectionLost, NSURLErrorNotConnectedToInternet,
+            NSURLErrorCannotConnectToHost, NSURLErrorCannotFindHost, NSURLErrorDNSLookupFailed
+        ].contains(error.code)
     }
 }

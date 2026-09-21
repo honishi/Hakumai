@@ -15,187 +15,196 @@ final class NdgrClient: NdgrClientType {
     weak var delegate: NdgrClientDelegate?
 
     // Private Properties
-    private let session: Session
-    private var receivedMessageMetaIds = Set<String>()
-    private let metaIdCheckLock = NSLock()
-    private let diagnosticsLock = NSLock()
+    private let configuration: URLSessionConfiguration
+    private var streamSession: Session?
+    private var streamTask: Task<Void, Never>?
     private var activeDiagnostics: ConnectionDiagnostics?
+    private var receivedMessageMetaIds = Set<String>()
+    private var resumeAt: Int?
+    private var connected = false
+    private var duplicateCount = 0
 
     init(delegate: NdgrClientDelegate? = nil, configuration: URLSessionConfiguration = .af.default) {
         self.delegate = delegate
+        self.configuration = configuration
         configuration.headers.add(.userAgent(commonUserAgentValue))
-        session = Session(configuration: configuration)
     }
 }
 
-// MARK: - Public Functions
+// 接続の切り替えと delegate 通知は main queue に直列化する。
 extension NdgrClient {
-    func connect(viewUri: URL, beginTime: Date, diagnostics: ConnectionDiagnostics) {
-        diagnosticsLock.lock()
+    func connect(viewUri: URL, beginTime: Date, diagnostics: ConnectionDiagnostics, resuming: Bool = false) {
+        guard Thread.isMainThread else {
+            DispatchQueue.main.async { self.connect(viewUri: viewUri, beginTime: beginTime,
+                                                    diagnostics: diagnostics, resuming: resuming) }
+            return
+        }
+        disconnect()
+        if !resuming {
+            receivedMessageMetaIds.removeAll()
+            resumeAt = Int(beginTime.timeIntervalSince1970)
+        }
+        let session = Session(configuration: configuration)
+        streamSession = session
         activeDiagnostics = diagnostics
-        diagnosticsLock.unlock()
-        diagnostics.emit("NDGR開始 (受信待ちタイムアウト=\(session.session.configuration.timeoutIntervalForRequest)秒)")
-        Task {
-            // TODO: 厳密には ndgrClientDidConnect はこの位置ではない。
-            delegate?.ndgrClientDidConnect(self, diagnostics: diagnostics)
-            await forwardPlaylist(uri: viewUri, from: Int(beginTime.timeIntervalSince1970), diagnostics: diagnostics)
-            diagnostics.emit("NDGR終了通知: View取得ループ終了（放送終了の確認とは限らない）")
-            delegate?.ndgrClientDidDisconnect(self, diagnostics: diagnostics)
+        connected = false
+        duplicateCount = 0
+        diagnostics.emit("NDGR開始 (受信待ちタイムアウト=\(configuration.timeoutIntervalForRequest)秒), 再開=\(resuming), at=\(resumeAt ?? Int(beginTime.timeIntervalSince1970))")
+        streamTask = Task { @MainActor [weak self] in
+            guard let self = self else { return }
+            let reason: NdgrTermination
+            do {
+                try await self.forwardPlaylist(uri: viewUri, from: self.resumeAt ?? Int(beginTime.timeIntervalSince1970),
+                                               diagnostics: diagnostics, session: session)
+                reason = .missingNext
+            } catch NdgrStreamError.programEnded {
+                reason = .programEnded
+            } catch {
+                reason = .failure(error)
+            }
+            guard self.activeDiagnostics === diagnostics, !Task.isCancelled else { return }
+            diagnostics.emit("NDGR終了通知: \(Self.summary(reason)), 重複除外=\(self.duplicateCount)")
+            self.disconnect()
+            self.delegate?.ndgrClientDidDisconnect(self, diagnostics: diagnostics, reason: reason)
         }
     }
 
     func disconnect() {
-        diagnosticsLock.lock()
-        let diagnostics = activeDiagnostics
-        diagnosticsLock.unlock()
-        diagnostics?.emit("NDGR切断要求: 全HTTPリクエストをキャンセル")
-        session.cancelAllRequests { [weak self] in
-            guard let self = self else { return }
-            diagnostics?.emit("NDGR終了通知: 全HTTPリクエストのキャンセル完了")
-            self.delegate?.ndgrClientDidDisconnect(self, diagnostics: diagnostics)
+        guard Thread.isMainThread else {
+            DispatchQueue.main.async { self.disconnect() }
+            return
+        }
+        // 古い Session のキャンセルが新しい接続の HTTP を巻き込まないよう、接続ごとに分離する。
+        activeDiagnostics?.emit("NDGR停止: 受信Taskと当該接続のHTTPをキャンセル, 重複除外=\(duplicateCount)")
+        activeDiagnostics = nil
+        streamTask?.cancel()
+        streamTask = nil
+        streamSession?.cancelAllRequests()
+        streamSession = nil
+    }
+
+    private static func summary(_ reason: NdgrTermination) -> String {
+        switch reason {
+        case .programEnded: return "サーバーから放送終了を確認"
+        case .missingNext: return "次の取得位置なし（放送終了は未確認）"
+        case .failure(let error): return "通信・解析失敗 \(ConnectionDiagnostics.errorSummary(error))"
         }
     }
 }
 
-// MARK: - Private Functions
 private extension NdgrClient {
-    // swiftlint:disable function_body_length
-    func forwardPlaylist(uri: URL, from: Int?, diagnostics: ConnectionDiagnostics) async {
+    @MainActor
+    // swiftlint:disable:next cyclomatic_complexity
+    func forwardPlaylist(uri: URL, from: Int, diagnostics: ConnectionDiagnostics, session: Session) async throws {
         var next: Int? = from
-
         var segmentCount = 0
         let chatHistory = ChatHistory()
-        // 現在時刻より少し前 (1segment = 16sec * n) で history chat としての読み込みをやめる
+        defer { emitChatHistoryIfExists(chatHistory: chatHistory, diagnostics: diagnostics) }
         let latestHistoryTime = Int(Date().timeIntervalSince1970) - 16 * 4
 
-        while next != nil {
-            let current = next ?? 0
-            log.debug("🪞 view: \(current)")
-            let entries = retrieve(
-                uri: uri.appending("at", value: next.toAtParameter()),
-                messageType: Dwango_Nicolive_Chat_Service_Edge_ChunkedEntry.self,
-                activity: .view,
-                diagnostics: diagnostics
-            )
+        while let current = next {
+            try Task.checkCancellation()
             chatHistory.isFetching = current < latestHistoryTime
             if !chatHistory.isFetching {
-                emitChatHistoryIfExists(chatHistory: chatHistory)
+                emitChatHistoryIfExists(chatHistory: chatHistory, diagnostics: diagnostics)
             }
             next = nil
-            for await entry in entries {
-                guard let entry = entry.entry else {
-                    log.error("entry.entry is nil")
-                    continue
-                }
-                switch entry {
-                case .backward:
-                    // log.info("⏮️ backward: \(current)")
-                    continue
-                case .previous:
-                    // log.info("⏮️ previous: \(current)")
-                    continue
-                case .segment(let segment):
-                    log.info("📩 segment: \(current)")
-                    segmentCount += 1
-                    guard let url = URL(string: segment.uri) else {
-                        log.error("failed to create url: \(segment.uri)")
-                        continue
-                    }
-                    let _segmentCount = segmentCount
-                    Task {
-                        await pullMessages(uri: url, chatHistory: chatHistory, diagnostics: diagnostics)
-                        if chatHistory.isFetching {
-                            delegate?.ndgrClientReceivingChatHistory(
-                                self,
-                                requestCount: _segmentCount,
-                                totalChatCount: chatHistory.chats.count
-                            )
+            // Segment の完了を待ってから再開位置を進め、取得途中のコメントを飛ばさない。
+            try await withThrowingTaskGroup(of: Void.self) { group in
+                var activeSegments = 0
+                let entries = retrieve(uri: uri.appending("at", value: String(current)),
+                                       messageType: Dwango_Nicolive_Chat_Service_Edge_ChunkedEntry.self,
+                                       activity: .view, diagnostics: diagnostics, session: session)
+                for try await entry in entries {
+                    try Task.checkCancellation()
+                    guard let entry = entry.entry else { continue }
+                    switch entry {
+                    case .backward, .previous: continue
+                    case .segment(let segment):
+                        guard let url = URL(string: segment.uri) else { throw NdgrStreamError.invalidSegmentURL }
+                        if activeSegments >= 8 {
+                            try await group.next()
+                            activeSegments -= 1
                         }
+                        segmentCount += 1
+                        activeSegments += 1
+                        group.addTask {
+                            try await self.pullMessages(uri: url, chatHistory: chatHistory,
+                                                        diagnostics: diagnostics, session: session)
+                        }
+                    case .next(let marker): next = Int(marker.at)
                     }
-                case .next(let _next):
-                    log.info("⏭️ next: \(current) -> \(_next.at)")
-                    next = Int(_next.at)
                 }
+                try await group.waitForAll()
             }
+            try Task.checkCancellation()
+            if chatHistory.isFetching {
+                delegate?.ndgrClientReceivingChatHistory(self, requestCount: segmentCount,
+                                                         totalChatCount: chatHistory.chats.count, diagnostics: diagnostics)
+            }
+            // 再開位置より前の履歴は通知済みにする。途中停止で未通知の履歴を飛ばさないため。
+            emitChatHistoryIfExists(chatHistory: chatHistory, diagnostics: diagnostics)
+            try Task.checkCancellation()
+            if let next = next { resumeAt = next }
         }
         diagnostics.emit("NDGR Viewループ終了: 次の取得位置なし (segments=\(segmentCount))")
-        emitChatHistoryIfExists(chatHistory: chatHistory)
-        log.debug("done: \(next ?? 0)")
     }
-    // swiftlint:enable function_body_length
 
-    func emitChatHistoryIfExists(chatHistory: ChatHistory) {
-        guard !chatHistory.isEmpty else { return }
-        delegate?.ndgrClientDidReceiveChatHistory(self, chats: chatHistory.chats)
+    @MainActor
+    func emitChatHistoryIfExists(chatHistory: ChatHistory, diagnostics: ConnectionDiagnostics) {
+        guard activeDiagnostics === diagnostics, !chatHistory.isEmpty else { return }
+        receivedMessageMetaIds.formUnion(chatHistory.metaIds)
+        delegate?.ndgrClientDidReceiveChatHistory(self, chats: chatHistory.chats, diagnostics: diagnostics)
         chatHistory.removeAll()
     }
 
-    // swiftlint:disable cyclomatic_complexity
-    func pullMessages(uri: URL, chatHistory: ChatHistory, diagnostics: ConnectionDiagnostics) async {
-        let onReceiveChat = { [weak self] (chat: Chat) in
-            // TODO: まだ chat 消失のケースがある。
-            log.debug(chat)
-            if chatHistory.isFetching {
-                chatHistory.append(chat)
-                return
-            }
-            guard let self = self else { return }
-            diagnostics.record(.comment)
-            delegate?.ndgrClientDidReceiveChat(self, chat: chat)
-        }
-        var detectedDisconnection = false
-        let messages = retrieve(
-            uri: uri,
-            messageType: Dwango_Nicolive_Chat_Service_Edge_ChunkedMessage.self,
-            activity: .segment,
-            diagnostics: diagnostics
-        )
-        for await message in messages {
-            if checkIfMessageIsReceived(metaId: message.meta.id) {
-                continue
-            }
-            guard let payload = message.payload else { continue }
+    @MainActor
+    func pullMessages(uri: URL, chatHistory: ChatHistory, diagnostics: ConnectionDiagnostics, session: Session) async throws {
+        let messages = retrieve(uri: uri, messageType: Dwango_Nicolive_Chat_Service_Edge_ChunkedMessage.self,
+                                activity: .segment, diagnostics: diagnostics, session: session)
+        for try await message in messages {
+            try Task.checkCancellation()
+            guard activeDiagnostics === diagnostics, let payload = message.payload else { continue }
+            let chat: Chat?
             switch payload {
-            case .message(let message):
-                guard let chat = message.toChat() else {
-                    log.warning("need to handle this message. (\(String(describing: message.data)))")
-                    continue
-                }
-                onReceiveChat(chat)
+            case .message(let message): chat = message.toChat()
             case .state(let state):
                 if state.isDisconnect() {
+                    // 終了通知を見た時点で他の受信も止め、HTTP EOF 待ちで終了を遅らせない。
                     diagnostics.emit("NDGR Segment: サーバーから放送終了状態を受信")
-                    detectedDisconnection = true
-                    continue
+                    emitChatHistoryIfExists(chatHistory: chatHistory, diagnostics: diagnostics)
+                    disconnect()
+                    delegate?.ndgrClientDidDisconnect(self, diagnostics: diagnostics, reason: .programEnded)
+                    throw NdgrStreamError.programEnded
                 }
-                guard let chat = state.toChat() else {
-                    log.warning("need to handle this state. (\(String(describing: state)))")
-                    continue
-                }
-                onReceiveChat(chat)
-            case .signal(let signal):
-                log.debug("flushed: (\(signal == .flushed))")
-                continue
+                chat = state.toChat()
+            case .signal: chat = nil
             }
+            if !connected {
+                connected = true
+                diagnostics.emit("NDGR実データ受信 → 接続成功")
+                delegate?.ndgrClientDidConnect(self, diagnostics: diagnostics)
+            }
+            guard let chat = chat else { continue }
+            emit(chat: chat, metaId: message.meta.id, history: chatHistory, diagnostics: diagnostics)
         }
-        if detectedDisconnection {
-            diagnostics.emit("NDGR切断の発端: 放送終了状態を含むSegmentの読み取り完了")
-            disconnect()
-        }
-        log.debug("done")
+        try Task.checkCancellation()
     }
-    // swiftlint:enable cyclomatic_complexity
 
-    func checkIfMessageIsReceived(metaId: String) -> Bool {
-        guard !metaId.isEmpty else {
-            return false
+    @MainActor
+    func emit(chat: Chat, metaId: String, history: ChatHistory, diagnostics: ConnectionDiagnostics) {
+        if !metaId.isEmpty && (receivedMessageMetaIds.contains(metaId) || history.metaIds.contains(metaId)) {
+            duplicateCount += 1
+            return
         }
-        metaIdCheckLock.lock()
-        defer { metaIdCheckLock.unlock() }
-        let alreadyReceived = receivedMessageMetaIds.contains(metaId)
-        // log.info("is received meta-id: \(alreadyReceived) (\(metaId))")
-        receivedMessageMetaIds.insert(metaId)
-        return alreadyReceived
+        if history.isFetching {
+            history.append(chat)
+            if !metaId.isEmpty { history.metaIds.insert(metaId) }
+        } else {
+            if !metaId.isEmpty { receivedMessageMetaIds.insert(metaId) }
+            diagnostics.record(.comment)
+            delegate?.ndgrClientDidReceiveChat(self, chat: chat, diagnostics: diagnostics)
+        }
     }
 }
 
@@ -203,30 +212,41 @@ private extension NdgrClient {
 private extension NdgrClient {
     // #1. 指定された uri を stream として listen しつつ、
     // 逐一 protobuf message として parse したものを stream として返す。
+    // swiftlint:disable function_body_length
     func retrieve<T: SwiftProtobuf.Message>(
         uri: URL,
         messageType: T.Type,
         activity: ConnectionDiagnostics.Activity,
-        diagnostics: ConnectionDiagnostics
-    ) -> AsyncStream<T> {
+        diagnostics: ConnectionDiagnostics,
+        session: Session
+    ) -> AsyncThrowingStream<T, Error> {
         // log.debug("\(uri.absoluteString)")
         var unread: Data?
         let requestID = diagnostics.nextRequestID()
         let label = "\(activity.rawValue) HTTP#\(requestID)"
         var receivedBytes = 0
+        var parsedRetryCount = 0
         let retrier = NdgrRequestRetrier { message in
             diagnostics.emit("\(label): \(message)")
         }
 
-        return AsyncStream { continuation in
+        return AsyncThrowingStream { continuation in
             let request = session.streamRequest(
                 uri,
                 method: .get,
                 interceptor: Interceptor(retriers: [retrier])
             )
             .validate()
-            .responseStream { [weak self] in
-                guard let self = self else { return }
+            request.responseStream { [weak self, weak request] in
+                guard let self = self, self.activeDiagnostics === diagnostics else {
+                    continuation.finish(throwing: CancellationError())
+                    return
+                }
+                if let retries = request?.retryCount, retries != parsedRetryCount {
+                    // 再取得はフレームの先頭から始まるため、前の試行の未完フレームを混ぜない。
+                    unread = nil
+                    parsedRetryCount = retries
+                }
                 switch $0.event {
                 case let .stream(result):
                     // log.debug("📦 stream (\(messageType))")
@@ -251,12 +271,16 @@ private extension NdgrClient {
                     case .failure(let error):
                         log.error(error)
                         diagnostics.emit("\(label): データ処理失敗 \(ConnectionDiagnostics.errorSummary(error))")
+                        continuation.finish(throwing: error)
                     }
                 case .complete(let completion):
-                    // 通信エラーもここで完了する。従来どおりfinishしつつ、終了理由を残す。
+                    if completion.error == nil && parsedRetryCount > 0 {
+                        diagnostics.emit("\(label): HTTP再試行で回復, 試行済み=\(parsedRetryCount), 受信=\(receivedBytes)bytes")
+                    }
+                    // 失敗を上位へ伝え、正常な EOF と区別する。
                     diagnostics.reportStreamCompletion(completion, request: label,
                                                        receivedBytes: receivedBytes, unreadBytes: unread?.count ?? 0)
-                    continuation.finish()
+                    continuation.finish(throwing: completion.error ?? ((unread?.isEmpty == false) ? NdgrStreamError.truncatedFrame : nil))
                 }
             }
             continuation.onTermination = { @Sendable _ in
@@ -264,6 +288,8 @@ private extension NdgrClient {
             }
         }
     }
+
+    // swiftlint:enable function_body_length
 
     // #2. stream data を protobuf messages として parse する。
     // data がちぎれていた場合は、truncated として返して次回 parse に回す。
@@ -392,59 +418,18 @@ private extension NdgrClient {
     }
 }
 
-private final class ChatHistory: @unchecked Sendable {
-    private var _isFetching = true
-    private var _chats: [Chat] = []
-    private let lock = NSLock()
+@MainActor
+private final class ChatHistory {
+    var metaIds = Set<String>()
+    var isFetching = true
+    private(set) var chats: [Chat] = []
+    var isEmpty: Bool { chats.isEmpty }
 
-    var isFetching: Bool {
-        get {
-            lock.lock()
-            defer { lock.unlock() }
-            return _isFetching
-        }
-        set(value) {
-            lock.lock()
-            defer { lock.unlock() }
-            _isFetching = value
-        }
-    }
-
-    init() {}
-
-    var isEmpty: Bool {
-        lock.lock()
-        defer { lock.unlock() }
-        return _chats.isEmpty
-    }
-
-    var chats: [Chat] {
-        lock.lock()
-        defer { lock.unlock() }
-        return _chats
-    }
-
-    func append(_ chat: Chat) {
-        lock.lock()
-        defer { lock.unlock() }
-        _chats.append(chat)
-    }
+    func append(_ chat: Chat) { chats.append(chat) }
 
     func removeAll() {
-        lock.lock()
-        defer { lock.unlock() }
-        _chats.removeAll()
-    }
-}
-
-private extension Optional<Int> {
-    func toAtParameter() -> String {
-        switch self {
-        case .none:
-            return "now"
-        case .some(let value):
-            return String(describing: value)
-        }
+        chats.removeAll()
+        metaIds.removeAll()
     }
 }
 

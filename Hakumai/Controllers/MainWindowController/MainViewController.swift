@@ -301,6 +301,7 @@ final class MainViewController: NSViewController {
 
     private(set) var live: Live?
     private(set) var connectedToLive = false
+    private var connectingToLive = false
     private var liveStartedDate: Date?
 
     // row-height cache
@@ -708,6 +709,7 @@ extension MainViewController: NicoManagerDelegate {
     }
 
     func nicoManagerWillPrepareLive(_ nicoManager: NicoManagerType) {
+        connectingToLive = true
         updateMainControlViews(status: .connecting)
     }
 
@@ -751,6 +753,7 @@ extension MainViewController: NicoManagerDelegate {
     }
 
     func nicoManagerDidFailToPrepareLive(_ nicoManager: NicoManagerType, error: NicoError) {
+        connectingToLive = false
         logSystemMessageToTable(L10n.failedToPrepareLive(error.toMessage))
         updateMainControlViews(status: .disconnected)
         liveThumbnailManager.stop()
@@ -762,6 +765,7 @@ extension MainViewController: NicoManagerDelegate {
     func nicoManagerDidConnectToLive(_ nicoManager: NicoManagerType, roomPosition: RoomPosition, connectContext: NicoConnectContext) {
         guard connectedToLive == false else { return }
         connectedToLive = true
+        connectingToLive = false
         switch connectContext {
         case .normal:
             liveStartedDate = Date()
@@ -769,7 +773,7 @@ extension MainViewController: NicoManagerDelegate {
             showLiveOpenedNotification()
         case .reconnect(let reason):
             switch reason {
-            case .normal:
+            case .normal, .ndgr:
                 logSystemMessageToTable(L10n.reconnected)
             case .noPong, .noTexts:
                 break
@@ -805,13 +809,7 @@ extension MainViewController: NicoManagerDelegate {
     }
 
     func nicoManagerWillReconnectToLive(_ nicoManager: NicoManagerType, reason: NicoReconnectReason) {
-        switch reason {
-        case .normal:
-            // logSystemMessageToTableView(L10n.reconnecting)
-            break
-        case .noPong, .noTexts:
-            break
-        }
+        logSystemMessageToTable(L10n.commentReconnecting)
         logDebugReconnectReason(reason)
     }
 
@@ -837,32 +835,31 @@ extension MainViewController: NicoManagerDelegate {
     }
 
     func nicoManagerDidDisconnect(_ nicoManager: NicoManagerType, disconnectContext: NicoDisconnectContext) {
-        logDebugMessageToTable("UI切断通知: context=\(disconnectContext), 接続表示=\(connectedToLive)\(connectedToLive ? "" : "（既に切断表示のため無視）")")
-        guard connectedToLive else { return }
+        logDebugMessageToTable("UI切断通知: context=\(disconnectContext), 接続表示=\(connectedToLive), 接続準備中=\(connectingToLive)")
+        guard connectedToLive || connectingToLive else { return }
 
         switch disconnectContext {
+        case .failure:
+            logSystemMessageToTable(L10n.commentConnectionFailed)
         case .normal:
             logSystemMessageToTable(L10n.liveClosed)
             showLiveClosedNotification()
-        case .reconnect(let reason):
-            switch reason {
-            case .normal:
-                logSystemMessageToTable(L10n.liveClosed)
-            case .noPong, .noTexts:
-                break
-            }
+        case .reconnect:
+            break
         }
         stopElapsedTimeAndActiveUserTimer()
         connectedToLive = false
         updateSpeechManagerState()
 
         switch disconnectContext {
-        case .normal:
+        case .normal, .failure:
+            connectingToLive = false
             updateMainControlViews(status: .disconnected)
             liveThumbnailManager.stop()
             kusaCommentDetector.stop()
             rankingManager.removeDelegate(self)
         case .reconnect:
+            connectingToLive = true
             updateMainControlViews(status: .connecting)
         }
 
@@ -931,7 +928,7 @@ extension MainViewController {
     }
 
     func logout() {
-        if connectedToLive {
+        if connectedToLive || connectingToLive {
             nicoManager.disconnect()
         }
         nicoManager.logout()
@@ -1024,7 +1021,7 @@ extension MainViewController {
     }
 
     func disconnect() {
-        guard connectedToLive else { return }
+        guard connectedToLive || connectingToLive else { return }
         nicoManager.disconnect()
     }
 
@@ -1672,6 +1669,8 @@ private extension MainViewController {
             progressIndicator.stopAnimation(self)
         case .connecting:
             controls.forEach { $0.isEnabled = false }
+            connectButton.isEnabled = true
+            connectButton.image = Asset.stopBlack.image
             progressIndicator.startAnimation(self)
         case .connected:
             controls.forEach { $0.isEnabled = true }
@@ -1856,7 +1855,7 @@ extension MainViewController {
     }
 
     @IBAction func connectButtonPressed(_ sender: AnyObject) {
-        if connectedToLive {
+        if connectedToLive || connectingToLive {
             nicoManager.disconnect()
         } else {
             connectLive(self)
@@ -2257,6 +2256,7 @@ private extension MainViewController {
             case .normal:   return "normal"
             case .noPong:   return "no pong"
             case .noTexts:  return "no text"
+            case .ndgr:     return "NDGR interrupted"
             }
         }()
         logDebugMessageToTable("Reconnecting... (\(_reason))")
@@ -2274,7 +2274,7 @@ private extension Chat {
 private extension NicoError {
     var toMessage: String {
         switch self {
-        case .internal:                 return L10n.errorInternal
+        case .internal, .transport:     return L10n.errorInternal
         case .noLiveInfo:               return L10n.errorNoLiveInfo
         case .noMessageServerInfo:      return L10n.errorNoMessageServerInfo
         case .openMessageServerFailed:  return L10n.errorFailedToOpenMessageServer
