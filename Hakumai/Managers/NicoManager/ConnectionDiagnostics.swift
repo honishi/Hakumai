@@ -78,22 +78,9 @@ final class ConnectionDiagnostics {
         if let cause = (error as? NicoError)?.underlyingError {
             return errorSummary(cause)
         }
-        if let error = error as? AFError {
-            switch error {
-            case .sessionTaskFailed(let underlyingError):
-                return "通信失敗(\(errorSummary(underlyingError)))"
-            case .responseValidationFailed(let reason):
-                if case .unacceptableStatusCode(let code) = reason {
-                    return "HTTP \(code)"
-                }
-                return "HTTP応答検証失敗"
-            case .explicitlyCancelled:
-                return "キャンセル"
-            default:
-                return "Alamofireエラー(code=\((error as NSError).code))"
-            }
-        }
+        if let error = error as? AFError { return alamofireErrorSummary(error) }
         if let error = error as? NdgrStreamError { return error.diagnosticSummary }
+        if let error = error as? NdgrRequestThrottle.Failure { return error.diagnosticSummary }
         if let error = error as? WSError {
             return "WebSocketエラー(type=\(error.type), code=\(error.code))"
         }
@@ -102,6 +89,26 @@ final class ConnectionDiagnostics {
                             "kCFErrorDomainCFNetwork", "kCFStreamErrorDomainSSL"]
         let domain = knownDomains.contains(nsError.domain) ? nsError.domain : "その他"
         return "\(domain)(code=\(nsError.code))"
+    }
+
+    private static func alamofireErrorSummary(_ error: AFError) -> String {
+        switch error {
+        case .sessionTaskFailed(let underlyingError):
+            return "通信失敗(\(errorSummary(underlyingError)))"
+        case .requestRetryFailed(let retryError, _):
+            return errorSummary(retryError)
+        case .requestAdaptationFailed(let underlyingError):
+            return errorSummary(underlyingError)
+        case .responseValidationFailed(let reason):
+            if case .unacceptableStatusCode(let code) = reason {
+                return "HTTP \(code)"
+            }
+            return "HTTP応答検証失敗"
+        case .explicitlyCancelled:
+            return "キャンセル"
+        default:
+            return "Alamofireエラー(code=\((error as NSError).code))"
+        }
     }
 
     /// サーバーの任意テキストを転記せず、既知の理由コードだけを表示する。

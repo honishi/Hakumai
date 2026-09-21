@@ -14,6 +14,13 @@ final class NdgrRequestThrottle: RequestInterceptor, @unchecked Sendable {
     enum Failure: Error {
         case rateLimitExhausted
         case serverWaitTooLong
+
+        var diagnosticSummary: String {
+            switch self {
+            case .rateLimitExhausted: return "HTTP 429: 待機再試行上限に到達"
+            case .serverWaitTooLong: return "HTTP 429: サーバー指定の待機時間が上限を超過"
+            }
+        }
     }
 
     private let policy: Policy

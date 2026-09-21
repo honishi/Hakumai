@@ -38,7 +38,10 @@ final class ConnectionDiagnosticsTests: XCTestCase {
             AFError.sessionTaskFailed(error: underlying),
             WSError(type: .serverError, message: secret, code: 1006),
             NSError(domain: secret, code: 99),
-            NicoError.transport(AFError.sessionTaskFailed(error: underlying))
+            NicoError.transport(AFError.sessionTaskFailed(error: underlying)),
+            AFError.requestAdaptationFailed(error: underlying),
+            AFError.requestRetryFailed(retryError: AFError.requestAdaptationFailed(error: underlying),
+                                       originalError: NSError(domain: secret, code: 99))
         ]
         for error in errors {
             let summary = ConnectionDiagnostics.errorSummary(error)
@@ -50,6 +53,26 @@ final class ConnectionDiagnosticsTests: XCTestCase {
         XCTAssertTrue(ConnectionDiagnostics.errorSummary(errors[2]).contains("1006"))
         XCTAssertEqual(ConnectionDiagnostics.serverReason(secret), "未知の理由（本文省略）")
         XCTAssertEqual(ConnectionDiagnostics.serverReason("END_PROGRAM"), "END_PROGRAM")
+    }
+
+    func testRateLimitStopReasonsSurviveAlamofireWrappingWithoutEnablingRecovery() {
+        let reasons: [(NdgrRequestThrottle.Failure, String)] = [
+            (.rateLimitExhausted, "HTTP 429: 待機再試行上限に到達"),
+            (.serverWaitTooLong, "HTTP 429: サーバー指定の待機時間が上限を超過")
+        ]
+        let original = AFError.responseValidationFailed(reason: .unacceptableStatusCode(code: 429))
+        for (reason, expected) in reasons {
+            let adapted = AFError.requestAdaptationFailed(error: reason)
+            let errors: [Error] = [
+                reason, adapted,
+                AFError.requestRetryFailed(retryError: reason, originalError: original),
+                NicoError.transport(AFError.requestRetryFailed(retryError: adapted, originalError: original))
+            ]
+            for error in errors {
+                XCTAssertEqual(ConnectionDiagnostics.errorSummary(error), expected)
+                XCTAssertFalse(NicoRecoveryPolicy.shouldRetry(error))
+            }
+        }
     }
 
     func testNDGRTimeoutReportsRetryThenCompletionBeforeEndNotification() throws {

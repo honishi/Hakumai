@@ -101,6 +101,7 @@ final class NdgrRequestThrottleTests: XCTestCase {
         XCTAssertEqual(fixture.programRequests, 1)
         XCTAssertEqual(recorder.recoveryNotices, 0)
         XCTAssertTrue(recorder.logs.contains { $0.contains("待機再試行上限2回") })
+        XCTAssertTrue(recorder.logs.contains { $0.contains("NDGR終了通知: 通信・解析失敗 HTTP 429: 待機再試行上限に到達") })
         manager.disconnect()
     }
 
@@ -166,6 +167,7 @@ final class NdgrRequestThrottleTests: XCTestCase {
         XCTAssertEqual(fixture.viewPositions.count, 1)
         XCTAssertEqual(fixture.programRequests, 1)
         XCTAssertTrue(recorder.logs.contains { $0.contains("待機上限を超過") })
+        XCTAssertTrue(recorder.logs.contains { $0.contains("NDGR終了通知: 通信・解析失敗 HTTP 429: サーバー指定の待機時間が上限を超過") })
         manager.disconnect()
     }
 
