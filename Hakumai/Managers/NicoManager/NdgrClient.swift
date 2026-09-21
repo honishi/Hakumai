@@ -206,6 +206,7 @@ private extension NdgrClient {
     @MainActor
     func finishChatHistory(_ history: ChatHistory, diagnostics: ConnectionDiagnostics) {
         guard activeDiagnostics === diagnostics, !history.didFinish else { return }
+        (streamSession?.interceptor as? NdgrRequestThrottle)?.reportMetrics(context: "履歴取得完了")
         emitChatHistoryIfExists(chatHistory: history, diagnostics: diagnostics)
         history.didFinish = true
         delegate?.ndgrClientDidFinishChatHistory(self, diagnostics: diagnostics)
@@ -336,13 +337,15 @@ private extension NdgrClient {
                         continuation.finish(throwing: error)
                     }
                 case .complete(let completion):
+                    let error: Error? = completion.error ?? ((unread?.isEmpty == false) ? NdgrStreamError.truncatedFrame : nil)
+                    (session.interceptor as? NdgrRequestThrottle)?.recordResponse(success: error == nil)
                     if completion.error == nil && parsedRetryCount > 0 {
                         diagnostics.emit("\(label): HTTP再試行で回復, 試行済み=\(parsedRetryCount), 受信=\(receivedBytes)bytes")
                     }
                     // 失敗を上位へ伝え、正常な EOF と区別する。
                     diagnostics.reportStreamCompletion(completion, request: label,
                                                        receivedBytes: receivedBytes, unreadBytes: unread?.count ?? 0)
-                    continuation.finish(throwing: completion.error ?? ((unread?.isEmpty == false) ? NdgrStreamError.truncatedFrame : nil))
+                    continuation.finish(throwing: error)
                 }
             }
             continuation.onTermination = { @Sendable _ in
@@ -719,6 +722,7 @@ final class NdgrRequestRetrier: RequestRetrier, @unchecked Sendable {
         completion: @escaping (RetryResult) -> Void
     ) {
         log.debug("RequestRetrier > error: \(ConnectionDiagnostics.errorSummary(error))")
+        DispatchQueue.main.async { self.throttle?.recordResponse(success: false) }
         if request.response?.statusCode == 429, !request.isCancelled, let throttle = throttle {
             throttle.retryRateLimited(request, completion: completion)
             return

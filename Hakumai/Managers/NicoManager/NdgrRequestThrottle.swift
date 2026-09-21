@@ -6,9 +6,11 @@ import Alamofire
 final class NdgrRequestThrottle: RequestInterceptor, @unchecked Sendable {
     struct Policy {
         // サーバーの公称制限値ではなく、履歴取得のバーストを避けるための初期値。
-        var interval: TimeInterval = 0.1
+        var interval: TimeInterval = 0.01
         var retryDelays: [TimeInterval] = [10, 20, 40, 80]
         var maximumServerWait: TimeInterval = 300
+        var stableDuration: TimeInterval = 30
+        var stableResponseCount = 100
     }
 
     enum Failure: Error {
@@ -33,6 +35,13 @@ final class NdgrRequestThrottle: RequestInterceptor, @unchecked Sendable {
     private var cooldownCount = 0
     private var stoppedError: Error?
     private var isCoolingDown = false
+    private var stableSince: TimeInterval?
+    private var successfulResponses = 0
+    private let startedAt = ProcessInfo.processInfo.systemUptime
+    private var sentRequests = 0
+    private var waitStartedAt: TimeInterval?
+    private var pacingWait: TimeInterval = 0
+    private var cooldownWait: TimeInterval = 0
 
     init(policy: Policy = Policy(), report: @escaping (String) -> Void) {
         self.policy = policy
@@ -65,6 +74,8 @@ final class NdgrRequestThrottle: RequestInterceptor, @unchecked Sendable {
                 return
             }
             let now = ProcessInfo.processInfo.systemUptime
+            self.accountWait(now: now)
+            self.resetStability()
             let serverWait = Self.retryAfter(header) ?? 0
             guard serverWait <= self.policy.maximumServerWait else {
                 self.report("NDGR HTTP 429: Retry-After=\(serverWait)秒が待機上限を超過、取得を中止")
@@ -93,10 +104,59 @@ final class NdgrRequestThrottle: RequestInterceptor, @unchecked Sendable {
         }
     }
 
+    /// 完了した HTTP 応答だけを数え、待機時間・無通信時間だけでは速度を戻さない。
+    func recordResponse(success: Bool) {
+        dispatchPrecondition(condition: .onQueue(.main))
+        guard stoppedError == nil else { return }
+        let now = ProcessInfo.processInfo.systemUptime
+        guard success, !isCoolingDown, now >= cooldownUntil else {
+            resetStability()
+            return
+        }
+        guard interval > policy.interval else { return }
+        if stableSince == nil { stableSince = now }
+        successfulResponses += 1
+        guard let since = stableSince, now - since >= policy.stableDuration,
+              successfulResponses >= policy.stableResponseCount else { return }
+        let previous = interval
+        interval = max(policy.interval, interval / 2)
+        // 既に予約した次の送信も新しい間隔に合わせる。429 の待機期限は変更しない。
+        nextRequestAt -= previous - interval
+        report("NDGR取得速度を回復: 取得間隔=\(previous)→\(interval)秒, 安定時間=\(seconds(now - since))秒, 成功応答=\(successfulResponses)件, 待機回数=\(cooldownCount)/\(policy.retryDelays.count)（上限は維持）")
+        resetStability()
+        drain()
+    }
+
+    private func resetStability() {
+        stableSince = nil
+        successfulResponses = 0
+    }
+
+    /// 接続内の累計。並行リクエストの待ちを重複加算しない。
+    func reportMetrics(context: String) {
+        dispatchPrecondition(condition: .onQueue(.main))
+        let now = ProcessInfo.processInfo.systemUptime
+        let wasWaiting = waitStartedAt != nil
+        accountWait(now: now)
+        if wasWaiting { waitStartedAt = now }
+        report("NDGR取得集計: \(context), 接続内経過=\(seconds(now - startedAt))秒, HTTP送信許可=\(sentRequests)件（再試行含む）, 速度制限待機=\(seconds(pacingWait))秒, 429待機=\(seconds(cooldownWait))秒, 待機回数=\(cooldownCount), 取得間隔=\(interval)秒")
+    }
+
+    private func accountWait(now: TimeInterval) {
+        guard let start = waitStartedAt else { return }
+        cooldownWait += max(0, min(now, cooldownUntil) - start)
+        pacingWait += max(0, now - max(start, cooldownUntil))
+        waitStartedAt = nil
+    }
+
+    private func seconds(_ value: TimeInterval) -> String { String(format: "%.3f", value) }
+
     /// 手動停止・放送終了時、まだ送っていない HTTP を待機時間に関係なく解放する。
     func stop(error: Error = AFError.explicitlyCancelled) {
         dispatchPrecondition(condition: .onQueue(.main))
         guard stoppedError == nil else { return }
+        reportMetrics(context: "取得停止")
+        waitStartedAt = nil
         stoppedError = error
         wakeup?.cancel()
         wakeup = nil
@@ -107,12 +167,14 @@ final class NdgrRequestThrottle: RequestInterceptor, @unchecked Sendable {
     }
 
     private func drain() {
+        let now = ProcessInfo.processInfo.systemUptime
+        accountWait(now: now)
         wakeup?.cancel()
         wakeup = nil
         guard stoppedError == nil, !pending.isEmpty else { return }
-        let now = ProcessInfo.processInfo.systemUptime
         let delay = max(nextRequestAt, cooldownUntil) - now
         if delay > 0 {
+            waitStartedAt = now
             let work = DispatchWorkItem { [weak self] in self?.drain() }
             wakeup = work
             DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: work)
@@ -123,6 +185,7 @@ final class NdgrRequestThrottle: RequestInterceptor, @unchecked Sendable {
             report("NDGR HTTP 429: 待機終了、同じ取得位置からHTTP再試行（視聴用WSを維持）, 取得間隔=\(interval)秒")
         }
         let (request, completion) = pending.removeFirst()
+        sentRequests += 1
         nextRequestAt = now + interval
         completion(.success(request))
         if !pending.isEmpty { drain() }

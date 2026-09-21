@@ -120,6 +120,7 @@ final class NicoManager: NicoManagerType {
     // 再開位置より前の取得済み履歴を接続試行の外で保持し、履歴取得完了時に一括表示する。
     private var pendingHistory: [Chat] = []
     private var awaitingInitialHistory = false
+    private var initialHistoryStartedAt: TimeInterval?
     private var recoveryStartedAt: TimeInterval?
     private var recoveryWorkItem: DispatchWorkItem?
     private var watchSetupTimeout: DispatchWorkItem?
@@ -189,6 +190,7 @@ extension NicoManager {
             }
             disconnect()
             awaitingInitialHistory = true
+            initialHistoryStartedAt = ProcessInfo.processInfo.systemUptime
             recoveryAttempt = 0
             resumingLive = false
         }
@@ -431,11 +433,16 @@ extension NicoManager: NdgrClientDelegate {
 
     func ndgrClientDidFinishChatHistory(_ ndgrClient: NdgrClientType, diagnostics: ConnectionDiagnostics) {
         guard connectionDiagnostics === diagnostics else { return }
-        publishPendingHistory()
+        publishPendingHistory(completed: true)
     }
 
-    private func publishPendingHistory() {
+    private func publishPendingHistory(completed: Bool = false) {
         let isInitial = awaitingInitialHistory
+        if let started = initialHistoryStartedAt {
+            let elapsed = String(format: "%.3f", ProcessInfo.processInfo.systemUptime - started)
+            (connectionDiagnostics ?? recoveryDiagnostics)?.emit("初回履歴取得: \(completed ? "完了" : "完了通知前に終了"), 総時間=\(elapsed)秒（接続準備・復旧待機を含む）")
+            initialHistoryStartedAt = nil
+        }
         // 初回の履歴が0件でも区切りを記録し、後の復旧履歴を初回扱いしない。
         awaitingInitialHistory = false
         guard !pendingHistory.isEmpty else { return }
@@ -1039,7 +1046,7 @@ private extension NicoManager {
             if receivedAllChats || tooManyRequest {
                 historyChats.sort(by: { a, b in a.date < b.date })
                 pendingHistory.append(contentsOf: historyChats)
-                publishPendingHistory()
+                publishPendingHistory(completed: true)
                 if isTimeShift {
                     disconnect()
                 } else {
