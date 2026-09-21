@@ -839,6 +839,9 @@ extension MainViewController: NicoManagerDelegate {
         guard connectedToLive || connectingToLive else { return }
 
         switch disconnectContext {
+        case .preparationFailure:
+            // 接続準備の具体的な失敗理由は DidFailToPrepareLive で一度だけ表示する。
+            break
         case .failure:
             logSystemMessageToTable(L10n.commentConnectionFailed)
         case .normal:
@@ -852,7 +855,7 @@ extension MainViewController: NicoManagerDelegate {
         updateSpeechManagerState()
 
         switch disconnectContext {
-        case .normal, .failure:
+        case .normal, .failure, .preparationFailure:
             connectingToLive = false
             updateMainControlViews(status: .disconnected)
             liveThumbnailManager.stop()

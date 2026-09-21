@@ -143,6 +143,22 @@ extension NicoManagerTests {
         XCTAssertEqual(fixture.programRequests, 1)
     }
 
+    func testPreparationFailureReportsOnlyPreparationError() {
+        let fixture = RecoveryFixture()
+        fixture.programFailure = { _ in 403 }
+        let recorder = RecoveryRecorder()
+        let failed = expectation(description: "準備失敗を通知")
+        recorder.onPreparationFailure = { failed.fulfill() }
+        let manager = fixture.manager(recorder: recorder)
+        manager.connect(liveProgramId: "lv1")
+        wait(for: [failed], timeout: 5)
+        XCTAssertEqual(recorder.disconnections.count, 1)
+        XCTAssertTrue(recorder.disconnections.contains { if case .preparationFailure = $0 { return true }; return false })
+        XCTAssertEqual(recorder.preparationFailures, 1)
+        manager.disconnect()
+        XCTAssertEqual(recorder.disconnections.count, 1, "失敗後に接続状態が残らない")
+    }
+
     func testPermissionErrorDoesNotRecoverOrReportProgramEnd() {
         let fixture = RecoveryFixture()
         fixture.view = { _, _ in .http(403) }
@@ -500,11 +516,16 @@ private final class RecoveryRecorder: NicoManagerDelegate {
     var disconnections: [NicoDisconnectContext] = []
     var onDisconnect: ((NicoDisconnectContext) -> Void)?
     var onLog: ((String) -> Void)?
+    var preparationFailures = 0
+    var onPreparationFailure: (() -> Void)?
     func nicoManagerNeedsToken(_ nicoManager: NicoManagerType) {}
     func nicoManagerDidConfirmTokenExistence(_ nicoManager: NicoManagerType) {}
     func nicoManagerWillPrepareLive(_ nicoManager: NicoManagerType) {}
     func nicoManagerDidPrepareLive(_ nicoManager: NicoManagerType, user: User, live: Live, connectContext: NicoConnectContext) {}
-    func nicoManagerDidFailToPrepareLive(_ nicoManager: NicoManagerType, error: NicoError) {}
+    func nicoManagerDidFailToPrepareLive(_ nicoManager: NicoManagerType, error: NicoError) {
+        preparationFailures += 1
+        onPreparationFailure?()
+    }
     func nicoManagerDidConnectToLive(_ nicoManager: NicoManagerType, roomPosition: RoomPosition, connectContext: NicoConnectContext) {}
     func nicoManagerDidReceiveChat(_ nicoManager: NicoManagerType, chat: Chat) { comments.append(chat.comment) }
     func nicoManagerWillReconnectToLive(_ nicoManager: NicoManagerType, reason: NicoReconnectReason) {}

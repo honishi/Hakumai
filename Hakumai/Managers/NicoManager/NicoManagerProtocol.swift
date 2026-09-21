@@ -95,6 +95,7 @@ enum NicoConnectContext {
 }
 
 enum NicoDisconnectContext {
+    case preparationFailure
     case failure
     case normal
     case reconnect(NicoReconnectReason)

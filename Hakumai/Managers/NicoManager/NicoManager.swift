@@ -282,7 +282,7 @@ extension NicoManager {
             scheduleRecovery(reason: .ndgr, detail: "接続準備中の通信失敗")
         } else {
             diagnostics.emit("復旧・接続中止: 再試行対象外の接続準備失敗")
-            disconnect(disconnectContext: .failure)
+            disconnect(disconnectContext: .preparationFailure)
             delegate?.nicoManagerDidFailToPrepareLive(self, error: error)
         }
     }
