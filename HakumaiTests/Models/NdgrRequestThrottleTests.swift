@@ -4,8 +4,7 @@ import Alamofire
 @testable import Hakumai
 
 final class NdgrRequestThrottleTests: XCTestCase {
-    func testDefaultPolicySpacesViewAndSegmentRequests() {
-        XCTAssertEqual(NdgrRequestThrottle.Policy().interval, 0.01)
+    func testConfiguredPolicySpacesViewAndSegmentRequests() {
         let fixture = RecoveryFixture()
         var requestedAt: [TimeInterval] = []
         fixture.view = { count, _ in
@@ -19,7 +18,7 @@ final class NdgrRequestThrottleTests: XCTestCase {
         let recorder = RecoveryRecorder()
         let ended = expectation(description: "頻度を抑えて履歴を取得")
         recorder.onDisconnect = { if case .normal = $0 { ended.fulfill() } }
-        let manager = fixture.manager(recorder: recorder, throttlePolicy: .init())
+        let manager = fixture.manager(recorder: recorder, throttlePolicy: .init(interval: 0.01))
         manager.connect(liveProgramId: "lv1")
         wait(for: [ended], timeout: 3)
         XCTAssertEqual(requestedAt.count, 4)
@@ -266,6 +265,42 @@ final class NdgrRequestThrottleTests: XCTestCase {
 }
 
 extension NdgrRequestThrottleTests {
+    func testDefaultPolicyDoesNotAddPacingWait() {
+        XCTAssertEqual(NdgrRequestThrottle.Policy().interval, 0)
+        let fixture = historyFixture(viewFailures: [], totalViews: 3)
+        let recorder = RecoveryRecorder()
+        let ended = expectation(description: "通常取得は間隔なし")
+        recorder.onDisconnect = { if case .normal = $0 { ended.fulfill() } }
+        let manager = fixture.manager(recorder: recorder, throttlePolicy: .init())
+        manager.connect(liveProgramId: "lv1")
+        wait(for: [ended], timeout: 3)
+        let summary = recorder.logs.first { $0.contains("NDGR取得集計: 取得停止") } ?? ""
+        XCTAssertEqual(metric("速度制限待機", in: summary), 0)
+        XCTAssertEqual(metric("429待機", in: summary), 0)
+        XCTAssertEqual(recorder.comments, ["1", "2"])
+        manager.disconnect()
+    }
+
+    func testZeroInitialIntervalBacksOffAndReturnsToZeroWithoutResettingBudget() {
+        let fixture = historyFixture(viewFailures: [1, 6], totalViews: 7)
+        let recorder = RecoveryRecorder()
+        let failed = expectation(description: "0秒から減速し0秒へ回復、再試行上限は維持")
+        recorder.onDisconnect = { if case .failure = $0 { failed.fulfill() } }
+        let policy = NdgrRequestThrottle.Policy(retryDelays: [0.04], stableDuration: 0, stableResponseCount: 3)
+        let manager = fixture.manager(recorder: recorder, throttlePolicy: policy)
+        manager.connect(liveProgramId: "lv1")
+        wait(for: [failed], timeout: 3)
+        XCTAssertTrue(recorder.logs.contains { $0.contains("再開後の取得間隔=0.01秒") })
+        let recoveries = recorder.logs.filter { $0.contains("NDGR取得速度を回復") }
+        XCTAssertEqual(recoveries.count, 1)
+        XCTAssertTrue(recoveries.first?.contains("0.01→0.0秒") == true)
+        XCTAssertEqual(fixture.programRequests, 1)
+        XCTAssertEqual(fixture.viewPositions.count, 6)
+        XCTAssertEqual(recorder.comments, ["2", "3", "4", "5"])
+        XCTAssertEqual(recorder.historyBatchCount, 1)
+        manager.disconnect()
+    }
+
     func testStableResponsesRestoreSpeedWithoutResettingRetryBudget() {
         let fixture = historyFixture(viewFailures: [1, 6], totalViews: 7)
         let recorder = RecoveryRecorder()

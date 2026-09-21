@@ -5,8 +5,8 @@ import Alamofire
 /// 状態は main queue に限定し、待機中も UI と視聴用 WS を動かし続ける。
 final class NdgrRequestThrottle: RequestInterceptor, @unchecked Sendable {
     struct Policy {
-        // サーバーの公称制限値ではなく、履歴取得のバーストを避けるための初期値。
-        var interval: TimeInterval = 0.01
+        // 通常は間隔を空けず、429 が発生した場合に減速する。
+        var interval: TimeInterval = 0
         var retryDelays: [TimeInterval] = [10, 20, 40, 80]
         var maximumServerWait: TimeInterval = 300
         var stableDuration: TimeInterval = 30
@@ -93,7 +93,8 @@ final class NdgrRequestThrottle: RequestInterceptor, @unchecked Sendable {
                 }
                 self.cooldownUntil = now + self.policy.retryDelays[self.cooldownCount]
                 self.cooldownCount += 1
-                self.interval = min(max(self.interval * 2, self.policy.interval), 1)
+                // 初期値が 0 でも減速できるよう、最初の間隔は最低 10ms とする。
+                self.interval = min(max(self.interval * 2, 0.01), 1)
             }
             self.cooldownUntil = max(self.cooldownUntil, now + serverWait)
             self.isCoolingDown = true
@@ -119,7 +120,8 @@ final class NdgrRequestThrottle: RequestInterceptor, @unchecked Sendable {
         guard let since = stableSince, now - since >= policy.stableDuration,
               successfulResponses >= policy.stableResponseCount else { return }
         let previous = interval
-        interval = max(policy.interval, interval / 2)
+        // 10ms まで回復したら初期値に戻す。半減だけでは 0 に到達しない。
+        interval = max(policy.interval, interval <= 0.01 ? 0 : interval / 2)
         // 既に予約した次の送信も新しい間隔に合わせる。429 の待機期限は変更しない。
         nextRequestAt -= previous - interval
         report("NDGR取得速度を回復: 取得間隔=\(previous)→\(interval)秒, 安定時間=\(seconds(now - since))秒, 成功応答=\(successfulResponses)件, 待機回数=\(cooldownCount)/\(policy.retryDelays.count)（上限は維持）")
