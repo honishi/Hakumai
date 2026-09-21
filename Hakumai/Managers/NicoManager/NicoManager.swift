@@ -119,6 +119,7 @@ final class NicoManager: NicoManagerType {
     private var recoveryAttempt = 0
     // 再開位置より前の取得済み履歴を接続試行の外で保持し、履歴取得完了時に一括表示する。
     private var pendingHistory: [Chat] = []
+    private var awaitingInitialHistory = false
     private var recoveryStartedAt: TimeInterval?
     private var recoveryWorkItem: DispatchWorkItem?
     private var watchSetupTimeout: DispatchWorkItem?
@@ -187,6 +188,7 @@ extension NicoManager {
                 pendingHistory.removeAll()
             }
             disconnect()
+            awaitingInitialHistory = true
             recoveryAttempt = 0
             resumingLive = false
         }
@@ -433,11 +435,14 @@ extension NicoManager: NdgrClientDelegate {
     }
 
     private func publishPendingHistory() {
+        let isInitial = awaitingInitialHistory
+        // 初回の履歴が0件でも区切りを記録し、後の復旧履歴を初回扱いしない。
+        awaitingInitialHistory = false
         guard !pendingHistory.isEmpty else { return }
         let chats = pendingHistory
         pendingHistory.removeAll()
-        (connectionDiagnostics ?? recoveryDiagnostics)?.emit("履歴コメントを一括通知: \(chats.count)件")
-        delegate?.nicoManagerDidReceiveChatHistory(self, chats: chats)
+        (connectionDiagnostics ?? recoveryDiagnostics)?.emit("履歴コメントを一括通知: \(chats.count)件, 初回=\(isInitial)")
+        delegate?.nicoManagerDidReceiveChatHistory(self, chats: chats, isInitial: isInitial)
         delegate?.nicoManagerDidFinishChatHistory(self, totalChatCount: chats.count)
     }
 
@@ -1033,7 +1038,8 @@ private extension NicoManager {
             let tooManyRequest = 100 < historyThreadRequestCount
             if receivedAllChats || tooManyRequest {
                 historyChats.sort(by: { a, b in a.date < b.date })
-                delegate?.nicoManagerDidReceiveChatHistory(self, chats: historyChats)
+                pendingHistory.append(contentsOf: historyChats)
+                publishPendingHistory()
                 if isTimeShift {
                     disconnect()
                 } else {

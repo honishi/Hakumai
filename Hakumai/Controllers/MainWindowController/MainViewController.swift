@@ -819,7 +819,7 @@ extension MainViewController: NicoManagerDelegate {
         logSystemMessageToTable(L10n.receivingComments(totalChatCount, requestCount))
     }
 
-    func nicoManagerDidReceiveChatHistory(_ nicoManager: NicoManagerType, chats: [Chat]) {
+    func nicoManagerDidReceiveChatHistory(_ nicoManager: NicoManagerType, chats: [Chat], isInitial: Bool) {
         guard let live = live else { return }
         chats.forEach {
             HandleNameManager.shared.extractAndUpdateHandleName(
@@ -828,7 +828,7 @@ extension MainViewController: NicoManagerDelegate {
                 in: live.programProvider.programProviderId
             )
         }
-        bulkAppendToTable(chats: chats)
+        bulkAppendToTable(chats: chats, forceScrollToLatest: isInitial)
     }
 
     func nicoManagerDidFinishChatHistory(_ nicoManager: NicoManagerType, totalChatCount: Int) {
@@ -1771,8 +1771,9 @@ private extension MainViewController {
         updateCommentSearchStatusLabel()
     }
 
-    func bulkAppendToTable(chats: [Chat]) {
+    func bulkAppendToTable(chats: [Chat], forceScrollToLatest: Bool) {
         DispatchQueue.main.async {
+            let shouldScroll = forceScrollToLatest || self.scrollView.isReachedToBottom
             let startingRow = self.messageContainer.count()
             var appendedMessages = [Message]()
             chats.forEach {
@@ -1789,8 +1790,12 @@ private extension MainViewController {
             self.updateCommentSearchStatusLabel()
 
             DispatchQueue.main.async {
-                // 履歴の一括表示後は、読み込み中の位置によらず最新コメントへ移動する。
-                self.scrollView.scrollToBottom()
+                // 初回だけ最新位置へ移動し、復旧後は読み返している位置を尊重する。
+                if shouldScroll {
+                    self.scrollView.scrollToBottom()
+                } else {
+                    self.scrollView.flashScrollers()
+                }
                 self.scrollView.updateButtonEnables()
             }
         }

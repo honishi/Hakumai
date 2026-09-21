@@ -503,6 +503,34 @@ extension NicoManagerTests {
         manager.disconnect()
     }
 
+    func testOnlyInitialHistoryIsForcedEvenWhenEmptyAndAcrossNewConnections() {
+        for initialIsEmpty in [false, true] {
+            let fixture = RecoveryFixture()
+            let recorder = RecoveryRecorder()
+            let stub = RecoveryNDGRStub()
+            let finished = expectation(description: "初回・復旧・新規接続の履歴を区別")
+            let manager = fixture.manager(recorder: recorder, ndgrClient: stub)
+            let chat = Chat(roomPosition: .arena, no: 1, date: Date(), dateUsec: 0, mail: nil,
+                            userId: "1", comment: "history", premium: .ippan, chatType: .comment)
+            stub.onConnect = { diagnostics in
+                let attempt = stub.connections.count
+                if attempt != 1 || !initialIsEmpty {
+                    manager.ndgrClientDidReceiveChatHistory(stub, chats: [chat], diagnostics: diagnostics)
+                }
+                manager.ndgrClientDidFinishChatHistory(stub, diagnostics: diagnostics)
+                switch attempt {
+                case 1: manager.reconnect(reason: .normal)
+                case 2: DispatchQueue.main.async { manager.connect(liveProgramId: "lv2") }
+                default: finished.fulfill()
+                }
+            }
+            manager.connect(liveProgramId: "lv1")
+            wait(for: [finished], timeout: 5)
+            XCTAssertEqual(recorder.initialHistoryFlags, initialIsEmpty ? [false, true] : [true, false, true])
+            manager.disconnect()
+        }
+    }
+
     func testHistoryIsPublishedOnceAfterCatchUpBeforeRealtimeComments() {
         let fixture = RecoveryFixture()
         fixture.beginAt = String(Int(Date().timeIntervalSince1970) - 10_000)
@@ -530,6 +558,7 @@ extension NicoManagerTests {
         wait(for: [ended], timeout: 5)
         XCTAssertEqual(recorder.comments, ["/history1", "/history2", "/live"])
         XCTAssertEqual(recorder.historyBatchCount, 1)
+        XCTAssertEqual(recorder.initialHistoryFlags, [true])
         XCTAssertEqual(recorder.historySummaries, [2])
     }
 
@@ -560,6 +589,7 @@ extension NicoManagerTests {
             XCTAssertEqual(recorder.comments, ["first", "second"])
             XCTAssertEqual(recorder.historySummaries, [2])
             XCTAssertEqual(recorder.historyBatchCount, 1)
+            XCTAssertEqual(recorder.initialHistoryFlags, [true])
             XCTAssertEqual(fixture.programRequests, 2)
         }
     }
@@ -604,6 +634,7 @@ extension NicoManagerTests {
         wait(for: [stopped], timeout: 5)
         XCTAssertEqual(recorder.comments, ["history"])
         XCTAssertEqual(recorder.historyBatchCount, 1)
+        XCTAssertEqual(recorder.initialHistoryFlags, [true])
         XCTAssertEqual(recorder.historySummaries, [1])
         XCTAssertFalse(recorder.logs.contains { $0.contains("復旧開始") })
     }
@@ -671,6 +702,7 @@ extension NicoManagerTests {
         XCTAssertEqual(recorder.comments, ["history"])
         XCTAssertEqual(recorder.historySummaries, [1])
         XCTAssertEqual(recorder.historyBatchCount, 1)
+        XCTAssertEqual(recorder.initialHistoryFlags, [true])
         XCTAssertEqual(fixture.viewPositions, [fixture.beginAt, "100", "100"])
         XCTAssertTrue(recorder.logs.contains { $0.contains("旧コメントWSの空送信・Ping監視タイマーは起動しない") })
     }

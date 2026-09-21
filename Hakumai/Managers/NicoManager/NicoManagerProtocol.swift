@@ -58,7 +58,7 @@ protocol NicoManagerDelegate: AnyObject {
     // History.
     func nicoManagerDidFinishChatHistory(_ nicoManager: NicoManagerType, totalChatCount: Int)
     func nicoManagerReceivingChatHistory(_ nicoManager: NicoManagerType, requestCount: Int, totalChatCount: Int)
-    func nicoManagerDidReceiveChatHistory(_ nicoManager: NicoManagerType, chats: [Chat])
+    func nicoManagerDidReceiveChatHistory(_ nicoManager: NicoManagerType, chats: [Chat], isInitial: Bool)
 
     // Disconnect.
     func nicoManagerDidDisconnect(_ nicoManager: NicoManagerType, disconnectContext: NicoDisconnectContext)
