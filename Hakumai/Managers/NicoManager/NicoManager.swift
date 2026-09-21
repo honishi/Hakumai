@@ -111,6 +111,7 @@ final class NicoManager: NicoManagerType {
     private let session: Session
     private var watchSocket: WebSocket?
     private var messageSocket: WebSocket?
+    private var connectionDiagnostics: ConnectionDiagnostics?
 
     // Timers for WebSockets
     private var watchSocketKeepSeatInterval = 30
@@ -158,11 +159,17 @@ extension NicoManager {
     }
 
     func connect(liveProgramId: String, connectContext: NicoConnectContext) {
+        let diagnostics = ConnectionDiagnostics { [weak self] message in
+            guard let self = self else { return }
+            self.delegate?.nicoManager(self, hasDebugMessgae: message)
+        }
+        diagnostics.emit("接続開始 context=\(connectContext)")
         // 0. Configure delegate.
         ndgrClient.delegate = self
 
         // 1. Check if the token is existing.
         guard authManager.hasToken else {
+            diagnostics.emit("接続中止: 認証トークンなし")
             delegate?.nicoManagerNeedsToken(self)
             return
         }
@@ -184,19 +191,23 @@ extension NicoManager {
 
         // 4. Cleanup current connection, if needed.
         if live != nil {
+            connectionDiagnostics?.emit("切断の発端: 別の接続要求に伴う既存接続の終了")
             disconnect()
         }
+        connectionDiagnostics = diagnostics
 
         // 5. Ok, start to establish connection from retrieving general live info.
         delegate?.nicoManagerWillPrepareLive(self)
-        requestLiveInfo(liveProgramId: liveProgramId, connectContext: connectContext)
+        requestLiveInfo(liveProgramId: liveProgramId, connectContext: connectContext, diagnostics: diagnostics)
     }
 
     func disconnect() {
+        connectionDiagnostics?.emit("通常切断要求（手動操作・呼び出し元からの要求）")
         disconnect(disconnectContext: .normal)
     }
 
     func disconnect(disconnectContext: NicoDisconnectContext) {
+        connectionDiagnostics?.emit("切断実行 → UI終了通知 context=\(disconnectContext)")
         ndgrClient.disconnect()
         disconnectSocketsAndResetState()
         delegate?.nicoManagerDidDisconnect(self, disconnectContext: disconnectContext)
@@ -207,7 +218,10 @@ extension NicoManager {
         defer { objc_sync_exit(self) }
 
         log.debug("Reconnecting...")
+        let diagnostics = connectionDiagnostics
+        diagnostics?.emit("再接続要求 reason=\(reason)")
         guard let lastConnection = connectRequests.lastEstablished else {
+            diagnostics?.emit("再接続を実行できない: 最後に接続成功した番組情報なし")
             log.warning("Failed to reconnect since there's no last established connection info.")
             return
         }
@@ -217,9 +231,11 @@ extension NicoManager {
 
         disconnect(disconnectContext: .reconnect(reason))
         delegate?.nicoManagerWillReconnectToLive(self, reason: reason)
+        diagnostics?.emit("再接続を予約: 2秒後に番組情報から取得し直す")
 
         // Just in case, make some delay to invoke the connect method.
         DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + 2) {
+            diagnostics?.emit("予約した再接続を実行")
             self.connect(
                 liveProgramId: lastConnection.liveProgramId,
                 connectContext: .reconnect(reason))
@@ -330,7 +346,8 @@ extension NicoManager {
 
 // MARK: - NdgrClientDelegate Methods
 extension NicoManager: NdgrClientDelegate {
-    func ndgrClientDidConnect(_ ndgrClient: any NdgrClientType) {
+    func ndgrClientDidConnect(_ ndgrClient: any NdgrClientType, diagnostics: ConnectionDiagnostics) {
+        diagnostics.emit("NDGR開始通知を受信 → UI接続済み（HTTP受信成功前）, 現在の接続=\(connectionDiagnostics?.id ?? "なし")")
         log.info("ndgr client connected.")
         delegate?.nicoManager(self, hasDebugMessgae: "Completed to open message socket.")
         connectRequests.lastEstablished = connectRequests.onGoing
@@ -358,7 +375,8 @@ extension NicoManager: NdgrClientDelegate {
         delegate?.nicoManagerDidReceiveChat(self, chat: chat)
     }
 
-    func ndgrClientDidDisconnect(_ ndgrClient: any NdgrClientType) {
+    func ndgrClientDidDisconnect(_ ndgrClient: any NdgrClientType, diagnostics: ConnectionDiagnostics?) {
+        (diagnostics ?? connectionDiagnostics)?.emit("NDGR終了通知を受信 → UI通常切断, 現在の接続=\(connectionDiagnostics?.id ?? "なし")")
         log.info("ndgr client disconnected.")
         delegate?.nicoManagerDidDisconnect(self, disconnectContext: .normal)
     }
@@ -368,10 +386,12 @@ extension NicoManager: NdgrClientDelegate {
 // Main connect sequence.
 private extension NicoManager {
     // #1/5. Get general live info.
-    func requestLiveInfo(liveProgramId: String, connectContext: NicoConnectContext) {
+    func requestLiveInfo(liveProgramId: String, connectContext: NicoConnectContext, diagnostics: ConnectionDiagnostics) {
+        diagnostics.emit("接続準備: 番組情報を取得")
         delegate?.nicoManager(self, hasDebugMessgae: "Requesting live info...")
         callOAuthEndpoint(
             url: watchProgramsApiUrl,
+            diagnostics: diagnostics,
             parameters: [
                 "nicoliveProgramId": liveProgramId,
                 "fields": "program,programProvider"
@@ -381,6 +401,7 @@ private extension NicoManager {
             switch result {
             case .success(let data):
                 if data.isNotStarted {
+                    diagnostics.emit("接続準備中止: 番組が未開始")
                     me.delegate?.nicoManagerDidFailToPrepareLive(me, error: .notStarted)
                     return
                 }
@@ -388,8 +409,10 @@ private extension NicoManager {
                 me.requestUserInfo(
                     liveProgramId: liveProgramId,
                     connectContext: connectContext,
-                    live: data.toLive(with: liveProgramId))
+                    live: data.toLive(with: liveProgramId),
+                    diagnostics: diagnostics)
             case .failure(let error):
+                diagnostics.emit("接続準備失敗: 番組情報 error=\(error)")
                 log.error(error)
                 me.delegate?.nicoManager(
                     me,
@@ -400,10 +423,12 @@ private extension NicoManager {
     }
 
     // #2/5. Get user info.
-    func requestUserInfo(liveProgramId: String, connectContext: NicoConnectContext, live: Live, allowRefreshToken: Bool = true) {
+    func requestUserInfo(liveProgramId: String, connectContext: NicoConnectContext, live: Live, diagnostics: ConnectionDiagnostics, allowRefreshToken: Bool = true) {
+        diagnostics.emit("接続準備: ユーザー情報を取得")
         delegate?.nicoManager(self, hasDebugMessgae: "Requesting user info...")
         callOAuthEndpoint(
-            url: userinfoApiUrl
+            url: userinfoApiUrl,
+            diagnostics: diagnostics
         ) { [weak self] (result: Result<UserInfoResponse, NicoError>) in
             guard let me = self else { return }
             switch result {
@@ -413,8 +438,10 @@ private extension NicoManager {
                     liveProgramId: liveProgramId,
                     connectContext: connectContext,
                     live: live,
-                    user: response.toUser())
+                    user: response.toUser(),
+                    diagnostics: diagnostics)
             case .failure(let error):
+                diagnostics.emit("接続準備失敗: ユーザー情報 error=\(error)")
                 log.error(error)
                 me.delegate?.nicoManager(
                     me,
@@ -425,11 +452,13 @@ private extension NicoManager {
     }
 
     // #3/5. Get websocket endpoint.
-    func requestWebSocketEndpoint(liveProgramId: String, connectContext: NicoConnectContext, live: Live, user: User) {
+    func requestWebSocketEndpoint(liveProgramId: String, connectContext: NicoConnectContext, live: Live, user: User, diagnostics: ConnectionDiagnostics) {
+        diagnostics.emit("接続準備: 視聴用WS接続先を取得")
         delegate?.nicoManager(self, hasDebugMessgae: "Requesting websocket endpoint...")
         // https://github.com/niconamaworkshop/websocket_api_document
         callOAuthEndpoint(
             url: wsEndpointApiUrl,
+            diagnostics: diagnostics,
             parameters: [
                 "nicoliveProgramId": liveProgramId,
                 "userId": user.userId
@@ -445,10 +474,10 @@ private extension NicoManager {
                 // Ok, proceed to websocket calls..
                 me.openWatchSocket(
                     webSocketUrl: response.data.url,
-                    userId: String(user.userId),
-                    connectContext: connectContext
+                    diagnostics: diagnostics
                 )
             case .failure(let error):
+                diagnostics.emit("接続準備失敗: 視聴用WS接続先 error=\(error)")
                 log.error(error)
                 me.delegate?.nicoManager(
                     me,
@@ -459,19 +488,17 @@ private extension NicoManager {
     }
 
     // #4/5. Open watch socket.
-    func openWatchSocket(webSocketUrl: URL, userId: String, connectContext: NicoConnectContext) {
+    func openWatchSocket(webSocketUrl: URL, diagnostics: ConnectionDiagnostics) {
         delegate?.nicoManager(self, hasDebugMessgae: "Opening watch socket...")
-        openWatchSocket(webSocketUrl: webSocketUrl) { [weak self] in
+        openWatchSocket(webSocketUrl: webSocketUrl, diagnostics: diagnostics) { [weak self] in
             guard let me = self, let live = me.live else { return }
             switch $0 {
             case .success(let messageServer):
                 me.delegate?.nicoManager(me, hasDebugMessgae: "Completed to open watch socket.")
                 me.connectToNdgrServer(
-                    userId: userId,
                     messageServer: messageServer,
-                    connectContext: connectContext,
                     beginTime: live.beginTime,
-                    isTimeShift: live.isTimeShift
+                    diagnostics: diagnostics
                 )
             case .failure(let error):
                 me.delegate?.nicoManager(
@@ -484,47 +511,24 @@ private extension NicoManager {
 
     // #5/5. Finally, connect to ndgr server.
     func connectToNdgrServer(
-        userId: String,
         messageServer: WebSocketMessageServerData,
-        connectContext: NicoConnectContext,
         beginTime: Date,
-        isTimeShift: Bool
+        diagnostics: ConnectionDiagnostics
     ) {
         delegate?.nicoManager(self, hasDebugMessgae: "Connecting to ngdr server...")
         guard let url = URL(string: messageServer.data.viewUri) else {
+            diagnostics.emit("NDGR開始失敗: viewUriをURLとして解釈できない")
             log.error("viewuri parse error.")
             return
         }
-        ndgrClient.connect(viewUri: url, beginTime: beginTime)
-        /*
-         openMessageSocket(userId: userId, room: room, connectContext: connectContext, isTimeShift: isTimeShift) { [weak self] in
-         guard let me = self else { return }
-         switch $0 {
-         case .success:
-         me.delegate?.nicoManager(me, hasDebugMessgae: "Completed to open message socket.")
-         me.connectRequests.lastEstablished = me.connectRequests.onGoing
-         me.connectRequests.onGoing = nil
-         me.isConnected = true
-         me.openedRoomCount = 1
-         me.startBasicTimers()
-         me.delegate?.nicoManagerDidConnectToLive(
-         me,
-         roomPosition: RoomPosition.arena,
-         connectContext: connectContext)
-         case .failure(let error):
-         me.delegate?.nicoManager(
-         me,
-         hasDebugMessgae: "Failed to open message socket. (\(error))")
-         me.delegate?.nicoManagerDidFailToPrepareLive(me, error: .openMessageServerFailed)
-         }
-         }
-         */
+        ndgrClient.connect(viewUri: url, beginTime: beginTime, diagnostics: diagnostics)
     }
 }
 
 // Methods for disconnect and timers.
 private extension NicoManager {
     func startBasicTimers() {
+        connectionDiagnostics?.emit("タイマー開始: mainThread=\(Thread.isMainThread), 旧コメントWSあり=\(messageSocket != nil), Ping監視対象=旧コメントWS")
         startWatchSocketKeepSeatTimer(interval: watchSocketKeepSeatInterval)
         startMessageSocketEmptyMessageTimer(interval: messageSocketEmptyMessageInterval)
         startPingPongCheckTimer()
@@ -563,6 +567,7 @@ private extension NicoManager {
 // Methods for OAuth endpoint calls.
 private extension NicoManager {
     func callOAuthEndpoint<T: Codable>(url: String,
+                                       diagnostics: ConnectionDiagnostics? = nil,
                                        parameters: Alamofire.Parameters? = nil,
                                        allowRefreshToken: Bool = true,
                                        completion: @escaping (Result<T, NicoError>) -> Void) {
@@ -572,6 +577,7 @@ private extension NicoManager {
         }
         callOAuthEndpoint(
             url: url,
+            diagnostics: diagnostics,
             parameters: parameters,
             allowRefreshToken: allowRefreshToken,
             completion: completion)
@@ -579,6 +585,7 @@ private extension NicoManager {
 
     // swiftlint:disable function_body_length
     func callOAuthEndpoint<T: Codable>(url: URL,
+                                       diagnostics: ConnectionDiagnostics? = nil,
                                        parameters: Alamofire.Parameters?,
                                        allowRefreshToken: Bool,
                                        completion: @escaping (Result<T, NicoError>) -> Void) {
@@ -606,6 +613,8 @@ private extension NicoManager {
                 completion(.success(response))
             case .failure(let error):
                 log.error(error)
+                let status = $0.response.map { String($0.statusCode) } ?? "なし"
+                diagnostics?.emit("API取得失敗: HTTP=\(status), error=\(ConnectionDiagnostics.errorSummary(error))")
                 // Is access token expired?
                 if error.isInvalidToken, allowRefreshToken {
                     // Access token is expired, so refresh tokens..
@@ -621,6 +630,7 @@ private extension NicoManager {
                                 hasDebugMessgae: "Completed to refresh token.")
                             me.callOAuthEndpoint(
                                 url: url,
+                                diagnostics: diagnostics,
                                 parameters: parameters,
                                 allowRefreshToken: false,   // Do NOT allow repeated refresh token.
                                 completion: completion)
@@ -629,7 +639,7 @@ private extension NicoManager {
                             // Refresh token failed, finish to establish connection here.
                             me.delegate?.nicoManager(
                                 me,
-                                hasDebugMessgae: "Failed to refresh token. (\(error))")
+                                hasDebugMessgae: "Failed to refresh token. (\(ConnectionDiagnostics.errorSummary(error)))")
                             completion(.failure(.internal))
                         }
                     }
@@ -638,7 +648,7 @@ private extension NicoManager {
                 // For normal error case, returning the error immediately.
                 me.delegate?.nicoManager(
                     me,
-                    hasDebugMessgae: "Failed to call OAuth endpoint. (\(error))")
+                    hasDebugMessgae: "Failed to call OAuth endpoint. (\(ConnectionDiagnostics.errorSummary(error)))")
                 completion(.failure(.internal))
             }
         }
@@ -659,7 +669,8 @@ private extension NicoManager {
 
 // MARK: Private Methods (Watch Socket)
 private extension NicoManager {
-    func openWatchSocket(webSocketUrl: URL, completion: @escaping (Result<WebSocketMessageServerData, NicoError>) -> Void) {
+    func openWatchSocket(webSocketUrl: URL, diagnostics: ConnectionDiagnostics, completion: @escaping (Result<WebSocketMessageServerData, NicoError>) -> Void) {
+        diagnostics.emit("視聴用WS: 接続開始")
         var request = URLRequest(url: webSocketUrl)
         request.applyDefaultWatchSocketSetting()
         let socket = WebSocket(request: request)
@@ -668,39 +679,54 @@ private extension NicoManager {
             me.handleWatchSocketEvent(
                 socket: socket,
                 event: $0,
+                diagnostics: diagnostics,
                 completion: completion)
         }
         socket.connect()
         watchSocket = socket
     }
 
-    func handleWatchSocketEvent(socket: WebSocket, event: WebSocketEvent, completion: (Result<WebSocketMessageServerData, NicoError>) -> Void) {
+    func handleWatchSocketEvent(socket: WebSocket, event: WebSocketEvent, diagnostics: ConnectionDiagnostics, completion: (Result<WebSocketMessageServerData, NicoError>) -> Void) {
         log.debug(event)
+        let current = "現在のWS=\(watchSocket === socket)"
         switch event {
         case .connected:
+            diagnostics.emit("視聴用WS: 接続成功, \(current)")
             socket.write(string: startWatchingMessage)
         case .text(let text):
+            diagnostics.record(.watch)
             log.debug(text)
-            processWatchSocketTextEvent(text: text, socket: socket, completion: completion)
+            processWatchSocketTextEvent(text: text, socket: socket, diagnostics: diagnostics, completion: completion)
         case .pong:
+            diagnostics.record(.watch)
             lastPongSocketDates?.watch = Date()
         case .error(let error):
-            delegate?.nicoManager(self, hasDebugMessgae: "Watch socket error. (\(String(describing: error)))")
+            diagnostics.emit("視聴用WS: error=\(ConnectionDiagnostics.errorSummary(error)) → 再接続要求, \(current)")
             reconnect()
-        case .reconnectSuggested:
+        case .reconnectSuggested(let suggested):
+            diagnostics.emit("視聴用WS: reconnectSuggested=\(suggested) → 再接続要求, \(current)")
             reconnect()
-        case .binary, .cancelled, .disconnected, .ping, .viabilityChanged, .peerClosed:
-            break
+        case .disconnected(let reason, let code):
+            diagnostics.emit("視聴用WS: disconnected code=\(code), reason=\(ConnectionDiagnostics.serverReason(reason)) → 現行処理では再接続しない, \(current)")
+        case .cancelled:
+            diagnostics.emit("視聴用WS: cancelled → 現行処理では再接続しない, \(current)")
+        case .peerClosed:
+            diagnostics.emit("視聴用WS: peerClosed → 現行処理では再接続しない, \(current)")
+        case .viabilityChanged(let viable):
+            diagnostics.emit("視聴用WS: viabilityChanged=\(viable), \(current)")
+        case .binary, .ping:
+            diagnostics.record(.watch)
         }
     }
 
-    func processWatchSocketTextEvent(text: String, socket: WebSocket, completion: (Result<WebSocketMessageServerData, NicoError>) -> Void) {
+    func processWatchSocketTextEvent(text: String, socket: WebSocket, diagnostics: ConnectionDiagnostics, completion: (Result<WebSocketMessageServerData, NicoError>) -> Void) {
         guard let decoded = decodeWebSocketData(text: text) else { return }
         switch decoded {
         case let seat as WebSocketSeatData:
             log.debug(seat)
             watchSocketKeepSeatInterval = seat.data.keepIntervalSec
         case let messageServer as WebSocketMessageServerData:
+            diagnostics.emit("視聴用WS: messageServer受信 → NDGR接続へ")
             log.debug(messageServer)
             completion(Result.success(messageServer))
         case is WebSocketPingData:
@@ -709,13 +735,23 @@ private extension NicoManager {
         case let stat as WebSocketStatisticsData:
             delegate?.nicoManagerDidReceiveStatistics(self, stat: stat.toLiveStatistics())
         case is WebSocketDisconnectData:
+            let data = watchSocketMessageData(text)
+            diagnostics.emit("視聴用WS: disconnect指示 reason=\(ConnectionDiagnostics.serverReason(data?["reason"] as? String)) → 通常切断")
             disconnect()
         case is WebSocketReconnectData:
+            let wait = (watchSocketMessageData(text)?["waitTimeSec"] as? Int).map(String.init) ?? "なし"
+            diagnostics.emit("視聴用WS: reconnect指示 waitTimeSec=\(wait) → 現行処理では固定2秒後に再接続")
             // XXX: Add delay based on `waitTimeSec` parameter.
             reconnect()
         default:
             break
         }
+    }
+
+    func watchSocketMessageData(_ text: String) -> [String: Any]? {
+        guard let data = text.data(using: .utf8),
+              let message = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return nil }
+        return message["data"] as? [String: Any]
     }
 
     func decodeWebSocketData(text: String) -> Any? {

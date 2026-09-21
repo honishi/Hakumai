@@ -812,6 +812,7 @@ extension MainViewController: NicoManagerDelegate {
     }
 
     func nicoManagerDidDisconnect(_ nicoManager: NicoManagerType, disconnectContext: NicoDisconnectContext) {
+        logDebugMessageToTable("UI切断通知: context=\(disconnectContext), 接続表示=\(connectedToLive)\(connectedToLive ? "" : "（既に切断表示のため無視）")")
         guard connectedToLive else { return }
 
         switch disconnectContext {
