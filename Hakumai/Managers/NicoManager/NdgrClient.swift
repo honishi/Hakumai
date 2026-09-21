@@ -16,6 +16,7 @@ final class NdgrClient: NdgrClientType {
 
     // Private Properties
     private let configuration: URLSessionConfiguration
+    private let endDrainTimeout: TimeInterval
     private var streamSession: Session?
     private var streamTask: Task<Void, Never>?
     private var activeDiagnostics: ConnectionDiagnostics?
@@ -24,9 +25,11 @@ final class NdgrClient: NdgrClientType {
     private var connected = false
     private var duplicateCount = 0
 
-    init(delegate: NdgrClientDelegate? = nil, configuration: URLSessionConfiguration = .af.default) {
+    init(delegate: NdgrClientDelegate? = nil, configuration: URLSessionConfiguration = .af.default,
+         endDrainTimeout: TimeInterval = 5) {
         self.delegate = delegate
         self.configuration = configuration
+        self.endDrainTimeout = endDrainTimeout
         configuration.headers.add(.userAgent(commonUserAgentValue))
     }
 }
@@ -94,7 +97,6 @@ extension NdgrClient {
 
 private extension NdgrClient {
     @MainActor
-    // swiftlint:disable:next cyclomatic_complexity
     func forwardPlaylist(uri: URL, from: Int, diagnostics: ConnectionDiagnostics, session: Session) async throws {
         var next: Int? = from
         var segmentCount = 0
@@ -108,46 +110,10 @@ private extension NdgrClient {
             if !chatHistory.isFetching {
                 emitChatHistoryIfExists(chatHistory: chatHistory, diagnostics: diagnostics)
             }
-            next = nil
-            let view = ViewIteration()
-            // Segment の完了を待ってから再開位置を進め、取得途中のコメントを飛ばさない。
-            try await withThrowingTaskGroup(of: Void.self) { group in
-                var activeSegments = 0
-                let entries = retrieve(uri: uri.appending("at", value: String(current)),
-                                       messageType: Dwango_Nicolive_Chat_Service_Edge_ChunkedEntry.self,
-                                       activity: .view, diagnostics: diagnostics, session: session, view: view)
-                for try await entry in entries {
-                    try Task.checkCancellation()
-                    if let failure = view.failure { throw failure }
-                    guard let entry = entry.entry else { continue }
-                    switch entry {
-                    case .backward, .previous: continue
-                    case .segment(let segment):
-                        guard let url = URL(string: segment.uri) else { throw NdgrStreamError.invalidSegmentURL }
-                        if activeSegments >= 8 {
-                            try await group.next()
-                            activeSegments -= 1
-                        }
-                        segmentCount += 1
-                        activeSegments += 1
-                        group.addTask {
-                            do {
-                                try await self.pullMessages(uri: url, chatHistory: chatHistory,
-                                                            diagnostics: diagnostics, session: session)
-                            } catch {
-                                if !Task.isCancelled {
-                                    diagnostics.emit("NDGR Segment失敗 → View待機を解除: \(ConnectionDiagnostics.errorSummary(error))")
-                                    await view.fail(error)
-                                }
-                                throw error
-                            }
-                        }
-                    case .next(let marker): next = Int(marker.at)
-                    }
-                }
-                try await group.waitForAll()
-            }
-            try Task.checkCancellation()
+            let result = try await forwardView(uri: uri.appending("at", value: String(current)),
+                                               chatHistory: chatHistory, diagnostics: diagnostics, session: session)
+            segmentCount += result.segmentCount
+            next = result.next
             if chatHistory.isFetching {
                 delegate?.ndgrClientReceivingChatHistory(self, requestCount: segmentCount,
                                                          totalChatCount: chatHistory.chats.count, diagnostics: diagnostics)
@@ -161,6 +127,76 @@ private extension NdgrClient {
     }
 
     @MainActor
+    // swiftlint:disable:next cyclomatic_complexity
+    func forwardView(uri: URL, chatHistory: ChatHistory, diagnostics: ConnectionDiagnostics,
+                     session: Session) async throws -> (next: Int?, segmentCount: Int) {
+        let view = ViewIteration()
+        defer { view.cancelEndDeadline() }
+        var next: Int?
+        var segmentCount = 0
+        // Segment の完了を待ってから再開位置を進め、取得途中のコメントを飛ばさない。
+        do {
+            try await withThrowingTaskGroup(of: Void.self) { group in
+                var activeSegments = 0
+                let entries = retrieve(uri: uri, messageType: Dwango_Nicolive_Chat_Service_Edge_ChunkedEntry.self,
+                                       activity: .view, diagnostics: diagnostics, session: session, view: view)
+                for try await entry in entries {
+                    try Task.checkCancellation()
+                    if view.programEnded { break }
+                    if let failure = view.failure { throw failure }
+                    guard let entry = entry.entry else { continue }
+                    switch entry {
+                    case .backward, .previous: continue
+                    case .segment(let segment):
+                        guard let url = URL(string: segment.uri) else { throw NdgrStreamError.invalidSegmentURL }
+                        if activeSegments >= 8 {
+                            try await group.next()
+                            activeSegments -= 1
+                            if view.programEnded { break }
+                        }
+                        segmentCount += 1
+                        activeSegments += 1
+                        view.pendingSegments += 1
+                        group.addTask {
+                            try await self.pullSegment(uri: url, chatHistory: chatHistory,
+                                                       diagnostics: diagnostics, session: session, view: view)
+                        }
+                    case .next(let marker): next = Int(marker.at)
+                    }
+                }
+                try await group.waitForAll()
+            }
+        } catch {
+            // 終了通知と通信失敗が競合しても、確認済みの終了を復旧に戻さない。
+            if !view.programEnded { throw error }
+        }
+        try Task.checkCancellation()
+        if view.programEnded {
+            diagnostics.emit("NDGR終了待ち完了: 取得済みコメントを通知して終了")
+            throw NdgrStreamError.programEnded
+        }
+        return (next, segmentCount)
+    }
+
+    @MainActor
+    func pullSegment(uri: URL, chatHistory: ChatHistory, diagnostics: ConnectionDiagnostics,
+                     session: Session, view: ViewIteration) async throws {
+        defer { view.pendingSegments -= 1 }
+        do {
+            try await pullMessages(uri: uri, chatHistory: chatHistory, diagnostics: diagnostics, session: session, view: view)
+        } catch {
+            try Task.checkCancellation()
+            if view.programEnded {
+                diagnostics.emit("NDGR終了待ち: Segment取得失敗、放送終了を優先: \(ConnectionDiagnostics.errorSummary(error))")
+                return
+            }
+            diagnostics.emit("NDGR Segment失敗 → View待機を解除: \(ConnectionDiagnostics.errorSummary(error))")
+            view.fail(error)
+            throw error
+        }
+    }
+
+    @MainActor
     func emitChatHistoryIfExists(chatHistory: ChatHistory, diagnostics: ConnectionDiagnostics) {
         guard activeDiagnostics === diagnostics, !chatHistory.isEmpty else { return }
         receivedMessageMetaIds.formUnion(chatHistory.metaIds)
@@ -169,7 +205,8 @@ private extension NdgrClient {
     }
 
     @MainActor
-    func pullMessages(uri: URL, chatHistory: ChatHistory, diagnostics: ConnectionDiagnostics, session: Session) async throws {
+    func pullMessages(uri: URL, chatHistory: ChatHistory, diagnostics: ConnectionDiagnostics,
+                      session: Session, view: ViewIteration) async throws {
         let messages = retrieve(uri: uri, messageType: Dwango_Nicolive_Chat_Service_Edge_ChunkedMessage.self,
                                 activity: .segment, diagnostics: diagnostics, session: session)
         for try await message in messages {
@@ -180,12 +217,9 @@ private extension NdgrClient {
             case .message(let message): chat = message.toChat()
             case .state(let state):
                 if state.isDisconnect() {
-                    // 終了通知を見た時点で他の受信も止め、HTTP EOF 待ちで終了を遅らせない。
-                    diagnostics.emit("NDGR Segment: サーバーから放送終了状態を受信")
-                    emitChatHistoryIfExists(chatHistory: chatHistory, diagnostics: diagnostics)
-                    disconnect()
-                    delegate?.ndgrClientDidDisconnect(self, diagnostics: diagnostics, reason: .programEnded)
-                    throw NdgrStreamError.programEnded
+                    // 新規取得を止め、開始済みの Segment だけを上限時間内で受け取り切る。
+                    view.endProgram(timeout: endDrainTimeout, diagnostics: diagnostics, session: session)
+                    return
                 }
                 chat = state.toChat()
             case .signal: chat = nil
@@ -686,6 +720,29 @@ final class NdgrRequestRetrier: RequestRetrier, @unchecked Sendable {
 private final class ViewIteration {
     var stop: ((Error?) -> Void)?
     private(set) var failure: Error?
+    private(set) var programEnded = false
+    var pendingSegments = 0
+    private var endDeadline: DispatchWorkItem?
+
+    func endProgram(timeout: TimeInterval, diagnostics: ConnectionDiagnostics, session: Session) {
+        guard !programEnded else { return }
+        programEnded = true
+        diagnostics.emit("NDGR Segment: サーバーから放送終了状態を受信")
+        stop?(nil)
+        diagnostics.emit("NDGR終了待ち開始: 残りSegment=\(pendingSegments - 1), 上限=\(timeout)秒, 新規取得・復旧は行わない")
+        let deadline = DispatchWorkItem { [weak self] in
+            guard let self = self, self.pendingSegments > 0 else { return }
+            diagnostics.emit("NDGR終了待ち上限: 未完了Segment=\(self.pendingSegments), HTTPをキャンセルして終了")
+            session.cancelAllRequests()
+        }
+        endDeadline = deadline
+        DispatchQueue.main.asyncAfter(deadline: .now() + timeout, execute: deadline)
+    }
+
+    func cancelEndDeadline() {
+        endDeadline?.cancel()
+        endDeadline = nil
+    }
 
     func fail(_ error: Error) {
         guard failure == nil else { return }

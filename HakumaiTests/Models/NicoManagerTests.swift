@@ -125,6 +125,78 @@ extension NicoManagerTests {
         manager.disconnect()
     }
 
+    func testProgramEndDrainsEarlierHistorySegmentBeforeStopping() {
+        let fixture = RecoveryFixture()
+        fixture.beginAt = String(Int(Date().timeIntervalSince1970) - 10_000)
+        fixture.status = { _ in "ENDED" }
+        fixture.view = { _, _ in
+            .holding(try RecoveryFixture.playlist(segment: "history") + RecoveryFixture.playlist(segment: "end", next: 100))
+        }
+        fixture.segment = { path in
+            if path == "/end" { return .delayed(try RecoveryFixture.end(), 0.02) }
+            return .delayed(try RecoveryFixture.comment(id: "history", text: "last history"), 0.1)
+        }
+        let recorder = RecoveryRecorder()
+        let ended = expectation(description: "並行取得中の履歴を受信して終了")
+        recorder.onDisconnect = { if case .normal = $0 { ended.fulfill() } }
+        let manager = fixture.manager(recorder: recorder)
+        manager.connect(liveProgramId: "lv1")
+        wait(for: [ended], timeout: 5)
+        XCTAssertEqual(recorder.comments, ["last history"])
+        XCTAssertEqual(fixture.viewPositions.count, 1)
+        XCTAssertEqual(recorder.disconnections.count, 1)
+        XCTAssertTrue(recorder.logs.contains { $0.contains("NDGR終了待ち完了") })
+        XCTAssertFalse(recorder.logs.contains { $0.contains("復旧開始") || $0.contains("終了待ち上限") })
+    }
+
+    func testProgramEndDrainHasDeadlineAndDoesNotRecoverStalledSegment() {
+        let fixture = RecoveryFixture()
+        fixture.view = { _, _ in
+            .holding(try RecoveryFixture.playlist(segment: "stalled") + RecoveryFixture.playlist(segment: "end"))
+        }
+        fixture.segment = { path in
+            if path == "/end" { return .ok(try RecoveryFixture.end()) }
+            return .holding(Data())
+        }
+        let recorder = RecoveryRecorder()
+        let ended = expectation(description: "終了待ち上限で停止")
+        recorder.onDisconnect = { if case .normal = $0 { ended.fulfill() } }
+        let manager = fixture.manager(recorder: recorder, endDrainTimeout: 0.05)
+        manager.connect(liveProgramId: "lv1")
+        wait(for: [ended], timeout: 2)
+        XCTAssertEqual(fixture.programRequests, 1)
+        XCTAssertEqual(recorder.disconnections.count, 1)
+        XCTAssertTrue(recorder.logs.contains { $0.contains("NDGR終了待ち上限") })
+        XCTAssertFalse(recorder.logs.contains { $0.contains("復旧開始") })
+    }
+
+    func testManualStopCancelsProgramEndDrainAndDeadline() {
+        let fixture = RecoveryFixture()
+        fixture.view = { _, _ in
+            .holding(try RecoveryFixture.playlist(segment: "stalled") + RecoveryFixture.playlist(segment: "end"))
+        }
+        fixture.segment = { path in
+            if path == "/end" { return .ok(try RecoveryFixture.end()) }
+            return .holding(Data())
+        }
+        let recorder = RecoveryRecorder()
+        let stopped = expectation(description: "終了待ち中に手動停止")
+        let noDeadline = expectation(description: "停止後に期限処理しない")
+        noDeadline.isInverted = true
+        let manager = fixture.manager(recorder: recorder, endDrainTimeout: 0.1)
+        recorder.onLog = { message in
+            if message.contains("NDGR終了待ち開始") {
+                DispatchQueue.main.async { manager.disconnect(); stopped.fulfill() }
+            }
+            if message.contains("NDGR終了待ち上限") { noDeadline.fulfill() }
+        }
+        manager.connect(liveProgramId: "lv1")
+        wait(for: [stopped], timeout: 2)
+        wait(for: [noDeadline], timeout: 0.2)
+        XCTAssertEqual(recorder.disconnections.count, 1)
+        XCTAssertEqual(fixture.programRequests, 1)
+    }
+
     func testMissingNextChecksProgramStatusAndStopsWhenEnded() {
         let fixture = RecoveryFixture()
         fixture.status = { $0 == 1 ? "ON_AIR" : "ENDED" }
@@ -372,7 +444,7 @@ extension NicoManagerTests {
 
 private final class RecoveryFixture {
     enum Reply {
-        case ok(Data), holding(Data), http(Int), timeout
+        case ok(Data), holding(Data), delayed(Data, TimeInterval), http(Int), timeout
     }
     var beginAt = String(Int(Date().timeIntervalSince1970) - 10)
     var status: (Int) -> String = { _ in "ON_AIR" }
@@ -385,11 +457,11 @@ private final class RecoveryFixture {
     var engines: [RecoveryEngine] = []
 
     func manager(recorder: RecoveryRecorder, delays: [TimeInterval] = [0, 0, 0],
-                 ndgrClient: NdgrClientType? = nil) -> NicoManager {
+                 ndgrClient: NdgrClientType? = nil, endDrainTimeout: TimeInterval = 5) -> NicoManager {
         let config = URLSessionConfiguration.ephemeral
         config.protocolClasses = [RecoveryURLProtocol.self]
         RecoveryURLProtocol.reply = { [self] url in try respond(url) }
-        let manager = NicoManager(authManager: RecoveryAuth(), ndgrClient: ndgrClient ?? NdgrClient(configuration: config),
+        let manager = NicoManager(authManager: RecoveryAuth(), ndgrClient: ndgrClient ?? NdgrClient(configuration: config, endDrainTimeout: endDrainTimeout),
                                   configuration: config, recoveryDelays: delays) { [self] request in
             let engine = RecoveryEngine(sendMessageServer: sendMessageServer)
             engines.append(engine)
@@ -476,27 +548,43 @@ private final class RecoveryURLProtocol: URLProtocol {
             guard !stopped, let url = request.url else { return }
             do {
                 guard let reply = try Self.reply?(url) else { return }
-                let status: Int
-                let data: Data
-                let finish: Bool
-                switch reply {
-                case .timeout:
-                    client?.urlProtocol(self, didFailWithError: URLError(.timedOut))
-                    return
-                case .http(let code): (status, data, finish) = (code, Data(), true)
-                case .ok(let bytes): (status, data, finish) = (200, bytes, true)
-                case .holding(let bytes): (status, data, finish) = (200, bytes, false)
-                }
-                let response = try XCTUnwrap(HTTPURLResponse(url: url, statusCode: status, httpVersion: nil,
-                                                             headerFields: ["Content-Type": "application/octet-stream"]))
-                client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
-                if !data.isEmpty { client?.urlProtocol(self, didLoad: data) }
-                if finish { client?.urlProtocolDidFinishLoading(self) }
+                try deliver(reply)
             } catch {
                 client?.urlProtocol(self, didFailWithError: error)
             }
         }
     }
+    private func deliver(_ reply: RecoveryFixture.Reply) throws {
+        let status: Int
+        let data: Data
+        let finish: Bool
+        var delay: TimeInterval = 0
+        switch reply {
+        case .timeout:
+            client?.urlProtocol(self, didFailWithError: URLError(.timedOut))
+            return
+        case .http(let code): (status, data, finish) = (code, Data(), true)
+        case .ok(let bytes): (status, data, finish) = (200, bytes, true)
+        case .holding(let bytes): (status, data, finish) = (200, bytes, false)
+        case .delayed(let bytes, let interval):
+            (status, data, finish) = (200, bytes, true)
+            delay = interval
+        }
+        let response = try XCTUnwrap(HTTPURLResponse(url: try XCTUnwrap(request.url), statusCode: status, httpVersion: nil,
+                                                     headerFields: ["Content-Type": "application/octet-stream"]))
+        client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+        let deliver = { [self] in
+            guard !stopped else { return }
+            if !data.isEmpty { client?.urlProtocol(self, didLoad: data) }
+            if finish { client?.urlProtocolDidFinishLoading(self) }
+        }
+        if delay > 0 {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: deliver)
+        } else {
+            deliver()
+        }
+    }
+
     override func stopLoading() { DispatchQueue.main.async { self.stopped = true } }
 }
 
