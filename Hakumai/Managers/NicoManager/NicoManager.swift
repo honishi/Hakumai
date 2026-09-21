@@ -115,6 +115,7 @@ final class NicoManager: NicoManagerType {
 
     private var activeProgramId: String?
     private var currentConnectContext: NicoConnectContext = .normal
+    // 一時的なデータ受信と切断の反復で無限復旧しないよう、手動接続まで累計を保持する。
     private var recoveryAttempt = 0
     // View ごとの履歴は即時表示し、件数の案内だけを履歴取得の区切りまで集計する。
     private var pendingHistoryCount = 0
@@ -196,7 +197,7 @@ extension NicoManager {
             }
         }
         connectionDiagnostics = diagnostics
-        diagnostics.emit("接続開始 context=\(connectContext), 復旧試行=\(recoveryAttempt)/\(recoveryDelays.count), 前接続=\(recoveryDiagnostics?.id ?? "なし")")
+        diagnostics.emit("接続開始 context=\(connectContext), 復旧試行(セッション累計)=\(recoveryAttempt)/\(recoveryDelays.count), 前接続=\(recoveryDiagnostics?.id ?? "なし")")
         ndgrClient.delegate = self
         guard authManager.hasToken else {
             diagnostics.emit("接続中止: 認証トークンなし")
@@ -256,7 +257,7 @@ extension NicoManager {
         guard let programId = activeProgramId, recoveryWorkItem == nil else { return }
         let diagnostics = connectionDiagnostics ?? recoveryDiagnostics
         guard recoveryAttempt < recoveryDelays.count else {
-            diagnostics?.emit("復旧断念: 再接続上限\(recoveryDelays.count)回, 理由=\(detail)")
+            diagnostics?.emit("復旧断念: セッション累計の再接続上限\(recoveryDelays.count)回, 理由=\(detail)")
             disconnect(disconnectContext: .failure)
             return
         }
@@ -265,7 +266,7 @@ extension NicoManager {
         resumingLive = resumingLive || live?.isTimeShift == false
         let delay = recoveryDelays[recoveryAttempt]
         recoveryAttempt += 1
-        diagnostics?.emit("復旧開始: reason=\(reason), 理由=\(detail), 試行=\(recoveryAttempt)/\(recoveryDelays.count), 待機=\(delay)秒, 番組情報・接続先を再取得")
+        diagnostics?.emit("復旧開始: reason=\(reason), 理由=\(detail), 試行(セッション累計)=\(recoveryAttempt)/\(recoveryDelays.count), 待機=\(delay)秒, 番組情報・接続先を再取得")
         recoveryDiagnostics = diagnostics
         stopConnectionAttempt()
         delegate?.nicoManagerDidDisconnect(self, disconnectContext: .reconnect(reason))
@@ -400,7 +401,7 @@ extension NicoManager: NdgrClientDelegate {
         diagnostics.emit("NDGR実データ受信確認 → UI接続済み")
         if let started = recoveryStartedAt {
             let elapsed = String(format: "%.1f", ProcessInfo.processInfo.systemUptime - started)
-            diagnostics.emit("復旧成功: NDGRデータ受信再開, 所要=\(elapsed)秒, 累計試行=\(recoveryAttempt)")
+            diagnostics.emit("復旧成功: NDGRデータ受信再開, 所要=\(elapsed)秒, セッション累計試行=\(recoveryAttempt)")
             recoveryStartedAt = nil
         }
         connectRequests.lastEstablished = connectRequests.onGoing

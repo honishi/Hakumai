@@ -246,6 +246,34 @@ extension NicoManagerTests {
         XCTAssertEqual(recorder.comments.count, 3)
     }
 
+    func testSuccessfulRecoveryDoesNotResetSessionLimitButManualConnectDoes() {
+        let fixture = RecoveryFixture()
+        fixture.view = { _, _ in .ok(try RecoveryFixture.playlist(segment: "comment")) }
+        fixture.segment = { _ in .ok(try RecoveryFixture.comment(id: "one", text: "one")) }
+        let recorder = RecoveryRecorder()
+        let failed = expectation(description: "実データが届いてもセッション累計の上限で停止")
+        recorder.onDisconnect = { if case .failure = $0 { failed.fulfill() } }
+        let manager = fixture.manager(recorder: recorder, delays: [0, 0])
+        manager.connect(liveProgramId: "lv1")
+        wait(for: [failed], timeout: 5)
+        XCTAssertEqual(fixture.programRequests, 3)
+        XCTAssertEqual(recorder.logs.filter { $0.contains("復旧成功") }.count, 2)
+        XCTAssertEqual(recorder.comments, ["one"])
+        XCTAssertTrue(recorder.logs.contains { $0.contains("復旧断念: セッション累計の再接続上限2回") })
+
+        let ended = expectation(description: "手動接続で復旧枠をリセット")
+        fixture.view = { count, _ in
+            if count == 4 { return .ok(Data()) }
+            return .ok(try RecoveryFixture.playlist(segment: "end"))
+        }
+        fixture.segment = { _ in .ok(try RecoveryFixture.end()) }
+        recorder.onDisconnect = { if case .normal = $0 { ended.fulfill() } }
+        manager.connect(liveProgramId: "lv1")
+        wait(for: [ended], timeout: 5)
+        XCTAssertEqual(fixture.programRequests, 5)
+        XCTAssertEqual(recorder.logs.filter { $0.contains("復旧断念") }.count, 1)
+    }
+
     func testTimeshiftEOFStopsWithoutRecovery() {
         let fixture = RecoveryFixture()
         fixture.status = { _ in "ENDED" }
