@@ -207,5 +207,5 @@
 "scroll_up_button" = "Press to scroll up / long press to scroll to top";
 "scroll_down_button" = "Press to scroll down / long press to scroll to bottom";
 
-"comment_reconnecting" = "Comment reception interrupted. Reconnecting…";
+"comment_reconnecting" = "Reconnecting to the comment server…";
 "comment_connection_failed" = "Comment reception stopped due to a connection error.";

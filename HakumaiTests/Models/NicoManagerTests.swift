@@ -222,7 +222,28 @@ extension NicoManagerTests {
         wait(for: [failed], timeout: 5)
         XCTAssertEqual(fixture.programRequests, 3)
         XCTAssertTrue(recorder.logs.contains { $0.contains("復旧断念") })
+        XCTAssertEqual(recorder.recoveryNotices, 1)
+        XCTAssertEqual(recorder.logs.filter { $0.contains("復旧開始") }.count, 2)
         XCTAssertFalse(recorder.disconnections.contains { if case .normal = $0 { return true }; return false })
+    }
+
+    func testSeparateInterruptionsEachAnnounceRecoveryOnce() {
+        let fixture = RecoveryFixture()
+        fixture.view = { count, _ in .ok(try RecoveryFixture.playlist(segment: "segment\(count)")) }
+        fixture.segment = { path in
+            var data = try RecoveryFixture.comment(id: path, text: path)
+            if path == "/segment3" { data += try RecoveryFixture.end() }
+            return .ok(data)
+        }
+        let recorder = RecoveryRecorder()
+        let ended = expectation(description: "復旧成功後の中断も案内する")
+        recorder.onDisconnect = { if case .normal = $0 { ended.fulfill() } }
+        let manager = fixture.manager(recorder: recorder)
+        manager.connect(liveProgramId: "lv1")
+        wait(for: [ended], timeout: 5)
+        XCTAssertEqual(recorder.recoveryNotices, 2)
+        XCTAssertEqual(recorder.logs.filter { $0.contains("復旧成功") }.count, 2)
+        XCTAssertEqual(recorder.comments.count, 3)
     }
 
     func testTimeshiftEOFStopsWithoutRecovery() {
@@ -690,6 +711,7 @@ private final class RecoveryRecorder: NicoManagerDelegate {
     var onLog: ((String) -> Void)?
     var historySummaries: [Int] = []
     var historyBatchCount = 0
+    var recoveryNotices = 0
     var preparationFailures = 0
     var onPreparationFailure: (() -> Void)?
     func nicoManagerNeedsToken(_ nicoManager: NicoManagerType) {}
@@ -702,7 +724,7 @@ private final class RecoveryRecorder: NicoManagerDelegate {
     }
     func nicoManagerDidConnectToLive(_ nicoManager: NicoManagerType, roomPosition: RoomPosition, connectContext: NicoConnectContext) {}
     func nicoManagerDidReceiveChat(_ nicoManager: NicoManagerType, chat: Chat) { comments.append(chat.comment) }
-    func nicoManagerWillReconnectToLive(_ nicoManager: NicoManagerType, reason: NicoReconnectReason) {}
+    func nicoManagerWillReconnectToLive(_ nicoManager: NicoManagerType, reason: NicoReconnectReason) { recoveryNotices += 1 }
     func nicoManagerDidReceiveStatistics(_ nicoManager: NicoManagerType, stat: LiveStatistics) {}
     func nicoManagerReceivingChatHistory(_ nicoManager: NicoManagerType, requestCount: Int, totalChatCount: Int) {}
     func nicoManagerDidReceiveChatHistory(_ nicoManager: NicoManagerType, chats: [Chat]) {

@@ -260,15 +260,16 @@ extension NicoManager {
             disconnect(disconnectContext: .failure)
             return
         }
-        if recoveryStartedAt == nil { recoveryStartedAt = ProcessInfo.processInfo.systemUptime }
+        let isStartingRecovery = recoveryStartedAt == nil
+        if isStartingRecovery { recoveryStartedAt = ProcessInfo.processInfo.systemUptime }
         resumingLive = resumingLive || live?.isTimeShift == false
         let delay = recoveryDelays[recoveryAttempt]
         recoveryAttempt += 1
-        diagnostics?.emit("復旧開始: 理由=\(detail), 試行=\(recoveryAttempt)/\(recoveryDelays.count), 待機=\(delay)秒, 番組情報・接続先を再取得")
+        diagnostics?.emit("復旧開始: reason=\(reason), 理由=\(detail), 試行=\(recoveryAttempt)/\(recoveryDelays.count), 待機=\(delay)秒, 番組情報・接続先を再取得")
         recoveryDiagnostics = diagnostics
         stopConnectionAttempt()
         delegate?.nicoManagerDidDisconnect(self, disconnectContext: .reconnect(reason))
-        delegate?.nicoManagerWillReconnectToLive(self, reason: reason)
+        if isStartingRecovery { delegate?.nicoManagerWillReconnectToLive(self, reason: reason) }
         let work = DispatchWorkItem { [weak self] in
             guard let self = self, self.activeProgramId == programId, self.recoveryWorkItem != nil else { return }
             self.recoveryWorkItem = nil

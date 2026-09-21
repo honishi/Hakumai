@@ -207,5 +207,5 @@
 "scroll_up_button" = "短押しで上にスクロール / 長押しで１番上にスクロール";
 "scroll_down_button" = "短押しで下にスクロール / 長押しで１番下にスクロール";
 
-"comment_reconnecting" = "コメント受信が中断しました。再接続中…";
+"comment_reconnecting" = "コメントサーバーに再接続しています…";
 "comment_connection_failed" = "コメント受信を継続できませんでした。接続エラーで停止しました。";
