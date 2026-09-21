@@ -147,7 +147,7 @@
 ///
 /// Comment Menu
 ///
-"copy_comment" = "コメントをコピー";
+"copy_comment" = "メッセージをコピー";
 "copy_url_in_comment" = "コメント中のURLをコピー";
 "open_url_in_comment" = "コメント中のURLを開く";
 "set_handle_name" = "ハンドル名を設定";

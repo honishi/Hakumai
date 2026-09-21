@@ -1033,6 +1033,16 @@ extension MainViewController {
         return messageContainer[tableView.clickedRow]
     }
 
+    var contextMenuCopyRows: IndexSet {
+        MessageCopy.contextMenuRows(clickedRow: tableView.clickedRow,
+                                    selectedRows: tableView.selectedRowIndexes,
+                                    messageCount: messageContainer.count())
+    }
+
+    func copyMessages(at rows: IndexSet) {
+        MessageCopy.text(messages: messageContainer.filteredMessagesSnapshot(), rows: rows)?.copyToPasteBoard()
+    }
+
     func userPageUrl(for userId: String) -> URL? {
         return nicoManager.userPageUrl(for: userId)
     }
@@ -1527,6 +1537,9 @@ private extension MainViewController {
     }
 
     func configureTableView() {
+        tableView.allowsMultipleSelection = true
+        tableView.allowsColumnSelection = false
+        tableView.setCopyAction { [weak self] rows in self?.copyMessages(at: rows) }
         tableView.setClickAction(
             clickHandler: nil,
             doubleClickHandler: { [weak self] in self?.openUserWindow() }

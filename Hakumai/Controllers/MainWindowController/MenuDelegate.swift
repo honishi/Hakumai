@@ -38,11 +38,12 @@ final class MenuDelegate: NSObject {
 extension MenuDelegate: NSMenuItemValidation {
     // swiftlint:disable cyclomatic_complexity
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+        if menuItem == copyCommentMenuItem {
+            return !mainViewController.contextMenuCopyRows.isEmpty
+        }
         guard let message = clickedMessage,
               case let .chat(chat) = message.content else { return false }
         switch menuItem {
-        case copyCommentMenuItem:
-            return true
         case copyUrlMenuItem, openUrlMenuItem:
             return chat.comment.extractUrlString() != nil ? true : false
         case setHandleNameMenuItem, setUserColorMenuItem:
@@ -77,8 +78,7 @@ extension MenuDelegate: NSMenuItemValidation {
 extension MenuDelegate {
     // MARK: - Context Menu Handlers
     @IBAction func copyComment(_ sender: AnyObject) {
-        guard case let .chat(chat) = clickedMessage?.content else { return }
-        chat.comment.copyToPasteBoard()
+        mainViewController.copyMessages(at: mainViewController.contextMenuCopyRows)
     }
 
     @IBAction func copyUrl(_ sender: Any) {
@@ -153,6 +153,29 @@ extension MenuDelegate {
         guard case let .chat(chat) = clickedMessage?.content,
               let url = mainViewController.userPageUrl(for: chat.userId) else { return }
         NSWorkspace.shared.open(url)
+    }
+}
+
+enum MessageCopy {
+    static func contextMenuRows(clickedRow: Int, selectedRows: IndexSet, messageCount: Int) -> IndexSet {
+        let validRows = IndexSet(integersIn: 0..<messageCount)
+        guard validRows.contains(clickedRow) else { return [] }
+        if selectedRows.contains(clickedRow) {
+            return selectedRows.intersection(validRows)
+        }
+        return IndexSet(integer: clickedRow)
+    }
+
+    static func text(messages: [Message], rows: IndexSet) -> String? {
+        let validRows = rows.intersection(IndexSet(integersIn: messages.indices))
+        guard !validRows.isEmpty else { return nil }
+        return validRows.map { row in
+            switch messages[row].content {
+            case .chat(let chat): return chat.comment
+            case .debug(let debug): return debug.displayMessage
+            case .system(let system): return system.message
+            }
+        }.joined(separator: "\n")
     }
 }
 

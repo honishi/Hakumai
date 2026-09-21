@@ -84,7 +84,7 @@ internal enum L10n {
   internal static let copyAllCommentsFormatNumberAndComment = L10n.tr("Localizable", "copy_all_comments_format_number_and_comment")
   /// Choose Copy Format
   internal static let copyAllCommentsFormatTitle = L10n.tr("Localizable", "copy_all_comments_format_title")
-  /// Copy Comment
+  /// Copy Message
   internal static let copyComment = L10n.tr("Localizable", "copy_comment")
   /// Copy URL in Comment
   internal static let copyUrlInComment = L10n.tr("Localizable", "copy_url_in_comment")
