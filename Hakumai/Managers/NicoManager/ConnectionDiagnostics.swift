@@ -93,6 +93,7 @@ final class ConnectionDiagnostics {
                 return "Alamofireエラー(code=\((error as NSError).code))"
             }
         }
+        if let error = error as? NdgrStreamError { return error.diagnosticSummary }
         if let error = error as? WSError {
             return "WebSocketエラー(type=\(error.type), code=\(error.code))"
         }
@@ -119,6 +120,7 @@ final class ConnectionDiagnostics {
 /// 再取得しても改善しない認証・権限エラーや手動キャンセルは再試行しない。
 enum NicoRecoveryPolicy {
     static func shouldRetry(_ error: Error) -> Bool {
+        if case NdgrStreamError.truncatedFrame = error { return true }
         if let cause = (error as? NicoError)?.underlyingError {
             return shouldRetry(cause)
         }

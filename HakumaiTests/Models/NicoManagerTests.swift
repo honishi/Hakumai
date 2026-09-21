@@ -427,7 +427,45 @@ extension NicoManagerTests {
         XCTAssertTrue(recorder.logs.contains { $0.contains("旧コメントWSの空送信・Ping監視タイマーは起動しない") })
     }
 
+    func testTruncatedSegmentRecoversWithoutDuplicatingCompletedFrames() {
+        let fixture = RecoveryFixture()
+        fixture.view = { count, _ in
+            .ok(try RecoveryFixture.playlist(segment: count == 1 ? "partial" : "recovered", next: 100))
+        }
+        fixture.segment = { path in
+            let first = try RecoveryFixture.comment(id: "one", text: "first")
+            if path == "/partial" { return .ok(first + Data([0x80])) }
+            return .ok(try first + RecoveryFixture.comment(id: "two", text: "second") + RecoveryFixture.end())
+        }
+        let recorder = RecoveryRecorder()
+        let ended = expectation(description: "未完フレームから復旧")
+        recorder.onDisconnect = { if case .normal = $0 { ended.fulfill() } }
+        let manager = fixture.manager(recorder: recorder)
+        manager.connect(liveProgramId: "lv1")
+        wait(for: [ended], timeout: 5)
+        XCTAssertEqual(recorder.comments, ["first", "second"])
+        XCTAssertEqual(fixture.viewPositions, [fixture.beginAt, fixture.beginAt])
+        XCTAssertTrue(recorder.logs.contains { $0.contains("復旧開始") && $0.contains("NDGRフレーム途中で受信終了") })
+    }
+
+    func testRepeatedTruncatedViewsStopAtRecoveryLimit() {
+        let fixture = RecoveryFixture()
+        fixture.view = { _, _ in .ok(Data([0x80])) }
+        let recorder = RecoveryRecorder()
+        let failed = expectation(description: "繰り返す不完全データは上限で停止")
+        recorder.onDisconnect = { if case .failure = $0 { failed.fulfill() } }
+        let manager = fixture.manager(recorder: recorder, delays: [0, 0])
+        manager.connect(liveProgramId: "lv1")
+        wait(for: [failed], timeout: 5)
+        XCTAssertEqual(fixture.programRequests, 3)
+        XCTAssertEqual(fixture.viewPositions.count, 3)
+        XCTAssertFalse(recorder.disconnections.contains { if case .normal = $0 { return true }; return false })
+    }
+
     func testRecoveryPolicyRetriesTransientFailuresOnly() {
+        XCTAssertTrue(NicoRecoveryPolicy.shouldRetry(NdgrStreamError.truncatedFrame))
+        XCTAssertFalse(NicoRecoveryPolicy.shouldRetry(NdgrStreamError.invalidSegmentURL))
+        XCTAssertFalse(NicoRecoveryPolicy.shouldRetry(NdgrStreamError.programEnded))
         for code in [NSURLErrorTimedOut, NSURLErrorNetworkConnectionLost, NSURLErrorNotConnectedToInternet] {
             XCTAssertTrue(NicoRecoveryPolicy.shouldRetry(URLError(URLError.Code(rawValue: code))))
         }

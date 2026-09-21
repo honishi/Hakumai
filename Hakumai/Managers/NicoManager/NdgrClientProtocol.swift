@@ -39,4 +39,12 @@ enum NdgrStreamError: Error {
     case programEnded
     case invalidSegmentURL
     case truncatedFrame
+
+    var diagnosticSummary: String {
+        switch self {
+        case .truncatedFrame: return "NDGRフレーム途中で受信終了"
+        case .invalidSegmentURL: return "NDGR Segment取得先が不正"
+        case .programEnded: return "NDGR放送終了通知"
+        }
+    }
 }
