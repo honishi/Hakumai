@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import AppKit
 import XCTest
 @testable import Hakumai
 
@@ -159,6 +160,62 @@ final class HakumaiTests: XCTestCase {
         XCTAssertEqual(state.matchedRows, [1, 4, 8, 9])
     }
 
+    func testContextMenuCopiesTheSelectionOnlyWhenClickingInsideIt() {
+        let selection = IndexSet([0, 2])
+        XCTAssertEqual(MessageCopy.contextMenuRows(clickedRow: 2, selectedRows: selection, messageCount: 4), selection)
+        XCTAssertEqual(MessageCopy.contextMenuRows(clickedRow: 1, selectedRows: selection, messageCount: 4), IndexSet(integer: 1))
+        XCTAssertTrue(MessageCopy.contextMenuRows(clickedRow: -1, selectedRows: selection, messageCount: 4).isEmpty)
+        XCTAssertTrue(MessageCopy.contextMenuRows(clickedRow: 4, selectedRows: selection, messageCount: 4).isEmpty)
+        XCTAssertEqual(MessageCopy.contextMenuRows(clickedRow: 0, selectedRows: selection, messageCount: 1), IndexSet(integer: 0))
+    }
+
+    func testCopyIncludesCommentsDebugCountsAndSystemMessagesInDisplayOrder() {
+        var debug = Message(messageNo: 1, debug: "Kusa rate 0%")
+        debug.content = .debug(DebugMessage(message: "Kusa rate 0%", repeatCount: 5))
+        let messages = [
+            makeChatMessage(messageNo: 0, userId: "1", comment: "hello\nworld"),
+            debug,
+            Message(messageNo: 2, system: "Live closed.")
+        ]
+        XCTAssertEqual(MessageCopy.text(messages: messages, rows: IndexSet([2, 0, 1])),
+                       "hello\nworld\nKusa rate 0% x5\nLive closed.")
+        XCTAssertEqual(MessageCopy.text(messages: messages, rows: IndexSet(integer: 1)), "Kusa rate 0% x5")
+        XCTAssertEqual(MessageCopy.text(messages: messages, rows: IndexSet([0, 2])), "hello\nworld\nLive closed.")
+    }
+
+    func testCopyIgnoresRowsThatNoLongerExistAndDoesNotClearClipboardForEmptySelection() {
+        let messages = [Message(messageNo: 0, debug: "debug")]
+        XCTAssertNil(MessageCopy.text(messages: messages, rows: []))
+        XCTAssertNil(MessageCopy.text(messages: [], rows: IndexSet(integer: 0)))
+        XCTAssertNil(MessageCopy.text(messages: messages, rows: IndexSet(integer: 10)))
+        XCTAssertEqual(MessageCopy.text(messages: messages, rows: IndexSet([0, 10])), "debug")
+    }
+
+    func testTableSelectAllAndCopyUseStandardActions() {
+        let source = CopyTableDataSource()
+        let table = ClickTableView(frame: .zero)
+        table.allowsMultipleSelection = true
+        table.allowsColumnSelection = false
+        table.addTableColumn(NSTableColumn(identifier: NSUserInterfaceItemIdentifier("message")))
+        table.dataSource = source
+        table.reloadData()
+        var copiedRows: IndexSet?
+        table.setCopyAction { copiedRows = $0 }
+        let copyItem = NSMenuItem(title: "Copy", action: #selector(ClickTableView.copy(_:)), keyEquivalent: "c")
+
+        XCTAssertFalse(table.validateUserInterfaceItem(copyItem))
+        table.copy(nil)
+        XCTAssertNil(copiedRows)
+        table.selectAll(nil)
+        XCTAssertEqual(table.selectedRowIndexes, IndexSet(integersIn: 0..<3))
+        XCTAssertTrue(table.validateUserInterfaceItem(copyItem))
+        table.copy(nil)
+        XCTAssertEqual(copiedRows, IndexSet(integersIn: 0..<3))
+        table.deselectAll(nil)
+        XCTAssertFalse(table.validateUserInterfaceItem(copyItem))
+        withExtendedLifetime(source) {}
+    }
+
     private func makeChatMessage(
         messageNo: Int,
         userId: String,
@@ -179,4 +236,8 @@ final class HakumaiTests: XCTestCase {
         )
         return Message(messageNo: messageNo, chat: chat)
     }
+}
+
+private final class CopyTableDataSource: NSObject, NSTableViewDataSource {
+    func numberOfRows(in tableView: NSTableView) -> Int { 3 }
 }

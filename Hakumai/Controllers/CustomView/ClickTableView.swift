@@ -12,6 +12,7 @@ import AppKit
 final class ClickTableView: NSTableView {
     private var clickHandler: (() -> Void)?
     private var doubleClickHandler: (() -> Void)?
+    private var copyHandler: ((IndexSet) -> Void)?
     private var lastClickedRow = -1
 }
 
@@ -25,10 +26,32 @@ extension ClickTableView {
         self.doubleClickHandler = doubleClickHandler
     }
 
+    func setCopyAction(_ handler: @escaping (IndexSet) -> Void) {
+        copyHandler = handler
+    }
+
+    @objc func copy(_ sender: Any?) {
+        guard !selectedRowIndexes.isEmpty else { return }
+        copyHandler?(selectedRowIndexes)
+    }
+
+    override func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
+        if item.action == #selector(copy(_:)) {
+            return copyHandler != nil && !selectedRowIndexes.isEmpty
+        }
+        return super.validateUserInterfaceItem(item)
+    }
+
     @objc func rowClicked(_ sender: AnyObject?) {
         // log.debug("\(clickedRow), \(selectedRow)")
         guard let clickHandler = clickHandler else {
-            unclickRow()
+            let modifiers = NSApp.currentEvent?.modifierFlags ?? []
+            if allowsMultipleSelection && !modifiers.isDisjoint(with: [.command, .shift]) {
+                // 複数選択操作の結果を維持し、通常クリックの連続判定をリセットする。
+                lastClickedRow = -1
+            } else {
+                unclickRow()
+            }
             return
         }
         clickHandler()

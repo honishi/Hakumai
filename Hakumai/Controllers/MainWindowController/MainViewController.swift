@@ -48,6 +48,7 @@ struct CommentSearchState {
     var generation = 0
 
     private var pendingMatchedRows = [Int]()
+    private var pendingUpdatedMatches = [Int: Bool]()
 
     var hasPendingTypedQuery: Bool { typedQuery != appliedQuery }
     var needsSearchExecution: Bool { typedQuery != nil && appliedQuery == nil }
@@ -69,6 +70,7 @@ struct CommentSearchState {
         normalizedQuery = nil
         matchedRows.removeAll(keepingCapacity: false)
         pendingMatchedRows.removeAll(keepingCapacity: false)
+        pendingUpdatedMatches.removeAll(keepingCapacity: false)
         isSearching = false
         generation += 1
     }
@@ -78,6 +80,7 @@ struct CommentSearchState {
         normalizedQuery = nil
         matchedRows.removeAll(keepingCapacity: false)
         pendingMatchedRows.removeAll(keepingCapacity: false)
+        pendingUpdatedMatches.removeAll(keepingCapacity: false)
         isSearching = false
         generation += 1
     }
@@ -93,6 +96,7 @@ struct CommentSearchState {
         self.normalizedQuery = normalizedQuery
         matchedRows.removeAll(keepingCapacity: false)
         pendingMatchedRows.removeAll(keepingCapacity: false)
+        pendingUpdatedMatches.removeAll(keepingCapacity: false)
         isSearching = true
         generation += 1
 
@@ -106,8 +110,17 @@ struct CommentSearchState {
     mutating func finishSearch(matchedRows: [Int], generation: Int) -> Bool {
         guard generation == self.generation else { return false }
         isSearching = false
-        self.matchedRows = matchedRows + pendingMatchedRows
+        var rows = Set(matchedRows + pendingMatchedRows)
+        for (row, isMatched) in pendingUpdatedMatches {
+            if isMatched {
+                rows.insert(row)
+            } else {
+                rows.remove(row)
+            }
+        }
+        self.matchedRows = rows.sorted()
         pendingMatchedRows.removeAll(keepingCapacity: false)
+        pendingUpdatedMatches.removeAll(keepingCapacity: false)
         return true
     }
 
@@ -117,6 +130,18 @@ struct CommentSearchState {
             pendingMatchedRows.append(contentsOf: rows)
         } else {
             matchedRows.append(contentsOf: rows)
+        }
+    }
+
+    mutating func updateMatch(at row: Int, isMatched: Bool) {
+        if isSearching {
+            pendingUpdatedMatches[row] = isMatched
+        } else {
+            matchedRows.removeAll { $0 == row }
+            if isMatched {
+                matchedRows.append(row)
+                matchedRows.sort()
+            }
         }
     }
 }
@@ -178,7 +203,7 @@ struct CommentSearchMatcher {
         case .system(let system):
             return system.message
         case .debug(let debug):
-            return debug.message
+            return debug.displayMessage
         case .chat(let chat):
             let userLabel = resolvedUserLabel(
                 for: chat.userId,
@@ -584,7 +609,7 @@ extension MainViewController: NSTableViewDelegate {
                 isBold: chat.isFirst,
                 isRed: chat.isCasterComment)
         case .debug(let debug):
-            content = debug.message
+            content = debug.displayMessage
             attributes = UIHelper.commentAttributes(fontSize: tableViewFontSize)
         }
 
@@ -812,6 +837,7 @@ extension MainViewController: NicoManagerDelegate {
     }
 
     func nicoManagerDidDisconnect(_ nicoManager: NicoManagerType, disconnectContext: NicoDisconnectContext) {
+        logDebugMessageToTable("UI切断通知: context=\(disconnectContext), 接続表示=\(connectedToLive)\(connectedToLive ? "" : "（既に切断表示のため無視）")")
         guard connectedToLive else { return }
 
         switch disconnectContext {
@@ -1005,6 +1031,16 @@ extension MainViewController {
     var clickedMessage: Message? {
         guard tableView.clickedRow != -1 else { return nil }
         return messageContainer[tableView.clickedRow]
+    }
+
+    var contextMenuCopyRows: IndexSet {
+        MessageCopy.contextMenuRows(clickedRow: tableView.clickedRow,
+                                    selectedRows: tableView.selectedRowIndexes,
+                                    messageCount: messageContainer.count())
+    }
+
+    func copyMessages(at rows: IndexSet) {
+        MessageCopy.text(messages: messageContainer.filteredMessagesSnapshot(), rows: rows)?.copyToPasteBoard()
     }
 
     func userPageUrl(for userId: String) -> URL? {
@@ -1417,6 +1453,7 @@ extension MainViewController {
             let shouldScroll = self.scrollView.isReachedToBottom
             self.messageContainer.rebuildFilteredMessages {
                 self.resetCommentSearchResults()
+                self.rowHeightCache.removeAll(keepingCapacity: false)
                 self.tableView.reloadData()
                 self.updateCommentSearchStatusLabel()
                 if shouldScroll {
@@ -1500,6 +1537,9 @@ private extension MainViewController {
     }
 
     func configureTableView() {
+        tableView.allowsMultipleSelection = true
+        tableView.allowsColumnSelection = false
+        tableView.setCopyAction { [weak self] rows in self?.copyMessages(at: rows) }
         tableView.setClickAction(
             clickHandler: nil,
             doubleClickHandler: { [weak self] in self?.openUserWindow() }
@@ -1684,6 +1724,10 @@ private extension MainViewController {
     func appendToTable(debugMessage: String) {
         DispatchQueue.main.async {
             let result = self.messageContainer.append(debug: debugMessage)
+            if let row = result.updatedRow {
+                self.reloadRepeatedDebugMessage(at: row)
+                return
+            }
             if result.appended {
                 let rowIndex = result.count - 1
                 self.updateCommentSearchMatchesForAppendedMessages(
@@ -1693,6 +1737,23 @@ private extension MainViewController {
             }
             self._updateTable(appended: result.appended, messageCount: result.count)
         }
+    }
+
+    func reloadRepeatedDebugMessage(at row: Int) {
+        let message = messageContainer[row]
+        let shouldScroll = scrollView.isReachedToBottom
+        if let query = commentSearchState.incrementalNormalizedQuery {
+            let isMatched = !matchedRowIndexes(for: [message], normalizedQuery: query).isEmpty
+            commentSearchState.updateMatch(at: row, isMatched: isMatched)
+        }
+        rowHeightCache.removeValue(forKey: message.messageNo)
+        let rows = IndexSet(integer: row)
+        tableView.reloadData(forRowIndexes: rows, columnIndexes: IndexSet(integersIn: 0..<tableView.numberOfColumns))
+        tableView.noteHeightOfRows(withIndexesChanged: rows)
+        if shouldScroll {
+            scrollView.scrollToBottom()
+        }
+        updateCommentSearchStatusLabel()
     }
 
     func _updateTable(appended: Bool, messageCount: Int) {

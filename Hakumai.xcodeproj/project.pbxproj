@@ -36,6 +36,9 @@
 		DB2F516126669675000A1C58 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DB2F516326669675000A1C58 /* Localizable.strings */; };
 		DB2F516726669B3E000A1C58 /* Localize.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2F516626669B3E000A1C58 /* Localize.swift */; };
 		DB3091102C5D736900B9F7AA /* NdgrClientProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB30910F2C5D736900B9F7AA /* NdgrClientProtocol.swift */; };
+		CA2026092100000000000001 /* ConnectionDiagnostics.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092100000000000002 /* ConnectionDiagnostics.swift */; };
+		CA2026092100000000000003 /* ConnectionDiagnosticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092100000000000004 /* ConnectionDiagnosticsTests.swift */; };
+		CA2026092100000000000005 /* MessageContainerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092100000000000006 /* MessageContainerTests.swift */; };
 		DB3091122C5D737800B9F7AA /* NdgrClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB3091112C5D737800B9F7AA /* NdgrClient.swift */; };
 		DB3091462C5D8E2000B9F7AA /* moderator.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB3091392C5D8E2000B9F7AA /* moderator.pb.swift */; };
 		DB3091472C5D8E2000B9F7AA /* atoms.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB30913B2C5D8E2000B9F7AA /* atoms.pb.swift */; };
@@ -195,6 +198,9 @@
 		DB2F5164266696FD000A1C58 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		DB2F516626669B3E000A1C58 /* Localize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Localize.swift; sourceTree = "<group>"; };
 		DB30910F2C5D736900B9F7AA /* NdgrClientProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrClientProtocol.swift; sourceTree = "<group>"; };
+		CA2026092100000000000002 /* ConnectionDiagnostics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionDiagnostics.swift; sourceTree = "<group>"; };
+		CA2026092100000000000004 /* ConnectionDiagnosticsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionDiagnosticsTests.swift; sourceTree = "<group>"; };
+		CA2026092100000000000006 /* MessageContainerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageContainerTests.swift; sourceTree = "<group>"; };
 		DB3091112C5D737800B9F7AA /* NdgrClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrClient.swift; sourceTree = "<group>"; };
 		DB3091392C5D8E2000B9F7AA /* moderator.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = moderator.pb.swift; sourceTree = "<group>"; };
 		DB30913B2C5D8E2000B9F7AA /* atoms.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = atoms.pb.swift; sourceTree = "<group>"; };
@@ -675,9 +681,11 @@
 			isa = PBXGroup;
 			children = (
 				DB7BA06D1A58B6B7000778CF /* ChatMessageTests.swift */,
+				CA2026092100000000000004 /* ConnectionDiagnosticsTests.swift */,
 				DBDBA087277B45AB000EE2F2 /* DatabaseValueCacherTests.swift */,
 				DBE093FE1A5869A2004554FD /* HandleNameManagerTests.swift */,
 				DB34F836275BB37600180C7A /* LiveThumbnailManagerTest.swift */,
+				CA2026092100000000000006 /* MessageContainerTests.swift */,
 				DB0F0ECC1A16441D00F8BDC5 /* NicoManagerTests.swift */,
 				DBD1CF53273F376A00D52271 /* PremiumTests.swift */,
 				DBAFCFAD27313EB200989F8B /* RankingManagerTests.swift */,
@@ -766,6 +774,7 @@
 		DBE093F61A585EC5004554FD /* NicoManager */ = {
 			isa = PBXGroup;
 			children = (
+				CA2026092100000000000002 /* ConnectionDiagnostics.swift */,
 				DB3091112C5D737800B9F7AA /* NdgrClient.swift */,
 				DB30910F2C5D736900B9F7AA /* NdgrClientProtocol.swift */,
 				DBAAA7501A0FDA4500981004 /* NicoManager.swift */,
@@ -1132,6 +1141,7 @@
 				DBA4FA0E285E110C000BB6C4 /* CommentCopier.swift in Sources */,
 				DBA4FA0C285E1100000BB6C4 /* CommentCopierType.swift in Sources */,
 				DB5164FC264E662100F809B3 /* CommentTableCellView.swift in Sources */,
+				CA2026092100000000000001 /* ConnectionDiagnostics.swift in Sources */,
 				DBDBA086277B40A3000EE2F2 /* DatabaseValueCacher.swift in Sources */,
 				DBFA88821A1BC8C9005349AD /* Enum.swift in Sources */,
 				DB0E10641A39B6C200A10E00 /* GeneralViewController.swift in Sources */,
@@ -1212,10 +1222,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				DB7BA06E1A58B6B7000778CF /* ChatMessageTests.swift in Sources */,
+				CA2026092100000000000003 /* ConnectionDiagnosticsTests.swift in Sources */,
 				DBDBA088277B45AB000EE2F2 /* DatabaseValueCacherTests.swift in Sources */,
 				DB2AE0D71A0EE2FD00B1CE4D /* HakumaiTests.swift in Sources */,
 				DBE093FF1A5869A2004554FD /* HandleNameManagerTests.swift in Sources */,
 				DB34F837275BB37600180C7A /* LiveThumbnailManagerTest.swift in Sources */,
+				CA2026092100000000000005 /* MessageContainerTests.swift in Sources */,
 				DB0F0ECD1A16441D00F8BDC5 /* NicoManagerTests.swift in Sources */,
 				DBD1CF54273F376A00D52271 /* PremiumTests.swift in Sources */,
 				DBAFCFAE27313EB200989F8B /* RankingManagerTests.swift in Sources */,
