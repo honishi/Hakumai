@@ -182,6 +182,10 @@ extension NicoManager {
             return
         }
         if !connectContext.isReconnect {
+            if pendingHistoryCount > 0 {
+                (connectionDiagnostics ?? recoveryDiagnostics)?.emit("手動接続切替: 旧接続の未報告履歴\(pendingHistoryCount)件は新しい画面に通知しない")
+                pendingHistoryCount = 0
+            }
             disconnect()
             recoveryAttempt = 0
             resumingLive = false

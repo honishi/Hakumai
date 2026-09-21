@@ -519,6 +519,42 @@ extension NicoManagerTests {
         XCTAssertEqual(recorder.historySummaries, [1])
     }
 
+    func testNewConnectionDoesNotReportOldHistoryCountAfterClearingTable() {
+        let fixture = RecoveryFixture()
+        fixture.beginAt = String(Int(Date().timeIntervalSince1970) - 10_000)
+        let recorder = RecoveryRecorder()
+        var switchProgram: () -> Void = {}
+        fixture.view = { count, _ in
+            if count == 2 {
+                DispatchQueue.main.async { switchProgram() }
+                return .holding(Data())
+            }
+            return .ok(try RecoveryFixture.playlist(segment: count == 1 ? "old" : "new", next: count == 1 ? 100 : nil))
+        }
+        fixture.segment = { path in
+            var data = try RecoveryFixture.comment(id: path, text: path)
+            if path == "/new" { data += try RecoveryFixture.end() }
+            return .ok(data)
+        }
+        let ended = expectation(description: "新番組の件数だけを通知")
+        recorder.onDisconnect = { context in
+            if case .normal = context, fixture.programRequests == 2 { ended.fulfill() }
+        }
+        let manager = fixture.manager(recorder: recorder)
+        switchProgram = {
+            XCTAssertEqual(recorder.comments, ["/old"])
+            XCTAssertTrue(recorder.historySummaries.isEmpty)
+            // connectLive と同じく、新しい接続を要求する前にテーブルを消す。
+            recorder.comments.removeAll()
+            manager.connect(liveProgramId: "lv2")
+        }
+        manager.connect(liveProgramId: "lv1")
+        wait(for: [ended], timeout: 5)
+        XCTAssertEqual(recorder.comments, ["/new"])
+        XCTAssertEqual(recorder.historySummaries, [1])
+        XCTAssertTrue(recorder.logs.contains { $0.contains("旧接続の未報告履歴1件") })
+    }
+
     func testCompletedHistoryIsNotLostWhenWatchConnectionRestarts() {
         let fixture = RecoveryFixture()
         fixture.beginAt = String(Int(Date().timeIntervalSince1970) - 10_000)
