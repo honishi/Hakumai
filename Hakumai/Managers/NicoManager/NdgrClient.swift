@@ -745,6 +745,7 @@ private final class ViewIteration {
         programEnded = true
         diagnostics.emit("NDGR Segment: サーバーから放送終了状態を受信")
         stop?(nil)
+        // 呼び出し元の終了通知Segmentは戻った後のdeferで減るため、待機対象から先に除く。
         diagnostics.emit("NDGR終了待ち開始: 残りSegment=\(pendingSegments - 1), 上限=\(timeout)秒, 新規取得・復旧は行わない")
         let deadline = DispatchWorkItem { [weak self] in
             guard let self = self, self.pendingSegments > 0 else { return }
