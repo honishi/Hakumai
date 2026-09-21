@@ -173,7 +173,7 @@ private extension NdgrClient {
         }
         try Task.checkCancellation()
         if view.programEnded {
-            diagnostics.emit("NDGR終了待ち完了: 取得済みコメントを通知して終了")
+            diagnostics.emit("NDGR終了待ち完了: 取得失敗Segment=\(view.failedSegments), 取得済みコメントを通知して終了")
             throw NdgrStreamError.programEnded
         }
         return (next, segmentCount)
@@ -188,7 +188,8 @@ private extension NdgrClient {
         } catch {
             try Task.checkCancellation()
             if view.programEnded {
-                diagnostics.emit("NDGR終了待ち: Segment取得失敗、放送終了を優先: \(ConnectionDiagnostics.errorSummary(error))")
+                view.failedSegments += 1
+                diagnostics.emit("NDGR終了待ち: Segment取得失敗、放送終了を優先: \(ConnectionDiagnostics.errorSummary(error)), 未完了Segment(当該含む)=\(view.pendingSegments), 取得失敗累計=\(view.failedSegments)")
                 return
             }
             diagnostics.emit("NDGR Segment失敗 → View待機を解除: \(ConnectionDiagnostics.errorSummary(error))")
@@ -736,6 +737,7 @@ private final class ViewIteration {
     private(set) var failure: Error?
     private(set) var programEnded = false
     var pendingSegments = 0
+    var failedSegments = 0
     private var endDeadline: DispatchWorkItem?
 
     func endProgram(timeout: TimeInterval, diagnostics: ConnectionDiagnostics, session: Session) {

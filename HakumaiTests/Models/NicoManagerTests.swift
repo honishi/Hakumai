@@ -170,6 +170,32 @@ extension NicoManagerTests {
         XCTAssertFalse(recorder.logs.contains { $0.contains("復旧開始") })
     }
 
+    func testFailureDuringEndDrainReportsCountsAndPreservesOtherSegments() {
+        let fixture = RecoveryFixture()
+        fixture.view = { _, _ in
+            .holding(try RecoveryFixture.playlist(segment: "failed") + RecoveryFixture.playlist(segment: "slow") + RecoveryFixture.playlist(segment: "end"))
+        }
+        fixture.segment = { path in
+            switch path {
+            case "/end": return .ok(try RecoveryFixture.end())
+            case "/failed": return .delayedFailure(.cannotConnectToHost, 0.1)
+            default: return .delayed(try RecoveryFixture.comment(id: "one", text: "last comment"), 0.2)
+            }
+        }
+        let recorder = RecoveryRecorder()
+        let ended = expectation(description: "通信失敗があっても他のSegmentを取得して終了")
+        recorder.onDisconnect = { if case .normal = $0 { ended.fulfill() } }
+        let manager = fixture.manager(recorder: recorder)
+        manager.connect(liveProgramId: "lv1")
+        wait(for: [ended], timeout: 5)
+        XCTAssertEqual(recorder.comments, ["last comment"])
+        XCTAssertEqual(recorder.disconnections.count, 1)
+        XCTAssertEqual(fixture.programRequests, 1)
+        XCTAssertTrue(recorder.logs.contains { $0.contains("未完了Segment(当該含む)=2") && $0.contains("取得失敗累計=1") })
+        XCTAssertTrue(recorder.logs.contains { $0.contains("NDGR終了待ち完了: 取得失敗Segment=1") })
+        XCTAssertFalse(recorder.logs.contains { $0.contains("復旧開始") || $0.contains("NDGR終了待ち上限") })
+    }
+
     func testManualStopCancelsProgramEndDrainAndDeadline() {
         let fixture = RecoveryFixture()
         fixture.view = { _, _ in
@@ -638,6 +664,7 @@ extension NicoManagerTests {
 private final class RecoveryFixture {
     enum Reply {
         case ok(Data), holding(Data), delayed(Data, TimeInterval), http(Int), timeout
+        case delayedFailure(URLError.Code, TimeInterval)
     }
     var beginAt = String(Int(Date().timeIntervalSince1970) - 10)
     var status: (Int) -> String = { _ in "ON_AIR" }
@@ -753,6 +780,12 @@ private final class RecoveryURLProtocol: URLProtocol {
         let finish: Bool
         var delay: TimeInterval = 0
         switch reply {
+        case .delayedFailure(let code, let delay):
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [self] in
+                guard !stopped else { return }
+                client?.urlProtocol(self, didFailWithError: URLError(code))
+            }
+            return
         case .timeout:
             client?.urlProtocol(self, didFailWithError: URLError(.timedOut))
             return
