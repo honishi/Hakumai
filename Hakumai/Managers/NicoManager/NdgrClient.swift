@@ -101,7 +101,8 @@ private extension NdgrClient {
         var next: Int? = from
         var segmentCount = 0
         let chatHistory = ChatHistory()
-        defer { finishChatHistory(chatHistory, diagnostics: diagnostics) }
+        // 失敗時も履歴本体は渡す。件数の確定は履歴完了または Manager の最終切断で行う。
+        defer { emitChatHistoryIfExists(chatHistory: chatHistory, diagnostics: diagnostics) }
         let latestHistoryTime = Int(Date().timeIntervalSince1970) - 16 * 4
 
         while let current = next {

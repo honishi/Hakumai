@@ -473,6 +473,52 @@ extension NicoManagerTests {
         XCTAssertEqual(recorder.historySummaries, [2])
     }
 
+    func testHistorySummarySurvivesNDGRFailureAndMissingNext() {
+        for truncated in [true, false] {
+            let fixture = RecoveryFixture()
+            fixture.beginAt = String(Int(Date().timeIntervalSince1970) - 10_000)
+            fixture.view = { count, _ in
+                .ok(try RecoveryFixture.playlist(segment: count == 1 ? "first" : "recovered"))
+            }
+            fixture.segment = { path in
+                let first = try RecoveryFixture.comment(id: "one", text: "first")
+                if path == "/first" { return .ok(first + (truncated ? Data([0x80]) : Data())) }
+                return .ok(try first + RecoveryFixture.comment(id: "two", text: "second") + RecoveryFixture.end())
+            }
+            let recorder = RecoveryRecorder()
+            let ended = expectation(description: "NDGR復旧をまたいで履歴件数をまとめる")
+            recorder.onLog = { message in
+                if message.contains("復旧開始") {
+                    XCTAssertEqual(recorder.comments, ["first"])
+                    XCTAssertTrue(recorder.historySummaries.isEmpty)
+                }
+            }
+            recorder.onDisconnect = { if case .normal = $0 { ended.fulfill() } }
+            let manager = fixture.manager(recorder: recorder)
+            manager.connect(liveProgramId: "lv1")
+            wait(for: [ended], timeout: 5)
+            XCTAssertEqual(recorder.comments, ["first", "second"])
+            XCTAssertEqual(recorder.historySummaries, [2])
+            XCTAssertEqual(fixture.programRequests, 2)
+        }
+    }
+
+    func testUnreportedHistoryIsSummarizedWhenRecoveryFinallyFails() {
+        let fixture = RecoveryFixture()
+        fixture.beginAt = String(Int(Date().timeIntervalSince1970) - 10_000)
+        fixture.view = { _, _ in .ok(try RecoveryFixture.playlist(segment: "history")) }
+        fixture.segment = { _ in .ok(try RecoveryFixture.comment(id: "one", text: "first")) }
+        fixture.programFailure = { $0 == 2 ? 403 : nil }
+        let recorder = RecoveryRecorder()
+        let failed = expectation(description: "最終停止時に未報告件数を通知")
+        recorder.onPreparationFailure = { failed.fulfill() }
+        let manager = fixture.manager(recorder: recorder)
+        manager.connect(liveProgramId: "lv1")
+        wait(for: [failed], timeout: 5)
+        XCTAssertEqual(recorder.comments, ["first"])
+        XCTAssertEqual(recorder.historySummaries, [1])
+    }
+
     func testCompletedHistoryIsNotLostWhenWatchConnectionRestarts() {
         let fixture = RecoveryFixture()
         fixture.beginAt = String(Int(Date().timeIntervalSince1970) - 10_000)
