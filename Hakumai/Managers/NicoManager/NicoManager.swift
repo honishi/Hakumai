@@ -117,8 +117,8 @@ final class NicoManager: NicoManagerType {
     private var currentConnectContext: NicoConnectContext = .normal
     // 一時的なデータ受信と切断の反復で無限復旧しないよう、手動接続まで累計を保持する。
     private var recoveryAttempt = 0
-    // View ごとの履歴は即時表示し、件数の案内だけを履歴取得の区切りまで集計する。
-    private var pendingHistoryCount = 0
+    // 再開位置より前の取得済み履歴を接続試行の外で保持し、履歴取得完了時に一括表示する。
+    private var pendingHistory: [Chat] = []
     private var recoveryStartedAt: TimeInterval?
     private var recoveryWorkItem: DispatchWorkItem?
     private var watchSetupTimeout: DispatchWorkItem?
@@ -182,9 +182,9 @@ extension NicoManager {
             return
         }
         if !connectContext.isReconnect {
-            if pendingHistoryCount > 0 {
-                (connectionDiagnostics ?? recoveryDiagnostics)?.emit("手動接続切替: 旧接続の未報告履歴\(pendingHistoryCount)件は新しい画面に通知しない")
-                pendingHistoryCount = 0
+            if !pendingHistory.isEmpty {
+                (connectionDiagnostics ?? recoveryDiagnostics)?.emit("手動接続切替: 旧接続の未表示履歴\(pendingHistory.count)件は新しい画面に通知しない")
+                pendingHistory.removeAll()
             }
             disconnect()
             recoveryAttempt = 0
@@ -229,7 +229,7 @@ extension NicoManager {
             return
         }
         (connectionDiagnostics ?? recoveryDiagnostics)?.emit("切断実行: context=\(disconnectContext), 復旧予約を取り消す")
-        reportReceivedHistory()
+        publishPendingHistory()
         let wasActive = activeProgramId != nil
         activeProgramId = nil
         recoveryStartedAt = nil
@@ -423,21 +423,22 @@ extension NicoManager: NdgrClientDelegate {
 
     func ndgrClientDidReceiveChatHistory(_ ndgrClient: any NdgrClientType, chats: [Chat], diagnostics: ConnectionDiagnostics) {
         guard connectionDiagnostics === diagnostics else { return }
-        pendingHistoryCount += chats.count
-        delegate?.nicoManagerDidReceiveChatHistory(self, chats: chats)
+        pendingHistory.append(contentsOf: chats)
+        diagnostics.emit("履歴コメントを保留: 今回=\(chats.count)件, 合計=\(pendingHistory.count)件、取得完了後に一括表示")
     }
 
     func ndgrClientDidFinishChatHistory(_ ndgrClient: NdgrClientType, diagnostics: ConnectionDiagnostics) {
         guard connectionDiagnostics === diagnostics else { return }
-        reportReceivedHistory()
+        publishPendingHistory()
     }
 
-    private func reportReceivedHistory() {
-        guard pendingHistoryCount > 0 else { return }
-        let count = pendingHistoryCount
-        pendingHistoryCount = 0
-        (connectionDiagnostics ?? recoveryDiagnostics)?.emit("履歴コメント受信集計: \(count)件、通常メッセージで一度だけ通知")
-        delegate?.nicoManagerDidFinishChatHistory(self, totalChatCount: count)
+    private func publishPendingHistory() {
+        guard !pendingHistory.isEmpty else { return }
+        let chats = pendingHistory
+        pendingHistory.removeAll()
+        (connectionDiagnostics ?? recoveryDiagnostics)?.emit("履歴コメントを一括通知: \(chats.count)件")
+        delegate?.nicoManagerDidReceiveChatHistory(self, chats: chats)
+        delegate?.nicoManagerDidFinishChatHistory(self, totalChatCount: chats.count)
     }
 
     func ndgrClientDidReceiveChat(_ ndgrClient: any NdgrClientType, chat: Chat, diagnostics: ConnectionDiagnostics) {

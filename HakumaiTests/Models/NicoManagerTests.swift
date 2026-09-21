@@ -503,26 +503,33 @@ extension NicoManagerTests {
         manager.disconnect()
     }
 
-    func testHistoryBatchesAreDeliveredIncrementallyWithOneSummary() {
+    func testHistoryIsPublishedOnceAfterCatchUpBeforeRealtimeComments() {
         let fixture = RecoveryFixture()
         fixture.beginAt = String(Int(Date().timeIntervalSince1970) - 10_000)
+        let recorder = RecoveryRecorder()
         let now = Int64(Date().timeIntervalSince1970)
         fixture.view = { count, _ in
-            if count == 3 { return .ok(try RecoveryFixture.playlist(segment: "end")) }
+            if count == 2 {
+                XCTAssertTrue(recorder.comments.isEmpty, "最初の履歴バッチを表示せず保持する")
+                XCTAssertEqual(recorder.historyBatchCount, 0)
+            }
+            if count == 3 {
+                XCTAssertEqual(recorder.comments, ["/history1", "/history2"], "ライブ取得前に履歴をまとめて表示する")
+                return .ok(try RecoveryFixture.playlist(segment: "live"))
+            }
             return .ok(try RecoveryFixture.playlist(segment: "history\(count)", next: count == 1 ? 100 : now))
         }
         fixture.segment = { path in
-            if path == "/end" { return .ok(try RecoveryFixture.end()) }
-            return .ok(try RecoveryFixture.comment(id: path, text: path))
+            let data = try RecoveryFixture.comment(id: path, text: path)
+            return .ok(try path == "/live" ? data + RecoveryFixture.end() : data)
         }
-        let recorder = RecoveryRecorder()
-        let ended = expectation(description: "履歴を分割表示し件数はまとめる")
+        let ended = expectation(description: "履歴を一括表示してからライブコメントを表示")
         recorder.onDisconnect = { if case .normal = $0 { ended.fulfill() } }
         let manager = fixture.manager(recorder: recorder)
         manager.connect(liveProgramId: "lv1")
         wait(for: [ended], timeout: 5)
-        XCTAssertEqual(recorder.comments, ["/history1", "/history2"])
-        XCTAssertEqual(recorder.historyBatchCount, 2)
+        XCTAssertEqual(recorder.comments, ["/history1", "/history2", "/live"])
+        XCTAssertEqual(recorder.historyBatchCount, 1)
         XCTAssertEqual(recorder.historySummaries, [2])
     }
 
@@ -542,7 +549,7 @@ extension NicoManagerTests {
             let ended = expectation(description: "NDGR復旧をまたいで履歴件数をまとめる")
             recorder.onLog = { message in
                 if message.contains("復旧開始") {
-                    XCTAssertEqual(recorder.comments, ["first"])
+                    XCTAssertTrue(recorder.comments.isEmpty, "復旧中は取得済み履歴を表示しない")
                     XCTAssertTrue(recorder.historySummaries.isEmpty)
                 }
             }
@@ -552,6 +559,7 @@ extension NicoManagerTests {
             wait(for: [ended], timeout: 5)
             XCTAssertEqual(recorder.comments, ["first", "second"])
             XCTAssertEqual(recorder.historySummaries, [2])
+            XCTAssertEqual(recorder.historyBatchCount, 1)
             XCTAssertEqual(fixture.programRequests, 2)
         }
     }
@@ -570,6 +578,34 @@ extension NicoManagerTests {
         wait(for: [failed], timeout: 5)
         XCTAssertEqual(recorder.comments, ["first"])
         XCTAssertEqual(recorder.historySummaries, [1])
+    }
+
+    func testManualStopPublishesCompletedHistoryBatchesOnce() {
+        let fixture = RecoveryFixture()
+        fixture.beginAt = String(Int(Date().timeIntervalSince1970) - 10_000)
+        let recorder = RecoveryRecorder()
+        var stop: () -> Void = {}
+        fixture.view = { count, _ in
+            if count == 2 {
+                DispatchQueue.main.async { stop() }
+                return .holding(Data())
+            }
+            return .ok(try RecoveryFixture.playlist(segment: "history", next: 100))
+        }
+        fixture.segment = { _ in .ok(try RecoveryFixture.comment(id: "one", text: "history")) }
+        let stopped = expectation(description: "停止時は取得済み履歴を一度だけ表示")
+        recorder.onDisconnect = { if case .normal = $0 { stopped.fulfill() } }
+        let manager = fixture.manager(recorder: recorder)
+        stop = {
+            XCTAssertTrue(recorder.comments.isEmpty)
+            manager.disconnect()
+        }
+        manager.connect(liveProgramId: "lv1")
+        wait(for: [stopped], timeout: 5)
+        XCTAssertEqual(recorder.comments, ["history"])
+        XCTAssertEqual(recorder.historyBatchCount, 1)
+        XCTAssertEqual(recorder.historySummaries, [1])
+        XCTAssertFalse(recorder.logs.contains { $0.contains("復旧開始") })
     }
 
     func testNewConnectionDoesNotReportOldHistoryCountAfterClearingTable() {
@@ -595,7 +631,7 @@ extension NicoManagerTests {
         }
         let manager = fixture.manager(recorder: recorder)
         switchProgram = {
-            XCTAssertEqual(recorder.comments, ["/old"])
+            XCTAssertTrue(recorder.comments.isEmpty, "切替前の履歴はまだ表示しない")
             XCTAssertTrue(recorder.historySummaries.isEmpty)
             // connectLive と同じく、新しい接続を要求する前にテーブルを消す。
             recorder.comments.removeAll()
@@ -605,7 +641,7 @@ extension NicoManagerTests {
         wait(for: [ended], timeout: 5)
         XCTAssertEqual(recorder.comments, ["/new"])
         XCTAssertEqual(recorder.historySummaries, [1])
-        XCTAssertTrue(recorder.logs.contains { $0.contains("旧接続の未報告履歴1件") })
+        XCTAssertTrue(recorder.logs.contains { $0.contains("旧接続の未表示履歴1件") })
     }
 
     func testCompletedHistoryIsNotLostWhenWatchConnectionRestarts() {
@@ -626,11 +662,15 @@ extension NicoManagerTests {
         let ended = expectation(description: "履歴を保って再接続後終了")
         recorder.onDisconnect = { if case .normal = $0 { ended.fulfill() } }
         let manager = fixture.manager(recorder: recorder)
-        requestRecovery = { manager.reconnect(reason: .normal) }
+        requestRecovery = {
+            XCTAssertTrue(recorder.comments.isEmpty, "再接続前の履歴は保持だけ行う")
+            manager.reconnect(reason: .normal)
+        }
         manager.connect(liveProgramId: "lv1")
         wait(for: [ended], timeout: 5)
         XCTAssertEqual(recorder.comments, ["history"])
         XCTAssertEqual(recorder.historySummaries, [1])
+        XCTAssertEqual(recorder.historyBatchCount, 1)
         XCTAssertEqual(fixture.viewPositions, [fixture.beginAt, "100", "100"])
         XCTAssertTrue(recorder.logs.contains { $0.contains("旧コメントWSの空送信・Ping監視タイマーは起動しない") })
     }

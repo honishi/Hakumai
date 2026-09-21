@@ -1773,7 +1773,6 @@ private extension MainViewController {
 
     func bulkAppendToTable(chats: [Chat]) {
         DispatchQueue.main.async {
-            let shouldScroll = self.scrollView.isReachedToBottom
             let startingRow = self.messageContainer.count()
             var appendedMessages = [Message]()
             chats.forEach {
@@ -1790,11 +1789,8 @@ private extension MainViewController {
             self.updateCommentSearchStatusLabel()
 
             DispatchQueue.main.async {
-                if shouldScroll {
-                    self.scrollView.scrollToBottom()
-                } else {
-                    self.scrollView.flashScrollers()
-                }
+                // 履歴の一括表示後は、読み込み中の位置によらず最新コメントへ移動する。
+                self.scrollView.scrollToBottom()
                 self.scrollView.updateButtonEnables()
             }
         }

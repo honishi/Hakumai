@@ -119,7 +119,7 @@ private extension NdgrClient {
                 delegate?.ndgrClientReceivingChatHistory(self, requestCount: segmentCount,
                                                          totalChatCount: chatHistory.totalCount, diagnostics: diagnostics)
             }
-            // 再開位置より前の履歴は通知済みにする。途中停止で未通知の履歴を飛ばさないため。
+            // 再開位置より前の履歴を Manager に退避する。画面への一括表示前に再接続しても失わないため。
             emitChatHistoryIfExists(chatHistory: chatHistory, diagnostics: diagnostics)
             try Task.checkCancellation()
             if let next = next { resumeAt = next }
