@@ -88,6 +88,28 @@ extension NicoManagerTests {
         manager.disconnect()
     }
 
+    func testSegmentFailureInterruptsOpenViewAndResumesFromUnfinishedPosition() {
+        let fixture = RecoveryFixture()
+        fixture.view = { count, _ in
+            if count == 1 { return .holding(try RecoveryFixture.playlist(segment: "failed", next: 100)) }
+            return .ok(try RecoveryFixture.playlist(segment: "end"))
+        }
+        fixture.segment = { path in
+            if path == "/failed" { return .http(503) }
+            return .ok(try RecoveryFixture.comment(id: "recovered", text: "recovered") + RecoveryFixture.end())
+        }
+        let recorder = RecoveryRecorder()
+        let ended = expectation(description: "ViewのEOFを待たず復旧")
+        recorder.onDisconnect = { if case .normal = $0 { ended.fulfill() } }
+        let manager = fixture.manager(recorder: recorder)
+        manager.connect(liveProgramId: "lv1")
+        wait(for: [ended], timeout: 5)
+        XCTAssertEqual(fixture.programRequests, 2)
+        XCTAssertEqual(fixture.viewPositions, [fixture.beginAt, fixture.beginAt])
+        XCTAssertEqual(recorder.comments, ["recovered"])
+        XCTAssertTrue(recorder.logs.contains { $0.contains("Segment失敗 → View待機を解除") })
+    }
+
     func testProgramEndStopsEvenWhenViewAndSegmentHTTPHaveNotClosed() throws {
         let fixture = RecoveryFixture()
         fixture.view = { _, _ in .holding(try RecoveryFixture.playlist(segment: "end")) }

@@ -109,14 +109,16 @@ private extension NdgrClient {
                 emitChatHistoryIfExists(chatHistory: chatHistory, diagnostics: diagnostics)
             }
             next = nil
+            let view = ViewIteration()
             // Segment の完了を待ってから再開位置を進め、取得途中のコメントを飛ばさない。
             try await withThrowingTaskGroup(of: Void.self) { group in
                 var activeSegments = 0
                 let entries = retrieve(uri: uri.appending("at", value: String(current)),
                                        messageType: Dwango_Nicolive_Chat_Service_Edge_ChunkedEntry.self,
-                                       activity: .view, diagnostics: diagnostics, session: session)
+                                       activity: .view, diagnostics: diagnostics, session: session, view: view)
                 for try await entry in entries {
                     try Task.checkCancellation()
+                    if let failure = view.failure { throw failure }
                     guard let entry = entry.entry else { continue }
                     switch entry {
                     case .backward, .previous: continue
@@ -129,8 +131,16 @@ private extension NdgrClient {
                         segmentCount += 1
                         activeSegments += 1
                         group.addTask {
-                            try await self.pullMessages(uri: url, chatHistory: chatHistory,
-                                                        diagnostics: diagnostics, session: session)
+                            do {
+                                try await self.pullMessages(uri: url, chatHistory: chatHistory,
+                                                            diagnostics: diagnostics, session: session)
+                            } catch {
+                                if !Task.isCancelled {
+                                    diagnostics.emit("NDGR Segment失敗 → View待機を解除: \(ConnectionDiagnostics.errorSummary(error))")
+                                    await view.fail(error)
+                                }
+                                throw error
+                            }
                         }
                     case .next(let marker): next = Int(marker.at)
                     }
@@ -213,12 +223,14 @@ private extension NdgrClient {
     // #1. 指定された uri を stream として listen しつつ、
     // 逐一 protobuf message として parse したものを stream として返す。
     // swiftlint:disable function_body_length
+    @MainActor
     func retrieve<T: SwiftProtobuf.Message>(
         uri: URL,
         messageType: T.Type,
         activity: ConnectionDiagnostics.Activity,
         diagnostics: ConnectionDiagnostics,
-        session: Session
+        session: Session,
+        view: ViewIteration? = nil
     ) -> AsyncThrowingStream<T, Error> {
         // log.debug("\(uri.absoluteString)")
         var unread: Data?
@@ -231,6 +243,7 @@ private extension NdgrClient {
         }
 
         return AsyncThrowingStream { continuation in
+            view?.stop = { continuation.finish(throwing: $0) }
             let request = session.streamRequest(
                 uri,
                 method: .get,
@@ -665,5 +678,18 @@ final class NdgrRequestRetrier: RequestRetrier, @unchecked Sendable {
         report("\(action): \(ConnectionDiagnostics.errorSummary(error))")
         // すでに1回リトライしていたら再試行しない、そうでなければリトライする
         completion(request.retryCount >= 1 ? .doNotRetry : .retry)
+    }
+}
+
+// Segment の失敗を View の受信待ちにも伝える。状態は main actor 上でのみ操作する。
+@MainActor
+private final class ViewIteration {
+    var stop: ((Error?) -> Void)?
+    private(set) var failure: Error?
+
+    func fail(_ error: Error) {
+        guard failure == nil else { return }
+        failure = error
+        stop?(error)
     }
 }
