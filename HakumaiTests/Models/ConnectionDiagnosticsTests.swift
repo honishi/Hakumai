@@ -77,7 +77,8 @@ final class ConnectionDiagnosticsTests: XCTestCase {
         let messages = try runNDGR(path: "empty")
         XCTAssertTrue(messages.contains { $0.contains("次の取得位置なし") })
         XCTAssertFalse(messages.contains { $0.contains("サーバーから放送終了状態を受信") })
-        XCTAssertFalse(messages.contains { $0.contains("再試行") })
+        // 起動時の再試行上限の設定表示と、実際の再試行を区別する。
+        XCTAssertFalse(messages.contains { $0.contains("再試行を実行") || $0.contains("取得を一時停止") })
     }
 
     private func runNDGR(path: String) throws -> [String] {

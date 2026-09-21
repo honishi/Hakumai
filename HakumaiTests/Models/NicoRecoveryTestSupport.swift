@@ -8,7 +8,8 @@ import SwiftProtobuf
 // 実際の接続処理をテストするための API・WebSocket・NDGR 応答。
 final class RecoveryFixture {
     enum Reply {
-        case ok(Data), holding(Data), delayed(Data, TimeInterval), http(Int), timeout
+        case ok(Data), holding(Data), delayed(Data, TimeInterval), timeout
+        case http(Int, headers: [String: String] = [:])
         case delayedFailure(URLError.Code, TimeInterval)
         case chunks([Data], TimeInterval)
     }
@@ -23,11 +24,12 @@ final class RecoveryFixture {
     var engines: [RecoveryEngine] = []
 
     func manager(recorder: RecoveryRecorder, delays: [TimeInterval] = [0, 0, 0],
-                 ndgrClient: NdgrClientType? = nil, endDrainTimeout: TimeInterval = 5) -> NicoManager {
+                 ndgrClient: NdgrClientType? = nil, endDrainTimeout: TimeInterval = 5,
+                 throttlePolicy: NdgrRequestThrottle.Policy = .init(interval: 0)) -> NicoManager {
         let config = URLSessionConfiguration.ephemeral
         config.protocolClasses = [RecoveryURLProtocol.self]
         RecoveryURLProtocol.reply = { [self] url in try respond(url) }
-        let manager = NicoManager(authManager: RecoveryAuth(), ndgrClient: ndgrClient ?? NdgrClient(configuration: config, endDrainTimeout: endDrainTimeout),
+        let manager = NicoManager(authManager: RecoveryAuth(), ndgrClient: ndgrClient ?? NdgrClient(configuration: config, endDrainTimeout: endDrainTimeout, throttlePolicy: throttlePolicy),
                                   configuration: config, recoveryDelays: delays) { [self] request in
             let engine = RecoveryEngine(sendMessageServer: sendMessageServer)
             engines.append(engine)
@@ -129,8 +131,8 @@ private final class RecoveryURLProtocol: URLProtocol {
                 guard !stopped else { return }
                 client?.urlProtocol(self, didFailWithError: URLError(code))
             }
-        case .http(let code):
-            try sendResponse(status: code)
+        case .http(let code, let headers):
+            try sendResponse(status: code, headers: headers)
             sendData(Data(), finish: true)
         case .ok(let data):
             try sendResponse()
@@ -152,9 +154,9 @@ private final class RecoveryURLProtocol: URLProtocol {
         }
     }
 
-    private func sendResponse(status: Int = 200) throws {
+    private func sendResponse(status: Int = 200, headers: [String: String] = [:]) throws {
         let response = try XCTUnwrap(HTTPURLResponse(url: try XCTUnwrap(request.url), statusCode: status, httpVersion: nil,
-                                                     headerFields: ["Content-Type": "application/octet-stream"]))
+                                                     headerFields: headers.merging(["Content-Type": "application/octet-stream"]) { first, _ in first }))
         client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
     }
 

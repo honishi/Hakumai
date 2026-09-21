@@ -17,6 +17,7 @@ final class NdgrClient: NdgrClientType {
     // Private Properties
     private let configuration: URLSessionConfiguration
     private let endDrainTimeout: TimeInterval
+    private let throttlePolicy: NdgrRequestThrottle.Policy
     private var streamSession: Session?
     private var streamTask: Task<Void, Never>?
     private var activeDiagnostics: ConnectionDiagnostics?
@@ -26,10 +27,11 @@ final class NdgrClient: NdgrClientType {
     private var duplicateCount = 0
 
     init(delegate: NdgrClientDelegate? = nil, configuration: URLSessionConfiguration = .af.default,
-         endDrainTimeout: TimeInterval = 5) {
+         endDrainTimeout: TimeInterval = 5, throttlePolicy: NdgrRequestThrottle.Policy = .init()) {
         self.delegate = delegate
         self.configuration = configuration
         self.endDrainTimeout = endDrainTimeout
+        self.throttlePolicy = throttlePolicy
         configuration.headers.add(.userAgent(commonUserAgentValue))
     }
 }
@@ -47,11 +49,13 @@ extension NdgrClient {
             receivedMessageMetaIds.removeAll()
             resumeAt = Int(beginTime.timeIntervalSince1970)
         }
-        let session = Session(configuration: configuration)
+        let throttle = NdgrRequestThrottle(policy: throttlePolicy) { diagnostics.emit($0) }
+        let session = Session(configuration: configuration, interceptor: throttle)
         streamSession = session
         activeDiagnostics = diagnostics
         connected = false
         duplicateCount = 0
+        diagnostics.emit("NDGR取得制御: 最小間隔=\(throttlePolicy.interval)秒, HTTP 429待機再試行上限=\(throttlePolicy.retryDelays.count)回")
         diagnostics.emit("NDGR開始 (受信待ちタイムアウト=\(configuration.timeoutIntervalForRequest)秒), 再開=\(resuming), at=\(resumeAt ?? Int(beginTime.timeIntervalSince1970))")
         streamTask = Task { @MainActor [weak self] in
             guard let self = self else { return }
@@ -82,6 +86,7 @@ extension NdgrClient {
         activeDiagnostics = nil
         streamTask?.cancel()
         streamTask = nil
+        (streamSession?.interceptor as? NdgrRequestThrottle)?.stop()
         streamSession?.cancelAllRequests()
         streamSession = nil
     }
@@ -282,7 +287,7 @@ private extension NdgrClient {
         let label = "\(activity.rawValue) HTTP#\(requestID)"
         var receivedBytes = 0
         var parsedRetryCount = 0
-        let retrier = NdgrRequestRetrier { message in
+        let retrier = NdgrRequestRetrier(throttle: session.interceptor as? NdgrRequestThrottle) { message in
             diagnostics.emit("\(label): \(message)")
         }
 
@@ -698,8 +703,12 @@ private extension Dwango_Nicolive_Chat_Data_Nicoad {
 // reportはロックで保護された診断情報を更新し、UI側は既存のmain queue経由で表示する。
 final class NdgrRequestRetrier: RequestRetrier, @unchecked Sendable {
     private let report: (String) -> Void
+    private let throttle: NdgrRequestThrottle?
+    private let retryLock = NSLock()
+    private var networkRetries = 0
 
-    init(report: @escaping (String) -> Void) {
+    init(throttle: NdgrRequestThrottle? = nil, report: @escaping (String) -> Void) {
+        self.throttle = throttle
         self.report = report
     }
 
@@ -710,6 +719,10 @@ final class NdgrRequestRetrier: RequestRetrier, @unchecked Sendable {
         completion: @escaping (RetryResult) -> Void
     ) {
         log.debug("RequestRetrier > error: \(ConnectionDiagnostics.errorSummary(error))")
+        if request.response?.statusCode == 429, !request.isCancelled, let throttle = throttle {
+            throttle.retryRateLimited(request, completion: completion)
+            return
+        }
         guard
             let afError = error.asAFError,
             case .sessionTaskFailed(let underlyingError) = afError,
@@ -723,10 +736,15 @@ final class NdgrRequestRetrier: RequestRetrier, @unchecked Sendable {
             return
         }
         log.debug("RequestRetrier > perform retry")
-        let action = request.retryCount >= 1 ? "再試行上限に到達" : "1回目の再試行を実行"
+        // 429 の再試行で、タイムアウト・切断の再試行枠を消費しない。
+        retryLock.lock()
+        let shouldRetry = networkRetries == 0
+        networkRetries += 1
+        retryLock.unlock()
+        let action = shouldRetry ? "1回目の再試行を実行" : "再試行上限に到達"
         report("\(action): \(ConnectionDiagnostics.errorSummary(error))")
         // すでに1回リトライしていたら再試行しない、そうでなければリトライする
-        completion(request.retryCount >= 1 ? .doNotRetry : .retry)
+        completion(shouldRetry ? .retry : .doNotRetry)
     }
 }
 
@@ -743,6 +761,7 @@ private final class ViewIteration {
     func endProgram(timeout: TimeInterval, diagnostics: ConnectionDiagnostics, session: Session) {
         guard !programEnded else { return }
         programEnded = true
+        (session.interceptor as? NdgrRequestThrottle)?.stop()
         diagnostics.emit("NDGR Segment: サーバーから放送終了状態を受信")
         stop?(nil)
         // 呼び出し元の終了通知Segmentは戻った後のdeferで減るため、待機対象から先に除く。
