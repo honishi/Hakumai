@@ -141,9 +141,9 @@ private extension NdgrClient {
                 var activeSegments = 0
                 let entries = retrieve(uri: uri, messageType: Dwango_Nicolive_Chat_Service_Edge_ChunkedEntry.self,
                                        activity: .view, diagnostics: diagnostics, session: session, view: view)
-                for try await entry in entries {
+                entryLoop: for try await entry in entries {
                     try Task.checkCancellation()
-                    if view.programEnded { break }
+                    if view.programEnded { break entryLoop }
                     if let failure = view.failure { throw failure }
                     guard let entry = entry.entry else { continue }
                     switch entry {
@@ -153,7 +153,7 @@ private extension NdgrClient {
                         if activeSegments >= 8 {
                             try await group.next()
                             activeSegments -= 1
-                            if view.programEnded { break }
+                            if view.programEnded { break entryLoop }
                         }
                         segmentCount += 1
                         activeSegments += 1

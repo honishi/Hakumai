@@ -196,6 +196,33 @@ extension NicoManagerTests {
         XCTAssertFalse(recorder.logs.contains { $0.contains("復旧開始") || $0.contains("NDGR終了待ち上限") })
     }
 
+    func testProgramEndAtConcurrencyLimitDoesNotStartQueuedSegments() {
+        let fixture = RecoveryFixture()
+        fixture.view = { _, _ in
+            var entries = Data()
+            for index in 1...9 { entries += try RecoveryFixture.playlist(segment: "segment\(index)") }
+            return .holding(entries)
+        }
+        var requested: [String] = []
+        fixture.segment = { path in
+            requested.append(path)
+            if path == "/segment8" { return .delayed(try RecoveryFixture.end(), 0.05) }
+            return .holding(try RecoveryFixture.comment(id: path, text: path))
+        }
+        let recorder = RecoveryRecorder()
+        let ended = expectation(description: "並行取得上限で終了通知を受け、9本目を開始しない")
+        recorder.onDisconnect = { if case .normal = $0 { ended.fulfill() } }
+        let manager = fixture.manager(recorder: recorder, endDrainTimeout: 0.05)
+        manager.connect(liveProgramId: "lv1")
+        wait(for: [ended], timeout: 5)
+        XCTAssertEqual(requested.count, 8)
+        XCTAssertFalse(requested.contains("/segment9"))
+        XCTAssertEqual(recorder.comments.count, 7)
+        XCTAssertEqual(recorder.disconnections.count, 1)
+        XCTAssertTrue(recorder.logs.contains { $0.contains("NDGR終了待ち開始: 残りSegment=7") })
+        XCTAssertFalse(recorder.logs.contains { $0.contains("復旧開始") })
+    }
+
     func testManualStopCancelsProgramEndDrainAndDeadline() {
         let fixture = RecoveryFixture()
         fixture.view = { _, _ in
