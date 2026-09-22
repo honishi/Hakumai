@@ -247,9 +247,7 @@ final class RecoveryRecorder: NicoManagerDelegate {
         comments += chats.map(\.comment)
         historyBatchCount += 1
         initialHistoryFlags.append(isInitial)
-    }
-    func nicoManagerDidFinishChatHistory(_ nicoManager: NicoManagerType, totalChatCount: Int) {
-        historySummaries.append(totalChatCount)
+        historySummaries.append(chats.count)
     }
     func nicoManagerDidDisconnect(_ nicoManager: NicoManagerType, disconnectContext: NicoDisconnectContext) {
         disconnections.append(disconnectContext)

@@ -7,7 +7,7 @@ final class NdgrTransport: @unchecked Sendable {
     private final class Lease {
         let session: Session
         let generation: Int
-        var readers = 0
+        var activeReaders = 0
         init(session: Session, generation: Int) {
             self.session = session
             self.generation = generation
@@ -25,8 +25,11 @@ final class NdgrTransport: @unchecked Sendable {
         dispatchPrecondition(condition: .onQueue(.main))
         self.configuration = configuration
         self.throttle = throttle
-        current = Lease(session: Session(configuration: configuration, startRequestsImmediately: false,
-                                         interceptor: throttle), generation: 1)
+        current = Lease(session: Self.makeSession(configuration: configuration, throttle: throttle), generation: 1)
+    }
+
+    private static func makeSession(configuration: URLSessionConfiguration, throttle: NdgrRequestThrottle) -> Session {
+        Session(configuration: configuration, startRequestsImmediately: false, interceptor: throttle)
     }
 
     func stopNewRequests() {
@@ -54,16 +57,16 @@ final class NdgrTransport: @unchecked Sendable {
                         try Task.checkCancellation()
                         guard self.acceptsRequests else { throw CancellationError() }
                         let lease = self.current
-                        lease.readers += 1
+                        lease.activeReaders += 1
                         do {
+                            // catch より先に解放し、更新判定の時点で使用中の読み取りに数えない。
+                            defer { self.release(lease) }
                             for try await message in makeStream(lease.session, lease.generation) {
                                 try Task.checkCancellation()
                                 continuation.yield(message)
                             }
-                            self.release(lease)
                             break
                         } catch {
-                            self.release(lease)
                             try Task.checkCancellation()
                             guard let renewal = error as? NdgrRequestRetrier.ConnectionRenewal else { throw error }
                             guard self.acceptsRequests else { throw CancellationError() }
@@ -87,8 +90,8 @@ final class NdgrTransport: @unchecked Sendable {
     private func renew(after failed: Lease, report: (String) -> Void) {
         if failed === current {
             retired.append(current)
-            current = Lease(session: Session(configuration: configuration, startRequestsImmediately: false,
-                                             interceptor: throttle), generation: current.generation + 1)
+            current = Lease(session: Self.makeSession(configuration: configuration, throttle: throttle),
+                            generation: current.generation + 1)
             report("通信接続を更新: 世代=\(failed.generation)→\(current.generation), タイムアウト後の再試行に新しいURLSessionを使用, 並行受信は継続")
             retireIfUnused(failed)
         } else {
@@ -97,12 +100,12 @@ final class NdgrTransport: @unchecked Sendable {
     }
 
     private func release(_ lease: Lease) {
-        lease.readers -= 1
+        lease.activeReaders -= 1
         retireIfUnused(lease)
     }
 
     private func retireIfUnused(_ lease: Lease) {
-        guard lease !== current, lease.readers == 0 else { return }
+        guard lease !== current, lease.activeReaders == 0 else { return }
         lease.session.session.finishTasksAndInvalidate()
         retired.removeAll { $0 === lease }
     }

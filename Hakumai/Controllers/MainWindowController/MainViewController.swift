@@ -302,6 +302,7 @@ final class MainViewController: NSViewController {
     private(set) var live: Live?
     private(set) var connectedToLive = false
     private var connectingToLive = false
+    private var isLiveSessionActive: Bool { connectedToLive || connectingToLive }
     private var liveStartedDate: Date?
 
     // row-height cache
@@ -824,24 +825,22 @@ extension MainViewController: NicoManagerDelegate {
     }
 
     func nicoManagerDidReceiveChatHistory(_ nicoManager: NicoManagerType, chats: [Chat], isInitial: Bool) {
-        guard let live = live else { return }
-        chats.forEach {
-            HandleNameManager.shared.extractAndUpdateHandleName(
-                from: $0.comment,
-                for: $0.userId,
-                in: live.programProvider.programProviderId
-            )
+        if let live = live {
+            chats.forEach {
+                HandleNameManager.shared.extractAndUpdateHandleName(
+                    from: $0.comment,
+                    for: $0.userId,
+                    in: live.programProvider.programProviderId
+                )
+            }
+            bulkAppendToTable(chats: chats, forceScrollToLatest: isInitial)
         }
-        bulkAppendToTable(chats: chats, forceScrollToLatest: isInitial)
-    }
-
-    func nicoManagerDidFinishChatHistory(_ nicoManager: NicoManagerType, totalChatCount: Int) {
-        logSystemMessageToTable(L10n.receivedComments(totalChatCount))
+        logSystemMessageToTable(L10n.receivedComments(chats.count))
     }
 
     func nicoManagerDidDisconnect(_ nicoManager: NicoManagerType, disconnectContext: NicoDisconnectContext) {
         logDebugMessageToTable("UI切断通知: context=\(disconnectContext), 接続表示=\(connectedToLive), 接続準備中=\(connectingToLive)")
-        guard connectedToLive || connectingToLive else { return }
+        guard isLiveSessionActive else { return }
 
         switch disconnectContext {
         case .preparationFailure:
@@ -936,7 +935,7 @@ extension MainViewController {
     }
 
     func logout() {
-        if connectedToLive || connectingToLive {
+        if isLiveSessionActive {
             nicoManager.disconnect()
         }
         nicoManager.logout()
@@ -1029,7 +1028,7 @@ extension MainViewController {
     }
 
     func disconnect() {
-        guard connectedToLive || connectingToLive else { return }
+        guard isLiveSessionActive else { return }
         nicoManager.disconnect()
     }
 
@@ -1864,7 +1863,7 @@ extension MainViewController {
     }
 
     @IBAction func connectButtonPressed(_ sender: AnyObject) {
-        if connectedToLive || connectingToLive {
+        if isLiveSessionActive {
             nicoManager.disconnect()
         } else {
             connectLive(self)

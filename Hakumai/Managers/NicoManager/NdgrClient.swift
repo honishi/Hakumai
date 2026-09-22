@@ -59,6 +59,7 @@ extension NdgrClient {
             self.delegate?.ndgrClientWillWaitForRateLimit(self, diagnostics: diagnostics)
         }, report: { diagnostics.emit($0) })
         let session = NdgrTransport(configuration: configuration, throttle: throttle)
+        let startAt = resumeAt ?? Int(beginTime.timeIntervalSince1970)
         streamSession = session
         activeDiagnostics = diagnostics
         connected = false
@@ -66,13 +67,12 @@ extension NdgrClient {
         diagnostics.emit("NDGR取得制御: 最小間隔=\(throttlePolicy.interval)秒, HTTP 429待機再試行上限=\(throttlePolicy.retryDelays.count)回")
         diagnostics.emit("NDGR通信再試行: 上限=\(retryPolicy.maxRetries)回（初回取得を除く）, 初回待機=\(retryPolicy.initialDelay)秒, 以降は倍率1.5・±50%の揺らぎ")
         diagnostics.emit("NDGR通信接続更新: タイムアウト後のURLSession更新=\(retryPolicy.renewConnectionOnTimeout), HTTP計測の接続再利用で効果を確認")
-        diagnostics.emit("NDGR開始 (View: ヘッダー待ち=\(timeoutPolicy.view.header)秒, 本文待ち=\(timeoutPolicy.view.body)秒 / Segment: ヘッダー待ち=\(timeoutPolicy.segment.header)秒, 本文待ち=\(timeoutPolicy.segment.body)秒), 再開=\(resuming), at=\(resumeAt ?? Int(beginTime.timeIntervalSince1970))")
+        diagnostics.emit("NDGR開始 (View: ヘッダー待ち=\(timeoutPolicy.view.header)秒, 本文待ち=\(timeoutPolicy.view.body)秒 / Segment: ヘッダー待ち=\(timeoutPolicy.segment.header)秒, 本文待ち=\(timeoutPolicy.segment.body)秒), 再開=\(resuming), at=\(startAt)")
         streamTask = Task { @MainActor [weak self] in
             guard let self = self else { return }
             let reason: NdgrTermination
             do {
-                try await self.forwardPlaylist(uri: viewUri, from: self.resumeAt ?? Int(beginTime.timeIntervalSince1970),
-                                               diagnostics: diagnostics, session: session)
+                try await self.forwardPlaylist(uri: viewUri, from: startAt, diagnostics: diagnostics, session: session)
                 reason = .missingNext
             } catch NdgrStreamError.programEnded {
                 reason = .programEnded
@@ -96,7 +96,6 @@ extension NdgrClient {
         activeDiagnostics = nil
         streamTask?.cancel()
         streamTask = nil
-        streamSession?.stopNewRequests()
         streamSession?.cancelAllRequests()
         streamSession = nil
     }

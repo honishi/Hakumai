@@ -80,7 +80,7 @@ final class ConnectionDiagnostics {
             }
             let protocolName: String
             switch transaction.networkProtocolName {
-            case "h2", "h3", "http/1.1", "http/1.0": protocolName = transaction.networkProtocolName ?? "記録なし"
+            case let name? where ["h2", "h3", "http/1.1", "http/1.0"].contains(name): protocolName = name
             case nil: protocolName = "記録なし"
             default: protocolName = "その他"
             }
@@ -115,11 +115,16 @@ final class ConnectionDiagnostics {
         }.joined(separator: ", ")
         lock.unlock()
 
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        let timestamp = formatter.string(from: Date())
+        let timestamp = Self.timestampFormatter.string(from: Date())
         output("[接続 \(id)] \(timestamp) +\(elapsed)秒 \(message) | \(ages)")
     }
+
+    // ISO8601DateFormatter はスレッドセーフなので、呼び出しごとに生成せず共有する。
+    private static let timestampFormatter: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter
+    }()
 
     private static func seconds(_ interval: TimeInterval) -> String {
         String(format: "%.1f", max(0, interval))
