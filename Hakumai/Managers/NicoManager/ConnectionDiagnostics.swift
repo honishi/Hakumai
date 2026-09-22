@@ -134,6 +134,7 @@ enum NicoRecoveryPolicy {
         if let error = error as? AFError {
             switch error {
             case .sessionTaskFailed(let cause): return shouldRetry(cause)
+            case .requestRetryFailed(let retryError, _): return shouldRetry(retryError)
             case .responseValidationFailed(let reason):
                 if case .unacceptableStatusCode(let status) = reason {
                     return status == 429 || (500..<600).contains(status)

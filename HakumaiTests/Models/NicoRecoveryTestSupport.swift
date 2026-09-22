@@ -12,6 +12,7 @@ final class RecoveryFixture {
         case http(Int, headers: [String: String] = [:])
         case delayedFailure(URLError.Code, TimeInterval)
         case chunks([Data], TimeInterval)
+        case awaitingHeaders
     }
     var beginAt = String(Int(Date().timeIntervalSince1970) - 10)
     var status: (Int) -> String = { _ in "ON_AIR" }
@@ -25,11 +26,12 @@ final class RecoveryFixture {
 
     func manager(recorder: RecoveryRecorder, delays: [TimeInterval] = [0, 0, 0],
                  ndgrClient: NdgrClientType? = nil, endDrainTimeout: TimeInterval = 5,
-                 throttlePolicy: NdgrRequestThrottle.Policy = .init(interval: 0)) -> NicoManager {
+                 throttlePolicy: NdgrRequestThrottle.Policy = .init(interval: 0),
+                 timeoutPolicy: NdgrStreamTimeout.Policy = .init()) -> NicoManager {
         let config = URLSessionConfiguration.ephemeral
         config.protocolClasses = [RecoveryURLProtocol.self]
         RecoveryURLProtocol.reply = { [self] url in try respond(url) }
-        let manager = NicoManager(authManager: RecoveryAuth(), ndgrClient: ndgrClient ?? NdgrClient(configuration: config, endDrainTimeout: endDrainTimeout, throttlePolicy: throttlePolicy),
+        let manager = NicoManager(authManager: RecoveryAuth(), ndgrClient: ndgrClient ?? NdgrClient(configuration: config, endDrainTimeout: endDrainTimeout, throttlePolicy: throttlePolicy, timeoutPolicy: timeoutPolicy),
                                   configuration: config, recoveryDelays: delays) { [self] request in
             let engine = RecoveryEngine(sendMessageServer: sendMessageServer)
             engines.append(engine)
@@ -124,6 +126,8 @@ private final class RecoveryURLProtocol: URLProtocol {
     }
     private func deliver(_ reply: RecoveryFixture.Reply) throws {
         switch reply {
+        case .awaitingHeaders:
+            break
         case .timeout:
             client?.urlProtocol(self, didFailWithError: URLError(.timedOut))
         case .delayedFailure(let code, let delay):
@@ -145,11 +149,15 @@ private final class RecoveryURLProtocol: URLProtocol {
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) { self.sendData(data, finish: true) }
         case .chunks(let chunks, let interval):
             try sendResponse()
-            if chunks.isEmpty { sendData(Data(), finish: true) }
-            for (index, data) in chunks.enumerated() {
-                DispatchQueue.main.asyncAfter(deadline: .now() + Double(index + 1) * interval) {
-                    self.sendData(data, finish: index == chunks.count - 1)
-                }
+            sendChunks(chunks, interval: interval)
+        }
+    }
+
+    private func sendChunks(_ chunks: [Data], interval: TimeInterval) {
+        if chunks.isEmpty { sendData(Data(), finish: true) }
+        for (index, data) in chunks.enumerated() {
+            DispatchQueue.main.asyncAfter(deadline: .now() + Double(index + 1) * interval) {
+                self.sendData(data, finish: index == chunks.count - 1)
             }
         }
     }
