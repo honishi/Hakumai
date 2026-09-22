@@ -32,6 +32,7 @@ final class NdgrClient: NdgrClientType {
         self.configuration = configuration
         self.endDrainTimeout = endDrainTimeout
         self.throttlePolicy = throttlePolicy
+        configuration.timeoutIntervalForRequest = 10
         configuration.headers.add(.userAgent(commonUserAgentValue))
     }
 }
