@@ -46,7 +46,28 @@ final class NdgrRequestRetrier: RequestRetrier, @unchecked Sendable {
                 return
             }
             let error = self.timeout?.finishAttempt(error: error) ?? error
+            self.reportAttemptMetrics(request, error: error)
             self.retry(request, error: error, completion: completion)
+        }
+    }
+
+    func reportCompletedAttempt(_ request: Request?, error: Error?) {
+        // 通信失敗は retry() で記録済み。ここでは正常 EOF（未完フレーム検出を含む）を扱う。
+        guard let request = request, request.error == nil, error != nil || request.retryCount > 0 else { return }
+        // 通常の履歴取得で大量のログを出さず、失敗と再試行後の回復だけを記録する。
+        reportAttemptMetrics(request, error: error)
+    }
+
+    private func reportAttemptMetrics(_ request: Request, error: Error?) {
+        let result = error.map { ConnectionDiagnostics.errorSummary($0) } ?? "成功"
+        let prefix = "HTTP試行計測: 試行=\(request.retryCount + 1), 結果=\(result)"
+        // metrics が欠ける環境でも、前の試行の値を今回の値として表示しない。
+        guard request.allMetrics.count == request.tasks.count, let metrics = request.lastMetrics else {
+            report("\(prefix), task計測なし（前の試行の計測値は使用しない）")
+            return
+        }
+        for summary in ConnectionDiagnostics.httpMetricsSummary(metrics) {
+            report("\(prefix), \(summary)")
         }
     }
 

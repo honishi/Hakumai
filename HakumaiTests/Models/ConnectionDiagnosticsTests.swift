@@ -5,6 +5,83 @@ import Starscream
 @testable import Hakumai
 
 final class ConnectionDiagnosticsTests: XCTestCase {
+    func testRepeatedMessageServerIsDiagnosedWithoutRestartingNDGR() {
+        let fixture = RecoveryFixture()
+        let recorder = RecoveryRecorder()
+        let client = RecoveryNDGRStub()
+        let checked = expectation(description: "追加通知を記録")
+        client.onConnect = { _ in
+            DispatchQueue.main.async {
+                fixture.engines.first?.sendMessageServer()
+                fixture.engines.first?.sendMessageServer(viewUri: "https://changed.invalid/view?token=secret")
+            }
+        }
+        recorder.onLog = { message in
+            if message.contains("messageServer通知 #3") { checked.fulfill() }
+        }
+        let manager = fixture.manager(recorder: recorder, ndgrClient: client)
+        manager.connect(liveProgramId: "lv1")
+        wait(for: [checked], timeout: 3)
+        XCTAssertEqual(client.connections.count, 1)
+        XCTAssertEqual(fixture.programRequests, 1)
+        XCTAssertTrue(recorder.logs.contains { $0.contains("messageServer通知 #2, 初回採用URLと比較=同一") })
+        XCTAssertTrue(recorder.logs.contains { $0.contains("messageServer通知 #3, 初回採用URLと比較=変更あり") && $0.contains("初回以降のため無視") })
+        XCTAssertFalse(recorder.logs.contains { $0.contains("secret") || $0.contains("changed.invalid") })
+        recorder.onLog = nil
+        manager.disconnect()
+    }
+
+    func testMessageServerChangesAreComparedWithoutExposingURLsOrLeakingAcrossConnections() {
+        var messages: [String] = []
+        let diagnostics = ConnectionDiagnostics(output: { messages.append($0) })
+        let original = "https://example.invalid/private?token=secret1"
+        let changed = "https://example.invalid/private?token=secret2"
+        diagnostics.reportMessageServer(viewUri: original, accepted: true)
+        diagnostics.reportMessageServer(viewUri: changed, accepted: false)
+        diagnostics.reportMessageServer(viewUri: changed, accepted: false)
+        diagnostics.reportMessageServer(viewUri: original, accepted: false)
+        let new = ConnectionDiagnostics(output: { messages.append($0) })
+        new.reportMessageServer(viewUri: changed, accepted: true)
+        XCTAssertTrue(messages[1].contains("初回採用URLと比較=変更あり, 前回通知URLと比較=変更あり"))
+        XCTAssertTrue(messages[2].contains("初回採用URLと比較=変更あり, 前回通知URLと比較=同一"))
+        XCTAssertTrue(messages[3].contains("初回採用URLと比較=同一, 前回通知URLと比較=変更あり"))
+        XCTAssertTrue(messages[4].contains("messageServer通知 #1, 初回採用URLと比較=比較対象なし"))
+        XCTAssertFalse(messages.contains { $0.contains("secret") || $0.contains("example.invalid") || $0.contains("private") })
+    }
+
+    func testHTTPMetricsDistinguishMissingDataFromUnfinishedResponseWithoutExposingRequest() throws {
+        let transaction = DiagnosticTransactionMetrics()
+        let metrics = DiagnosticTaskMetrics(transactions: [transaction])
+        let summary = try XCTUnwrap(ConnectionDiagnostics.httpMetricsSummary(metrics).first)
+        XCTAssertTrue(summary.contains("DNS=記録なし"))
+        XCTAssertTrue(summary.contains("要求送信=0.100秒"))
+        XCTAssertTrue(summary.contains("応答待ち=未完了(59.800秒経過)"))
+        XCTAssertTrue(summary.contains("本文受信=記録なし"))
+        XCTAssertTrue(summary.contains("接続再利用=true"))
+        XCTAssertTrue(summary.contains("protocol=その他"))
+        XCTAssertFalse(summary.contains("secret"))
+        XCTAssertFalse(summary.contains("example.invalid"))
+        let empty = ConnectionDiagnostics.httpMetricsSummary(DiagnosticTaskMetrics(transactions: []))
+        XCTAssertTrue(empty[0].contains("取引計測なし"))
+    }
+
+    func testHTTPMetricsReportSuccessfulTimingForEachTransaction() {
+        let transaction = DiagnosticTransactionMetrics(completed: true)
+        let summaries = ConnectionDiagnostics.httpMetricsSummary(DiagnosticTaskMetrics(transactions: [transaction, transaction]))
+        XCTAssertEqual(summaries.count, 2)
+        XCTAssertTrue(summaries[0].contains("取引=1/2"))
+        XCTAssertTrue(summaries[1].contains("取引=2/2"))
+        for summary in summaries {
+            XCTAssertTrue(summary.contains("DNS=0.020秒"))
+            XCTAssertTrue(summary.contains("接続(TLS含む)=0.060秒"))
+            XCTAssertTrue(summary.contains("TLS=0.050秒"))
+            XCTAssertTrue(summary.contains("応答待ち=0.200秒"))
+            XCTAssertTrue(summary.contains("本文受信=0.300秒"))
+            XCTAssertTrue(summary.contains("protocol=h2"))
+            XCTAssertFalse(summary.contains("secret"))
+        }
+    }
+
     func testActivityAgesAndConnectionIDsDoNotRequirePerMessageLogging() {
         var now: TimeInterval = 100
         var messages: [String] = []
@@ -87,6 +164,10 @@ final class ConnectionDiagnosticsTests: XCTestCase {
         XCTAssertTrue(messages[completed].contains("-1001"))
         XCTAssertTrue(messages[retry].contains("HTTP#1"))
         XCTAssertTrue(messages[completed].contains("HTTP#1"))
+        let attempts = messages.filter { $0.contains("HTTP試行計測:") }
+        XCTAssertEqual(attempts.count, 2)
+        XCTAssertTrue(attempts[0].contains("試行=1"))
+        XCTAssertTrue(attempts[1].contains("試行=2"))
     }
 
     func testNDGRHTTPFailureReportsStatusWithoutChangingRetryPolicy() throws {
@@ -94,6 +175,7 @@ final class ConnectionDiagnosticsTests: XCTestCase {
         XCTAssertTrue(messages.contains { $0.contains("再試行対象外: HTTP 503") })
         XCTAssertTrue(messages.contains { $0.contains("完了 status=503, error=HTTP 503") })
         XCTAssertFalse(messages.contains { $0.contains("1回目の再試行を実行") })
+        XCTAssertTrue(messages.contains { $0.contains("HTTP試行計測: 試行=1, 結果=HTTP 503") })
     }
 
     func testNDGRCleanEOFWithoutNextReportsLoopEndRatherThanProgramEnd() throws {
@@ -102,6 +184,7 @@ final class ConnectionDiagnosticsTests: XCTestCase {
         XCTAssertFalse(messages.contains { $0.contains("サーバーから放送終了状態を受信") })
         // 起動時の再試行上限の設定表示と、実際の再試行を区別する。
         XCTAssertFalse(messages.contains { $0.contains("再試行を実行") || $0.contains("取得を一時停止") })
+        XCTAssertFalse(messages.contains { $0.contains("HTTP試行計測:") })
     }
 
     private func runNDGR(path: String) throws -> [String] {
@@ -121,6 +204,40 @@ final class ConnectionDiagnosticsTests: XCTestCase {
         XCTAssertFalse(messages.contains { $0.contains("secret") || $0.contains("diagnostics.invalid") })
         return messages
     }
+}
+
+private final class DiagnosticTaskMetrics: URLSessionTaskMetrics, @unchecked Sendable {
+    private let transactions: [URLSessionTaskTransactionMetrics]
+    init(transactions: [URLSessionTaskTransactionMetrics]) {
+        self.transactions = transactions
+        super.init()
+    }
+    override var taskInterval: DateInterval { DateInterval(start: Date(timeIntervalSince1970: 100), duration: 60) }
+    override var transactionMetrics: [URLSessionTaskTransactionMetrics] { transactions }
+    override var redirectCount: Int { 0 }
+}
+
+private final class DiagnosticTransactionMetrics: URLSessionTaskTransactionMetrics, @unchecked Sendable {
+    private let completed: Bool
+    init(completed: Bool = false) {
+        self.completed = completed
+        super.init()
+    }
+    override var request: URLRequest { URLRequest(url: URL(fileURLWithPath: "/secret")) }
+    override var response: URLResponse? { nil }
+    override var domainLookupStartDate: Date? { completed ? Date(timeIntervalSince1970: 100) : nil }
+    override var domainLookupEndDate: Date? { completed ? Date(timeIntervalSince1970: 100.02) : nil }
+    override var connectStartDate: Date? { completed ? Date(timeIntervalSince1970: 100.02) : nil }
+    override var connectEndDate: Date? { completed ? Date(timeIntervalSince1970: 100.08) : nil }
+    override var secureConnectionStartDate: Date? { completed ? Date(timeIntervalSince1970: 100.03) : nil }
+    override var secureConnectionEndDate: Date? { completed ? Date(timeIntervalSince1970: 100.08) : nil }
+    override var requestStartDate: Date? { Date(timeIntervalSince1970: 100.1) }
+    override var requestEndDate: Date? { Date(timeIntervalSince1970: 100.2) }
+    override var responseStartDate: Date? { completed ? Date(timeIntervalSince1970: 100.4) : nil }
+    override var responseEndDate: Date? { completed ? Date(timeIntervalSince1970: 100.7) : nil }
+    override var networkProtocolName: String? { completed ? "h2" : "secret" }
+    override var isReusedConnection: Bool { true }
+    override var resourceFetchType: URLSessionTaskMetrics.ResourceFetchType { .networkLoad }
 }
 
 private final class DiagnosticMessages {

@@ -863,6 +863,7 @@ private extension NicoManager {
             // NDGR の初回受信待ちが長引いても視聴用 WS の接続を維持する。
             startWatchSocketKeepSeatTimer(interval: watchSocketKeepSeatInterval)
         case let messageServer as WebSocketMessageServerData:
+            diagnostics.reportMessageServer(viewUri: messageServer.data.viewUri, accepted: watchSetupTimeout != nil)
             guard watchSetupTimeout != nil else { return }
             watchSetupTimeout?.cancel()
             watchSetupTimeout = nil

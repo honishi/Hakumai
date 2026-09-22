@@ -190,9 +190,9 @@ final class RecoveryEngine: Engine {
         delegate?.didReceive(event: .connected([:]))
         if responds { sendMessageServer() }
     }
-    func sendMessageServer() {
+    func sendMessageServer(viewUri: String = "https://recovery.invalid/view") {
         delegate?.didReceive(event: .text("""
-        {"type":"messageServer","data":{"viewUri":"https://recovery.invalid/view", "vposBaseTime":"2026-09-21T00:00:00Z", "hashedUserId":"test"}}
+        {"type":"messageServer","data":{"viewUri":"\(viewUri)", "vposBaseTime":"2026-09-21T00:00:00Z", "hashedUserId":"test"}}
         """))
     }
     func stop(closeCode: UInt16) { delegate?.didReceive(event: .disconnected("", closeCode)) }

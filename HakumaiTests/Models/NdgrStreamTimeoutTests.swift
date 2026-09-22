@@ -22,6 +22,10 @@ final class NdgrStreamTimeoutTests: XCTestCase {
         let retry = try XCTUnwrap(recorder.logs.firstIndex { $0.contains("1回目の再試行を実行") })
         XCTAssertLessThan(deadline, confirmed)
         XCTAssertLessThan(confirmed, retry)
+        let attempts = recorder.logs.filter { $0.contains("View受信 HTTP#1: HTTP試行計測:") }
+        XCTAssertEqual(attempts.count, 2)
+        XCTAssertTrue(attempts[0].contains("試行=1, 結果=通信失敗(NSURLErrorDomain(code=-1001))"))
+        XCTAssertTrue(attempts[1].contains("試行=2, 結果=成功"))
     }
 
     func testSegmentHeaderTimeoutExhaustionRecoversSession() throws {

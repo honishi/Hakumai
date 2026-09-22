@@ -18,6 +18,9 @@ final class ConnectionDiagnostics {
     private let output: (String) -> Void
     private var lastActivity: [Activity: TimeInterval] = [:]
     private var requestCount = 0
+    private var messageServerCount = 0
+    private var acceptedViewUri: String?
+    private var lastNotifiedViewUri: String?
 
     init(id: String = String(UUID().uuidString.prefix(8)),
          clock: @escaping () -> TimeInterval = { ProcessInfo.processInfo.systemUptime },
@@ -42,6 +45,64 @@ final class ConnectionDiagnostics {
         defer { lock.unlock() }
         requestCount += 1
         return requestCount
+    }
+
+    func reportMessageServer(viewUri: String, accepted: Bool) {
+        lock.lock()
+        messageServerCount += 1
+        let count = messageServerCount
+        let acceptedComparison = Self.compareUri(viewUri, with: acceptedViewUri)
+        let previousComparison = Self.compareUri(viewUri, with: lastNotifiedViewUri)
+        if accepted { acceptedViewUri = viewUri }
+        lastNotifiedViewUri = viewUri
+        lock.unlock()
+        let action = accepted ? "初回通知を採用" : "初回以降のため無視"
+        emit("視聴用WS: messageServer通知 #\(count), 初回採用URLと比較=\(acceptedComparison), 前回通知URLと比較=\(previousComparison), 処理=\(action)")
+    }
+
+    private static func compareUri(_ uri: String, with previous: String?) -> String {
+        guard let previous = previous else { return "比較対象なし" }
+        return uri == previous ? "同一" : "変更あり"
+    }
+
+    /// URL・ヘッダー・IP アドレスは含めず、各 HTTP 試行の終了時に得られる計測値だけを出す。
+    static func httpMetricsSummary(_ metrics: URLSessionTaskMetrics) -> [String] {
+        let formatSeconds: (TimeInterval) -> String = { String(format: "%.3f", max(0, $0)) }
+        let total = "task全体=\(formatSeconds(metrics.taskInterval.duration))秒, リダイレクト=\(metrics.redirectCount)回"
+        guard !metrics.transactionMetrics.isEmpty else { return [total + ", 取引計測なし"] }
+        return metrics.transactionMetrics.enumerated().map { index, transaction in
+            let duration: (Date?, Date?) -> String = { start, end in
+                guard let start = start else { return "記録なし" }
+                guard let end = end else {
+                    return "未完了(\(formatSeconds(metrics.taskInterval.end.timeIntervalSince(start)))秒経過)"
+                }
+                return formatSeconds(end.timeIntervalSince(start)) + "秒"
+            }
+            let protocolName: String
+            switch transaction.networkProtocolName {
+            case "h2", "h3", "http/1.1", "http/1.0": protocolName = transaction.networkProtocolName ?? "記録なし"
+            case nil: protocolName = "記録なし"
+            default: protocolName = "その他"
+            }
+            let source: String
+            switch transaction.resourceFetchType {
+            case .networkLoad: source = "ネットワーク"
+            case .localCache: source = "キャッシュ"
+            case .serverPush: source = "サーバープッシュ"
+            default: source = "不明"
+            }
+            let status = (transaction.response as? HTTPURLResponse).map { String($0.statusCode) } ?? "なし"
+            return [
+                total, "取引=\(index + 1)/\(metrics.transactionMetrics.count)",
+                "DNS=\(duration(transaction.domainLookupStartDate, transaction.domainLookupEndDate))",
+                "接続(TLS含む)=\(duration(transaction.connectStartDate, transaction.connectEndDate))",
+                "TLS=\(duration(transaction.secureConnectionStartDate, transaction.secureConnectionEndDate))",
+                "要求送信=\(duration(transaction.requestStartDate, transaction.requestEndDate))",
+                "応答待ち=\(duration(transaction.requestEndDate, transaction.responseStartDate))",
+                "本文受信=\(duration(transaction.responseStartDate, transaction.responseEndDate))",
+                "protocol=\(protocolName)", "接続再利用=\(transaction.isReusedConnection)", "取得元=\(source)", "status=\(status)"
+            ].joined(separator: ", ")
+        }
     }
 
     func emit(_ message: String) {

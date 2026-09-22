@@ -358,6 +358,7 @@ private extension NdgrClient {
                 case .complete(let completion):
                     timeout.stop()
                     let error: Error? = completion.error ?? ((unread?.isEmpty == false) ? NdgrStreamError.truncatedFrame : nil)
+                    retrier.reportCompletedAttempt(request, error: error)
                     (session.interceptor as? NdgrRequestThrottle)?.recordResponse(success: error == nil)
                     if completion.error == nil && parsedRetryCount > 0 {
                         diagnostics.emit("\(label): HTTP再試行で回復, \(retrier.retryCountSummary(totalRetries: parsedRetryCount)), 受信=\(receivedBytes)bytes")
