@@ -360,7 +360,7 @@ private extension NdgrClient {
                     let error: Error? = completion.error ?? ((unread?.isEmpty == false) ? NdgrStreamError.truncatedFrame : nil)
                     (session.interceptor as? NdgrRequestThrottle)?.recordResponse(success: error == nil)
                     if completion.error == nil && parsedRetryCount > 0 {
-                        diagnostics.emit("\(label): HTTP再試行で回復, 試行済み=\(parsedRetryCount), 受信=\(receivedBytes)bytes")
+                        diagnostics.emit("\(label): HTTP再試行で回復, \(retrier.retryCountSummary(totalRetries: parsedRetryCount)), 受信=\(receivedBytes)bytes")
                     }
                     // 失敗を上位へ伝え、正常な EOF と区別する。
                     diagnostics.reportStreamCompletion(completion, request: label,

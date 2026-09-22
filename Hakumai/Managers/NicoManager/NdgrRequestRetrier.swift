@@ -28,6 +28,11 @@ final class NdgrRequestRetrier: RequestRetrier, @unchecked Sendable {
         self.policy = policy
     }
 
+    // main queue 上で、Alamofire の総回数と通信エラーだけの回数を区別して表示する。
+    func retryCountSummary(totalRetries: Int) -> String {
+        "通信再試行済み=\(networkRetries)回, 総再試行済み（429含む）=\(totalRetries)回"
+    }
+
     func retry(
         _ request: Request,
         for session: Session,
@@ -60,7 +65,7 @@ final class NdgrRequestRetrier: RequestRetrier, @unchecked Sendable {
             [-1001, -1005].contains((underlyingError as NSError).code)
         else {
             log.debug("RequestRetrier > not retry")
-            report("再試行対象外: \(ConnectionDiagnostics.errorSummary(error)) (再試行済み=\(request.retryCount))")
+            report("再試行対象外: \(ConnectionDiagnostics.errorSummary(error)) (\(retryCountSummary(totalRetries: request.retryCount)))")
             completion(.doNotRetry)
             return
         }

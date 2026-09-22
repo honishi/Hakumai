@@ -54,6 +54,31 @@ final class NdgrRequestRetrierTests: XCTestCase {
         XCTAssertEqual(recorder.rateLimitWaitNotices, 1)
         XCTAssertEqual(recorder.recoveryNotices, 0)
         XCTAssertTrue(recorder.logs.contains { $0.contains("5回目の再試行を実行") })
+        XCTAssertTrue(recorder.logs.contains {
+            $0.contains("HTTP再試行で回復") && $0.contains("通信再試行済み=5回, 総再試行済み（429含む）=6回")
+        })
+    }
+
+    func testNonRetryableErrorDistinguishesNetworkRetriesFromRateLimits() {
+        let fixture = RecoveryFixture()
+        fixture.view = { count, _ in
+            if count == 1 { return .timeout }
+            return count == 2 ? .http(429) : .http(403)
+        }
+        let recorder = RecoveryRecorder()
+        let failed = expectation(description: "403で終了")
+        recorder.onDisconnect = { if case .failure = $0 { failed.fulfill() } }
+        let manager = fixture.manager(recorder: recorder, throttlePolicy: .init(retryDelays: [0.01]),
+                                      retryPolicy: .init(initialDelay: 0))
+        manager.connect(liveProgramId: "lv1")
+        wait(for: [failed], timeout: 5)
+        XCTAssertEqual(fixture.viewPositions.count, 3)
+        XCTAssertEqual(recorder.recoveryNotices, 0)
+        XCTAssertTrue(recorder.logs.contains {
+            $0.contains("再試行対象外: HTTP 403") && $0.contains("通信再試行済み=1回, 総再試行済み（429含む）=2回")
+        })
+        recorder.onDisconnect = nil
+        manager.disconnect()
     }
 
     func testDefaultFirstRetryWaitsHalfASecond() throws {
