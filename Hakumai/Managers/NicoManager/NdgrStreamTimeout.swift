@@ -76,8 +76,12 @@ final class NdgrStreamTimeout: @unchecked Sendable {
         let code = (underlying as NSError).code
         let isNetworkError = (underlying as NSError).domain == NSURLErrorDomain
         let expired = didExpire && isNetworkError && code == NSURLErrorCancelled
-        if !didExpire, isNetworkError, code == NSURLErrorTimedOut, let phase = phase {
-            reportTimeout(phase)
+        if let phase = phase {
+            if expired || (isNetworkError && code == NSURLErrorTimedOut) {
+                reportTimeout(phase)
+            } else if didExpire {
+                report("\(phase.rawValue)期限到達後の終了: \(ConnectionDiagnostics.errorSummary(error)), タイムアウトへの変換なし")
+            }
         }
         stop()
         return expired ? AFError.sessionTaskFailed(error: URLError(.timedOut)) : error
@@ -103,7 +107,7 @@ final class NdgrStreamTimeout: @unchecked Sendable {
                   self.isActive(), let request = self.request, !request.isCancelled,
                   let task = self.task, task === request.task, task.state == .running else { return }
             self.didExpire = true
-            self.reportTimeout(phase)
+            self.report("\(phase.rawValue)期限到達: 上限=\(self.duration(for: phase))秒, 当該HTTPの中止を要求")
             // Request.cancel() は Alamofire の再試行を禁止するため、今回の task のみ中止する。
             task.cancel()
         }
@@ -116,6 +120,6 @@ final class NdgrStreamTimeout: @unchecked Sendable {
     }
 
     private func reportTimeout(_ phase: Phase) {
-        report("\(phase.rawValue)タイムアウト: 上限=\(duration(for: phase))秒")
+        report("\(phase.rawValue)タイムアウト: 上限=\(duration(for: phase))秒, 終了原因を確認")
     }
 }

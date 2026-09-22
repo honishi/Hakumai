@@ -17,6 +17,11 @@ final class NdgrStreamTimeoutTests: XCTestCase {
         XCTAssertEqual(recorder.logs.filter { $0.contains("ヘッダー待ちタイムアウト") }.count, 1)
         XCTAssertTrue(recorder.logs.contains { $0.contains("HTTP再試行で回復") })
         XCTAssertEqual(recorder.recoveryNotices, 0)
+        let deadline = try XCTUnwrap(recorder.logs.firstIndex { $0.contains("ヘッダー待ち期限到達:") })
+        let confirmed = try XCTUnwrap(recorder.logs.firstIndex { $0.contains("ヘッダー待ちタイムアウト:") && $0.contains("終了原因を確認") })
+        let retry = try XCTUnwrap(recorder.logs.firstIndex { $0.contains("1回目の再試行を実行") })
+        XCTAssertLessThan(deadline, confirmed)
+        XCTAssertLessThan(confirmed, retry)
     }
 
     func testSegmentHeaderTimeoutExhaustionRecoversSession() throws {
