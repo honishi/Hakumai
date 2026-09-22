@@ -20,7 +20,7 @@ final class NdgrClient: NdgrClientType {
     private let throttlePolicy: NdgrRequestThrottle.Policy
     private let timeoutPolicy: NdgrStreamTimeout.Policy
     private let retryPolicy: NdgrRequestRetrier.Policy
-    private var streamSession: Session?
+    private var streamSession: NdgrTransport?
     private var streamTask: Task<Void, Never>?
     private var activeDiagnostics: ConnectionDiagnostics?
     private var receivedMessageMetaIds = Set<String>()
@@ -58,13 +58,14 @@ extension NdgrClient {
             guard let self = self, self.activeDiagnostics === diagnostics else { return }
             self.delegate?.ndgrClientWillWaitForRateLimit(self, diagnostics: diagnostics)
         }, report: { diagnostics.emit($0) })
-        let session = Session(configuration: configuration, startRequestsImmediately: false, interceptor: throttle)
+        let session = NdgrTransport(configuration: configuration, throttle: throttle)
         streamSession = session
         activeDiagnostics = diagnostics
         connected = false
         duplicateCount = 0
         diagnostics.emit("NDGR取得制御: 最小間隔=\(throttlePolicy.interval)秒, HTTP 429待機再試行上限=\(throttlePolicy.retryDelays.count)回")
         diagnostics.emit("NDGR通信再試行: 上限=\(retryPolicy.maxRetries)回（初回取得を除く）, 初回待機=\(retryPolicy.initialDelay)秒, 以降は倍率1.5・±50%の揺らぎ")
+        diagnostics.emit("NDGR通信接続更新: タイムアウト後のURLSession更新=\(retryPolicy.renewConnectionOnTimeout), HTTP計測の接続再利用で効果を確認")
         diagnostics.emit("NDGR開始 (View: ヘッダー待ち=\(timeoutPolicy.view.header)秒, 本文待ち=\(timeoutPolicy.view.body)秒 / Segment: ヘッダー待ち=\(timeoutPolicy.segment.header)秒, 本文待ち=\(timeoutPolicy.segment.body)秒), 再開=\(resuming), at=\(resumeAt ?? Int(beginTime.timeIntervalSince1970))")
         streamTask = Task { @MainActor [weak self] in
             guard let self = self else { return }
@@ -95,7 +96,7 @@ extension NdgrClient {
         activeDiagnostics = nil
         streamTask?.cancel()
         streamTask = nil
-        (streamSession?.interceptor as? NdgrRequestThrottle)?.stop()
+        streamSession?.stopNewRequests()
         streamSession?.cancelAllRequests()
         streamSession = nil
     }
@@ -111,7 +112,7 @@ extension NdgrClient {
 
 private extension NdgrClient {
     @MainActor
-    func forwardPlaylist(uri: URL, from: Int, diagnostics: ConnectionDiagnostics, session: Session) async throws {
+    func forwardPlaylist(uri: URL, from: Int, diagnostics: ConnectionDiagnostics, session: NdgrTransport) async throws {
         var next: Int? = from
         var segmentCount = 0
         let chatHistory = ChatHistory()
@@ -144,7 +145,7 @@ private extension NdgrClient {
     @MainActor
     // swiftlint:disable:next cyclomatic_complexity
     func forwardView(uri: URL, chatHistory: ChatHistory, diagnostics: ConnectionDiagnostics,
-                     session: Session) async throws -> (next: Int?, segmentCount: Int) {
+                     session: NdgrTransport) async throws -> (next: Int?, segmentCount: Int) {
         let view = ViewIteration()
         defer { view.cancelEndDeadline() }
         var next: Int?
@@ -195,7 +196,7 @@ private extension NdgrClient {
 
     @MainActor
     func pullSegment(uri: URL, chatHistory: ChatHistory, diagnostics: ConnectionDiagnostics,
-                     session: Session, view: ViewIteration) async throws {
+                     session: NdgrTransport, view: ViewIteration) async throws {
         defer { view.pendingSegments -= 1 }
         do {
             try await pullMessages(uri: uri, chatHistory: chatHistory, diagnostics: diagnostics, session: session, view: view)
@@ -215,7 +216,7 @@ private extension NdgrClient {
     @MainActor
     func finishChatHistory(_ history: ChatHistory, diagnostics: ConnectionDiagnostics) {
         guard activeDiagnostics === diagnostics, !history.didFinish else { return }
-        (streamSession?.interceptor as? NdgrRequestThrottle)?.reportMetrics(context: "履歴取得完了")
+        streamSession?.throttle.reportMetrics(context: "履歴取得完了")
         emitChatHistoryIfExists(chatHistory: history, diagnostics: diagnostics)
         history.didFinish = true
         delegate?.ndgrClientDidFinishChatHistory(self, diagnostics: diagnostics)
@@ -231,7 +232,7 @@ private extension NdgrClient {
 
     @MainActor
     func pullMessages(uri: URL, chatHistory: ChatHistory, diagnostics: ConnectionDiagnostics,
-                      session: Session, view: ViewIteration) async throws {
+                      session: NdgrTransport, view: ViewIteration) async throws {
         let messages = retrieve(uri: uri, messageType: Dwango_Nicolive_Chat_Service_Edge_ChunkedMessage.self,
                                 activity: .segment, diagnostics: diagnostics, session: session)
         for try await message in messages {
@@ -288,93 +289,98 @@ private extension NdgrClient {
         messageType: T.Type,
         activity: ConnectionDiagnostics.Activity,
         diagnostics: ConnectionDiagnostics,
-        session: Session,
+        session: NdgrTransport,
         view: ViewIteration? = nil
     ) -> AsyncThrowingStream<T, Error> {
         // log.debug("\(uri.absoluteString)")
-        var unread: Data?
         let requestID = diagnostics.nextRequestID()
         let label = "\(activity.rawValue) HTTP#\(requestID)"
         var receivedBytes = 0
-        var parsedRetryCount = 0
         let limits = timeoutPolicy.limits(for: activity)
         let timeout = NdgrStreamTimeout(limits: limits, isActive: { [weak self] in
             self?.activeDiagnostics === diagnostics
         }, report: { diagnostics.emit("\(label): \($0)") })
-        let retrier = NdgrRequestRetrier(throttle: session.interceptor as? NdgrRequestThrottle,
+        let retrier = NdgrRequestRetrier(throttle: session.throttle,
                                          timeout: timeout, policy: retryPolicy) { message in
             diagnostics.emit("\(label): \(message)")
         }
 
-        return AsyncThrowingStream { continuation in
+        return session.stream(report: { diagnostics.emit("\(label): \($0)") }, installStop: { continuation in
             view?.stop = { continuation.finish(throwing: $0) }
-            let request = session.streamRequest(
-                uri,
-                method: .get,
-                interceptor: Interceptor(retriers: [retrier]),
-                requestModifier: { $0.timeoutInterval = max(limits.header, limits.body) }
-            )
-            .validate()
-            timeout.observe(request)
-            request.responseStream { [weak self, weak request] in
-                guard let self = self, self.activeDiagnostics === diagnostics else {
-                    // 旧接続の通知を破棄するときも、残った監視を明示的に解除する。
-                    timeout.stop()
-                    continuation.finish(throwing: CancellationError())
-                    return
-                }
-                if let retries = request?.retryCount, retries != parsedRetryCount {
-                    // 再取得はフレームの先頭から始まるため、前の試行の未完フレームを混ぜない。
-                    unread = nil
-                    parsedRetryCount = retries
-                }
-                switch $0.event {
-                case let .stream(result):
-                    // log.debug("📦 stream (\(messageType))")
-                    switch result {
-                    case let .success(data):
-                        timeout.receivedData(data)
-                        if diagnostics.record(activity) {
-                            diagnostics.emit("\(label): この接続で初めてデータを受信")
+        }, makeStream: { [weak self] attemptSession, generation in
+            retrier.transportGeneration = generation
+            var unread: Data?
+            var parsedRetryCount = 0
+            return AsyncThrowingStream { continuation in
+                let request = attemptSession.streamRequest(
+                    uri,
+                    method: .get,
+                    interceptor: Interceptor(retriers: [retrier]),
+                    requestModifier: { $0.timeoutInterval = max(limits.header, limits.body) }
+                )
+                .validate()
+                timeout.observe(request)
+                request.responseStream { [weak self, weak request] in
+                    guard let self = self, self.activeDiagnostics === diagnostics else {
+                        // 旧接続の通知を破棄するときも、残った監視を明示的に解除する。
+                        timeout.stop()
+                        continuation.finish(throwing: CancellationError())
+                        return
+                    }
+                    if let retries = request?.retryCount, retries != parsedRetryCount {
+                        // 再取得はフレームの先頭から始まるため、前の試行の未完フレームを混ぜない。
+                        unread = nil
+                        parsedRetryCount = retries
+                    }
+                    switch $0.event {
+                    case let .stream(result):
+                        // log.debug("📦 stream (\(messageType))")
+                        switch result {
+                        case let .success(data):
+                            timeout.receivedData(data)
+                            if diagnostics.record(activity) {
+                                diagnostics.emit("\(label): この接続で初めてデータを受信")
+                            }
+                            receivedBytes += data.count
+                            log.debug("data from stream: \(data)")
+                            let decoded = self.decode(unread: unread, data: data, messageType: T.self)
+                            unread = decoded.truncated
+                            log.debug("unread: (\(unread?.count ?? 0)).")
+                            if (unread?.count ?? 0) > 10_240 {
+                                log.error("unread data too large (\(unread?.count ?? 0)), drop.")
+                                unread = nil
+                            }
+                            log.debug("unread: \(String(describing: unread))")
+                            for message in decoded.messages {
+                                continuation.yield(message)
+                            }
+                        case .failure(let error):
+                            log.error(error)
+                            diagnostics.emit("\(label): データ処理失敗 \(ConnectionDiagnostics.errorSummary(error))")
+                            continuation.finish(throwing: error)
                         }
-                        receivedBytes += data.count
-                        log.debug("data from stream: \(data)")
-                        let decoded = self.decode(unread: unread, data: data, messageType: T.self)
-                        unread = decoded.truncated
-                        log.debug("unread: (\(unread?.count ?? 0)).")
-                        if (unread?.count ?? 0) > 10_240 {
-                            log.error("unread data too large (\(unread?.count ?? 0)), drop.")
-                            unread = nil
+                    case .complete(let completion):
+                        timeout.stop()
+                        let error: Error? = completion.error ?? ((unread?.isEmpty == false) ? NdgrStreamError.truncatedFrame : nil)
+                        if let renewal = retrier.takeConnectionRenewal(request, error: error) {
+                            continuation.finish(throwing: renewal)
+                            return
                         }
-                        log.debug("unread: \(String(describing: unread))")
-                        for message in decoded.messages {
-                            continuation.yield(message)
-                        }
-                    case .failure(let error):
-                        log.error(error)
-                        diagnostics.emit("\(label): データ処理失敗 \(ConnectionDiagnostics.errorSummary(error))")
+                        retrier.reportCompletedAttempt(request, error: error, receivedBytes: receivedBytes)
+                        session.throttle.recordResponse(success: error == nil)
+                        // 失敗を上位へ伝え、正常な EOF と区別する。
+                        diagnostics.reportStreamCompletion(completion, request: label,
+                                                           receivedBytes: receivedBytes, unreadBytes: unread?.count ?? 0)
                         continuation.finish(throwing: error)
                     }
-                case .complete(let completion):
-                    timeout.stop()
-                    let error: Error? = completion.error ?? ((unread?.isEmpty == false) ? NdgrStreamError.truncatedFrame : nil)
-                    retrier.reportCompletedAttempt(request, error: error)
-                    (session.interceptor as? NdgrRequestThrottle)?.recordResponse(success: error == nil)
-                    if completion.error == nil && parsedRetryCount > 0 {
-                        diagnostics.emit("\(label): HTTP再試行で回復, \(retrier.retryCountSummary(totalRetries: parsedRetryCount)), 受信=\(receivedBytes)bytes")
-                    }
-                    // 失敗を上位へ伝え、正常な EOF と区別する。
-                    diagnostics.reportStreamCompletion(completion, request: label,
-                                                       receivedBytes: receivedBytes, unreadBytes: unread?.count ?? 0)
-                    continuation.finish(throwing: error)
                 }
+                continuation.onTermination = { @Sendable _ in
+                    request.cancel()
+                }
+                // 高速な応答でもヘッダー通知を取りこぼさないよう、監視を設置してから開始する。
+                request.resume()
             }
-            continuation.onTermination = { @Sendable _ in
-                request.cancel()
-            }
-            // 高速な応答でもヘッダー通知を取りこぼさないよう、監視を設置してから開始する。
-            request.resume()
-        }
+        })
     }
 
     // swiftlint:enable function_body_length
@@ -736,10 +742,10 @@ private final class ViewIteration {
     var failedSegments = 0
     private var endDeadline: DispatchWorkItem?
 
-    func endProgram(timeout: TimeInterval, diagnostics: ConnectionDiagnostics, session: Session) {
+    func endProgram(timeout: TimeInterval, diagnostics: ConnectionDiagnostics, session: NdgrTransport) {
         guard !programEnded else { return }
         programEnded = true
-        (session.interceptor as? NdgrRequestThrottle)?.stop()
+        session.stopNewRequests()
         diagnostics.emit("NDGR Segment: サーバーから放送終了状態を受信")
         stop?(nil)
         // 呼び出し元の終了通知Segmentは戻った後のdeferで減るため、待機対象から先に除く。

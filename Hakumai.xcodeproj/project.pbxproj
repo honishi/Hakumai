@@ -10,6 +10,7 @@
 		CA2026092200000000000001 /* NicoRecoveryTestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092200000000000002 /* NicoRecoveryTestSupport.swift */; };
 		CA2026092300000000000003 /* NdgrRequestThrottleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092300000000000004 /* NdgrRequestThrottleTests.swift */; };
 		CA2026092400000000000003 /* NdgrStreamTimeoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092400000000000004 /* NdgrStreamTimeoutTests.swift */; };
+		CA2026092500000000000003 /* NdgrTransportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092500000000000004 /* NdgrTransportTests.swift */; };
 		CA2026092400000000000007 /* NdgrRequestRetrierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092400000000000008 /* NdgrRequestRetrierTests.swift */; };
 		9A3A22960489C07A1AB8A317 /* Pods_Hakumai.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84A41989D935D7A03EBFCB87 /* Pods_Hakumai.framework */; };
 		A7F49743094E5F56137600E8 /* Pods_HakumaiTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 624C843B0BCD6D9BBCFABC5C /* Pods_HakumaiTests.framework */; };
@@ -44,6 +45,7 @@
 		CA2026092300000000000001 /* NdgrRequestThrottle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092300000000000002 /* NdgrRequestThrottle.swift */; };
 		CA2026092400000000000001 /* NdgrStreamTimeout.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092400000000000002 /* NdgrStreamTimeout.swift */; };
 		CA2026092400000000000005 /* NdgrRequestRetrier.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092400000000000006 /* NdgrRequestRetrier.swift */; };
+		CA2026092500000000000001 /* NdgrTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092500000000000002 /* NdgrTransport.swift */; };
 		CA2026092100000000000003 /* ConnectionDiagnosticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092100000000000004 /* ConnectionDiagnosticsTests.swift */; };
 		CA2026092100000000000005 /* MessageContainerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092100000000000006 /* MessageContainerTests.swift */; };
 		DB3091122C5D737800B9F7AA /* NdgrClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB3091112C5D737800B9F7AA /* NdgrClient.swift */; };
@@ -169,6 +171,7 @@
 		CA2026092200000000000002 /* NicoRecoveryTestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoRecoveryTestSupport.swift; sourceTree = "<group>"; };
 		CA2026092300000000000004 /* NdgrRequestThrottleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrRequestThrottleTests.swift; sourceTree = "<group>"; };
 		CA2026092400000000000004 /* NdgrStreamTimeoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrStreamTimeoutTests.swift; sourceTree = "<group>"; };
+		CA2026092500000000000004 /* NdgrTransportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrTransportTests.swift; sourceTree = "<group>"; };
 		CA2026092400000000000008 /* NdgrRequestRetrierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrRequestRetrierTests.swift; sourceTree = "<group>"; };
 		1C70C20FABA74CB0DE9D6117 /* Pods-Hakumai.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Hakumai.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Hakumai/Pods-Hakumai.debug.xcconfig"; sourceTree = "<group>"; };
 		20EE9521898A5BBE307B4918 /* Pods-Hakumai.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Hakumai.release.xcconfig"; path = "Pods/Target Support Files/Pods-Hakumai/Pods-Hakumai.release.xcconfig"; sourceTree = "<group>"; };
@@ -213,6 +216,7 @@
 		CA2026092300000000000002 /* NdgrRequestThrottle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrRequestThrottle.swift; sourceTree = "<group>"; };
 		CA2026092400000000000002 /* NdgrStreamTimeout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrStreamTimeout.swift; sourceTree = "<group>"; };
 		CA2026092400000000000006 /* NdgrRequestRetrier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrRequestRetrier.swift; sourceTree = "<group>"; };
+		CA2026092500000000000002 /* NdgrTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrTransport.swift; sourceTree = "<group>"; };
 		CA2026092100000000000004 /* ConnectionDiagnosticsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionDiagnosticsTests.swift; sourceTree = "<group>"; };
 		CA2026092100000000000006 /* MessageContainerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageContainerTests.swift; sourceTree = "<group>"; };
 		DB3091112C5D737800B9F7AA /* NdgrClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrClient.swift; sourceTree = "<group>"; };
@@ -703,6 +707,7 @@
 				CA2026092400000000000008 /* NdgrRequestRetrierTests.swift */,
 				CA2026092300000000000004 /* NdgrRequestThrottleTests.swift */,
 				CA2026092400000000000004 /* NdgrStreamTimeoutTests.swift */,
+				CA2026092500000000000004 /* NdgrTransportTests.swift */,
 				DB0F0ECC1A16441D00F8BDC5 /* NicoManagerTests.swift */,
 				CA2026092200000000000002 /* NicoRecoveryTestSupport.swift */,
 				DBD1CF53273F376A00D52271 /* PremiumTests.swift */,
@@ -798,6 +803,7 @@
 				CA2026092400000000000006 /* NdgrRequestRetrier.swift */,
 				CA2026092300000000000002 /* NdgrRequestThrottle.swift */,
 				CA2026092400000000000002 /* NdgrStreamTimeout.swift */,
+				CA2026092500000000000002 /* NdgrTransport.swift */,
 				DBAAA7501A0FDA4500981004 /* NicoManager.swift */,
 				DB6DD2AD2650F1B0009A9574 /* NicoManagerProtocol.swift */,
 			);
@@ -1200,6 +1206,7 @@
 				CA2026092400000000000005 /* NdgrRequestRetrier.swift in Sources */,
 				CA2026092300000000000001 /* NdgrRequestThrottle.swift in Sources */,
 				CA2026092400000000000001 /* NdgrStreamTimeout.swift in Sources */,
+				CA2026092500000000000001 /* NdgrTransport.swift in Sources */,
 				DBAAA7511A0FDA4500981004 /* NicoManager.swift in Sources */,
 				DB6DD2AE2650F1B0009A9574 /* NicoManagerProtocol.swift in Sources */,
 				DBBE416C266CB939004002F1 /* NicoOAuthApiModel.swift in Sources */,
@@ -1255,6 +1262,7 @@
 				CA2026092400000000000007 /* NdgrRequestRetrierTests.swift in Sources */,
 				CA2026092300000000000003 /* NdgrRequestThrottleTests.swift in Sources */,
 				CA2026092400000000000003 /* NdgrStreamTimeoutTests.swift in Sources */,
+				CA2026092500000000000003 /* NdgrTransportTests.swift in Sources */,
 				DB0F0ECD1A16441D00F8BDC5 /* NicoManagerTests.swift in Sources */,
 				CA2026092200000000000001 /* NicoRecoveryTestSupport.swift in Sources */,
 				DBD1CF54273F376A00D52271 /* PremiumTests.swift in Sources */,
