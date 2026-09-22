@@ -110,7 +110,7 @@ final class ConnectionDiagnosticsTests: XCTestCase {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [DiagnosticURLProtocol.self]
         let delegate = DiagnosticNDGRDelegate(finished: expectation(description: "NDGR終了"))
-        let client = NdgrClient(delegate: delegate, configuration: configuration)
+        let client = NdgrClient(delegate: delegate, configuration: configuration, retryPolicy: .init(maxRetries: 1, initialDelay: 0))
         let url = try XCTUnwrap(URL(string: "https://diagnostics.invalid/\(path)?token=secret"))
         client.connect(viewUri: url, beginTime: Date(), diagnostics: diagnostics)
         wait(for: [delegate.finished], timeout: 5)

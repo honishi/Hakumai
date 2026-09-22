@@ -3,15 +3,29 @@ import Alamofire
 
 // 再試行判定とタイムアウト監視は main queue に直列化する。
 final class NdgrRequestRetrier: RequestRetrier, @unchecked Sendable {
+    struct Policy {
+        var maxRetries = 5
+        var initialDelay: TimeInterval = 0.5
+
+        func delay(forRetry retry: Int) -> TimeInterval {
+            guard retry > 1 else { return initialDelay }
+            // Web プレイヤーと同じ倍率 1.5、±50% の揺らぎ。初回は固定 500ms。
+            return initialDelay * pow(1.5, Double(retry - 1)) * (Bool.random() ? 1.5 : 0.5)
+        }
+    }
+
     private let report: (String) -> Void
     private let throttle: NdgrRequestThrottle?
     private let timeout: NdgrStreamTimeout?
+    private let policy: Policy
     private var networkRetries = 0
 
-    init(throttle: NdgrRequestThrottle? = nil, timeout: NdgrStreamTimeout? = nil, report: @escaping (String) -> Void) {
+    init(throttle: NdgrRequestThrottle? = nil, timeout: NdgrStreamTimeout? = nil,
+         policy: Policy = .init(), report: @escaping (String) -> Void) {
         self.throttle = throttle
         self.timeout = timeout
         self.report = report
+        self.policy = policy
     }
 
     func retry(
@@ -52,11 +66,14 @@ final class NdgrRequestRetrier: RequestRetrier, @unchecked Sendable {
         }
         log.debug("RequestRetrier > perform retry")
         // 429 の再試行で、タイムアウト・切断の再試行枠を消費しない。
-        let shouldRetry = networkRetries == 0
+        guard networkRetries < policy.maxRetries else {
+            report("再試行上限に到達: \(ConnectionDiagnostics.errorSummary(error)), 上限=\(policy.maxRetries)回")
+            completion(.doNotRetryWithError(error))
+            return
+        }
         networkRetries += 1
-        let action = shouldRetry ? "1回目の再試行を実行" : "再試行上限に到達"
-        report("\(action): \(ConnectionDiagnostics.errorSummary(error))")
-        // すでに1回リトライしていたら再試行しない、そうでなければリトライする
-        completion(shouldRetry ? .retry : .doNotRetryWithError(error))
+        let delay = policy.delay(forRetry: networkRetries)
+        report("\(networkRetries)回目の再試行を実行: \(ConnectionDiagnostics.errorSummary(error)), 上限=\(policy.maxRetries)回, 待機=\(String(format: "%.3f", delay))秒")
+        completion(.retryWithDelay(delay))
     }
 }

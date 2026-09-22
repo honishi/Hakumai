@@ -19,6 +19,7 @@ final class NdgrClient: NdgrClientType {
     private let endDrainTimeout: TimeInterval
     private let throttlePolicy: NdgrRequestThrottle.Policy
     private let timeoutPolicy: NdgrStreamTimeout.Policy
+    private let retryPolicy: NdgrRequestRetrier.Policy
     private var streamSession: Session?
     private var streamTask: Task<Void, Never>?
     private var activeDiagnostics: ConnectionDiagnostics?
@@ -29,12 +30,13 @@ final class NdgrClient: NdgrClientType {
 
     init(delegate: NdgrClientDelegate? = nil, configuration: URLSessionConfiguration = .af.default,
          endDrainTimeout: TimeInterval = 5, throttlePolicy: NdgrRequestThrottle.Policy = .init(),
-         timeoutPolicy: NdgrStreamTimeout.Policy = .init()) {
+         timeoutPolicy: NdgrStreamTimeout.Policy = .init(), retryPolicy: NdgrRequestRetrier.Policy = .init()) {
         self.delegate = delegate
         self.configuration = configuration
         self.endDrainTimeout = endDrainTimeout
         self.throttlePolicy = throttlePolicy
         self.timeoutPolicy = timeoutPolicy
+        self.retryPolicy = retryPolicy
         configuration.headers.add(.userAgent(commonUserAgentValue))
     }
 }
@@ -62,6 +64,7 @@ extension NdgrClient {
         connected = false
         duplicateCount = 0
         diagnostics.emit("NDGR取得制御: 最小間隔=\(throttlePolicy.interval)秒, HTTP 429待機再試行上限=\(throttlePolicy.retryDelays.count)回")
+        diagnostics.emit("NDGR通信再試行: 上限=\(retryPolicy.maxRetries)回（初回取得を除く）, 初回待機=\(retryPolicy.initialDelay)秒, 以降は倍率1.5・±50%の揺らぎ")
         diagnostics.emit("NDGR開始 (View: ヘッダー待ち=\(timeoutPolicy.view.header)秒, 本文待ち=\(timeoutPolicy.view.body)秒 / Segment: ヘッダー待ち=\(timeoutPolicy.segment.header)秒, 本文待ち=\(timeoutPolicy.segment.body)秒), 再開=\(resuming), at=\(resumeAt ?? Int(beginTime.timeIntervalSince1970))")
         streamTask = Task { @MainActor [weak self] in
             guard let self = self else { return }
@@ -298,7 +301,8 @@ private extension NdgrClient {
         let timeout = NdgrStreamTimeout(limits: limits, isActive: { [weak self] in
             self?.activeDiagnostics === diagnostics
         }, report: { diagnostics.emit("\(label): \($0)") })
-        let retrier = NdgrRequestRetrier(throttle: session.interceptor as? NdgrRequestThrottle, timeout: timeout) { message in
+        let retrier = NdgrRequestRetrier(throttle: session.interceptor as? NdgrRequestThrottle,
+                                         timeout: timeout, policy: retryPolicy) { message in
             diagnostics.emit("\(label): \(message)")
         }
 

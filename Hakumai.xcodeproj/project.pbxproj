@@ -10,6 +10,7 @@
 		CA2026092200000000000001 /* NicoRecoveryTestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092200000000000002 /* NicoRecoveryTestSupport.swift */; };
 		CA2026092300000000000003 /* NdgrRequestThrottleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092300000000000004 /* NdgrRequestThrottleTests.swift */; };
 		CA2026092400000000000003 /* NdgrStreamTimeoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092400000000000004 /* NdgrStreamTimeoutTests.swift */; };
+		CA2026092400000000000007 /* NdgrRequestRetrierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092400000000000008 /* NdgrRequestRetrierTests.swift */; };
 		9A3A22960489C07A1AB8A317 /* Pods_Hakumai.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84A41989D935D7A03EBFCB87 /* Pods_Hakumai.framework */; };
 		A7F49743094E5F56137600E8 /* Pods_HakumaiTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 624C843B0BCD6D9BBCFABC5C /* Pods_HakumaiTests.framework */; };
 		DB022ED1271144CF003DC12A /* IconTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB022ED0271144CF003DC12A /* IconTableCellView.swift */; };
@@ -168,6 +169,7 @@
 		CA2026092200000000000002 /* NicoRecoveryTestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoRecoveryTestSupport.swift; sourceTree = "<group>"; };
 		CA2026092300000000000004 /* NdgrRequestThrottleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrRequestThrottleTests.swift; sourceTree = "<group>"; };
 		CA2026092400000000000004 /* NdgrStreamTimeoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrStreamTimeoutTests.swift; sourceTree = "<group>"; };
+		CA2026092400000000000008 /* NdgrRequestRetrierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrRequestRetrierTests.swift; sourceTree = "<group>"; };
 		1C70C20FABA74CB0DE9D6117 /* Pods-Hakumai.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Hakumai.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Hakumai/Pods-Hakumai.debug.xcconfig"; sourceTree = "<group>"; };
 		20EE9521898A5BBE307B4918 /* Pods-Hakumai.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Hakumai.release.xcconfig"; path = "Pods/Target Support Files/Pods-Hakumai/Pods-Hakumai.release.xcconfig"; sourceTree = "<group>"; };
 		624C843B0BCD6D9BBCFABC5C /* Pods_HakumaiTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_HakumaiTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -698,6 +700,7 @@
 				DBE093FE1A5869A2004554FD /* HandleNameManagerTests.swift */,
 				DB34F836275BB37600180C7A /* LiveThumbnailManagerTest.swift */,
 				CA2026092100000000000006 /* MessageContainerTests.swift */,
+				CA2026092400000000000008 /* NdgrRequestRetrierTests.swift */,
 				CA2026092300000000000004 /* NdgrRequestThrottleTests.swift */,
 				CA2026092400000000000004 /* NdgrStreamTimeoutTests.swift */,
 				DB0F0ECC1A16441D00F8BDC5 /* NicoManagerTests.swift */,
@@ -1249,6 +1252,7 @@
 				DBE093FF1A5869A2004554FD /* HandleNameManagerTests.swift in Sources */,
 				DB34F837275BB37600180C7A /* LiveThumbnailManagerTest.swift in Sources */,
 				CA2026092100000000000005 /* MessageContainerTests.swift in Sources */,
+				CA2026092400000000000007 /* NdgrRequestRetrierTests.swift in Sources */,
 				CA2026092300000000000003 /* NdgrRequestThrottleTests.swift in Sources */,
 				CA2026092400000000000003 /* NdgrStreamTimeoutTests.swift in Sources */,
 				DB0F0ECD1A16441D00F8BDC5 /* NicoManagerTests.swift in Sources */,

@@ -27,11 +27,15 @@ final class RecoveryFixture {
     func manager(recorder: RecoveryRecorder, delays: [TimeInterval] = [0, 0, 0],
                  ndgrClient: NdgrClientType? = nil, endDrainTimeout: TimeInterval = 5,
                  throttlePolicy: NdgrRequestThrottle.Policy = .init(interval: 0),
-                 timeoutPolicy: NdgrStreamTimeout.Policy = .init()) -> NicoManager {
+                 timeoutPolicy: NdgrStreamTimeout.Policy = .init(),
+                 retryPolicy: NdgrRequestRetrier.Policy = .init(maxRetries: 1, initialDelay: 0)) -> NicoManager {
         let config = URLSessionConfiguration.ephemeral
         config.protocolClasses = [RecoveryURLProtocol.self]
         RecoveryURLProtocol.reply = { [self] url in try respond(url) }
-        let manager = NicoManager(authManager: RecoveryAuth(), ndgrClient: ndgrClient ?? NdgrClient(configuration: config, endDrainTimeout: endDrainTimeout, throttlePolicy: throttlePolicy, timeoutPolicy: timeoutPolicy),
+        // 既存の復旧境界テストは短い再試行枠で実行。製品既定の5回は専用テストで検証する。
+        let client = ndgrClient ?? NdgrClient(configuration: config, endDrainTimeout: endDrainTimeout,
+                                              throttlePolicy: throttlePolicy, timeoutPolicy: timeoutPolicy, retryPolicy: retryPolicy)
+        let manager = NicoManager(authManager: RecoveryAuth(), ndgrClient: client,
                                   configuration: config, recoveryDelays: delays) { [self] request in
             let engine = RecoveryEngine(sendMessageServer: sendMessageServer)
             engines.append(engine)
