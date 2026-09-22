@@ -318,6 +318,8 @@ private extension NdgrClient {
             timeout.observe(request)
             request.responseStream { [weak self, weak request] in
                 guard let self = self, self.activeDiagnostics === diagnostics else {
+                    // 旧接続の通知を破棄するときも、残った監視を明示的に解除する。
+                    timeout.stop()
                     continuation.finish(throwing: CancellationError())
                     return
                 }
