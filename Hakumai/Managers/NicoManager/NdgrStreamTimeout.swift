@@ -30,7 +30,7 @@ final class NdgrStreamTimeout: @unchecked Sendable {
     private weak var task: URLSessionTask?
     private var phase: Phase?
     private var deadline: DispatchWorkItem?
-    private var generation = 0
+    private var lastProgressAt: TimeInterval = 0
     private var didExpire = false
 
     init(limits: Limits, isActive: @escaping () -> Bool, report: @escaping (String) -> Void) {
@@ -67,7 +67,8 @@ final class NdgrStreamTimeout: @unchecked Sendable {
 
     func receivedData(_ data: Data) {
         guard !data.isEmpty, phase == .body, !didExpire else { return }
-        arm(.body)
+        // chunk ごとにタイマーを作り直さず、期限の判定時に最終受信からの経過で延長する。
+        lastProgressAt = ProcessInfo.processInfo.systemUptime
     }
 
     /// task の期限切れによるキャンセルだけを、既存 retrier が扱える通信タイムアウトへ変換する。
@@ -88,7 +89,6 @@ final class NdgrStreamTimeout: @unchecked Sendable {
     }
 
     func stop() {
-        generation += 1
         deadline?.cancel()
         deadline = nil
         phase = nil
@@ -98,21 +98,29 @@ final class NdgrStreamTimeout: @unchecked Sendable {
     }
 
     private func arm(_ phase: Phase) {
-        deadline?.cancel()
-        generation += 1
-        let expectedGeneration = generation
         self.phase = phase
+        lastProgressAt = ProcessInfo.processInfo.systemUptime
+        schedule(phase, after: duration(for: phase))
+    }
+
+    // 状態の更新と期限の実行はすべて main queue 上で行うため、cancel() 済みの期限は実行されない。
+    private func schedule(_ phase: Phase, after delay: TimeInterval) {
+        deadline?.cancel()
         let work = DispatchWorkItem { [weak self] in
-            guard let self = self, self.generation == expectedGeneration,
-                  self.isActive(), let request = self.request, !request.isCancelled,
+            guard let self = self, self.isActive(), let request = self.request, !request.isCancelled,
                   let task = self.task, task === request.task, task.state == .running else { return }
+            let remaining = self.lastProgressAt + self.duration(for: phase) - ProcessInfo.processInfo.systemUptime
+            if remaining > 0 {
+                self.schedule(phase, after: remaining)
+                return
+            }
             self.didExpire = true
             self.report("\(phase.rawValue)期限到達: 上限=\(self.duration(for: phase))秒, 当該HTTPの中止を要求")
             // Request.cancel() は Alamofire の再試行を禁止するため、今回の task のみ中止する。
             task.cancel()
         }
         deadline = work
-        DispatchQueue.main.asyncAfter(deadline: .now() + duration(for: phase), execute: work)
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: work)
     }
 
     private func duration(for phase: Phase) -> TimeInterval {

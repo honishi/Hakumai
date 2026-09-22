@@ -200,11 +200,15 @@ final class NdgrRequestThrottle: RequestInterceptor, @unchecked Sendable {
     static func retryAfter(_ value: String?, now: Date = Date()) -> TimeInterval? {
         guard let value = value?.trimmingCharacters(in: .whitespacesAndNewlines) else { return nil }
         if let seconds = Double(value), seconds.isFinite, seconds >= 0 { return seconds }
+        guard let date = httpDateFormatter.date(from: value) else { return nil }
+        return max(0, date.timeIntervalSince(now))
+    }
+
+    private static let httpDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
         formatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss zzz"
-        guard let date = formatter.date(from: value) else { return nil }
-        return max(0, date.timeIntervalSince(now))
-    }
+        return formatter
+    }()
 }

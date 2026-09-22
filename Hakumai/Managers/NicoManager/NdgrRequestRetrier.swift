@@ -20,14 +20,14 @@ final class NdgrRequestRetrier: RequestRetrier, @unchecked Sendable {
     }
 
     private let report: (String) -> Void
-    private let throttle: NdgrRequestThrottle?
-    private let timeout: NdgrStreamTimeout?
+    private let throttle: NdgrRequestThrottle
+    private let timeout: NdgrStreamTimeout
     private let policy: Policy
     private var networkRetries = 0
     private var previousRequestRetries = 0
     var transportGeneration = 1
 
-    func totalRetries(for request: Request) -> Int {
+    private func totalRetries(for request: Request) -> Int {
         previousRequestRetries + request.retryCount
     }
 
@@ -39,7 +39,7 @@ final class NdgrRequestRetrier: RequestRetrier, @unchecked Sendable {
         return renewal
     }
 
-    init(throttle: NdgrRequestThrottle? = nil, timeout: NdgrStreamTimeout? = nil,
+    init(throttle: NdgrRequestThrottle, timeout: NdgrStreamTimeout,
          policy: Policy = .init(), report: @escaping (String) -> Void) {
         self.throttle = throttle
         self.timeout = timeout
@@ -48,7 +48,7 @@ final class NdgrRequestRetrier: RequestRetrier, @unchecked Sendable {
     }
 
     // main queue 上で、Alamofire の総回数と通信エラーだけの回数を区別して表示する。
-    func retryCountSummary(totalRetries: Int) -> String {
+    private func retryCountSummary(totalRetries: Int) -> String {
         "通信再試行済み=\(networkRetries)回, 総再試行済み（429含む）=\(totalRetries)回"
     }
 
@@ -60,11 +60,11 @@ final class NdgrRequestRetrier: RequestRetrier, @unchecked Sendable {
     ) {
         DispatchQueue.main.async {
             guard !request.isCancelled else {
-                self.timeout?.stop()
+                self.timeout.stop()
                 completion(.doNotRetry)
                 return
             }
-            let error = self.timeout?.finishAttempt(error: error) ?? error
+            let error = self.timeout.finishAttempt(error: error)
             self.reportAttemptMetrics(request, error: error)
             self.retry(request, error: error, completion: completion)
         }
@@ -72,10 +72,11 @@ final class NdgrRequestRetrier: RequestRetrier, @unchecked Sendable {
 
     func reportCompletedAttempt(_ request: Request?, error: Error?, receivedBytes: Int) {
         // 通信失敗は retry() で記録済み。ここでは正常 EOF（未完フレーム検出を含む）を扱う。
-        guard let request = request, request.error == nil, error != nil || totalRetries(for: request) > 0 else { return }
+        guard let request = request, request.error == nil else { return }
+        let retries = totalRetries(for: request)
+        guard error != nil || retries > 0 else { return }
         // 通常の履歴取得で大量のログを出さず、失敗と再試行後の回復だけを記録する。
         reportAttemptMetrics(request, error: error)
-        let retries = totalRetries(for: request)
         if retries > 0 {
             report("HTTP再試行で回復, \(retryCountSummary(totalRetries: retries)), 受信=\(receivedBytes)bytes")
         }
@@ -96,17 +97,16 @@ final class NdgrRequestRetrier: RequestRetrier, @unchecked Sendable {
 
     private func retry(_ request: Request, error: Error, completion: @escaping (RetryResult) -> Void) {
         log.debug("RequestRetrier > error: \(ConnectionDiagnostics.errorSummary(error))")
-        throttle?.recordResponse(success: false)
-        if request.response?.statusCode == 429, !request.isCancelled, let throttle = throttle {
+        throttle.recordResponse(success: false)
+        if request.response?.statusCode == 429 {
             throttle.retryRateLimited(request, completion: completion)
             return
         }
         guard
             let afError = error.asAFError,
             case .sessionTaskFailed(let underlyingError) = afError,
-            // Code=-1001 "The request timed out."
-            // Code=-1005 "The network connection was lost."
-            [-1001, -1005].contains((underlyingError as NSError).code)
+            case let code = (underlyingError as NSError).code,
+            [NSURLErrorTimedOut, NSURLErrorNetworkConnectionLost].contains(code)
         else {
             log.debug("RequestRetrier > not retry")
             report("再試行対象外: \(ConnectionDiagnostics.errorSummary(error)) (\(retryCountSummary(totalRetries: totalRetries(for: request))))")
@@ -123,7 +123,7 @@ final class NdgrRequestRetrier: RequestRetrier, @unchecked Sendable {
         networkRetries += 1
         let delay = policy.delay(forRetry: networkRetries)
         report("\(networkRetries)回目の再試行を実行: \(ConnectionDiagnostics.errorSummary(error)), 上限=\(policy.maxRetries)回, 待機=\(String(format: "%.3f", delay))秒")
-        if policy.renewConnectionOnTimeout, (underlyingError as NSError).code == NSURLErrorTimedOut {
+        if policy.renewConnectionOnTimeout, code == NSURLErrorTimedOut {
             // Alamofire の Request は別の Session へ移せないため、読み取り側で HTTP を作り直す。
             completion(.doNotRetryWithError(ConnectionRenewal(delay: delay)))
         } else {

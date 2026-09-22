@@ -64,15 +64,6 @@ private let postCommentMessage = """
 // MARK: - Class
 final class NicoManager: NicoManagerType {
     // MARK: - Types
-    struct ConnectRequests {
-        // swiftlint:disable nesting
-        struct Request {
-            let liveProgramId: String
-        }
-        // swiftlint:enable nesting
-        var onGoing: Request?
-        var lastEstablished: Request?
-    }
     struct ChatNumbers {
         var latest: Int
         var maxBeforeReconnect: Int
@@ -103,11 +94,6 @@ final class NicoManager: NicoManagerType {
     private let ndgrClient: NdgrClientType
 
     private var isConnected = false
-    private var connectRequests: ConnectRequests =
-        ConnectRequests(
-            onGoing: nil,
-            lastEstablished: nil
-        )
     private let session: Session
     private var watchSocket: WebSocket?
     private var messageSocket: WebSocket?
@@ -128,6 +114,8 @@ final class NicoManager: NicoManagerType {
     private let recoveryDelays: [TimeInterval]
     private let socketFactory: (URLRequest) -> WebSocket
     private var recoveryDiagnostics: ConnectionDiagnostics?
+    // 復旧待機中は接続試行の診断が破棄されるため、直前の接続の診断に出力する。
+    private var currentDiagnostics: ConnectionDiagnostics? { connectionDiagnostics ?? recoveryDiagnostics }
 
     // Timers for WebSockets
     private var watchSocketKeepSeatInterval = 30
@@ -185,7 +173,7 @@ extension NicoManager {
         }
         if !connectContext.isReconnect {
             if !pendingHistory.isEmpty {
-                (connectionDiagnostics ?? recoveryDiagnostics)?.emit("手動接続切替: 旧接続の未表示履歴\(pendingHistory.count)件は新しい画面に通知しない")
+                currentDiagnostics?.emit("手動接続切替: 旧接続の未表示履歴\(pendingHistory.count)件は新しい画面に通知しない")
                 pendingHistory.removeAll()
             }
             disconnect()
@@ -214,8 +202,6 @@ extension NicoManager {
             return
         }
         delegate?.nicoManagerDidConfirmTokenExistence(self)
-        connectRequests.onGoing = ConnectRequests.Request(liveProgramId: liveProgramId)
-        connectRequests.lastEstablished = nil
         for room in RoomPosition.allCases {
             chatNumbers[room] = connectContext.isReconnect ? chatNumbers[room]?.makeMaxBeforeReconnectToLatest() : .zero
         }
@@ -232,14 +218,13 @@ extension NicoManager {
             DispatchQueue.main.async { self.disconnect(disconnectContext: disconnectContext) }
             return
         }
-        (connectionDiagnostics ?? recoveryDiagnostics)?.emit("切断実行: context=\(disconnectContext), 復旧予約を取り消す")
+        currentDiagnostics?.emit("切断実行: context=\(disconnectContext), 復旧予約を取り消す")
         publishPendingHistory()
         let wasActive = activeProgramId != nil
         activeProgramId = nil
         recoveryStartedAt = nil
         recoveryDiagnostics = nil
         stopConnectionAttempt()
-        connectRequests = ConnectRequests()
         if wasActive { delegate?.nicoManagerDidDisconnect(self, disconnectContext: disconnectContext) }
     }
 
@@ -263,7 +248,7 @@ extension NicoManager {
 
     private func scheduleRecovery(reason: NicoReconnectReason, detail: String) {
         guard let programId = activeProgramId, recoveryWorkItem == nil else { return }
-        let diagnostics = connectionDiagnostics ?? recoveryDiagnostics
+        let diagnostics = currentDiagnostics
         guard recoveryAttempt < recoveryDelays.count else {
             diagnostics?.emit("復旧断念: セッション累計の再接続上限\(recoveryDelays.count)回, 理由=\(detail)")
             disconnect(disconnectContext: .failure)
@@ -290,7 +275,6 @@ extension NicoManager {
     }
 
     private func failConnection(_ error: NicoError, diagnostics: ConnectionDiagnostics) {
-        guard connectionDiagnostics === diagnostics else { return }
         if currentConnectContext.isReconnect && NicoRecoveryPolicy.shouldRetry(error) {
             scheduleRecovery(reason: .ndgr, detail: "接続準備中の通信失敗")
         } else {
@@ -417,8 +401,6 @@ extension NicoManager: NdgrClientDelegate {
             diagnostics.emit("復旧成功: NDGRデータ受信再開, 所要=\(elapsed)秒, セッション累計試行=\(recoveryAttempt)")
             recoveryStartedAt = nil
         }
-        connectRequests.lastEstablished = connectRequests.onGoing
-        connectRequests.onGoing = nil
         isConnected = true
         startBasicTimers()
         delegate?.nicoManagerDidConnectToLive(self, roomPosition: .arena, connectContext: currentConnectContext)
@@ -445,7 +427,7 @@ extension NicoManager: NdgrClientDelegate {
         let isInitial = awaitingInitialHistory
         if let started = initialHistoryStartedAt {
             let elapsed = String(format: "%.3f", ProcessInfo.processInfo.systemUptime - started)
-            (connectionDiagnostics ?? recoveryDiagnostics)?.emit("初回履歴取得: \(completed ? "完了" : "完了通知前に終了"), 総時間=\(elapsed)秒（接続準備・復旧待機を含む）")
+            currentDiagnostics?.emit("初回履歴取得: \(completed ? "完了" : "完了通知前に終了"), 総時間=\(elapsed)秒（接続準備・復旧待機を含む）")
             initialHistoryStartedAt = nil
         }
         // 初回の履歴が0件でも区切りを記録し、後の復旧履歴を初回扱いしない。
@@ -453,9 +435,8 @@ extension NicoManager: NdgrClientDelegate {
         guard !pendingHistory.isEmpty else { return }
         let chats = pendingHistory
         pendingHistory.removeAll()
-        (connectionDiagnostics ?? recoveryDiagnostics)?.emit("履歴コメントを一括通知: \(chats.count)件, 初回=\(isInitial)")
+        currentDiagnostics?.emit("履歴コメントを一括通知: \(chats.count)件, 初回=\(isInitial)")
         delegate?.nicoManagerDidReceiveChatHistory(self, chats: chats, isInitial: isInitial)
-        delegate?.nicoManagerDidFinishChatHistory(self, totalChatCount: chats.count)
     }
 
     func ndgrClientDidReceiveChat(_ ndgrClient: any NdgrClientType, chat: Chat, diagnostics: ConnectionDiagnostics) {
@@ -505,7 +486,7 @@ private extension NicoManager {
                 "fields": "program,programProvider"
             ]
         ) { [weak self] (result: Result<WatchProgramsResponse, NicoError>) in
-            guard let me = self, me.connectionDiagnostics === diagnostics else { return }
+            guard let me = self else { return }
             switch result {
             case .success(let data):
                 if me.resumingLive && data.data.program.schedule.status == .ended {
@@ -543,7 +524,7 @@ private extension NicoManager {
             url: userinfoApiUrl,
             diagnostics: diagnostics
         ) { [weak self] (result: Result<UserInfoResponse, NicoError>) in
-            guard let me = self, me.connectionDiagnostics === diagnostics else { return }
+            guard let me = self else { return }
             switch result {
             case .success(let response):
                 me.delegate?.nicoManager(me, hasDebugMessgae: "Completed to request user info.")
@@ -577,7 +558,7 @@ private extension NicoManager {
                 "userId": user.userId
             ]
         ) { [weak self] (result: Result<WsEndpointResponse, NicoError>) in
-            guard let me = self, me.connectionDiagnostics === diagnostics else { return }
+            guard let me = self else { return }
             switch result {
             case .success(let response):
                 me.delegate?.nicoManager(me, hasDebugMessgae: "Completed to request websocket endpoint.")
@@ -604,7 +585,7 @@ private extension NicoManager {
     func openWatchSocket(webSocketUrl: URL, diagnostics: ConnectionDiagnostics) {
         delegate?.nicoManager(self, hasDebugMessgae: "Opening watch socket...")
         openWatchSocket(webSocketUrl: webSocketUrl, diagnostics: diagnostics) { [weak self] in
-            guard let me = self, me.connectionDiagnostics === diagnostics, let live = me.live else { return }
+            guard let me = self, let live = me.live else { return }
             switch $0 {
             case .success(let messageServer):
                 me.delegate?.nicoManager(me, hasDebugMessgae: "Completed to open watch socket.")
@@ -823,10 +804,9 @@ private extension NicoManager {
             return
         }
         log.debug(event)
-        let current = "現在のWS=\(watchSocket === socket)"
         switch event {
         case .connected:
-            diagnostics.emit("視聴用WS: 接続成功, \(current)")
+            diagnostics.emit("視聴用WS: 接続成功")
             socket.write(string: startWatchingMessage)
         case .text(let text):
             diagnostics.record(.watch)
@@ -836,19 +816,19 @@ private extension NicoManager {
             diagnostics.record(.watch)
             lastPongSocketDates?.watch = Date()
         case .error(let error):
-            diagnostics.emit("視聴用WS: error=\(ConnectionDiagnostics.errorSummary(error)) → 再接続要求, \(current)")
+            diagnostics.emit("視聴用WS: error=\(ConnectionDiagnostics.errorSummary(error)) → 再接続要求")
             reconnect()
         case .reconnectSuggested(let suggested):
-            diagnostics.emit("視聴用WS: reconnectSuggested=\(suggested) → 再接続要求, \(current)")
+            diagnostics.emit("視聴用WS: reconnectSuggested=\(suggested) → 再接続要求")
             reconnect()
         case .disconnected(let reason, let code):
-            diagnostics.emit("視聴用WS: disconnected code=\(code), reason=\(ConnectionDiagnostics.serverReason(reason)) → 現行処理では再接続しない, \(current)")
+            diagnostics.emit("視聴用WS: disconnected code=\(code), reason=\(ConnectionDiagnostics.serverReason(reason)) → 現行処理では再接続しない")
         case .cancelled:
-            diagnostics.emit("視聴用WS: cancelled → 現行処理では再接続しない, \(current)")
+            diagnostics.emit("視聴用WS: cancelled → 現行処理では再接続しない")
         case .peerClosed:
-            diagnostics.emit("視聴用WS: peerClosed → 現行処理では再接続しない, \(current)")
+            diagnostics.emit("視聴用WS: peerClosed → 現行処理では再接続しない")
         case .viabilityChanged(let viable):
-            diagnostics.emit("視聴用WS: viabilityChanged=\(viable), \(current)")
+            diagnostics.emit("視聴用WS: viabilityChanged=\(viable)")
         case .binary, .ping:
             diagnostics.record(.watch)
         }

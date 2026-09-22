@@ -13,6 +13,12 @@ final class ConnectionDiagnostics {
 
     let id: String
     private let lock = NSLock()
+    // ISO8601DateFormatter は内部で排他しないため、接続ごとに持ち lock 内でのみ使う。
+    private let timestampFormatter: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter
+    }()
     private let clock: () -> TimeInterval
     private let startedAt: TimeInterval
     private let output: (String) -> Void
@@ -80,7 +86,7 @@ final class ConnectionDiagnostics {
             }
             let protocolName: String
             switch transaction.networkProtocolName {
-            case "h2", "h3", "http/1.1", "http/1.0": protocolName = transaction.networkProtocolName ?? "記録なし"
+            case let name? where ["h2", "h3", "http/1.1", "http/1.0"].contains(name): protocolName = name
             case nil: protocolName = "記録なし"
             default: protocolName = "その他"
             }
@@ -113,11 +119,9 @@ final class ConnectionDiagnostics {
             let age = lastActivity[activity].map { Self.seconds(now - $0) + "秒前" } ?? "未受信"
             return "\(activity.rawValue)=\(age)"
         }.joined(separator: ", ")
+        let timestamp = timestampFormatter.string(from: Date())
         lock.unlock()
 
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        let timestamp = formatter.string(from: Date())
         output("[接続 \(id)] \(timestamp) +\(elapsed)秒 \(message) | \(ages)")
     }
 
