@@ -27,6 +27,7 @@ final class NdgrRequestThrottle: RequestInterceptor, @unchecked Sendable {
 
     private let policy: Policy
     private let report: (String) -> Void
+    private let onWait: () -> Void
     private var pending: [(URLRequest, (Result<URLRequest, Error>) -> Void)] = []
     private var wakeup: DispatchWorkItem?
     private var nextRequestAt: TimeInterval = 0
@@ -43,8 +44,9 @@ final class NdgrRequestThrottle: RequestInterceptor, @unchecked Sendable {
     private var pacingWait: TimeInterval = 0
     private var cooldownWait: TimeInterval = 0
 
-    init(policy: Policy = Policy(), report: @escaping (String) -> Void) {
+    init(policy: Policy = Policy(), onWait: @escaping () -> Void = {}, report: @escaping (String) -> Void) {
         self.policy = policy
+        self.onWait = onWait
         self.report = report
         interval = policy.interval
     }
@@ -84,7 +86,8 @@ final class NdgrRequestThrottle: RequestInterceptor, @unchecked Sendable {
                 return
             }
             // 同時に返った複数の 429 は一つの待機として数える。
-            if now >= self.cooldownUntil {
+            let startsNewWait = now >= self.cooldownUntil
+            if startsNewWait {
                 guard self.cooldownCount < self.policy.retryDelays.count else {
                     self.report("NDGR HTTP 429: 待機再試行上限\(self.cooldownCount)回、取得を中止（接続全体の再試行なし）")
                     self.stop(error: Failure.rateLimitExhausted)
@@ -98,6 +101,7 @@ final class NdgrRequestThrottle: RequestInterceptor, @unchecked Sendable {
             }
             self.cooldownUntil = max(self.cooldownUntil, now + serverWait)
             self.isCoolingDown = true
+            if startsNewWait { self.onWait() }
             self.report("NDGR HTTP 429: 取得を一時停止、待機=\(String(format: "%.1f", self.cooldownUntil - now))秒, 待機回数=\(self.cooldownCount)/\(self.policy.retryDelays.count), Retry-After秒=\(serverWait), 再開後の取得間隔=\(self.interval)秒")
             self.drain()
             // 再試行も adapt を通るので、他の View/Segment とともに待機する。

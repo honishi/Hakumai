@@ -54,6 +54,8 @@ internal enum L10n {
   internal static let commentConnectionFailed = L10n.tr("Localizable", "comment_connection_failed")
   /// Comments
   internal static let commentCount = L10n.tr("Localizable", "comment_count")
+  /// Comment requests are temporarily rate limited. Waiting before retrying automatically.
+  internal static let commentRateLimitWaiting = L10n.tr("Localizable", "comment_rate_limit_waiting")
   /// Reconnecting to the comment server…
   internal static let commentReconnecting = L10n.tr("Localizable", "comment_reconnecting")
   /// 0 of 0

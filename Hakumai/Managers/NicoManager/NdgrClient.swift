@@ -49,7 +49,10 @@ extension NdgrClient {
             receivedMessageMetaIds.removeAll()
             resumeAt = Int(beginTime.timeIntervalSince1970)
         }
-        let throttle = NdgrRequestThrottle(policy: throttlePolicy) { diagnostics.emit($0) }
+        let throttle = NdgrRequestThrottle(policy: throttlePolicy, onWait: { [weak self] in
+            guard let self = self, self.activeDiagnostics === diagnostics else { return }
+            self.delegate?.ndgrClientWillWaitForRateLimit(self, diagnostics: diagnostics)
+        }) { diagnostics.emit($0) }
         let session = Session(configuration: configuration, interceptor: throttle)
         streamSession = session
         activeDiagnostics = diagnostics

@@ -20,6 +20,7 @@ protocol NdgrClientType: AnyObject {
 protocol NdgrClientDelegate: AnyObject {
     // Main connection sequence.
     func ndgrClientDidConnect(_ ndgrClient: NdgrClientType, diagnostics: ConnectionDiagnostics)
+    func ndgrClientWillWaitForRateLimit(_ ndgrClient: NdgrClientType, diagnostics: ConnectionDiagnostics)
     func ndgrClientDidReceiveChat(_ ndgrClient: NdgrClientType, chat: Chat, diagnostics: ConnectionDiagnostics)
     func ndgrClientDidDisconnect(_ ndgrClient: NdgrClientType, diagnostics: ConnectionDiagnostics, reason: NdgrTermination)
 

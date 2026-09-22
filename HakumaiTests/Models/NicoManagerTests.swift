@@ -492,6 +492,8 @@ extension NicoManagerTests {
             } else {
                 let count = recorder.disconnections.count
                 manager.ndgrClientDidDisconnect(stub, diagnostics: stub.connections[0], reason: .programEnded)
+                manager.ndgrClientWillWaitForRateLimit(stub, diagnostics: stub.connections[0])
+                XCTAssertEqual(recorder.rateLimitWaitNotices, 0)
                 XCTAssertEqual(recorder.disconnections.count, count)
                 XCTAssertEqual(manager.live?.liveProgramId, "lv2")
                 switched.fulfill()

@@ -208,4 +208,5 @@
 "scroll_down_button" = "短押しで下にスクロール / 長押しで１番下にスクロール";
 
 "comment_reconnecting" = "コメントサーバーに再接続しています…";
+"comment_rate_limit_waiting" = "コメントの取得制限に達したため、一時的に待機しています。自動で再試行します。";
 "comment_connection_failed" = "コメント受信を継続できませんでした。接続エラーで停止しました。";

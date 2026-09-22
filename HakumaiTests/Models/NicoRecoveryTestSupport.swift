@@ -211,6 +211,7 @@ final class RecoveryRecorder: NicoManagerDelegate {
     var historyBatchCount = 0
     var initialHistoryFlags: [Bool] = []
     var recoveryNotices = 0
+    var rateLimitWaitNotices = 0
     var preparationFailures = 0
     var onPreparationFailure: (() -> Void)?
     func nicoManagerNeedsToken(_ nicoManager: NicoManagerType) {}
@@ -224,6 +225,10 @@ final class RecoveryRecorder: NicoManagerDelegate {
     func nicoManagerDidConnectToLive(_ nicoManager: NicoManagerType, roomPosition: RoomPosition, connectContext: NicoConnectContext) {}
     func nicoManagerDidReceiveChat(_ nicoManager: NicoManagerType, chat: Chat) { comments.append(chat.comment) }
     func nicoManagerWillReconnectToLive(_ nicoManager: NicoManagerType, reason: NicoReconnectReason) { recoveryNotices += 1 }
+    func nicoManagerWillWaitForRateLimit(_ nicoManager: NicoManagerType) {
+        XCTAssertTrue(Thread.isMainThread)
+        rateLimitWaitNotices += 1
+    }
     func nicoManagerDidReceiveStatistics(_ nicoManager: NicoManagerType, stat: LiveStatistics) {}
     func nicoManagerReceivingChatHistory(_ nicoManager: NicoManagerType, requestCount: Int, totalChatCount: Int) {}
     func nicoManagerDidReceiveChatHistory(_ nicoManager: NicoManagerType, chats: [Chat], isInitial: Bool) {

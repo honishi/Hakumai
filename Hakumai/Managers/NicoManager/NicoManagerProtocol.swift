@@ -53,6 +53,7 @@ protocol NicoManagerDelegate: AnyObject {
     // Events after connection establishment.
     func nicoManagerDidReceiveChat(_ nicoManager: NicoManagerType, chat: Chat)
     func nicoManagerWillReconnectToLive(_ nicoManager: NicoManagerType, reason: NicoReconnectReason)
+    func nicoManagerWillWaitForRateLimit(_ nicoManager: NicoManagerType)
     func nicoManagerDidReceiveStatistics(_ nicoManager: NicoManagerType, stat: LiveStatistics)
 
     // History.

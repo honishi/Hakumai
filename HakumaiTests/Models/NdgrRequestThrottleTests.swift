@@ -58,6 +58,7 @@ final class NdgrRequestThrottleTests: XCTestCase {
         XCTAssertEqual(recorder.recoveryNotices, 0)
         if requestedAt.count == 2 { XCTAssertGreaterThanOrEqual(requestedAt[1] - requestedAt[0], 0.99) }
         XCTAssertTrue(recorder.logs.contains { $0.contains("待機終了") })
+        XCTAssertEqual(recorder.rateLimitWaitNotices, 1)
         let metrics = recorder.logs.filter { $0.contains("NDGR取得集計: 取得停止") }
         XCTAssertEqual(metrics.count, 1)
         XCTAssertTrue(metrics.first?.contains("HTTP送信許可=3件") == true)
@@ -84,6 +85,7 @@ final class NdgrRequestThrottleTests: XCTestCase {
         manager.connect(liveProgramId: "lv1")
         wait(for: [ended], timeout: 3)
         XCTAssertEqual(calls, 2)
+        XCTAssertEqual(recorder.rateLimitWaitNotices, 1)
         XCTAssertEqual(fixture.viewPositions, ["100", "200"])
         XCTAssertEqual(fixture.engines.count, 1)
         XCTAssertEqual(recorder.comments, ["history"])
@@ -105,6 +107,7 @@ final class NdgrRequestThrottleTests: XCTestCase {
         XCTAssertEqual(fixture.programRequests, 1)
         XCTAssertEqual(recorder.recoveryNotices, 0)
         XCTAssertTrue(recorder.logs.contains { $0.contains("待機再試行上限2回") })
+        XCTAssertEqual(recorder.rateLimitWaitNotices, 2)
         XCTAssertTrue(recorder.logs.contains { $0.contains("NDGR終了通知: 通信・解析失敗 HTTP 429: 待機再試行上限に到達") })
         manager.disconnect()
     }
@@ -152,6 +155,7 @@ final class NdgrRequestThrottleTests: XCTestCase {
         manager.connect(liveProgramId: "lv1")
         wait(for: [ended], timeout: 3)
         XCTAssertEqual(calls, ["/first": 2, "/second": 2])
+        XCTAssertEqual(recorder.rateLimitWaitNotices, 1)
         XCTAssertEqual(recorder.comments.sorted(), ["/first", "/second"])
         XCTAssertEqual(recorder.historySummaries, [2])
         XCTAssertEqual(recorder.historyBatchCount, 1)
@@ -171,6 +175,7 @@ final class NdgrRequestThrottleTests: XCTestCase {
         XCTAssertEqual(fixture.viewPositions.count, 1)
         XCTAssertEqual(fixture.programRequests, 1)
         XCTAssertTrue(recorder.logs.contains { $0.contains("待機上限を超過") })
+        XCTAssertEqual(recorder.rateLimitWaitNotices, 0)
         XCTAssertTrue(recorder.logs.contains { $0.contains("NDGR終了通知: 通信・解析失敗 HTTP 429: サーバー指定の待機時間が上限を超過") })
         manager.disconnect()
     }
@@ -278,6 +283,7 @@ extension NdgrRequestThrottleTests {
         XCTAssertEqual(metric("速度制限待機", in: summary), 0)
         XCTAssertEqual(metric("429待機", in: summary), 0)
         XCTAssertEqual(recorder.comments, ["1", "2"])
+        XCTAssertEqual(recorder.rateLimitWaitNotices, 0)
         manager.disconnect()
     }
 

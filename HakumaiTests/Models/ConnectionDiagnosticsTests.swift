@@ -149,6 +149,7 @@ private final class DiagnosticNDGRDelegate: NdgrClientDelegate {
     }
 
     func ndgrClientDidConnect(_ ndgrClient: NdgrClientType, diagnostics: ConnectionDiagnostics) {}
+    func ndgrClientWillWaitForRateLimit(_ ndgrClient: NdgrClientType, diagnostics: ConnectionDiagnostics) {}
     func ndgrClientDidReceiveChat(_ ndgrClient: NdgrClientType, chat: Chat, diagnostics: ConnectionDiagnostics) {}
     func ndgrClientDidFinishChatHistory(_ ndgrClient: NdgrClientType, diagnostics: ConnectionDiagnostics) {}
     func ndgrClientReceivingChatHistory(_ ndgrClient: NdgrClientType, requestCount: Int, totalChatCount: Int, diagnostics: ConnectionDiagnostics) {}

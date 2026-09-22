@@ -404,6 +404,11 @@ extension NicoManager {
 
 // MARK: - NdgrClientDelegate Methods
 extension NicoManager: NdgrClientDelegate {
+    func ndgrClientWillWaitForRateLimit(_ ndgrClient: NdgrClientType, diagnostics: ConnectionDiagnostics) {
+        guard connectionDiagnostics === diagnostics else { return }
+        delegate?.nicoManagerWillWaitForRateLimit(self)
+    }
+
     func ndgrClientDidConnect(_ ndgrClient: any NdgrClientType, diagnostics: ConnectionDiagnostics) {
         guard connectionDiagnostics === diagnostics else { return }
         diagnostics.emit("NDGR実データ受信確認 → UI接続済み")

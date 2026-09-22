@@ -813,6 +813,10 @@ extension MainViewController: NicoManagerDelegate {
         logDebugReconnectReason(reason)
     }
 
+    func nicoManagerWillWaitForRateLimit(_ nicoManager: NicoManagerType) {
+        logSystemMessageToTable(L10n.commentRateLimitWaiting)
+    }
+
     func nicoManagerReceivingChatHistory(_ nicoManager: NicoManagerType, requestCount: Int, totalChatCount: Int) {
         let shouldLog = requestCount % 20 == 0
         guard shouldLog else { return }
