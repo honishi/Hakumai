@@ -13,6 +13,12 @@ final class ConnectionDiagnostics {
 
     let id: String
     private let lock = NSLock()
+    // ISO8601DateFormatter は内部で排他しないため、接続ごとに持ち lock 内でのみ使う。
+    private let timestampFormatter: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter
+    }()
     private let clock: () -> TimeInterval
     private let startedAt: TimeInterval
     private let output: (String) -> Void
@@ -113,18 +119,11 @@ final class ConnectionDiagnostics {
             let age = lastActivity[activity].map { Self.seconds(now - $0) + "秒前" } ?? "未受信"
             return "\(activity.rawValue)=\(age)"
         }.joined(separator: ", ")
+        let timestamp = timestampFormatter.string(from: Date())
         lock.unlock()
 
-        let timestamp = Self.timestampFormatter.string(from: Date())
         output("[接続 \(id)] \(timestamp) +\(elapsed)秒 \(message) | \(ages)")
     }
-
-    // ISO8601DateFormatter はスレッドセーフなので、呼び出しごとに生成せず共有する。
-    private static let timestampFormatter: ISO8601DateFormatter = {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        return formatter
-    }()
 
     private static func seconds(_ interval: TimeInterval) -> String {
         String(format: "%.1f", max(0, interval))
