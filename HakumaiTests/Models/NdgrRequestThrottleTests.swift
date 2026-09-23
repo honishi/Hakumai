@@ -3,6 +3,7 @@ import XCTest
 import Alamofire
 @testable import Hakumai
 
+// swiftlint:disable:next type_body_length
 final class NdgrRequestThrottleTests: XCTestCase {
     func testConfiguredPolicySpacesViewAndSegmentRequests() {
         let fixture = RecoveryFixture()
