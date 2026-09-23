@@ -5,6 +5,26 @@ import Starscream
 @testable import Hakumai
 
 final class ConnectionDiagnosticsTests: XCTestCase {
+    @MainActor
+    func testFirstSuccessfulRequestAfterSessionRenewalReportsMetricsWithoutClaimingRetryRecovery() {
+        var messages: [String] = []
+        let timeout = NdgrStreamTimeout(limits: .init(header: 60, body: 60), isActive: { true }, report: { _ in })
+        let retrier = NdgrRequestRetrier(throttle: NdgrRequestThrottle(report: { _ in }), timeout: timeout,
+                                         report: { messages.append($0) })
+        let session = Session(configuration: .ephemeral, startRequestsImmediately: false)
+        let request = session.request("https://diagnostics.invalid/metrics")
+        defer { request.cancel() }
+        retrier.transportGeneration = 2
+        retrier.reportCompletedAttempt(request, error: nil, receivedBytes: 10)
+        XCTAssertTrue(messages.isEmpty)
+
+        retrier.reportsSuccessfulMetrics = true
+        retrier.reportCompletedAttempt(request, error: nil, receivedBytes: 10)
+        XCTAssertEqual(messages.count, 1)
+        XCTAssertTrue(messages.contains { $0.contains("HTTP試行計測: 試行=1, 結果=成功, 通信世代=2") })
+        XCTAssertFalse(messages.contains { $0.contains("HTTP再試行で回復") })
+    }
+
     func testRepeatedMessageServerIsDiagnosedWithoutRestartingNDGR() {
         let fixture = RecoveryFixture()
         let recorder = RecoveryRecorder()

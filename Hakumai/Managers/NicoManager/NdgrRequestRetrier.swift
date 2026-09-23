@@ -26,6 +26,7 @@ final class NdgrRequestRetrier: RequestRetrier, @unchecked Sendable {
     private var networkRetries = 0
     private var previousRequestRetries = 0
     var transportGeneration = 1
+    var reportsSuccessfulMetrics = false
 
     private func totalRetries(for request: Request) -> Int {
         previousRequestRetries + request.retryCount
@@ -74,8 +75,8 @@ final class NdgrRequestRetrier: RequestRetrier, @unchecked Sendable {
         // 通信失敗は retry() で記録済み。ここでは正常 EOF（未完フレーム検出を含む）を扱う。
         guard let request = request, request.error == nil else { return }
         let retries = totalRetries(for: request)
-        guard error != nil || retries > 0 else { return }
-        // 通常の履歴取得で大量のログを出さず、失敗と再試行後の回復だけを記録する。
+        guard error != nil || retries > 0 || reportsSuccessfulMetrics else { return }
+        // 通常の履歴取得は省略し、失敗・再試行後と、接続更新後の初回だけを記録する。
         reportAttemptMetrics(request, error: error)
         if retries > 0 {
             report("HTTP再試行で回復, \(retryCountSummary(totalRetries: retries)), 受信=\(receivedBytes)bytes")

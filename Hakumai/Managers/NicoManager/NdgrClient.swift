@@ -67,6 +67,7 @@ extension NdgrClient {
         diagnostics.emit("NDGR取得制御: 最小間隔=\(throttlePolicy.interval)秒, HTTP 429待機再試行上限=\(throttlePolicy.retryDelays.count)回")
         diagnostics.emit("NDGR通信再試行: 上限=\(retryPolicy.maxRetries)回（初回取得を除く）, 初回待機=\(retryPolicy.initialDelay)秒, 以降は倍率1.5・±50%の揺らぎ")
         diagnostics.emit("NDGR通信接続更新: タイムアウト後のURLSession更新=\(retryPolicy.renewConnectionOnTimeout), HTTP計測の接続再利用で効果を確認")
+        diagnostics.emit("NDGR通信接続予防更新: Session再利用上限=\(session.maximumSessionAge)秒（作成時から）, 新規HTTP割り当て時に確認, 受信中の通信は継続, 更新後の初回HTTPを計測")
         diagnostics.emit("NDGR開始 (View: ヘッダー待ち=\(timeoutPolicy.view.header)秒, 本文待ち=\(timeoutPolicy.view.body)秒 / Segment: ヘッダー待ち=\(timeoutPolicy.segment.header)秒, 本文待ち=\(timeoutPolicy.segment.body)秒), 再開=\(resuming), at=\(startAt)")
         streamTask = Task { @MainActor [weak self] in
             guard let self = self else { return }
@@ -306,8 +307,9 @@ private extension NdgrClient {
 
         return session.stream(report: { diagnostics.emit("\(label): \($0)") }, installStop: { continuation in
             view?.stop = { continuation.finish(throwing: $0) }
-        }, makeStream: { [weak self] attemptSession, generation in
+        }, makeStream: { [weak self] attemptSession, generation, reportMetrics in
             retrier.transportGeneration = generation
+            retrier.reportsSuccessfulMetrics = reportMetrics
             var unread: Data?
             var parsedRetryCount = 0
             return AsyncThrowingStream { continuation in
