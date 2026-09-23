@@ -288,6 +288,7 @@ private extension NdgrClient {
     // 逐一 protobuf message として parse したものを stream として返す。
     // swiftlint:disable function_body_length
     @MainActor
+    // swiftlint:disable:next cyclomatic_complexity
     func retrieve<T: SwiftProtobuf.Message>(
         uri: URL,
         messageType: T.Type,
@@ -317,6 +318,7 @@ private extension NdgrClient {
             retrier.reportsSuccessfulMetrics = reportMetrics
             var unread: Data?
             var parsedRetryCount = 0
+            var acceptsResponseData = false
             return AsyncThrowingStream { continuation in
                 let request = attemptSession.streamRequest(
                     uri,
@@ -326,7 +328,12 @@ private extension NdgrClient {
                     requestModifier: { $0.timeoutInterval = max(limits.header, limits.body) }
                 )
                 .validate()
-                timeout.observe(request)
+                timeout.observe(request) { response in
+                    acceptsResponseData = (200..<300).contains(response.statusCode)
+                    if !acceptsResponseData {
+                        diagnostics.emit("\(label): HTTP \(response.statusCode)の応答本文をNDGR受信・解析の対象外にする")
+                    }
+                }
                 request.responseStream { [weak self, weak request] in
                     guard let self = self, self.activeDiagnostics === diagnostics else {
                         // 旧接続の通知を破棄するときも、残った監視を明示的に解除する。
@@ -344,6 +351,9 @@ private extension NdgrClient {
                         // log.debug("📦 stream (\(messageType))")
                         switch result {
                         case let .success(data):
+                            // validate() は通信完了時に実行されるため、エラー本文も先にここへ届く。
+                            // データとして採用せず、HTTP 自体は完了させて既存の検証・429 待機へ渡す。
+                            guard acceptsResponseData else { return }
                             timeout.receivedData(data)
                             if diagnostics.record(activity) {
                                 diagnostics.emit("\(label): この接続で初めてデータを受信")

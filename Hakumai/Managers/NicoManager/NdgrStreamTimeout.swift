@@ -42,12 +42,16 @@ final class NdgrStreamTimeout: @unchecked Sendable {
         self.report = report
     }
 
-    func observe(_ request: DataStreamRequest) {
+    func observe(_ request: DataStreamRequest, onResponse: @escaping (HTTPURLResponse) -> Void) {
         request.onURLSessionTaskCreation { [weak request] task in
             guard let request = request else { return }
             self.start(task: task, request: request)
         }
-        request.onHTTPResponse { response in self.receivedResponse(response) }
+        // Alamofire のヘッダー通知は一つだけ登録できるため、監視と本文の採否判定を同じ通知で行う。
+        request.onHTTPResponse { response in
+            self.receivedResponse(response)
+            onResponse(response)
+        }
     }
 
     private func start(task: URLSessionTask, request: DataStreamRequest) {

@@ -206,3 +206,77 @@ final class NdgrRequestRetrierTests: XCTestCase {
         manager.disconnect()
     }
 }
+
+// HTTPエラー本文は、検証・再試行へ渡し、コメントの受信には使わない。
+extension NdgrRequestRetrierTests {
+    func testViewErrorBodyCannotStartSegmentsAndRateLimitStillRetries() {
+        for status in [403, 429, 503] {
+            let fixture = RecoveryFixture()
+            let recorder = RecoveryRecorder()
+            fixture.view = { count, _ in
+                if count == 1 {
+                    return .http(status, body: try RecoveryFixture.playlist(segment: "error-body"))
+                }
+                return .ok(try RecoveryFixture.playlist(segment: "end"))
+            }
+            var segments: [String] = []
+            fixture.segment = { path in
+                segments.append(path)
+                return .ok(try RecoveryFixture.end())
+            }
+            let stopped = expectation(description: "エラー本文を無視してHTTPステータスどおりに処理")
+            recorder.onDisconnect = { context in
+                switch context {
+                case .normal, .failure: stopped.fulfill()
+                default: break
+                }
+            }
+            let manager = fixture.manager(recorder: recorder, throttlePolicy: .init(retryDelays: [0.01]))
+            manager.connect(liveProgramId: "lv1")
+            wait(for: [stopped], timeout: 5)
+            XCTAssertEqual(segments, status == 403 ? [] : ["/end"])
+            let firstDataLogs = recorder.logs.filter { $0.contains("View受信 HTTP#1: この接続で初めてデータを受信") }
+            XCTAssertEqual(firstDataLogs.count, status == 403 ? 0 : 1)
+            XCTAssertEqual(recorder.rateLimitWaitNotices, status == 429 ? 1 : 0)
+            XCTAssertEqual(fixture.programRequests, status == 503 ? 2 : 1)
+            XCTAssertTrue(recorder.logs.contains { $0.contains("HTTP \(status)の応答本文をNDGR受信・解析の対象外") })
+            manager.disconnect()
+        }
+    }
+
+    func testSegmentErrorBodyCannotPublishCommentsOrEndProgram() {
+        for status in [403, 429, 503] {
+            let fixture = RecoveryFixture()
+            let recorder = RecoveryRecorder()
+            fixture.view = { _, _ in .ok(try RecoveryFixture.playlist(segment: "segment")) }
+            var attempts = 0
+            fixture.segment = { _ in
+                attempts += 1
+                let data = try RecoveryFixture.comment(id: "same-id", text: attempts == 1 ? "error-body" : "valid")
+                    + RecoveryFixture.end()
+                return attempts == 1 ? .http(status, body: data) : .ok(data)
+            }
+            let stopped = expectation(description: "エラー本文による誤受信・誤終了を防ぐ")
+            recorder.onDisconnect = { context in
+                switch context {
+                case .normal, .failure: stopped.fulfill()
+                default: break
+                }
+            }
+            let manager = fixture.manager(recorder: recorder, throttlePolicy: .init(retryDelays: [0.01]))
+            manager.connect(liveProgramId: "lv1")
+            wait(for: [stopped], timeout: 5)
+            XCTAssertEqual(recorder.comments, status == 403 ? [] : ["valid"])
+            XCTAssertEqual(attempts, status == 403 ? 1 : 2)
+            let firstDataLogs = recorder.logs.filter { $0.contains("Segment受信 HTTP#2: この接続で初めてデータを受信") }
+            XCTAssertEqual(firstDataLogs.count, status == 403 ? 0 : 1)
+            XCTAssertEqual(recorder.rateLimitWaitNotices, status == 429 ? 1 : 0)
+            XCTAssertEqual(fixture.programRequests, status == 503 ? 2 : 1)
+            XCTAssertFalse(recorder.disconnections.contains { context in
+                if case .normal = context { return status == 403 }
+                return false
+            })
+            manager.disconnect()
+        }
+    }
+}

@@ -9,7 +9,7 @@ import SwiftProtobuf
 final class RecoveryFixture {
     enum Reply {
         case ok(Data), holding(Data), delayed(Data, TimeInterval), timeout
-        case http(Int, headers: [String: String] = [:])
+        case http(Int, headers: [String: String] = [:], body: Data = Data())
         case delayedFailure(URLError.Code, TimeInterval)
         case chunks([Data], TimeInterval)
         case awaitingHeaders
@@ -139,9 +139,9 @@ private final class RecoveryURLProtocol: URLProtocol {
                 guard !stopped else { return }
                 client?.urlProtocol(self, didFailWithError: URLError(code))
             }
-        case .http(let code, let headers):
+        case .http(let code, let headers, let body):
             try sendResponse(status: code, headers: headers)
-            sendData(Data(), finish: true)
+            sendData(body, finish: true)
         case .ok(let data):
             try sendResponse()
             sendData(data, finish: true)
