@@ -727,6 +727,8 @@ extension MainViewController: NicoManagerDelegate {
         updateLiveTitleViews(for: live)
 
         if live.isTimeShift {
+            // 復旧中は初回の準備を保持する。監視の再開や「準備完了」の再表示は行わない。
+            guard !connectContext.isReconnect else { return }
             liveThumbnailManager.start(for: live.liveProgramId, delegate: self)
             resetCellViewFlashedStatus()
             resetElapsedLabel()
