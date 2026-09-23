@@ -51,6 +51,8 @@ extension NdgrClient {
         }
         disconnect()
         if !resuming {
+            // 復旧では再開位置と meta ID を残す。途中の Segment を再取得しても表示済みコメントを重ねない。
+            // 手動接続は別の受信セッションなので、同じ番組への接続でも両方をリセットする。
             receivedMessageMetaIds.removeAll()
             resumeAt = Int(beginTime.timeIntervalSince1970)
         }
@@ -151,6 +153,8 @@ private extension NdgrClient {
         var next: Int?
         var segmentCount = 0
         // Segment の完了を待ってから再開位置を進め、取得途中のコメントを飛ばさない。
+        // Web プレイヤーの View 先行取得とは意図的に異なる。高速化する場合も未完了 Segment の
+        // 再取得を保証すること。単に next を先に保存すると、復旧時の重複排除だけでは欠落を防げない。
         do {
             try await withThrowingTaskGroup(of: Void.self) { group in
                 var activeSegments = 0
@@ -300,6 +304,7 @@ private extension NdgrClient {
         let timeout = NdgrStreamTimeout(limits: limits, isActive: { [weak self] in
             self?.activeDiagnostics === diagnostics
         }, report: { diagnostics.emit("\(label): \($0)") })
+        // Session を交換する makeStream の外に置き、同じ URI の再試行上限を交換後も維持する。
         let retrier = NdgrRequestRetrier(throttle: session.throttle,
                                          timeout: timeout, policy: retryPolicy) { message in
             diagnostics.emit("\(label): \(message)")
@@ -317,6 +322,7 @@ private extension NdgrClient {
                     uri,
                     method: .get,
                     interceptor: Interceptor(retriers: [retrier]),
+                    // OS 側の補助タイムアウト。ヘッダー／本文の別々の期限は NdgrStreamTimeout が担う。
                     requestModifier: { $0.timeoutInterval = max(limits.header, limits.body) }
                 )
                 .validate()
@@ -362,6 +368,8 @@ private extension NdgrClient {
                         }
                     case .complete(let completion):
                         timeout.stop()
+                        // chunk 間の未完フレームは正常だが、EOF まで残れば途中切断として上位へ伝える。
+                        // EOF をすべて放送終了扱いすると、配信中なのに Live closed となる。
                         let error: Error? = completion.error ?? ((unread?.isEmpty == false) ? NdgrStreamError.truncatedFrame : nil)
                         if let renewal = retrier.takeConnectionRenewal(request, error: error) {
                             continuation.finish(throwing: renewal)
@@ -744,6 +752,8 @@ private final class ViewIteration {
     private var endDeadline: DispatchWorkItem?
 
     func endProgram(timeout: TimeInterval, diagnostics: ConnectionDiagnostics, session: NdgrTransport) {
+        // 終了状態を受信した Segment と他の Segment は並行する。即時全キャンセルによる末尾欠落を
+        // 減らす一方、閉じないストリームを永遠に待たないよう、開始済みの取得だけを期限付きで待つ。
         guard !programEnded else { return }
         programEnded = true
         session.stopNewRequests()

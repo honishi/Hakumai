@@ -47,7 +47,8 @@ extension ClickTableView {
         guard let clickHandler = clickHandler else {
             let modifiers = NSApp.currentEvent?.modifierFlags ?? []
             if allowsMultipleSelection && !modifiers.isDisjoint(with: [.command, .shift]) {
-                // 複数選択操作の結果を維持し、通常クリックの連続判定をリセットする。
+                // 複数選択を追加しても「同じ行を通常クリックし直すと解除」という従来操作を残す。
+                // Command / Shift の選択は NSTableView に任せ、通常クリックの連続判定だけリセットする。
                 lastClickedRow = -1
             } else {
                 unclickRow()

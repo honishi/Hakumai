@@ -815,6 +815,7 @@ extension MainViewController: NicoManagerDelegate {
     }
 
     func nicoManagerWillWaitForRateLimit(_ nicoManager: NicoManagerType) {
+        // debug 非表示でも「停止して見えるのは 429 による待機」と分かるよう system message にする。
         logSystemMessageToTable(L10n.commentRateLimitWaiting)
     }
 
@@ -833,6 +834,8 @@ extension MainViewController: NicoManagerDelegate {
                     in: live.programProvider.programProviderId
                 )
             }
+            // 初回は従来どおり全履歴を一括表示して最新へ移動する。復旧分の追加では、過去ログを
+            // 読んでいるユーザーの位置を強制移動しない（既に最下部なら追従する）。
             bulkAppendToTable(chats: chats, forceScrollToLatest: isInitial)
         }
         logSystemMessageToTable(L10n.receivedComments(chats.count))

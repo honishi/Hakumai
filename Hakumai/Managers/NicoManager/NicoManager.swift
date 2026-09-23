@@ -104,6 +104,8 @@ final class NicoManager: NicoManagerType {
     // 一時的なデータ受信と切断の反復で無限復旧しないよう、手動接続まで累計を保持する。
     private var recoveryAttempt = 0
     // 再開位置より前の取得済み履歴を接続試行の外で保持し、履歴取得完了時に一括表示する。
+    // 分割通知をそのまま UI へ流すと、従来の「裏で全取得→一括表示→最新へ移動」が崩れる。
+    // 復旧中は保留を引き継ぎ、最終停止では取得済み分を公開する。手動の接続切替では旧履歴を破棄する。
     private var pendingHistory: [Chat] = []
     private var awaitingInitialHistory = false
     private var initialHistoryStartedAt: TimeInterval?
@@ -247,6 +249,8 @@ extension NicoManager {
     }
 
     private func scheduleRecovery(reason: NicoReconnectReason, detail: String) {
+        // HTTP 単体の再試行で扱えない切断を受け持つ。接続先の失効や本当の放送終了もあり得るため、
+        // 古い URL へ戻るだけでなく番組情報・視聴用 WS・NDGR 接続先を取得し直す。
         guard let programId = activeProgramId, recoveryWorkItem == nil else { return }
         let diagnostics = currentDiagnostics
         guard recoveryAttempt < recoveryDelays.count else {
@@ -454,6 +458,8 @@ extension NicoManager: NdgrClientDelegate {
             diagnostics.emit("放送終了確認 → 復旧せず終了")
             disconnect()
         case .missingNext:
+            // 生放送の View EOF / next 欠落だけでは放送終了の証拠にならない（636684f）。
+            // 一方、タイムシフトの末尾は通常終了とし、有限のデータを再接続し続けない。
             if live?.isTimeShift == true {
                 diagnostics.emit("タイムシフトの末尾 → 復旧せず終了")
                 disconnect()
@@ -800,6 +806,7 @@ private extension NicoManager {
     // swiftlint:disable:next cyclomatic_complexity
     func handleWatchSocketEvent(socket: WebSocket, event: WebSocketEvent, diagnostics: ConnectionDiagnostics, completion: (Result<WebSocketMessageServerData, NicoError>) -> Void) {
         guard connectionDiagnostics === diagnostics, watchSocket === socket else {
+            // 停止・接続切替の後から届くイベントで、新しい接続を閉じたり復旧を予約したりしない。
             diagnostics.emit("視聴用WSイベントを無視: 古い接続")
             return
         }
@@ -843,6 +850,8 @@ private extension NicoManager {
             // NDGR の初回受信待ちが長引いても視聴用 WS の接続を維持する。
             startWatchSocketKeepSeatTimer(interval: watchSocketKeepSeatInterval)
         case let messageServer as WebSocketMessageServerData:
+            // 接続先変更が停止原因かを調べるため、採用しない再通知も比較結果を記録する。
+            // URL 変更への追従は未実装。HTTP 接続更新とは別の問題で、ここでは初回だけを採用する。
             diagnostics.reportMessageServer(viewUri: messageServer.data.viewUri, accepted: watchSetupTimeout != nil)
             guard watchSetupTimeout != nil else { return }
             watchSetupTimeout?.cancel()

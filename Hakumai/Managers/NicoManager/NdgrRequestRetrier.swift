@@ -4,6 +4,8 @@ import Alamofire
 // 再試行判定とタイムアウト監視は main queue に直列化する。
 final class NdgrRequestRetrier: RequestRetrier, @unchecked Sendable {
     struct Policy {
+        // Web プレイヤーに合わせ、同じ論理 HTTP に対し初回とは別に最大 5 回（c726f67）。
+        // NicoManager の番組情報・WS を再取得する復旧上限とは別の層であり、全体で 5 回ではない。
         var maxRetries = 5
         var initialDelay: TimeInterval = 0.5
         var renewConnectionOnTimeout = true
@@ -24,6 +26,8 @@ final class NdgrRequestRetrier: RequestRetrier, @unchecked Sendable {
     private let timeout: NdgrStreamTimeout
     private let policy: Policy
     private var networkRetries = 0
+    // タイムアウトで Request を作り直しても上限と診断上の試行番号を引き継ぐ。
+    // Request ごとにカウンターを初期化すると、新規接続での失敗を無制限に繰り返してしまう。
     private var previousRequestRetries = 0
     var transportGeneration = 1
     var reportsSuccessfulMetrics = false
@@ -72,6 +76,8 @@ final class NdgrRequestRetrier: RequestRetrier, @unchecked Sendable {
     }
 
     func reportCompletedAttempt(_ request: Request?, error: Error?, receivedBytes: Int) {
+        // 成功計測は HTTP の EOF 時点。本文を長く受信するため、ログ時刻はコメント再開時刻ではない。
+        // receivedBytes は論理 HTTP 内の全試行の累計で、今回の試行だけの受信量ではない。
         // 通信失敗は retry() で記録済み。ここでは正常 EOF（未完フレーム検出を含む）を扱う。
         guard let request = request, request.error == nil else { return }
         let retries = totalRetries(for: request)
@@ -126,6 +132,7 @@ final class NdgrRequestRetrier: RequestRetrier, @unchecked Sendable {
         report("\(networkRetries)回目の再試行を実行: \(ConnectionDiagnostics.errorSummary(error)), 上限=\(policy.maxRetries)回, 待機=\(String(format: "%.3f", delay))秒")
         if policy.renewConnectionOnTimeout, code == NSURLErrorTimedOut {
             // Alamofire の Request は別の Session へ移せないため、読み取り側で HTTP を作り直す。
+            // このエラーは番組全体の再接続指示ではなく、NdgrTransport だけが扱う内部の制御用エラー。
             completion(.doNotRetryWithError(ConnectionRenewal(delay: delay)))
         } else {
             completion(.retryWithDelay(delay))

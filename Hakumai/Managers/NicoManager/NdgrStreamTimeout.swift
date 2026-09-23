@@ -9,7 +9,10 @@ final class NdgrStreamTimeout: @unchecked Sendable {
     }
 
     struct Policy {
-        // ニコ生 Web プレイヤーの entry / message 設定に合わせる。
+        // 2026-09 に調査したニコ生 Web プレイヤーの entry / message 設定に合わせる（eed070e）。
+        // View の一律 10 秒化では正常なストリームも打ち切り得たため撤回した（3e9726b）。
+        // コメント投稿がない時間と通信停止を区別し、HTTP のヘッダー待ち・本文の無受信時間を監視する。
+        // Web 実装の将来の変更を自動追従する値ではない。調整時は正常な長時間受信も検証する。
         var view = Limits(header: 60, body: 60)
         var segment = Limits(header: 10, body: 30)
 
@@ -48,6 +51,7 @@ final class NdgrStreamTimeout: @unchecked Sendable {
     }
 
     private func start(task: URLSessionTask, request: DataStreamRequest) {
+        // Request 作成時には 429 の adapt 待ちがあり得る。実際の task 作成から試行ごとに監視する。
         stop()
         guard isActive(), !request.isCancelled else { return }
         self.task = task
@@ -66,6 +70,7 @@ final class NdgrStreamTimeout: @unchecked Sendable {
     }
 
     func receivedData(_ data: Data) {
+        // protobuf の完成やコメント変換を待たず、生データの到着を進捗とする（分割フレームも正常）。
         guard !data.isEmpty, phase == .body, !didExpire else { return }
         // chunk ごとにタイマーを作り直さず、期限の判定時に最終受信からの経過で延長する。
         lastProgressAt = ProcessInfo.processInfo.systemUptime
@@ -77,6 +82,8 @@ final class NdgrStreamTimeout: @unchecked Sendable {
         let code = (underlying as NSError).code
         let isNetworkError = (underlying as NSError).domain == NSURLErrorDomain
         let expired = didExpire && isNetworkError && code == NSURLErrorCancelled
+        // URLSession 自身の -1001 は設定上限より早く返ることもある。「上限」は実測時間ではない。
+        // 自前の監視による中止要求は「期限到達」、実際に確認した失敗は「タイムアウト」で区別する。
         if let phase = phase {
             if expired || (isNetworkError && code == NSURLErrorTimedOut) {
                 reportTimeout(phase)
@@ -117,6 +124,7 @@ final class NdgrStreamTimeout: @unchecked Sendable {
             self.didExpire = true
             self.report("\(phase.rawValue)期限到達: 上限=\(self.duration(for: phase))秒, 当該HTTPの中止を要求")
             // Request.cancel() は Alamofire の再試行を禁止するため、今回の task のみ中止する。
+            // Web 側の待機打ち切りと違い、未完の HTTP も中止してから再試行し、受信処理を残さない。
             task.cancel()
         }
         deadline = work

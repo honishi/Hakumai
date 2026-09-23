@@ -3,6 +3,8 @@ import Alamofire
 import Starscream
 
 /// 接続ごとに保持し、古い非同期処理の通知を新しい接続のログと区別する。
+/// 「コメント未受信」は投稿がない場合にも増える。通信停止の診断には View / Segment の受信と
+/// HTTP 試行計測も合わせて使う。HTTP の読み取り完了時刻をコメント再開時刻として扱わない。
 final class ConnectionDiagnostics {
     enum Activity: String, CaseIterable {
         case watch = "WS受信"
@@ -54,6 +56,7 @@ final class ConnectionDiagnostics {
     }
 
     func reportMessageServer(viewUri: String, accepted: Bool) {
+        // 共有される診断ログに認証情報を含む URL を出さず、接続先が変わったかだけを残す。
         lock.lock()
         messageServerCount += 1
         let count = messageServerCount
@@ -72,6 +75,9 @@ final class ConnectionDiagnostics {
     }
 
     /// URL・ヘッダー・IP アドレスは含めず、各 HTTP 試行の終了時に得られる計測値だけを出す。
+    /// task全体・本文受信は正常なストリームでも数十秒になる。応答待ちと区別して読むこと。
+    /// 通信世代はアプリ側 Session の識別であり、物理接続の識別ではない。新規接続の検証には
+    /// 接続再利用も見る。正常終了時のキャンセルなど、成功計測を残さず終わる HTTP もある。
     static func httpMetricsSummary(_ metrics: URLSessionTaskMetrics) -> [String] {
         let formatSeconds: (TimeInterval) -> String = { String(format: "%.3f", max(0, $0)) }
         let total = "task全体=\(formatSeconds(metrics.taskInterval.duration))秒, リダイレクト=\(metrics.redirectCount)回"
@@ -190,6 +196,8 @@ final class ConnectionDiagnostics {
 }
 
 /// 再取得しても改善しない認証・権限エラーや手動キャンセルは再試行しない。
+/// 429 待機上限は NdgrRequestThrottle.Failure として届くため false にする。
+/// 元の HTTP 429 へ巻き戻して true にすると、接続全体の復旧で待機上限を迂回してしまう。
 enum NicoRecoveryPolicy {
     static func shouldRetry(_ error: Error) -> Bool {
         if case NdgrStreamError.truncatedFrame = error { return true }

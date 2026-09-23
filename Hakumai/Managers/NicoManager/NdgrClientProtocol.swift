@@ -24,7 +24,8 @@ protocol NdgrClientDelegate: AnyObject {
     func ndgrClientDidReceiveChat(_ ndgrClient: NdgrClientType, chat: Chat, diagnostics: ConnectionDiagnostics)
     func ndgrClientDidDisconnect(_ ndgrClient: NdgrClientType, diagnostics: ConnectionDiagnostics, reason: NdgrTermination)
 
-    // History.
+    // History: DidReceive は復旧に備えたデータ退避であり、UI への逐次表示の指示ではない。
+    // DidFinish で一括表示の区切りを通知する。履歴 0 件でも初回取得の完了を区別するために必要。
     func ndgrClientDidFinishChatHistory(_ ndgrClient: NdgrClientType, diagnostics: ConnectionDiagnostics)
     func ndgrClientReceivingChatHistory(_ ndgrClient: NdgrClientType, requestCount: Int, totalChatCount: Int, diagnostics: ConnectionDiagnostics)
     func ndgrClientDidReceiveChatHistory(_ ndgrClient: NdgrClientType, chats: [Chat], diagnostics: ConnectionDiagnostics)

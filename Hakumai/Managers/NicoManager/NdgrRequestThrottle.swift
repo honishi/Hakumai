@@ -3,9 +3,12 @@ import Alamofire
 
 /// View と Segment、および HTTP 再試行を同じ待ち行列に通す。
 /// 状態は main queue に限定し、待機中も UI と視聴用 WS を動かし続ける。
+/// 大量の履歴取得で 429 が起きても、番組全体を接続し直して同じ範囲を再取得しないための制御。
+/// NdgrTransport の Session 更新をまたいで共有するが、別番組・新しい NDGR 接続とは共有しない。
 final class NdgrRequestThrottle: RequestInterceptor, @unchecked Sendable {
     struct Policy {
-        // 通常は間隔を空けず、429 が発生した場合に減速する。
+        // 固定間隔の導入は履歴取得を大幅に遅くしたため、通常は元の実装同様に待機しない。
+        // 429 時のみ減速し、成功応答の継続を確認して間隔を戻す（927f1d4、224e055）。
         var interval: TimeInterval = 0
         var retryDelays: [TimeInterval] = [10, 20, 40, 80]
         var maximumServerWait: TimeInterval = 300
@@ -101,6 +104,7 @@ final class NdgrRequestThrottle: RequestInterceptor, @unchecked Sendable {
             }
             self.cooldownUntil = max(self.cooldownUntil, now + serverWait)
             self.isCoolingDown = true
+            // 待機理由は debug 表示を無効にしていても system message で伝える。同時 429 は一度だけ。
             if startsNewWait { self.onWait() }
             self.report("NDGR HTTP 429: 取得を一時停止、待機=\(String(format: "%.1f", self.cooldownUntil - now))秒, 待機回数=\(self.cooldownCount)/\(self.policy.retryDelays.count), Retry-After秒=\(serverWait), 再開後の取得間隔=\(self.interval)秒")
             self.drain()

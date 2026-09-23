@@ -157,6 +157,7 @@ extension MenuDelegate {
 }
 
 enum MessageCopy {
+    // 選択範囲上の右クリックは複数行コピー、範囲外の右クリックは従来どおりその行だけを対象にする。
     static func contextMenuRows(clickedRow: Int, selectedRows: IndexSet, messageCount: Int) -> IndexSet {
         let validRows = IndexSet(integersIn: 0..<messageCount)
         guard validRows.contains(clickedRow) else { return [] }
@@ -167,6 +168,8 @@ enum MessageCopy {
     }
 
     static func text(messages: [Message], rows: IndexSet) -> String? {
+        // 診断ログをコメントと一緒に共有できるよう、画面の行順と debug の xN 表示をそのまま使う。
+        // rows は表示配列の添字なので、呼び出し元はフィルター済み配列のスナップショットを渡す。
         let validRows = rows.intersection(IndexSet(integersIn: messages.indices))
         guard !validRows.isEmpty else { return nil }
         return validRows.map { row in
