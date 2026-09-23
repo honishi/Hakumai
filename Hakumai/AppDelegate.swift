@@ -70,7 +70,8 @@ extension AppDelegate {
 
     @IBAction func closeInactiveWindows(_ sender: Any) {
         mainWindowControllers
-            .filter { !$0.connectedToLive }
+            // 接続準備・復旧待機中も利用中のため、一括終了の対象から外す。
+            .filter { !$0.isLiveSessionActive }
             .forEach { $0.window?.close() }
     }
 

@@ -302,7 +302,7 @@ final class MainViewController: NSViewController {
     private(set) var live: Live?
     private(set) var connectedToLive = false
     private var connectingToLive = false
-    private var isLiveSessionActive: Bool { connectedToLive || connectingToLive }
+    var isLiveSessionActive: Bool { connectedToLive || connectingToLive }
     private var liveStartedDate: Date?
 
     // row-height cache
