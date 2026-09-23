@@ -113,6 +113,8 @@ final class NicoManager: NicoManagerType {
     private var recoveryWorkItem: DispatchWorkItem?
     private var watchSetupTimeout: DispatchWorkItem?
     private var resumingLive = false
+    // 手動接続後、NDGR を始める前に WS が復旧しても前セッションの再開位置を使わない。
+    private var hasStartedNdgr = false
     private let recoveryDelays: [TimeInterval]
     private let socketFactory: (URLRequest) -> WebSocket
     private var recoveryDiagnostics: ConnectionDiagnostics?
@@ -183,6 +185,7 @@ extension NicoManager {
             initialHistoryStartedAt = ProcessInfo.processInfo.systemUptime
             recoveryAttempt = 0
             resumingLive = false
+            hasStartedNdgr = false
         }
         activeProgramId = liveProgramId
         currentConnectContext = connectContext
@@ -622,8 +625,12 @@ private extension NicoManager {
             failConnection(.noMessageServerInfo, diagnostics: diagnostics)
             return
         }
-        ndgrClient.connect(viewUri: url, beginTime: beginTime, diagnostics: diagnostics,
-                           resuming: currentConnectContext.isReconnect)
+        let resuming = hasStartedNdgr
+        hasStartedNdgr = true
+        if currentConnectContext.isReconnect && !resuming {
+            diagnostics.emit("NDGR初回開始: 今回の手動接続では未開始のため、旧接続の再開位置・重複除外を初期化")
+        }
+        ndgrClient.connect(viewUri: url, beginTime: beginTime, diagnostics: diagnostics, resuming: resuming)
     }
 }
 

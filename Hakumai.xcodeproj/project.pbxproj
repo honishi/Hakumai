@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CA2026092300000000000011 /* NicoManagerSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092300000000000012 /* NicoManagerSessionTests.swift */; };
 		CA2026092200000000000001 /* NicoRecoveryTestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092200000000000002 /* NicoRecoveryTestSupport.swift */; };
 		CA2026092300000000000003 /* NdgrRequestThrottleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092300000000000004 /* NdgrRequestThrottleTests.swift */; };
 		CA2026092400000000000003 /* NdgrStreamTimeoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092400000000000004 /* NdgrStreamTimeoutTests.swift */; };
@@ -168,6 +169,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		CA2026092300000000000012 /* NicoManagerSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoManagerSessionTests.swift; sourceTree = "<group>"; };
 		CA2026092200000000000002 /* NicoRecoveryTestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoRecoveryTestSupport.swift; sourceTree = "<group>"; };
 		CA2026092300000000000004 /* NdgrRequestThrottleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrRequestThrottleTests.swift; sourceTree = "<group>"; };
 		CA2026092400000000000004 /* NdgrStreamTimeoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrStreamTimeoutTests.swift; sourceTree = "<group>"; };
@@ -708,6 +710,7 @@
 				CA2026092300000000000004 /* NdgrRequestThrottleTests.swift */,
 				CA2026092400000000000004 /* NdgrStreamTimeoutTests.swift */,
 				CA2026092500000000000004 /* NdgrTransportTests.swift */,
+				CA2026092300000000000012 /* NicoManagerSessionTests.swift */,
 				DB0F0ECC1A16441D00F8BDC5 /* NicoManagerTests.swift */,
 				CA2026092200000000000002 /* NicoRecoveryTestSupport.swift */,
 				DBD1CF53273F376A00D52271 /* PremiumTests.swift */,
@@ -1263,6 +1266,7 @@
 				CA2026092300000000000003 /* NdgrRequestThrottleTests.swift in Sources */,
 				CA2026092400000000000003 /* NdgrStreamTimeoutTests.swift in Sources */,
 				CA2026092500000000000003 /* NdgrTransportTests.swift in Sources */,
+				CA2026092300000000000011 /* NicoManagerSessionTests.swift in Sources */,
 				DB0F0ECD1A16441D00F8BDC5 /* NicoManagerTests.swift in Sources */,
 				CA2026092200000000000001 /* NicoRecoveryTestSupport.swift in Sources */,
 				DBD1CF54273F376A00D52271 /* PremiumTests.swift in Sources */,
