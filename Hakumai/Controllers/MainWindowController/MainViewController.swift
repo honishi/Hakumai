@@ -507,6 +507,7 @@ extension MainViewController: NSTableViewDelegate {
         }
     }
 
+    // swiftlint:disable:next function_body_length
     private func configure(view: NSTableCellView, forChat message: Message, withTableColumn tableColumn: NSTableColumn) {
         guard let live = live, case let .chat(chat) = message.content else { return }
 
