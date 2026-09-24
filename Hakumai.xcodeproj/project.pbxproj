@@ -7,14 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CA2026092300000000000011 /* NicoManagerSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092300000000000012 /* NicoManagerSessionTests.swift */; };
-		CA2026092200000000000001 /* NicoRecoveryTestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092200000000000002 /* NicoRecoveryTestSupport.swift */; };
-		CA2026092300000000000003 /* NdgrRequestThrottleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092300000000000004 /* NdgrRequestThrottleTests.swift */; };
-		CA2026092400000000000003 /* NdgrStreamTimeoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092400000000000004 /* NdgrStreamTimeoutTests.swift */; };
-		CA2026092500000000000003 /* NdgrTransportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092500000000000004 /* NdgrTransportTests.swift */; };
-		CA2026092400000000000007 /* NdgrRequestRetrierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092400000000000008 /* NdgrRequestRetrierTests.swift */; };
 		9A3A22960489C07A1AB8A317 /* Pods_Hakumai.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84A41989D935D7A03EBFCB87 /* Pods_Hakumai.framework */; };
 		A7F49743094E5F56137600E8 /* Pods_HakumaiTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 624C843B0BCD6D9BBCFABC5C /* Pods_HakumaiTests.framework */; };
+		CA2026092100000000000001 /* ConnectionDiagnostics.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092100000000000002 /* ConnectionDiagnostics.swift */; };
+		CA2026092100000000000003 /* ConnectionDiagnosticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092100000000000004 /* ConnectionDiagnosticsTests.swift */; };
+		CA2026092100000000000005 /* MessageContainerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092100000000000006 /* MessageContainerTests.swift */; };
+		CA2026092200000000000001 /* NicoRecoveryTestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092200000000000002 /* NicoRecoveryTestSupport.swift */; };
+		CA2026092300000000000001 /* NdgrRequestThrottle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092300000000000002 /* NdgrRequestThrottle.swift */; };
+		CA2026092300000000000003 /* NdgrRequestThrottleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092300000000000004 /* NdgrRequestThrottleTests.swift */; };
+		CA2026092300000000000011 /* NicoManagerSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092300000000000012 /* NicoManagerSessionTests.swift */; };
+		CA2026092400000000000001 /* NdgrStreamTimeout.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092400000000000002 /* NdgrStreamTimeout.swift */; };
+		CA2026092400000000000003 /* NdgrStreamTimeoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092400000000000004 /* NdgrStreamTimeoutTests.swift */; };
+		CA2026092400000000000005 /* NdgrRequestRetrier.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092400000000000006 /* NdgrRequestRetrier.swift */; };
+		CA2026092400000000000007 /* NdgrRequestRetrierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092400000000000008 /* NdgrRequestRetrierTests.swift */; };
+		CA2026092500000000000001 /* NdgrTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092500000000000002 /* NdgrTransport.swift */; };
+		CA2026092500000000000003 /* NdgrTransportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092500000000000004 /* NdgrTransportTests.swift */; };
 		DB022ED1271144CF003DC12A /* IconTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB022ED0271144CF003DC12A /* IconTableCellView.swift */; };
 		DB022ED3271144F8003DC12A /* IconTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB022ED2271144F8003DC12A /* IconTableCellView.xib */; };
 		DB0D37A7275F78510086A7A2 /* BrowserUrlObserverType.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0D37A6275F78510086A7A2 /* BrowserUrlObserverType.swift */; };
@@ -42,13 +49,6 @@
 		DB2F516126669675000A1C58 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DB2F516326669675000A1C58 /* Localizable.strings */; };
 		DB2F516726669B3E000A1C58 /* Localize.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2F516626669B3E000A1C58 /* Localize.swift */; };
 		DB3091102C5D736900B9F7AA /* NdgrClientProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB30910F2C5D736900B9F7AA /* NdgrClientProtocol.swift */; };
-		CA2026092100000000000001 /* ConnectionDiagnostics.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092100000000000002 /* ConnectionDiagnostics.swift */; };
-		CA2026092300000000000001 /* NdgrRequestThrottle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092300000000000002 /* NdgrRequestThrottle.swift */; };
-		CA2026092400000000000001 /* NdgrStreamTimeout.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092400000000000002 /* NdgrStreamTimeout.swift */; };
-		CA2026092400000000000005 /* NdgrRequestRetrier.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092400000000000006 /* NdgrRequestRetrier.swift */; };
-		CA2026092500000000000001 /* NdgrTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092500000000000002 /* NdgrTransport.swift */; };
-		CA2026092100000000000003 /* ConnectionDiagnosticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092100000000000004 /* ConnectionDiagnosticsTests.swift */; };
-		CA2026092100000000000005 /* MessageContainerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2026092100000000000006 /* MessageContainerTests.swift */; };
 		DB3091122C5D737800B9F7AA /* NdgrClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB3091112C5D737800B9F7AA /* NdgrClient.swift */; };
 		DB3091462C5D8E2000B9F7AA /* moderator.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB3091392C5D8E2000B9F7AA /* moderator.pb.swift */; };
 		DB3091472C5D8E2000B9F7AA /* atoms.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB30913B2C5D8E2000B9F7AA /* atoms.pb.swift */; };
@@ -169,17 +169,24 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		CA2026092300000000000012 /* NicoManagerSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoManagerSessionTests.swift; sourceTree = "<group>"; };
-		CA2026092200000000000002 /* NicoRecoveryTestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoRecoveryTestSupport.swift; sourceTree = "<group>"; };
-		CA2026092300000000000004 /* NdgrRequestThrottleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrRequestThrottleTests.swift; sourceTree = "<group>"; };
-		CA2026092400000000000004 /* NdgrStreamTimeoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrStreamTimeoutTests.swift; sourceTree = "<group>"; };
-		CA2026092500000000000004 /* NdgrTransportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrTransportTests.swift; sourceTree = "<group>"; };
-		CA2026092400000000000008 /* NdgrRequestRetrierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrRequestRetrierTests.swift; sourceTree = "<group>"; };
 		1C70C20FABA74CB0DE9D6117 /* Pods-Hakumai.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Hakumai.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Hakumai/Pods-Hakumai.debug.xcconfig"; sourceTree = "<group>"; };
 		20EE9521898A5BBE307B4918 /* Pods-Hakumai.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Hakumai.release.xcconfig"; path = "Pods/Target Support Files/Pods-Hakumai/Pods-Hakumai.release.xcconfig"; sourceTree = "<group>"; };
 		624C843B0BCD6D9BBCFABC5C /* Pods_HakumaiTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_HakumaiTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		84A41989D935D7A03EBFCB87 /* Pods_Hakumai.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Hakumai.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C64D90E7D7263B8BAA24E4EB /* Pods-HakumaiTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HakumaiTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-HakumaiTests/Pods-HakumaiTests.release.xcconfig"; sourceTree = "<group>"; };
+		CA2026092100000000000002 /* ConnectionDiagnostics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionDiagnostics.swift; sourceTree = "<group>"; };
+		CA2026092100000000000004 /* ConnectionDiagnosticsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionDiagnosticsTests.swift; sourceTree = "<group>"; };
+		CA2026092100000000000006 /* MessageContainerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageContainerTests.swift; sourceTree = "<group>"; };
+		CA2026092200000000000002 /* NicoRecoveryTestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoRecoveryTestSupport.swift; sourceTree = "<group>"; };
+		CA2026092300000000000002 /* NdgrRequestThrottle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrRequestThrottle.swift; sourceTree = "<group>"; };
+		CA2026092300000000000004 /* NdgrRequestThrottleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrRequestThrottleTests.swift; sourceTree = "<group>"; };
+		CA2026092300000000000012 /* NicoManagerSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicoManagerSessionTests.swift; sourceTree = "<group>"; };
+		CA2026092400000000000002 /* NdgrStreamTimeout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrStreamTimeout.swift; sourceTree = "<group>"; };
+		CA2026092400000000000004 /* NdgrStreamTimeoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrStreamTimeoutTests.swift; sourceTree = "<group>"; };
+		CA2026092400000000000006 /* NdgrRequestRetrier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrRequestRetrier.swift; sourceTree = "<group>"; };
+		CA2026092400000000000008 /* NdgrRequestRetrierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrRequestRetrierTests.swift; sourceTree = "<group>"; };
+		CA2026092500000000000002 /* NdgrTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrTransport.swift; sourceTree = "<group>"; };
+		CA2026092500000000000004 /* NdgrTransportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrTransportTests.swift; sourceTree = "<group>"; };
 		DB022ED0271144CF003DC12A /* IconTableCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconTableCellView.swift; sourceTree = "<group>"; };
 		DB022ED2271144F8003DC12A /* IconTableCellView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = IconTableCellView.xib; sourceTree = "<group>"; };
 		DB0D37A6275F78510086A7A2 /* BrowserUrlObserverType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserUrlObserverType.swift; sourceTree = "<group>"; };
@@ -214,13 +221,6 @@
 		DB2F5164266696FD000A1C58 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		DB2F516626669B3E000A1C58 /* Localize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Localize.swift; sourceTree = "<group>"; };
 		DB30910F2C5D736900B9F7AA /* NdgrClientProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrClientProtocol.swift; sourceTree = "<group>"; };
-		CA2026092100000000000002 /* ConnectionDiagnostics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionDiagnostics.swift; sourceTree = "<group>"; };
-		CA2026092300000000000002 /* NdgrRequestThrottle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrRequestThrottle.swift; sourceTree = "<group>"; };
-		CA2026092400000000000002 /* NdgrStreamTimeout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrStreamTimeout.swift; sourceTree = "<group>"; };
-		CA2026092400000000000006 /* NdgrRequestRetrier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrRequestRetrier.swift; sourceTree = "<group>"; };
-		CA2026092500000000000002 /* NdgrTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrTransport.swift; sourceTree = "<group>"; };
-		CA2026092100000000000004 /* ConnectionDiagnosticsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionDiagnosticsTests.swift; sourceTree = "<group>"; };
-		CA2026092100000000000006 /* MessageContainerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageContainerTests.swift; sourceTree = "<group>"; };
 		DB3091112C5D737800B9F7AA /* NdgrClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NdgrClient.swift; sourceTree = "<group>"; };
 		DB3091392C5D8E2000B9F7AA /* moderator.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = moderator.pb.swift; sourceTree = "<group>"; };
 		DB30913B2C5D8E2000B9F7AA /* atoms.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = atoms.pb.swift; sourceTree = "<group>"; };
@@ -1430,7 +1430,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hakumai/Hakumai.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 3110;
+				CURRENT_PROJECT_VERSION = 3120;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = N4SRN3NAQ3;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1444,7 +1444,7 @@
 					"$(SDKROOT)/usr/lib/system",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
-				MARKETING_VERSION = 3.11.0;
+				MARKETING_VERSION = 3.12.0;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1468,7 +1468,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hakumai/Hakumai.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 3110;
+				CURRENT_PROJECT_VERSION = 3120;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = N4SRN3NAQ3;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1482,7 +1482,7 @@
 					"$(SDKROOT)/usr/lib/system",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
-				MARKETING_VERSION = 3.11.0;
+				MARKETING_VERSION = 3.12.0;
 				OTHER_CODE_SIGN_FLAGS = "--deep";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
