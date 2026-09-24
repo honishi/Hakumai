@@ -22,6 +22,8 @@ final class LiveThumbnailManager {
 
 extension LiveThumbnailManager: LiveThumbnailManagerType {
     func start(for liveProgramId: String, delegate: LiveThumbnailManagerDelegate) {
+        // start が繰り返されても、参照を失った旧タイマーが監視を続けないよう先に停止する。
+        invalidateTimer()
         self.liveProgramId = liveProgramId
         self.delegate = delegate
         self.originalThumbnailUrl = nil

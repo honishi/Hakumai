@@ -236,6 +236,8 @@ private extension MessageContainer {
     @discardableResult
     func appendIfConditionMet(message: Message, into messages: inout [Message]) -> (appended: Bool, updatedRow: Int?) {
         guard shouldAppend(message: message) else { return (false, nil) }
+        // 長時間の診断ログを読みやすくするため、表示側の連続 debug だけを集約する。
+        // 通常コメントや system message は同じ本文でも独立した行として残し、source は変更しない。
         if case .debug(let debug) = message.content,
            var previous = messages.last,
            case .debug(var previousDebug) = previous.content,

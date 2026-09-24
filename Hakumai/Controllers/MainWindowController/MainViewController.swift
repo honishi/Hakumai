@@ -301,6 +301,8 @@ final class MainViewController: NSViewController {
 
     private(set) var live: Live?
     private(set) var connectedToLive = false
+    private var connectingToLive = false
+    var isLiveSessionActive: Bool { connectedToLive || connectingToLive }
     private var liveStartedDate: Date?
 
     // row-height cache
@@ -505,6 +507,7 @@ extension MainViewController: NSTableViewDelegate {
         }
     }
 
+    // swiftlint:disable:next function_body_length
     private func configure(view: NSTableCellView, forChat message: Message, withTableColumn tableColumn: NSTableColumn) {
         guard let live = live, case let .chat(chat) = message.content else { return }
 
@@ -708,6 +711,7 @@ extension MainViewController: NicoManagerDelegate {
     }
 
     func nicoManagerWillPrepareLive(_ nicoManager: NicoManagerType) {
+        connectingToLive = true
         updateMainControlViews(status: .connecting)
     }
 
@@ -723,6 +727,8 @@ extension MainViewController: NicoManagerDelegate {
         updateLiveTitleViews(for: live)
 
         if live.isTimeShift {
+            // 復旧中は初回の準備を保持する。監視の再開や「準備完了」の再表示は行わない。
+            guard !connectContext.isReconnect else { return }
             liveThumbnailManager.start(for: live.liveProgramId, delegate: self)
             resetCellViewFlashedStatus()
             resetElapsedLabel()
@@ -751,6 +757,7 @@ extension MainViewController: NicoManagerDelegate {
     }
 
     func nicoManagerDidFailToPrepareLive(_ nicoManager: NicoManagerType, error: NicoError) {
+        connectingToLive = false
         logSystemMessageToTable(L10n.failedToPrepareLive(error.toMessage))
         updateMainControlViews(status: .disconnected)
         liveThumbnailManager.stop()
@@ -762,6 +769,7 @@ extension MainViewController: NicoManagerDelegate {
     func nicoManagerDidConnectToLive(_ nicoManager: NicoManagerType, roomPosition: RoomPosition, connectContext: NicoConnectContext) {
         guard connectedToLive == false else { return }
         connectedToLive = true
+        connectingToLive = false
         switch connectContext {
         case .normal:
             liveStartedDate = Date()
@@ -769,7 +777,7 @@ extension MainViewController: NicoManagerDelegate {
             showLiveOpenedNotification()
         case .reconnect(let reason):
             switch reason {
-            case .normal:
+            case .normal, .ndgr:
                 logSystemMessageToTable(L10n.reconnected)
             case .noPong, .noTexts:
                 break
@@ -805,14 +813,13 @@ extension MainViewController: NicoManagerDelegate {
     }
 
     func nicoManagerWillReconnectToLive(_ nicoManager: NicoManagerType, reason: NicoReconnectReason) {
-        switch reason {
-        case .normal:
-            // logSystemMessageToTableView(L10n.reconnecting)
-            break
-        case .noPong, .noTexts:
-            break
-        }
+        logSystemMessageToTable(L10n.commentReconnecting)
         logDebugReconnectReason(reason)
+    }
+
+    func nicoManagerWillWaitForRateLimit(_ nicoManager: NicoManagerType) {
+        // debug 非表示でも「停止して見えるのは 429 による待機」と分かるよう system message にする。
+        logSystemMessageToTable(L10n.commentRateLimitWaiting)
     }
 
     func nicoManagerReceivingChatHistory(_ nicoManager: NicoManagerType, requestCount: Int, totalChatCount: Int) {
@@ -821,48 +828,51 @@ extension MainViewController: NicoManagerDelegate {
         logSystemMessageToTable(L10n.receivingComments(totalChatCount, requestCount))
     }
 
-    func nicoManagerDidReceiveChatHistory(_ nicoManager: NicoManagerType, chats: [Chat]) {
-        guard let live = live else { return }
-        chats.forEach {
-            HandleNameManager.shared.extractAndUpdateHandleName(
-                from: $0.comment,
-                for: $0.userId,
-                in: live.programProvider.programProviderId
-            )
+    func nicoManagerDidReceiveChatHistory(_ nicoManager: NicoManagerType, chats: [Chat], isInitial: Bool) {
+        if let live = live {
+            chats.forEach {
+                HandleNameManager.shared.extractAndUpdateHandleName(
+                    from: $0.comment,
+                    for: $0.userId,
+                    in: live.programProvider.programProviderId
+                )
+            }
+            // 初回は従来どおり全履歴を一括表示して最新へ移動する。復旧分の追加では、過去ログを
+            // 読んでいるユーザーの位置を強制移動しない（既に最下部なら追従する）。
+            bulkAppendToTable(chats: chats, forceScrollToLatest: isInitial)
         }
-        bulkAppendToTable(chats: chats)
-        if !chats.isEmpty {
-            logSystemMessageToTable(L10n.receivedComments(chats.count))
-        }
+        logSystemMessageToTable(L10n.receivedComments(chats.count))
     }
 
     func nicoManagerDidDisconnect(_ nicoManager: NicoManagerType, disconnectContext: NicoDisconnectContext) {
-        logDebugMessageToTable("UI切断通知: context=\(disconnectContext), 接続表示=\(connectedToLive)\(connectedToLive ? "" : "（既に切断表示のため無視）")")
-        guard connectedToLive else { return }
+        logDebugMessageToTable("UI切断通知: context=\(disconnectContext), 接続表示=\(connectedToLive), 接続準備中=\(connectingToLive)")
+        guard isLiveSessionActive else { return }
 
         switch disconnectContext {
+        case .preparationFailure:
+            // 接続準備の具体的な失敗理由は DidFailToPrepareLive で一度だけ表示する。
+            break
+        case .failure:
+            logSystemMessageToTable(L10n.commentConnectionFailed)
         case .normal:
             logSystemMessageToTable(L10n.liveClosed)
             showLiveClosedNotification()
-        case .reconnect(let reason):
-            switch reason {
-            case .normal:
-                logSystemMessageToTable(L10n.liveClosed)
-            case .noPong, .noTexts:
-                break
-            }
+        case .reconnect:
+            break
         }
         stopElapsedTimeAndActiveUserTimer()
         connectedToLive = false
         updateSpeechManagerState()
 
         switch disconnectContext {
-        case .normal:
+        case .normal, .failure, .preparationFailure:
+            connectingToLive = false
             updateMainControlViews(status: .disconnected)
             liveThumbnailManager.stop()
             kusaCommentDetector.stop()
             rankingManager.removeDelegate(self)
         case .reconnect:
+            connectingToLive = true
             updateMainControlViews(status: .connecting)
         }
 
@@ -931,7 +941,7 @@ extension MainViewController {
     }
 
     func logout() {
-        if connectedToLive {
+        if isLiveSessionActive {
             nicoManager.disconnect()
         }
         nicoManager.logout()
@@ -1024,7 +1034,7 @@ extension MainViewController {
     }
 
     func disconnect() {
-        guard connectedToLive else { return }
+        guard isLiveSessionActive else { return }
         nicoManager.disconnect()
     }
 
@@ -1672,6 +1682,8 @@ private extension MainViewController {
             progressIndicator.stopAnimation(self)
         case .connecting:
             controls.forEach { $0.isEnabled = false }
+            connectButton.isEnabled = true
+            connectButton.image = Asset.stopBlack.image
             progressIndicator.startAnimation(self)
         case .connected:
             controls.forEach { $0.isEnabled = true }
@@ -1768,9 +1780,9 @@ private extension MainViewController {
         updateCommentSearchStatusLabel()
     }
 
-    func bulkAppendToTable(chats: [Chat]) {
+    func bulkAppendToTable(chats: [Chat], forceScrollToLatest: Bool) {
         DispatchQueue.main.async {
-            let shouldScroll = self.scrollView.isReachedToBottom
+            let shouldScroll = forceScrollToLatest || self.scrollView.isReachedToBottom
             let startingRow = self.messageContainer.count()
             var appendedMessages = [Message]()
             chats.forEach {
@@ -1787,6 +1799,7 @@ private extension MainViewController {
             self.updateCommentSearchStatusLabel()
 
             DispatchQueue.main.async {
+                // 初回だけ最新位置へ移動し、復旧後は読み返している位置を尊重する。
                 if shouldScroll {
                     self.scrollView.scrollToBottom()
                 } else {
@@ -1856,7 +1869,7 @@ extension MainViewController {
     }
 
     @IBAction func connectButtonPressed(_ sender: AnyObject) {
-        if connectedToLive {
+        if isLiveSessionActive {
             nicoManager.disconnect()
         } else {
             connectLive(self)
@@ -2257,6 +2270,7 @@ private extension MainViewController {
             case .normal:   return "normal"
             case .noPong:   return "no pong"
             case .noTexts:  return "no text"
+            case .ndgr:     return "NDGR interrupted"
             }
         }()
         logDebugMessageToTable("Reconnecting... (\(_reason))")
@@ -2274,7 +2288,7 @@ private extension Chat {
 private extension NicoError {
     var toMessage: String {
         switch self {
-        case .internal:                 return L10n.errorInternal
+        case .internal, .transport:     return L10n.errorInternal
         case .noLiveInfo:               return L10n.errorNoLiveInfo
         case .noMessageServerInfo:      return L10n.errorNoMessageServerInfo
         case .openMessageServerFailed:  return L10n.errorFailedToOpenMessageServer

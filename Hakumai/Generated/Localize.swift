@@ -50,8 +50,14 @@ internal enum L10n {
   internal static let closeInactiveWindows = L10n.tr("Localizable", "close_inactive_windows")
   /// Close Window/Tab
   internal static let closeWindow = L10n.tr("Localizable", "close_window")
+  /// Comment reception stopped due to a connection error.
+  internal static let commentConnectionFailed = L10n.tr("Localizable", "comment_connection_failed")
   /// Comments
   internal static let commentCount = L10n.tr("Localizable", "comment_count")
+  /// Comment requests are temporarily rate limited. Waiting before retrying automatically.
+  internal static let commentRateLimitWaiting = L10n.tr("Localizable", "comment_rate_limit_waiting")
+  /// Reconnecting to the comment server…
+  internal static let commentReconnecting = L10n.tr("Localizable", "comment_reconnecting")
   /// 0 of 0
   internal static let commentSearchStatusEmpty = L10n.tr("Localizable", "comment_search_status_empty")
   /// %1$d of %2$d

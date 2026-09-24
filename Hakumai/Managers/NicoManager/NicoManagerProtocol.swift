@@ -53,11 +53,12 @@ protocol NicoManagerDelegate: AnyObject {
     // Events after connection establishment.
     func nicoManagerDidReceiveChat(_ nicoManager: NicoManagerType, chat: Chat)
     func nicoManagerWillReconnectToLive(_ nicoManager: NicoManagerType, reason: NicoReconnectReason)
+    func nicoManagerWillWaitForRateLimit(_ nicoManager: NicoManagerType)
     func nicoManagerDidReceiveStatistics(_ nicoManager: NicoManagerType, stat: LiveStatistics)
 
     // History.
     func nicoManagerReceivingChatHistory(_ nicoManager: NicoManagerType, requestCount: Int, totalChatCount: Int)
-    func nicoManagerDidReceiveChatHistory(_ nicoManager: NicoManagerType, chats: [Chat])
+    func nicoManagerDidReceiveChatHistory(_ nicoManager: NicoManagerType, chats: [Chat], isInitial: Bool)
 
     // Disconnect.
     func nicoManagerDidDisconnect(_ nicoManager: NicoManagerType, disconnectContext: NicoDisconnectContext)
@@ -68,10 +69,16 @@ protocol NicoManagerDelegate: AnyObject {
 
 enum NicoError: Error {
     case `internal`
+    case transport(Error)
     case noLiveInfo
     case noMessageServerInfo
     case openMessageServerFailed
     case notStarted
+
+    var underlyingError: Error? {
+        guard case .transport(let error) = self else { return nil }
+        return error
+    }
 }
 
 enum NicoConnectContext {
@@ -89,8 +96,10 @@ enum NicoConnectContext {
 }
 
 enum NicoDisconnectContext {
+    case preparationFailure
+    case failure
     case normal
     case reconnect(NicoReconnectReason)
 }
 
-enum NicoReconnectReason { case normal, noPong, noTexts }
+enum NicoReconnectReason { case normal, noPong, noTexts, ndgr }
