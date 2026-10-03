@@ -11,7 +11,7 @@ jobs:
 
     # checkout
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # debug prints
       - name: Show Xcode versions
@@ -37,7 +37,7 @@ jobs:
 
       # setup xcode project
       - name: Setup cache for Pods
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: Pods
           key: ${{ runner.os }}-${{ runner.arch }}-macos-15-xcode-16.4-pods-${{ hashFiles('**/Podfile.lock') }}
