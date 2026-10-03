@@ -4,11 +4,14 @@ on: [ push, pull_request ]
 
 jobs:
   build:
-    runs-on: macos-14
+    runs-on: macos-15
+    env:
+      # Prevent switching back to Bundler 1.x from Gemfile.lock.
+      BUNDLER_VERSION: '2.6'
 
     # checkout
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       # debug prints
       - name: Show Xcode versions
@@ -20,7 +23,8 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7
+          ruby-version: '3.3'
+          bundler: '2.6'
           bundler-cache: true
       - name: Check Ruby version
         run: ruby -v
@@ -29,14 +33,14 @@ jobs:
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '15.4'
+          xcode-version: '16.4'
 
       # setup xcode project
       - name: Setup cache for Pods
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: Pods
-          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+          key: ${{ runner.os }}-${{ runner.arch }}-macos-15-xcode-16.4-pods-${{ hashFiles('**/Podfile.lock') }}
       - name: Pod install
         run: |
           # bundle exec pod repo update --silent
